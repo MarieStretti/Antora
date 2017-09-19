@@ -1,0 +1,14 @@
+{
+  "name": "antora-direct",
+  "version": "1.0.0-alpha.1",
+  "description": "A predefined documentation pipeline for creating documentation sites using Antora",
+  "author": {
+    "name": "OpenDevise Inc.",
+    "url": "http://opendevise.com"
+  },
+  "license": "MPL-2.0",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">= 7.10.1"
+  }
+}
