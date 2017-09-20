@@ -85,6 +85,11 @@ packages/     <7>
     lib/      <8>
     tests/    <8>
 tests/        <9>
+docs/         <10>
+  content/
+    user-manual.adoc
+  assets/
+  samples/
 ....
 <1> Defines project information and library dependencies.
 <2> Tracks the version of resolved dependencies to ensure builds are reproducible.
@@ -99,6 +104,8 @@ They will eventually graduate and migrate to their own repositories.
 <8> The main and test code for the playbook component.
 <9> Integration tests for the whole documentation pipeline.
 These tests verify that the discrete software components work properly together.
+<10> The documentation for Antora Direct.
+Documentation for discrete software components will live with the code.
 
 The application code is organized by component or function.
 We want to avoid having folders that become dumping grounds for source files.
