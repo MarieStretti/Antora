@@ -6,8 +6,17 @@
 // URIs:
 :uri-org: https://gitlab.com/antora
 :uri-project: {uri-org}/antora-direct
+:uri-repo: {uri-project}.git
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
+:uri-git: https://git-scm.com
+:uri-git-dl: {uri-git}/downloads
+:uri-node: https://nodejs.org
+:uri-nodegit: http://www.nodegit.org
+:uri-nodegit-dev: http://www.nodegit.org/guides/install/from-source
+:uri-nvm: https://github.com/creationix/nvm
+:uri-nvm-install: {uri-nvm}#installation
+:uri-yarn: https://yarnpkg.com
 
 == You're Invited
 
@@ -28,7 +37,8 @@ From all of us to you, welcome!
 
 == Project Host
 
-This project is hosted on GitLab under the {uri-org}[Antora organization]. This is the official home of the project and all development is done here.
+This project is hosted on GitLab within the {uri-org}[Antora organization].
+This is the official home of the project and all development is done here.
 
 === Project Resources
 
@@ -62,7 +72,8 @@ resolves #issue_number summarize the issue
 Please study the {uri-issue-labels}[issue labels] to understand what they mean and how to apply them.
 Issues are organized into categories, represented by the part of the label text in brackets.
 
-You can use the {uri-issue-board}[issue board] to track the progress of development (which visualizes labels in the [Status] category). Issues move across the board from left (Backlog) to right (Done).
+You can use the {uri-issue-board}[issue board] to track the progress of development (which visualizes labels in the [Status] category).
+Issues move across the board from left (Backlog) to right (Done).
 
 == Project Organization
 
@@ -111,8 +122,165 @@ The application code is organized by component or function.
 We want to avoid having folders that become dumping grounds for source files.
 Instead, each source file should be located in a self-describing location.
 
-Tests should mirror the structure of the application code to make it easy for develoeprs to find the tests that correspond to the application code.
+Tests should mirror the structure of the application code to make it easy for developers to find the tests that correspond to the application code.
 
 === Incubating Packages
 
-We envision that each software component will eventually graduate to become a package (i.e., Node.js module) hosted in a dedicated repository. However, making this split too early can make it difficult to get started. Therefore, we will incubate these packages in the packages folder inside this repository. When a component is ready for a first release, we will graduate it to a separate repository and add it as a dependency to this project.
+We envision that each software component will eventually graduate to become a package (i.e., Node.js module) hosted in a dedicated repository.
+However, making this split too early can make it difficult to get started.
+Therefore, we will incubate these packages in the packages folder inside this repository.
+When a component is ready for a first release, we will graduate it to a separate repository and add it as a dependency to this project.
+
+== Development
+
+This section gives you all the necessary information you need to set up your development workspace and begin hacking on the code.
+
+=== Prerequisites
+
+In order to obtain the source code, run the test suite, and launch the application, you'll need the following prerequisites:
+
+* git
+* Node.js / npm
+* Yarn
+* Gulp (CLI only)
+* Development libraries (e.g., a C compiler)
+
+The following sections describe the prerequisites in detail and provide resources or instructions about how to install them.
+
+==== git
+
+The source code of the project is hosted in a git repository.
+The first software you'll need on your machine is git (command: `git`).
+You'll use git to obtain the source code and push updates to it.
+
+First, check if you have git installed.
+
+ $ git --version
+
+If not, {uri-git-dl}[download and install] the git package for your system.
+
+==== Node.js / npm
+
+Antora is built on {uri-node}[Node.js] (herein Node) (command: `node`).
+To work with the project, you must have Node installed on your machine.
+The Node installation also provides npm (command: `npm`), which you'll use to install additional Node modules.
+
+To see which version of Node you have installed, open a terminal and type:
+
+ $ node --version
+
+If `node --version` doesn't return any information, you don't yet have Node installed.
+
+The minimum required version of Node is *v7.10.1*, as indicated in the package.json file.
+This is also the recommended version of Node for development.
+
+.Why Node 7?
+****
+This project leverages the latest and greatest features of ECMAScript, namely ECMAScript 2016 (ES2016, or ES7 for short).
+The main feature of ES7 this project depends on is the `await` keyword since it drastically simplifies asynchronous code.
+That's why this project requires at least Node v7.10.1.
+
+NOTE: We don't recommend using Node 8 at this time since it's not officially supported by one of the main dependencies of the project, NodeGit.
+Nodegit is the git integration library used to fetch files form the content repositories.
+Once Node 8 is officially supported by NodeGit, we'll consider bumping the recommended version of Node.
+****
+
+If you don't yet have Node installed, or the version of Node you have isn't Node 7, we strongly recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
+Follow the {uri-nvm-install}[nvm installation instructions] to set up nvm on your machine.
+
+TIP: Many CI environments use nvm to install the version of Node used for the build job.
+By using nvm, you can closely align your setup with the environment that is used to generate and publish the production site.
+
+Once you've installed nvm, open a new terminal and install Node 7 using:
+
+ $ nvm install 7
+
+The above command will install the latest version of Node 7.
+
+
+If you already have other Node versions installed, you can configure Node 7 as the default for any new terminal.
+
+ $ nvm alias default 7
+
+You can skip this step if you didn't previously have any Node versions installed because `nvm install` automatically adds the default alias to the first version of Node you install.
+
+Verify the version of Node you have selected using:
+
+ $ node --version
+
+The rest of the software you need is installable from Node (specifically npm).
+
+==== Yarn
+
+{uri-yarn}[Yarn] (command: `yarn`) is the preferred package manager and script runner for the Node ecosystem.
+
+You'll use the `npm` command (part of Node) to install Yarn.
+You should install Yarn globally, which resolves to a location in your user directory if you're using nvm, using:
+
+ $ npm install -g yarn
+
+Verify Yarn is installed by checking the version:
+
+ $ yarn --version
+
+If you see a version, you're all set.
+
+==== Development Libraries
+
+Some Node packages require development libraries, such as a C compiler, to be available on your machine.
+It's very likely you already have these libraries.
+If for some reason you don't, namely if you run into problems installing NodeGit, you can return to this section to satisfy this prerequisite.
+
+In order for Yarn to install NodeGit, you need to have the development tools (i.e., a C compiler) installed on your machine.
+Details about how to get these libraries can be found in the *Installing Dependencies* section of the page {uri-nodegit-dev}[Building NodeGit from source].
+
+=== Obtain the Source Code
+
+The next step is to obtain the source code of the project, which you'll do by cloning the git repository.
+
+Clone the source repository using:
+
+[subs=attributes+]
+ $ git clone {uri-repo} &&
+   cd "`basename $_`"
+
+You can copy and paste the above command directly into your terminal.
+The command will clone the repository, then switch to the newly created project folder.
+
+=== Install Dependencies
+
+Initializing the project means downloading and installing the dependencies (i.e., the required software) for the project.
+That's the job of Yarn.
+
+In your terminal, execute the following command from the root folder of the project:
+
+ $ yarn
+
+The default command in Yarn is `install`, so running `yarn` by itself is the equivalent of running `yarn install`.
+The install command uses dependency information defined in [.path]_package.json_ and [.path]_yarn.lock_ to resolve dependencies, which Yarn then installs inside the project under the [.path]_node_modules_ folder.
+
+NOTE: If you run into problems while installing dependencies, return to <<Development Libraries>>.
+
+=== Run the Test Suite
+
+WRITEME
+
+=== Expectations When Writing Tests
+
+WRITEME
+
+=== Write a New Test
+
+WRITEME
+
+=== Fork the Project
+
+WRITEME
+
+=== Submit a Merge Request
+
+WRITEME
+
+=== Coding Style: Guidelines and Expectations
+
+WRITEME
