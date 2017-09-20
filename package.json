@@ -10,5 +10,8 @@
   "main": "lib/index.js",
   "engines": {
     "node": ">= 7.10.1"
+  },
+  "dependencies": {
+    "gulp": "^3.9.1"
   }
 }

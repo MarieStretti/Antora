@@ -3,14 +3,16 @@
 :toc-title: Contents
 :toclevels: 1
 :toc:
-// URIs:
+// Project URIs:
 :uri-org: https://gitlab.com/antora
 :uri-project: {uri-org}/antora-direct
 :uri-repo: {uri-project}.git
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
+// External URIs:
 :uri-git: https://git-scm.com
 :uri-git-dl: {uri-git}/downloads
+:uri-gulp: https://gulpjs.com
 :uri-node: https://nodejs.org
 :uri-nodegit: http://www.nodegit.org
 :uri-nodegit-dev: http://www.nodegit.org/guides/install/from-source
@@ -171,7 +173,7 @@ To see which version of Node you have installed, open a terminal and type:
 
 If `node --version` doesn't return any information, you don't yet have Node installed.
 
-The minimum required version of Node is *v7.10.1*, as indicated in the package.json file.
+The minimum required version of Node is *v7.10.1*, as indicated in the [.path]_package.json_ file.
 This is also the recommended version of Node for development.
 
 .Why Node 7?
@@ -225,6 +227,22 @@ Verify Yarn is installed by checking the version:
 
 If you see a version, you're all set.
 
+==== Gulp (CLI only)
+
+This project uses {uri-gulp}[Gulp] (command: `gulp`) to manage various tasks, such as test, lint, etc.
+These tasks are defined in [.path]_gulpfile.js_.
+
+To launch these tasks, you need to install the CLI interface for Gulp using:
+
+ $ yarn global add gulp-cli
+
+The gulp-cli module provides the `gulp` command.
+You can verify this command is on your path using:
+
+ $ gulp --version
+
+If you see a version, you're all set.
+
 ==== Development Libraries
 
 Some Node packages require development libraries, such as a C compiler, to be available on your machine.
@@ -260,6 +278,16 @@ The default command in Yarn is `install`, so running `yarn` by itself is the equ
 The install command uses dependency information defined in [.path]_package.json_ and [.path]_yarn.lock_ to resolve dependencies, which Yarn then installs inside the project under the [.path]_node_modules_ folder.
 
 NOTE: If you run into problems while installing dependencies, return to <<Development Libraries>>.
+
+=== Build the Project
+
+To build this project, which means runs all the main tasks, use:
+
+ $ gulp build
+
+You can omit the `build` argument since it's the default command:
+
+ $ gulp
 
 === Run the Test Suite
 
