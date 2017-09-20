@@ -1,1 +1,104 @@
 = Contributing
+// Settings:
+:toc-title: Contents
+:toc:
+// URIs:
+:uri-org: https://gitlab.com/antora
+:uri-project: {uri-org}/antora-direct
+:uri-issue-board: {uri-project}/boards/368796
+:uri-issue-labels: {uri-project}/labels
+
+== You're Invited
+
+In the spirit of open source software, *everyone* is welcome to contribute to this project!
+
+We believe strongly that developing software in the open produces the best outcome.
+In order for that to work, the project relies on your support.
+We have big goals for the project and we need a variety of talent to achieve those goals.
+
+The best way to get involved is to just show up and make yourself heard.
+We pride ourselves on having a very friendly and encouraging culture.
+
+Whether you're a user, writer, designer, developer, architect, devops, system administrator, advocate, project manager, or just someone with an idea about how to improve the project, we welcome your participation.
+In return, you'll have better software to use that we built together as a community and a great sense of pride for having been a part of making it.
+
+We want your choice to participate in the Antora project to be the start of an exciting and rewarding journey.
+From all of us to you, welcome!
+
+== Project Host
+
+This project is hosted on GitLab under the {uri-org}[Antora organization]. This is the official home of the project and all development is done here.
+
+=== Project Resources
+
+The GitLab project provides the following resources for the project:
+
+* git repository
+* issue tracker
+* merge requests (aka pull requests)
+* CI server
+
+=== Permissions Required
+
+You do not need a GitLab.com account to view or clone the issue tracker, read the issues, browse the merge requests, or view the CI results.
+However, you do need a https://gitlab.com/users/sign_in[GitLab.com account] to file an issue, submit a merge request, or--if you're a member of the project--push code to the repository.
+
+=== Issue Tracker, Board, and Labels
+
+If you discover an error or omission in the main application code, tests, or documentation, don't hesitate to submit an issue so we can correct it or submit a patch (via a merge request) for review.
+
+A merge request should always addressing an open issue.
+If an issue does not yet exist for the change you're submitting, please create one first.
+Use the following commit message template when submitting a fix:
+
+....
+resolves #issue_number summarize the issue
+
+* explanation of change if necessary
+* more explanation of change if necessary
+....
+
+Please study the {uri-issue-labels}[issue labels] to understand what they mean and how to apply them.
+Issues are organized into categories, represented by the part of the label text in brackets.
+
+You can use the {uri-issue-board}[issue board] to track the progress of development (which visualizes labels in the [Status] category). Issues move across the board from left (Backlog) to right (Done).
+
+== Project Layout
+
+Antora Direct is a JavaScript project organized as a Node.js module.
+This section describes the layout of the project at a high level so you know where to look for files.
+
+Here are some of the files and directories you will see when developing this project:
+
+....
+package.json  <1>
+yarn.lock     <2>
+gulpfile.js   <3>
+lib/          <4>
+  index.js    <5>
+node_modules/ <6>
+packages/     <7>
+  playbook/
+    lib/      <8>
+    tests/    <8>
+tests/        <9>
+....
+<1> Defines project information and library dependencies.
+<2> Tracks the version of resolved dependencies to ensure builds are reproducible.
+<3> The Gulp build script that defines tasks used for development.
+<4> The application code folder.
+<5> The entry point of the application.
+The code assembles and executes the documentation pipeline.
+<6> A local installation of the Node.js modules used for the development of this project.
+<7> Discrete software components used in the documentation pipeline.
+These packages are located in this repository while incubating.
+They will eventually graduate and be migrated into their own repositories.
+<8> The main and test code for the playbook component.
+<9> Integration tests for the whole documentation pipeline.
+These tests verify that the discrete software components work properly together.
+
+The application code is organized by component or function. We want to avoid having folders that become dumping grounds for source files. Instead, each source file should be located in a self-describing location.
+
+The tests should mirror the structure of the main application code to make the corresponding tests easy to find.
+
+We envision that each software component will eventually graduate to become a package (i.e., Node.js module) hosted in a dedicated repository. However, making this split too early can make it difficult to get started. Therefore, we will incubate these packages in the packages folder inside this repository. When a component is ready for a first release, we will graduate it to a separate repository and add it as a dependency to this project.
