@@ -1,6 +1,7 @@
 = Contributing
 // Settings:
 :toc-title: Contents
+:toclevels: 1
 :toc:
 // URIs:
 :uri-org: https://gitlab.com/antora
@@ -63,10 +64,12 @@ Issues are organized into categories, represented by the part of the label text 
 
 You can use the {uri-issue-board}[issue board] to track the progress of development (which visualizes labels in the [Status] category). Issues move across the board from left (Backlog) to right (Done).
 
-== Project Layout
+== Project Organization
 
-Antora Direct is a JavaScript project organized as a Node.js module.
-This section describes the layout of the project at a high level so you know where to look for files.
+Antora Direct is a JavaScript project organized and packaged as a Node.js module.
+This section describes the organization of the project at a high level so you know where to look for files.
+
+=== Project Structure
 
 Here are some of the files and directories you will see when developing this project:
 
@@ -88,17 +91,21 @@ tests/        <9>
 <3> The Gulp build script that defines tasks used for development.
 <4> The application code folder.
 <5> The entry point of the application.
-The code assembles and executes the documentation pipeline.
-<6> A local installation of the Node.js modules used for the development of this project.
+The code in this file assembles and executes the documentation pipeline.
+<6> A local installation of Node.js modules used for the development of this project.
 <7> Discrete software components used in the documentation pipeline.
 These packages are located in this repository while incubating.
-They will eventually graduate and be migrated into their own repositories.
+They will eventually graduate and migrate to their own repositories.
 <8> The main and test code for the playbook component.
 <9> Integration tests for the whole documentation pipeline.
 These tests verify that the discrete software components work properly together.
 
-The application code is organized by component or function. We want to avoid having folders that become dumping grounds for source files. Instead, each source file should be located in a self-describing location.
+The application code is organized by component or function.
+We want to avoid having folders that become dumping grounds for source files.
+Instead, each source file should be located in a self-describing location.
 
-The tests should mirror the structure of the main application code to make the corresponding tests easy to find.
+Tests should mirror the structure of the application code to make it easy for develoeprs to find the tests that correspond to the application code.
+
+=== Incubating Packages
 
 We envision that each software component will eventually graduate to become a package (i.e., Node.js module) hosted in a dedicated repository. However, making this split too early can make it difficult to get started. Therefore, we will incubate these packages in the packages folder inside this repository. When a component is ready for a first release, we will graduate it to a separate repository and add it as a dependency to this project.
