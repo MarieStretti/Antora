@@ -1,7 +1,22 @@
 = Antora Direct
+:uri-asciidoctor: http://asciidoctor.org
 
-Antora is a modular documentation site generator especially designed for users of Asciidoctor.
+Antora is a modular documentation site generator especially designed for users of {uri-asciidoctor}[Asciidoctor].
 
 More specifically, Antora is a modular Asciidoctor documentation toolchain and workflow that empowers technical writing teams to create, manage, collaborate on, remix, and publish documentation sites sourced from a variety of versioned content repositories without needing expertise in web technologies, build automation, or system administration.
 
 Antora Direct provides a predefined software pipeline to quickly get started creating documentation sites using Antora.
+
+== Contributing
+
+To learn how to contribute to this project, including how to set up a development workspace, build the project, and submit a merge request, please refer to the link:contributing.adoc[contributing guide].
+
+== Copyright and License
+
+Copyright (C) 2017 OpenDevise Inc. and the Antora Project.
+Use of this software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).
+See link:LICENSE[] for details.
+
+== Authors
+
+Development of Antora is lead and sponsored by OpenDevise Inc.
