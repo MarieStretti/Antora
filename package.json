@@ -13,7 +13,8 @@
   },
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha",
-    "test-watch": "nodemon --exec 'nyc --reporter=lcov --reporter=text mocha || true'"
+    "test-watch": "nodemon --exec 'nyc --reporter=lcov --reporter=text mocha || true'",
+    "lint": "standard --verbose | snazzy"
   },
   "dependencies": {
     "array-to-stream": "^1.0.2",
@@ -26,6 +27,8 @@
     "mocha": "^3.5.3",
     "nodemon": "^1.12.1",
     "nyc": "^11.2.1",
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.3",
     "stream-to-array": "^2.3.0"
   }
 }

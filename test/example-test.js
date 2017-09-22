@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 'use strict'
 
 // This is a unit test reference, try to mimick its style ;-)
