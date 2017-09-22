@@ -19,6 +19,11 @@
 :uri-nvm: https://github.com/creationix/nvm
 :uri-nvm-install: {uri-nvm}#installation
 :uri-yarn: https://yarnpkg.com
+:uri-mocha: https://mochajs.org/
+:uri-chai: http://chaijs.com/api/bdd/
+:uri-istanbul: https://istanbul.js.org/
+:uri-chai-as-promised: https://github.com/domenic/chai-as-promised
+:uri-chai-spies: https://github.com/chaijs/chai-spies
 
 == You're Invited
 
@@ -291,15 +296,36 @@ You can omit the `build` argument since it's the default command:
 
 === Run the Test Suite
 
-WRITEME
+This project uses {uri-mocha}[mocha] to run the tests and the assertion library {uri-chai}[chai].
+To run the test suite, use:
+
+  $ yarn test
+
+Note that this command also computes a coverage report using {uri-istanbul}[istanbul].
+You can browse this report in a web browser by opening this HTML file: `coverage/index.html`.
+
+You can run selective parts of the test suite by adding `.only` on `describe()` and/or `it()`.
+You can find more details here: https://mochajs.org/#exclusive-tests
+
+You can skip some parts of the test suite by adding `.skip` on `describe()` and/or `it()`.
+You can find more details here: https://mochajs.org/#inclusive-tests
 
 === Expectations When Writing Tests
 
-WRITEME
+If you need to add a new test to the suite, you can use `test/capitalize-test.js` as a reference.
+It already follows the structure of the project and contains various comments and hints to help you.
+Be sure to follow the directions on what to require and the different traps to avoid.
 
-=== Write a New Test
+Apart from the classic {uri-chai}[chai] assertions, two plugins are enabled, you'll find the documentation for their APIs here:
 
-WRITEME
+* {chai-as-promised}[chai-as-promised] to test promises
+* {chai-spies}[chai-spies] to create and test spies on callbacks
+
+If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
+
+  $ yarn run test-watch
+
+This will run the test suite each time you modify the code or the test
 
 === Fork the Project
 
