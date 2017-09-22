@@ -302,30 +302,33 @@ To run the test suite, use:
   $ yarn test
 
 Note that this command also computes a coverage report using {uri-istanbul}[istanbul].
-You can browse this report in a web browser by opening this HTML file: `coverage/index.html`.
+You can browse this report in a web browser by opening the HTML file [.path]_coverage/index.html_.
 
-You can run selective parts of the test suite by adding `.only` on `describe()` and/or `it()`.
-You can find more details here: https://mochajs.org/#exclusive-tests
+=== Select or Skip Tests
 
-You can skip some parts of the test suite by adding `.skip` on `describe()` and/or `it()`.
-You can find more details here: https://mochajs.org/#inclusive-tests
+You can run select tests by appending `.only` to the `describe` and/or `it` method calls (e.g., `it.only()`.
+You can read more about this feature in the https://mochajs.org/#exclusive-tests[mocha documentation].
 
-=== Expectations When Writing Tests
+You can skip tests by appending `.skip` to the `describe` and/or `it` method calls (e.g., `describe.skip()`).
+You can read more about this feature in the https://mochajs.org/#inclusive-tests[mocha documentation].
 
-If you need to add a new test to the suite, you can use `test/capitalize-test.js` as a reference.
+=== Expectations For Writing Tests
+
+If you need to add a new test to the suite, you can use [.path]_test/example-test.js_ as a reference.
 It already follows the structure of the project and contains various comments and hints to help you.
-Be sure to follow the directions on what to require and the different traps to avoid.
+Be sure to follow the directions on what to require and various traps to avoid.
 
-Apart from the classic {uri-chai}[chai] assertions, two plugins are enabled, you'll find the documentation for their APIs here:
+Apart from the classic {uri-chai}[chai] assertions, two plugins are enabled.
+You'll find the documentation for their APIs here:
 
-* {chai-as-promised}[chai-as-promised] to test promises
-* {chai-spies}[chai-spies] to create and test spies on callbacks
+* {uri-chai-as-promised}[chai-as-promised] to test promises
+* {uri-chai-spies}[chai-spies] to create and test spies on callbacks
 
 If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
 
   $ yarn run test-watch
 
-This will run the test suite each time you modify the code or the test
+This command runs the test suite and coverage report each time you save the test or the code under test.
 
 === Fork the Project
 

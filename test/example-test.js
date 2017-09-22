@@ -6,7 +6,7 @@
 const { expect, spy } = require('./test-utils')
 
 // Require the functions to be tested
-const { capitalize, capitalizeArray, capitalizeKeys, asyncCapitalize, capitalizeStream } = require('../lib/capitalize')
+const { capitalize, capitalizeArray, capitalizeKeys, asyncCapitalize, capitalizeStream } = require('../lib-example/capitalize.js')
 
 // NOTE: these requires are only there to test arrays
 const toStream = require('array-to-stream')
@@ -26,7 +26,7 @@ describe('text-utils#capitalize', () => {
     expect(capitalizedText).to.equal('Hello')
   })
 
-  it('should let numbers as is', () => {
+  it('should leave numbers unchanged', () => {
     const text = '12'
     const capitalizedText = capitalize(text)
     expect(capitalizedText).to.equal('12')
@@ -68,7 +68,7 @@ describe('text-utils#capitalizeKeys', () => {
     expect(capitalizedKeysObject).not.to.equal(expectedObject)
   })
 
-  it('should not capitalize deep keys (it is not recursive)', () => {
+  it('should not capitalize deep keys (since it is not recursive)', () => {
     object.fouR = { valuE: '44' }
     expectedObject.Four = { valuE: '44' }
     const capitalizedKeysObject = capitalizeKeys(object)
@@ -89,7 +89,7 @@ describe('text-utils#asyncCapitalize', () => {
     return expect(capitalizedText).to.be.fulfilled.and.eventually.equal('Hello')
   })
 
-  it('should reject if value is null', () => {
+  it('should reject null value', () => {
     const text = null
     const capitalizedText = asyncCapitalize(text)
     // don't forget to return the promise as the result of the it() test function!

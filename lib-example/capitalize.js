@@ -40,4 +40,4 @@ function capitalizeStream() {
   })
 }
 
-module.exports = { capitalize, capitalizeArray, capitalizeKeys, asyncCapitalize }
+module.exports = { capitalize, capitalizeArray, capitalizeKeys, asyncCapitalize, capitalizeStream }
