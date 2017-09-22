@@ -7,14 +7,19 @@
 const { expect, spy } = require('./test-utils')
 
 // Require the functions to be tested
-const { capitalize, capitalizeArray, capitalizeKeys, asyncCapitalize, capitalizeStream } = require('../lib-example/capitalize.js')
+const {
+  capitalize,
+  capitalizeArray,
+  capitalizeKeys,
+  asyncCapitalize,
+  capitalizeStream
+} = require('../lib-example/capitalize.js')
 
 // NOTE: these requires are only there to test arrays
 const toStream = require('array-to-stream')
 const toArray = require('stream-to-array')
 
 describe('text-utils#capitalize', () => {
-
   it('should uppercase first letter', () => {
     const text = 'hello'
     const capitalizedText = capitalize(text)
@@ -41,7 +46,6 @@ describe('text-utils#capitalize', () => {
 })
 
 describe('text-utils#capitalizeArray', () => {
-
   it('should capitalize all items of an array', () => {
     const array = ['zerO', 'onE', 'twO', 'threE']
     // if the expected result is used many times, consider using a variable
@@ -55,7 +59,6 @@ describe('text-utils#capitalizeArray', () => {
 })
 
 describe('text-utils#capitalizeKeys', () => {
-
   let object
   let expectedObject
 
@@ -85,7 +88,6 @@ describe('text-utils#capitalizeKeys', () => {
 })
 
 describe('text-utils#asyncCapitalize', () => {
-
   // try to avoid async/await in tests
   // The API from "chai-as-promised" like #to.eventually.equal() gives better logs
   it('should uppercase first letter AND lowercase other letters', () => {
@@ -103,7 +105,6 @@ describe('text-utils#asyncCapitalize', () => {
 })
 
 describe('text-utils#capitalizeStream', () => {
-
   let endCallback
   let errorCallback
 
@@ -123,7 +124,8 @@ describe('text-utils#capitalizeStream', () => {
     // it's easier to convert streams to arrays to test their result
     const capitalizedArray = toArray(capitalizedStream)
     // don't forget to return the promise as the result of the it() test function!
-    return expect(capitalizedArray).to.be.fulfilled.and.to.eventually.eql(['Zero', 'One', 'Two', 'Three'])
+    return expect(capitalizedArray)
+      .to.be.fulfilled.and.to.eventually.eql(['Zero', 'One', 'Two', 'Three'])
       .then(() => {
         // callback need to be tested asynchronously (after the stream is finished)
         expect(errorCallback).not.to.have.been.called()
@@ -139,7 +141,8 @@ describe('text-utils#capitalizeStream', () => {
       .on('end', endCallback)
     const capitalizedArray = toArray(capitalizedStream)
     // don't forget to return the promise as the result of the it() test function!
-    return expect(capitalizedArray).to.be.rejectedWith(TypeError)
+    return expect(capitalizedArray)
+      .to.be.rejectedWith(TypeError)
       .then(() => {
         expect(errorCallback).to.have.been.called.once()
         expect(endCallback).not.to.have.been.called.once()

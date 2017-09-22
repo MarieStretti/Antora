@@ -4,15 +4,15 @@
 
 const map = require('map-stream')
 
-function capitalize(text) {
+function capitalize (text) {
   return text[0].toUpperCase() + text.slice(1).toLowerCase()
 }
 
-function capitalizeArray(array) {
+function capitalizeArray (array) {
   return array.map((text) => capitalize(text))
 }
 
-function capitalizeKeys(object) {
+function capitalizeKeys (object) {
   const result = {}
   Object.entries(object).forEach(([key, value]) => {
     result[capitalize(key)] = value
@@ -20,7 +20,7 @@ function capitalizeKeys(object) {
   return result
 }
 
-function asyncCapitalize(text) {
+function asyncCapitalize (text) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (text == null) {
@@ -31,7 +31,7 @@ function asyncCapitalize(text) {
   })
 }
 
-function capitalizeStream() {
+function capitalizeStream () {
   return map((text, next) => {
     if (typeof text !== 'string') {
       return next(new TypeError('cannot capitalized a non String'))
@@ -40,4 +40,10 @@ function capitalizeStream() {
   })
 }
 
-module.exports = { capitalize, capitalizeArray, capitalizeKeys, asyncCapitalize, capitalizeStream }
+module.exports = {
+  capitalize,
+  capitalizeArray,
+  capitalizeKeys,
+  asyncCapitalize,
+  capitalizeStream
+}
