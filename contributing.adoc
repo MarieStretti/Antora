@@ -25,6 +25,10 @@
 :uri-chai-as-promised: https://github.com/domenic/chai-as-promised
 :uri-chai-spies: https://github.com/chaijs/chai-spies
 :uri-dirty-chai: https://github.com/prodatakey/dirty-chai
+:uri-standardjs: https://standardjs.com/
+:uri-standardjs-rules: https://standardjs.com/rules.html
+:uri-standardjs-ide: https://standardjs.com/#are-there-text-editor-plugins
+:uri-prettier: https://github.com/prettier/prettier
 
 == You're Invited
 
@@ -324,7 +328,6 @@ You'll find the documentation for their APIs here:
 
 * {uri-chai-as-promised}[chai-as-promised] to test promises
 * {uri-chai-spies}[chai-spies] to create and test spies on callbacks
-* {uri-dirty-chai}[dirty-chai] to provide real callable functions instead of function expressions for assertions
 
 If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
 
