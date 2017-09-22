@@ -18,6 +18,10 @@ describe('text-utils#capitalize', () => {
     const text = 'hello'
     const capitalizedText = capitalize(text)
     expect(capitalizedText).to.equal('Hello')
+    // All assertion should be function calls and not just expressions like "to.be.true"
+    // https://eslint.org/docs/rules/no-unused-expressions
+    // this is provided by the dirty-chai plugin
+    expect(capitalizedText === 'Hello').to.be.true()
   })
 
   it('should lowercase other letters', () => {
@@ -121,8 +125,8 @@ describe('text-utils#capitalizeStream', () => {
     return expect(capitalizedArray).to.be.fulfilled.and.to.eventually.eql(['Zero', 'One', 'Two', 'Three'])
       .then(() => {
         // callback need to be tested asynchronously (after the stream is finished)
-        expect(errorCallback).not.to.have.been.called
-        expect(endCallback).to.have.been.called.once
+        expect(errorCallback).not.to.have.been.called()
+        expect(endCallback).to.have.been.called.once()
       })
   })
 
@@ -136,9 +140,8 @@ describe('text-utils#capitalizeStream', () => {
     // don't forget to return the promise as the result of the it() test function!
     return expect(capitalizedArray).to.be.rejectedWith(TypeError)
       .then(() => {
-        expect(errorCallback).to.have.been.called.once
-        expect(endCallback).not.to.have.been.called.once
+        expect(errorCallback).to.have.been.called.once()
+        expect(endCallback).not.to.have.been.called.once()
       })
   })
 })
-
