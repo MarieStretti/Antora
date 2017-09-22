@@ -1,0 +1,33 @@
+Playbook
+site: SiteConfig
+  title: String
+  url: String
+  root: String
+  aspect: String
+  nav: String[]
+  keys: Hash
+content: ContentConfig
+  branches: String
+  sources: ContentSourceConfig[]
+    location: String
+    type: String
+    branches: String | String[]
+asciidoctor: AsciidoctorConfig
+  attributes: String[] | Hash
+ui: UIBundleConfig
+  location: String
+  name: String
+  version: String
+output: OutputConfig (may have type per provider)
+  provider: String
+  on: OnConfig
+    ci: Boolean
+
+LocalOutputConfig:
+  directory:
+
+S3OutputConfig:
+  bucket:
+  prefix:
+  api_key:
+  secret_key:
