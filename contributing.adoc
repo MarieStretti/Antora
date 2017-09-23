@@ -24,7 +24,6 @@
 :uri-istanbul: https://istanbul.js.org/
 :uri-chai-as-promised: https://github.com/domenic/chai-as-promised
 :uri-chai-spies: https://github.com/chaijs/chai-spies
-:uri-dirty-chai: https://github.com/prodatakey/dirty-chai
 :uri-standardjs: https://standardjs.com/
 :uri-standardjs-rules: https://standardjs.com/rules.html
 :uri-standardjs-ide: https://standardjs.com/#are-there-text-editor-plugins
@@ -316,6 +315,29 @@ You can read more about this feature in the https://mochajs.org/#exclusive-tests
 
 You can skip tests by appending `.skip` to the `describe` and/or `it` method calls (e.g., `describe.skip()`).
 You can read more about this feature in the https://mochajs.org/#inclusive-tests[mocha documentation].
+
+=== Expectations for Writing Code
+
+All JavaScript code in the project must adhere to the {uri-standardjs}[JavaScript Standard Style].
+You can find a {uri-standardjs-rules}[list of rules] on the standard JS site.
+As the name suggests, these rules are pretty standard.
+
+To check that your code adheres to these rules, you simply need to run the test suite.
+It's automatically configured to lint (i.e., check) your JavaScript code first.
+
+If you want to run the linter separately, you can use the following gulp task:
+
+ $ gulp lint
+
+There are also {uri-standardjs-ide}[text editor plugins] you can use, if that's what you prefer.
+
+While the standard linter checks for syntax, it doesn't cover all the asthetics of a code style.
+For that, we employ {uri-prettier}[prettier].
+To run prettier to automatically format your code, run the following Yarn script:
+
+ $ yarn run format
+
+The format command will modify your files, so be sure to commit your changes before running it so you can review and rollback if necessary.
 
 === Expectations For Writing Tests
 
