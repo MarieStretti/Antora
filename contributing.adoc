@@ -367,7 +367,9 @@ The CI pipeline is run in the https://docs.gitlab.com/ce/ci/[GitLab CI] environm
 The pipeline consists of the following stages:
 
 * setup
-* test
+* verify
+ ** lint
+ ** test
 
 These stages, as well as any global configuration settings, are defined in the [.path]_.gitlab-ci.yml_ file at the root of the project.
 The CI pipeline essentially boils down to these three commands:
