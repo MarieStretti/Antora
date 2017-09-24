@@ -1,5 +1,12 @@
 = Antora Direct
+// Project URIs:
+:uri-project: https://gitlab.com/antora/antora-direct
+:uri-ci-jobs: {uri-project}/-/jobs
+:img-ci-status: {uri-project}/badges/master/pipeline.svg
+// External URIs:
 :uri-asciidoctor: http://asciidoctor.org
+
+image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-jobs}]
 
 Antora is a modular documentation site generator especially designed for users of {uri-asciidoctor}[Asciidoctor].
 
