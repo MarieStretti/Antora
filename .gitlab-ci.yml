@@ -1,0 +1,31 @@
+image: node:8
+before_script:
+- npm install -g yarn
+stages:
+- setup
+- test
+yarn-install:
+  stage: setup
+  script:
+  - yarn --cache-folder=.yarn-cache install
+  cache:
+    paths:
+    - node_modules/
+    - .yarn-cache/
+gulp-lint:
+  stage: test
+  cache:
+    policy: pull
+    paths:
+    - node_modules/
+  script: node_modules/.bin/gulp lint
+yarn-test:
+  stage: test
+  cache:
+    policy: pull
+    paths:
+    - node_modules/
+  script: yarn test
+  artifacts:
+    paths:
+    - coverage
