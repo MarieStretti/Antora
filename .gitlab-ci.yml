@@ -1,13 +1,12 @@
 image: node:8
-before_script:
-- npm install -g yarn
 stages:
 - setup
 - verify
-yarn-install:
+yarn:
   stage: setup
   script:
-  - yarn --cache-folder=.yarn-cache install
+  - npm install -g yarn
+  - yarn --cache-folder=.yarn-cache
   cache:
     paths:
     - node_modules/
@@ -25,7 +24,7 @@ test:
     policy: pull
     paths:
     - node_modules/
-  script: yarn test
+  script: node_modules/.bin/gulp test-only
   artifacts:
     paths:
     - coverage

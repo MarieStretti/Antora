@@ -2,9 +2,10 @@
 
 const gulp = require('gulp')
 
-const build = require('./tasks/build-task')
 const lint = require('./tasks/lint-task')
+const test = require('./tasks/test-task')
 
-gulp.task('build', build)
 gulp.task('lint', () => lint(['lib*/**/*.js', 'test/**/*.js']))
-gulp.task('default', ['build'])
+gulp.task('test', ['lint'], () => test(['test/**/*-test.js']))
+gulp.task('test-only', () => test(['test/**/*-test.js']))
+gulp.task('default', ['test'])
