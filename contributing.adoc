@@ -9,6 +9,7 @@
 :uri-repo: {uri-project}.git
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
+:uri-ci-jobs: {uri-project}/-/jobs
 // External URIs:
 :uri-git: https://git-scm.com
 :uri-git-dl: {uri-git}/downloads
@@ -356,6 +357,35 @@ If you're working on tests or refactoring tested code, you can run the test suit
   $ yarn run test-watch
 
 This command runs the test suite and coverage report each time you save the test or the code under test.
+
+=== Continous Integration
+
+Both the linter and the test suite documented above are run in a continous integration (CI) environment on every commit to master and on every merge request.
+A merge request cannot be merged unless the CI pipeline succeeds.
+
+The CI pipeline is run in the https://docs.gitlab.com/ce/ci/[GitLab CI] environment using the https://store.docker.com/images/node[node:8] docker image.
+The pipeline consists of the following stages:
+
+* setup
+* test
+
+These stages, as well as any global configuration settings, are defined in the [.path]_.gitlab-ci.yml_ file at the root of the project.
+The CI pipeline essentially boils down to these three commands:
+
+* `yarn install`
+* `gulp lint`
+* `yarn test`
+
+You can view the results of the jobs in the pipeline on the {uri-ci-jobs}[jobs dashboard].
+
+==== Skip the CI Pipeline
+
+If you need to make a change to the repository without triggering the CI pipeline, add `[skip ci]` to the end of the commit message.
+For example:
+
+ fix typo in README [skip ci]
+
+This flag is reserved for non-software changes, as suggested by the example.
 
 === Fork the Project
 
