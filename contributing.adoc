@@ -9,7 +9,7 @@
 :uri-repo: {uri-project}.git
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
-:uri-ci-jobs: {uri-project}/-/jobs
+:uri-ci-pipelines: {uri-project}/pipelines
 // External URIs:
 :uri-git: https://git-scm.com
 :uri-git-dl: {uri-git}/downloads
@@ -376,7 +376,7 @@ The CI pipeline essentially boils down to these three commands:
 * `gulp lint`
 * `yarn test`
 
-You can view the results of the jobs in the pipeline on the {uri-ci-jobs}[jobs dashboard].
+You can view the results of the pipelines on the {uri-ci-pipelines}[pipelines dashboard].
 
 ==== Skip the CI Pipeline
 
