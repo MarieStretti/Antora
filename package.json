@@ -24,7 +24,7 @@
     "chai-spies": "^0.7.1",
     "dirty-chai": "^2.0.1",
     "gulp": "^3.9.1",
-    "gulp-standard": "^8.0.2",
+    "gulp-standard": "emgeee/gulp-standard#0f44da222cea1ddc82dab3b776cc729b744a9c7c",
     "gulp-spawn-mocha": "^3.3.1",
     "istanbul": "^0.4.5",
     "map-stream": "^0.0.7",
