@@ -15,7 +15,7 @@
     "test": "nyc --reporter=html --reporter=text mocha",
     "test-watch": "nodemon --exec 'nyc --reporter=lcov --reporter=text mocha || true'",
     "lint": "standard '{lib*,test}/**/*.js' 'packages/*/{lib,test}/**/*.js' | snazzy",
-    "format": "prettier-standard '{lib*,test}/**/*.js' 'packages/*/{lib,test}/**/*.js'"
+    "format": "prettier-standard gulpfile.js '{lib*,tasks,test}/**/*.js' 'packages/*/{lib,test}/**/*.js'"
   },
   "devDependencies": {
     "array-to-stream": "^1.0.2",
