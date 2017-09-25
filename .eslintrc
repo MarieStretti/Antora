@@ -1,5 +1,5 @@
 {
-    "rules": {
-        "arrow-parens": ["error", "always"]
-    }
+  "rules": {
+    "arrow-parens": ["error", "always"]
+  }
 }
