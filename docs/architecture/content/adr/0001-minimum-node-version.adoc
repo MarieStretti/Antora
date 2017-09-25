@@ -1,0 +1,30 @@
+= ADR 0001: Minimum Node Version
+:revdate: 2017-09-25
+
+== Status
+
+Proposed
+
+== Context
+
+The current minimum version of Node for Antora is Node 7.
+However, being an odd version number, Node 7 is not slated to become a long-term support (LTS) release.
+Now that Node 8 is now considered stable and mature, the Node project recommends its use over Node 7.
+Libraries such as Yarn are beginning to phase out support for Node 7.
+
+The current LTS release is Node 6.
+However, Antora cannot go backwards to Node 6 since Antora relies on several ES2016 (ES7) features first introduced in Node 7, including the await keyword.
+The only option is forward.
+
+== Decision
+
+We will bump the minimum version of Node to develop and use Antora from Node 7 to Node 8.
+
+The only factor that was previously holding back this change was for nodegit to support Node 8.
+Installing nodegit on Node 8 used to require the installer to build nodegit from source, which took several minutes.
+We've confirmed that nodegit installs on Node 8.5 using Yarn 1.1.0 in a few seconds.
+Now that nodegit supports Node 8, there is nothing preventing Antora from upgrading.
+
+== Consequences
+
+By making Node 8 the minimum required version of Node, we can be sure Antora will depend on a version of Node that will be supported from October 2017--which aligns perfectly with the initial release of Antora--to December 2019, according to the https://github.com/nodejs/Release[Node LTS schedule].
