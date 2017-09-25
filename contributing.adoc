@@ -244,7 +244,7 @@ These tasks are defined in [.path]_gulpfile.js_.
 
 To launch these tasks, you need to install the CLI interface for Gulp using:
 
- $ yarn global add gulp-cli
+ $ npm install -g gulp-ci
 
 The gulp-cli module provides the `gulp` command.
 You can verify this command is on your path using:
@@ -304,7 +304,7 @@ You can omit the `build` argument since it's the default command:
 This project uses {uri-mocha}[mocha] to run the tests and the assertion library {uri-chai}[chai].
 To run the test suite, use:
 
-  $ yarn test
+ $ gulp test
 
 Note that this command also computes a coverage report using {uri-istanbul}[istanbul].
 You can browse this report in a web browser by opening the HTML file [.path]_coverage/index.html_.
@@ -354,7 +354,7 @@ You'll find the documentation for their APIs here:
 
 If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
 
-  $ yarn run test-watch
+ $ yarn run test-watch
 
 This command runs the test suite and coverage report each time you save the test or the code under test.
 
@@ -376,7 +376,7 @@ The CI pipeline essentially boils down to these three commands:
 
 * `yarn install`
 * `gulp lint`
-* `yarn test`
+* `gulp test`
 
 You can view the results of the pipelines on the {uri-ci-pipelines}[pipelines dashboard].
 
