@@ -14,8 +14,8 @@
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha",
     "test-watch": "nodemon --exec 'nyc --reporter=lcov --reporter=text mocha || true'",
-    "lint": "standard | snazzy",
-    "format": "prettier-standard **/*.js"
+    "lint": "standard '{lib*,test}/**/*.js' 'packages/*/{lib,test}/**/*.js' | snazzy",
+    "format": "prettier-standard '{lib*,test}/**/*.js' 'packages/*/{lib,test}/**/*.js'"
   },
   "devDependencies": {
     "array-to-stream": "^1.0.2",
