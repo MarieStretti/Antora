@@ -17,7 +17,7 @@
     "lint": "standard | snazzy",
     "format": "prettier-standard **/*.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "array-to-stream": "^1.0.2",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
