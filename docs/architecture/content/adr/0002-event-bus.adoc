@@ -21,16 +21,16 @@ Node's event bus, called the EventEmitter, supports both synchronous and asynchr
 Events are registered by name and additional arguments can be passed to the event listeners by the emitter.
 
 We will leverage the built-in event bus in Node to make plugins easy to register.
-When plugins get registered, they will be passed the event bus instance (i.e., EventEmitter instance) so that they can use it to listen for events.
+When plugins get registered, they will be passed the event bus instance (i.e., EventEmitter instance) so they can use it to listen for events.
 
 == Consequences
 
-Listeners for an event are executed synchronous in the order in which they are registered.
-The only exception is when a listener is configured to run immediately, in which case it is run asynchronously.
+Listeners for an event are executed synchronously in the order in which they are registered.
+The only exception is when a listener is configured to run immediately, in which case it's run asynchronously.
 This could present a problem if plugins need to be registered in a particular order.
 One possible workaround is for a plugin to use the prepend feature to add a listener at the top of the list.
 But that's the extent of the control over ordering (append/prepend).
 
 Using the Node event bus ties Antora components to the Node JavaScript environment.
-This sacrifice in portability between JavaScript environments can be mitigated using a node module like https://yarnpkg.com/en/package/eventemitter3[EventEmitter3], which extends support to browser environments.
+This sacrifice in portability between JavaScript environments can be alleviated using a node module like https://yarnpkg.com/en/package/eventemitter3[EventEmitter3], which extends support to browser environments.
 The downside of that approach is that plugins must also change to using that module in order to register events.
