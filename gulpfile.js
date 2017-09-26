@@ -5,6 +5,8 @@ const gulp = require('gulp')
 const lint = require('./tasks/lint-task')
 const test = require('./tasks/test-task')
 
+const testFiles = ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
+
 gulp.task('lint', () =>
   lint([
     'gulpfile.js',
@@ -13,12 +15,8 @@ gulp.task('lint', () =>
   ])
 )
 
-gulp.task('test', ['lint'], () =>
-  test(['test/**/*-test.js', 'packages/*/test/**/*-test.js'])
-)
-
-gulp.task('test-only', () =>
-  test(['test/**/*-test.js', 'packages/*/test/**/*-test.js'])
-)
+gulp.task('test', ['lint'], () => test(testFiles))
+gulp.task('test-only', () => test(testFiles))
+gulp.task('test-watch', () => gulp.watch(allFiles, ['test-only']))
 
 gulp.task('default', ['test'])

@@ -354,7 +354,7 @@ You'll find the documentation for their APIs here:
 
 If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
 
- $ yarn run test-watch
+ $ gulp test-watch
 
 This command runs the test suite and coverage report each time you save the test or the code under test.
 

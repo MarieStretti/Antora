@@ -12,8 +12,6 @@
     "node": ">= 7.10.1"
   },
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text mocha",
-    "test-watch": "nodemon --exec 'nyc --reporter=lcov --reporter=text mocha || true'",
     "lint": "standard '{lib*,test}/**/*.js' 'packages/*/{lib,test}/**/*.js' | snazzy",
     "format": "prettier-standard gulpfile.js '{lib*,tasks,test}/**/*.js' 'packages/*/{lib,test}/**/*.js'"
   },
@@ -25,11 +23,9 @@
     "dirty-chai": "^2.0.1",
     "gulp": "^3.9.1",
     "gulp-standard": "emgeee/gulp-standard#0f44da222cea1ddc82dab3b776cc729b744a9c7c",
-    "gulp-spawn-mocha": "^3.3.1",
-    "istanbul": "^0.4.5",
     "map-stream": "^0.0.7",
     "mocha": "^3.5.3",
-    "nodemon": "^1.12.1",
+    "npm-run": "^4.1.2",
     "nyc": "^11.2.1",
     "prettier-standard": "^6.0.0",
     "snazzy": "^7.0.0",

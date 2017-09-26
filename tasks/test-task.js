@@ -1,14 +1,7 @@
 'use strict'
 
-const vfs = require('vinyl-fs')
-const mocha = require('gulp-spawn-mocha')
+const run = require('./run-command')
 
-module.exports = (glob) =>
-  vfs.src(glob, { read: false }).pipe(
-    mocha({
-      R: 'spec',
-      istanbul: {
-        report: ['lcov', 'html']
-      }
-    })
-  )
+module.exports = (files) => {
+  return run('nyc', ['--reporter=html', '--reporter=text', 'mocha', ...files])
+}
