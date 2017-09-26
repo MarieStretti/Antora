@@ -1,14 +1,7 @@
 'use strict'
 
-const vfs = require('vinyl-fs')
-const standard = require('gulp-standard')
+const run = require('./run-command')
 
-module.exports = (glob) =>
-  vfs
-    .src(glob)
-    .pipe(standard())
-    .pipe(
-      standard.reporter('default', {
-        breakOnError: true
-      })
-    )
+module.exports = (files) => {
+  return run('eslint', files)
+}

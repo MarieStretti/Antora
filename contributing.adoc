@@ -27,7 +27,7 @@
 :uri-chai-spies: https://github.com/chaijs/chai-spies
 :uri-standardjs: https://standardjs.com/
 :uri-standardjs-rules: https://standardjs.com/rules.html
-:uri-standardjs-ide: https://standardjs.com/#are-there-text-editor-plugins
+:uri-eslint-ide: https://eslint.org/docs/user-guide/integrations#editors
 :uri-prettier: https://github.com/prettier/prettier
 
 == You're Invited
@@ -322,6 +322,7 @@ You can read more about this feature in the https://mochajs.org/#inclusive-tests
 All JavaScript code in the project must adhere to the {uri-standardjs}[JavaScript Standard Style].
 You can find a {uri-standardjs-rules}[list of rules] on the standard JS site.
 As the name suggests, these rules are pretty standard.
+This project customizes a few of the rules, which are documented in [.path]_.eslintrc_.
 
 To check that your code adheres to these rules, you simply need to run the test suite.
 It's automatically configured to lint (i.e., check) your JavaScript code first.
@@ -330,15 +331,17 @@ If you want to run the linter separately, you can use the following gulp task:
 
  $ gulp lint
 
-There are also {uri-standardjs-ide}[text editor plugins] you can use, if that's what you prefer.
+We don't use StandardJS command line tool.
+We use its rules and configuration through ESLint.
+There are {uri-eslint-ide}[text editor plugins for ESLint] that you can use, if that's what you prefer.
 
-While the standard linter checks for syntax, it doesn't cover all the asthetics of a code style.
+While ESLint checks for syntax, it doesn't cover all the asthetics of a code style.
 For that, we employ {uri-prettier}[prettier].
-To run prettier to automatically format your code, run the following Yarn script:
+To run prettier to automatically format your code, run the following gulp task:
 
- $ yarn run format
+ $ gulp format
 
-The format command will modify your files, so be sure to commit your changes before running it so you can review and rollback if necessary.
+The format task will modify your files, so be sure to commit your changes before running it so you can review and rollback if necessary.
 
 === Expectations For Writing Tests
 
@@ -354,7 +357,7 @@ You'll find the documentation for their APIs here:
 
 If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
 
- $ yarn run test-watch
+ $ gulp test-watch
 
 This command runs the test suite and coverage report each time you save the test or the code under test.
 
