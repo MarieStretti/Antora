@@ -1,0 +1,58 @@
+= ADR 0004: Build Tasks
+
+== Status
+
+Accepted
+
+== Context
+
+To aid in the development of Antora, the project needs to provide a software build that automates common and complex tasks.
+All these tasks should be available through a unified task interface so they're easy to discover and execute.
+
+In a Node project, there are two common approaches to defining tasks:
+
+* Tasks can be defined directly as scripts in the package.json file, called npm tasks (also executable by yarn)
+* Tasks can be defined in a formal build system like Gulp, called build tasks.
+
+There are pros and cons to each approach.
+Evaluate these options and decide which task interface we're going to use.
+Make any subsequent decisions that pertain to that choice.
+
+== Decision
+
+We will use the Gulp build system and define all automated tasks as build tasks.
+The reason we decided against using npm tasks is as follows:
+
+* task definitions get lost inside of the package.json file because they're surrounded by a lot of non-related information
+* tasks can only invoke a CLI interface; there's no option to leverage a library's API or to use streams
+* common patterns and variables cannot be reused in different tasks
+* tasks cannot easily be chained or executed in parallel
+* the task must be executed through a subcommand of npm (`npm run <task>`) or yarn (`yarn run <task>`)
+
+We've identified some drawbacks to using Gulp build tasks, but we've also found a pattern to alleviates them.
+
+The main drawback is that Gulp wants to use streams by default, but not all the tools being integrated honor the stream pattern.
+This leads to the second drawback.
+Adapting the tool to Gulp streams requires a plugin which, in turn, adds extra dependencies to the project and may not pull in the latest version of the tool it's wrapping.
+
+But the Gulp task does not have to use streams.
+After all, it's just a function.
+So, to address these drawbacks, we simply use a run command (i.e., child process) to execute any tool that works best (or only works) through its CLI interface.
+In the end, the developer just executes the gulp task (e.g., `gulp test`) and the right thing happens.
+
+In summary, we've decided to use the Gulp build system to define automated tasks.
+The logic inside the task will execute the tool in the way that gives the best result and gives us maximum control over the dependencies.
+Some of these tasks may do exactly what we would have done in an npm task, but that's okay.
+
+== Consequences
+
+By using Gulp build tasks instead of npm tasks, the project can provide a unified task interface.
+This unified interface makes tasks easy to discover (`gulp -T`).
+Since tasks are the primary function of the build system, they are easy to execute (`gulp <task>`).
+They can also be chained, making it possible to combine tasks together under a single command (`gulp build`), which may even run tasks in parallel.
+
+The build system allows us to invoke tools in the preferred way.
+Some tools prefer to be invoked via the CLI interface, others the API.
+Since the task is just a function, it let's us control how we interact with applications, possibly even combining different strategies in the same task.
+
+By using the run command inside of Gulp tasks, we do give up on the dream of running functions over streams, but then again, that's not our dream.
