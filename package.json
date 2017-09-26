@@ -12,7 +12,6 @@
     "node": ">= 7.10.1"
   },
   "scripts": {
-    "lint": "standard '{lib*,test}/**/*.js' 'packages/*/{lib,test}/**/*.js' | snazzy",
     "format": "prettier-standard gulpfile.js '{lib*,tasks,test}/**/*.js' 'packages/*/{lib,test}/**/*.js'"
   },
   "devDependencies": {
@@ -21,15 +20,18 @@
     "chai-as-promised": "^7.1.1",
     "chai-spies": "^0.7.1",
     "dirty-chai": "^2.0.1",
+    "eslint": "^4.7.2",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "gulp": "^3.9.1",
-    "gulp-standard": "emgeee/gulp-standard#0f44da222cea1ddc82dab3b776cc729b744a9c7c",
     "map-stream": "^0.0.7",
     "mocha": "^3.5.3",
     "npm-run": "^4.1.2",
     "nyc": "^11.2.1",
     "prettier-standard": "^6.0.0",
-    "snazzy": "^7.0.0",
-    "standard": "^10.0.3",
     "stream-to-array": "^2.3.0"
   }
 }

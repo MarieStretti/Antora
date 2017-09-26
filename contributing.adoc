@@ -27,7 +27,7 @@
 :uri-chai-spies: https://github.com/chaijs/chai-spies
 :uri-standardjs: https://standardjs.com/
 :uri-standardjs-rules: https://standardjs.com/rules.html
-:uri-standardjs-ide: https://standardjs.com/#are-there-text-editor-plugins
+:uri-eslint-ide: https://eslint.org/docs/user-guide/integrations#editors
 :uri-prettier: https://github.com/prettier/prettier
 
 == You're Invited
@@ -330,9 +330,11 @@ If you want to run the linter separately, you can use the following gulp task:
 
  $ gulp lint
 
-There are also {uri-standardjs-ide}[text editor plugins] you can use, if that's what you prefer.
+We don't use StandardJS command line tool.
+We use its rules and configuration through ESLint.
+There are {uri-eslint-ide}[text editor plugins for ESLint] that you can use, if that's what you prefer.
 
-While the standard linter checks for syntax, it doesn't cover all the asthetics of a code style.
+While ESLint checks for syntax, it doesn't cover all the asthetics of a code style.
 For that, we employ {uri-prettier}[prettier].
 To run prettier to automatically format your code, run the following Yarn script:
 
