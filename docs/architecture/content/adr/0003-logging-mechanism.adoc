@@ -1,0 +1,79 @@
+= ADR 0003: Logging Mechanism
+
+== Status
+
+Accepted
+
+== Context
+
+Antora needs to capture, record, and communicate information about what's happening in the pipeline.
+To the end user, the application needs to communicate information that keep the users informed of the application's progress and any decisions it makes.
+To the developer, the application needs to capture and record information to aid in debugging when the application malfunctions.
+
+Reporting this diagnostic information is called logging.
+Logging helps both end users and developers understand better how the application works.
+
+Messages should not be sent directly to the standard streams as these are hard to control and couple the application to a console environment.
+Instead, messages should be sent to a logging subsystem that allows the user, whether an end user or a developer, to tune the verbosity of the messages, control where they are written, and customize how they are organized and formatted.
+We can imagine in the future wanting to sent messages to an external service for monitoring.
+
+Node does not provide a standard logging module.
+Therefore, we will need to evaluate available logging libraries and select one.
+
+Logging should have minimal impact on the application's performance.
+One of the most important pieces of information in the message is the timestamp at which it was recorded.
+
+== Decision
+
+We evaluated the following logging libraries:
+
+* https://yarnpkg.com/en/package/winston[winston] - a multi-transport sync logging library for Node.js
+* https://yarnpkg.com/en/package/aurelia-logging[aurelia-logging] - a minimal but effective logging mechanism with support for log levels and pluggable log appenders
+
+We have decided to select *winston* because it's both robust and flexible, it's broadly adopted, and has strong documentation.
+Specifically, we want to use *winston 3* (currently in pre-release at the time of this writing) because it adds custom message formatting.
+
+In particular, here's what we like about it:
+
+* custom transports
+* custom message formatting
+* default logger
+* custom categories
+* custom levels
+* exception handling
+* profiling
+* single package w/ small size (~ 232K + 400K dependencies)
+
+Here's a basic example of how to use winston to log a message:
+
+[source,js]
+----
+const logger = require('winston')
+logger.info('holler')
+----
+
+Here's an example of how to define and use a logging category:
+
+[source,js]
+----
+const winston = require('winston')
+const logger = winston.loggers.add('antora', {
+  console: {
+    colorize: true,
+    label: 'antora'
+  }
+})
+logger.info('holler')
+----
+
+We can start by creating a global logger that is either passed to each of the components or accessible through a globally accessible component.
+As we become more familiar with it, we may learn better ways to use it.
+
+== Consequences
+
+A logging library adds a dependency to the project.
+However, since Node does not provide a built-in logging mechanism, this is unavoidable (as we've already ruled out logging to standard streams).
+
+By choosing a logging library for core, it determines the logging library that all extensions must use as well (if those extensions expect to participate in the same logging configuration).
+
+The benefit of using a single logging mechanism is that we can allow the playbook to define the logging configuration, thus making it easy for the end user to tune the logging.
