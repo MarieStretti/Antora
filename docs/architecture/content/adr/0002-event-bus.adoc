@@ -8,9 +8,9 @@ Proposed
 
 Plugins should be able to participate in the documentation pipeline by registering event listeners.
 This requires the use of an event bus into which pipeline components emit events.
-Event listeners may perform supplamental tasks at strategic points in the pipeline or modify the state of the application data that is exposed to the listener.
+Event listeners may perform supplemental tasks at strategic points in the pipeline or modify the state of the application data that is exposed to the listener.
 
-An open question is whether methods on plugins should be called directly or whether plugins should be invoked through the event system (by listening for events).
+An open question is whether methods on plugins should be called directly or whether plugins should be invoked through the event system by listening for events.
 
 == Decision
 
