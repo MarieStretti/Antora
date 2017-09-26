@@ -3,6 +3,7 @@
 const gulp = require('gulp')
 
 const lint = require('./tasks/lint-task')
+const format = require('./tasks/format-task')
 const test = require('./tasks/test-task')
 
 const testFiles = ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
@@ -13,6 +14,7 @@ const allFiles = [
 ]
 
 gulp.task('lint', () => lint(allFiles))
+gulp.task('format', () => format(allFiles))
 gulp.task('test', ['lint'], () => test(testFiles))
 gulp.task('test-only', () => test(testFiles))
 gulp.task('test-watch', () => gulp.watch(allFiles, ['test-only']))

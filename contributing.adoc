@@ -336,11 +336,11 @@ There are {uri-eslint-ide}[text editor plugins for ESLint] that you can use, if 
 
 While ESLint checks for syntax, it doesn't cover all the asthetics of a code style.
 For that, we employ {uri-prettier}[prettier].
-To run prettier to automatically format your code, run the following Yarn script:
+To run prettier to automatically format your code, run the following gulp task:
 
- $ yarn run format
+ $ gulp format
 
-The format command will modify your files, so be sure to commit your changes before running it so you can review and rollback if necessary.
+The format task will modify your files, so be sure to commit your changes before running it so you can review and rollback if necessary.
 
 === Expectations For Writing Tests
 
