@@ -1,0 +1,71 @@
+= Playbook Component Guidebook
+
+== Context
+
+The documentation pipeline needs to be able to accept user input in the form of configuration options.
+This configuration, which we call a [.term]_playbook_, tells the documentation pipeline what input to use, how the input should be processed, and where to publish the result.
+
+== Functional Overview
+
+Numerous components in the documentation pipeline need access to configuration provided by the playbook.
+The playbook needs to be loaded as the first step in the pipeline and that object needs to be transmittable.
+
+The main configuration will be read from a file, which we call a [.term]_playbook spec_.
+The user should be able to apply [.term]_audibles_ to this configuration using either process arguments (i.e., command-line flags and switches), environment variables, or a combination of both.
+
+Plugins should be able to participate in the process of building the playbook, either to modify the schema or modify the configuration data.
+
+== Software Architecture
+
+The playbook functionality is provided by the playbook component.
+The playbook component consists of the playbook builder and the playbook model.
+
+All the details of loading the configuration, including the schema, the validation, the precedence of input methods, and the conversion to a transmittable model should be encapsulated in this component, specifically the playbook builder.
+
+The playbook builder should accept two parameters, an array of arguments (populating from or simulating process arguments) and a hash of variables (populating from or simulating environment variables).
+By accepting these two parameters, the playbook builder can be used and tested in isolation from the runtime environment.
+Within that data, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
+The playbook spec file can be composed in either YAML or CSON format.
+
+The playbook builder should fire one event after the configuration schema is loaded and one event after the configuration data is populated.
+This means that the playbook component has an implicit dependency on an event bus infrastructure.
+
+The playbook builder should return a well-defined, read-only model called a playbook.
+This model should not be coupled to any configuration-related technology used within the component.
+Instead, it should be a pure model that can be easily reproduced by another means, such as an alternate implementation of the playbook component.
+
+== Code
+
+The playbook component is implemented as a dedicated node module.
+It's APIs should be exported so that they can be required using the `require` keyword in the documentation pipeline.
+
+Here's a rough sketch of how this component will be used in the pipeline:
+
+[source,js]
+----
+const PlaybookBuilder = require('./packages/playbook/builder')
+const playbook = PlaybookBuilder.build(process.argv, process.env)
+----
+
+The playbook builder should use https://github.com/mozilla/node-convict[convict] to process the user input.
+If the `playbook` option is specified, it should be interpretted as a relative path to a playbook spec file (i.e., configuration file).
+The playbook spec can be composed in either the YAML or CSON data format.
+The data format is determined by the file's extension.
+If the path does not have a file extension, the builder should attempt to locate a file with the `.yml` extension or `.cson` extension, in that order.
+If the playbook spec file is found, the configuration should be loaded again, this time loading the playbook spec file first followed by the audibles (process arguments then environment variables).
+
+This component should use the global event emitter to fire events into the event bus.
+
+== Data
+
+The playbook data object produced by this component should have a well-defined model.
+Each section of configuration (site, content, ui) should be represented by a dedicated model type whose properties (name, location, and type) can be documented using a tool like https://github.com/documentationjs/documentation[documentationjs].
+
+== Consequences
+
+By introducing a dedicated playbook component that produces a pure data model, the configuration step is decoupled from the runtime environment (e.g., CLI environment).
+This design will have an immediate impact on development by making the component easier to test in isolation.
+
+This component also reserves room in the future for the documentation pipeline to accept configuration from other types of input, such as a database or web service.
+
+By raising events at strategic points, the playbook component allows plugins to introduce flags and switches to the main application interface.
