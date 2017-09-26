@@ -1,0 +1,36 @@
+= ADR 0002: Event Bus
+
+== Status
+
+Proposed
+
+== Context
+
+Plugins should be able to participate in the documentation pipeline by registering event listeners.
+This requires the use of an event bus into which pipeline components emit events.
+Event listeners may perform supplamental tasks at strategic points in the pipeline or modify the state of the application data that is exposed to the listener.
+
+An open question is whether methods on plugins should be called directly or whether plugins should be invoked through the event system (by listening for events).
+
+== Decision
+
+Node provides an event-driven architecture, which means it has an event bus built right into its core.
+All Antora needs to do is make use of it.
+
+Node's event bus, called the EventEmitter, supports both synchronous and asynchronous publish-subscribe messaging (decouples producers and consumers through a standard interface).
+Events are registered by name and additional arguments can be passed to the event listeners by the emitter.
+
+We will leverage the built-in event bus in Node to make plugins easy to register.
+When plugins get registered, they will be passed the event bus instance (i.e., EventEmitter instance) so that they can use it to listen for events.
+
+== Consequences
+
+Listeners for an event are executed synchronous in the order in which they are registered.
+The only exception is when a listener is configured to run immediately, in which case it is run asynchronously.
+This could present a problem if plugins need to be registered in a particular order.
+One possible workaround is for a plugin to use the prepend feature to add a listener at the top of the list.
+But that's the extent of the control over ordering (append/prepend).
+
+Using the Node event bus ties Antora components to the Node JavaScript environment.
+This sacrifice in portability between JavaScript environments can be mitigated using a node module like https://yarnpkg.com/en/package/eventemitter3[EventEmitter3], which extends support to browser environments.
+The downside of that approach is that plugins must also change to using that module in order to register events.
