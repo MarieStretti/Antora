@@ -322,6 +322,7 @@ You can read more about this feature in the https://mochajs.org/#inclusive-tests
 All JavaScript code in the project must adhere to the {uri-standardjs}[JavaScript Standard Style].
 You can find a {uri-standardjs-rules}[list of rules] on the standard JS site.
 As the name suggests, these rules are pretty standard.
+This project customizes a few of the rules, which are documented in [.path]_.eslintrc_.
 
 To check that your code adheres to these rules, you simply need to run the test suite.
 It's automatically configured to lint (i.e., check) your JavaScript code first.

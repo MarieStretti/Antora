@@ -45,5 +45,5 @@ module.exports = {
   capitalizeArray,
   capitalizeKeys,
   asyncCapitalize,
-  capitalizeStream
+  capitalizeStream,
 }

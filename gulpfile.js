@@ -10,7 +10,7 @@ const testFiles = ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
 const allFiles = [
   'gulpfile.js',
   '{lib*,tasks,test}/**/*.js',
-  'packages/*/{lib,test}/**/*.js'
+  'packages/*/{lib,test}/**/*.js',
 ]
 
 gulp.task('lint', () => lint(allFiles))

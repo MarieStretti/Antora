@@ -12,7 +12,7 @@ const {
   capitalizeArray,
   capitalizeKeys,
   asyncCapitalize,
-  capitalizeStream
+  capitalizeStream,
 } = require('../lib-example/capitalize.js')
 
 // NOTE: these requires are only there to test arrays
