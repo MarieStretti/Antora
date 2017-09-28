@@ -22,7 +22,7 @@ We will bump the minimum version of Node to develop and use Antora from Node 7 t
 
 The only factor that was previously holding back this change was for nodegit to support Node 8.
 Installing nodegit on Node 8 used to require the installer to build nodegit from source, which took several minutes.
-We've confirmed that nodegit installs on Node 8.5 using Yarn 1.1.0 in a few seconds.
+We've confirmed that nodegit installs on Node 8 using Yarn in a few seconds (tested using Node v8.5.0 and Yarn 1.1.0).
 Now that nodegit supports Node 8, there is nothing preventing Antora from upgrading.
 
 == Consequences

@@ -183,7 +183,7 @@ To see which version of Node you have installed, open a terminal and type:
 
 If `node --version` doesn't return any information, you don't yet have Node installed.
 
-The minimum required version of Node is *v8.5.0*, as indicated in the [.path]_package.json_ file.
+The minimum required version of Node is *8.0.0*, as indicated in [.path]_package.json_, though we recommend using the latest release in the 8.x series.
 This is also the recommended version of Node for development.
 
 .Why Node 8?
@@ -195,7 +195,7 @@ In order to use this feature, we need least Node v7.10.1.
 For stability reasons, we decided to go for Node 8 since our dependencies are compatible and it will have longer support.
 ****
 
-If you don't yet have Node installed, or the version of Node you have isn't Node 7, we strongly recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
+If you don't yet have Node installed, or the version of Node you have isn't Node 8, we strongly recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
 Follow the {uri-nvm-install}[nvm installation instructions] to set up nvm on your machine.
 
 TIP: Many CI environments use nvm to install the version of Node used for the build job.
