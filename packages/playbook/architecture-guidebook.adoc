@@ -13,7 +13,7 @@ The playbook needs to be loaded as the first step in the pipeline and that objec
 The main configuration will be read from a file, which we call a [.term]_playbook spec_.
 The user should be able to apply [.term]_audibles_ to this configuration using either process arguments (i.e., command-line flags and switches), environment variables, or a combination of both.
 
-Plugins should be able to participate in the process of building the playbook, either to modify the schema or modify the configuration data.
+(Future idea: Plugins should be able to participate in the process of building the playbook, either to modify the schema or modify the configuration data.)
 
 == Software Architecture
 
@@ -27,8 +27,8 @@ By accepting these two parameters, the playbook builder can be used and tested i
 Within that data, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
 The playbook spec file can be composed in either YAML or CSON format.
 
-The playbook builder should fire one event after the configuration schema is loaded and one event after the configuration data is populated.
-This means that the playbook component has an implicit dependency on an event bus infrastructure.
+(Future idea: The playbook builder should fire one event after the configuration schema is loaded and one event after the configuration data is populated.
+This means that the playbook component has an implicit dependency on an event bus infrastructure.)
 
 The playbook builder should return a well-defined, read-only model called a playbook.
 This model should not be coupled to any configuration-related technology used within the component.
@@ -54,7 +54,7 @@ The data format is determined by the file's extension.
 If the path does not have a file extension, the builder should attempt to locate a file with the `.yml` extension or `.cson` extension, in that order.
 If the playbook spec file is found, the configuration should be loaded again, this time loading the playbook spec file first followed by the audibles (process arguments then environment variables).
 
-This component should use the global event emitter to fire events into the event bus.
+(Future idea: This component should use the global event emitter to fire events into the event bus.)
 
 == Data
 
@@ -68,4 +68,4 @@ This design will have an immediate impact on development by making the component
 
 This component also reserves room in the future for the documentation pipeline to accept configuration from other types of input, such as a database or web service.
 
-By raising events at strategic points, the playbook component allows plugins to introduce flags and switches to the main application interface.
+(Future idea: By raising events at strategic points, the playbook component allows plugins to introduce flags and switches to the main application interface.)
