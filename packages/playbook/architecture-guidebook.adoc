@@ -11,7 +11,8 @@ Numerous components in the documentation pipeline need access to configuration p
 The playbook needs to be loaded as the first step in the pipeline and that object needs to be transmittable.
 
 The main configuration will be read from a file, which we call a [.term]_playbook spec_.
-The user should be able to apply [.term]_audibles_ to this configuration using either process arguments (i.e., command-line flags and switches), environment variables, or a combination of both.
+The user should be able to apply [.term]_audibles_, which are substitute options passed at usage time.
+Audibles may be passed using either process arguments (i.e., command-line flags and switches), environment variables, or a combination of both.
 
 (Future idea: Plugins should be able to participate in the process of building the playbook, either to modify the schema or modify the configuration data.)
 
