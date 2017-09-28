@@ -56,7 +56,7 @@ If the `playbook` option is specified, it should be interpretted as a relative p
 The playbook spec can be composed in either the YAML or CSON data format.
 The format of the playbook spec file is determined by the file's extension.
 If the path does not have a file extension, the builder should attempt to locate a file with the `.yml` extension or `.cson` extension, in that order.
-If the playbook spec file is found, the configuration should be loaded again, this time loading the playbook spec file first followed by the audibles (process arguments, then environment variables).
+If the playbook spec file is found, the configuration should be loaded again, this time loading the playbook spec file first followed by the audibles (environment variables then process arguments).
 
 (Future idea: This component should use the global event emitter to fire events into the event bus.)
 
