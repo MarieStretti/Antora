@@ -3,12 +3,13 @@
 == Context
 
 The documentation pipeline needs to be able to accept user input in the form of configuration options.
-This configuration, which we call a [.term]_playbook_, tells the documentation pipeline what input to use, how the input should be processed, and where to publish the result.
+This configuration, which we call a [.term]_playbook_, tells the documentation pipeline what input to use, how the input should be processed, how the site should be generated, and where to publish the output.
 
 == Functional Overview
 
-Numerous components in the documentation pipeline need access to configuration provided by the playbook.
-The playbook needs to be loaded as the first step in the pipeline and that object needs to be transmittable.
+The playbook needs to be loaded as the first step in the pipeline.
+Numerous components in the documentation pipeline need to access configuration options that are provided by the playbook.
+Therefore, the object that holds the data in the playbook needs to be transmittable.
 
 The main configuration will be read from a file, which we call a [.term]_playbook spec_.
 The user should be able to apply [.term]_audibles_, which are substitute options passed at usage time.
@@ -19,25 +20,26 @@ Audibles may be passed using either process arguments (i.e., command-line flags 
 == Software Architecture
 
 The playbook functionality is provided by the playbook component.
-The playbook component consists of the playbook builder and the playbook model.
+The playbook component is composed of several object prototypes, including a playbook builder and the playbook data model.
 
-All the details of loading the configuration, including the schema, the validation, the precedence of input methods, and the conversion to a transmittable model should be encapsulated in this component, specifically the playbook builder.
+All the details of loading the configuration, including the schema, the validation, the precedence of input methods, and the conversion to a transmittable model should be encapsulated in this component.
+The playbook builder is the main coordinator, though it may delegate work to subordinate objects.
 
-The playbook builder should accept two parameters, an array of arguments (populating from or simulating process arguments) and a hash of variables (populating from or simulating environment variables).
-By accepting these two parameters, the playbook builder can be used and tested in isolation from the runtime environment.
-Within that data, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
-The playbook spec file can be composed in either YAML or CSON format.
+The playbook builder should accept two parameters, an array of arguments (populated from or simulating process arguments) and a hash of variables (populated from or simulating environment variables).
+By accepting these two parameters, the playbook builder can be used and tested independently of the CLI runtime environment.
+Within those parameters, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
+The playbook spec file may be composed in either YAML or CSON format.
 
 (Future idea: The playbook builder should fire one event after the configuration schema is loaded and one event after the configuration data is populated.
 This means that the playbook component has an implicit dependency on an event bus infrastructure.)
 
-The playbook builder should return a well-defined, read-only model called a playbook.
+The playbook builder should return a well-defined, read-only data model called a playbook.
 This model should not be coupled to any configuration-related technology used within the component.
 Instead, it should be a pure model that can be easily reproduced by another means, such as an alternate implementation of the playbook component.
 
 == Code
 
-The playbook component is implemented as a dedicated node module.
+The playbook component is implemented as a dedicated node package (i.e., module).
 It's APIs should be exported so that they can be required using the `require` keyword in the documentation pipeline.
 
 Here's a rough sketch of how this component will be used in the pipeline:
@@ -45,22 +47,23 @@ Here's a rough sketch of how this component will be used in the pipeline:
 [source,js]
 ----
 const PlaybookBuilder = require('./packages/playbook/builder')
-const playbook = PlaybookBuilder.build(process.argv, process.env)
+const playbook = PlaybookBuilder.load(process.argv, process.env)
 ----
 
 The playbook builder should use https://github.com/mozilla/node-convict[convict] to process the user input.
+
 If the `playbook` option is specified, it should be interpretted as a relative path to a playbook spec file (i.e., configuration file).
 The playbook spec can be composed in either the YAML or CSON data format.
-The data format is determined by the file's extension.
+The format of the playbook spec file is determined by the file's extension.
 If the path does not have a file extension, the builder should attempt to locate a file with the `.yml` extension or `.cson` extension, in that order.
-If the playbook spec file is found, the configuration should be loaded again, this time loading the playbook spec file first followed by the audibles (process arguments then environment variables).
+If the playbook spec file is found, the configuration should be loaded again, this time loading the playbook spec file first followed by the audibles (process arguments, then environment variables).
 
 (Future idea: This component should use the global event emitter to fire events into the event bus.)
 
 == Data
 
-The playbook data object produced by this component should have a well-defined model.
-Each section of configuration (site, content, ui) should be represented by a dedicated model type whose properties (name, location, and type) can be documented using a tool like https://github.com/documentationjs/documentation[documentationjs].
+The playbook object produced by this component should have a well-defined data model.
+Each section of configuration (site, content, ui) should be represented by a dedicated model type whose properties (name, location, and type) can be easily converted into API documentation (for example, using a tool like https://github.com/documentationjs/documentation[documentationjs]).
 
 == Consequences
 
