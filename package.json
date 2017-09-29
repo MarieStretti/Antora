@@ -12,6 +12,8 @@
     "node": ">= 8.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^3.2.0",
+    "@commitlint/config-angular": "^3.1.1",
     "array-to-stream": "^1.0.2",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
