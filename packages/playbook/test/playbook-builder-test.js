@@ -84,7 +84,7 @@ describe('buildPlaybook()', () => {
     'default-schema-spec-sample.yml'
   )
 
-  it('should throw if no playbook spec file can be loaded', () => {
+  it('should throw error if no playbook spec file can be loaded', () => {
     expect(() => buildPlaybook(schema)).to.throw()
   })
 
@@ -95,7 +95,7 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load YML playbook spec file (if not extension was defined)', () => {
+  it('should load YML playbook spec file when no file extension is given', () => {
     process.env.PLAYBOOK = extensionLessSpec
     const playbook = buildPlaybook(schema)
     expectedPlaybook.one.one = 'yml-spec-value-one'
@@ -116,17 +116,17 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should throw when loading unkown type file', () => {
+  it('should throw error when loading unknown type file', () => {
     process.env.PLAYBOOK = iniSpec
     expect(() => buildPlaybook(schema)).to.throw()
   })
 
-  it('should throw if spec file cannot be found', () => {
+  it('should throw error if spec file is specified but cannot be found', () => {
     process.env.PLAYBOOK = 'file/not/found.yml'
     expect(() => buildPlaybook(schema)).to.throw()
   })
 
-  it('should use default value (if nothing is set in spec file)', () => {
+  it('should use default value if spec file is not specified', () => {
     process.env.PLAYBOOK = ymlSpec
     const playbook = buildPlaybook(schema)
     expect(playbook.one.two).to.equal('default-value')
@@ -187,12 +187,12 @@ describe('buildPlaybook()', () => {
     expect(playbook.three).to.be.true()
   })
 
-  it('should throw when trying to load values that are not declared in the schema', () => {
+  it('should throw error when trying to load values not declared in the schema', () => {
     process.env.PLAYBOOK = badSpec
     expect(() => buildPlaybook(schema)).to.throw()
   })
 
-  it('should throw when spec file used values of the wrong format', () => {
+  it('should throw error when spec file used values of the wrong format', () => {
     process.env.PLAYBOOK = ymlSpec
     schema.two.format = String
     expect(() => buildPlaybook(schema)).to.throw()
@@ -206,7 +206,7 @@ describe('buildPlaybook()', () => {
     }).to.throw()
   })
 
-  it('should use default schema if not specified', () => {
+  it('should use default schema if none is specified', () => {
     process.env.PLAYBOOK = defaultSchemaSpec
     const playbook = buildPlaybook()
     expect(playbook.site.url).to.equal('https://example.com')
