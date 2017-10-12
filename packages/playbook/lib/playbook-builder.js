@@ -1,10 +1,13 @@
+'use strict'
+
 const fs = require('fs')
 const path = require('path')
+
 const convict = require('convict')
+const cson = require('cson-parser')
 const deepFreeze = require('deep-freeze')
 const defaultSchema = require('./config/schema')
 const yaml = require('js-yaml')
-const cson = require('cson-parser')
 
 function getConvictConfig (customSchema) {
   if (customSchema != null) {
