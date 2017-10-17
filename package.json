@@ -39,6 +39,7 @@
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "matcher": "^1.0.0",
+    "mime-types": "^2.1.17",
     "nodegit": "^0.20.2",
     "stream-to-array": "^2.3.0",
     "vinyl": "^2.1.0",
