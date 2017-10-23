@@ -57,6 +57,11 @@ module.exports = {
       default: [],
       env: 'CONTENT_SOURCES',
     },
+    branches: {
+      doc: 'The default branch pattern to use when no specific pattern is provided',
+      format: Array,
+      default: ['v*', 'master'],
+    },
   },
   ui: {
     location: {

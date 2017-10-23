@@ -32,7 +32,12 @@ describe('aggregateContent()', () => {
 
   beforeEach(() => {
     cleanRepos()
-    playbook = { content: { sources: [] } }
+    playbook = {
+      content: {
+        sources: [],
+        branches: ['v*', 'master'],
+      },
+    }
   })
 
   afterEach(cleanRepos)
@@ -148,23 +153,6 @@ describe('aggregateContent()', () => {
     await repo.createBranch({ name: 'the-component', version: 'v3.0.0' })
   }
 
-  describe('should read all branches in source repository', () => {
-    testAll(async (repo) => {
-      await initRepoWithBranches(repo)
-      playbook.content.sources.push({ location: repo.location })
-      const corpus = aggregateContent(playbook)
-      return expect(corpus)
-        .to.be.fulfilled()
-        .then((theCorpus) => {
-          expect(theCorpus).to.have.lengthOf(4)
-          expect(theCorpus[0]).to.deep.include({ name: 'the-component', version: 'unknown' })
-          expect(theCorpus[1]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
-          expect(theCorpus[2]).to.deep.include({ name: 'the-component', version: 'v2.0.0' })
-          expect(theCorpus[3]).to.deep.include({ name: 'the-component', version: 'v3.0.0' })
-        })
-    })
-  })
-
   describe('should filter branches by exact name', () => {
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
@@ -216,6 +204,35 @@ describe('aggregateContent()', () => {
           expect(theCorpus[0]).to.deep.include({ name: 'the-component', version: 'unknown' })
           expect(theCorpus[1]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
           expect(theCorpus[2]).to.deep.include({ name: 'the-component', version: 'v3.0.0' })
+        })
+    })
+  })
+
+  describe('should filter branches using playbook default filter "content.branches"', () => {
+    testAll(async (repo) => {
+      await initRepoWithBranches(repo)
+      playbook.content.sources.push({ location: repo.location })
+      playbook.content.branches = ['v1.0.0', 'v2*']
+      const corpus = aggregateContent(playbook)
+      return expect(corpus)
+        .to.be.fulfilled()
+        .then((theCorpus) => {
+          expect(theCorpus).to.have.lengthOf(2)
+          expect(theCorpus[0]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
+          expect(theCorpus[1]).to.deep.include({ name: 'the-component', version: 'v2.0.0' })
+        })
+    })
+
+    testAll(async (repo) => {
+      await initRepoWithBranches(repo)
+      playbook.content.sources.push({ location: repo.location })
+      playbook.content.branches = 'v1.0.*'
+      const corpus = aggregateContent(playbook)
+      return expect(corpus)
+        .to.be.fulfilled()
+        .then((theCorpus) => {
+          expect(theCorpus).to.have.lengthOf(1)
+          expect(theCorpus[0]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
         })
     })
   })
