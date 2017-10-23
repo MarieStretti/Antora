@@ -8,8 +8,7 @@ module.exports = {
   },
   site: {
     url: {
-      doc:
-        'The base URL of the published site (optional). Should not include a trailing slash.',
+      doc: 'The base URL of the published site (optional). Should not include a trailing slash.',
       format: String,
       default: undefined,
       env: 'URL',
@@ -22,20 +21,17 @@ module.exports = {
       arg: 'title',
     },
     root: {
-      doc:
-        'The name of the component to use as the root of the site (optional).',
+      doc: 'The name of the component to use as the root of the site (optional).',
       format: String,
       default: undefined,
     },
     aspect: {
-      doc:
-        'The name of the aspect navigation to make available on every page in the site.',
+      doc: 'The name of the aspect navigation to make available on every page in the site.',
       format: String,
       default: undefined,
     },
     nav: {
-      doc:
-        'The list of descriptors which define the aspect navigation domains.',
+      doc: 'The list of descriptors which define the aspect navigation domains.',
       format: Array,
       default: undefined,
     },
@@ -79,15 +75,13 @@ module.exports = {
       default: undefined,
     },
     archive: {
-      doc:
-        'A local theme archive. If specified, used in place of the UI bundle from the repository.',
+      doc: 'A local theme archive. If specified, used in place of the UI bundle from the repository.',
       format: String,
       default: undefined,
       arg: 'ui-archive',
     },
     skip_cache: {
-      doc:
-        'Skip the local bundle cache and always fetch the UI bundle from the repository.',
+      doc: 'Skip the local bundle cache and always fetch the UI bundle from the repository.',
       format: Boolean,
       default: false,
       arg: 'skip-ui-cache',
@@ -109,23 +103,20 @@ module.exports = {
   },
   urls: {
     htmlExtensionStyle: {
-      doc:
-        'Controls how the URL extension for HTML pages is handled (default, drop, or indexify).',
+      doc: 'Controls how the URL extension for HTML pages is handled (default, drop, or indexify).',
       format: ['default', 'drop', 'indexify'],
       default: 'default',
       arg: 'html-url-extension-style',
     },
     aspectPageStrategy: {
-      doc:
-        'Controls how links to pages in aspect domains are generated (path or query).',
+      doc: 'Controls how links to pages in aspect domains are generated (path or query).',
       format: String,
       default: 'path',
       arg: 'aspect-page-url-strategy',
     },
   },
   redirects: {
-    doc:
-      'Generate nginx config file containing URL redirects for page aliases.',
+    doc: 'Generate nginx config file containing URL redirects for page aliases.',
     format: Boolean,
     default: false,
     arg: 'redirects',

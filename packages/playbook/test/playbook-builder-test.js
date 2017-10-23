@@ -60,10 +60,7 @@ describe('buildPlaybook()', () => {
       },
       two: 42,
       three: false,
-      four: [
-        { lastname: 'Lennon', name: 'John' },
-        { lastname: 'McCartney', name: 'Paul' },
-      ],
+      four: [{ lastname: 'Lennon', name: 'John' }, { lastname: 'McCartney', name: 'Paul' }],
     }
   })
 
@@ -78,11 +75,7 @@ describe('buildPlaybook()', () => {
   const csonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.cson')
   const iniSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.ini')
   const badSpec = path.resolve(__dirname, 'fixtures', 'bad-spec-sample.yml')
-  const defaultSchemaSpec = path.resolve(
-    __dirname,
-    'fixtures',
-    'default-schema-spec-sample.yml'
-  )
+  const defaultSchemaSpec = path.resolve(__dirname, 'fixtures', 'default-schema-spec-sample.yml')
 
   it('should throw error if no playbook spec file can be loaded', () => {
     expect(() => buildPlaybook(schema)).to.throw()

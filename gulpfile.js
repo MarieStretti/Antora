@@ -7,11 +7,7 @@ const format = require('./tasks/format-task')
 const test = require('./tasks/test-task')
 
 const testFiles = ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
-const allFiles = [
-  'gulpfile.js',
-  '{lib*,tasks,test}/**/*.js',
-  'packages/*/{lib,test}/**/*.js',
-]
+const allFiles = ['gulpfile.js', '{lib*,tasks,test}/**/*.js', 'packages/*/{lib,test}/**/*.js']
 
 gulp.task('lint', () => lint(allFiles))
 gulp.task('format', () => format(allFiles))
