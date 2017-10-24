@@ -35,7 +35,7 @@ class FileCatalog {
   }
 
   findBy (options) {
-    const srcFilter = _.pick(options, ['component', 'module', 'module', 'family', 'subpath', 'stem'])
+    const srcFilter = _.pick(options, ['component', 'version', 'module', 'family', 'subpath', 'stem', 'basename'])
     return _.filter(this[$files], { src: srcFilter })
   }
 }
