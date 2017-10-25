@@ -499,4 +499,44 @@ describe('classifyContent()', () => {
       expect(pages[1].src).to.include({ component: 'the-component', version: 'v4.5.6' })
     })
   })
+
+  describe('getById()', () => {
+    beforeEach(() => {
+      corpus = [
+        {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          files: [
+            createFile('/modules/ROOT/assets/images/foo.png'),
+            createFile('/modules/ROOT/documents/page-one.adoc'),
+          ],
+        },
+      ]
+    })
+
+    it('should find file by coordinates', () => {
+      const page = classifyContent(playbook, corpus).getById({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        subpath: '',
+        basename: 'page-one.adoc',
+      })
+      expect(page.path).to.equal('/modules/ROOT/documents/page-one.adoc')
+    })
+
+    it('should return null if nothing is found', () => {
+      const page = classifyContent(playbook, corpus).getById({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        subpath: '',
+        basename: 'unknown-page.adoc',
+      })
+      expect(page).not.to.exist()
+    })
+  })
 })

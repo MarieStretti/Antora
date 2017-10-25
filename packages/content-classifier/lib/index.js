@@ -38,6 +38,11 @@ class FileCatalog {
     const srcFilter = _.pick(options, ['component', 'version', 'module', 'family', 'subpath', 'stem', 'basename'])
     return _.filter(this[$files], { src: srcFilter })
   }
+
+  getById ({ component, version, module, family, subpath, basename }) {
+    const id = [component, version, module, family, subpath, basename]
+    return _.get(this[$filesIndex], id)
+  }
 }
 
 module.exports = (playbook, corpus) => {
