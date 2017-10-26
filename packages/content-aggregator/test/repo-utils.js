@@ -13,8 +13,8 @@ class FixtureRepo {
     this.isBare = isBare
   }
 
-  async initRepo ({ repoName, name, title, version, nav, subpath }) {
-    this.subpath = subpath
+  async initRepo ({ repoName, name, title, version, nav, startPath }) {
+    this.startPath = startPath
     this.repoPath = path.join(reposBasePath, repoName || name || 'default-repo')
     this.location = this.repoPath
     if (this.isRemote) {
@@ -26,13 +26,13 @@ class FixtureRepo {
     this.repository = await git.Repository.init(this.repoPath, 0)
     await this.copyAll(['README.adoc'])
     await this.commitAll('Init commit', true)
-    await this.setDocsComponent({ name, title, version, nav, subpath })
+    await this.setDocsComponent({ name, title, version, nav, startPath })
     return this
   }
 
-  async copyAll (items, subpath = '.') {
+  async copyAll (items, startPath = '.') {
     return Promise.all(
-      items.map((item) => fs.copy(path.join(fixturesPath, item), path.join(this.repoPath, subpath, item)))
+      items.map((item) => fs.copy(path.join(fixturesPath, item), path.join(this.repoPath, startPath, item)))
     )
   }
 
@@ -63,8 +63,8 @@ class FixtureRepo {
     )
   }
 
-  async setDocsComponent ({ name, title, version, nav, subpath = '.' }) {
-    const filepath = path.join(this.repoPath, subpath, 'docs-component.yml')
+  async setDocsComponent ({ name, title, version, nav, startPath = '.' }) {
+    const filepath = path.join(this.repoPath, startPath, 'docs-component.yml')
     const docsComponentYml = []
     if (name) {
       docsComponentYml.push(`name: ${name}`)
@@ -97,8 +97,8 @@ class FixtureRepo {
     await this.setDocsComponent({ name, version })
   }
 
-  async addFixtureFiles (files, subpath) {
-    await this.copyAll(files, subpath)
+  async addFixtureFiles (files, startPath) {
+    await this.copyAll(files, startPath)
     await this.commitAll('Add example files')
   }
 

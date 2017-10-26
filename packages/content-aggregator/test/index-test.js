@@ -95,18 +95,18 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('should read properties from docs-component.yml located at specified subpath', () => {
+  describe('should read properties from docs-component.yml located at specified startPath', () => {
     testAll(async (repo) => {
       await repo.initRepo({
         name: 'the-component',
         title: 'The Component',
         version: 'v1.2.3',
         nav: ['nav-one.adoc', 'nav-two.adoc'],
-        subpath: 'docs',
+        startPath: 'docs',
       })
       playbook.content.sources.push({
         location: repo.location,
-        subpath: repo.subpath,
+        startPath: repo.startPath,
       })
       const corpus = aggregateContent(playbook)
       return expect(corpus)
@@ -296,15 +296,15 @@ describe('aggregateContent()', () => {
               '',
               'Hey World!',
               '',
-            ].join('\n')
+            ].join('\n'),
           )
         })
     })
   })
 
-  describe('should catalog all files when component is located at a subpath', () => {
+  describe('should catalog all files when component is located at a startPath', () => {
     testAll(async (repo) => {
-      await repo.initRepo({ name: 'the-component', version: 'v1.2.3', subpath: 'docs' })
+      await repo.initRepo({ name: 'the-component', version: 'v1.2.3', startPath: 'docs' })
       await repo.addFixtureFiles(['should-be-ignored.adoc'])
       await repo.addFixtureFiles(
         [
@@ -312,9 +312,9 @@ describe('aggregateContent()', () => {
           'modules/ROOT/content/_attributes.adoc',
           'modules/ROOT/content/page-one.adoc',
         ],
-        'docs'
+        'docs',
       )
-      playbook.content.sources.push({ location: repo.location, subpath: repo.subpath })
+      playbook.content.sources.push({ location: repo.location, startPath: repo.startPath })
       const corpus = aggregateContent(playbook)
       return expect(corpus)
         .to.be.fulfilled()
@@ -543,7 +543,7 @@ describe('aggregateContent()', () => {
                 // in our test the git url is the same as the repo location we provided
                 url: repo.location,
                 branch: 'master',
-                subpath: '/',
+                startPath: '/',
               },
             },
           })

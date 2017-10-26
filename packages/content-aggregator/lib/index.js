@@ -40,7 +40,7 @@ module.exports = async (playbook) => {
         }
 
         const componentVersion = await readComponentDesc(files)
-        componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, repo.subpath))
+        componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, repo.startPath))
         return componentVersion
       })
       .value()
@@ -161,7 +161,7 @@ function readComponentDesc (files) {
 }
 
 async function loadGitFiles (repository, branch, repo) {
-  const tree = await getGitTree(repository, branch, repo.subpath)
+  const tree = await getGitTree(repository, branch, repo.startPath)
   const entries = await getGitEntries(tree)
   const vfiles = entries.map(async (entry) => {
     const blob = await entry.getBlob()
@@ -174,13 +174,13 @@ async function loadGitFiles (repository, branch, repo) {
   return Promise.all(vfiles)
 }
 
-async function getGitTree (repository, branch, subpath) {
+async function getGitTree (repository, branch, startPath) {
   const commit = await repository.getBranchCommit(branch)
   const tree = await commit.getTree()
-  if (subpath == null) {
+  if (startPath == null) {
     return tree
   }
-  const subEntry = await tree.entryByPath(subpath)
+  const subEntry = await tree.entryByPath(startPath)
   const subTree = await repository.getTree(subEntry.id())
   return subTree
 }
@@ -195,7 +195,7 @@ function getGitEntries (tree, onEntry) {
 }
 
 async function loadLocalFiles (repo) {
-  const basePath = path.join(repo.location, repo.subpath || '.')
+  const basePath = path.join(repo.location, repo.startPath || '.')
   const vfileStream = vfs.src('**/*.*', {
     base: basePath,
     cwd: basePath,
@@ -204,7 +204,7 @@ async function loadLocalFiles (repo) {
   return streamToArray(vfileStream)
 }
 
-function assignFileProperties (file, url, branch, subpath = '/') {
+function assignFileProperties (file, url, branch, startPath = '/') {
   file.path = file.relative
   file.base = process.cwd()
   file.cwd = process.cwd()
@@ -216,7 +216,7 @@ function assignFileProperties (file, url, branch, subpath = '/') {
     stem: path.basename(file.path, extname),
     extname,
     origin: {
-      git: { url, branch, subpath },
+      git: { url, branch, startPath },
     },
   }
   return file
