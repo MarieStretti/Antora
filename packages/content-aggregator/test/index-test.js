@@ -296,7 +296,7 @@ describe('aggregateContent()', () => {
               '',
               'Hey World!',
               '',
-            ].join('\n'),
+            ].join('\n')
           )
         })
     })
@@ -312,7 +312,7 @@ describe('aggregateContent()', () => {
           'modules/ROOT/content/_attributes.adoc',
           'modules/ROOT/content/page-one.adoc',
         ],
-        'docs',
+        'docs'
       )
       playbook.content.sources.push({ location: repo.location, startPath: repo.startPath })
       const corpus = aggregateContent(playbook)
