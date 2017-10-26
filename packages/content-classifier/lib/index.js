@@ -113,25 +113,25 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
 
   const extname = src.extname === '.adoc' ? '.html' : src.extname
   let basename = src.stem + extname
-  const subpathSegments = src.subpath.split('/').filter((a) => a !== '')
 
+  let indexifyPathSegment = ''
   if (src.family === 'page' && src.stem !== 'index' && htmlExtensionStyle === 'indexify') {
     basename = 'index.html'
-    subpathSegments.push(src.stem)
+    indexifyPathSegment = src.stem
   }
 
+  let familyPathSegment = ''
   if (src.family === 'image') {
-    subpathSegments.unshift('_images')
+    familyPathSegment = '_images'
   }
   if (src.family === 'attachment') {
-    subpathSegments.unshift('_attachments')
+    familyPathSegment = '_attachments'
   }
 
-  const dirname = path.join(...['/', src.component, version, module, ...subpathSegments])
-  const moduleDirname = path.join(...['/', src.component, version, module])
-
+  const modulePath = path.join('/', src.component, version, module)
+  const dirname = path.join(modulePath, familyPathSegment, src.subpath, indexifyPathSegment)
   const outputPath = path.join(dirname, basename)
-  const moduleRootPath = path.relative(dirname, moduleDirname) || '.'
+  const moduleRootPath = path.relative(dirname, modulePath) || '.'
   const rootPath = path.relative(dirname, '/') || '.'
 
   return {
