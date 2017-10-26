@@ -30,7 +30,7 @@ module.exports = async (playbook) => {
         return isLocalRepo ? _.last(branches) : _.first(branches)
       })
       .values()
-      .filter(({ branchName }) => branchMatches(branchName, repo.branches))
+      .filter(({ branchName }) => branchMatches(branchName, repo.branches || playbook.content.branches))
       .map(async ({ branch, branchName, isHead, isLocal }) => {
         let files
         if (isLocalRepo && !isBare && isHead) {
@@ -136,7 +136,7 @@ function getBranchInfo (branch) {
   return { branch, branchName, isLocal, isHead }
 }
 
-function branchMatches (branchName, branchPattern = '*') {
+function branchMatches (branchName, branchPattern) {
   if (Array.isArray(branchPattern)) {
     return branchPattern.some((pattern) => isMatch(branchName, pattern))
   }

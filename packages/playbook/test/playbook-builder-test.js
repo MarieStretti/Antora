@@ -75,6 +75,7 @@ describe('buildPlaybook()', () => {
   const csonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.cson')
   const iniSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.ini')
   const badSpec = path.resolve(__dirname, 'fixtures', 'bad-spec-sample.yml')
+  const coerceValueSpec = path.resolve(__dirname, 'fixtures', 'coerce-value-spec-sample.yml')
   const defaultSchemaSpec = path.resolve(__dirname, 'fixtures', 'default-schema-spec-sample.yml')
 
   it('should throw error if no playbook spec file can be loaded', () => {
@@ -204,5 +205,13 @@ describe('buildPlaybook()', () => {
     const playbook = buildPlaybook()
     expect(playbook.site.url).to.equal('https://example.com')
     expect(playbook.site.title).to.equal('Example site')
+  })
+
+  it('should coerce a String value to an Array', () => {
+    process.env.PLAYBOOK = coerceValueSpec
+    const playbook = buildPlaybook(schema)
+    expectedPlaybook.one.one = 'one'
+    expectedPlaybook.four = ['John']
+    expect(playbook).to.eql(expectedPlaybook)
   })
 })
