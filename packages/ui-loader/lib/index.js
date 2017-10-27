@@ -11,7 +11,7 @@ const streamToArray = require('stream-to-array')
 const yaml = require('js-yaml')
 const zip = require('gulp-vinyl-zip')
 
-const minimatchAll = require('./minimatch-all')
+const minimatchAll = require('minimatch-all')
 
 const $files = Symbol('$files')
 const $filesIndex = Symbol('$filesIndex')
@@ -67,7 +67,9 @@ module.exports = async (playbook) => {
 
   let supplementalFiles
   if (uiDesc != null) {
-    supplementalFiles = uiDesc.supplemental_files
+    if ((supplementalFiles = uiDesc.supplemental_files) != null && !Array.isArray(supplementalFiles)) {
+      supplementalFiles = [supplementalFiles]
+    }
   }
 
   uiFiles.forEach((file) => {
