@@ -67,7 +67,7 @@ describe('loadUi()', () => {
     cleanCache()
   })
 
-  describe('should load all files (not directories) from the bundle', () => {
+  describe('should load all files in the UI bundle', () => {
     testAll('the-ui-bundle.zip', (playbook) => {
       return expect(loadUi(playbook))
         .to.be.fulfilled()
@@ -79,7 +79,7 @@ describe('loadUi()', () => {
     })
   })
 
-  describe('should load all files (not directories) from the bundle (with startPath)', () => {
+  describe('should load all files in the bundle from specified startPath', () => {
     testAll('the-ui-bundle-with-start-path.zip', (playbook) => {
       playbook.ui.startPath = '/the-ui-bundle'
       return expect(loadUi(playbook))
@@ -93,54 +93,54 @@ describe('loadUi()', () => {
   })
 
   describe('findByType()', () => {
-    describe('should find helpers', () => {
+    describe('should discover helpers', () => {
       testAll('the-ui-bundle.zip', (playbook) => {
         return expect(loadUi(playbook))
           .to.be.fulfilled()
           .then((uiCatalog) => {
             const helpers = uiCatalog.findByType('helper')
             helpers.forEach(({ type }) => expect(type).to.equal('helper'))
-            const helpersPaths = helpers.map((file) => file.path)
-            expect(helpersPaths).to.have.members(['helpers/and.js', 'helpers/or.js'])
+            const helperPaths = helpers.map((file) => file.path)
+            expect(helperPaths).to.have.members(['helpers/and.js', 'helpers/or.js'])
           })
       })
     })
 
-    describe('should find layouts', () => {
+    describe('should discover layouts', () => {
       testAll('the-ui-bundle.zip', (playbook) => {
         return expect(loadUi(playbook))
           .to.be.fulfilled()
           .then((uiCatalog) => {
             const layouts = uiCatalog.findByType('layout')
             layouts.forEach(({ type }) => expect(type).to.equal('layout'))
-            const layoutsPaths = layouts.map((file) => file.path)
-            expect(layoutsPaths).to.have.members(['layouts/404.hbs', 'layouts/default.hbs'])
+            const layoutPaths = layouts.map((file) => file.path)
+            expect(layoutPaths).to.have.members(['layouts/404.hbs', 'layouts/default.hbs'])
           })
       })
     })
 
-    describe('should find partials', () => {
+    describe('should discover partials', () => {
       testAll('the-ui-bundle.zip', (playbook) => {
         return expect(loadUi(playbook))
           .to.be.fulfilled()
           .then((uiCatalog) => {
             const partials = uiCatalog.findByType('partial')
             partials.forEach(({ type }) => expect(type).to.equal('partial'))
-            const partialsPaths = partials.map((file) => file.path)
-            expect(partialsPaths).to.have.members(['partials/footer.hbs', 'partials/header.hbs'])
+            const partialPaths = partials.map((file) => file.path)
+            expect(partialPaths).to.have.members(['partials/footer.hbs', 'partials/header.hbs'])
           })
       })
     })
 
-    describe('should find other assets', () => {
+    describe('should discover assets', () => {
       testAll('the-ui-bundle.zip', (playbook) => {
         return expect(loadUi(playbook))
           .to.be.fulfilled()
           .then((uiCatalog) => {
-            const uiAssets = uiCatalog.findByType('ui-asset')
-            uiAssets.forEach(({ type }) => expect(type).to.equal('ui-asset'))
-            const uiAssetsPaths = uiAssets.map((file) => file.path)
-            expect(uiAssetsPaths).to.have.members([
+            const uiAssets = uiCatalog.findByType('asset')
+            uiAssets.forEach(({ type }) => expect(type).to.equal('asset'))
+            const uiAssetPaths = uiAssets.map((file) => file.path)
+            expect(uiAssetPaths).to.have.members([
               'css/one.css',
               'css/two.css',
               'fonts/Roboto-Medium.ttf',
@@ -153,15 +153,15 @@ describe('loadUi()', () => {
       })
     })
 
-    describe('should differentiate supplemental files from ui-assets', () => {
-      testAll('the-ui-bundle-supplemental-files.zip', (playbook) => {
+    describe('should differentiate static files from assets', () => {
+      testAll('the-ui-bundle-with-static-files.zip', (playbook) => {
         return expect(loadUi(playbook))
           .to.be.fulfilled()
           .then((uiCatalog) => {
-            const uiAssets = uiCatalog.findByType('ui-asset')
-            uiAssets.forEach(({ type }) => expect(type).to.equal('ui-asset'))
-            const uiAssetsPaths = uiAssets.map((file) => file.path)
-            expect(uiAssetsPaths).to.have.members([
+            const uiAssets = uiCatalog.findByType('asset')
+            uiAssets.forEach(({ type }) => expect(type).to.equal('asset'))
+            const uiAssetPaths = uiAssets.map((file) => file.path)
+            expect(uiAssetPaths).to.have.members([
               'css/one.css',
               'css/two.css',
               'fonts/Roboto-Medium.ttf',
@@ -171,29 +171,29 @@ describe('loadUi()', () => {
               'scripts/01-one.js',
               'scripts/02-two.js',
             ])
-            const supplementalFiles = uiCatalog.findByType('supplemental-file')
-            supplementalFiles.forEach(({ type }) => expect(type).to.equal('supplemental-file'))
-            const supplementalFilesPaths = supplementalFiles.map((file) => file.path)
-            expect(supplementalFilesPaths).to.have.members(['foo/two.xml', 'foo/bar/one.xml', 'humans.txt'])
+            const staticFiles = uiCatalog.findByType('static')
+            staticFiles.forEach(({ type }) => expect(type).to.equal('static'))
+            const staticFilePaths = staticFiles.map((file) => file.path)
+            expect(staticFilePaths).to.have.members(['foo/two.xml', 'foo/bar/one.xml', 'humans.txt'])
           })
       })
     })
 
-    describe('should find supplemental files when specified with single glob string', () => {
-      testAll('the-ui-bundle-supplemental-files-single.zip', (playbook) => {
+    describe('should discover static files when specified with single glob string', () => {
+      testAll('the-ui-bundle-with-static-files-single-glob.zip', (playbook) => {
         return expect(loadUi(playbook))
           .to.be.fulfilled()
           .then((uiCatalog) => {
-            const supplementalFiles = uiCatalog.findByType('supplemental-file')
-            supplementalFiles.forEach(({ type }) => expect(type).to.equal('supplemental-file'))
-            const supplementalFilesPaths = supplementalFiles.map((file) => file.path)
-            expect(supplementalFilesPaths).to.have.members(['foo/two.xml', 'foo/bar/one.xml'])
+            const staticFiles = uiCatalog.findByType('static')
+            staticFiles.forEach(({ type }) => expect(type).to.equal('static'))
+            const staticFilePaths = staticFiles.map((file) => file.path)
+            expect(staticFilePaths).to.have.members(['foo/two.xml', 'foo/bar/one.xml'])
           })
       })
     })
   })
 
-  describe('should NOT set the out property on helpers', () => {
+  describe('should not set the out property on helpers', () => {
     testAll('the-ui-bundle.zip', (playbook) => {
       return expect(loadUi(playbook))
         .to.be.fulfilled()
@@ -206,7 +206,7 @@ describe('loadUi()', () => {
     })
   })
 
-  describe('should NOT set the out property on layouts', () => {
+  describe('should not set the out property on layouts', () => {
     testAll('the-ui-bundle.zip', (playbook) => {
       return expect(loadUi(playbook))
         .to.be.fulfilled()
@@ -219,7 +219,7 @@ describe('loadUi()', () => {
     })
   })
 
-  describe('should NOT set the out property on partials', () => {
+  describe('should not set the out property on partials', () => {
     testAll('the-ui-bundle.zip', (playbook) => {
       return expect(loadUi(playbook))
         .to.be.fulfilled()
@@ -232,12 +232,12 @@ describe('loadUi()', () => {
     })
   })
 
-  describe('should set the out property on ui-assets', () => {
+  describe('should set the out property on assets', () => {
     testAll('the-ui-bundle.zip', (playbook) => {
       return expect(loadUi(playbook))
         .to.be.fulfilled()
         .then((uiCatalog) => {
-          const uiAssets = uiCatalog.findByType('ui-asset')
+          const uiAssets = uiCatalog.findByType('asset')
           uiAssets.forEach((file) => {
             expect(file).to.have.property('out')
           })
@@ -251,36 +251,36 @@ describe('loadUi()', () => {
     })
   })
 
-  describe('should set the out property on ui-assets (with custom playbook.ui.outputDir)', () => {
+  describe('should set the out property on assets with custom playbook.ui.outputDir', () => {
     testAll('the-ui-bundle.zip', (playbook) => {
-      playbook.ui.outputDir = '/_theme'
+      playbook.ui.outputDir = '/_ui'
       return expect(loadUi(playbook))
         .to.be.fulfilled()
         .then((uiCatalog) => {
-          const uiAssets = uiCatalog.findByType('ui-asset')
+          const uiAssets = uiCatalog.findByType('asset')
           uiAssets.forEach((file) => {
             expect(file).to.have.property('out')
           })
           const script = uiAssets.find(({ path }) => path === 'scripts/01-one.js')
           expect(script.out).to.eql({
-            dirname: '/_theme/scripts',
+            dirname: '/_ui/scripts',
             basename: '01-one.js',
-            path: '/_theme/scripts/01-one.js',
+            path: '/_ui/scripts/01-one.js',
           })
         })
     })
   })
 
-  describe('should set the out property on supplemental files', () => {
-    testAll('the-ui-bundle-supplemental-files.zip', (playbook) => {
+  describe('should set the out property on static files', () => {
+    testAll('the-ui-bundle-with-static-files.zip', (playbook) => {
       return expect(loadUi(playbook))
         .to.be.fulfilled()
         .then((uiCatalog) => {
-          const supplementalFiles = uiCatalog.findByType('supplemental-file')
-          supplementalFiles.forEach((file) => {
+          const staticFiles = uiCatalog.findByType('static')
+          staticFiles.forEach((file) => {
             expect(file).to.have.property('out')
           })
-          const xml = supplementalFiles.find(({ path }) => path === 'foo/bar/one.xml')
+          const xml = staticFiles.find(({ path }) => path === 'foo/bar/one.xml')
           expect(xml.out).to.eql({
             dirname: '/foo/bar',
             basename: 'one.xml',

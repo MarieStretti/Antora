@@ -65,10 +65,10 @@ module.exports = async (playbook) => {
   const uiFiles = getFilesInStartPath(zipFilesAndDirs, playbook.ui.startPath)
   const { uiDesc, uiDescFile } = readUiDesc(uiFiles)
 
-  let supplementalFiles
+  let staticFiles
   if (uiDesc != null) {
-    if ((supplementalFiles = uiDesc.supplemental_files) != null && !Array.isArray(supplementalFiles)) {
-      supplementalFiles = [supplementalFiles]
+    if ((staticFiles = uiDesc.staticFiles) != null && !Array.isArray(staticFiles)) {
+      staticFiles = [staticFiles]
     }
   }
 
@@ -77,11 +77,10 @@ module.exports = async (playbook) => {
       return
     }
 
-    file.type = resolveType(file, supplementalFiles)
-    if (file.type === 'ui-asset') {
+    file.type = resolveType(file, staticFiles)
+    if (file.type === 'asset') {
       file.out = resolveOut(file, playbook.ui.outputDir)
-    }
-    if (file.type === 'supplemental-file') {
+    } else if (file.type === 'static') {
       file.out = resolveOut(file, '/')
     }
 
@@ -126,7 +125,7 @@ function readUiDesc (files) {
   return { uiDesc, uiDescFile }
 }
 
-function resolveType (file, supplementalFiles) {
+function resolveType (file, staticFiles) {
   const pathSegments = file.path.split('/').filter((a) => a !== '')
   if (pathSegments[0] === 'layouts') {
     return 'layout'
@@ -134,10 +133,10 @@ function resolveType (file, supplementalFiles) {
     return 'helper'
   } else if (pathSegments[0] === 'partials') {
     return 'partial'
-  } else if (supplementalFiles != null && minimatchAll(file.path, supplementalFiles)) {
-    return 'supplemental-file'
+  } else if (staticFiles != null && minimatchAll(file.path, staticFiles)) {
+    return 'static'
   }
-  return 'ui-asset'
+  return 'asset'
 }
 
 function resolveOut (file, outputDir = `/_`) {
