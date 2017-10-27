@@ -62,8 +62,8 @@ module.exports = async (playbook) => {
   const zipFilesAndDirsStream = zip.src(zipPath).pipe(buffer())
 
   const zipFilesAndDirs = await streamToArray(zipFilesAndDirsStream)
-  const uiFiles = getFilesInStartPath(zipFilesAndDirs, playbook.ui.startPath)
-  const { uiDesc, uiDescFile } = readUiDesc(uiFiles)
+  const uiFiles = getFilesFromStartPath(zipFilesAndDirs, playbook.ui.startPath)
+  const { uiDesc } = readUiDesc(uiFiles)
 
   let staticFiles
   if (uiDesc != null) {
@@ -73,15 +73,14 @@ module.exports = async (playbook) => {
   }
 
   uiFiles.forEach((file) => {
-    if (file === uiDescFile) {
-      return
-    }
-
-    file.type = resolveType(file, staticFiles)
-    if (file.type === 'asset') {
-      file.out = resolveOut(file, playbook.ui.outputDir)
-    } else if (file.type === 'static') {
+    if (staticFiles != null && isStaticFile(file, staticFiles)) {
+      file.type = 'static'
       file.out = resolveOut(file, '/')
+    } else {
+      file.type = resolveType(file)
+      if (file.type === 'asset') {
+        file.out = resolveOut(file, playbook.ui.outputDir)
+      }
     }
 
     uiCatalog.addFile(file)
@@ -100,7 +99,7 @@ function sha1 (string) {
   return shasum.digest('hex')
 }
 
-function getFilesInStartPath (filesAndDirs, startPath) {
+function getFilesFromStartPath (filesAndDirs, startPath) {
   return filesAndDirs
     .map((file) => {
       if (file.isDirectory()) {
@@ -117,29 +116,33 @@ function getFilesInStartPath (filesAndDirs, startPath) {
 }
 
 function readUiDesc (files) {
-  const uiDescFile = _.find(files, { path: 'ui.yml' })
-  if (uiDescFile == null) {
+  const uiDescFileIndex = _.findIndex(files, { path: 'ui.yml' })
+  if (uiDescFileIndex === -1) {
     return {}
   }
+  const [uiDescFile] = files.splice(uiDescFileIndex, 1)
   const uiDesc = yaml.safeLoad(uiDescFile.contents.toString())
   return { uiDesc, uiDescFile }
 }
 
-function resolveType (file, staticFiles) {
-  const pathSegments = file.path.split('/').filter((a) => a !== '')
-  if (pathSegments[0] === 'layouts') {
-    return 'layout'
-  } else if (pathSegments[0] === 'helpers') {
-    return 'helper'
-  } else if (pathSegments[0] === 'partials') {
-    return 'partial'
-  } else if (staticFiles != null && minimatchAll(file.path, staticFiles)) {
-    return 'static'
-  }
-  return 'asset'
+function isStaticFile (file, staticFiles) {
+  return minimatchAll(file.path, staticFiles)
 }
 
-function resolveOut (file, outputDir = `/_`) {
+function resolveType (file) {
+  const firstPathSegment = file.path.split('/', 1)[0]
+  if (firstPathSegment === 'layouts') {
+    return 'layout'
+  } else if (firstPathSegment === 'helpers') {
+    return 'helper'
+  } else if (firstPathSegment === 'partials') {
+    return 'partial'
+  } else {
+    return 'asset'
+  }
+}
+
+function resolveOut (file, outputDir = '/_') {
   const dirname = path.join('/', outputDir, file.dirname)
   const basename = file.basename
   const outputPath = path.join(dirname, basename)
