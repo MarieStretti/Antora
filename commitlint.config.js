@@ -1,8 +1,8 @@
 'use strict'
 
 module.exports = {
-  extends: ['@commitlint/config-angular'],
   rules: {
-    'scope-enum': ['playbook'],
-  },
+    'subject-empty': [2, 'never'],
+    'subject-full-stop': [2, 'never', '.']
+  }
 }
