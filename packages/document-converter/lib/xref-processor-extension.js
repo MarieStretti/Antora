@@ -18,7 +18,7 @@ module.exports = class AsciidoctorXrefProcessorExtension {
           (refId && refId.endsWith('.adoc') && (refId = refId.slice(0, -5)) !== undefined)
         ) {
           let text
-          text = (text = node.$text()) === global.Opal.nil ? refId : text
+          text = (text = node.getText()) === undefined ? refId : text
           return thisExtension[$$pageRefHandler](refId, text)
         }
       }
