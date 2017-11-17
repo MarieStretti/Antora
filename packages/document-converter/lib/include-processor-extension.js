@@ -14,9 +14,9 @@ module.exports = class AsciidoctorIncludeProcessorExtension {
           if (!processCallback) {
             return
           }
-          const include = processCallback(doc, target, doc.reader.$cursor())
+          const include = processCallback(doc, target, doc.reader.getCursor())
           if (include != null) {
-            reader.$push_include(include.contents, include.file, include.path, 1, attributes)
+            reader.pushInclude(include.contents, include.file, include.path, 1, attributes)
           }
         })
       })
