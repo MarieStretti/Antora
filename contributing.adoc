@@ -389,8 +389,10 @@ This flag is reserved for non-software changes, as suggested by the example.
 
 To contribute code or documentation to the project:
 
-. Fork the project
-. Create a dedicated branch named with the issue number it fixes and a short textual hint.
+. Fork the project.
+. Create a dedicated branch in your fork with your changes.
+. Name the branch after the issue number it fixes along with a short textual hint.
+For example:
 
  issue-2-init-gulp-build
 
@@ -401,21 +403,28 @@ A merge request (MR) must close an issue!
 
 When you're ready to submit a MR to the project:
 
-. Rebase your branch on the latest master
-. Write a concise but explicit commit message
-.. Write the message in lowercase and imperative tense
-.. The subject goes on the first line of the commit message (required)
-.. Separate the subject line from body with a blank line
-.. Each body line should succinctly identify an important change or why that change was made (optional)
-.. Each MR must close an issue
-... In some select cases, the implementation of an issue might be broken up into separate commits if they can be tested and work in isolation.
-
+. Write a concise but explicit commit message.
+ .. Write the message in lowercase and imperative tense.
+ .. The subject goes on the first line of the commit message (required).
+ .. Separate the subject line from body with a blank line.
+ .. Each body line should succinctly identify an important change or why that change was made (optional).
++
 .Commit message example
 ----
-contributing(close #13): add merge request steps
+contributing.adoc: add merge request steps
 ----
+. Rebase your branch on the latest master.
+. Push the branch to your fork.
+. Create an MR from your branch (using the URL shown in the terminal when you push).
+ .. Each MR must close an issue.
+ .. Begin the title of the MR with the issue it resolves followed by a restatement of the issue (e.g., `resolves #2 initialize gulp build`)
+ .. In some select cases, the implementation of an issue might be broken up into separate commits if they can be tested and work in isolation.
 
 Once you've submitted your MR, a project member will review it.
+If changes are required, the project member will request them in a comment on the MR.
+You can either append a new commit or rewrite the existing commit, depending on what you think is most appropriate.
+
+Once all change requests have been satisified, the project member will merge the MR using a fast-forward merge (with merge commit).
 
 .Future: Commit message linting
 ****
