@@ -72,16 +72,8 @@ However, you do need a https://gitlab.com/users/sign_in[GitLab.com account] to f
 
 If you discover an error or omission in the main application code, tests, or documentation, don't hesitate to submit an issue so we can correct it or submit a patch (via a merge request) for review.
 
-A merge request should always addressing an open issue.
+A merge request should always address an open issue.
 If an issue does not yet exist for the change you're submitting, please create one first.
-Use the following commit message template when submitting a fix:
-
-....
-resolves #issue_number summarize the issue
-
-* explanation of change if necessary
-* more explanation of change if necessary
-....
 
 Please study the {uri-issue-labels}[issue labels] to understand what they mean and how to apply them.
 Issues are organized into categories, represented by the part of the label text in brackets.
@@ -336,7 +328,7 @@ We don't use StandardJS command line tool.
 We use its rules and configuration through ESLint.
 There are {uri-eslint-ide}[text editor plugins for ESLint] that you can use, if that's what you prefer.
 
-While ESLint checks for syntax, it doesn't cover all the asthetics of a code style.
+While ESLint checks for syntax, it doesn't cover all the aesthetics of a code style.
 For that, we employ {uri-prettier}[prettier].
 To run prettier to automatically format your code, run the following gulp task:
 
@@ -362,9 +354,9 @@ If you're working on tests or refactoring tested code, you can run the test suit
 
 This command runs the test suite and coverage report each time you save the test or the code under test.
 
-=== Continous Integration
+=== Continuous Integration
 
-Both the linter and the test suite documented above are run in a continous integration (CI) environment on every commit to master and on every merge request.
+Both the linter and the test suite documented above are run in a continuous integration (CI) environment on every commit to master and on every merge request.
 A merge request cannot be merged unless the CI pipeline succeeds.
 
 The CI pipeline is run in the https://docs.gitlab.com/ce/ci/[GitLab CI] environment using the https://store.docker.com/images/node[node:8] docker image.
@@ -395,12 +387,42 @@ This flag is reserved for non-software changes, as suggested by the example.
 
 === Fork the Project
 
-WRITEME
+To contribute code or documentation to the project:
+
+. Fork the project
+. Create a dedicated branch named with the issue number it fixes and a short textual hint.
+
+ issue-2-init-gulp-build
 
 === Submit a Merge Request
 
-WRITEME
+Antora is an issue-driven project.
+A merge request (MR) must close an issue!
 
-=== Coding Style: Guidelines and Expectations
+When you're ready to submit a MR to the project:
 
-WRITEME
+. Rebase your branch on the latest master
+. Write a concise but explicit commit message
+.. Write the message in lowercase and imperative tense
+.. The subject goes on the first line of the commit message (required)
+.. Separate the subject line from body with a blank line
+.. Each body line should succinctly identify an important change or why that change was made (optional)
+.. Each MR must close an issue
+... In some select cases, the implementation of an issue might be broken up into separate commits if they can be tested and work in isolation.
+
+.Commit message example
+----
+contributing(close #13): add merge request steps
+----
+
+Once you've submitted your MR, a project member will review it.
+
+.Future: Commit message linting
+****
+We're experimenting with the wording and structure of our commit messages.
+Once we've determined what information we want in a commit message we'll be implementing a set of commit message rules.
+****
+
+// === Coding Style: Guidelines and Expectations
+
+// WRITEME
