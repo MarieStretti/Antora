@@ -1,0 +1,6 @@
+name: antora
+title: Antora
+version: 'master'
+nav:
+- modules/ROOT/nav.adoc
+- modules/playbook/nav.adoc

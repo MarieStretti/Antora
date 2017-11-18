@@ -1,0 +1,52 @@
+= Run Antora and Generate the Site
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+:experimental:
+:!table-caption:
+
+[abstract]
+Now that you've configured your playbook, it's time to run Antora.
+//Now that you've told Antora which content to use and which UI to apply to that content, it's time to run it.
+
+[#using-private-repositories]
+.Using private repositories
+IMPORTANT: If your playbook uses private repositories, you must have an SSH agent running with the identity (i.e., SSH key) you've linked to your GitHub account.
+Otherwise, the generator will fail.
+The SSH agent allows the generator to authenticate with private repositories on your behalf.
+To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent[Generating a new SSH key and adding it to the ssh-agent].
+
+You invoke Antora by passing the `generate` command to Node (which runs the [.path]_generate.js_ script):
+
+ $ node generate
+
+This script loads and executes Antora, passing along any trailing configuration flags and switches.
+For example, you can specify a custom playbook as follows:
+
+ $ node generate --playbook=custom-site
+
+Depending on your internet connection speed, it may take anywhere from a few seconds to several minutes to complete the generation process the first time you run it.
+That's because it first has to download (i.e., `git clone`) all the repositories specified in the playbook.
+
+When you run Antora again, the repositories are automatically updated (i.e., `git pull`).
+These subsequent runs complete much faster because only the changes to the repositories have to be downloaded.
+
+The repositories are cached under the [.path]_build_ directory.
+If you remove the [.path]_build_ directory, the repositories will have to be downloaded again from scratch.
+
+When generation is complete, you'll see a URL in the terminal that is specific to your machine.
+
+[.output]
+....
+Loading theme bundle from GitHub release: ...
+Using content from repository: ...
+...
+Finished in 0:00:45
+Site can be viewed at file:///home/user/projects/docs-site/build/site
+....
+
+You can follow this URL to preview the site locally in your browser.
+You do not need to publish the site to a server in order to preview it.
+Depending on what you built, you may have to navigate to an HTML file from that location to see the actual site.

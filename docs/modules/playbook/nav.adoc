@@ -1,0 +1,3 @@
+* xref:index.adoc[Playbook]
+** xref:configure-playbook.adoc[Configure Playbook]
+** xref:author-mode.adoc[Configure Author Playbook]
