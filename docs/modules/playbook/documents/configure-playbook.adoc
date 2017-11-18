@@ -1,0 +1,134 @@
+= Configure a Playbook
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+:experimental:
+
+[abstract]
+With Antora's playbook, you can control what content is included in your site.
+It's particularly useful for creating a partial site for local preview.
+
+//The playbook makes it possible for writers to control what content is included in the site without needing any knowledge of programming knowledge.
+
+== The default playbook
+
+The default playbook is the file _site.yml_ at the root of the project.
+It's written in YAML, a common configuration language for configuring automated tasks.
+Antora automatically detects and uses this file if you don't specify an override.
+
+Here's an example of a playbook:
+
+.site.yml
+[source,yaml,subs=attributes+]
+----
+site:
+  title: Docs Demo Site
+content: <1>
+- repository: https://github.com/my-antora-demo/server-docs <2>
+  branches: v* <3>
+- repository: https://github.com/my-antora-demo/aspnet-docs
+  branches: master
+theme:
+  repository: https://github.com/my-antora-demo/docs-site-ui
+----
+<1> Content key
+<2> Repository key
+<3> Branches key
+
+The content key is likely the one you'll tune most often.
+It contains an array of repository specifications.
+
+At a minimum, you must specify the location of each public repository using the `repository` key.
+Antora will then scan and use every branch in that repository that begins with "`v`" or is named "`master`".
+
+=== Modify site.yml
+
+If you only want to generate pages for a single component, you can trim the content key to a single entry.
+For example, here's how you'd configure the `content` key so that Antora only generates the server component (using the default branch set):
+
+//SAW: define "default branch set"
+
+.site.yml (excerpt)
+[source,yaml]
+----
+content:
+- repository: https://github.com/my-antora-demo/server-docs
+----
+
+== Create a custom playbook
+
+Instead of modifying the main playbook, you can create a custom playbook and pass it to Antora.
+
+Start by creating a new file named [.path]_custom-site.yml_.
+Populate it as follows:
+
+.custom-site.yml
+[source,yaml,subs=attributes+]
+----
+site:
+  title: Custom Docs Site
+content:
+- repository: https://github.com/my-antora-demo/server-docs
+theme:
+  repository: https://github.com/my-antora-demo/docs-site-ui
+----
+
+Then pass your custom playbook to Antora using the `--playbook` flag and the custom playbook's name.
+
+ $ node generate --playbook=custom-site
+
+TIP: You don't have to specify the file extension (i.e., `.yml`).
+It gets added automatically if missing.
+
+== Specify source branches
+
+If you want to limit the branches Antora scans and uses, you can specify an array of branch patterns using the branches key.
+
+Each pattern is either an exact branch name or a shell glob pattern such as as `v3.*`.
+If the pattern starts with a `!` character, then it is negated (i.e., the matches are excluded).
+This is how you can deselect branches that were matched by a previous glob.
+
+For example, let's say you want to include all 3.x versions of the server component except for 3.2.
+You'd enter the following branches values into the playbook:
+
+.site.yml (excerpt)
+[source,yaml]
+----
+- repository: https://github.com/my-antora-demo/server-docs
+  branches:
+  - v3.*
+  - '!v3.2'
+----
+
+IMPORTANT: A negated value must be enclosed in single quotes, per YAML rules.
+
+Here's how you'd exclude all branches that end in `-beta`.
+
+.site.yml (excerpt)
+[source,yaml]
+----
+- repository: https://github.com/my-antora-demo/server-docs
+  branches:
+  - v*
+  - '!v*-beta'
+----
+
+== component.yml
+
+The file system name of the repository and branch are ignored once the content is retrieved.
+Instead, metadata about the component is read from a configuration file in the repository.
+Inside each branch is a [.path]_component.yml_ file at the docs component root.
+The file defines the name and version of the component.
+
+As an example, here's the [.path]_component.yml_ file in the v5.0 branch of the server repository:
+
+.component.yml (excerpt)
+[source,yaml]
+----
+name: server
+version: '5.0'
+----
+
+This decoupling allows you to have more than one branch that provides the same version of a documentation component, which you can then toggle by configuring the branches key in the playbook.

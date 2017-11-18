@@ -1,0 +1,8 @@
+You configure Antora to generate the documentation site you want to make using a playbook.
+The playbook provides Antora with the following information:
+
+* [x] Which content repositories and branches to feed into Antora's generator.
+* [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages in the site.
+* [x] A list of paths of aspect navigation domains to use (navigation which is not linked to any given component).
+* [x] The URL of the published site (used for canonical URLs and URLs in the sitemap).
+* [x] The component which sits at the root of the site (i.e., the landing content).

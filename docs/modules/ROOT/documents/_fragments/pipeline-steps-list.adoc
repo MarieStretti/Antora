@@ -1,0 +1,12 @@
+When Antora runs, it performs the following steps:
+
+. Clones or fetches the content repositories using git via NodeGit.
+. Resolves and downloads the UI bundle using the GitLab or GitHub API (unless it's already cached).
+. Locates and reads all AsciiDoc files.
+. Locates and reads all navigation files.
+. Converts AsciiDoc files to embeddable HTML.
+. Wraps the embeddable HTML in the page template and adds the navigation tree, which is also converted to HTML.
+. Reads asset files (images, attachments, and UI resources).
+. Writes all site files to [.path]_build/site_.
+
+//The following sections describe a few of these steps in more detail.

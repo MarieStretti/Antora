@@ -1,0 +1,57 @@
+= Use Author Mode
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:experimental:
+
+[abstract]
+Although the primary function of Antora is to generate a site for publishing, it also serves as a tool for the author.
+By configuring the generator to use a local repository, the author can preview their local content, including content which is not yet committed.
+This section explains how this mode is activated and how it functions.
+
+== Activate author mode
+
+Author mode is activated when you configure the playbook to use a local clone for one or more of the content repositories.
+Antora will use the repository as it is on your local machine instead of cloning it from its remote location.
+This scenario assumes you've already cloned a repository and want to incorporate it into the site generation.
+
+To begin, create a folder named [.path]_workspace_ in your docs-site project.
+
+ $ mkdir workspace
+
+Switch to the newly created directory and clone one of the repositories:
+
+ $ cd workspace &&
+   git clone https://github.com/my-antora-demo/server-docs
+
+Next, open your playbook file and configure it to use this clone.
+You can specify the repository either as a path relative to the root of the docs-site project or as an absolute path.
+
+.site.yml (excerpt)
+----
+content:
+- repository: workspace/server-docs
+----
+
+Now when you run Antora, the contents of your local repository will be incorporated into the pipeline.
+
+== Author mode order of operations
+
+You may be wondering what branches the generator selects when the repository is local and whether it will pick up your uncommitted changes.
+Here's how a local repository is handled:
+
+* The repository is used in place instead of being cloned into build/sources.
+* The repository is not updated; it's assumed the author will manage the repository.
+
+Here's how the branches are selected in author mode:
+
+* Both local branches and remote branches associated with the remote named origin are considered.
+* If a local branch has the same name as a remote branch, the local branch is chosen.
+* The contents of the working tree get used in place of the files from the current branch.
+Aside from its name, the current branch is effectively ignored.
+
+If you want to use multiple working trees, simply clone the repository multiple times and configure multiple entries in the playbook.
+You can use the `branches` key to filter out the names of branches you don't want.

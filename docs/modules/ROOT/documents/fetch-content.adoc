@@ -1,0 +1,31 @@
+= Content Fetching
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+[abstract]
+Antora's first step--probably the most important--is the fetching of the content.
+This is the step that makes Antora so versatile.
+Here's how it works.
+
+. The list of repositories is read from a playbook ([.path]_site.yml_).
+
+. Using git (via NodeGit), these repositories are cloned or updated and stored under [.path]_build/sources_
+.. Each time Antora is run, the clone is synchronized with the remote repository.
+.. The repositories are cloned bare, which means you won't actually see any files inside these directories aside from the [.path]_.git_ folder.
+
+. Using the information from the playbook, Antora iterates over all the branches in these repositories and decides which ones to use.
+
+. Those branches are scanned and their files put into a vinyl collection.
+A vinyl collection is an in-memory set of virtual file objects.
+
+. Each file in a branch is associated with the component name and version defined in the [.path]_component.yml_ at the root of the branch.
+
+From this point forward, the rest of Antora's pipeline interfaces only with the virtual file collection, not the git repositories.
+This abstracts away the details of each file's origin.
+However, the virtual files retain relevant metadata about each file provided by the git repository.
+
+NOTE: [.path]_build/sources_ may change to [.path]_build/content_ in the future.

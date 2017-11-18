@@ -1,0 +1,48 @@
+= The Playbook
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+////
+:ci-job-name: docs-prod-next
+// URIs:
+:uri-ui-repo: https://github.com/cb-docs-demo-201710/docs-site-ui
+:uri-git: https://git-scm.com
+:uri-git-dl: {uri-git}/downloads
+:uri-node: https://nodejs.org
+:uri-nodegit: http://www.nodegit.org
+:uri-nodegit-dev: http://www.nodegit.org/guides/install/from-source
+:uri-nvm: https://github.com/creationix/nvm
+:uri-nvm-install: {uri-nvm}#installation
+:uri-site-generator: https://gitlab.com/opendevise-projects/opendevise-site-generator-express
+:uri-yarn: https://yarnpkg.com
+:uri-ui-designer-guide: {uri-ui-repo}/blob/master/README.adoc
+////
+
+WARNING: This documentation is ahead of Antora's development. It will not be accurate until Antora is officially released.
+
+[abstract]
+include::{fragmentsdir}/playbook-summary.adoc[]
+
+////
+There's one playbook preconfigured in this project.
+Let's explore its contents.
+Following that, you'll learn how to make your own playbook.
+////
+
+////
+The UI is configured by pointing to the repository that hosts the UI project.
+Details about how the UI is created, bundled, published, and consumed can be found <<UI Loading>>.
+
+If you're interested in what happens behind the pipeline's scenes, head to <<The Generator Pipeline>>.
+
+If you want to learn about creating and editing pipeline-compliant documents, see the xref:tech-writers-guide.adoc#[tech writer's guide].
+
+== Next Steps
+
+You now understand how to configure the site generator using a playbook and work with local content.
+You can now move on to the xref:tech-writers-guide.adoc#[tech writer's guide] to learn how to work with the content in the site, including how to make references between pages, or read the xref:aspect-navigation.adoc#[aspect navigation guide] to learn how to create task flows that span documentation components.
+////
