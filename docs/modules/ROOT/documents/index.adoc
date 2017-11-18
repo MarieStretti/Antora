@@ -2,8 +2,10 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+// Settings
 :idprefix:
 :idseparator: -
 
-[abstract]
+WARNING: This documentation is ahead of Antora's development. It will not be accurate until Antora is officially released.
+
 include::{fragmentsdir}/pipeline-steps-list.adoc[]

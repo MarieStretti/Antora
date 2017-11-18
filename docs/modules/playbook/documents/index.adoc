@@ -1,16 +1,8 @@
 = The Playbook
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
-:icons: font
 endif::[]
-ifdef::env-github[]
-:important-caption: :exclamation:
-:note-caption: :paperclip:
-:warning-caption: :warning:
-endif::[]
-// Settings:
-//:toc:
-//:toc-title: Contents
+// Settings
 :idprefix:
 :idseparator: -
 
@@ -29,6 +21,8 @@ endif::[]
 :uri-yarn: https://yarnpkg.com
 :uri-ui-designer-guide: {uri-ui-repo}/blob/master/README.adoc
 ////
+
+WARNING: This documentation is ahead of Antora's development. It will not be accurate until Antora is officially released.
 
 [abstract]
 include::{fragmentsdir}/playbook-summary.adoc[]

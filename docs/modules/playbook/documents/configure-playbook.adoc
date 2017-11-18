@@ -1,12 +1,6 @@
 = Configure a Playbook
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
-:icons: font
-endif::[]
-ifdef::env-github[]
-:important-caption: :exclamation:
-:note-caption: :paperclip:
-:warning-caption: :warning:
 endif::[]
 :idprefix:
 :idseparator: -

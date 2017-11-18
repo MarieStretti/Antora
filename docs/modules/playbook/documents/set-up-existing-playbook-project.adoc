@@ -2,9 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+// Settings
 :idprefix:
 :idseparator: -
 :experimental:
+// URIs
 :uri-antora-repo: https://gitlab.com/antora/antora-direct
 // update uri once repo is renamed
 
