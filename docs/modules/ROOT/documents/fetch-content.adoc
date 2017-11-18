@@ -1,6 +1,12 @@
 = Content Fetching
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
+:icons: font
+endif::[]
+ifdef::env-github[]
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:warning-caption: :warning:
 endif::[]
 :idprefix:
 :idseparator: -
@@ -10,16 +16,21 @@ Antora's first step--probably the most important--is the fetching of the content
 This is the step that makes Antora so versatile.
 Here's how it works.
 
-The list of repositories is read from the playbook ([.path]_site.yml_).
-Antora then uses git (via NodeGit) to clone or update these repositories.
-The cloned repositories are stored under [.path]_build/sources_ (though this may be changed to [.path]_build/content_ in the future).
-Each time Antora is run, the clone is synchronized with the remote repository.
-Currently, the repositories are cloned bare, which means you won't actually see any files inside these directories aside from the [.path]_.git_ folder.
+. The list of repositories is read from a playbook ([.path]_site.yml_).
 
-Antora then iterates over all the branches in these repositories and, using information from the playbook, decides which ones it will use.
-It then scans those branches and puts the files into a vinyl collection, which is an in-memory collection of virtual file objects.
-It associates each file in a branch with the component name and version defined in the [.path]_component.yml_ at the root of the branch.
-As such, the repository name and branch name don't matter once the file is read.
+. Using git (via NodeGit), these repositories are cloned or updated and stored under [.path]_build/sources_
+.. Each time Antora is run, the clone is synchronized with the remote repository.
+.. The repositories are cloned bare, which means you won't actually see any files inside these directories aside from the [.path]_.git_ folder.
 
-The rest of Antora's pipeline interfaces only with this virtual file collection, not the git repositories, thus abstracting away the details of each file's origin.
-// However, the virtual files do still retain some metadata about each file provided by the git repository.
+. Using the information from the playbook, Antora iterates over all the branches in these repositories and decides which ones to use.
+
+. Those branches are scanned and their files put into a vinyl collection.
+A vinyl collection is an in-memory set of virtual file objects.
+
+. Each file in a branch is associated with the component name and version defined in the [.path]_component.yml_ at the root of the branch.
+
+From this point forward, the rest of Antora's pipeline interfaces only with the virtual file collection, not the git repositories.
+This abstracts away the details of each file's origin.
+However, the virtual files retain relevant metadata about each file provided by the git repository.
+
+NOTE: [.path]_build/sources_ may change to [.path]_build/content_ in the future.

@@ -7,30 +7,45 @@ endif::[]
 
 [abstract]
 //As described in the {uri-ui-designer-guide}[UI Designer Guide], each UI bundle is stored as a zip that is attached to a release in the GitHub repository that hosts the UI project.
-Each UI bundle is stored as a zip that is attached to a release in the GitLab or GitHub repository that hosts the UI project.
-Antora resolves the latest release of the UI unless specified using the `tag` key.
-It then downloads the UI bundle attached to that release.
-Next, it extracts this zip file and adds the file contents to the vinyl collection previously described.
-From that point forward, the pipeline interfaces only with the UI files in the virtual file collection, thus abstracting away the details of the UI's origin.
+Each UI bundle is stored as a zip that is attached to a release in the GitLab or GitHub repository that hosts your site's UI project.
+Here's how it works.
+
+. Antora resolves the latest release of the UI unless specified using the `tag` key.
+
+. It downloads the UI bundle attached to that release.
+
+. It extracts this zip file and adds the file contents to the vinyl collection previously described in xref:fetch-content.adoc[].
+
+From this point forward, the pipeline interfaces only with the UI files in the virtual file collection, thus abstracting away the details of the UI's origin.
 
 The UI bundle is cached inside [.path]_build_ after the first time you run Antora.
 The cached bundle is used automatically on subsequent runs.
 New UI releases *are not* picked up automatically.
 
-If you want to force the generator to resolve and download a new UI bundle, you must pass the `--skip-theme-cache` switch:
+== Fetch a new UI bundle
+
+If you want to force Antora to resolve and download a new UI bundle, you must pass the `--skip-theme-cache` switch:
 
  $ node generate --skip-theme-cache
 
-The alternative is to simply remove the build/themes directory, which is where the cache is stored.
+The alternative is to remove the [.path]_build/themes_ directory, which is where the cache is stored.
+
+=== Rate limits and personal access tokens
 
 If you fetch the UI often, you might find that you bump into the GitLab or GitHub rate limit.
-If this happens, you can increase the limit by passing a https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/[personal access token] when you run the generator:
+If this happens, you can increase the limit by passing a https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/[personal access token] when you run Antora:
 
  $ GITHUB_TOKEN=xxxxx node generate --skip-theme-cache
+
+////
+SAW: This content belongs in the UI bundle repo docs.
 
 The UI provides both the design assets (e.g., CSS, fonts, shared images) as well as the template(s) for the pages.
 Antora reads each AsciiDoc document, collects metadata from the document header, converts the document to embeddable HTML, then passes all the information to the template in the form of a page model.
 The template then arranges the information and emits a standalone HTML page.
 That page is put back into the virtual file collection in place of the AsciiDoc file, now ready to be written to disk as a page in the site.
 
-//To learn more about designing a UI, visit the {uri-ui-designer-guide}[UI Designer Guide].
+[...]
+
+To learn more about designing a UI, visit the {uri-ui-designer-guide}[UI Designer Guide].
+////

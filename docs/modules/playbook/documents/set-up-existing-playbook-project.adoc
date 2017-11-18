@@ -1,0 +1,69 @@
+= Set Up an Existing Playbook Project
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+:experimental:
+:uri-antora-repo: https://gitlab.com/antora/antora-direct
+// update uri once repo is renamed
+
+[abstract]
+The Antora pipeline is controlled by a playbook which is hosted in a playbook project.
+// The next step is to fetch the playbook project and initialize it.
+
+*This page is for people joining a documentation project that already uses Antora.*
+
+== Fetch the playbook project
+
+To start, open a terminal and clone the playbook project using git:
+
+[subs=attributes+]
+ $ git clone your-playbook-repo &&
+   cd "`basename $_`"
+
+//You can copy and paste the whole command directly into your terminal.
+
+The command clones the playbook project then switches to the project folder.
+Stay in this project folder in order to initialize the project using Yarn.
+
+== Install dependencies
+
+Initializing the project means downloading and installing the dependencies (i.e., the required software) for the project.
+That's the job of Yarn.
+
+In your terminal, execute the following command from the root folder of the playbook project:
+
+ $ yarn
+
+The default command in Yarn is `install`, so running `yarn` by itself is the equivalent of running `yarn install`.
+The install command uses dependency information defined in [.path]_package.json_ and [.path]_yarn.lock_ to resolve dependencies.
+Yarn installs these dependencies inside the project under the [.path]_node_modules_ folder.
+
+////
+NOTE: If you run into problems while installing dependencies, return to <<troubleshooting-nodegit-install>>.
+////
+
+=== Refresh dependencies
+
+You must run the `yarn` command each time the `yarn.lock` file is changed.
+This refreshes the dependencies, fetching any dependencies you don't yet have installed and cleaning out old ones.
+Since Yarn runs very quickly, it doesn't hurt to run it each time you run `git pull`.
+
+=== About dependencies
+
+The playbook project only has one top-level dependency, which is (pending release) _antora_.
+You can see that this is the only dependency declared in [.path]_package.json_:
+
+.package.json (excerpt)
+[source,json,subs=attributes+]
+----
+"dependencies": {
+  "antora": "{uri-antora-repo}#v1.0.0"
+},
+----
+
+*You do not need to clone the Antora repository listed in this excerpt*.
+Yarn does that for you.
+
+Antora has its own transitive dependencies, but those are fetched automatically by Yarn.

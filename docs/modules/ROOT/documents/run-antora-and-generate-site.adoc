@@ -5,24 +5,20 @@ endif::[]
 :idprefix:
 :idseparator: -
 :experimental:
-:!table-caption:
 
 [abstract]
-Now that you've configured your playbook, it's time to run Antora.
+Once you've configured your playbook, it's time to run Antora.
 //Now that you've told Antora which content to use and which UI to apply to that content, it's time to run it.
 
-[#using-private-repositories]
-.Using private repositories
-IMPORTANT: If your playbook uses private repositories, you must have an SSH agent running with the identity (i.e., SSH key) you've linked to your GitHub account.
-Otherwise, the generator will fail.
-The SSH agent allows the generator to authenticate with private repositories on your behalf.
-To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent[Generating a new SSH key and adding it to the ssh-agent].
+== Run Antora
 
-You invoke Antora by passing the `generate` command to Node (which runs the [.path]_generate.js_ script):
+You invoke Antora by passing the `generate` command to Node.
+This command runs the [.path]_generate.js_ script.
 
  $ node generate
 
-This script loads and executes Antora, passing along any trailing configuration flags and switches.
+The script loads and executes Antora and passes any trailing configuration flags and switches.
+// Move this to a fragment or file in the playbook module
 For example, you can specify a custom playbook as follows:
 
  $ node generate --playbook=custom-site
@@ -33,8 +29,19 @@ That's because it first has to download (i.e., `git clone`) all the repositories
 When you run Antora again, the repositories are automatically updated (i.e., `git pull`).
 These subsequent runs complete much faster because only the changes to the repositories have to be downloaded.
 
-The repositories are cached under the [.path]_build_ directory.
+The repositories are cached under the [.path]_build/sources_ directory.
 If you remove the [.path]_build_ directory, the repositories will have to be downloaded again from scratch.
+
+[#using-private-repositories]
+=== Private GitHub repositories
+
+If your playbook uses private repositories, you must have an SSH agent running with the identity (i.e., SSH key) you've linked to your GitHub account.
+Otherwise, Antora will fail.
+
+The SSH agent allows Antora to authenticate with private repositories on your behalf.
+To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent[Generating a new SSH key and adding it to the ssh-agent].
+
+== Preview site locally
 
 When generation is complete, you'll see a URL in the terminal that is specific to your machine.
 
