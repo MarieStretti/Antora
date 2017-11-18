@@ -1,0 +1,48 @@
+= ADR 0005: Repository Name
+:revdate: 2017-11-17
+
+== Status
+
+Pending
+
+== Context
+
+When we began work on Antora, we knew we wanted to make the pipeline modular, but we weren't sure whether we wanted to use a dedicated repository for each software component or manage all the source code in a single repository.
+To avoid occupying the repository name *antora* prematurely, we decided to play it safe and use the name *antora-direct*.
+
+Since then, we've decided to organize the antora-direct repository as a monorepo (in the style of Lerna).
+This decision was made to simplify development in the early stages, before any releases were made.
+At the time of writing, the repository holds all the core parts of Antora minus the UI.
+These components are organized under the [.path]_packages_ folder.
+
+For newcomers, the role of this repository is not obvious.
+As a result, Antora currently lacks a "`home base`".
+
+== Decision
+
+Regardless of whether we decide to graduate core components out into dedicated repositories, we know there will always be some sort of foundation for the project.
+That foundation can serve as the home base repository.
+
+At the most basic level, the repository can provide a high-level overview of Antora and serve as a sign post to communicate where various parts of Antora can be found.
+It can also serve as the umbrella for issues and docs that don't fit with any one component, but rather belong to the project as a whole.
+The scope of this repository may change over time, but we'd still always have a use for it.
+
+Therefore, the decision has been made to rename this repository from *antora-direct* to *antora*.
+In the time leading up to the first release, this repository will host all the code except for the UI.
+Eventually, we forsee it transitioning into a gateway repository as components are depleted from it.
+
+== Consequences
+
+By naming this repository *antora*, it's going to become the repository that newcomers are likely going to click on first.
+That's a good thing because it will offer an obvious place to start.
+
+The downside is that it could give the impression that the whole of Antora is confined to this one repository.
+However, other modular projects have used this naming pattern (e.g., jekyll, middleman, metalsmith) and there's no evidence that people misunderstand its purpose and overlook other parts of the ecosystem.
+What we do see evidence of is newcomers being confused when the main repository is missing.
+
+The purpose of this repository may need to evolve over time, and that may mean developers have to update their workflow and that issues have to be migrated to other repositories.
+Fortunately, GitLab provides the tools to be able to handle these transitions, so we're confident we can make them smoothly.
+What we don't know is whether this will break references to merge requests in the git commit log that were made before the name change, so that's a risk.
+
+It's also possible to change the display name of the repository without changing the repository name (i.e., the repository path).
+That would allow us to add a qualifier to the name (e.g., `Antora (Foundation)`) to make the role of the repository more clear.
