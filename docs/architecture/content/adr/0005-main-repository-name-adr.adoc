@@ -1,5 +1,5 @@
-= ADR 0005: Repository Name
-:revdate: 2017-11-17
+= ADR 0005: Main Repository Name
+:revdate: 2017-11-18
 
 == Status
 
@@ -15,8 +15,8 @@ This decision was made to simplify development in the early stages, before any r
 At the time of writing, the repository holds all the core parts of Antora minus the UI.
 These components are organized under the [.path]_packages_ folder.
 
-For newcomers, the role of this repository is not obvious.
-As a result, Antora currently lacks a "`home base`".
+For newcomers, the role of this repository (antora-direct) is not obvious.
+As a result, Antora lacks a "`home base`".
 
 == Decision
 
@@ -24,16 +24,16 @@ Regardless of whether we decide to graduate core components out into dedicated r
 That foundation can serve as the home base repository.
 
 At the most basic level, the repository can provide a high-level overview of Antora and serve as a sign post to communicate where various parts of Antora can be found.
-It can also serve as the umbrella for issues and docs that don't fit with any one component, but rather belong to the project as a whole.
+It can also serve as the umbrella for issues and documentation that don't fit with any one component, but rather belong to the project as a whole.
 The scope of this repository may change over time, but we'd still always have a use for it.
 
-Therefore, the decision has been made to rename this repository from *antora-direct* to *antora*.
+Therefore, the decision has been made to rename the repository from *antora-direct* to *antora*.
 In the time leading up to the first release, this repository will host all the code except for the UI.
-Eventually, we forsee it transitioning into a gateway repository as components are depleted from it.
+Eventually, we foresee it transitioning into a gateway repository as components are depleted from it.
 
 == Consequences
 
-By naming this repository *antora*, it's going to become the repository that newcomers are likely going to click on first.
+By naming the repository *antora*, it's going to become the repository that newcomers are likely going to click on first.
 That's a good thing because it will offer an obvious place to start.
 
 The downside is that it could give the impression that the whole of Antora is confined to this one repository.
