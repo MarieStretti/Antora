@@ -6,6 +6,30 @@ endif::[]
 :idprefix:
 :idseparator: -
 
-WARNING: This documentation is ahead of Antora's development. It will not be accurate until Antora is officially released.
+WARNING: This documentation is ahead of Antora's development.
+It will not be accurate until Antora is officially released.
+
+Antora is an end-to-end solution.
+It collects source content and outputs a fully-prepared site.
+No additional scripts are needed.
+This orchestration makes the Antora pipeline extremely CI-friendly.
+All the CI job has to worry about is preparing the environment and launching a single command.
+
+== Docs and configuration as code
+
+An Antora pipeline has a modular architecture.
+It consists of a playbook project, content repositories, a UI bundle, and Antora's pipeline packages, all of which are discrete parts.
+The playbook project drives Antora and your documentation site generation.
+
+The separation of these parts keeps the logic and configuration separate from the content.
+The content repositories are just content.
+They can be enlisted, per branch, into the site generation process.
+This strategy makes it possible for content branches to be reused, substituted, deactivated, or archived.
+This is a sharp contrast from many other site generators, which intermix all these concerns, making the documentation difficult to manage, maintain, and enhance.
+
+Let's go over what environment is needed to run Antora.
+You'll then find out how to set it up and run it.
+
+== Pipeline steps
 
 include::{fragmentsdir}/pipeline-steps-list.adoc[]

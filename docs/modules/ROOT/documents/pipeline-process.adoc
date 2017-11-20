@@ -1,0 +1,62 @@
+= Pipeline Process
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+//The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
+
+When Antora runs, it performs the following operations:
+
+Read playbook::
+Receives a playbook and reads it.
+
+Locate content repositories::
+Searches for and finds the content repositories and their branches listed in the playbook.
+These repositories can be local and remote.
+
+Clone or fetch remote content repository branches::
+Downloads the contents of each branch specified in the playbook into content repositories.
+//using git via NodeGit
+
+Locate UI bundle::
+Searches for and finds the UI bundle listed in the playbook.
+The UI bundle can be cached locally or remote.
+
+Download UI bundle::
+Downloads the UI bundle if it isn't cached.
+//using the GitLab or GitHub API
+
+Identify matching branches::
+Scans the local content repositories and selects the branches that match the values in the playbook.
+
+Aggregate files::
+Collects all of the files--text, images, samples, and other supporting materials--from the matched branches.
+
+Organize files into a content catalog::
+Sorts the aggregated files into a content catalog.
+The files are classified by documentation component, version, format and other assigned metadata values.
+
+////
+Read AsciiDoc files::
+Antora selects the AsciiDoc files from content catalog and reads them into the appropriate processing stream.
+
+Read navigation files::
+Antora selects the navigation files from the content catalog and reads them into the appropriate processing stream..
+
+Convert AsciiDoc files::
+Antora converts the AsciiDoc files to embeddable HTML with Asciidoctor.
+
+Wrap converted AsciiDoc content in page template::
+Antora wraps the embeddable HTML in the assigned page template from the UI bundle.
+
+Convert navigation tree::
+Antora converts the navigate tree to HTML and adds it to the site.
+
+Read asset files::
+images, attachments, and UI resources
+
+Write site files::
+Writes all site files to [.path]_build/site_.
+////

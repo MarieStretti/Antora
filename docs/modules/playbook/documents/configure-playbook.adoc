@@ -6,11 +6,10 @@ endif::[]
 :idseparator: -
 :experimental:
 
-[abstract]
+* [x] How to configure Antora using a playbook.
+
 With Antora's playbook, you can control what content is included in your site.
 It's particularly useful for creating a partial site for local preview.
-
-//The playbook makes it possible for writers to control what content is included in the site without needing any knowledge of programming knowledge.
 
 == The default playbook
 

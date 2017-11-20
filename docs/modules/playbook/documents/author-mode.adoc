@@ -7,10 +7,9 @@ endif::[]
 :idseparator: -
 :experimental:
 
-[abstract]
 Although the primary function of Antora is to generate a site for publishing, it also serves as a tool for the author.
-By configuring the generator to use a local repository, the author can preview their local content, including content which is not yet committed.
-This section explains how this mode is activated and how it functions.
+By configuring Antora to use a local repository, you can preview local content, including content you haven't committed.
+This page explains how this mode is activated and how it functions.
 
 == Activate author mode
 

@@ -7,7 +7,9 @@ endif::[]
 :idseparator: -
 :experimental:
 
-[abstract]
+* [x] How to launch the site generator.
+* [x] How to preview the generated site locally.
+
 Once you've configured your playbook, it's time to run Antora.
 //Now that you've told Antora which content to use and which UI to apply to that content, it's time to run it.
 
