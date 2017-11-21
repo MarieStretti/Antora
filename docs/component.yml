@@ -3,4 +3,5 @@ title: Antora
 version: 'master'
 nav:
 - modules/ROOT/nav.adoc
+- modules/navigation/nav.adoc
 - modules/playbook/nav.adoc
