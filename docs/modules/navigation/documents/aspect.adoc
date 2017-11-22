@@ -1,0 +1,121 @@
+= Aspect Navigation
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+An [.term]_aspect domain_ is a published set of pages that are sourced from multiple components and component versions versus one component or component version.
+The result is a free-form, cross-cutting domain.
+As such, an aspect domain only has a single version.
+
+You can use an aspect domain when you want to create a sequence of pages that use source material from multiple components.
+Examples of aspect domains may include pages grouped by role, such as Java developer or SysAdmin, or common workflows.
+////
+You create an aspect domain when you want the user to follow a sequence of pages through the site which are not already grouped together.
+////
+You might also create one if you want to present an alternate organization of pages for a single component version.
+
+When a visitor navigates to an aspect page (i.e., a page in an aspect domain), the visitor sees the navigation tree for that aspect domain instead of the navigation tree for the component in which that page resides.
+This behavior keeps the user in the flow of the aspect context.
+
+An aspect domain is created implicitly by defining a navigation tree for it.
+
+=== Define an aspect domain
+
+An aspect domain is defined using an aspect navigation file.
+This file can be stored anywhere in the playbook repository.
+
+The aspect navigation file is an AsciiDoc document that contains a single unordered list with a mandatory block title.
+Like regular xref:linked.adoc[linked navigation files], each top-level item in an aspect domain navigation file can have up to five levels of nested navigation, which are also defined as unordered lists.
+You can use the AsciiDoc include directive in an aspect navigation file.
+The include file must reside in the playbook repository and is resolved relative to the file that references it.
+
+The basename of the navigation file (minus the file extension) is used as the name of the aspect domain.
+You'll use this name to create a reference to an xref:ROOT:reference/aspect-page.adoc[aspect page] from outside of the aspect domain.
+
+Here's an example of a navigation file for an aspect domain named `hello-app`:
+
+.aspect-nav/hello-app.adoc
+[source,asciidoc]
+----
+.Hello App
+* xref:3.5@app-runtime::install/downloading-and-starting-app.adoc[Install App]
+* xref:developer:get-started:build-a-hello-world-application.adoc[Create Your App]
+* xref:2.0@monitor:console:web-overview.adoc[Monitoring Console Overview]
+----
+
+The block title on the unordered list becomes the title of the aspect domain, which is displayed in the navigation domain selector dropdown menu located in the site toolbar.
+The block title may be an xref macro.
+If it is, the page it references is used as the index page for the aspect domain.
+If not, the first entry in the list is used as the index page.
+
+[#register]
+== Register an aspect domain
+
+To register the aspect domain, the aspect navigation file must be declared in the `nav` key of the playbook.
+Here's how we can register our `hello-app` aspect:
+
+.site.yml (excerpt)
+[source,yaml]
+----
+nav:
+- aspect-nav/hello-app.adoc
+----
+
+If you want to register all the navigation files in a particular directory, you can use a glob pattern:
+
+.site.yml (excerpt)
+[source,yaml]
+----
+nav:
+- aspect-nav/*.adoc
+----
+
+When you generate the site, you should now see the aspect domain in the navigation domain selector (adjacent to the Home icon).
+The title displayed in that list is the title of the unordered list in the navigation file.
+
+=== The site aspect
+
+You can promote one aspect domain to be available on all pages, called the site aspect.
+This global navigation appears under the *Tasks* tab in the navigation panel.
+
+To configure the site aspect, you add the `aspect` property to the `site` section in your playbook and assign a value that matches the stem (filename without the directories or file extension) of the aspect navigation file you want to use.
+For example:
+
+.site.yml (excerpt)
+[source,yaml]
+----
+site:
+  aspect: hello-app
+----
+
+Let's dive into more detail about what goes in the aspect navigation file.
+
+== The contents of an aspect navigation file
+
+The items in an aspect navigation file are predominantly cross references to pages within the site.
+The aspect navigation file not only defines the navigation used for an aspect domain, it also enlists each page referenced in the aspect domain, creating what is referred to as an [.term]_aspect page_.
+
+An aspect domain does not have a context, meaning it's not linked to a specific component or component version.
+Therefore, all the page references in the navigation must be fully qualified.
+In other words, you must specify all of these parts in the xref:
+
+ xref:component:module:topic/page.adoc[text]
+
+TIP: You can use an empty value to reference the ROOT module (e.g., `+xref:component::topic/page.adoc[text]+`).
+
+For pages in components which are versioned, you must also specify the version.
+
+ xref:version@component:module:topic/page.adoc[text]
+
+For example:
+
+[source,asciidoc]
+----
+* xref:3.5@app-runtime::install/downloading-and-starting-app.adoc[Install App]
+----
+
+When converted, this cross reference automatically links to that page and displays the corresponding aspect navigation tree instead of the app-runtime component's linked navigation.
+In other words, when a visitor clicks on one of the links in the navigation tree of an aspect domain, the visitor stays in the aspect domain instead of getting routed to the component domain where that page is sourced from.

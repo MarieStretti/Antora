@@ -1,0 +1,29 @@
+= Reference an Aspect Page
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+How does a visitor navigate into an aspect domain from a component domain?
+
+One way is to click on the title of the aspect domain in the domain selector (adjacent to the Home icon).
+By clicking on that entry, the visitor is taken to the index page of the aspect domain.
+
+But more often, you'll want the visitor to end up in an aspect domain by following a link in the content.
+If you were to use the xref macro in the content, the visitor would be taken to the normal page instead of the aspect page.
+So you need to provide an extra hint.
+
+To reference the aspect page instead of the normal page, define the `aspect` attribute in the xref macro.
+The value of this attribute is the name of the aspect domain.
+
+Here's an example:
+
+[source,asciidoc]
+----
+After you create your first application, make sure you xref:1.5@test::test-tutorial.adoc[test it, aspect=hello-app].
+----
+
+The page reference does not have to be fully qualified if you are linking to it from the same component and/or component version.
+That's because an aspect page is actually the same as the original, just with a different navigation tree.
