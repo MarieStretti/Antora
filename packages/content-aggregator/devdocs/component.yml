@@ -1,0 +1,5 @@
+name: content-aggregator
+title: Content Aggregator Component
+version: master
+nav:
+- modules/ROOT/nav.adoc
