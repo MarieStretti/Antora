@@ -17,8 +17,8 @@ It then completes the following actions using information provided by the playbo
 // definition of term: documentation component
  ** The documentation component is a group of documentation files which are versioned together and share a common subject.
  ** The documentation component can be located in a subpath of the repository's branch
-* Find information about each documentation component version
-* Collect all the files in each documentation component branch
+* Load information about each documentation component version
+* Collect all the files in the documentation component (i.e., `**/*.*`)
 * Group the files by documentation component version into a content aggregate
 
 // definition of term(light): content aggregate, see the data section for the heavy definition
@@ -42,7 +42,7 @@ The content aggregator component should:
 * Scan all branches per repository to find playbook matches
  ** Local branches shall take precedence over remote branches with the same name
 * Visit each matched branch and find the [.term]_component description file_ (antora.yml) at the root of each documentation component
-* Walk each documentation component subtree and collect input files
+* Walk each documentation component subtree and collect all input files (i.e., `**/*.*`)
 * Create a virtual file for each collected file (vinyl object)
 * Assign the virtual file to the files collection associated with a component version
  ** The component version is the primary association for a content file
