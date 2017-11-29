@@ -33,7 +33,7 @@ You can use the AsciiDoc include directive in an aspect navigation file.
 The include file must reside in the playbook repository and is resolved relative to the file that references it.
 
 The basename of the navigation file (minus the file extension) is used as the name of the aspect domain.
-You'll use this name to create a reference to an xref:ROOT:reference/aspect-page.adoc[aspect page] from outside of the aspect domain.
+You'll use this name to create a reference to an xref:ROOT:cross-reference/aspect-page-link.adoc[aspect page] from outside of the aspect domain.
 
 Here's an example of a navigation file for an aspect domain named `hello-app`:
 
@@ -94,6 +94,7 @@ site:
 Let's dive into more detail about what goes in the aspect navigation file.
 
 == The contents of an aspect navigation file
+// This section needs serious clarification or it can be easily confused with how to do apect page xrefs from page to page
 
 The items in an aspect navigation file are predominantly cross references to pages within the site.
 The aspect navigation file not only defines the navigation used for an aspect domain, it also enlists each page referenced in the aspect domain, creating what is referred to as an [.term]_aspect page_.
