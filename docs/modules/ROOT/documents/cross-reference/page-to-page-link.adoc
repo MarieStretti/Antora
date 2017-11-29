@@ -1,0 +1,132 @@
+= Reference another Page
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+Antora uses an enhanced version of the AsciiDoc inline xref macro for linking between pages in a site.
+You'll also use this xref macro to add pages to xref:navigation:linked.adoc[navigation files].
+//This feature is activated if the value of the macro target ends with the AsciiDoc file extension (`.adoc`) or a fragment identifier (`#id`).
+
+The information you need to provide in the xref macro depends on the location of the current file and the location of the destination file (the document you're linking to).
+The closer the two files are, the less information you need to specify.
+
+== Page reference structure
+
+First, let's dissect a fully qualified page reference:
+
+[source,asciidoc]
+----
+xref:version-name@component-name:module-name:local-path.adoc#fragment[link text]
+----
+
+Here's what each part of the page reference does:
+
+xref: ::
+The prefix for an AsciiDoc inline xref macro.
+
+version-name@ ::
+If a component has versions, the first target position is used to specify the version name of the destination component.
+This value is defined in the antora.yml file in the branch of the component repository that hosts the destination file.
+When the version target is filled, it must be directly followed by an `@` symbol.
+
+component-name: ::
+The second target position specifies the name of the destination component.
+The component name is directly followed by one colon (`:`).
+This value is defined in the name key of the antora.yml file in the branch of the component repository that hosts the destination file.
+If a component name is present in the xref, a module name must also be specified after the `:`.
+Otherwise, this position gets interpreted as the module name.
+
+module-name: ::
+The third target position specifies the name of the destination module.
+The module name is directly followed by one colon (`:`).
+If a component name is present, and the name of the module is "`ROOT`", the module name position can be left empty in some cases.
+That's why sometimes you see a component name followed by two colons (`::`).
+
+local-path.adoc ::
+The fourth target position specifies the local path of the destination file relative to the module's documents directory.
+This value may include one or more optional topic folders.
+The destination file name must have the _.adoc_ file extension.
+
+#fragment ::
+An optional ID of a section or other anchor point to link to in the destination page (i.e., deep link).
+This part is always optional.
+
+[link text] ::
+The text of the link that is displayed to the user.
+This text must be entered inside a set of square brackets (`[]`) at the end of the macro.
+If the text is not specified, the raw target is used.
+
+[link text,aspect=name-of-aspect] ::
+To link to the aspect variant of a page, add the aspect attribute after the link text.
+A comma (`,`) should directly follow the link text, and the aspect attribute should directly follow the comma, i.e., don't add a blank space after the comma.
+To learn more about referencing aspect pages, go to the xref:apect-page-link.adoc[referencing an aspect page].
+
+== Scenario: In the same component and module
+
+When the current document and the destination document are in the same module, you only need to enter the name of the destination file.
+
+.Link to a document in the same module
+[source,asciidoc]
+----
+xref:error-handling.adoc[Error Handling]
+----
+
+.Link to a document in a topic folder
+[source,asciidoc]
+----
+xref:concept/index.adoc[Key Concepts]
+----
+
+.Link to a document in the same module and in a different version
+[source,asciidoc]
+----
+xref:3.3@error-handling.adoc#message-list[error messages]
+----
+
+== Scenario: In the same component but different module
+
+When the current document and the destination document are in the same component but different modules, you'll need to enter the name of the destination module and destination file.
+
+.Link to a document in another module
+[source,asciidoc]
+----
+xref:getting-started:implement-and-test-api.adoc[implement an API]
+----
+
+.Link to a document in the ROOT module and in a topic folder
+[source,asciidoc]
+----
+xref:ROOT:transports/ajax-reference.adoc[Ajax Transports]
+----
+
+.Link to a document in the ROOT module and in a different version
+[source,asciidoc]
+----
+The xref:3.4@ROOT:scopes/foreach.adoc[foreach scope] splits a collection.
+----
+
+== Scenario: In a different component
+
+When the current document and the destination document are in different components, you'll need to enter values for all of the target positions.
+If a version is not specified in this scenario, the implicit value is `master@`.
+
+.Link to a document in the ROOT module of a versioned component
+[source,asciidoc]
+----
+How do I xref:2.0@default-ui::modify-template.adoc[modify a template] in the UI project?
+----
+
+.Link to a document in the ROOT module of a component that doesn't have versions
+[source,asciidoc]
+----
+xref:icons::index.adoc#intro[Introducing the Icon Project]
+----
+
+.Link to a document in a module of a component that doesn't have versions
+[source,asciidoc]
+----
+xref:icons:web:modify-svg.adoc[Getting started with the SVG assets]
+----

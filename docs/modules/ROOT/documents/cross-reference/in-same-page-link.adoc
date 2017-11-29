@@ -1,0 +1,56 @@
+= Reference a Section, Block, Line or Word
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// URLs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+
+//WARNING: Don't use the `link` macro for referencing sections and IDs in the same page.
+
+== Reference a section in the same page
+
+Section title IDs are automatically generated when AsciiDoc pages are processed, so you can use them as links by referencing the section's title.
+However, the title must begin with an uppercase letter (in basic Latin) without any leading formatting marks.
+
+To link to the beginning of a section in the same page, use the in-page cross reference which is designated by a set of double angled brackets (`<< >>`).
+
+.Link to section title in the same page
+[source,asciidoc]
+----
+This is an in-page cross reference: <<Reference a section in the same page>>. //<1>
+
+This is an in-page cross reference:
+<<reference-a-section-in-the-same-page,Check it out>>! //<2>
+----
+<1> In-page xref to a section using the section's title.
+<2> In-page xref to a section using the section's implicit ID.
+
+== Reference a block, line, or word in the same page
+
+To link to a block or line in the same page, you must define an ID at that location.
+
+.Create an ID
+[source,asciidoc]
+----
+[#playbook] //<1>
+Here's an example of a playbook.
+
+This is an [#name-me] inline ID. //<2>
+----
+<1> An ID can be placed on a paragraph (i.e., block).
+<2> An ID can be placed inline.
+
+There are some exceptions, see {uri-adoc-manual}/#anchordef[defining an anchor] in the Asciidoctor user manual for more use cases.
+
+To link to that ID, use the same in-page xref markup you use for section headings.
+
+.Link to an ID
+[source,asciidoc]
+----
+We'll walk through a <<playbook,detailed example>> of a playbook in this tutorial.
+----
+
+Reference: {uri-adoc-manual}/#anchordef[Define an anchor]

@@ -5,5 +5,7 @@
 * xref:install-prerequisites.adoc[Install Prerequisites]
 ** xref:troubleshoot-yarn-nodegit.adoc[Troubleshoot Yarn and NodeGit]
 * xref:run-antora-and-generate-site.adoc[Run Antora]
-* Page References
-** xref:reference/aspect-page.adoc[Reference an Aspect Page]
+* Cross References
+** xref:cross-reference/page-to-page-link.adoc[Link to a Page]
+*** xref:cross-reference/in-same-page-link.adoc[Link in the Same Page]
+** xref:cross-reference/aspect-page-link.adoc[Link to an Aspect Page]
