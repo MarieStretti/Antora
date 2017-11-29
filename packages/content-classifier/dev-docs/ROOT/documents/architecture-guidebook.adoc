@@ -1,0 +1,107 @@
+= Content Classifier Component Guidebook
+
+== Context
+
+To process files efficiently they need to be well organized.
+The documentation pipeline needs to access this data through certain views and be able to query by path.
+This data, which we call a [.term]_content catalog_, tells the documentation pipeline what each file is, what each file's source and destination paths are, and how to navigate between the files.
+The catalog is structured for optimal path search and file processing.
+
+== Functional Overview
+
+The content classifier component needs to access the playbook and content corpus.
+Using those inputs it needs to be able to execute the following operations:
+
+* Further partition the corpus into modules and then families
+* Add additional metadata to the virtual files concerning information about its module, family, subpath, etc.
+* Add a navigation index to navigation files
+* Create a look up mechanism to find files matching certain criteria
+* Build a structured catalog of virtual files that can be transmitted
+
+== Software Architecture
+
+The content classifier is the component responsible for populating each file with metadata, organizing the files for efficient processing, and creating the content catalog.
+
+The details of calculating file paths, assigning calculated metadata to files, sorting files by family for processing, and adding each file to a structured and transmittable content catalog should be encapsulated in this component.
+
+At this point the content corpus contains files that are grouped by component version.
+
+The content classifier should:
+
+* Walk each component version
+** The walker should be aware of the following divisions: module, family, and topic
+* Only keep files that match a known family and family file format
+* Discard files that do not match allowed project or file structures
+* Calculate each file source, output, and published path information
+** Assign source metadata to each file (`src` property)
+** Assign output metadata to each file (`out` property)
+** Assign published metadata to each file (`pub` property)
+* Keep track of navigation order for each navigation file (`nav` property)
+* Apply URL extension strategy to published files
+* Add each file to the content catalog
+** The content catalog is an index of virtual file entries keyed by page ID
+
+.Inputs
+* Content corpus
+* Playbook (URL strategies)
+
+.Output
+* Content catalog
+
+== Code
+
+The content classifier component is implemented as a dedicated node package (i.e., module).
+Its APIs should be exported so that they can be required using the `require` keyword in the documentation pipeline.
+
+Public API of content catalog:
+
+* `getFiles()`
+* `addFile()`
+* `findBy({...})` with filter abilities
+** filter options: `component`, `version`, `module`, `family`, `subpath`, `stem`, and `basename`
+* `getByID({...})`
+
+== Data
+
+The content catalog object (instance of `FileCatalog`) produced by this component should have a well defined, queryable index of virtual files.
+
+Each virtual file in the content catalog should have the `src`, `out`, and `pub` properties fully populated.
+It also has the `src.origin` property carried over from the content aggregator component.
+
+.src property
+* `component`
+* `version`
+* `module`
+* `family`
+** `navigation`
+** `fragment`
+** `page`
+** `image`
+** `attachment`
+** `sample`
+* `topics`
+* `moduleRootPath`
+* `basename`
+* `mediaType`
+* `stem`
+* `extname`
+* `origin`
+
+.out property
+* `dirname`
+* `basename`
+* `path`
+* `moduleRootPath`
+* `rootPath`
+
+.pub property
+* `url`
+* `absoluteUrl` (using the site property from the playbook)
+* `rootPath`
+
+== Consequences
+
+* All destination information for each file has been determined and assigned
+* Files can be queried by component version and/or family so they can be processed in parallel
+* No subsequent components should have to organize the files for processing
+* Pages can now be found and processed
