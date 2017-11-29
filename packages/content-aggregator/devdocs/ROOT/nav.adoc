@@ -1,1 +1,1 @@
-* xref:architecture-guidebook.adoc[Content Aggregator Architecture Guidebook]
+* xref:architecture-guidebook.adoc[Architecture Guidebook]

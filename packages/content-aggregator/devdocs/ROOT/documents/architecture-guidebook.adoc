@@ -1,62 +1,57 @@
 = Content Aggregator Guidebook
-////
-TODO
-- define documentation component
-- define content corpus: coarse-grained body of work, a set of arrays of vinyl files grouped by location repo/branch
-- complete sections
-////
 
 == Context
 
-The documentation pipeline does not own any content files.
-Instead, it needs to be able to retrieve all of the input files for the site from multiple repositories and branches and organize the files into a content corpus that preserves each file's origin.
+The site project does not own any content files itself.
+Instead, it relies on Antora's documentation pipeline, specifically the content aggregator component, to retrieve the content from multiple repositories and branches using information provided by the playbook.
+The component stores these files as virtual file objects in a content aggregate (i.e., virtual file system), which is then presented to the rest of the pipeline for processing, effectively abstracting away the files`' origins.
 
 == Functional Overview
-// I'm trying to avoid defining more than the final output term here b/c otherwise this section would bulk up really quickly and then we might as well just delete it and go right into the software architecture section.
 
-The content aggregator component accesses and reads the configuration options provided by a playbook.
-
-Then it completes the following actions as they are specified in the playbook and produces a [.term]_content aggregate_.
-// definition of term(light): content aggregate, see the data section for the heavy definition
-The content aggregate is a transmittable collection of coarsely sorted virtual content files.
+The content aggregator component accesses and reads information about the content sources from the playbook.
+It then completes the following actions using information provided by the playbook to produce a [.term]_content aggregate_.
 
 * Fetch the remote repositories
 * Identify remote and local repository branches
 * Find the [.term]_documentation component_ in each branch
 // definition of term: documentation component
-** The documentation component is a group of documentation files which are versioned together and share a common subject
+ ** The documentation component is a group of documentation files which are versioned together and share a common subject.
+ ** The documentation component can be located in a subpath of the repository's branch
 * Find information about each documentation component version
 * Collect all the files in each documentation component branch
 * Group the files by documentation component version into a content aggregate
 
+// definition of term(light): content aggregate, see the data section for the heavy definition
+The content aggregate is a transmittable collection of coarsely grouped (by component version) virtual content files (i.e., virtual file system).
+
 == Software Architecture
 
-The content aggregator component functionality is provided by index.js, the entry point file for the component, and mime.js.
-Mime.js associates the file extension .adoc with the internet media type text/asciidoc.
+The content aggregator component functionality is provided by the content-aggregator module.
 
-All the details of locating and cloning or fetching the repositories, identifying branches, finding documentation components, their information and their files, and grouping the files by documentation component version into a content aggregate should be encapsulated in the content aggregator component.
+All the details of locating and cloning or fetching the repositories, identifying branches, finding documentation components and the files they contain, and grouping the files by documentation component version into a content aggregate should be encapsulated in the content aggregator component.
 
 The content aggregator component should:
 
-* Load a playbook
-* Locate input repositories
+* Accept a playbook
+* Locate source repositories from the playbook (`content.sources`)
 * Use a git integration library (NodeGit) to clone the repositories the first time and fetch them subsequent times
 * Work with private, public, bare, non-bare, ssh, https, and local directories that are git repositories (worktree)
-** Repository origins could be GitHub, GitLab, Bitbucket, etc.
+ ** Repository origins could be GitHub, GitLab, Bitbucket, etc.
 * Put cloned repositories into cache for subsequent runs
 * Use local directories in place
 * Scan all branches per repository to find playbook matches
-** Local branches take precedence over remote branches with the same name
+ ** Local branches shall take precedence over remote branches with the same name
 * Visit each matched branch and find the [.term]_component description file_ (antora.yml) at the root of each documentation component
 * Walk each documentation component subtree and collect input files
-* Create a virtual file for each collected file (vinyl)
-* Assign a [.term]_component version key_ (`version@component`) to each virtual file
-// definition of term: component version key
-** The component version key is the primary association for a content file
-** Each content file must be in exactly one component version
-* Add origin metadata (`src` property) to each virtual file
-* Sort files by component version key and build them into a content aggregate
-** The content aggregate should be transmittable
+* Create a virtual file for each collected file (vinyl object)
+* Assign the virtual file to the files collection associated with a component version
+ ** The component version is the primary association for a content file
+ ** Each content file must be in exactly one component version
+ ** Two files cannot exist with the same component, version, and path
+* Store input path information in the `src` property for each virtual file
+* Capture information about the file's origin in the file's `src.origin` property
+* Put all component version entries into a content aggregate
+ ** The content aggregate should be transmittable
 * Parallelize input processing whenever possible and do a join once content aggregate is complete (map reduce)
 
 .Input
@@ -69,16 +64,46 @@ The content aggregator component should:
 == Code
 
 The content aggregator component is implemented as a dedicated node package (i.e., module).
+The main API it exports is the asynchronous function `aggregateContent()`, which accepts a playbook instance.
 
-// Are there any public API methods that need to be introduced here?
+The API for the content aggregator should be used as follows:
+
+[source,js]
+----
+const aggregateContent = require('../packages/content-aggregator/lib/index')
+
+//...
+
+const aggregate = await aggregateContent(playbook)
+----
+
+The files in the aggregate can be visited as follows:
+
+[source,js]
+----
+aggregate.forEach(({ name, title, version, nav, files }) => {
+  files.forEach((file) => {
+    //...
+  }
+}
+----
 
 == Data
-// preliminary definition of term(heavy): content aggregate, see the overview section for the light definition
-The content aggregate data structure produced by this component should index files by component version (`version@component`).
-The component version information should be loaded from antora.yml files.
-The location of antora.yml is the root of the file's path.
 
-Each file should include the following properties:
+// preliminary definition of term(heavy): content aggregate, see the overview section for the light definition
+The content aggregate data structure produced by this component should group files by component version.
+The component version information should be loaded from antora.yml files.
+The location of antora.yml is the root of each file's path (e.g., the path is relative to this location).
+
+Each entry in the aggregate has the following keys:
+
+* `name` -- the name of the component
+* `version` -- the version of the component
+* `title` -- the title (i.e., display name) of the component
+* `nav` -- a collection of navigation description files
+* `files` -- the virtual files associated with this component version
+
+Each virtual file object should include the following properties:
 
 .src property
 * `basename`
@@ -89,13 +114,13 @@ Each file should include the following properties:
 
 == Consequences
 
-The content aggregator component allows the documentation pipeline to work with content from multiple repositories and their branches.
+The content aggregator component allows the Antora documentation pipeline to work with content from multiple repositories and their branches.
 This component enables the rest of the pipeline to work on virtual files.
 
 * No other pipeline components need to know how to get the files from their repositories.
-** All subsequent processing is done on the virtual file objects created by the content aggregator.
-** While subsequent components don't interface with file origins, they do know where the files came from.
+ ** All subsequent processing is done on the virtual file objects created by the content aggregator.
+ ** While subsequent components don't interface with the files' origin, they can use information stored in the file to know where the files came from.
 * Files are only coarsely sorted in the content aggregator.
-** The content aggregator doesn't sort the files further because extensions should be allowed to easily contribute files without the component needing to recompute the data source.
-* The next component in the Antora pipeline, the content classifier, is responsible for fine-grained organization.
-** The classifier organizes the files and allows subsequent components to request a specific file by its page ID or other grouping, such as component version or family.
+ ** The content aggregator doesn't sort the files further because extensions should be allowed to easily contribute files without the component needing to recompute output and publish paths.
+* The next component in the Antora pipeline, the content classifier, is responsible for fine-grained organization of the virtual files.
+ ** The classifier organizes the files and allows subsequent components to request a specific file by its page ID or other grouping, such as component version or family.
