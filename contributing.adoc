@@ -5,7 +5,7 @@
 :toc:
 // Project URIs:
 :uri-org: https://gitlab.com/antora
-:uri-project: {uri-org}/antora-direct
+:uri-project: {uri-org}/antora
 :uri-repo: {uri-project}.git
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
@@ -83,7 +83,7 @@ Issues move across the board from left (Backlog) to right (Done).
 
 == Project Organization
 
-Antora Direct is a JavaScript project organized and packaged as a Node.js module.
+Antora is a JavaScript project organized and packaged as a Node.js module.
 This section describes the organization of the project at a high level so you know where to look for files.
 
 === Project Structure
@@ -121,7 +121,7 @@ They will eventually graduate and migrate to their own repositories.
 <8> The main and test code for the playbook component.
 <9> Integration tests for the whole documentation pipeline.
 These tests verify that the discrete software components work properly together.
-<10> The documentation for Antora Direct.
+<10> The documentation for Antora.
 Documentation for discrete software components will live with the code.
 
 The application code is organized by component or function.
