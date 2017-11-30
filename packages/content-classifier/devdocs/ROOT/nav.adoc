@@ -1,1 +1,1 @@
-* xref:architecture-guidebook.adoc[Content Classifier Architecture]
+* xref:architecture-guidebook.adoc[Architecture Guidebook]

@@ -2,23 +2,28 @@
 
 == Context
 
-To process files efficiently they need to be well organized.
-Antora`'s documentation pipeline needs to access the file data through certain views and be able to query the files by path.
-This data, which we call a [.term]_content catalog_, tells the documentation pipeline what each file is, what each file`'s source and destination paths are, and how to navigate between the files.
-The catalog is structured for optimal path search and file processing.
+Throughout Antora's documentation pipeline, components frequently need to retrieve files by group or look up a file at a specific path.
+Therefore, these files need to be well organized in order for the components to process them efficiently.
+This component provides that function.
+The collection of files this component creates, which we call a [.term]_content catalog_, is the primary interface components will use to access the virtual files and their metadata, which includes source and destination paths.
+The catalog should be structured for optimal querying.
 
 == Functional Overview
 
-The content classifier component is responsible for populating each file with metadata, organizing the files for efficient processing, and creating the content catalog.
+The content classifier component is responsible for populating each file with metadata pertaining to where it's published, organizing the files for efficient processing, and putting the files into a content catalog.
+It effectively transforms the content aggregate into a content catalog.
 
-The content classifier needs to access the playbook and content aggregate.
-Using those inputs, it needs to be able to execute the following operations:
+The content classifier requires the playbook and the content aggregate as input.
+Using those inputs, it should carry out the following operations:
 
-* Further partition the aggregate into modules and then families
+* Further partition the content aggregate into modules and families
+ ** Build on the work the content aggregator did to organize the files by component version
+* Reject files which are not in a recognized location
 * Add additional metadata to the virtual files concerning information about their module, family, subpath, etc.
-* Add a navigation index to the navigation files
+* Compute the output path (disk) and publish path (URL) information for each publishable file
+//* Add a navigation index to the navigation files
 * Create a look up mechanism to find files matching certain criteria
-* Build a structured catalog of virtual files that can be transmitted
+* Build a structured catalog of virtual files that can be queried and transmitted
 
 == Software Architecture
 
@@ -28,23 +33,23 @@ The details of calculating file paths, assigning calculated metadata to files, s
 
 The content classifier should:
 
-* Access the aggregate, which is provided by the content aggregator component
-* Walk each component version
-** The walker should be aware of the following divisions: module, family, and topic
+* Access the content aggregate, which is produced by the content aggregator component
+* Walk the files in each component version
+ ** The file walker should be aware of the following divisions: module, family, and topic
 * Only keep files that match a known family and family file format
 * Discard files that do not match allowed project or file structures
 * Calculate source, output, and published path information for each file
-** Assign source metadata to each file (`src` property)
-** Assign output metadata to each file (`out` property)
-** Assign published metadata to each file (`pub` property)
+ ** Assign source metadata to each file (`src` property)
+ ** Assign output metadata to each file (`out` property)
+ ** Assign published metadata to each file (`pub` property)
+  *** Apply the URL extension style to published files (drop or indexify)
 * Keep track of navigation order for each navigation file (`nav` property)
-* Apply a URL extension strategy to published files
 * Add each file to the content catalog
-** The content catalog is an index of virtual file entries keyed by page ID
+ ** The content catalog is an index of virtual file entries keyed by page ID
 
 .Inputs
 * Content aggregate (`aggregate`)
-* Playbook (URL strategies)
+* Playbook (`urls.htmlExtensionStyle` and `site.url`)
 
 .Output
 * Content catalog (`catalog`)
@@ -52,36 +57,69 @@ The content classifier should:
 == Code
 
 The content classifier is implemented as a dedicated node package (i.e., module).
-Its API exports several functions, the main function being `fileCatalog()`, which accepts a content aggregate data structure and a playbook instance.
+Its API exports the `classifyContent()` function, which accepts a playbook instance and the content aggregate data structure.
 
 The API for the content classifier should be used as follows:
 
 [source,js]
 ----
-const fileCatalog = require ('../packages/content-classifier/lib/index')
+const classifyContent = require ('../packages/content-classifier/lib/index')
 
 //...
 
-const catalog = await fileCatalog(playbook, aggregate)
+const catalog = classifyContent(playbook, aggregate)
 ----
 
-The files in the catalog can be visited as follows:
+The files in the catalog can be queried as follows:
 
 [source,js]
 ----
-Insert code snippet
+const pages = catalog.findBy({ family: 'page' })
 ----
 
 .Content classifier API
 * `getFiles()`
 * `addFile()`
 * `findBy({...})` with filter abilities
-** filter options: `component`, `version`, `module`, `family`, `subpath`, `stem`, and `basename`
+ ** filterable properties: `component`, `version`, `module`, `family`, `subpath`, `stem`, and `basename`
 * `getByID({...})`
 
 == Data
 
-The content catalog object (instance of `catalog`) produced by this component should have a well defined, queryable index of virtual files.
+The classifier assumes that each documentation component adheres to the following filesystem structure:
+
+....
+antora.yml
+modules/
+  ROOT/
+    assets/
+      attachments/
+      images/
+    documents/
+      index.adoc
+      ...
+      _partials/
+    examples/
+  module-a/
+    assets/
+    documents/
+      index.adoc
+      ...
+    examples/
+  module-b/
+    assets/
+    documents/
+      index.adoc
+      ...
+    examples/
+....
+
+There must be one or more modules.
+Files in the ROOT module are promoted a level above the named modules when published (effectively belonging to the component version itself).
+AsciiDoc files are assumed to have the file extension `.adoc`.
+Files and folders which begin with an underscore are not published.
+
+The content catalog object (instance of `FileCatalog`) produced by this component should have a well defined, queryable index of virtual files.
 
 Each virtual file in the content catalog should have the `src`, `out`, and `pub` properties fully populated.
 The `src.origin` property information attached to each file should also be carried over from the `aggregate`.
@@ -92,13 +130,7 @@ Each virtual file object should include the following properties:
 * `component`
 * `version`
 * `module`
-* `family`
-** `navigation`
-** `fragment`
-** `page`
-** `image`
-** `attachment`
-** `sample`
+* `family` (navigation, fragment, page, image, attachment, or sample)
 * `topics`
 * `moduleRootPath`
 * `basename`
