@@ -1,5 +1,5 @@
 name: content-classifier
-title: Content Classifier Component
+title: Content Classifier
 version: master
 nav:
 - modules/ROOT/nav.adoc
