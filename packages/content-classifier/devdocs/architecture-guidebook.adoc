@@ -77,7 +77,7 @@ The files in the catalog can be queried as follows:
 const pages = catalog.findBy({ family: 'page' })
 ----
 
-.Content classifier API
+.Content catalog API
 * `getFiles()`
 * `addFile()`
 * `findBy({...})` with filter abilities
