@@ -6,8 +6,7 @@ const _ = require('lodash')
 const $files = Symbol('$files')
 const $generateId = Symbol('$generateId')
 
-// if we really expose addFile(), this class would need to be exposed
-class FileCatalog {
+class ContentCatalog {
   constructor () {
     this[$files] = {}
   }
@@ -40,7 +39,7 @@ class FileCatalog {
 }
 
 module.exports = (playbook, corpus) => {
-  const vinylCatalog = new FileCatalog()
+  const catalog = new ContentCatalog()
 
   corpus.forEach(({ name, title, version, nav, files }) => {
     files.forEach((file) => {
@@ -61,12 +60,12 @@ module.exports = (playbook, corpus) => {
       file.out = resolveOut(file.src, playbook.urls.htmlExtensionStyle)
       file.pub = resolvePub(file.src, file.out, playbook.urls.htmlExtensionStyle, playbook.site.url)
 
-      // maybe addFile() should be "really" public and do all the stuffs above
-      vinylCatalog.addFile(file)
+      // maybe addFile() should be "really" public and handle all the stuff above
+      catalog.addFile(file)
     })
   })
 
-  return vinylCatalog
+  return catalog
 }
 
 function partitionSrc (file, pathSegments, nav) {

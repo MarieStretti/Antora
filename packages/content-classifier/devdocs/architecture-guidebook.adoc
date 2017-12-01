@@ -119,7 +119,7 @@ Files in the ROOT module are promoted a level above the named modules when publi
 AsciiDoc files are assumed to have the file extension `.adoc`.
 Files and folders which begin with an underscore are not published.
 
-The content catalog object (instance of `FileCatalog`) produced by this component should have a well defined, queryable index of virtual files.
+The content catalog object (instance of `ContentCatalog`) produced by this component should have provide a queryable index of virtual files.
 
 Each virtual file in the content catalog should have the `src`, `out`, and `pub` properties fully populated.
 The `src.origin` property information attached to each file should also be carried over from the `aggregate`.
