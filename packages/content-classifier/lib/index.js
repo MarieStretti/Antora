@@ -38,10 +38,10 @@ class ContentCatalog {
   }
 }
 
-module.exports = (playbook, corpus) => {
+module.exports = (playbook, aggregate) => {
   const catalog = new ContentCatalog()
 
-  corpus.forEach(({ name, title, version, nav, files }) => {
+  aggregate.forEach(({ name, title, version, nav, files }) => {
     files.forEach((file) => {
       const pathSegments = file.path.split('/').filter((a) => a !== '')
       partitionSrc(file, pathSegments, nav)
