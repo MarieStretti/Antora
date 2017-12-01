@@ -63,9 +63,9 @@ describe('classifyContent()', () => {
   })
 
   it('should classify a partial page', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/documents/_fragments/foo.adoc'))
+    aggregate[0].files.push(createFile('/modules/ROOT/documents/_partials/foo.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/documents/_fragments/foo.adoc')
+    expect(files[0].path).to.equal('/modules/ROOT/documents/_partials/foo.adoc')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -105,14 +105,14 @@ describe('classifyContent()', () => {
   })
 
   it('should classify an example', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/samples/foo.xml'))
+    aggregate[0].files.push(createFile('/modules/ROOT/examples/foo.xml'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/samples/foo.xml')
+    expect(files[0].path).to.equal('/modules/ROOT/examples/foo.xml')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
       module: 'ROOT',
-      family: 'sample',
+      family: 'example',
       subpath: '',
       moduleRootPath: '..',
     })
@@ -439,7 +439,7 @@ describe('classifyContent()', () => {
           version: 'v4.5.6',
           files: [
             createFile('/modules/ROOT/assets/images/foo.png'),
-            createFile('/modules/ROOT/documents/_fragments/foo.adoc'),
+            createFile('/modules/ROOT/documents/_partials/foo.adoc'),
             createFile('/modules/ROOT/documents/page-one.adoc'),
             createFile('/modules/ROOT/documents/page-two.adoc'),
           ],
@@ -449,7 +449,7 @@ describe('classifyContent()', () => {
           title: 'The Other Title',
           version: 'v4.5.6',
           files: [
-            createFile('/modules/ROOT/documents/_fragments/bar.adoc'),
+            createFile('/modules/ROOT/documents/_partials/bar.adoc'),
             createFile('/modules/ROOT/documents/page-three.adoc'),
           ],
         },
@@ -476,7 +476,7 @@ describe('classifyContent()', () => {
       expect(pages[1].src.version).to.equal('v1.2.3')
       expect(pages[2].path).to.equal('/modules/ROOT/assets/images/foo.png')
       expect(pages[2].src.version).to.equal('v4.5.6')
-      expect(pages[3].path).to.equal('/modules/ROOT/documents/_fragments/foo.adoc')
+      expect(pages[3].path).to.equal('/modules/ROOT/documents/_partials/foo.adoc')
       expect(pages[4].path).to.equal('/modules/ROOT/documents/page-one.adoc')
       expect(pages[4].src.version).to.equal('v4.5.6')
       expect(pages[5].path).to.equal('/modules/ROOT/documents/page-two.adoc')

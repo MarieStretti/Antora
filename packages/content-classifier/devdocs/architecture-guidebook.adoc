@@ -130,7 +130,7 @@ Each virtual file object should include the following properties:
 * `component`
 * `version`
 * `module`
-* `family` (navigation, fragment, page, image, attachment, or sample)
+* `family` (attachment, example, fragment, image, navigation, or page)
 * `topics`
 * `moduleRootPath`
 * `basename`

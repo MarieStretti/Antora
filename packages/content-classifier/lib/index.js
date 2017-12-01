@@ -78,9 +78,10 @@ function partitionSrc (file, pathSegments, nav) {
     file.nav = { index: navIndex }
   } else if (pathSegments[0] === 'modules') {
     if (pathSegments[2] === 'documents') {
-      if (pathSegments[3] === '_fragments') {
+      if (pathSegments[3] === '_partials') {
+        // QUESTION should this be partial-page instead?
         file.src.family = 'fragment'
-        // start from 4 (after /modules/foo/documents/_fragments) end at -1 (before filename.ext)
+        // start from 4 (after /modules/foo/documents/_partials) end at -1 (before filename.ext)
         file.src.subpath = pathSegments.slice(4, -1).join('/')
       } else if (file.src.mediaType === 'text/asciidoc' && file.src.basename !== '_attributes.adoc') {
         file.src.family = 'page'
@@ -97,9 +98,9 @@ function partitionSrc (file, pathSegments, nav) {
         // start from 4 (after /modules/foo/assets/attachments) end at -1 (before filename.ext)
         file.src.subpath = pathSegments.slice(4, -1).join('/')
       }
-    } else if (pathSegments[2] === 'samples') {
-      file.src.family = 'sample'
-      // start from 3 (after /modules/foo/samples) end at -1 (before filename.ext)
+    } else if (pathSegments[2] === 'examples') {
+      file.src.family = 'example'
+      // start from 3 (after /modules/foo/examples) end at -1 (before filename.ext)
       file.src.subpath = pathSegments.slice(3, -1).join('/')
     }
   }
