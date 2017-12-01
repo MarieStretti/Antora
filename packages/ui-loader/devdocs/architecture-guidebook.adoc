@@ -2,18 +2,18 @@
 
 == Context
 
-The UI (_user interface_) provides the page layouts, stylesheets (CSS), interactive behavior (JavaScript), and UI and brand images for the documentation site.
+The user interface (UI) provides the page layouts, stylesheets (CSS), interactive behavior (JavaScript), and UI and brand images for the documentation site.
 The UI is managed as a separate project, published in the form of a bundle (i.e., archive) to a public URL, and specified as an input to the documentation pipeline.
 Antora's documentation pipeline needs to load these files so they can be used by subsequent components to integrate the UI into the site output.
 
 == Functional Overview
 
-The UI loader component reads the location of the UI bundle from the playbook.
-It then completes the following actions to produce a [.term]_UI catalog_.
+The UI loader component should read the location of the UI bundle from the playbook.
+It should then completes the following actions to produce a [.term]_UI catalog_.
 
 * Fetch the UI bundle from the URL specified in the playbook
 * Extract the files in the UI bundle (starting at the specified start path)
-* Create a virtual file object for each UI file containing the file's contents and path information
+* Create a virtual file object for each UI file containing the file`'s contents and path information
 * Classify the UI file
 * Compute the output path for each UI file that is publishable (of type static or asset)
 * Create a UI catalog to host the virtual UI files
@@ -44,7 +44,7 @@ The UI loader component should:
 * Use information from the UI description file to identify static files
  ** Set the type of these files to `static`
 * Set the type for all other files based on location (asset, layout, helper, partial)
-* Compute the output path for each publisable file (static or asset)
+* Compute the output path for each publishable file (static or asset)
  ** Use the value of `ui.outputDir` from the playbook as the base folder for publishable UI files
 * Instantiate the UI catalog (`UiCatalog`) and add the virtual UI files to this catalog instance
 * Provide an API method that allows files in the UI catalog to be queried by type
