@@ -3,7 +3,7 @@
 == Context
 
 The documentation pipeline needs to be able to accept user input in the form of configuration options.
-This configuration, which we call a [.term]_playbook_, tells the documentation pipeline what input to use, how the input should be processed, how the site should be generated, and where to publish the output.
+This configuration, which we call a [.term]_playbook_, tells the documentation pipeline what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
 == Functional Overview
 
@@ -12,13 +12,15 @@ The playbook component is responsible for accessing, validating, and processing 
 Numerous components in the Antora pipeline will need to access the configuration options provided by the playbook.
 Therefore, the object that holds the data in the playbook needs to be transmittable.
 
-The playbook component requires a configuration file, which we call a [.term]_playbook spec_, as input.
+The playbook component takes a configuration file, which we call a [.term]_playbook spec_, as input.
 A playbook spec can be created and used by anyone operating an Antora pipeline.
+While the playbook spec is the primary means of configuration, audibles may be passed using either process arguments (i.e., command-line flags and switches), environment variables, or a combination of both.
+Audibles overrides equivalent option values in the playbook spec.
 
 Using a playbook spec as an input, the component should carry out the following operations:
 
 * Read the playbook spec file
-* Accept and apply any substitute options passed by the user at usage time.
+* Accept and apply any audibles (i.e., override options) passed by the user at runtime.
 * Validate the playbook spec
 * Convert the playbook spec file into a transmittable model that the other pipeline components can use
 
@@ -30,16 +32,21 @@ All the details of loading the configuration, including the schema, the validati
 
 The playbook component should:
 
-* Accept a playbook spec file composed in YAML, JSON, or CSON format.
-* Accept two parameters, an array of arguments (populated from or simulating process arguments) and a hash of variables (populated from or simulating environment variables).
-** By accepting these two parameters, the playbook builder can be used and tested independently of the CLI runtime environment.
-// ** Within those parameters, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
-* Validate the playbook spec
+* Load the built-in playbook schema and assign default option values
+* Accept two parameters, an array of arguments (populated from or simulating process arguments) and a hash of variables (populated from or simulating environment variables)
+ ** By accepting these two parameters, the playbook builder can be used and tested independently of the CLI runtime environment.
+ ** Within those parameters, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
+* Look for the specified playbook spec file composed in YAML, JSON, or CSON format
+ ** When the data in these formats are read in, they become plain JavaScript objects
+* Apply audibles in the form of process arguments and environment variables
+ ** The order of precedence for an option value is as follows (highest to lowest): process argument, environment variable, spec, default
+* Validate the aggregate playbook spec values
+ ** The validation step checks that the option value matches the expected data type and enforces required options
 * Convert a valid playbook spec into a transmittable, well-defined, read-only data model that other pipeline components can use
 
 .Inputs
 * Playbook spec (`site.yml`, `site.json`, or `site.cson`)
-* Process arguments (i.e., command-line flags and switches)
+* Process arguments (i.e., commandline flags and switches)
 * Environment variables
 
 .Output
@@ -48,9 +55,9 @@ The playbook component should:
 == Code
 
 The playbook component is implemented as a dedicated node package (i.e., module).
-Its APIs should be exported so that they can be required using the `require` keyword in the documentation pipeline.
+Its API exports the `buildPlaybook()` function, which reads environment variables, commandline flags and switches, and a playbook spec file to produce the playbook data model.
 
-The playbook component is composed of several object prototypes, including a playbook builder and the playbook data model.
+#FIXME# the buildPlaybook function should accept an array of process arguments and a hash of environment variables.
 
 The playbook builder should:
 
@@ -58,28 +65,56 @@ The playbook builder should:
 * Use https://github.com/mozilla/node-convict[convict] to process the user input
 * Interpret the `playbook` option as a relative path to a playbook spec file
 * Load a playbook spec composed in YAML, JSON, or CSON data format
-** The format of the playbook spec file is determined by the file`'s extension
-** If the path does not have a file extension, the builder should attempt to locate a file with the `.yml`, `.json`, or `.cson` extension, in that order
+ ** The format of the playbook spec file is determined by the file's extension
+ ** If the path does not have a file extension, the builder should attempt to locate a file with the `.yml`, `.json`, or `.cson` extension, in that order
+ ** Select and use the appropriate parser based on the data format; the resulting object should be the same regardless of data format
 * Load any environment variables, then process arguments
+
+The API for the playbook should be used as follows:
+
+[source,js]
+----
+const buildPlaybook = require ('../packages/playbook/lib/playbook-builder')
+
+const playbook = buildPlaybook()
+----
+
+The properties of the playbook can be accessed as follows:
+
+[source,js]
+----
+const sources = playbook.content.sources
+----
 
 == Data
 
+The schema for the playbook is managed in the file https://gitlab.com/antora/antora/blob/master/packages/playbook/lib/config/schema.js[schema.js].
+The schema defines the hierarchy of configuration properties as well as the names of environment variables and process arguments that can be used to override the default values or the values specified in the playbook spec.
+It may be possible in the future for extensions to contribute entries to these schema.
+
 The playbook object (`playbook`) produced by this component should be a well-defined, read-only data model.
-This model should not be coupled to any configuration-related technology used within the component.
-Instead, it should be a model that can be easily reproduced by another means, such as an alternate implementation of the playbook component.
+This model should allow the playbook properties to be referenced using path navigation (e.g., `playbook.content.sources`).
+This model should be easily reproduced by another means, such as an alternate implementation of the playbook component.
 
 Each section of configuration (site, content, ui) should be represented by a dedicated model type whose properties (name, location, and type) can be easily converted into API documentation (for example, using a tool like https://github.com/documentationjs/documentation[documentationjs]).
 
 == Consequences
 
-By introducing a dedicated playbook component that produces a data model, the configuration step is decoupled from the runtime environment (e.g., CLI environment).
+Once the playbook is built, all user input has been captured and the pipeline can proceed to generate the site based on these parameters.
+Almost all subsequent components will be configured in some way base on information provided in the playbook.
+No other component should look for user input for the site other than in the playbook.
+
+By introducing a dedicated playbook component to handle user configuration, the configuration step is decoupled from the rest of the pipeline and the runtime environment.
 This design will have an immediate impact on development by making the component easier to test in isolation.
 
 This component also reserves room in the future for Antora to accept configuration from other input types, such as a database or web service.
 
-// Audibles may be passed using either process arguments (i.e., command-line flags and switches), environment variables, or a combination of both.
-//Future idea: Plugins should be able to participate in the process of building the playbook, either to modify the schema or modify the configuration data.
-// Future idea: The playbook builder should fire one event after the configuration schema is loaded and one event after the configuration data is populated.
-// This means that the playbook component has an implicit dependency on an event bus infrastructure.
-// Future idea: This component should use the global event emitter to fire events into the event bus.
-// Future idea: By raising events at strategic points, the playbook component allows plugins to introduce flags and switches to the main application interface.
+////
+== Future Ideas
+
+* Plugins should be able to participate in the process of building the playbook, either to modify the schema or modify the configuration data.
+* The playbook builder should fire one event after the configuration schema is loaded and one event after the configuration data is populated.
+* This means that the playbook component has an implicit dependency on an event bus infrastructure.
+* This component should use the global event emitter to fire events into the event bus.
+* By raising events at strategic points, the playbook component allows plugins to introduce flags and switches to the main application interface.
+////
