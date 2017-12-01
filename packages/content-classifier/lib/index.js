@@ -1,37 +1,26 @@
 'use strict'
 
 const path = require('path')
-
 const _ = require('lodash')
 
 const $files = Symbol('$files')
-const $filesIndex = Symbol('$filesIndex')
+const $generateId = Symbol('$generateId')
 
-// if we really expose addFile(), this class would need to be exposed
-class FileCatalog {
+class ContentCatalog {
   constructor () {
-    this[$files] = []
-    this[$filesIndex] = {}
+    this[$files] = {}
   }
 
   getFiles () {
-    return this[$files]
+    return _.values(this[$files])
   }
 
   addFile (file) {
-    const id = [
-      file.src.component,
-      file.src.version,
-      file.src.module,
-      file.src.family,
-      file.src.subpath,
-      file.src.basename,
-    ]
-    if (_.get(this[$filesIndex], id) != null) {
+    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'subpath', 'basename'))
+    if (_.has(this[$files], id)) {
       throw new Error('Duplicate file')
     }
-    _.set(this[$filesIndex], id, file)
-    this[$files].push(file)
+    this[$files][id] = file
   }
 
   findBy (options) {
@@ -40,15 +29,19 @@ class FileCatalog {
   }
 
   getById ({ component, version, module, family, subpath, basename }) {
-    const id = [component, version, module, family, subpath, basename]
-    return _.get(this[$filesIndex], id)
+    const id = this[$generateId]({ component, version, module, family, subpath, basename })
+    return this[$files][id]
+  }
+
+  [$generateId] ({ component, version, module, family, subpath, basename }) {
+    return `${family}/${version}@${component}:${module}:${subpath}${subpath ? '/' : ''}${basename}`
   }
 }
 
-module.exports = (playbook, corpus) => {
-  const vinylCatalog = new FileCatalog()
+module.exports = (playbook, aggregate) => {
+  const catalog = new ContentCatalog()
 
-  corpus.forEach(({ name, title, version, nav, files }) => {
+  aggregate.forEach(({ name, title, version, nav, files }) => {
     files.forEach((file) => {
       const pathSegments = file.path.split('/').filter((a) => a !== '')
       partitionSrc(file, pathSegments, nav)
@@ -67,12 +60,12 @@ module.exports = (playbook, corpus) => {
       file.out = resolveOut(file.src, playbook.urls.htmlExtensionStyle)
       file.pub = resolvePub(file.src, file.out, playbook.urls.htmlExtensionStyle, playbook.site.url)
 
-      // maybe addFile() should be "really" public and do all the stuffs above
-      vinylCatalog.addFile(file)
+      // maybe addFile() should be "really" public and handle all the stuff above
+      catalog.addFile(file)
     })
   })
 
-  return vinylCatalog
+  return catalog
 }
 
 function partitionSrc (file, pathSegments, nav) {
@@ -85,9 +78,10 @@ function partitionSrc (file, pathSegments, nav) {
     file.nav = { index: navIndex }
   } else if (pathSegments[0] === 'modules') {
     if (pathSegments[2] === 'documents') {
-      if (pathSegments[3] === '_fragments') {
+      if (pathSegments[3] === '_partials') {
+        // QUESTION should this be partial-page instead?
         file.src.family = 'fragment'
-        // start from 4 (after /modules/foo/documents/_fragments) end at -1 (before filename.ext)
+        // start from 4 (after /modules/foo/documents/_partials) end at -1 (before filename.ext)
         file.src.subpath = pathSegments.slice(4, -1).join('/')
       } else if (file.src.mediaType === 'text/asciidoc' && file.src.basename !== '_attributes.adoc') {
         file.src.family = 'page'
@@ -104,9 +98,9 @@ function partitionSrc (file, pathSegments, nav) {
         // start from 4 (after /modules/foo/assets/attachments) end at -1 (before filename.ext)
         file.src.subpath = pathSegments.slice(4, -1).join('/')
       }
-    } else if (pathSegments[2] === 'samples') {
-      file.src.family = 'sample'
-      // start from 3 (after /modules/foo/samples) end at -1 (before filename.ext)
+    } else if (pathSegments[2] === 'examples') {
+      file.src.family = 'example'
+      // start from 3 (after /modules/foo/examples) end at -1 (before filename.ext)
       file.src.subpath = pathSegments.slice(3, -1).join('/')
     }
   }
