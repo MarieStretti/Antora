@@ -1,0 +1,130 @@
+= UI Loader Guidebook
+
+== Context
+
+The UI (_user interface_) provides the page layouts, stylesheets (CSS), interactive behavior (JavaScript), and UI and brand images for the documentation site.
+The UI is managed as a separate project, published in the form of a bundle (i.e., archive) to a public URL, and specified as an input to the documentation pipeline.
+Antora's documentation pipeline needs to load these files so they can be used by subsequent components to integrate the UI into the site output.
+
+== Functional Overview
+
+The UI loader component reads the location of the UI bundle from the playbook.
+It then completes the following actions to produce a [.term]_UI catalog_.
+
+* Fetch the UI bundle from the URL specified in the playbook
+* Extract the files in the UI bundle (starting at the specified start path)
+* Create a virtual file object for each UI file containing the file's contents and path information
+* Classify the UI file
+* Compute the output path for each UI file that is publishable (of type static or asset)
+* Create a UI catalog to host the virtual UI files
+* Put each virtual UI file into the UI catalog
+
+The UI catalog is a transmittable collection of virtual UI files.
+
+== Software Architecture
+
+The UI loader component functionality is provided by the ui-loader module.
+
+All the details of fetching the UI bundle, caching it, locating files to extract, extracting the files into virtual file objects, populating the type and, if applicable, output information for each file, and storing the files in the UI catalog should be encapsulated in the UI loader component.
+
+The UI loader component should:
+
+* Accept a playbook
+* Determine from the playbook the URL where the UI bundle is located (`ui.bundle`)
+* Download the UI bundle
+ ** The URL may be a local filesystem reference
+* Cache the contents of the remote URL using the sha1 hash of the URL as the cache key
+ ** The cache should be placed in the [.path]_.cache/ui_ folder
+* Stream the files in the bundle to a virtual file collection
+* Skip to the start path specified in the playbook (`ui.startPath`)
+ ** This allows multiple UIs to be packaged inside the same bundle
+* Collect all files from the start path
+ ** Adjust the file path to be relative to the start path, if applicable
+* Read the UI description file ([.path]_ui.yml_)
+* Use information from the UI description file to identify static files
+ ** Set the type of these files to `static`
+* Set the type for all other files based on location (asset, layout, helper, partial)
+* Compute the output path for each publisable file (static or asset)
+ ** Use the value of `ui.outputDir` from the playbook as the base folder for publishable UI files
+* Instantiate the UI catalog (`UiCatalog`) and add the virtual UI files to this catalog instance
+* Provide an API method that allows files in the UI catalog to be queried by type
+
+.Input
+* Playbook (`ui.outputDir`)
+
+.Output
+* UI catalog (`ui`)
+
+== Code
+
+The UI loader is implemented as a dedicated node package (i.e., module).
+This module exports the asynchronous function `loadUi()`, which accepts a playbook instance and returns an instance of `UiCatalog`.
+
+The API for the UI loader should be used as follows:
+
+[source,js]
+----
+const loadUi = require('../packages/ui-loader/lib/index')
+
+//...
+
+const ui = await loadUi(playbook)
+----
+
+The files in the UI catalog can be retrieved as follows:
+
+[source,js]
+----
+const layouts = ui.findByType('layout')
+----
+
+.UiCatalog API
+* `getFiles()`
+* `addFile()`
+* `findByType()`
+ ** types include: `asset`, `layout`, `helper`, `partial`, and `static`
+
+== Data
+
+The UI bundle should adhere to the following structure:
+
+....
+ui.yml
+layouts/
+helpers/
+partials/
+....
+
+Any file not in these folders is assumed to be an asset unless specified as a static file in [.path]_ui.yml_.
+Both asset and static files are publishable and will get copied directly to the site output.
+Asset files go into the UI output directory whereas static files get copied using their original path.
+
+The UI catalog (instance of `UiCatalog`) produced by this component should have a well defined, queryable index of virtual files.
+
+Each virtual file in the UI catalog should have the `type` property and, if publishable, the `out` property as well.
+
+Valid values for the `type` property are as follows:
+
+* layout
+* helper
+* partial
+* asset
+* static
+
+The `out` property should be populated with the following properties:
+
+* `dirname`
+* `basename`
+* `path`
+
+== Consequences
+
+The UI loader component is responsible for retrieving the UI bundle and using it to populate the UI catalog.
+The UI catalog provides a virtual file system for accessing virtual UI file objects by type.
+
+* All destination information for each UI file has been determined and assigned
+* UI files can be queried by type
+* No subsequent components should have to organize the UI files for processing
+* The UI catalog is transmittable
+
+Subsequent components use the UI files either to apply a layout to pages or copy UI assets to the output site.
