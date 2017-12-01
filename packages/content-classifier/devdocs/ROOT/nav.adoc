@@ -1,1 +1,0 @@
-* xref:architecture-guidebook.adoc[Architecture Guidebook]
