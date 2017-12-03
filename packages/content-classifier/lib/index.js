@@ -110,7 +110,7 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
   const version = src.version === 'master' ? '' : src.version
   const module = src.module === 'ROOT' ? '' : src.module
 
-  const extname = src.extname === '.adoc' ? '.html' : src.extname
+  const extname = src.mediaType === 'text/asciidoc' ? '.html' : src.extname
   let basename = src.stem + extname
 
   let indexifyPathSegment = ''
