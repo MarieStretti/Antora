@@ -1,0 +1,95 @@
+= Modules
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+A documentation component contains one or more modules.
+A [.term]_module_ is a discrete bundle of content within a component.
+
+....
+admin/
+  assets/
+    attachments/
+      signing-key.gpg
+    images/
+      web-console-dashboard.png
+  documents/
+    index.adoc
+    dashboard-tour.adoc
+    backup/
+      index.adoc
+      scheduling.adoc
+    security/
+      index.adoc
+    _partials/
+      prerequisite-checklist.adoc
+  examples/
+    ldap.conf
+....
+
+Since documentation contains more than just text, the module itself is composed of a hierarchy of folders.
+These folders are used to organize files, first by content type, then by topic (or perhaps tag or category).
+
+AsciiDoc documents go in the [.path]_pages_ folder.
+Images go in the [.path]_assets/images_ folder.
+Examples (often code snippets) go in the [.path]_examples_ folder.
+Other content types are organized in a similar fashion.
+Each one of these folders can have an arbitrary depth of topic folders that are used to group files to make them easier to manage and navigate.
+
+When a writer is working on the content, the module becomes the writer's primary workspace.
+The writer doesn't have to go looking elsewhere to find files that belong together.
+This arrangement mirrors how software developers work on source code.
+
+== Why modules?
+
+You might be contemplating one or more of the following questions:
+
+[%hardbreaks]
+_Do we need all this structure?
+Why have modules?
+Isn't a component enough?_
+
+One thing we know for sure about content is that it multiplies, often fast and unpredictably.
+As more content is created, you'll need this extra layer of organization to keep disparate files from ending up on top of one another.
+
+You could argue certain components don't need this much structure.
+In the case of a component that only has single module, we _could_ abbreviate the structure by folding the contents of the module folder directly into the component folder (i.e., the top-level folder).
+But what happens when the project expands in complexity, and you find yourself needing to add another module?
+You now have to go back and change the structure of the project in order to allocate space for it.
+
+== ROOT module
+
+That's where the ROOT module comes in.
+
+....
+antora.yml
+modules/
+  ROOT/
+    assets/
+    examples/
+    pages/
+  ...
+....
+
+The first module in the structure shown in the listing above is named _ROOT_.
+Notice it's in all uppercase.
+That's because it's special.
+The ROOT module contains all the content that's directly associated with the component itself.
+When the content in the ROOT module is published, it gets promoted a level above the other modules, at the component root, hence the name.
+In contrast, the content of other modules reside in subfolders.
+
+....
+https://docs.project-name.com/
+  component-a/
+    index.html
+    admin/
+      index.html
+    api/
+      index.html
+....
+
+If you start out with a ROOT module, even for a simple component, you can easily add more modules later and gradually redistribute the content without having to restructure the project.
+So while the extra structure seems like overkill now, in the long run, you'll be glad you gave your content the space to grow.

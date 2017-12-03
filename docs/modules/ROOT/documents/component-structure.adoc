@@ -1,0 +1,66 @@
+= Organizing Documentation for Antora
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+Antora is designed to work best with a consistent project structure.
+The benefits of this project structure are:
+
+* interoperability with editing, IDE, migration, and validation tools
+* input source to input source cross references that can span repositories and be automatically by Antora when an input's name or location changes
+* shorter contributer onboarding effort
+
+Tools can then be developed to work with this structure to streamline daily tasks and automated processes.
+
+== Standard documentation project
+
+When Antora scans a repository, its first objective is to find a file named `antora`.
+//This file is commonly written in YAML, but it can also be JSON or CSON.
+Once Antora finds this file, it knows that directory and all its folders and files are a [.term]_documentation component_.
+
+//A documentation component must contain an antora.yml (or .cson or .json) file and certain directories when specific file formats are present.
+
+//It includes several sample files thrown in for context.
+Below is Antora's standard documentation project structure, also known as a documentation component.
+
+.Antora documentation component
+....
+antora.yml //<1>
+modules/ //<2>
+  ROOT/ //<3>
+    assets/ //<4>
+      attachments/ //<5>
+      images/ //<6>
+    examples/ //<7>
+    pages/ //<8>
+      _partials/ //<9>
+  user-defined-module/ //<10>
+    assets/
+    examples/
+    pages/
+  module-z/
+    assets/
+    examples/
+    pages/
+  [...]
+....
+<1> *antora.yml* This file signals that the contents of the directory represents a documentation component.
+It is commonly written in YAML, but it can also be JSON or CSON.
+This file is mandatory and contains crucial xref:antora_yml.adoc[metadata about the documentation component].
+<2> *modules*
+<3> *ROOT*
+<4> *assets*
+<5> *attachments*
+<6> *images*
+<7> *examples*
+<8> *pages*
+<9> *_partials*
+<10> *user-defined module*
+
+//This project structure represents a [.term]_documentation component_.
+You can think of a documentation component as a documentation project.
+
+//We know the structure in the example above represents a documentation component because of the presence of an [.path]_antora.yml_ file.

@@ -1,0 +1,26 @@
+= antora.yml
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+When we find an [.path]_antora.yml_ file in a repository, we expect to find the standard structure of a documentation component below it.
+Thus, the documentation can live anywhere in the repository.
+It also means it can share the same repository as the software it documents.
+This project structure is then repeated in each branch of each repository that hosts a documentation component.
+
+The [.path]_antora.yml_ file contains information about the component, such as its name, title, version, and navigation data.
+
+[source,yml]
+----
+name: component-a
+title: Component A
+version: '1.0'
+nav:
+- modules/admin/nav.adoc
+----
+
+All the other files in the component reside in the [.path]_modules_ folder.
+Let's open that folder and have a look inside.
