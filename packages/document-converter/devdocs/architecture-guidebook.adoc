@@ -2,42 +2,43 @@
 
 == Context
 
-In Antora, documentation articles (i.e., pages) are written in AsciiDoc.
-Each non-partial AsciiDoc documents gets mapped to a web page in the site.
+In Antora, text documents (i.e., pages) are written in AsciiDoc.
+Each non-partial, AsciiDoc document gets mapped to a web page in the site.
 The AsciiDoc must be converted to HTML so the contents of the document can be displayed as a web page.
 
 == Functional Overview
 
-The files from the content catalog in the `page` family (i.e., documentation articles) are written in AsciiDoc format.
+The files from the content catalog in the `page` family (i.e., text documents that originated from a [.path]_/pages_ directory) are written in AsciiDoc format.
 The document converter should use an AsciiDoc processor (e.g., Asciidoctor.js) to convert these files to HTML.
 
-The documentation article populates the main area of the web page, so the AsciiDoc only needs to be converted to embeddable HTML.
+A text document populates the main area of a web page, so the AsciiDoc only needs to be converted to embeddable HTML.
+// in a subsequent step or in a subsequent component?
 That embeddable HTML gets enclosed in a web page template in a subsequent step to produce the complete page.
-Page metadata in the document header may be used by the template to control the presentation of auxilary elements in the web page.
-Therefore, that page metadata should also be accessible to the template via the file object.
+Page metadata in the document header may be used by the template to control the presentation of auxiliary elements in the web page.
+Therefore, that page metadata should be accessible to the template via the file object.
 
 As part of converting the AsciiDoc to HTML, the document converter should also resolve references in the AsciiDoc.
 Specifically, it should:
 
-* resolve xref macros that specify page references, verifying a match can be found in the content catalog
+* resolve xref macros that specify page references and verify a match can be found in the content catalog
 * add the appropriate path prefix to image references
-* populate the attribute used in attachement references
+* populate the attribute used in attachment references
 * resolve the contents for include directives from partials and examples within the content catalog
 
-When documentation conversion is complete, the contents property on the file object should be replaced with the embeddable HTML generated from the AsciiDoc and the asciidoc property should capture the attributes in the document header available.
+When document conversion is complete, the `contents` property on the file object should be replaced with the embeddable HTML generated from the AsciiDoc, and the `asciidoc` property should capture the available attributes in the document header.
 
 == Software Architecture
 
 The document converter component functionality is provided by the document-converter module.
 
 At a high level, this component is an AsciiDoc to HTML converter that operates on the files from the content catalog in the `page` family.
-All the details of converting the AsciiDoc documents to HTML, which includes resolving include directives and xref macros, should be encapsulated in this component.
+All the details of converting the AsciiDoc documents to HTML, such as resolving include directives and xref macros, should be encapsulated in this component.
 
 Asciidoctor.js should be used to handle the conversion of AsciiDoc to HTML.
 
 For each file in the `page` family, the document converter should:
 
-* parse the AsciiDoc into an AST
+* parse the AsciiDoc into an abstract syntax tree (AST)
  ** pass the value of the `contents` property of the file to the `Asciidoctor.load` API of Asciidoctor.js
  ** pass any options and attributes to `Asciidoctor.load` required for the document to work with Antora (see below)
  ** pass custom attributes defined by the user in the playbook (`asciidoc.attributes`)
@@ -90,13 +91,14 @@ For example:
 
  develop/best-practices.adoc
 
-The filepath is relative to the module's [.path]_pages_ directory.
+The filepath is relative to a module's [.path]_pages_ directory.
 The `<topic/...>` part is only required if the page is located inside a subdirectory.
 
 If any part is missing, the value from the current context should be consumed.
 For example, if the component is not specified, the component of the referring page (the page containing the xref) should be assumed.
 
-The xref should be translated into a link to the URL of the target page (retrieved from the `pub.url` of the target file).
+The xref should be translated into a link to the URL of the target page.
+The URL of the target page should be retrieved from the `pub.url` of the target file.
 That URL should be made relative to the current page's URL so that the link can be followed even when the site is not served through a web server.
 
 If the target page cannot be resolved, a warning should be emitted.
@@ -104,7 +106,7 @@ If the target page cannot be resolved, a warning should be emitted.
 === Include processor
 
 The target of all include directives should be resolved from the content catalog.
-Include target must point to a file local to the current module, either in the `fragment` family or the `example` family.
+An include target must point to a file local to the current module, either in the `fragment` family or the `example` family.
 For example:
 
  include::{partialsdir}/partial.adoc[]
@@ -159,15 +161,15 @@ catalog.findBy({ family: 'page' }).forEach((file) => {
 The document converter mutates the files from the content catalog in the `page` family, which can be retrieved by invoking `findBy({ family: 'pages' })` on the content catalog.
 Specifically, this component updates the value of the `contents` property by replacing the AsciiDoc with embeddable HTML.
 The previous value is still accessible via the `history` property on the file.
-It also assigns the hash of header attributes to the `asciidoc.attributes` property on the file object.
+It also assigns a hash of header attributes to the `asciidoc.attributes` property on the file object.
 
 When converting each AsciiDoc document, this component incorporates global AsciiDoc attributes defined in the playbook (at the path `asciidoc.attributes`).
 // Q: should it also incorporate attributes from antora.yml?
 
 == Consequences
 
-The document converter component allows documentation articles to be written in AsciiDoc.
-Each documentation article (non-partial AsciiDoc document) becomes a web page in the generated site.
+The document converter component allows text documents to be written in AsciiDoc.
+Each non-partial, AsciiDoc document becomes a web page in the generated site.
 This component converts the AsciiDoc to embeddable HTML, which is used as the contents of the main area of the web page.
 
 As a result of invoking the main function for this component, the file contents of the files from the content catalog in the `page` family has been converted from AsciiDoc to embeddable HTML.
