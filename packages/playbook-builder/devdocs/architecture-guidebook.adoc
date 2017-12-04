@@ -8,11 +8,11 @@ This configuration, which we call a [.term]_playbook_, tells the documentation p
 == Functional Overview
 
 The playbook needs to be loaded as the first step in the Antora pipeline.
-The playbook component is responsible for accessing, validating, and processing a user provided playbook.
+The playbook builder component is responsible for accessing, validating, and processing a user provided playbook.
 Numerous components in the Antora pipeline will need to access the configuration options provided by the playbook.
 Therefore, the object that holds the data in the playbook needs to be transmittable.
 
-The playbook component takes a configuration file, which we call a [.term]_playbook spec_, as input.
+The playbook builder component accepts a configuration file, which we call a [.term]_playbook spec_, as input.
 A playbook spec can be created and used by anyone operating an Antora pipeline.
 While the playbook spec is the primary means of configuration, audibles may be passed using either process arguments (i.e., command-line flags and switches), environment variables, or a combination of both.
 Audibles override equivalent option values in the playbook spec.
@@ -26,11 +26,11 @@ Using a playbook spec as an input, the component should carry out the following 
 
 == Software Architecture
 
-The playbook component functionality is provided by the playbook module.
+The playbook builder component functionality is provided by the playbook-builder module.
 
 All the details of loading the configuration, including the schema, the validation, the precedence of input methods, and the conversion to a transmittable model should be encapsulated in this component.
 
-The playbook component should:
+The playbook builder component should:
 
 * Load the built-in playbook schema and assign default option values
 * Accept two parameters, an array of arguments (populated from or simulating process arguments) and a hash of variables (populated from or simulating environment variables)
@@ -54,7 +54,7 @@ The playbook component should:
 
 == Code
 
-The playbook component is implemented as a dedicated node package (i.e., module).
+The playbook builder component is implemented as a dedicated node package (i.e., module).
 Its API exports the `buildPlaybook()` function, which reads environment variables, commandline flags and switches, and a playbook spec file to produce the playbook data model.
 
 #FIXME# the buildPlaybook function should accept an array of process arguments and a hash of environment variables.
@@ -70,11 +70,11 @@ The playbook builder should:
  ** Select and use the appropriate parser based on the data format; the resulting object should be the same regardless of data format
 * Load any environment variables, then process arguments
 
-The API for the playbook should be used as follows:
+The API for the playbook builder should be used as follows:
 
 [source,js]
 ----
-const buildPlaybook = require ('../packages/playbook/lib/playbook-builder')
+const buildPlaybook = require ('../packages/playbook/lib/index')
 
 const playbook = buildPlaybook()
 ----
@@ -94,7 +94,7 @@ It may be possible in the future for extensions to contribute entries to the sch
 
 The playbook object (`playbook`) produced by this component should be a well-defined, read-only data model.
 This model should allow the playbook properties to be referenced using path navigation (e.g., `playbook.content.sources`).
-This model should be easy to reproduce by another means, such as an alternate implementation of the playbook component.
+This model should be easy to reproduce by another means, such as an alternate implementation of the playbook builder component.
 
 Each section of configuration (site, content, ui) should be represented by a dedicated model type whose properties (name, location, and type) can be easily converted into API documentation (for example, using a tool like https://github.com/documentationjs/documentation[documentationjs]).
 
@@ -104,7 +104,7 @@ Once the playbook is built, all user input has been captured and the pipeline ca
 Almost all subsequent components will be configured in some way based on information provided in the playbook.
 No other component should look for user input for the site other than in the playbook.
 
-By introducing a dedicated playbook component to handle user configuration, the configuration step is decoupled from the rest of the pipeline and the runtime environment.
+By introducing a dedicated playbook builder component to handle user configuration, the configuration step is decoupled from the rest of the pipeline and the runtime environment.
 This design will have an immediate impact on development by making the component easier to test in isolation.
 
 This component also reserves room in the future for Antora to accept configuration from other input types, such as a database or web service.
@@ -114,7 +114,7 @@ This component also reserves room in the future for Antora to accept configurati
 
 * Plugins should be able to participate in the process of building the playbook, either to modify the schema or modify the configuration data.
 * The playbook builder should fire one event after the configuration schema is loaded and one event after the configuration data is populated.
-* This means that the playbook component has an implicit dependency on an event bus infrastructure.
+* This means that the playbook builder component has an implicit dependency on an event bus infrastructure.
 * This component should use the global event emitter to fire events into the event bus.
-* By raising events at strategic points, the playbook component allows plugins to introduce flags and switches to the main application interface.
+* By raising events at strategic points, the playbook builder component allows plugins to introduce flags and switches to the main application interface.
 ////

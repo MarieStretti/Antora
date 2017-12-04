@@ -2,7 +2,7 @@
 'use strict'
 
 const { expect } = require('../../../test/test-utils')
-const buildPlaybook = require('../lib/playbook-builder')
+const buildPlaybook = require('../lib/index')
 
 const path = require('path')
 
