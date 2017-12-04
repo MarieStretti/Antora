@@ -1,3 +1,4 @@
+// line comments are supported
 {
     "one": {
         "one": "json-spec-value-one"
@@ -6,12 +7,14 @@
     "three": false,
     "four": [
         {
-            "name": "John",
-            "lastname": "Lennon"
+            // keys don't have to be quoted
+            // string values can be enclosed in single quotes
+            name: 'John',
+            lastname: 'Lennon'
         },
         {
             "name": "Paul",
             "lastname": "McCartney"
-        }
-    ]
+        },
+    ],
 }
