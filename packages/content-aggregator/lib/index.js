@@ -8,7 +8,7 @@ const del = require('del')
 const File = require('vinyl')
 const git = require('nodegit')
 const isMatch = require('matcher').isMatch
-const mime = require('./mime')
+const mimeTypes = require('./mime-types-with-asciidoc')
 const streamToArray = require('stream-to-array')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
@@ -212,7 +212,7 @@ function assignFileProperties (file, url, branch, startPath = '/') {
   const extname = path.extname(file.path)
   file.src = {
     basename: path.basename(file.path),
-    mediaType: mime.lookup(extname),
+    mediaType: mimeTypes.lookup(extname),
     stem: path.basename(file.path, extname),
     extname,
     origin: {

@@ -4,7 +4,7 @@
 const { expect } = require('../../../test/test-utils')
 const classifyContent = require('../lib/index')
 const path = require('path')
-const mime = require('../../content-aggregator/lib/mime')
+const mimeTypes = require('../../content-aggregator/lib/mime-types-with-asciidoc')
 
 const createFile = (filepath) => {
   const basename = path.basename(filepath)
@@ -12,7 +12,7 @@ const createFile = (filepath) => {
   const stem = path.basename(filepath, extname)
   return {
     path: filepath,
-    src: { basename, mediaType: mime.lookup(extname), stem, extname },
+    src: { basename, mediaType: mimeTypes.lookup(extname), stem, extname },
   }
 }
 
