@@ -1,63 +1,46 @@
 'use strict'
 
+const convict = require('./solitary-convict')
+const cson = require('cson-parser')
+const freeze = require('deep-freeze')
 const fs = require('fs')
 const path = require('path')
-
-const convict = require('convict')
-const cson = require('cson-parser')
-const deepFreeze = require('deep-freeze')
-const defaultSchema = require('./config/schema')
 const yaml = require('js-yaml')
 
-function getConvictConfig (customSchema) {
-  if (customSchema != null) {
-    return convict(customSchema)
-  }
+const loadConvictConfig = (args, env, customSchema) =>
+  convict(customSchema || require('./config/schema'), { args: args, env: env })
 
-  return convict(defaultSchema)
+const parseSpecFile = (specFilePath) => {
+  const data = fs.readFileSync(specFilePath, 'utf8')
+
+  switch (path.extname(specFilePath)) {
+    case '.yml':
+      return yaml.safeLoad(data)
+    case '.json':
+      return JSON.parse(data)
+    case '.cson':
+      return cson.parse(data)
+    default:
+      throw new Error('Unsupported file type')
+  }
 }
 
-function loadSpecFile (specPath) {
-  const specExtname = path.extname(specPath)
-  const fileContents = fs.readFileSync(specPath, 'utf8')
+module.exports = (args, env, schema) => {
+  const config = loadConvictConfig(args, env, schema)
 
-  if (specExtname === '.yml') {
-    return yaml.safeLoad(fileContents)
+  const specFileRelPath = config.get('playbook')
+  if (!specFileRelPath) {
+    throw new Error('Spec file for playbook not specified')
   }
 
-  if (specExtname === '.json') {
-    return JSON.parse(fileContents)
-  }
+  let specFileAbsPath = path.resolve(process.cwd(), specFileRelPath)
+  if (!path.extname(specFileAbsPath)) specFileAbsPath += '.yml'
 
-  if (specExtname === '.cson') {
-    return cson.parse(fileContents)
-  }
-
-  throw new Error('Unknown file type')
-}
-
-module.exports = (customSchema) => {
-  const config = getConvictConfig(customSchema)
-  const specRelativePath = config.get('playbook')
-
-  if (specRelativePath == null) {
-    throw new Error('Playbook spec file cannot be found')
-  }
-
-  let specPath = path.resolve(process.cwd(), specRelativePath)
-  // assume implicit .yml extension
-  if (path.extname(specPath) === '') {
-    specPath += '.yml'
-  }
-
-  const spec = loadSpecFile(specPath)
-  config.load(spec)
+  config.load(parseSpecFile(specFileAbsPath))
   config.validate({ allowed: 'strict' })
 
   const playbook = config.getProperties()
-  // playbook path property should not leak
+  // playbook property is private; should not leak
   delete playbook.playbook
-  const frozenPlaybook = deepFreeze(playbook)
-
-  return frozenPlaybook
+  return freeze(playbook)
 }
