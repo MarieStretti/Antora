@@ -2,18 +2,17 @@
 
 == Context
 
-In Antora, text documents (i.e., pages) are written in AsciiDoc.
-Each non-partial, AsciiDoc document gets mapped to a web page in the site.
-The AsciiDoc must be converted to HTML so the contents of the document can be displayed as a web page.
+In Antora, documentation pages are written in AsciiDoc.
+Each non-partial, AsciiDoc document under the [.path]_pages_ folder gets mapped to a web page in the site.
+The AsciiDoc must be converted to HTML so the contents of these documents can be displayed as a web page.
 
 == Functional Overview
 
-The files from the content catalog in the `page` family (i.e., text documents that originated from a [.path]_/pages_ directory) are written in AsciiDoc format.
+The files in the `page` family of the content catalog (i.e., text documents in the [.path]_pages_ directory) are written in AsciiDoc format.
 The document converter should use an AsciiDoc processor (e.g., Asciidoctor.js) to convert these files to HTML.
 
-A text document populates the main area of a web page, so the AsciiDoc only needs to be converted to embeddable HTML.
-// in a subsequent step or in a subsequent component?
-That embeddable HTML gets enclosed in a web page template in a subsequent step to produce the complete page.
+These documents are used to populate the main area of the web page, so the AsciiDoc only needs to be converted to embeddable HTML.
+That embeddable HTML is later enclosed in a web page template by the page generator component to produce the complete page.
 Page metadata in the document header may be used by the template to control the presentation of auxiliary elements in the web page.
 Therefore, that page metadata should be accessible to the template via the file object.
 
@@ -31,7 +30,7 @@ When document conversion is complete, the `contents` property on the file object
 
 The document converter component functionality is provided by the document-converter module.
 
-At a high level, this component is an AsciiDoc to HTML converter that operates on the files from the content catalog in the `page` family.
+At a high level, this component is an AsciiDoc to HTML converter that operates on the files in the `page` family of the content catalog.
 All the details of converting the AsciiDoc documents to HTML, such as resolving include directives and xref macros, should be encapsulated in this component.
 
 Asciidoctor.js should be used to handle the conversion of AsciiDoc to HTML.
@@ -118,11 +117,11 @@ Due to current limitations in the AsciiDoc processor, this processor must handle
 
 .Inputs
 * Content catalog (`catalog`)
-* `page` family from content catalog
+* `page` family from the content catalog
 * Playbook (`asciidoc`)
 
 .Output
-* _none_ (mutates the files from the `page` family in the content catalog)
+* _none_ (mutates the files in the `page` family of the content catalog)
 
 == Code
 
@@ -158,7 +157,7 @@ catalog.findBy({ family: 'page' }).forEach((file) => {
 
 == Data
 
-The document converter mutates the files from the content catalog in the `page` family, which can be retrieved by invoking `findBy({ family: 'pages' })` on the content catalog.
+The document converter mutates the files in the `page` family of the content catalog, which can be retrieved by invoking `findBy({ family: 'page' })` on the content catalog.
 Specifically, this component updates the value of the `contents` property by replacing the AsciiDoc with embeddable HTML.
 The previous value is still accessible via the `history` property on the file.
 It also assigns a hash of header attributes to the `asciidoc.attributes` property on the file object.
@@ -172,7 +171,7 @@ The document converter component allows text documents to be written in AsciiDoc
 Each non-partial, AsciiDoc document becomes a web page in the generated site.
 This component converts the AsciiDoc to embeddable HTML, which is used as the contents of the main area of the web page.
 
-As a result of invoking the main function for this component, the file contents of the files from the content catalog in the `page` family has been converted from AsciiDoc to embeddable HTML.
+As a result of invoking the main function for this component, the file contents of the files in the `page` family of the content catalog has been converted from AsciiDoc to embeddable HTML.
 The contents of these files are now ready to be wrapped in a web page template and written to the generated site.
 
 This component hands off processing to the page generator component, which wraps the embeddable HTML created by this component in a web page template to produce a complete web page.
