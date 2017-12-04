@@ -43,7 +43,7 @@ module.exports = {
         arg: 'google-analytics-key',
       },
       swiftype: {
-        doc: 'The key to activate the SwiftType widget.',
+        doc: 'The key to activate the Swiftype widget.',
         format: String,
         default: undefined,
         arg: 'swiftype-key',
@@ -107,15 +107,15 @@ module.exports = {
     },
   },
   urls: {
-    htmlExtensionStyle: {
+    html_extension_style: {
       doc: 'Controls how the URL extension for HTML pages is handled (default, drop, or indexify).',
       format: ['default', 'drop', 'indexify'],
       default: 'default',
       arg: 'html-url-extension-style',
     },
-    aspectPageStrategy: {
+    aspect_page_strategy: {
       doc: 'Controls how links to pages in aspect domains are generated (path or query).',
-      format: String,
+      format: ['path', 'query'],
       default: 'path',
       arg: 'aspect-page-url-strategy',
     },

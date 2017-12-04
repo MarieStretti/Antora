@@ -1,8 +1,9 @@
 'use strict'
 
+const camelCaseKeys = require('camelcase-keys')
 const convict = require('./solitary-convict')
 const cson = require('cson-parser')
-const freeze = require('deep-freeze')
+const freezeDeep = require('deep-freeze')
 const fs = require('fs')
 const path = require('path')
 const yaml = require('js-yaml')
@@ -25,22 +26,26 @@ const parseSpecFile = (specFilePath) => {
   }
 }
 
+const exportPlaybookModel = (config) => {
+  const playbook = camelCaseKeys(config.getProperties(), { deep: true })
+  // playbook property is private; should not leak
+  delete playbook.playbook
+  return freezeDeep(playbook)
+}
+
 module.exports = (args, env, schema) => {
   const config = loadConvictConfig(args, env, schema)
 
   const specFileRelPath = config.get('playbook')
-  if (!specFileRelPath) {
+  if (specFileRelPath) {
+    let specFileAbsPath = path.resolve(process.cwd(), specFileRelPath)
+    if (!path.extname(specFileAbsPath)) specFileAbsPath += '.yml'
+    config.load(parseSpecFile(specFileAbsPath))
+  } else {
     throw new Error('Spec file for playbook not specified')
   }
 
-  let specFileAbsPath = path.resolve(process.cwd(), specFileRelPath)
-  if (!path.extname(specFileAbsPath)) specFileAbsPath += '.yml'
-
-  config.load(parseSpecFile(specFileAbsPath))
   config.validate({ allowed: 'strict' })
 
-  const playbook = config.getProperties()
-  // playbook property is private; should not leak
-  delete playbook.playbook
-  return freeze(playbook)
+  return exportPlaybookModel(config)
 }
