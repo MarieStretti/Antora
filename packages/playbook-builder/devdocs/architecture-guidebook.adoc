@@ -33,11 +33,13 @@ All the details of loading the configuration, including the schema, the validati
 The playbook builder component should:
 
 * Load the built-in playbook schema and assign default option values
-* Accept two parameters, an array of arguments (populated from or simulating process arguments) and a hash of variables (populated from or simulating environment variables)
+* Accept two parameters, an array of arguments (populated from or simulating process arguments) and a map of variables (populated from or simulating environment variables)
  ** By accepting these two parameters, the playbook builder can be used and tested independently of the CLI runtime environment.
  ** Within those parameters, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
 * Look for the specified playbook spec file composed in YAML, JSON, or CSON format
  ** When the data in these formats are read in, they become plain JavaScript objects.
+ ** If the playbook spec file is a relative path, assume it's relative to the process working directory
+ ** If the path specified for the playbook spec file does not have a file extension, assume the file extension is `.yml`
 * Apply audibles in the form of process arguments and environment variables
  ** The order of precedence for an option value is as follows (highest to lowest): process argument, environment variable, spec, default.
 * Validate the aggregate playbook spec values
@@ -57,8 +59,6 @@ The playbook builder component should:
 The playbook builder component is implemented as a dedicated node package (i.e., module).
 Its API exports the `buildPlaybook()` function, which reads environment variables, commandline flags and switches, and a playbook spec file to produce the playbook data model.
 
-#FIXME# the buildPlaybook function should accept an array of process arguments and a hash of environment variables.
-
 The playbook builder should:
 
 * Be the main coordinator, though it may delegate work to subordinate objects
@@ -72,12 +72,27 @@ The playbook builder should:
 
 The API for the playbook builder should be used as follows:
 
+////
 [source,js]
 ----
 const buildPlaybook = require ('../packages/playbook/lib/index')
 
 const playbook = buildPlaybook()
 ----
+
+By default, the process arguments (i.e., `process.argv` and environment variables `process.env` are used as configuration input).
+// Q: should args and env be assumed to be empty if not specified?
+It should be possible to isolate the API call from the process environment by passing an array of arguments and map of environment variables:
+////
+
+[source,js]
+----
+const buildPlaybook = require ('../packages/playbook/lib/index')
+
+const playbook = buildPlaybook(process.argv.slice(2), process.env)
+----
+
+The first argument is an array of process arguments (e.g., `+['--playbook', 'site.yml']+`) and the second is a map of environment variables (e.g., `+{ URL: 'http://example.com' }+`)
 
 The properties of the playbook can be accessed as follows:
 
