@@ -5,6 +5,7 @@ const { expect } = require('../../../test/test-utils')
 const classifyContent = require('../lib/index')
 const path = require('path')
 const mimeTypes = require('../../content-aggregator/lib/mime-types-with-asciidoc')
+const { COMPONENT_DESC_FILENAME } = require('../../content-aggregator/lib/constants')
 
 const createFile = (filepath) => {
   const basename = path.basename(filepath)
@@ -118,13 +119,13 @@ describe('classifyContent()', () => {
     })
   })
 
-  it('should not classify a navigation if not referenced in docs-component.yml', () => {
+  it('should not classify a navigation if not referenced in component desc', () => {
     aggregate[0].files.push(createFile('/modules/ROOT/nav.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
     expect(files).to.have.lengthOf(0)
   })
 
-  it('should classify a navigation if referenced in docs-component.yml', () => {
+  it('should classify a navigation if referenced in component desc', () => {
     aggregate[0].nav = ['modules/ROOT/nav.adoc']
     aggregate[0].files.push(createFile('/modules/ROOT/nav.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
@@ -139,7 +140,7 @@ describe('classifyContent()', () => {
     })
   })
 
-  it('should assign a nav.index on navigation based on order in docs-component.yml', () => {
+  it('should assign a nav.index on navigation based on order in component desc', () => {
     aggregate[0].nav = ['modules/ROOT/nav.adoc', 'modules/module-a/nav.adoc', 'modules/module-b/nav.adoc']
     aggregate[0].files.push(
       ...[
@@ -160,7 +161,7 @@ describe('classifyContent()', () => {
   it('should not classify files that do not follow the Antora standard', () => {
     aggregate[0].files.push(
       ...[
-        createFile('/docs-component.yml'),
+        createFile('/' + COMPONENT_DESC_FILENAME),
         createFile('/README.adoc'),
         createFile('/modules/ROOT/_attributes.adoc'),
         createFile('/modules/ROOT/assets/bad-file.png'),

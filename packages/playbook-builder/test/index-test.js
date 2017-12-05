@@ -3,7 +3,6 @@
 
 const { expect } = require('../../../test/test-utils')
 const buildPlaybook = require('../lib/index')
-
 const path = require('path')
 
 describe('buildPlaybook()', () => {
