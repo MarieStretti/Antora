@@ -10,23 +10,29 @@ This page becomes a page in the generated site.
 
 == Functional Overview
 
-At this point in the pipeline, the contents of files in the `page` family from the content catalog (i.e., documentation articles) are embeddable HTML.
+At this point in the pipeline, the files in the `page` family from the content catalog (i.e., text documents from the pages directory) are embeddable HTML.
 The page generator component needs to transform the contents of these files to complete HTML.
 
 The main purpose of the page generator component is to a apply a page template to the embeddable HTML produced by the document converter.
-The page template wraps the main content in a UI shell that provides the foundation structure of an HTML page, adds common navigation in the header and footer areas, populates a navigation tree for navigating to other pages in the current site, and includes a toolbar for performing actions such as switching between versions of the current page, among other things.
-Since each site needs its own user interface to help it stand out and fit the unique requirements of the site owner, the page templates needs to be customizable.
-That's why the page templates are managed as a separate project and provided as input to the site generator.
+The page template wraps the main content in a UI shell that provides the foundation structure of an HTML page, adds common navigation in the header and footer areas, populates a navigation tree for navigating to other pages in the site, and includes a toolbar for performing actions such as switching between versions of the current page.
+Since each site's UI needs to fit the unique requirements of the site owner, the page templates need to be customizable.
+That's why the page templates are managed as a separate project and provided as input to the Antora pipeline.
 //It also allows the site owner to supply different page templates for different pages.
 
-In fact, the page templates are what are used to actually make the pages in the site.
+In fact, the page templates are what are used to make the pages in the site.
 The pipeline feeds the embeddable HTML to the page template.
 It does so by passing a model to the template for each page.
 That model includes the embeddable HTML for the main content as well as other information such as the page's component, version, navigation, and so forth.
-The template actually decides where to place that embeddable HTML in the page.
+The template decides where to place that embeddable HTML in the page.
 This strategy gives the site owner full control over the layout of the pages.
 
-Thus, this component should iterate over each file from the content catalog in the `page` family, determine which page template the page is requesting (falling back to a global default), populate a template model that includes the embeddable HTML contents of the current page and other information about the page and its context, apply that model to the template, and replace the contents of the current file with the template result.
+Thus, this component should:
+
+* iterate over each file from the content catalog in the `page` family
+* determine which page template the page is requesting (falling back to a global default)
+* populate a template model that includes the embeddable HTML contents of the current page and other information about the page and its context
+* apply the model to the template
+* replace the contents of the current file with the template result
 
 == Software Architecture
 
@@ -36,10 +42,10 @@ At a high level, this component is a template renderer.
 It applies a page template for each file in the `page` family from the content catalog.
 All the details of applying the template to produce component HTML, which includes populating the template model and using it to run the template, should be encapsulated in this component.
 
-Page templates are assumed to be written in Handlebars
+Page templates are assumed to be written in Handlebars.
 Therefore, this component should use a Handlebars library to apply the template.
 
-For each file in the `page` family, the document converter should:
+For each file in the `page` family, the page generator should:
 
 * Populate a template model that includes the contents of the current file (embeddable HTML) as well as information about the page's context such as the component, version, and navigation model
  ** The links in navigation model and breadcrumbs should be converted to be relative to the URL of the current page
@@ -121,7 +127,7 @@ For example, to access the site title in the template, you can use:
 Each page is generated using the specified page template, which is supplied by the UI bundle.
 Relying on a page template to produce the pages gives the site owner complete control over the generation of the pages, and thus complete control over the UI.
 The template model that is passed to the UI gives the author of the template enough information to create a wide variety of layouts that are influenced by the content.
-This ensures that the site can stand out and meet the requirements of the site owner.
+This ensures that the site can meet the requirements of the site owner.
 It's also possible to use different layouts for different pages by defining the layout at the page or component level.
 
-One the page generator runs, the pages in the site are ready to be published.
+Once the page generator runs, the pages in the site are ready to be published.
