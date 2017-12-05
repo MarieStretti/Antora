@@ -64,7 +64,7 @@ module.exports = {
     },
   },
   ui: {
-    location: {
+    url: {
       doc: 'The repository that hosts the UI.',
       format: String,
       default: undefined,
