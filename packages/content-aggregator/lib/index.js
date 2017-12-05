@@ -1,18 +1,18 @@
 'use strict'
 
-const path = require('path')
-const fs = require('fs')
-
 const _ = require('lodash')
 const del = require('del')
 const File = require('vinyl')
+const fs = require('fs')
 const git = require('nodegit')
 const isMatch = require('matcher').isMatch
 const mimeTypes = require('./mime-types-with-asciidoc')
+const path = require('path')
 const streamToArray = require('stream-to-array')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
+const { COMPONENT_DESC_FILENAME } = require('./constants')
 const localCachePath = path.resolve('.git-cache')
 
 module.exports = async (playbook) => {
@@ -53,7 +53,7 @@ module.exports = async (playbook) => {
     return allRepoComponentVersions
   })
 
-  return buildCorpus(await Promise.all(componentVersions))
+  return buildAggregate(await Promise.all(componentVersions))
 }
 
 async function openOrCloneRepository (repoUrl) {
@@ -144,17 +144,17 @@ function branchMatches (branchName, branchPattern) {
 }
 
 function readComponentDesc (files) {
-  const componentDescFile = files.find((file) => file.relative === 'docs-component.yml')
+  const componentDescFile = files.find((file) => file.relative === COMPONENT_DESC_FILENAME)
   if (componentDescFile == null) {
-    throw new Error('docs-component.yml not found')
+    throw new Error(COMPONENT_DESC_FILENAME + ' not found')
   }
 
   const componentDesc = yaml.safeLoad(componentDescFile.contents.toString())
   if (componentDesc.name == null) {
-    throw new Error('docs-component.yml is missing a name')
+    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name')
   }
   if (componentDesc.version == null) {
-    throw new Error('docs-component.yml is missing a version')
+    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version')
   }
 
   return componentDesc
@@ -222,7 +222,7 @@ function assignFileProperties (file, url, branch, startPath = '/') {
   return file
 }
 
-function buildCorpus (componentVersions) {
+function buildAggregate (componentVersions) {
   return _(componentVersions)
     .flatten()
     .groupBy(({ name, version }) => `${version}@${name}`)

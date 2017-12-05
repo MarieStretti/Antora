@@ -1,9 +1,10 @@
 'use strict'
 
-const path = require('path')
-const git = require('nodegit')
 const fs = require('fs-extra')
+const git = require('nodegit')
+const path = require('path')
 
+const { COMPONENT_DESC_FILENAME } = require('../lib/constants')
 const fixturesPath = path.resolve(__dirname, 'fixtures')
 const reposBasePath = path.resolve(__dirname, 'repos')
 
@@ -64,27 +65,27 @@ class FixtureRepo {
   }
 
   async setDocsComponent ({ name, title, version, nav, startPath = '.' }) {
-    const filepath = path.join(this.repoPath, startPath, 'docs-component.yml')
-    const docsComponentYml = []
+    const filepath = path.join(this.repoPath, startPath, COMPONENT_DESC_FILENAME)
+    const componentDescYaml = []
     if (name) {
-      docsComponentYml.push(`name: ${name}`)
+      componentDescYaml.push(`name: ${name}`)
     }
     if (title) {
-      docsComponentYml.push(`title: ${title}`)
+      componentDescYaml.push(`title: ${title}`)
     }
     if (version) {
-      docsComponentYml.push(`version: '${version}'`)
+      componentDescYaml.push(`version: '${version}'`)
     }
     if (nav) {
-      docsComponentYml.push('nav:')
+      componentDescYaml.push('nav:')
       nav.forEach((navItem) => {
-        docsComponentYml.push(`  - ${navItem}`)
+        componentDescYaml.push(`  - ${navItem}`)
       })
     }
     if (name != null || version != null) {
       await fs.ensureFile(filepath)
-      await fs.writeFile(filepath, docsComponentYml.join('\n'))
-      await this.commitAll(`Set docs-component for ${version}`)
+      await fs.writeFile(filepath, componentDescYaml.join('\n'))
+      await this.commitAll(`Populate component desc for ${version}`)
     }
   }
 
