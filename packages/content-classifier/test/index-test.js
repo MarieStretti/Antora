@@ -197,7 +197,7 @@ describe('classifyContent()', () => {
     expect(files[1].src).to.include({ component: 'the-other-component', version: 'v4.5.6' })
   })
 
-  it('should throw when two identical files are found in different locations', () => {
+  it('should throw when two identical files are found in different sources', () => {
     const aggregate = [
       {
         name: 'the-component',

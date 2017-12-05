@@ -17,7 +17,7 @@ const localCachePath = path.resolve('.git-cache')
 
 module.exports = async (playbook) => {
   const componentVersions = playbook.content.sources.map(async (repo) => {
-    const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(repo.location)
+    const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(repo.url)
     const branches = await repository.getReferences(git.Reference.TYPE.OID)
 
     const repoComponentVersions = _(branches)
@@ -195,7 +195,7 @@ function getGitEntries (tree, onEntry) {
 }
 
 async function loadLocalFiles (repo) {
-  const basePath = path.join(repo.location, repo.startPath || '.')
+  const basePath = path.join(repo.url, repo.startPath || '.')
   const vfileStream = vfs.src('**/*.*', {
     base: basePath,
     cwd: basePath,

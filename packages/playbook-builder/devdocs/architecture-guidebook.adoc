@@ -111,7 +111,7 @@ The playbook object (`playbook`) produced by this component should be a well-def
 This model should allow the playbook properties to be referenced using path navigation (e.g., `playbook.content.sources`).
 This model should be easy to reproduce by another means, such as an alternate implementation of the playbook builder component.
 
-Each section of configuration (site, content, ui) should be represented by a dedicated model type whose properties (name, location, and type) can be easily converted into API documentation (for example, using a tool like https://github.com/documentationjs/documentation[documentationjs]).
+Each section of configuration (site, content, ui) should be represented by a dedicated model type whose properties (name, url, and type) can be easily converted into API documentation (for example, using a tool like https://github.com/documentationjs/documentation[documentationjs]).
 
 == Consequences
 

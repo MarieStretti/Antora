@@ -17,12 +17,12 @@ class FixtureRepo {
   async initRepo ({ repoName, name, title, version, nav, startPath }) {
     this.startPath = startPath
     this.repoPath = path.join(reposBasePath, repoName || name || 'default-repo')
-    this.location = this.repoPath
+    this.url = this.repoPath
     if (this.isRemote) {
-      this.location = 'file://' + this.location
+      this.url = 'file://' + this.url
     }
     if (this.isBare) {
-      this.location = this.location + '/.git'
+      this.url = this.url + '/.git'
     }
     this.repository = await git.Repository.init(this.repoPath, 0)
     await this.copyAll(['README.adoc'])

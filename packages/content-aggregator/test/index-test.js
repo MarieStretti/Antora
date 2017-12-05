@@ -47,7 +47,7 @@ describe('aggregateContent()', () => {
   describe('should throw if component desc cannot be found', () => {
     testAll(async (repo) => {
       await repo.initRepo({})
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate).to.be.rejectedWith(COMPONENT_DESC_FILENAME + ' not found')
     })
@@ -56,7 +56,7 @@ describe('aggregateContent()', () => {
   describe('should throw if component desc does not define a name', () => {
     testAll(async (repo) => {
       await repo.initRepo({ version: 'v1.0.0' })
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate).to.be.rejectedWith(COMPONENT_DESC_FILENAME + ' is missing a name')
     })
@@ -65,7 +65,7 @@ describe('aggregateContent()', () => {
   describe('should throw if component desc does not define a version', () => {
     testAll(async (repo) => {
       await repo.initRepo({ name: 'the-component' })
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate).to.be.rejectedWith(COMPONENT_DESC_FILENAME + ' is missing a version')
     })
@@ -79,7 +79,7 @@ describe('aggregateContent()', () => {
         version: 'v1.2.3',
         nav: ['nav-one.adoc', 'nav-two.adoc'],
       })
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -105,7 +105,7 @@ describe('aggregateContent()', () => {
         startPath: 'docs',
       })
       playbook.content.sources.push({
-        location: repo.location,
+        url: repo.url,
         startPath: repo.startPath,
       })
       const aggregate = aggregateContent(playbook)
@@ -126,9 +126,9 @@ describe('aggregateContent()', () => {
   describe('should discover components across multiple repositories', () => {
     testAll(async (theComponent, theOtherComponent) => {
       await theComponent.initRepo({ name: 'the-component', title: 'The Component', version: 'v1.2.3' })
-      playbook.content.sources.push({ location: theComponent.location })
+      playbook.content.sources.push({ url: theComponent.url })
       await theOtherComponent.initRepo({ name: 'the-other-component', title: 'The Other Component', version: 'v4.5.6' })
-      playbook.content.sources.push({ location: theOtherComponent.location })
+      playbook.content.sources.push({ url: theOtherComponent.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -157,7 +157,7 @@ describe('aggregateContent()', () => {
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
       playbook.content.sources.push({
-        location: repo.location,
+        url: repo.url,
         branches: 'master',
       })
       const aggregate = aggregateContent(playbook)
@@ -174,7 +174,7 @@ describe('aggregateContent()', () => {
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
       playbook.content.sources.push({
-        location: repo.location,
+        url: repo.url,
         branches: 'v*',
       })
       const aggregate = aggregateContent(playbook)
@@ -193,7 +193,7 @@ describe('aggregateContent()', () => {
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
       playbook.content.sources.push({
-        location: repo.location,
+        url: repo.url,
         branches: ['master', 'v1.*', 'v3.*'],
       })
       const aggregate = aggregateContent(playbook)
@@ -211,7 +211,7 @@ describe('aggregateContent()', () => {
   describe('should filter branches using playbook default filter "content.branches"', () => {
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       playbook.content.branches = ['v1.0.0', 'v2*']
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
@@ -225,7 +225,7 @@ describe('aggregateContent()', () => {
 
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       playbook.content.branches = 'v1.0.*'
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
@@ -254,7 +254,7 @@ describe('aggregateContent()', () => {
   describe('should catalog all files', () => {
     testAll(async (repo) => {
       await initRepoWithFiles(repo)
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -280,7 +280,7 @@ describe('aggregateContent()', () => {
   describe('should populate files with correct contents', () => {
     testAll(async (repo) => {
       await initRepoWithFiles(repo)
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -316,7 +316,7 @@ describe('aggregateContent()', () => {
         ],
         'docs'
       )
-      playbook.content.sources.push({ location: repo.location, startPath: repo.startPath })
+      playbook.content.sources.push({ url: repo.url, startPath: repo.startPath })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -341,7 +341,7 @@ describe('aggregateContent()', () => {
       await repo.createBranch({ name: 'the-component', version: 'v1.2.3', branch: 'v1.2.3-fix-stuffs' })
       await repo.removeFixtureFiles(['modules/ROOT/documents/page-one.adoc'])
       await repo.addFixtureFiles(['modules/ROOT/documents/page-two.adoc'])
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -365,7 +365,7 @@ describe('aggregateContent()', () => {
         version: 'v1.2.3',
       })
       await theComponent.addFixtureFiles(['modules/ROOT/documents/page-one.adoc'])
-      playbook.content.sources.push({ location: theComponent.location })
+      playbook.content.sources.push({ url: theComponent.url })
       await theOtherComponent.initRepo({
         repoName: 'the-component-bar',
         name: 'the-component',
@@ -373,7 +373,7 @@ describe('aggregateContent()', () => {
         version: 'v1.2.3',
       })
       await theOtherComponent.addFixtureFiles(['modules/ROOT/documents/page-two.adoc'])
-      playbook.content.sources.push({ location: theOtherComponent.location })
+      playbook.content.sources.push({ url: theOtherComponent.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -381,9 +381,9 @@ describe('aggregateContent()', () => {
           expect(theAggregate).to.have.lengthOf(1)
           expect(theAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const pageOne = _.find(theAggregate[0].files, { path: 'modules/ROOT/documents/page-one.adoc' })
-          expect(pageOne.src.origin.git.url).to.equal(theComponent.location)
+          expect(pageOne.src.origin.git.url).to.equal(theComponent.url)
           const pageTwo = _.find(theAggregate[0].files, { path: 'modules/ROOT/documents/page-two.adoc' })
-          expect(pageTwo.src.origin.git.url).to.equal(theOtherComponent.location)
+          expect(pageTwo.src.origin.git.url).to.equal(theOtherComponent.url)
         })
     }, 2)
   })
@@ -397,14 +397,14 @@ describe('aggregateContent()', () => {
         version: 'v1.2.3',
         nav: ['nav.adoc'],
       })
-      playbook.content.sources.push({ location: theComponent.location })
+      playbook.content.sources.push({ url: theComponent.url })
       await theOtherComponent.initRepo({
         repoName: 'the-component-bar',
         name: 'the-component',
         title: 'The Real Component Name',
         version: 'v1.2.3',
       })
-      playbook.content.sources.push({ location: theOtherComponent.location })
+      playbook.content.sources.push({ url: theOtherComponent.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -435,7 +435,7 @@ describe('aggregateContent()', () => {
   it('should catalog files in work tree of local repo', async () => {
     const repo = new FixtureRepo({ isRemote: false, isBare: false })
     await initRepoWithWorkingFiles(repo)
-    playbook.content.sources.push({ location: repo.location })
+    playbook.content.sources.push({ url: repo.url })
     const aggregate = aggregateContent(playbook)
     return expect(aggregate)
       .to.be.fulfilled()
@@ -454,7 +454,7 @@ describe('aggregateContent()', () => {
 
   describe('should not catalog files in work tree', () => {
     function testNonWorkingFilesCatalog (repo) {
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -494,7 +494,7 @@ describe('aggregateContent()', () => {
     await repo.initRepo({ name: 'the-component', version: 'v1.2.3' })
     await repo.addFixtureFiles(['modules/ROOT/documents/page-one.adoc'])
 
-    playbook.content.sources.push({ location: repo.location })
+    playbook.content.sources.push({ url: repo.url })
     const aggregate = aggregateContent(playbook)
 
     await expect(aggregate)
@@ -526,7 +526,7 @@ describe('aggregateContent()', () => {
   describe('should assign correct src properties to files', () => {
     testAll(async (repo) => {
       await initRepoWithFiles(repo)
-      playbook.content.sources.push({ location: repo.location })
+      playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
       return expect(aggregate)
         .to.be.fulfilled()
@@ -541,8 +541,8 @@ describe('aggregateContent()', () => {
             extname: '.adoc',
             origin: {
               git: {
-                // in our test the git url is the same as the repo location we provided
-                url: repo.location,
+                // in our test the git url is the same as the repo url we provided
+                url: repo.url,
                 branch: 'master',
                 startPath: '/',
               },
