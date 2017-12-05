@@ -27,6 +27,11 @@ describe('buildPlaybook()', () => {
           format: String,
           default: 'default-value',
         },
+        widget_key: {
+          format: String,
+          default: undefined,
+          env: 'WIDGET_KEY',
+        },
       },
       two: {
         format: Number,
@@ -49,6 +54,7 @@ describe('buildPlaybook()', () => {
     expectedPlaybook = {
       one: {
         two: 'default-value',
+        widgetKey: undefined,
       },
       two: 42,
       three: false,
@@ -119,6 +125,12 @@ describe('buildPlaybook()', () => {
     expect(playbook.one.one).to.equal('the-args-value')
   })
 
+  it('should convert properties of playbook to camelCase', () => {
+    const env = { PLAYBOOK: ymlSpec, WIDGET_KEY: 'xxxyyyzzz' }
+    const playbook = buildPlaybook([], env, schema)
+    expect(playbook.one.widgetKey).to.equal('xxxyyyzzz')
+  })
+
   it('should coerce Number values in spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
     expect(playbook.two).to.equal(42)
@@ -178,6 +190,7 @@ describe('buildPlaybook()', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: defaultSchemaSpec })
     expect(playbook.site.url).to.equal('https://example.com')
     expect(playbook.site.title).to.equal('Example site')
+    expect(playbook.site.keys.googleAnalytics).to.equal('XX-123456')
   })
 
   it('is decoupled from the process environment', () => {
