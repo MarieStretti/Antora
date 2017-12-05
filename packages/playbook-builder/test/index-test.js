@@ -87,7 +87,7 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load JSON playbook spec file', () => {
+  it('should load JSON (JSON 5) playbook spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: jsonSpec }, schema)
     expectedPlaybook.one.one = 'json-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)

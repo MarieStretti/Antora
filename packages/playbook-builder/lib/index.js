@@ -5,6 +5,7 @@ const convict = require('./solitary-convict')
 const cson = require('cson-parser')
 const freezeDeep = require('deep-freeze')
 const fs = require('fs')
+const json = require('json5')
 const path = require('path')
 const yaml = require('js-yaml')
 
@@ -18,7 +19,7 @@ const parseSpecFile = (specFilePath) => {
     case '.yml':
       return yaml.safeLoad(data)
     case '.json':
-      return JSON.parse(data)
+      return json.parse(data)
     case '.cson':
       return cson.parse(data)
     default:
