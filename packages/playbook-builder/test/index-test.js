@@ -63,6 +63,8 @@ describe('buildPlaybook()', () => {
 
   const ymlSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.yml')
   const extensionlessSpec = path.resolve(__dirname, 'fixtures', 'spec-sample')
+  const extensionlessJsonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample-json')
+  const extensionlessCsonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample-cson')
   const jsonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.json')
   const csonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.cson')
   const iniSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.ini')
@@ -80,12 +82,6 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load YML playbook spec file when no file extension is given', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: extensionlessSpec }, schema)
-    expectedPlaybook.one.one = 'yml-spec-value-one'
-    expect(playbook).to.eql(expectedPlaybook)
-  })
-
   it('should load JSON (JSON 5) playbook spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: jsonSpec }, schema)
     expectedPlaybook.one.one = 'json-spec-value-one'
@@ -94,6 +90,24 @@ describe('buildPlaybook()', () => {
 
   it('should load CSON playbook spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: csonSpec }, schema)
+    expectedPlaybook.one.one = 'cson-spec-value-one'
+    expect(playbook).to.eql(expectedPlaybook)
+  })
+
+  it('should load YML playbook spec file first when no file extension is given', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: extensionlessSpec }, schema)
+    expectedPlaybook.one.one = 'yml-spec-value-one'
+    expect(playbook).to.eql(expectedPlaybook)
+  })
+
+  it('should discover JSON playbook when no file extension is given', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: extensionlessJsonSpec }, schema)
+    expectedPlaybook.one.one = 'json-spec-value-one'
+    expect(playbook).to.eql(expectedPlaybook)
+  })
+
+  it('should discover CSON playbook when no file extension is given', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: extensionlessCsonSpec }, schema)
     expectedPlaybook.one.one = 'cson-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })

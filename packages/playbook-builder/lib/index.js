@@ -40,10 +40,20 @@ module.exports = (args, env, schema) => {
   const specFileRelPath = config.get('playbook')
   if (specFileRelPath) {
     let specFileAbsPath = path.resolve(process.cwd(), specFileRelPath)
-    if (!path.extname(specFileAbsPath)) specFileAbsPath += '.yml'
+    if (!path.extname(specFileAbsPath)) {
+      if (fs.existsSync(specFileAbsPath + '.yml')) {
+        specFileAbsPath += '.yml'
+      } else if (fs.existsSync(specFileAbsPath + '.json')) {
+        specFileAbsPath += '.json'
+      } else if (fs.existsSync(specFileAbsPath + '.cson')) {
+        specFileAbsPath += '.cson'
+      } else {
+        throw new Error('playbook spec file could not be resolved')
+      }
+    }
     config.load(parseSpecFile(specFileAbsPath))
   } else {
-    throw new Error('Spec file for playbook not specified')
+    throw new Error('playbook spec file was not specified')
   }
 
   config.validate({ allowed: 'strict' })
