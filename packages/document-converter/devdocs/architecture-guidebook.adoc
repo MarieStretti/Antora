@@ -105,7 +105,7 @@ If the target page cannot be resolved, a warning should be emitted.
 === Include processor
 
 The target of all include directives should be resolved from the content catalog.
-An include target must point to a file local to the current module, either in the `fragment` family or the `example` family.
+An include target must point to a file local to the current module, either in the `partial` family or the `example` family.
 For example:
 
  include::{partialsdir}/partial.adoc[]

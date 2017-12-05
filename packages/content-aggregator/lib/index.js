@@ -163,7 +163,7 @@ function readComponentDesc (files) {
 async function loadGitFiles (repository, branch, repo) {
   const tree = await getGitTree(repository, branch, repo.startPath)
   const entries = await getGitEntries(tree)
-  const vfiles = entries.map(async (entry) => {
+  const files = entries.map(async (entry) => {
     const blob = await entry.getBlob()
     const contents = blob.content()
     const stat = new fs.Stats({})
@@ -171,7 +171,7 @@ async function loadGitFiles (repository, branch, repo) {
     stat.size = contents.length
     return new File({ path: entry.path(), contents, stat })
   })
-  return Promise.all(vfiles)
+  return Promise.all(files)
 }
 
 async function getGitTree (repository, branch, startPath) {
@@ -196,12 +196,11 @@ function getGitEntries (tree, onEntry) {
 
 async function loadLocalFiles (repo) {
   const basePath = path.join(repo.url, repo.startPath || '.')
-  const vfileStream = vfs.src('**/*.*', {
+  return streamToArray(vfs.src('**/*.*', {
     base: basePath,
     cwd: basePath,
     dot: false,
-  })
-  return streamToArray(vfileStream)
+  }))
 }
 
 function assignFileProperties (file, url, branch, startPath = '/') {

@@ -27,11 +27,11 @@ It will not be accurate until Antora is officially released.
 
 == Playbook Repository
 
-include::{fragmentsdir}/playbook-project-summary.adoc[]
+include::{partialsdir}/playbook-project-summary.adoc[]
 
 == site.yml
 
-include::{fragmentsdir}/playbook-summary.adoc[]
+include::{partialsdir}/playbook-summary.adoc[]
 
 ////
 There's one playbook preconfigured in this project.

@@ -4,10 +4,10 @@ const path = require('path')
 
 const convertAsciiDocString = require('./asciidoctor')
 
-const samplesdir = '$samples$'
-const fragmentsdir = '$fragments$'
+const examplesdir = '$examples$'
+const partialsdir = '$partials$'
 
-module.exports = async function convertDocument (file, playbookAsciidoctor, vfileCatalog) {
+module.exports = async function convertDocument (file, customAttributes, catalog) {
   const options = {
     safe: 'safe',
     attributes: Object.assign(
@@ -19,7 +19,7 @@ module.exports = async function convertDocument (file, playbookAsciidoctor, vfil
         idseparator: '-',
         icons: 'font',
       },
-      playbookAsciidoctor,
+      customAttributes,
       {
         // fixed attributes
         docname: file.src.stem,
@@ -28,8 +28,8 @@ module.exports = async function convertDocument (file, playbookAsciidoctor, vfil
         'env-site': '',
         imagesdir: file.out.moduleRootPath + '/_images',
         attachmentsdir: file.out.moduleRootPath + '/_attachments',
-        samplesdir,
-        fragmentsdir,
+        examplesdir,
+        partialsdir,
       }
     ),
   }
@@ -37,8 +37,8 @@ module.exports = async function convertDocument (file, playbookAsciidoctor, vfil
   const { attributes, htmlContents } = convertAsciiDocString(
     file.contents.toString(),
     options,
-    (doc, target) => readInclude(file, vfileCatalog, target),
-    (refId, text) => transformXref(file, refId, text, vfileCatalog)
+    (doc, target) => readInclude(file, catalog, target),
+    (refId, text) => transformXref(file, refId, text, catalog)
   )
 
   file.contents = htmlContents
@@ -47,7 +47,7 @@ module.exports = async function convertDocument (file, playbookAsciidoctor, vfil
   return Promise.resolve()
 }
 
-function readInclude (file, vfileCatalog, target) {
+function readInclude (file, catalog, target) {
   const [targetFamily, ...targetPath] = target.split('/').filter((a) => a !== '')
 
   const findOptions = {
@@ -60,17 +60,17 @@ function readInclude (file, vfileCatalog, target) {
 
   const include = { file: target, path: file.src.basename }
 
-  if (targetFamily === samplesdir) {
-    findOptions.family = 'sample'
-  } else if (targetFamily === fragmentsdir) {
-    findOptions.family = 'fragment'
+  if (targetFamily === examplesdir) {
+    findOptions.family = 'example'
+  } else if (targetFamily === partialsdir) {
+    findOptions.family = 'partial'
   } else {
     // TODO log "Bad include"
     include.contents = `+include::${target}[]+`
     return include
   }
 
-  const includeFile = vfileCatalog.getById(findOptions)
+  const includeFile = catalog.getById(findOptions)
   if (includeFile == null) {
     // TODO log "Unknown include"
     include.contents = `+include::${target}[]+`
@@ -81,7 +81,7 @@ function readInclude (file, vfileCatalog, target) {
   return include
 }
 
-function transformXref (file, xref, title, vfileCatalog) {
+function transformXref (file, xref, title, catalog) {
   const xrefSrc = getSourceFromXref(xref)
 
   if (xrefSrc == null) {
@@ -89,7 +89,7 @@ function transformXref (file, xref, title, vfileCatalog) {
     return `<a href="#">${xref}</a>`
   }
 
-  const xrefFile = vfileCatalog.getById({
+  const xrefFile = catalog.getById({
     component: xrefSrc.component || file.src.component,
     version: xrefSrc.version || file.src.version,
     module: xrefSrc.module || file.src.module,

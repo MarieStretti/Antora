@@ -80,7 +80,7 @@ function partitionSrc (file, pathSegments, nav) {
     if (pathSegments[2] === 'documents') {
       if (pathSegments[3] === '_partials') {
         // QUESTION should this be partial-page instead?
-        file.src.family = 'fragment'
+        file.src.family = 'partial'
         // start from 4 (after /modules/foo/documents/_partials) end at -1 (before filename.ext)
         file.src.subpath = pathSegments.slice(4, -1).join('/')
       } else if (file.src.mediaType === 'text/asciidoc' && file.src.basename !== '_attributes.adoc') {

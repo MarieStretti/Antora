@@ -32,4 +32,4 @@ You'll then find out how to set it up and run it.
 
 == Pipeline steps
 
-include::{fragmentsdir}/pipeline-steps-list.adoc[]
+include::{partialsdir}/pipeline-steps-list.adoc[]

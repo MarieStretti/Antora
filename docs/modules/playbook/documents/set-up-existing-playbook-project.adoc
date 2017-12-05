@@ -12,7 +12,7 @@ endif::[]
 
 *This page is for people joining a documentation project that already uses Antora.*
 
-include::{fragmentsdir}/playbook-project-summary.adoc[]
+include::{partialsdir}/playbook-project-summary.adoc[]
 
 Before you can run Antora on your own machine, you'll need to fetch the playbook project for your site and initialize it
 //The Antora pipeline is controlled by a playbook which is hosted in a playbook project.

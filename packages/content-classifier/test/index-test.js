@@ -71,7 +71,7 @@ describe('classifyContent()', () => {
       component: 'the-component',
       version: 'v1.2.3',
       module: 'ROOT',
-      family: 'fragment',
+      family: 'partial',
       subpath: '',
       moduleRootPath: '../..',
     })

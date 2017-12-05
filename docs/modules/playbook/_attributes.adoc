@@ -1,4 +1,4 @@
 :attachmentsdir: {moduledir}/assets/attachments
-:fragmentsdir: {moduledir}/documents/_fragments
+:examplesdir: {moduledir}/examples
 :imagesdir: {moduledir}/assets/images
-:samplesdir: {moduledir}/samples
+:partialsdir: {moduledir}/documents/_partials
