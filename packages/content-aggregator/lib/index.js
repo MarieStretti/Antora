@@ -196,11 +196,13 @@ function getGitEntries (tree, onEntry) {
 
 async function loadLocalFiles (repo) {
   const basePath = path.join(repo.url, repo.startPath || '.')
-  return streamToArray(vfs.src('**/*.*', {
-    base: basePath,
-    cwd: basePath,
-    dot: false,
-  }))
+  return streamToArray(
+    vfs.src('**/*.*', {
+      base: basePath,
+      cwd: basePath,
+      dot: false,
+    })
+  )
 }
 
 function assignFileProperties (file, url, branch, startPath = '/') {
