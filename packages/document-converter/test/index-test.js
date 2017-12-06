@@ -2,7 +2,7 @@
 'use strict'
 
 const { expect, spy } = require('../../../test/test-utils')
-const convertDocument = require('../lib/index')
+const convertDocument = require('@antora/document-converter')
 
 const Buffer = require('buffer').Buffer
 

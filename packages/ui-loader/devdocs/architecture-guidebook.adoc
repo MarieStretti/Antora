@@ -64,7 +64,7 @@ The API for the UI loader should be used as follows:
 
 [source,js]
 ----
-const loadUi = require('../packages/ui-loader/lib/index')
+const loadUi = require('@antora/ui-loader')
 
 //...
 

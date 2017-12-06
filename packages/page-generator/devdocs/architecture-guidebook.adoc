@@ -75,7 +75,7 @@ The API for the page generator should be used as follows:
 
 [source,js]
 ----
-const generatePages = require('../packages/page-generator/lib/index')
+const generatePages = require('@antora/page-generator')
 
 //...
 

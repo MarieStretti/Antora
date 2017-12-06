@@ -5,7 +5,7 @@ const del = require('del')
 const { expect } = require('../../../test/test-utils')
 const fs = require('fs')
 const http = require('http')
-const loadUi = require('../lib/index')
+const loadUi = require('@antora/ui-loader')
 const path = require('path')
 
 function testAll (archive, testFunction) {

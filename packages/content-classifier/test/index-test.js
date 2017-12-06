@@ -2,10 +2,10 @@
 'use strict'
 
 const { expect } = require('../../../test/test-utils')
-const classifyContent = require('../lib/index')
+const classifyContent = require('@antora/content-classifier')
 const path = require('path')
-const mimeTypes = require('../../content-aggregator/lib/mime-types-with-asciidoc')
-const { COMPONENT_DESC_FILENAME } = require('../../content-aggregator/lib/constants')
+const mimeTypes = require('@antora/content-aggregator/lib/mime-types-with-asciidoc')
+const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
 
 const createFile = (filepath) => {
   const basename = path.basename(filepath)

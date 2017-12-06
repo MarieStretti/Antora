@@ -2,13 +2,13 @@
 'use strict'
 
 const _ = require('lodash')
-const aggregateContent = require('../lib/index')
+const aggregateContent = require('@antora/content-aggregator')
 const del = require('del')
 const { expect } = require('../../../test/test-utils')
 const FixtureRepo = require('./repo-utils')
 const path = require('path')
 
-const { COMPONENT_DESC_FILENAME } = require('../lib/constants')
+const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
 
 function testAll (testFunction, count = 1) {
   function test (fixtureRepoOptions) {

@@ -4,7 +4,7 @@ const fs = require('fs-extra')
 const git = require('nodegit')
 const path = require('path')
 
-const { COMPONENT_DESC_FILENAME } = require('../lib/constants')
+const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
 const fixturesPath = path.resolve(__dirname, 'fixtures')
 const reposBasePath = path.resolve(__dirname, 'repos')
 
