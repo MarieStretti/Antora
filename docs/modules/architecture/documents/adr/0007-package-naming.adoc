@@ -1,5 +1,5 @@
 = ADR 0007: Package Naming
-:revdate: 2017-12-06
+:revdate: 2017-12-07
 
 == Status
 
@@ -7,10 +7,10 @@ Pending
 
 == Context
 
-We want packages to be named consistently.
-Since the packages will be published to the main npm repository (npmjs.com), the names must also be globally unique.
+We want the Antora package names to be structured consistently so that their purpose is easy to identify.
+Also, since the packages will be published to the main npm repository (npmjs.com), the names must be globally unique.
 
-We need to decide what prefixing strategy to use for package names to meet these requirements.
+In order to meet these requirements, we need to decide what prefixing strategy to use for package names.
 One option is to apply the hyphenated prefix `antora-` to the package names (e.g., `antora-content-aggregator`).
 The other option is to create an organization for Antora on npmjs.com and organize the packages under the organization namespace `@antora` (e.g., `@antora/content-aggregator`).
 
@@ -18,7 +18,7 @@ The other option is to create an organization for Antora on npmjs.com and organi
 
 Although still gaining traction, organizing packages under an organization namespace seems to be emerging as a best practice.
 It's used by major projects such as Babel, Phenomic, and Commitlint, and more are switching daily.
-Therefore, we've decided to create an organization for Antora on npmjs.com named `antora` and to organize the packages under the organizationn namespace, `@antora` (e.g., `@antora/content-aggregator`).
+Therefore, we decided to create an organization for Antora on npmjs.com named `antora` and to organize the packages under the organization namespace, `@antora` (e.g., `@antora/content-aggregator`).
 
 == Consequences
 
