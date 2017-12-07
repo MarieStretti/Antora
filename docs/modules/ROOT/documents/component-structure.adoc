@@ -9,35 +9,34 @@ endif::[]
 Antora is designed to work best with a consistent project structure.
 The benefits of this project structure are:
 
-* interoperability with editing, IDE, migration, and validation tools
-* input source to input source cross references that can span repositories and be automatically by Antora when an input's name or location changes
-* shorter contributer onboarding effort
+* interoperability with author, IDE, migration, and validation tools
+* input source to input source cross references that can span repositories and be automatically updated by Antora when a source's name or location changes
+* contributors can get oriented faster
 
-Tools can then be developed to work with this structure to streamline daily tasks and automated processes.
+When an organization's documentation follows Antora's standard project structure, they can take advantage of the open source tools, plugins, and automated processes built to integrate with the Antora pipeline.
 
-== Standard documentation project
+== Documentation component overview
 
 When Antora scans a repository, its first objective is to find a file named `antora`.
 //This file is commonly written in YAML, but it can also be JSON or CSON.
-Once Antora finds this file, it knows that directory and all its folders and files are a [.term]_documentation component_.
+Once Antora finds this file, it assumes that that directory and all its subdirectories and files are organized in the structure laid out below.
+
+We call this standardized project structure and its contents a [.term]_documentation component_.
 
 //A documentation component must contain an antora.yml (or .cson or .json) file and certain directories when specific file formats are present.
 
-//It includes several sample files thrown in for context.
-Below is Antora's standard documentation project structure, also known as a documentation component.
-
 .Antora documentation component
 ....
-antora.yml //<1>
-modules/ //<2>
-  ROOT/ //<3>
-    assets/ //<4>
-      attachments/ //<5>
-      images/ //<6>
-    examples/ //<7>
-    pages/ //<8>
-      _partials/ //<9>
-  user-defined-module/ //<10>
+antora.yml
+modules/
+  ROOT/
+    assets/
+      attachments/
+      images/
+    examples/
+    pages/
+      _partials/
+  user-defined-module/
     assets/
     examples/
     pages/
@@ -47,20 +46,41 @@ modules/ //<2>
     pages/
   [...]
 ....
-<1> *antora.yml* This file signals that the contents of the directory represents a documentation component.
+
+antora.yml ::
+This file signals to Antora that the contents of this directory are a documentation component.
+This file is often referred to as a component project file.
+// align on generic file name
 It is commonly written in YAML, but it can also be JSON or CSON.
 This file is mandatory and contains crucial xref:antora_yml.adoc[metadata about the documentation component].
-<2> *modules*
-<3> *ROOT*
-<4> *assets*
-<5> *attachments*
-<6> *images*
-<7> *examples*
-<8> *pages*
-<9> *_partials*
-<10> *user-defined module*
 
-//This project structure represents a [.term]_documentation component_.
-You can think of a documentation component as a documentation project.
+modules/ ::
+Directory that contains
+See xref:module.adoc[Modules]
+
+ROOT/ ::
+The root module is mandatory.
+The directory name on the filesystem must be written in all uppercase letters, as well as when the module is used as part of a cross reference.
+
+assets/ ::
+Directory where a module's attachments, images, and other multi-media files are stored and organized.
+
+attachments/ ::
+Directory that contains any files a module's page references, such as downloadable PDFs or .zip files.
+
+images/ ::
+Directory that contains any image files that are displayed in that module's pages.
+
+examples/ ::
+Directory that contains any literal, listing, or example block snippets that are inserted into that module's pages.
+
+pages/ ::
+Directory that contains
+
+_partials/ ::
+Directory that contains
+
+user-defined module/ ::
+Additional optional modules
 
 //We know the structure in the example above represents a documentation component because of the presence of an [.path]_antora.yml_ file.

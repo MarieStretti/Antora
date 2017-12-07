@@ -1,0 +1,93 @@
+= Adding Assets to a Page
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// URLs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
+:uri-hosted-video: {uri-adoc-manual}/#video
+:uri-shared-video: {uri-adoc-manual}/#youtube-and-vimeo-videos
+:uri-video-attrs: {uri-adoc-manual}/#supported-attributes
+
+[#insert-attachment]
+== Insert an attachment
+
+// See <<attachment-files, Attachment files>> for file name and file location guidelines.
+
+An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
+To insert a link to an attachment for download, use the AsciiDoc link macro (`link:[]`).
+
+.Insert a link to an attachment
+[source,asciidoc]
+----
+link:{attachmentsdir}/example.raml[Download the RAML example] and run it.
+----
+
+To insert a link to an attachment, use the link macro prefix, followed by the `{attachmentsdir}` reference, then the name of the file, and then a set of square brackets (`[]`).
+Optional link text can be entered between the brackets.
+
+You don't need to set the path to the [.path]_attachments_ directory in the header of your file.
+This is managed automatically by Antora and the [.path]_attributes.adoc_ file stored in each module.
+
+A module's image files should be saved in its xref:module.adoc#attachments-dir[attachments folder].
+
+[#insert-image]
+== Insert an image
+
+//See <<image-files, Image files>> for file name and file location guidelines.
+To insert an image on its own line, use the AsciiDoc block image macro (`image::[]`).
+
+.Insert a block image
+[source,asciidoc]
+----
+image::file-name.ext[optional alt text]
+----
+
+To insert an image, use the image macro prefix, then the name of the file, followed by a set of square brackets (`[]`).
+You can enter alt text for the image between the square brackets.
+
+.Image macro example
+[source,asciidoc]
+----
+image::pipeline-workflow.png[a diagram illustrating the pipeline stages]
+----
+
+A module's image files should be saved in its xref:module.adoc#images-dir[images folder].
+// inline image info needed
+
+[#insert-video]
+== Insert a video
+
+You can embed self-hosted videos or videos shared on YouTube and Vimeo.
+
+Video format support is dictated by the user's browser and/or system.
+For a list of the web video formats each browser supports, see the {uri-video-formats}[Mozilla Developer Supported Media Formats documentation].
+
+TIP: Insert animated GIFs and SVGs with the <<insert-image,image macro>>.
+
+.Insert a self-hosted video
+----
+video::video-file.mp4[]
+----
+
+To insert a self-hosted video, use the video macro prefix, then the name of the file, followed by a set of square brackets (`[]`).
+A module's video files should be saved in its xref:module.adoc#videos-dir[videos folder].
+
+=== Externally hosted videos
+
+To embed a video hosted on Youtube or Vimeo, put the video's ID in the macro target and the name of the hosting service (`youtube`, `vimeo`) between the brackets.
+
+.Embed a Youtube video
+----
+video::rPQoq7ThGAU[youtube]
+----
+
+.More AsciiDoc video help
+****
+- {uri-hosted-video}[The AsciiDoc video macro]
+- {uri-shared-video}[Embed Youtube and Vimeo videos]
+- {uri-video-attrs}[Video macro options and attributes]
+****

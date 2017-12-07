@@ -8,19 +8,43 @@ endif::[]
 
 When we find an [.path]_antora.yml_ file in a repository, we expect to find the standard structure of a documentation component below it.
 Thus, the documentation can live anywhere in the repository.
-It also means it can share the same repository as the software it documents.
+It means the documentation component can share the same repository as the software it documents.
 This project structure is then repeated in each branch of each repository that hosts a documentation component.
 
-The [.path]_antora.yml_ file contains information about the component, such as its name, title, version, and navigation data.
+The [.path]_antora.yml_ file contains crucial information about the component in a branch, such as its name and version, that Antora uses to build page links and your site's navigation.
 
+// name, title, version, and navigation data.
+
+.antora.yml component keys and values
 [source,yml]
 ----
-name: component-a
-title: Component A
-version: '1.0'
-nav:
+name: component-a // <1>
+title: Component A // <2>
+version: '1.0' // <3>
+nav: // <4>
+- modules/ROOT/nav.adoc
 - modules/admin/nav.adoc
+- ...
 ----
+<1> Name key and value
+<2> Title key and value
+<3> Version key and value
+<4> Nav key and values
+
+Name key::
+The value of the name key is the name of the documentation component that is used when creating page references.
+The value may not contain spaces.
+
+Title key::
+The value of the title key is used ...
+
+Version key::
+The value of the version key is used in the first page reference target position and ....
+
+Nav key::
+The nav key can accept a list of values.
+Each value specifies the route to a module's navigation file.
+The order of the values indicates the order that the nav.adoc file contents will be displayed in the site's navigation tree.
 
 All the other files in the component reside in the [.path]_modules_ folder.
 Let's open that folder and have a look inside.
