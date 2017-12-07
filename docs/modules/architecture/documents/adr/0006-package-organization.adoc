@@ -1,5 +1,5 @@
 = ADR 0006: Package Organization
-:revdate: 2017-12-06
+:revdate: 2017-12-07
 
 == Status
 
@@ -7,8 +7,8 @@ Accepted
 
 == Context
 
-The goal with Antora is to create an open architecture that allows core components to be reused to create a custom processing pipeline or to simply alter the default one.
-That means each step in the pipeline should be designed a discrete function that's provided by a dedicated package (i.e., node module).
+One of our goals for Antora is to create an open architecture that allows core components to be reused in order to create custom processing pipelines or to simply alter the default one.
+That means each step in the pipeline should be designed as a discrete function that's provided by a dedicated package (i.e., node module).
 But this raises the question, should these core packages each have their own repository (i.e., a dedicated repository for each software component) or should they be organized together under the main repository (i.e., host all core components in a single repository)?
 And if they are kept together, how can they be released as separate packages?
 
@@ -20,7 +20,7 @@ To quote the Lerna project:
 Especially during the early stages of development, we want to simplify development as much as possible.
 Using separate repositories means having to set up separate builds, separate test suites, separate release tasks, and separate issue trackers, not to mention having to release packages sooner than planned.
 
-One solution to these problem is to organize the code into a multi-package repository, or monorepo.
+One solution to this problem is to organize the code into a multi-package repository, or monorepo.
 There are tools available, such as Lerna, to manage a JavaScript project repository that hosts multiple packages.
 The decision to be made is whether to adopt the monorepo structure or use the traditional multi-repository structure.
 
@@ -36,7 +36,7 @@ Specifically, we've decided to use a combination of Lerna and Yarn workspaces to
 
 https://lernajs.io[Lerna] optimizes the workflow around managing multi-package repositories with git and npm or Yarn.
 https://yarnpkg.com/lang/en/docs/workspaces/[Yarn workspaces], a built-in feature of Yarn, provides support for multi-package repositories.
-When enabled for a project, Yarn workspaces allow Yarn to automatically recognizes the structure required by Lerna, thus allowing the user to continue to use Yarn in the normal way (e.g., `yarn install`).
+When enabled for a project, Yarn workspaces allow Yarn to automatically recognize the structure required by Lerna, thus allowing the user to continue to use Yarn in the normal way (e.g., `yarn install`).
 
 With the slight change required by Lerna, it's possible to release the packages as separate node modules, but still use a shared build to run tasks such as lint, test, and format.
 
@@ -45,7 +45,7 @@ With the slight change required by Lerna, it's possible to release the packages 
 By organizing the Antora codebase as a multi-package project, we can simplify development in the early stages of the project.
 We only need to maintain a single build, test suite, and issue tracker.
 Yet, the packages remain independent.
-Each package keeps track its own runtime dependencies, which can be installed using either Lerna or Yarn.
+Each package keeps track of its own runtime dependencies, which can be installed using either Lerna or Yarn.
 Using Lerna, each package can be released as a separate node module under a common version.
 
 If and when we decide to graduate some or all of the packages, it shouldn't be difficult to extract the packages from the main repository and import them into repositories of their own.
