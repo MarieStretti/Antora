@@ -39,7 +39,7 @@ The playbook builder component should:
 * Look for the specified playbook spec file composed in YAML, JSON, or CSON format
  ** When the data in these formats are read in, they become plain JavaScript objects.
  ** If the playbook spec file is a relative path, assume it's relative to the process working directory
- ** If the path specified for the playbook spec file does not have a file extension, assume the file extension is `.yml`
+ ** If the playbook spec path does not have a file extension, look for a file with the extension of each supported format in the following order: `.yml`, `.json`, `.cson`.
 * Apply audibles in the form of process arguments and environment variables
  ** The order of precedence for an option value is as follows (highest to lowest): process argument, environment variable, spec, default.
 * Validate the aggregate playbook spec values
