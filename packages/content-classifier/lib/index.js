@@ -3,8 +3,8 @@
 const path = require('path')
 const _ = require('lodash')
 
-const $files = Symbol('$files')
-const $generateId = Symbol('$generateId')
+const $files = Symbol('files')
+const $generateId = Symbol('generateId')
 
 class ContentCatalog {
   constructor () {

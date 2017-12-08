@@ -1,6 +1,6 @@
 'use strict'
 
-const $$includeHandler = Symbol('$$includeHandler')
+const $includeHandler = Symbol('includeHandler')
 
 module.exports = class AsciidoctorIncludeProcessorExtension {
   constructor (asciidoctor) {
@@ -10,7 +10,7 @@ module.exports = class AsciidoctorIncludeProcessorExtension {
     Extensions.register(function () {
       this.includeProcessor(function () {
         this.process((doc, reader, target, attributes) => {
-          const processCallback = thisExtension[$$includeHandler]
+          const processCallback = thisExtension[$includeHandler]
           if (!processCallback) {
             return
           }
@@ -22,10 +22,10 @@ module.exports = class AsciidoctorIncludeProcessorExtension {
       })
     })
 
-    this[$$includeHandler] = null
+    this[$includeHandler] = null
   }
 
   onInclude (callback) {
-    this[$$includeHandler] = callback
+    this[$includeHandler] = callback
   }
 }

@@ -13,8 +13,8 @@ const zip = require('gulp-vinyl-zip')
 
 const minimatchAll = require('minimatch-all')
 
-const $files = Symbol('$files')
-const $generateId = Symbol('$generateId')
+const $files = Symbol('files')
+const $generateId = Symbol('generateId')
 
 class UiCatalog {
   constructor () {

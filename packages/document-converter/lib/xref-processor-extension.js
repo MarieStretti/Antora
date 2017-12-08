@@ -1,6 +1,6 @@
 'use strict'
 
-const $$pageRefHandler = Symbol('$$pageRefHandler')
+const $pageRefHandler = Symbol('pageRefHandler')
 
 module.exports = class AsciidoctorXrefProcessorExtension {
   constructor (asciidoctor) {
@@ -19,7 +19,7 @@ module.exports = class AsciidoctorXrefProcessorExtension {
         ) {
           let text
           text = (text = node.getText()) === undefined ? refId : text
-          return thisExtension[$$pageRefHandler](refId, text)
+          return thisExtension[$pageRefHandler](refId, text)
         }
       }
       return this.$super_inline_anchor(node)
@@ -27,6 +27,6 @@ module.exports = class AsciidoctorXrefProcessorExtension {
   }
 
   onPageRef (callback) {
-    this[$$pageRefHandler] = callback
+    this[$pageRefHandler] = callback
   }
 }
