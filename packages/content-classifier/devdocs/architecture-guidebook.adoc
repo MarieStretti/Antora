@@ -95,20 +95,20 @@ modules/
     assets/
       attachments/
       images/
-    documents/
+    pages/
       index.adoc
       ...
       _partials/
     examples/
   module-a/
     assets/
-    documents/
+    pages/
       index.adoc
       ...
     examples/
   module-b/
     assets/
-    documents/
+    pages/
       index.adoc
       ...
     examples/

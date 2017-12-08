@@ -8,7 +8,7 @@ The AsciiDoc must be converted to HTML so the contents of these documents can be
 
 == Functional Overview
 
-The files in the `page` family of the content catalog (i.e., text documents in the [.path]_pages_ directory) are written in AsciiDoc format.
+The files in the `page` family of the content catalog (i.e., text documents taken from the [.path]_pages_ directory) are written in AsciiDoc format.
 The document converter should use an AsciiDoc processor (e.g., Asciidoctor.js) to convert these files to HTML.
 
 These documents are used to populate the main area of the web page, so the AsciiDoc only needs to be converted to embeddable HTML.
