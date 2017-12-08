@@ -4,8 +4,8 @@ const path = require('path')
 
 const convertAsciiDocString = require('./asciidoctor')
 
-const examplesdir = '$examples$'
-const partialsdir = '$partials$'
+const examplesdir = 'example$'
+const partialsdir = 'partial$'
 
 module.exports = async function convertDocument (file, customAttributes, catalog) {
   const options = {

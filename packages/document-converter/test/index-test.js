@@ -70,8 +70,8 @@ describe('convertDocument()', () => {
           'env-site': '',
           imagesdir: '../_images',
           attachmentsdir: '../_attachments',
-          partialsdir: '$partials$',
-          examplesdir: '$examples$',
+          partialsdir: 'partial$',
+          examplesdir: 'example$',
           // from overridable attributes
           'source-highlighter': 'highlight.js',
           sectanchors: '',
@@ -277,7 +277,7 @@ describe('convertDocument()', () => {
         .then(() => {
           const asciidocContents = file.contents.toString()
           expect(asciidocContents).to.equal(
-            ['<div class="paragraph">', '<p>include::$examples$/included-file.json[]</p>', '</div>'].join('\n')
+            ['<div class="paragraph">', '<p>include::example$/included-file.json[]</p>', '</div>'].join('\n')
           )
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-foo',
