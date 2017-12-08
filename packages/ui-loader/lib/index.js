@@ -14,29 +14,31 @@ const zip = require('gulp-vinyl-zip')
 const minimatchAll = require('minimatch-all')
 
 const $files = Symbol('$files')
-const $filesIndex = Symbol('$filesIndex')
+const $generateId = Symbol('$generateId')
 
 class UiCatalog {
   constructor () {
-    this[$files] = []
-    this[$filesIndex] = {}
+    this[$files] = {}
   }
 
   getFiles () {
-    return this[$files]
+    return _.values(this[$files])
   }
 
   addFile (file) {
-    const id = [file.type, ...file.path.split('/')]
-    if (_.get(this[$filesIndex], id) != null) {
+    const id = this[$generateId](file)
+    if (_.has(this[$files], id)) {
       throw new Error('Duplicate file')
     }
-    _.set(this[$filesIndex], id, file)
-    this[$files].push(file)
+    this[$files][id] = file
   }
 
   findByType (type) {
     return _.filter(this[$files], { type })
+  }
+
+  [$generateId] (file) {
+    return [file.type, ...file.path.split('/')]
   }
 }
 
