@@ -15,8 +15,6 @@ endif::[]
 [#insert-attachment]
 == Insert an attachment
 
-// See <<attachment-files, Attachment files>> for file name and file location guidelines.
-
 An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
 To insert a link to an attachment for download, use the AsciiDoc link macro (`link:[]`).
 
@@ -29,7 +27,7 @@ link:{attachmentsdir}/example.raml[Download the RAML example] and run it.
 To insert a link to an attachment, use the link macro prefix, followed by the `{attachmentsdir}` reference, then the name of the file, and then a set of square brackets (`[]`).
 Optional link text can be entered between the brackets.
 
-You don't need to set the path to the [.path]_attachments_ directory in the header of your file.
+You don't need to set the path to the [.path]_attachments/_ directory in the header of your file.
 This is managed automatically by Antora and the [.path]_attributes.adoc_ file stored in each module.
 
 A module's image files should be saved in its xref:module.adoc#attachments-dir[attachments folder].
@@ -37,7 +35,6 @@ A module's image files should be saved in its xref:module.adoc#attachments-dir[a
 [#insert-image]
 == Insert an image
 
-//See <<image-files, Image files>> for file name and file location guidelines.
 To insert an image on its own line, use the AsciiDoc block image macro (`image::[]`).
 
 .Insert a block image
@@ -66,7 +63,7 @@ You can embed self-hosted videos or videos shared on YouTube and Vimeo.
 Video format support is dictated by the user's browser and/or system.
 For a list of the web video formats each browser supports, see the {uri-video-formats}[Mozilla Developer Supported Media Formats documentation].
 
-TIP: Insert animated GIFs and SVGs with the <<insert-image,image macro>>.
+TIP: Insert animated GIFs with the <<insert-image,image macro>>.
 
 .Insert a self-hosted video
 ----

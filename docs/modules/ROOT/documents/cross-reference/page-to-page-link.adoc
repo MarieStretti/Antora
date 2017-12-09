@@ -27,11 +27,13 @@ Here's what each part of the page reference does:
 xref: ::
 The prefix for an AsciiDoc inline xref macro.
 
+[#page-id-vname-def]
 version-name@ ::
 If a component has versions, the first target position is used to specify the version name of the destination component.
 This value is defined in the antora.yml file in the branch of the component repository that hosts the destination file.
 When the version target is filled, it must be directly followed by an `@` symbol.
 
+[#page-id-cname-def]
 component-name: ::
 The second target position specifies the name of the destination component.
 The component name is directly followed by one colon (`:`).

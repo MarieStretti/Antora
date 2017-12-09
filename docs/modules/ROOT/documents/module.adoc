@@ -5,80 +5,79 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+// URLs
+:uri-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
 
 == What is a module?
 
-A [.term]_module_ is a discrete bundle of content within a documentation component.
-A documentation component contains one or more modules.
+A documentation component is composed of one or more modules.
+A [.term]_module_ is a discrete bundle of content, including text, images, and other source materials, organized in a hierarchy of folders by content type, then by optional topic, tag, or category if needed.
 
-Since documentation consists of more than just text, the module itself is composed of a hierarchy of folders.
-These folders are used to organize files, first by content type, then by topic (or perhaps tag or category).
+=== Why modules?
+
+You might be contemplating one or more of the following questions:
+
+[%hardbreaks]
+_Why have modules?
+Do we need all this structure?
+Isn't a component enough?_
+
+One thing we've learned about documentation is that it multiplies, often quickly and unpredictably.
+As more content is created and your documentation team grows, more often than not, you want to start grouping files into folders so that they're easier to find and manage.
+Modules allow you to group text files and their associated assets together as your documentation expands, all while preserving the full capability of Antora's page ID.
+
+Modules are also perfect when one software project is incubating a potential subproject that may spin off as its own project in the future.
+It's easy to detach a module from a component and set it up as its own documentation component.
+
+// This section feels rather unhelpful/hand-wavy, a nice solid example will probably help structure it better but such an example is going to take time (i.e. needs to be its own issue)
+// Eventually, we'll want to put together a little "Should I make this a topic folder or a module?" and/or what are some examples of topics vs modules.
+
+//Modules are also useful for grouping all the content related to a feature that you'll retire in a few versions.
+
+== Module overview
+
+A documentation component must have at least one module, named _ROOT_.
+In addition to the ROOT module, you can create as many other modules in a component as you need.
+All of a component's modules must be stored in [.path]_modules/_.
+
+The following diagram illustrates a documentation component with few example folders and files added for context.
+Let's examine the role of each module subdirectory and any associated requirements.
 
 .Module directory hierarchy
 ....
 antora.yml
-modules/  // <1>
-  a-module/ // <2>
-    assets/  // <3>
+modules/
+  a-module/
+    assets/
       attachments/
+        signing-key.gpg
       images/
+        web-console-dashboard.png
       videos/
-    examples/  // <4>
-    nav.adoc  // <5>
-    pages/  // <6>
-      _partials/  // <7>
-      y-topic/  // <8>
+        console-tour.mp4
+    examples/
+      ldap.conf
+    nav.adoc
+    pages/
+      _partials/
+      index.adoc
+      dashboard-tour.adoc
+      y-topic/
       z-topic/
       ...
-  ROOT/ // <9>
+  ROOT/
     assets/
       images/
     nav.adoc
     pages/
   ...
 ....
-<1> All of a component's modules must be in the modules directory.
-<2> Optional, user-defined module directory.
-<3> Module assets such as images, attachments, videos, etc. are organized in a module's assets directory.
-This directory doesn't have to be set up until a module has assets.
-<4> Directory where the content of literal, listing, or example blocks can be stored.
-<5> Navigation tree of the module's pages.
-<6> Directory where all of a module's Asciidoc files are stored.
-<7> Directory where AsciiDoc text fragments are stored.
-<8> Optional, user-defined directory if further file compartmentalization is desired.
-<9> At a minimum, a document component must contain a module directory named ROOT.
 
-AsciiDoc documents go in the [.path]_pages_ folder.
-Images go in the [.path]_assets/images_ folder.
-Examples (often code snippets) go in the [.path]_examples_ folder.
-Other content types are organized in a similar fashion.
-Each one of these folders can have an arbitrary depth of topic folders that are used to group files to make them easier to manage and navigate.
-
-When a writer is working on the content, the module becomes the writer's primary workspace.
-The writer doesn't have to go looking elsewhere to find files that belong together.
-This arrangement mirrors how software developers work on source code.
-
-== Why modules?
-
-You might be contemplating one or more of the following questions:
-
-[%hardbreaks]
-_Do we need all this structure?
-Why have modules?
-Isn't a component enough?_
-
-One thing we know for sure about content is that it multiplies, often fast and unpredictably.
-As more content is created, you'll need this extra layer of organization to keep disparate files from ending up on top of one another.
-
-You could argue certain components don't need this much structure.
-In the case of a component that only has single module, we _could_ abbreviate the structure by folding the contents of the module folder directly into the component folder (i.e., the top-level folder).
-But what happens when the project expands in complexity, and you find yourself needing to add another module?
-You now have to go back and change the structure of the project in order to allocate space for it.
+We'll start with the ROOT module, since it is required.
 
 == ROOT module
 
 A documentation component must contain a ROOT module directory.
-//That's where the ROOT module comes in.
 
 ....
 antora.yml
@@ -90,68 +89,51 @@ modules/
   ...
 ....
 
-
-//The first module in the structure shown in the listing above is named _ROOT_.
-//Notice it's in all uppercase.
-//That's because it's special.
-The [.term]_ROOT_ module contains all the content that's directly associated with the component itself.
+The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
+When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages in that component's URL.
 The directory name, ROOT, must be entered in all uppercase letters.
-When used in an xref, it must be entered in all uppercase letters.
+When used in a page reference, it must be entered in all uppercase letters.
 
-// In contrast, the content of other modules reside in subfolders.
-
-....
-https://docs.project-name.com/
-  component-a/
-    index.html
-    admin/
-      index.html
-    api/
-      index.html
-....
-
-If you start out with a ROOT module, even for a simple component, you can easily add more modules later and gradually redistribute the content without having to restructure the project.
+Simple documentation components may never need more than a ROOT module, however, if your project grows, you can easily add more modules and gradually redistribute the content without having to restructure the project.
 So while the extra structure seems like overkill now, in the long run, you'll be glad you gave your content the space to grow.
 
-When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages' in that component's URL.
+The ROOT module, as well as any other modules you create, should include the appropriate subdirectory when a module contains the corresponding content type.
 
-////
-....
-admin/
-  assets/
-    attachments/
-      signing-key.gpg
-    images/
-      web-console-dashboard.png
-  pages/
-    index.adoc
-    dashboard-tour.adoc
-    backup/
-      index.adoc
-      scheduling.adoc
-    security/
-      index.adoc
-    _partials/
-      prerequisite-checklist.adoc
-  examples/
-    ldap.conf
-....
-////
+For instance:
+
+* AsciiDoc documents go in the [.path]_pages/_ folder.
+* Images go in the [.path]_assets/images/_ folder.
+* Examples (often code snippets) go in the [.path]_examples/_ folder.
+
+Each one of these folders can have an arbitrary depth of topic folders that are used to group files to make them easier for you to manage and navigate.
+
+When a writer is working on the content, the module becomes the writer's primary workspace.
+The writer doesn't have to go looking elsewhere to find files that belong together.
+This arrangement mirrors how software developers work on source code.
+
+Let's look at each of these directories and their content type in more detail.
+
 [#assets-dir]
 == Assets
 
-Any attachment, image, and video files associated with a module must be stored in that module's [.path]_assets_ directory and the corresponding content or media type subdirectory.
+Any attachment, image, and video files associated with a module must be stored in that module's [.path]_assets/_ directory and the corresponding content or media type subdirectory.
 
-These subdirectory names are automatically recognized by Antora and associated to the corresponding AsciiDoc macros.
+The subdirectory names automatically recognized by Antora and associated to the corresponding AsciiDoc macros are:
 
-NOTE: You don't need to set the path to the images, videos or attachments directories in the header of your AsciiDoc files.
-This is managed automatically by Antora and, when viewing the file in an editor, the adjacent _attributes.adoc.
+* [.path]_assets/attachments/_
+* [.path]_assets/images/_
+* [.path]_assets/videos/_
+
+You don't need to set the path to these three subdirectories in the header of your AsciiDoc files.
+This is managed automatically by Antora and, when viewing the file in an editor, the adjacent [.path]_attributes.adoc_ file.
+
+// You can create custom subdirectories, however, you'll need to add them to X & Y so that Antora can manage them.
 
 [#attachments-dir]
 === Attachment files
 
 An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
-Attachment files are saved in the [.path]_assets/attachments_ in the same module where the page that links to that file is located.
+Attachment files are saved in the [.path]_assets/attachments/_ in the same module where the page that links to that file is located.
 
 A link to an attachment is created in a page with the xref:page-assets.adoc#insert-attachment[AsciiDoc link macro].
 
@@ -178,20 +160,32 @@ For a list of the web video formats each browser supports, see the {uri-video-fo
 
 Videos are inserted into a page with the xref:page-assets.adoc#insert-video[AsciiDoc video macro].
 
+=== Large files and GitLab / GitHub
+
+If your documentation component contains asset files over X size, we do not recommend that you store them in a regular GitLab / GitHub repository.
+
+Instead, you should ....
+
+[#examples-dir]
+== Examples
+
+The [.path]_examples/_ directory contains source, literal, listing, or example block snippets that are inserted into that module's pages.
+
+These files are inserted into a page with the AsciiDoc include directive.
+
+[#pages-dir]
 == Pages
 
-AsciiDoc document files go in the [.path]_pages_ folder.
+AsciiDoc document files go in the [.path]_pages/_ folder.
+These files are automatically enlisted by Antora and converted to standalone HTML pages.
+
+Need example of page output from ROOT and page output from other module.
 
 [#partials-dir]
 === Partial AsciiDoc files
 
-Partial AsciiDoc files are stored in [.path]_pages/_partials_  in the same module where the page that the partial page gets embedded in is located.
-You don't need to set the path to the [.path]_partials_ directory in the header of the primary AsciiDoc file.
+Partial AsciiDoc files are stored in [.path]_pages/_partials/_ in the same module where the page that the partial page gets embedded in is located.
+You don't need to set the path to the [.path]_partials/_ directory in the header of the primary AsciiDoc file.
 This is managed automatically by Antora and the [.path]_attributes.adoc_ file stored in each module.
 
-A partial AsciiDoc file is inserted into a page with the xref:page-partials.adoc[ AsciiDoc include directive].
-
-
-//Attachment file names should follow the <<name-guide, file name guidelines>>.
-
-//Image file names should follow the <<name-guide, file name guidelines>>.
+A partial AsciiDoc file is inserted into a page with the xref:page-partials.adoc[AsciiDoc include directive].
