@@ -22,8 +22,8 @@ function testAll (testFunction, count = 1) {
   it('on remote bare repo', () => test({ isRemote: true, isBare: true }))
 }
 
-function cleanRepos () {
-  del.sync('.git-cache')
+function cleanReposAndCache () {
+  del.sync('.cache')
   del.sync(path.resolve(__dirname, 'repos', '*'), { dot: true })
 }
 
@@ -31,7 +31,7 @@ describe('aggregateContent()', () => {
   let playbook
 
   beforeEach(() => {
-    cleanRepos()
+    cleanReposAndCache()
     playbook = {
       content: {
         sources: [],
@@ -40,7 +40,7 @@ describe('aggregateContent()', () => {
     }
   })
 
-  afterEach(cleanRepos)
+  afterEach(cleanReposAndCache)
 
   // Read & validate component desc
 

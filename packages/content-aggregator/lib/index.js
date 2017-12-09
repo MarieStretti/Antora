@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const del = require('del')
 const File = require('vinyl')
-const fs = require('fs')
+const fs = require('fs-extra')
 const git = require('nodegit')
 const isMatch = require('matcher').isMatch
 const mimeTypes = require('./mime-types-with-asciidoc')
@@ -12,8 +12,7 @@ const streamToArray = require('stream-to-array')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
-const { COMPONENT_DESC_FILENAME } = require('./constants')
-const localCachePath = path.resolve('.git-cache')
+const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH } = require('./constants')
 
 module.exports = async (playbook) => {
   const componentVersions = playbook.content.sources.map(async (repo) => {
@@ -67,7 +66,7 @@ async function openOrCloneRepository (repoUrl) {
     localPath = repoUrl
     isBare = !isLocalDirectory(path.join(localPath, '.git'))
   } else {
-    localPath = localCachePath + '/' + repoUrl.replace(/[:/\\]+/g, '__')
+    localPath = path.join(resolveCacheDir(), repoUrl.replace(/[:/\\]+/g, '__'))
     isBare = true
   }
 
@@ -104,11 +103,16 @@ async function openOrCloneRepository (repoUrl) {
 
 function isLocalDirectory (repoUrl) {
   try {
-    const stats = fs.lstatSync(repoUrl)
-    return stats.isDirectory()
+    return fs.lstatSync(repoUrl).isDirectory()
   } catch (e) {
     return false
   }
+}
+
+function resolveCacheDir () {
+  const cacheAbsPath = path.resolve(CONTENT_CACHE_PATH)
+  fs.ensureDirSync(cacheAbsPath)
+  return cacheAbsPath
 }
 
 function getFetchOptions () {

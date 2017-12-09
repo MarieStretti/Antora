@@ -1,17 +1,17 @@
 'use strict'
 
-const crypto = require('crypto')
-const path = require('path')
-
 const _ = require('lodash')
 const buffer = require('gulp-buffer')
+const crypto = require('crypto')
 const download = require('download')
 const fs = require('fs-extra')
+const minimatchAll = require('minimatch-all')
+const path = require('path')
 const streamToArray = require('stream-to-array')
 const yaml = require('js-yaml')
 const zip = require('gulp-vinyl-zip')
 
-const minimatchAll = require('minimatch-all')
+const { UI_CACHE_PATH } = require('./constants')
 
 const $files = Symbol('files')
 const $generateId = Symbol('generateId')
@@ -42,19 +42,16 @@ class UiCatalog {
   }
 }
 
-const localCachePath = path.resolve('.ui-cache')
-
 module.exports = async (playbook) => {
   const uiCatalog = new UiCatalog()
 
   let zipPath
   if (isRemote(playbook.ui.bundle)) {
-    const bundleSha1 = sha1(playbook.ui.bundle)
-    zipPath = path.join(localCachePath, bundleSha1 + '.zip')
-    const alreadyCached = await fs.pathExists(zipPath)
-    if (!alreadyCached) {
+    const cacheAbsDir = resolveCacheDir()
+    zipPath = path.join(cacheAbsDir, sha1(playbook.ui.bundle) + '.zip')
+    if (!fs.pathExistsSync(zipPath)) {
+      fs.ensureDirSync(cacheAbsDir)
       const bundle = await download(playbook.ui.bundle)
-      await fs.ensureDir(localCachePath)
       fs.writeFileSync(zipPath, bundle)
     }
   } else {
@@ -99,6 +96,10 @@ function sha1 (string) {
   const shasum = crypto.createHash('sha1')
   shasum.update(string)
   return shasum.digest('hex')
+}
+
+function resolveCacheDir () {
+  return path.resolve(UI_CACHE_PATH)
 }
 
 function getFilesFromStartPath (filesAndDirs, startPath) {
