@@ -21,7 +21,7 @@ function testAll (archive, testFunction) {
 }
 
 function cleanCache () {
-  del.sync('.cache')
+  del.sync('.antora-cache')
 }
 
 describe('loadUi()', () => {

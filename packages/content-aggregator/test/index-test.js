@@ -23,7 +23,7 @@ function testAll (testFunction, count = 1) {
 }
 
 function cleanReposAndCache () {
-  del.sync('.cache')
+  del.sync('.antora-cache')
   del.sync(path.resolve(__dirname, 'repos', '*'), { dot: true })
 }
 

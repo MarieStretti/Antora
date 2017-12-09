@@ -1,3 +1,3 @@
 module.exports = Object.freeze({
-  UI_CACHE_PATH: '.cache/ui',
+  UI_CACHE_PATH: '.antora-cache/ui',
 })
