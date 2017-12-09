@@ -77,15 +77,15 @@ function partitionSrc (file, pathSegments, nav) {
     // add navigation index for later sorting
     file.nav = { index: navIndex }
   } else if (pathSegments[0] === 'modules') {
-    if (pathSegments[2] === 'documents') {
+    if (pathSegments[2] === 'pages') {
       if (pathSegments[3] === '_partials') {
         // QUESTION should this be partial-page instead?
         file.src.family = 'partial'
-        // start from 4 (after /modules/foo/documents/_partials) end at -1 (before filename.ext)
+        // start from 4 (after /modules/foo/pages/_partials) end at -1 (before filename.ext)
         file.src.subpath = pathSegments.slice(4, -1).join('/')
       } else if (file.src.mediaType === 'text/asciidoc' && file.src.basename !== '_attributes.adoc') {
         file.src.family = 'page'
-        // start from 3 (after /modules/foo/documents) end at -1 (before filename.ext)
+        // start from 3 (after /modules/foo/pages) end at -1 (before filename.ext)
         file.src.subpath = pathSegments.slice(3, -1).join('/')
       }
     } else if (pathSegments[2] === 'assets') {

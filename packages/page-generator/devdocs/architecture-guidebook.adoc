@@ -10,7 +10,7 @@ This page becomes a page in the generated site.
 
 == Functional Overview
 
-At this point in the pipeline, the files in the `page` family from the content catalog (i.e., text documents from the pages directory) are embeddable HTML.
+At this point in the pipeline, the files in the `page` family from the content catalog (i.e., text documents taken from the pages directory) are embeddable HTML.
 The page generator component needs to transform the contents of these files to complete HTML.
 
 The main purpose of the page generator component is to a apply a page template to the embeddable HTML produced by the document converter.

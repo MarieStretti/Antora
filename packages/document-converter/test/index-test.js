@@ -28,7 +28,7 @@ describe('convertDocument()', () => {
 
   beforeEach(() => {
     file = {
-      path: '/modules/module-foo/documents/page-one.adoc',
+      path: '/modules/module-foo/pages/page-one.adoc',
       src: {
         component: 'component-foo',
         version: 'v1.2.3',
@@ -65,7 +65,7 @@ describe('convertDocument()', () => {
           'safe-mode-safe': '',
           // from fixed attributes
           docname: 'page-one',
-          docfile: '/modules/module-foo/documents/page-one.adoc',
+          docfile: '/modules/module-foo/pages/page-one.adoc',
           docfilesuffix: '.adoc',
           'env-site': '',
           imagesdir: '../_images',
