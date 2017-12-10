@@ -299,8 +299,15 @@ To run the test suite, use:
 
  $ gulp test
 
-Note that this command also computes a coverage report using {uri-istanbul}[istanbul].
-You can browse this report in a web browser by opening the HTML file [.path]_coverage/index.html_.
+// NOTE nyc is currently disabled
+//This command also computes a coverage report using {uri-istanbul}[istanbul].
+//You can browse this report in a web browser by opening the HTML file [.path]_coverage/index.html_.
+
+You can run the test suite for a single package by passing the name of the package to the `--package` flag:
+
+ $ gulp test --package=ui-loader
+
+This filter works for all gulp tasks, including `lint` and `test-watch`, which are covered later.
 
 === Select or Skip Tests
 
