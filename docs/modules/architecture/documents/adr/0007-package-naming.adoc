@@ -3,7 +3,7 @@
 
 == Status
 
-Pending
+Accepted
 
 == Context
 
@@ -19,7 +19,7 @@ The other option is to create an organization for Antora on npmjs.com and organi
 
 We decided that package names are structured as:
 
- "subject-activity"
+ subject-activity
 
 The *subject* is the primary entity on which the package is focused, that is, what it operates on or produces.
 Common subjects in the Antora pipeline are: playbook, content, ui, and navigation.
