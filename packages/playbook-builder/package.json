@@ -1,7 +1,7 @@
 {
   "name": "@antora/playbook-builder",
   "version": "1.0.0-alpha.1",
-  "description": "A component for Antora that takes configuration input and builds a playbook object that is used to configure the documentation pipeline.",
+  "description": "Accepts user input and builds a playbook object for configuring an Antora documentation pipeline.",
   "author": {
     "name": "OpenDevise Inc.",
     "url": "https://opendevise.com"
