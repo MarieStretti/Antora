@@ -245,7 +245,6 @@ async function loadLocalFiles (repo) {
     vfs.src('**/*.*', {
       base: basePath,
       cwd: basePath,
-      dot: false,
     })
   )
 }
