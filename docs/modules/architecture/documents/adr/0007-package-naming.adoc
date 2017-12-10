@@ -1,0 +1,54 @@
+= ADR 0007: Package Naming
+:revdate: 2017-12-09
+
+== Status
+
+Accepted
+
+== Context
+
+We want the Antora package names to be structured consistently so that their purpose is easy to identify.
+Also, since the packages will be published to the main npm repository (npmjs.com), the names must be globally unique.
+
+In order to meet these requirements, we need to decide on a package naming convention.
+We also need to decide what prefixing strategy to use for package names.
+One option is to apply the hyphenated prefix `antora-` to the package names (e.g., `antora-content-aggregator`).
+The other option is to create an organization for Antora on npmjs.com and organize the packages under the organization namespace `@antora` (e.g., `@antora/content-aggregator`).
+
+== Decision
+
+We decided that package names are structured as:
+
+ subject-activity
+
+The *subject* is the primary entity on which the package is focused, that is, what it operates on or produces.
+Common subjects in the Antora pipeline are: playbook, content, ui, and navigation.
+
+The *activity* concisely describes what the package's primary function is doing.
+This could be a task, transformation, or goal.
+
+Antora's common activities are:
+
+[%hardbreaks]
+builder - constructs a model from disparate sources
+loader - reads files or data into memory
+aggregator - collects and consolidates input (usually into memory)
+classifier - sorts data into a well-defined, queryable structure / model
+converter - converts information from one format to another
+generator - makes a new thing
+
+Examples of this two-part naming convention in action are: `playbook-builder`, `content-aggregator`, and `ui-loader`.
+
+In order to make the names globally unique, we decided to create an organization for Antora on npmjs.com named `antora` and to organize the packages under the organization namespace, `@antora` (e.g., `@antora/content-aggregator`).
+Although still gaining traction, organizing packages under an organization namespace seems to be emerging as a best practice.
+It's used by major projects such as Babel, Phenomic, and Commitlint, and more are switching daily.
+
+== Consequences
+
+The subject-activity package naming convention will make it clear what each package's main purpose is.
+It will also be helpful during architecture discussions.
+If we're having difficulty naming a package it may indicate that its input, output, or functionality has not been adequately broken down and delineated.
+
+By using an organization namespace instead of a hyphenated prefix, it's more clear which packages are part of the Antora project.
+It also allows us to restrict which packages use this namespace, so a distinction can be made between official packages and third-party packages.
+Users can also navigate to the Antora organization on npmjs.com to see a list of all the official packages.
