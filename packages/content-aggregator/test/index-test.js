@@ -309,11 +309,7 @@ describe('aggregateContent()', () => {
       await repo.initRepo({ name: 'the-component', version: 'v1.2.3', startPath: 'docs' })
       await repo.addFixtureFiles(['should-be-ignored.adoc'])
       await repo.addFixtureFiles(
-        [
-          'modules/ROOT/_attributes.adoc',
-          'modules/ROOT/pages/_attributes.adoc',
-          'modules/ROOT/pages/page-one.adoc',
-        ],
+        ['modules/ROOT/_attributes.adoc', 'modules/ROOT/pages/_attributes.adoc', 'modules/ROOT/pages/page-one.adoc'],
         'docs'
       )
       playbook.content.sources.push({ url: repo.url, startPath: repo.startPath })

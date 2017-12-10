@@ -429,10 +429,7 @@ describe('classifyContent()', () => {
           name: 'the-component',
           title: 'The Component',
           version: 'v1.2.3',
-          files: [
-            createFile('/modules/ROOT/assets/images/foo.png'),
-            createFile('/modules/ROOT/pages/page-one.adoc'),
-          ],
+          files: [createFile('/modules/ROOT/assets/images/foo.png'), createFile('/modules/ROOT/pages/page-one.adoc')],
         },
         {
           name: 'the-component',
@@ -515,10 +512,7 @@ describe('classifyContent()', () => {
           name: 'the-component',
           title: 'The Component',
           version: 'v1.2.3',
-          files: [
-            createFile('/modules/ROOT/assets/images/foo.png'),
-            createFile('/modules/ROOT/pages/page-one.adoc'),
-          ],
+          files: [createFile('/modules/ROOT/assets/images/foo.png'), createFile('/modules/ROOT/pages/page-one.adoc')],
         },
       ]
     })
