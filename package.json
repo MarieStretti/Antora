@@ -40,6 +40,7 @@
     "deep-freeze": "^0.0.1",
     "del": "^3.0.0",
     "download": "^6.2.5",
+    "fs-extra": "^4.0.2",
     "gulp-buffer": "^0.0.2",
     "gulp-vinyl-zip": "^2.1.0",
     "js-yaml": "^3.10.0",

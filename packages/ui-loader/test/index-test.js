@@ -1,14 +1,12 @@
 /* eslint-env mocha */
 'use strict'
 
+const del = require('del')
 const { expect } = require('../../../test/test-utils')
-const loadUi = require('../lib/index')
-
 const fs = require('fs')
 const http = require('http')
+const loadUi = require('../lib/index')
 const path = require('path')
-
-const del = require('del')
 
 function testAll (archive, testFunction) {
   const playbook = { ui: { startPath: '/' } }
@@ -23,7 +21,7 @@ function testAll (archive, testFunction) {
 }
 
 function cleanCache () {
-  del.sync('.ui-cache')
+  del.sync('.antora-cache')
 }
 
 describe('loadUi()', () => {

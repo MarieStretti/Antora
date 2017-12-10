@@ -37,8 +37,8 @@ The content aggregator component should:
 * Use a git integration library (NodeGit) to clone the repositories the first time and fetch them subsequent times
 * Work with private, public, bare, non-bare, ssh, https, and local directories that are git repositories (worktree)
  ** Repository origins could be GitHub, GitLab, Bitbucket, etc.
-* Put cloned repositories into cache for subsequent runs
-* Use local directories in place
+* Cache cloned repositories in the folder [.path]_.cache/content_ for use by subsequent runs
+* Use local directories as is (do not clone or copy)
 * Scan all branches per repository to find playbook matches
  ** Local branches shall take precedence over remote branches with the same name
 * Visit each matched branch and find the [.term]_component description file_ (antora.yml) at the root of each documentation component

@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const del = require('del')
 const File = require('vinyl')
-const fs = require('fs')
+const fs = require('fs-extra')
 const git = require('nodegit')
 const isMatch = require('matcher').isMatch
 const mimeTypes = require('./mime-types-with-asciidoc')
@@ -12,8 +12,10 @@ const streamToArray = require('stream-to-array')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
-const { COMPONENT_DESC_FILENAME } = require('./constants')
-const localCachePath = path.resolve('.git-cache')
+const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH } = require('./constants')
+const EXT_RX = /\.[a-z]+$/
+const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
+const SEPARATOR_RX = /\/|:/
 
 module.exports = async (playbook) => {
   const componentVersions = playbook.content.sources.map(async (repo) => {
@@ -67,7 +69,7 @@ async function openOrCloneRepository (repoUrl) {
     localPath = repoUrl
     isBare = !isLocalDirectory(path.join(localPath, '.git'))
   } else {
-    localPath = localCachePath + '/' + repoUrl.replace(/[:/\\]+/g, '__')
+    localPath = path.join(resolveCacheDir(), generateLocalFolderName(repoUrl))
     isBare = true
   }
 
@@ -104,11 +106,54 @@ async function openOrCloneRepository (repoUrl) {
 
 function isLocalDirectory (repoUrl) {
   try {
-    const stats = fs.lstatSync(repoUrl)
-    return stats.isDirectory()
+    return fs.lstatSync(repoUrl).isDirectory()
   } catch (e) {
     return false
   }
+}
+
+function resolveCacheDir () {
+  const cacheAbsPath = path.resolve(CONTENT_CACHE_PATH)
+  fs.ensureDirSync(cacheAbsPath)
+  return cacheAbsPath
+}
+
+/**
+ * Generates a friendly folder name from a URL.
+ *
+ * - Remove extension (e.g., .git)
+ * - Remove URI scheme (e.g,. https://)
+ * - Remove user from host (e.g., git@)
+ * - Remove leading and trailing slashes
+ * - Replace / and : with %
+ */
+function generateLocalFolderName (url) {
+  // NOTE we don't use extname since the last path segment could be .git
+  const extMatch = url.includes('.') && url.match(EXT_RX)
+  if (extMatch) {
+    url = url.slice(0, -extMatch[0].length)
+  }
+  const schemeMatch = url.includes(':') && url.match(URI_SCHEME_RX)
+  if (schemeMatch) {
+    url = url.slice(schemeMatch[0].length)
+  }
+  if (url.startsWith('/')) {
+    url = url.slice(1)
+  }
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1)
+  }
+  const segments = url.split(SEPARATOR_RX)
+  let firstSegment = segments[0]
+  if (firstSegment.length === 0) {
+    segments.splice(0, 1)
+  } else {
+    if (firstSegment.includes('@')) {
+      firstSegment = firstSegment.slice(firstSegment.indexOf('@') + 1)
+    }
+    segments[0] = firstSegment
+  }
+  return segments.join('%')
 }
 
 function getFetchOptions () {
