@@ -1,0 +1,21 @@
+{
+  "name": "@antora/playbook-builder",
+  "version": "1.0.0-alpha.1",
+  "description": "Accepts user input and builds a playbook object for configuring an Antora documentation pipeline.",
+  "author": {
+    "name": "OpenDevise Inc.",
+    "url": "https://opendevise.com"
+  },
+  "license": "MPL-2.0",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "dependencies": {
+    "camelcase-keys": "^4.2.0",
+    "convict": "^4.0.2",
+    "cson-parser": "^2.0.0",
+    "deep-freeze": "^0.0.1",
+    "js-yaml": "^3.10.0"
+  }
+}

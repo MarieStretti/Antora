@@ -75,7 +75,7 @@ The API for the playbook builder should be used as follows:
 ////
 [source,js]
 ----
-const buildPlaybook = require ('../packages/playbook/lib/index')
+const buildPlaybook = require('@antora/playbook-builder')
 
 const playbook = buildPlaybook()
 ----
@@ -87,7 +87,7 @@ It should be possible to isolate the API call from the process environment by pa
 
 [source,js]
 ----
-const buildPlaybook = require ('../packages/playbook/lib/index')
+const buildPlaybook = require('@antora/playbook-builder')
 
 const playbook = buildPlaybook(process.argv.slice(2), process.env)
 ----

@@ -134,7 +134,7 @@ The API for the document converter should be used as follows:
 // Q: should the convertDocuments return a collection of files which were converted?
 [source,js]
 ----
-const convertDocuments = require('../packages/document-converter/lib/index')
+const convertDocuments = require('@antora/document-converter')
 
 //...
 
@@ -146,7 +146,7 @@ Alternately, the pipeline can handle the conversion itself:
 // TODO check this code
 [source,js]
 ----
-const convertDocument = require('../packages/document-converter/lib/convert-document')
+const convertDocument = require('@antora/document-converter/lib/convert-document')
 
 //...
 

@@ -1,0 +1,24 @@
+{
+  "name": "@antora/ui-loader",
+  "version": "1.0.0-alpha.1",
+  "description": "Downloads a UI bundle and makes the UI files available to an Antora documentation pipeline.",
+  "author": {
+    "name": "OpenDevise Inc.",
+    "url": "https://opendevise.com"
+  },
+  "license": "MPL-2.0",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "dependencies": {
+    "download": "^6.2.5",
+    "fs-extra": "^4.0.2",
+    "gulp-buffer": "^0.0.2",
+    "js-yaml": "^3.10.0",
+    "lodash": "^4.17.4",
+    "minimatch-all": "^1.1.0",
+    "stream-to-array": "^2.3.0",
+    "gulp-vinyl-zip": "^2.1.0"
+  }
+}

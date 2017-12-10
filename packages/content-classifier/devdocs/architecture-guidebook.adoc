@@ -63,7 +63,7 @@ The API for the content classifier should be used as follows:
 
 [source,js]
 ----
-const classifyContent = require ('../packages/content-classifier/lib/index')
+const classifyContent = require('@antora/content-classifier')
 
 //...
 

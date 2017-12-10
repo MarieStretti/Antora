@@ -1,0 +1,26 @@
+{
+  "name": "@antora/content-aggregator",
+  "version": "1.0.0-alpha.1",
+  "description": "Fetches and aggregates content from distributed sources for use in an Antora documentation pipeline.",
+  "author": {
+    "name": "OpenDevise Inc.",
+    "url": "https://opendevise.com"
+  },
+  "license": "MPL-2.0",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "dependencies": {
+    "del": "^3.0.0",
+    "fs-extra": "^4.0.2",
+    "js-yaml": "^3.10.0",
+    "lodash": "^4.17.4",
+    "matcher": "^1.0.0",
+    "mime-types": "^2.1.17",
+    "nodegit": "^0.20.3",
+    "stream-to-array": "^2.3.0",
+    "vinyl": "^2.1.0",
+    "vinyl-fs": "^2.4.4"
+  }
+}
