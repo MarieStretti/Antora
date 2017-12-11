@@ -1,0 +1,147 @@
+= Navigation Builder Guidebook
+
+== Context
+
+To allow readers to browse pages in the documentation site and navigate to them, they need a navigation menu that provides links to those pages.
+The links in the navigation menu should be organized in a logical hierarchy.
+Since the documentation site may contain multiple versions of multiple components, there should be multiple navigation menus, each one scoped to a single component version.
+The navigation builder component needs to accept input from the site author that defines the contents of each of these navigation hierarchies.
+From that input, the component should build a navigation model, information from which can be used in a layout template to add a navigation menu to each page.
+
+== Functional Overview
+
+The main purpose of the navigation builder component is to build a navigation model from navigation files defined by the site authors, which can then be used by the layout template to add a navigation menu to each page.
+The navigation builder retrieves navigation files from the content catalog, translates the contents into navigation items organized in the specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
+
+//There are two types of navigation files:
+//
+//* *linked* -- the navigation for a specific component version
+//* *aspect* -- global, cross-cutting navigation not linked to any one component
+//
+//The *linked* navigation files are stored with the files for a component version and are listed in the component descriptor.
+//A component version can declare zero or more linked navigation files.
+//The *aspect* navigation files are stored in the playbook repository and are listed in the playbook.
+//The playbook can declare zero or more aspect navigation files.
+
+The navigation is defined using AsciiDoc documents.
+Navigation files are stored with the other files for a component version in the content catalog.
+A navigation file can live anywhere in the content tree.
+
+A content file is promoted to a navigation file when its listed (by path) in the `nav` array in the component descriptor.
+A component version can declare zero or more navigation files.
+The order the navigation files are listed in the component descriptor determines the order in the navigation model.
+
+Each navigation file contains one or more unordered AsciiDoc list of arbitrary depth that describes the navigation displayed when the user navigates to a particular component version.
+Each navigation entry can be a page reference link, an external link, or inactive text, all of which may contain inline formatting (bold, italic, etc).
+If the list has an optional block title, that block title becomes the title for the navigation menu.
+
+The navigation model built by this component is subsequently passed on to the layout template by the page generator.
+
+== Software Architecture
+
+The navigation builder component functionality is provided by the navigation-builder module.
+
+This component builds a navigation model from navigation files declared by the descriptor in each component.
+The navigation documents used as input should be retrieved by invoking `findBy({ family: 'navigation'})` on the content catalog.
+The navigation model is an instance of the NavigationCatalog class.
+
+//The navigation model is partitioned into domains.
+//For linked navigation, the navigation is indexed by component then version, known as a linked domain.
+//For aspect navigation, this component generates a corresponding aspect domain dynamically based on the navigation filename.
+//These navigation models can then be looked up by domain.
+
+//The linked navigation files should be retrieved by calling `findBy({ family: 'navigation'})` on the content catalog.
+//The aspect navigation files should be resolved from the `nav` property of the playbook.
+
+Each navigation file in a component version should be processed as follows:
+
+* parse the file using the `loadAsciiDoc` function from the AsciiDoc loader component
+ ** this function is an interface to Asciidoctor (specifically, Asciidoctor.js)
+ ** convert page references to root relative paths by passing the option `relativePageRefs: false`
+* find each top-level unordered list in the document
+* convert each item in each list to:
+ ** apply formatting (e.g., bold, italic)
+ ** resolve the URL to which the item points (if applicable)
+* if the URL points to a page within the site, that URL should be stored as root-relative path (e.g., /component-a/module-a/page.html)
+ ** the layout template will use a helper to convert root-relative paths to relative paths, allowing the navigation to work independently from where the site is hosted
+* add each list to the catalog as a tree
+ ** the order of the trees should be determined first by the order the navigation file is listed in the component descriptor, then by the order of the lists in the navigation file
+
+If a navigation file lives inside a module folder, any page references in that file inherit the context of the module (i.e., they are relative to that module).
+Otherwise, the page references are assumed to be relative to the component version.
+
+.Inputs
+* Content catalog (`contentCatalog`) (`navigation` family)
+
+.Output
+* NavigationCatalog (`navigationCatalog`)
+
+== Code
+
+The navigation builder is implemented as a dedicated node package (i.e., module).
+The navigation builder API exports the `buildNavigation()` function, which accepts the playbook and the content catalog and returns a navigation model object.
+
+The API for the navigation builder should be used as follows:
+
+[source,js]
+----
+const buildNavigation = require('@antora/navigation-builder')
+
+//...
+
+const navigationCatalog = buildNavigation(contentCatalog)
+----
+
+The navigation menus for a component version can be accessed as follows:
+
+[source,js]
+----
+const navigationMenu = navigationCatalog.getMenu('component-a', '1.0')
+----
+
+== Data
+
+The navigation builder reads files in the `navigation` family from the content catalog, which can be retrieved by invoking `findBy({ family: 'navigation' })` on the content catalog.
+This component should not modify the files retrieved from the content catalog.
+
+Here's a sample navigation file:
+
+[source,asciidoc]
+----
+.xref:index.adoc[Basics]
+* xref:overview.adoc[How Antora Works]
+ ** xref:content.adoc[Fetching Content]
+ ** xref:ui.adoc[Loading a UI]
+* xref:prerequisites.adoc[Prerequisites]
+* xref:generate-site.adoc[Generating a Site]
+----
+
+The navigation builder generates an instance of NavigationCatalog.
+The NavigationCatalog provides access to navigation menus.
+
+Navigation menus are indexed in the catalog by component version (each component version has one navigation menu).
+A navigation menu can be retrieved from the navigation catalog by component and version.
+A navigation menu contains a collection of navigation trees.
+Each navigation tree represents a hierarchy of navigation items, often mapping 1-to-1 to a module.
+
+The root of a navigation tree has an optional title and items.
+Each navigation item has the following properties:
+
+* content - the formatted text shown to the user
+* url - the URL to which the item points
+ ** if this is a page reference, the URL should be a root-relative path, which will be relativized by the template
+* urlType - one of internal (page reference), external, or fragment (only set if url is set)
+* items - a navigation subtree
+
+The title has the same model as a navigation item, except it cannot have nested items.
+If present, the title acts as the top level of the navigation tree.
+Otherwise, the top level is the first collection of items.
+
+Only the content is required for the title and each navigation item.
+
+== Consequences
+
+The navigation builder prepares the navigation model and makes it available to subsequent steps in the documentation pipeline.
+All other steps should read navigation information from this model.
+Other components may contribute to this model.
+The navigation menu retrieved from this model is used by the layout template to populate the navigation UI elements.
