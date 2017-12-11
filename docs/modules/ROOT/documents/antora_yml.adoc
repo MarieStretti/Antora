@@ -8,13 +8,15 @@ endif::[]
 
 A documentation component must contain a component descriptor file named [.path]_antora.yml_.
 
-This file serves two crucial purposes.
+This file serves two purposes:
 
-. *Project level*: When Antora finds [.path]_antora.yml_ in a repository, it knows that it has located a documentation component.
+. *Component marker*: When Antora finds [.path]_antora.yml_ in a repository, it knows that it has located a documentation component.
 This ability to "`start`" a documentation component anywhere in a directory hierarchy allows you to store a component in a repository with the software it documents, with a demo project, by itself, etc.
 
-. *Component level*: [.path]_Antora.yml_ is a component descriptor file.
-It contains crucial information about the component in a branch that Antora uses to build page links and site navigation.
+. *Component information*: [.path]_antora.yml_ is a component descriptor file.
+It associates the files under this hierarchy with the specified component name and version (aka component version), decoupling the files from the repository and branch in which they live.
+This information is used for creating links to pages in this component.
+The file also identifies files to use for site navigation.
 
 //When we find a component descriptor file, specifically , in a repository, we expect to find the standard structure of a documentation component below it.
 //Thus, the documentation can live anywhere in the repository.
@@ -23,12 +25,12 @@ It contains crucial information about the component in a branch that Antora uses
 
 == Component descriptor requirements
 
-A documentation component in a branch must have a [.term]_component descriptor_ file.
+A documentation component must have a [.term]_component descriptor_ file.
 This file provides stable metadata that Antora and other tools can use when they need to retrieve information about the component and version.
 
 The component descriptor must:
 
-* be located at the same directory hierarchy level as the component's [.path]_modules/_ directory
+* be located at the root of the documentation component (adjacent to the [.path]_modules/_ directory for that component)
 * be named [.path]_antora.yml_
 * be written in YAML
 * contain the required keys and values
@@ -48,14 +50,12 @@ nav: # <4>
 <3> Version key and value
 <4> Nav key and values
 
-=== Name
+=== name
 
 The value of the name key is the component name that is used when the component is referenced in a xref:cross-reference/page-to-page-link.adoc#page-id-cname-def[page ID].
-The value can contain letter, number, underscore (`_`), and hyphen (`-`) characters.
+The value can contain letter, number, underscore (`_`), hyphen (`-`), and period (`.`) characters.
 
-// period (`.`) is pending.
-
-=== Title
+=== title
 
 The value of the title key is the display name for the component.
 It's used anywhere in the UI that the component (or its super type, domain) is identified.
@@ -65,7 +65,7 @@ This includes:
 * domain selector drawer
 * first breadcrumb position
 
-=== Version
+=== version
 
 The value of the version key is both the display version and the actual version of the component.
 It's used anywhere that the version is referenced or identified.
@@ -86,8 +86,8 @@ If the value starts with a number, it must be contained within a set of single q
 * latest
 
 [#nav-key]
-=== Nav
+=== nav
 
-The nav key accepts a list of xref:navigation:linked.adoc[navigation files] as values.
-Each value specifies the route to a navigation file ([.path]_nav.adoc_).
-The order of the values indicates the order that the navigation file contents will be displayed in the site's navigation tree.
+The nav key accepts a list xref:navigation:linked.adoc[navigation files].
+Each value specifies the path to a navigation file (e.g., [.path]_modules/module-a/nav.adoc_).
+The order of the values indicates the order the navigation menus will be displayed in the site's navigation panel.

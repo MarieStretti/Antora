@@ -24,18 +24,23 @@ To insert a link to an attachment for download, use the AsciiDoc link macro (`li
 link:{attachmentsdir}/example.raml[Download the RAML example] and run it.
 ----
 
-To insert a link to an attachment, use the link macro prefix, followed by the `{attachmentsdir}` reference, then the name of the file, and then a set of square brackets (`[]`).
-Optional link text can be entered between the brackets.
+Let's break this down.
+You start with the link macro prefix, `link:`.
+Next is the target.
+Start the target with the `{attachmentsdir}/` reference to tell Antora where to look for the file.
+Then put the relative path of the attachment file after that.
+Finally, end with the text of the link (as the reader will see it) between a pair of square brackets (`+[]+`).
 
 You don't need to set the path to the [.path]_attachments/_ directory in the header of your file.
-This is managed automatically by Antora and the [.path]_attributes.adoc_ file stored in each module.
+This is managed automatically by Antora.
+When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
-A module's image files should be saved in its xref:module.adoc#attachments-dir[attachments folder].
+A module's attachment files should be saved in its xref:module.adoc#attachments-dir[attachments folder].
 
 [#insert-image]
 == Insert an image
 
-To insert an image on its own line, use the AsciiDoc block image macro (`image::[]`).
+To insert a standalone image (i.e., figure), use the AsciiDoc block image macro (`image::[]`).
 
 .Insert a block image
 [source,asciidoc]
@@ -43,17 +48,27 @@ To insert an image on its own line, use the AsciiDoc block image macro (`image::
 image::file-name.ext[optional alt text]
 ----
 
-To insert an image, use the image macro prefix, then the name of the file, followed by a set of square brackets (`[]`).
-You can enter alt text for the image between the square brackets.
+To insert an image in the flow of text, use the AsciiDoc inline image macro (`image:[]`).
 
-.Image macro example
+.Insert a block image
+[source,asciidoc]
+----
+image::file-name.ext[optional alt text]
+----
+
+Let's break this down.
+You start with the image macro prefix, `image::` or `+image:+`.
+Next is the target.
+Put the path of the image relative to the xref:module.adoc#images-dir[image catalog] in that slot (no need for an attribute prefix).
+Finally, end with a pair of square brackets (`+[]+`), optionally containing alt text for the image (which is otherwise generated).
+
+.Block image macro example
 [source,asciidoc]
 ----
 image::pipeline-workflow.png[a diagram illustrating the pipeline stages]
 ----
 
 A module's image files should be saved in its xref:module.adoc#images-dir[images folder].
-// inline image info needed
 
 [#insert-video]
 == Insert a video
@@ -70,8 +85,11 @@ TIP: Insert animated GIFs with the <<insert-image,image macro>>.
 video::video-file.mp4[]
 ----
 
-To insert a self-hosted video, use the video macro prefix, then the name of the file, followed by a set of square brackets (`[]`).
-A module's video files should be saved in its xref:module.adoc#videos-dir[videos folder].
+Let's break this down.
+You start with the video macro prefix, `video::`.
+Next is the target.
+Put the path of the video relative to the xref:module.adoc#videos-dir[video catalog] in that slot (no need for an attribute prefix).
+Finally, end with a pair of square brackets (`+[]+`).
 
 === Externally hosted videos
 
@@ -84,7 +102,7 @@ video::rPQoq7ThGAU[youtube]
 
 .More AsciiDoc video help
 ****
-- {uri-hosted-video}[The AsciiDoc video macro]
-- {uri-shared-video}[Embed Youtube and Vimeo videos]
-- {uri-video-attrs}[Video macro options and attributes]
+* {uri-hosted-video}[The AsciiDoc video macro]
+* {uri-shared-video}[Embed Youtube and Vimeo videos]
+* {uri-video-attrs}[Video macro options and attributes]
 ****
