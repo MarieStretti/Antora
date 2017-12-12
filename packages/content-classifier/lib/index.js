@@ -69,13 +69,12 @@ module.exports = (playbook, aggregate) => {
 }
 
 function partitionSrc (file, pathSegments, nav) {
-  const navIndex = _.indexOf(nav, file.path.slice(1))
-  if (navIndex !== -1) {
+  const navInfo = getNavInfo(file, nav)
+  if (navInfo) {
     file.src.family = 'navigation'
     // start from 2 (after /modules/foo) end at -1 (before filename.ext)
     file.src.subpath = pathSegments.slice(2, -1).join('/')
-    // add navigation index for later sorting
-    file.nav = { index: navIndex }
+    file.nav = navInfo
   } else if (pathSegments[0] === 'modules') {
     if (pathSegments[2] === 'pages') {
       if (pathSegments[3] === '_partials') {
@@ -106,6 +105,22 @@ function partitionSrc (file, pathSegments, nav) {
   }
 }
 
+/**
+ * Return navigation properties if this file is registered as a navigation file.
+ *
+ * @param {File} file - the virtual file to check.
+ * @param {Array} nav - the array of navigation entries from the component descriptor.
+ *
+ * @return {Object} - an object of properties that includes the navigation index, if this file is
+ * a navigation file, or undefined if it's not.
+ */
+function getNavInfo (file, nav) {
+  const index = _.indexOf(nav, file.path)
+  if (index !== -1) {
+    return { index }
+  }
+}
+
 function resolveOut (src, htmlExtensionStyle = 'default') {
   const version = src.version === 'master' ? '' : src.version
   const module = src.module === 'ROOT' ? '' : src.module
@@ -127,11 +142,11 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
     familyPathSegment = '_attachments'
   }
 
-  const modulePath = path.join('/', src.component, version, module)
+  const modulePath = path.join(src.component, version, module)
   const dirname = path.join(modulePath, familyPathSegment, src.subpath, indexifyPathSegment)
   const outputPath = path.join(dirname, basename)
   const moduleRootPath = path.relative(dirname, modulePath) || '.'
-  const rootPath = path.relative(dirname, '/') || '.'
+  const rootPath = path.relative(dirname, '') || '.'
 
   return {
     dirname,
@@ -160,7 +175,7 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
     }
   }
 
-  const url = urlSegments.join('/')
+  const url = '/' + urlSegments.join('/')
 
   return {
     url,

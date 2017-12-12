@@ -36,9 +36,9 @@ describe('classifyContent()', () => {
   })
 
   it('should classify a page', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/pages/page-one.adoc'))
+    aggregate[0].files.push(createFile('modules/ROOT/pages/page-one.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+    expect(files[0].path).to.equal('modules/ROOT/pages/page-one.adoc')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -50,9 +50,9 @@ describe('classifyContent()', () => {
   })
 
   it('should classify a page with a subpath', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/pages/the-subpath/page-one.adoc'))
+    aggregate[0].files.push(createFile('modules/ROOT/pages/the-subpath/page-one.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/pages/the-subpath/page-one.adoc')
+    expect(files[0].path).to.equal('modules/ROOT/pages/the-subpath/page-one.adoc')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -64,9 +64,9 @@ describe('classifyContent()', () => {
   })
 
   it('should classify a partial page', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/pages/_partials/foo.adoc'))
+    aggregate[0].files.push(createFile('modules/ROOT/pages/_partials/foo.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/pages/_partials/foo.adoc')
+    expect(files[0].path).to.equal('modules/ROOT/pages/_partials/foo.adoc')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -78,9 +78,9 @@ describe('classifyContent()', () => {
   })
 
   it('should classify an image', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/assets/images/foo.png'))
+    aggregate[0].files.push(createFile('modules/ROOT/assets/images/foo.png'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/assets/images/foo.png')
+    expect(files[0].path).to.equal('modules/ROOT/assets/images/foo.png')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -92,9 +92,9 @@ describe('classifyContent()', () => {
   })
 
   it('should classify an attachment', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/assets/attachments/example.zip'))
+    aggregate[0].files.push(createFile('modules/ROOT/assets/attachments/example.zip'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/assets/attachments/example.zip')
+    expect(files[0].path).to.equal('modules/ROOT/assets/attachments/example.zip')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -106,9 +106,9 @@ describe('classifyContent()', () => {
   })
 
   it('should classify an example', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/examples/foo.xml'))
+    aggregate[0].files.push(createFile('modules/ROOT/examples/foo.xml'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/examples/foo.xml')
+    expect(files[0].path).to.equal('modules/ROOT/examples/foo.xml')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -120,16 +120,17 @@ describe('classifyContent()', () => {
   })
 
   it('should not classify a navigation if not referenced in component desc', () => {
-    aggregate[0].files.push(createFile('/modules/ROOT/nav.adoc'))
+    aggregate[0].files.push(createFile('modules/ROOT/nav.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
     expect(files).to.have.lengthOf(0)
   })
 
   it('should classify a navigation if referenced in component desc', () => {
     aggregate[0].nav = ['modules/ROOT/nav.adoc']
-    aggregate[0].files.push(createFile('/modules/ROOT/nav.adoc'))
+    aggregate[0].files.push(createFile('modules/ROOT/nav.adoc'))
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/ROOT/nav.adoc')
+    expect(files).to.have.lengthOf(1)
+    expect(files[0].path).to.equal('modules/ROOT/nav.adoc')
     expect(files[0].src).to.include({
       component: 'the-component',
       version: 'v1.2.3',
@@ -140,34 +141,35 @@ describe('classifyContent()', () => {
     })
   })
 
-  it('should assign a nav.index on navigation based on order in component desc', () => {
+  it('should assign a nav.index property to navigation file according to order listed in component desc', () => {
     aggregate[0].nav = ['modules/ROOT/nav.adoc', 'modules/module-a/nav.adoc', 'modules/module-b/nav.adoc']
     aggregate[0].files.push(
       ...[
-        createFile('/modules/module-b/nav.adoc'),
-        createFile('/modules/ROOT/nav.adoc'),
-        createFile('/modules/module-a/nav.adoc'),
+        createFile('modules/module-b/nav.adoc'),
+        createFile('modules/ROOT/nav.adoc'),
+        createFile('modules/module-a/nav.adoc'),
       ]
     )
     const files = classifyContent(playbook, aggregate).getFiles()
-    expect(files[0].path).to.equal('/modules/module-b/nav.adoc')
+    expect(files[0].path).to.equal('modules/module-b/nav.adoc')
     expect(files[0].nav.index).to.equal(2)
-    expect(files[1].path).to.equal('/modules/ROOT/nav.adoc')
+    expect(files[1].path).to.equal('modules/ROOT/nav.adoc')
     expect(files[1].nav.index).to.equal(0)
-    expect(files[2].path).to.equal('/modules/module-a/nav.adoc')
+    expect(files[2].path).to.equal('modules/module-a/nav.adoc')
     expect(files[2].nav.index).to.equal(1)
   })
 
   it('should not classify files that do not follow the Antora standard', () => {
     aggregate[0].files.push(
       ...[
-        createFile('/' + COMPONENT_DESC_FILENAME),
-        createFile('/README.adoc'),
-        createFile('/modules/ROOT/_attributes.adoc'),
-        createFile('/modules/ROOT/assets/bad-file.png'),
-        createFile('/modules/ROOT/pages/bad-file.xml'),
-        createFile('/modules/ROOT/pages/_attributes.adoc'),
-        createFile('/modules/ROOT/bad-folder/bad-file.yml'),
+        createFile(COMPONENT_DESC_FILENAME),
+        createFile('README.adoc'),
+        createFile('modules/ROOT/_attributes.adoc'),
+        createFile('modules/ROOT/assets/bad-file.png'),
+        createFile('modules/ROOT/pages/bad-file.xml'),
+        createFile('modules/ROOT/documents/index.adoc'),
+        createFile('modules/ROOT/pages/_attributes.adoc'),
+        createFile('modules/ROOT/bad-folder/bad-file.yml'),
       ]
     )
     const files = classifyContent(playbook, aggregate).getFiles()
@@ -180,20 +182,20 @@ describe('classifyContent()', () => {
         name: 'the-component',
         title: 'The Component',
         version: 'v1.2.3',
-        files: [createFile('/modules/ROOT/pages/page-one.adoc')],
+        files: [createFile('modules/ROOT/pages/page-one.adoc')],
       },
       {
         name: 'the-other-component',
         title: 'The Other Component',
         version: 'v4.5.6',
-        files: [createFile('/modules/ROOT/pages/page-two.adoc')],
+        files: [createFile('modules/ROOT/pages/page-two.adoc')],
       },
     ]
     const files = classifyContent(playbook, aggregate).getFiles()
     expect(files).to.have.lengthOf(2)
-    expect(files[0].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+    expect(files[0].path).to.equal('modules/ROOT/pages/page-one.adoc')
     expect(files[0].src).to.include({ component: 'the-component', version: 'v1.2.3' })
-    expect(files[1].path).to.equal('/modules/ROOT/pages/page-two.adoc')
+    expect(files[1].path).to.equal('modules/ROOT/pages/page-two.adoc')
     expect(files[1].src).to.include({ component: 'the-other-component', version: 'v4.5.6' })
   })
 
@@ -203,13 +205,13 @@ describe('classifyContent()', () => {
         name: 'the-component',
         title: 'The Component',
         version: 'v1.2.3',
-        files: [createFile('/modules/ROOT/pages/page-one.adoc')],
+        files: [createFile('modules/ROOT/pages/page-one.adoc')],
       },
       {
         name: 'the-component',
         title: 'The Component',
         version: 'v1.2.3',
-        files: [createFile('/modules/ROOT/pages/page-one.adoc')],
+        files: [createFile('modules/ROOT/pages/page-one.adoc')],
       },
     ]
     expect(() => classifyContent({}, aggregate)).to.throw()
@@ -217,12 +219,12 @@ describe('classifyContent()', () => {
 
   describe('should assign correct out and pub properties to files', () => {
     it('full example', () => {
-      aggregate[0].files.push(createFile('/modules/the-module/pages/the-subpath/page-one.adoc'))
+      aggregate[0].files.push(createFile('modules/the-module/pages/the-subpath/page-one.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/the-subpath',
+        dirname: 'the-component/v1.2.3/the-module/the-subpath',
         basename: 'page-one.html',
-        path: '/the-component/v1.2.3/the-module/the-subpath/page-one.html',
+        path: 'the-component/v1.2.3/the-module/the-subpath/page-one.html',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -234,36 +236,36 @@ describe('classifyContent()', () => {
     })
 
     it('example with multiple subpaths', () => {
-      aggregate[0].files.push(createFile('/modules/the-module/pages/subpath-foo/subpath-bar/page-one.adoc'))
+      aggregate[0].files.push(createFile('modules/the-module/pages/subpath-foo/subpath-bar/page-one.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/subpath-foo/subpath-bar',
+        dirname: 'the-component/v1.2.3/the-module/subpath-foo/subpath-bar',
         basename: 'page-one.html',
-        path: '/the-component/v1.2.3/the-module/subpath-foo/subpath-bar/page-one.html',
+        path: 'the-component/v1.2.3/the-module/subpath-foo/subpath-bar/page-one.html',
         moduleRootPath: '../..',
         rootPath: '../../../../..',
       })
     })
 
     it('example without topic', () => {
-      aggregate[0].files.push(createFile('/modules/the-module/pages/page-one.adoc'))
+      aggregate[0].files.push(createFile('modules/the-module/pages/page-one.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module',
+        dirname: 'the-component/v1.2.3/the-module',
         basename: 'page-one.html',
-        path: '/the-component/v1.2.3/the-module/page-one.html',
+        path: 'the-component/v1.2.3/the-module/page-one.html',
         moduleRootPath: '.',
         rootPath: '../../..',
       })
     })
 
     it('example with ROOT module', () => {
-      aggregate[0].files.push(createFile('/modules/ROOT/pages/page-one.adoc'))
+      aggregate[0].files.push(createFile('modules/ROOT/pages/page-one.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3',
+        dirname: 'the-component/v1.2.3',
         basename: 'page-one.html',
-        path: '/the-component/v1.2.3/page-one.html',
+        path: 'the-component/v1.2.3/page-one.html',
         moduleRootPath: '.',
         rootPath: '../..',
       })
@@ -275,14 +277,14 @@ describe('classifyContent()', () => {
           name: 'the-component',
           title: 'The Component',
           version: 'master',
-          files: [createFile('/modules/the-module/pages/page-one.adoc')],
+          files: [createFile('modules/the-module/pages/page-one.adoc')],
         },
       ]
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/the-module',
+        dirname: 'the-component/the-module',
         basename: 'page-one.html',
-        path: '/the-component/the-module/page-one.html',
+        path: 'the-component/the-module/page-one.html',
         moduleRootPath: '.',
         rootPath: '../..',
       })
@@ -294,38 +296,38 @@ describe('classifyContent()', () => {
           name: 'the-component',
           title: 'The Component',
           version: 'master',
-          files: [createFile('/modules/ROOT/pages/page-one.adoc')],
+          files: [createFile('modules/ROOT/pages/page-one.adoc')],
         },
       ]
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component',
+        dirname: 'the-component',
         basename: 'page-one.html',
-        path: '/the-component/page-one.html',
+        path: 'the-component/page-one.html',
         moduleRootPath: '.',
         rootPath: '..',
       })
     })
 
     it('example with assets/images', () => {
-      aggregate[0].files.push(createFile('/modules/the-module/assets/images/foo.png'))
+      aggregate[0].files.push(createFile('modules/the-module/assets/images/foo.png'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/_images',
+        dirname: 'the-component/v1.2.3/the-module/_images',
         basename: 'foo.png',
-        path: '/the-component/v1.2.3/the-module/_images/foo.png',
+        path: 'the-component/v1.2.3/the-module/_images/foo.png',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
     })
 
     it('example with assets/attachments', () => {
-      aggregate[0].files.push(createFile('/modules/the-module/assets/attachments/example.zip'))
+      aggregate[0].files.push(createFile('modules/the-module/assets/attachments/example.zip'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/_attachments',
+        dirname: 'the-component/v1.2.3/the-module/_attachments',
         basename: 'example.zip',
-        path: '/the-component/v1.2.3/the-module/_attachments/example.zip',
+        path: 'the-component/v1.2.3/the-module/_attachments/example.zip',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -333,12 +335,12 @@ describe('classifyContent()', () => {
 
     it('example with assets/images with drop strategy', () => {
       playbook.urls.htmlExtensionStyle = 'drop'
-      aggregate[0].files.push(createFile('/modules/the-module/assets/images/foo.png'))
+      aggregate[0].files.push(createFile('modules/the-module/assets/images/foo.png'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/_images',
+        dirname: 'the-component/v1.2.3/the-module/_images',
         basename: 'foo.png',
-        path: '/the-component/v1.2.3/the-module/_images/foo.png',
+        path: 'the-component/v1.2.3/the-module/_images/foo.png',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -351,12 +353,12 @@ describe('classifyContent()', () => {
 
     it('full example with drop strategy', () => {
       playbook.urls.htmlExtensionStyle = 'drop'
-      aggregate[0].files.push(createFile('/modules/the-module/pages/the-subpath/page-one.adoc'))
+      aggregate[0].files.push(createFile('modules/the-module/pages/the-subpath/page-one.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/the-subpath',
+        dirname: 'the-component/v1.2.3/the-module/the-subpath',
         basename: 'page-one.html',
-        path: '/the-component/v1.2.3/the-module/the-subpath/page-one.html',
+        path: 'the-component/v1.2.3/the-module/the-subpath/page-one.html',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -369,12 +371,12 @@ describe('classifyContent()', () => {
 
     it('index.html example with drop strategy', () => {
       playbook.urls.htmlExtensionStyle = 'drop'
-      aggregate[0].files.push(createFile('/modules/the-module/pages/the-subpath/index.adoc'))
+      aggregate[0].files.push(createFile('modules/the-module/pages/the-subpath/index.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/the-subpath',
+        dirname: 'the-component/v1.2.3/the-module/the-subpath',
         basename: 'index.html',
-        path: '/the-component/v1.2.3/the-module/the-subpath/index.html',
+        path: 'the-component/v1.2.3/the-module/the-subpath/index.html',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -387,12 +389,12 @@ describe('classifyContent()', () => {
 
     it('full example with indexify strategy', () => {
       playbook.urls.htmlExtensionStyle = 'indexify'
-      aggregate[0].files.push(createFile('/modules/the-module/pages/the-subpath/page-one.adoc'))
+      aggregate[0].files.push(createFile('modules/the-module/pages/the-subpath/page-one.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/the-subpath/page-one',
+        dirname: 'the-component/v1.2.3/the-module/the-subpath/page-one',
         basename: 'index.html',
-        path: '/the-component/v1.2.3/the-module/the-subpath/page-one/index.html',
+        path: 'the-component/v1.2.3/the-module/the-subpath/page-one/index.html',
         moduleRootPath: '../..',
         rootPath: '../../../../..',
       })
@@ -405,12 +407,12 @@ describe('classifyContent()', () => {
 
     it('index.html page with indexify strategy', () => {
       playbook.urls.htmlExtensionStyle = 'indexify'
-      aggregate[0].files.push(createFile('/modules/the-module/pages/the-subpath/index.adoc'))
+      aggregate[0].files.push(createFile('modules/the-module/pages/the-subpath/index.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files[0].out).to.include({
-        dirname: '/the-component/v1.2.3/the-module/the-subpath',
+        dirname: 'the-component/v1.2.3/the-module/the-subpath',
         basename: 'index.html',
-        path: '/the-component/v1.2.3/the-module/the-subpath/index.html',
+        path: 'the-component/v1.2.3/the-module/the-subpath/index.html',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -429,17 +431,17 @@ describe('classifyContent()', () => {
           name: 'the-component',
           title: 'The Component',
           version: 'v1.2.3',
-          files: [createFile('/modules/ROOT/assets/images/foo.png'), createFile('/modules/ROOT/pages/page-one.adoc')],
+          files: [createFile('modules/ROOT/assets/images/foo.png'), createFile('modules/ROOT/pages/page-one.adoc')],
         },
         {
           name: 'the-component',
           title: 'The Component',
           version: 'v4.5.6',
           files: [
-            createFile('/modules/ROOT/assets/images/foo.png'),
-            createFile('/modules/ROOT/pages/_partials/foo.adoc'),
-            createFile('/modules/ROOT/pages/page-one.adoc'),
-            createFile('/modules/ROOT/pages/page-two.adoc'),
+            createFile('modules/ROOT/assets/images/foo.png'),
+            createFile('modules/ROOT/pages/_partials/foo.adoc'),
+            createFile('modules/ROOT/pages/page-one.adoc'),
+            createFile('modules/ROOT/pages/page-two.adoc'),
           ],
         },
         {
@@ -447,8 +449,8 @@ describe('classifyContent()', () => {
           title: 'The Other Title',
           version: 'v4.5.6',
           files: [
-            createFile('/modules/ROOT/pages/_partials/bar.adoc'),
-            createFile('/modules/ROOT/pages/page-three.adoc'),
+            createFile('modules/ROOT/pages/_partials/bar.adoc'),
+            createFile('modules/ROOT/pages/page-three.adoc'),
           ],
         },
       ]
@@ -457,35 +459,35 @@ describe('classifyContent()', () => {
     it('should find files by family', () => {
       const pages = classifyContent(playbook, aggregate).findBy({ family: 'page' })
       expect(pages).to.have.lengthOf(4)
-      expect(pages[0].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[0].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[0].src.version).to.equal('v1.2.3')
-      expect(pages[1].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[1].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[1].src.version).to.equal('v4.5.6')
-      expect(pages[2].path).to.equal('/modules/ROOT/pages/page-two.adoc')
-      expect(pages[3].path).to.equal('/modules/ROOT/pages/page-three.adoc')
+      expect(pages[2].path).to.equal('modules/ROOT/pages/page-two.adoc')
+      expect(pages[3].path).to.equal('modules/ROOT/pages/page-three.adoc')
     })
 
     it('should find files by component', () => {
       const pages = classifyContent(playbook, aggregate).findBy({ component: 'the-component' })
       expect(pages).to.have.lengthOf(6)
-      expect(pages[0].path).to.equal('/modules/ROOT/assets/images/foo.png')
+      expect(pages[0].path).to.equal('modules/ROOT/assets/images/foo.png')
       expect(pages[0].src.version).to.equal('v1.2.3')
-      expect(pages[1].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[1].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[1].src.version).to.equal('v1.2.3')
-      expect(pages[2].path).to.equal('/modules/ROOT/assets/images/foo.png')
+      expect(pages[2].path).to.equal('modules/ROOT/assets/images/foo.png')
       expect(pages[2].src.version).to.equal('v4.5.6')
-      expect(pages[3].path).to.equal('/modules/ROOT/pages/_partials/foo.adoc')
-      expect(pages[4].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[3].path).to.equal('modules/ROOT/pages/_partials/foo.adoc')
+      expect(pages[4].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[4].src.version).to.equal('v4.5.6')
-      expect(pages[5].path).to.equal('/modules/ROOT/pages/page-two.adoc')
+      expect(pages[5].path).to.equal('modules/ROOT/pages/page-two.adoc')
     })
 
     it('should find files by stem', () => {
       const pages = classifyContent(playbook, aggregate).findBy({ stem: 'page-one' })
       expect(pages).to.have.lengthOf(2)
-      expect(pages[0].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[0].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[0].src.version).to.equal('v1.2.3')
-      expect(pages[1].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[1].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[1].src.version).to.equal('v4.5.6')
     })
 
@@ -498,9 +500,9 @@ describe('classifyContent()', () => {
         stem: 'page-one',
       })
       expect(pages).to.have.lengthOf(2)
-      expect(pages[0].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[0].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[0].src).to.include({ component: 'the-component', version: 'v1.2.3' })
-      expect(pages[1].path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(pages[1].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[1].src).to.include({ component: 'the-component', version: 'v4.5.6' })
     })
   })
@@ -512,7 +514,7 @@ describe('classifyContent()', () => {
           name: 'the-component',
           title: 'The Component',
           version: 'v1.2.3',
-          files: [createFile('/modules/ROOT/assets/images/foo.png'), createFile('/modules/ROOT/pages/page-one.adoc')],
+          files: [createFile('modules/ROOT/assets/images/foo.png'), createFile('modules/ROOT/pages/page-one.adoc')],
         },
       ]
     })
@@ -526,7 +528,7 @@ describe('classifyContent()', () => {
         subpath: '',
         basename: 'page-one.adoc',
       })
-      expect(page.path).to.equal('/modules/ROOT/pages/page-one.adoc')
+      expect(page.path).to.equal('modules/ROOT/pages/page-one.adoc')
     })
 
     it('should return null if nothing is found', () => {
