@@ -47,7 +47,7 @@ module.exports = async (playbook) => {
 
   let zipPath
   if (isRemote(playbook.ui.bundle)) {
-    const cacheAbsDir = resolveCacheDir()
+    const cacheAbsDir = getCacheDir()
     zipPath = path.join(cacheAbsDir, sha1(playbook.ui.bundle) + '.zip')
     if (!fs.pathExistsSync(zipPath)) {
       fs.ensureDirSync(cacheAbsDir)
@@ -98,7 +98,7 @@ function sha1 (string) {
   return shasum.digest('hex')
 }
 
-function resolveCacheDir () {
+function getCacheDir () {
   return path.resolve(UI_CACHE_PATH)
 }
 

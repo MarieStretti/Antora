@@ -69,7 +69,7 @@ async function openOrCloneRepository (repoUrl) {
     localPath = repoUrl
     isBare = !isLocalDirectory(path.join(localPath, '.git'))
   } else {
-    localPath = path.join(resolveCacheDir(), generateLocalFolderName(repoUrl))
+    localPath = path.join(getCacheDir(), generateLocalFolderName(repoUrl))
     isBare = true
   }
 
@@ -104,15 +104,26 @@ async function openOrCloneRepository (repoUrl) {
   return { repository, isLocalRepo, isBare, url }
 }
 
-function isLocalDirectory (repoUrl) {
+/**
+ * Checks whether the specified URL resolves to a directory on the local filesystem.
+ *
+ * @param {String} url - The URL to check.
+ * @return {Boolean} - A flag indicating whether the URL resolves to a directory on the local filesystem.
+ */
+function isLocalDirectory (url) {
   try {
-    return fs.lstatSync(repoUrl).isDirectory()
+    return fs.lstatSync(url).isDirectory()
   } catch (e) {
     return false
   }
 }
 
-function resolveCacheDir () {
+/**
+ * Resolves the location of the content cache directory.
+ *
+ * @return {String} - The absolute directory path.
+ */
+function getCacheDir () {
   const cacheAbsPath = path.resolve(CONTENT_CACHE_PATH)
   fs.ensureDirSync(cacheAbsPath)
   return cacheAbsPath
@@ -126,6 +137,9 @@ function resolveCacheDir () {
  * - Remove user from host (e.g., git@)
  * - Remove leading and trailing slashes
  * - Replace / and : with %
+ *
+ * @param {String} url - The repository URL to convert.
+ * @return {String} - A friendly folder name.
  */
 function generateLocalFolderName (url) {
   // NOTE we don't use extname since the last path segment could be .git
