@@ -88,6 +88,6 @@ If the value starts with a number, it must be contained within a set of single q
 [#nav-key]
 === nav
 
-The nav key accepts a list xref:navigation:linked.adoc[navigation files].
+The nav key accepts a list of xref:navigation:linked.adoc[navigation files].
 Each value specifies the path to a navigation file (e.g., [.path]_modules/module-a/nav.adoc_).
 The order of the values indicates the order the navigation menus will be displayed in the site's navigation panel.

@@ -37,41 +37,14 @@ It's easy to later detach a module from a component and set it up as its own doc
 == Module overview
 
 A documentation component must have at least one module, named _ROOT_.
-In addition to the ROOT module, you can create as many other modules in a component as you need.
+In addition to the ROOT module, you can create as many additional modules in a component as you need.
 All of a component's modules must be stored in [.path]_modules/_.
 
-The following diagram illustrates a documentation component with few example folders and files added for context.
+The following figure illustrates a documentation component with a few example folders and files added for context.
 Let's examine the role of each module subdirectory and any associated requirements.
 
 .Module directory hierarchy
-....
-antora.yml
-modules/
-  a-module/
-    assets/
-      attachments/
-        signing-key.gpg
-      images/
-        web-console-dashboard.png
-      videos/
-        console-tour.mp4
-    examples/
-      ldap.conf
-    nav.adoc
-    pages/
-      _partials/
-      index.adoc
-      dashboard-tour.adoc
-      y-topic/
-      z-topic/
-      ...
-  ROOT/
-    assets/
-      images/
-    nav.adoc
-    pages/
-  ...
-....
+image::modules-dir.svg[,260]
 
 We'll start with the ROOT module, since it's required.
 
@@ -79,32 +52,25 @@ We'll start with the ROOT module, since it's required.
 
 A documentation component must contain a ROOT module directory.
 
-....
-antora.yml
-modules/
-  ROOT/
-    assets/
-    examples/
-    pages/
-  ...
-....
+image::root-dir.svg[,260]
 
 The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages in that component's URL.
+(You can see an example of a ROOT page's URL in <<pages-dir,Pages>>.)
 The directory name, ROOT, must be entered in all uppercase letters.
 When used in a page reference, it must be entered in all uppercase letters.
 
-Simple documentation components may never need more than a ROOT module.
+Small documentation components may never need more than a ROOT module.
 However, if your project grows, you can easily add more modules and gradually redistribute the content without having to restructure the project.
 So while the extra structure seems like overkill now, in the long run, you'll be glad you gave your content the space to grow.
 
-The ROOT module, as well as any other modules you create, should include the appropriate subdirectory when a module contains the corresponding content type.
+The ROOT module, as well as any other modules you create, should include the appropriate content type subdirectory when a module uses that content type.
 
 For instance:
 
 * AsciiDoc documents go in the [.path]_pages/_ folder.
 * Images go in the [.path]_assets/images/_ folder.
-* Examples (often code snippets) go in the [.path]_examples/_ folder.
+* Code snippets go in the [.path]_examples/_ folder.
 
 Each one of these folders can have an arbitrary depth of topic folders that are used to group files to make them easier for you to manage and navigate.
 
@@ -119,6 +85,8 @@ Let's look at each of these directories and their content type in more detail.
 
 Any attachment, image, and video files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets/_ directory.
 
+image::assets-dir.svg[,260]
+
 The subdirectory names automatically recognized by Antora and associated to the corresponding AsciiDoc macros are:
 
 * [.path]_assets/attachments/_
@@ -127,7 +95,7 @@ The subdirectory names automatically recognized by Antora and associated to the 
 
 You don't need to set the path to these three subdirectories in the header of your AsciiDoc files.
 This is managed automatically by Antora.
-When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
+When viewing the file in a preview tool, such as Atom or the Asciidoctor Chrome extension, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
 // You can create custom subdirectories, however, you'll need to add them to X & Y so that Antora can manage them.
 
@@ -135,7 +103,7 @@ When viewing the file in a preview tool, the path is managed by the adjacent [.p
 === Attachment files
 
 An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
-Attachment files are saved in the [.path]_assets/attachments/_ in the same module where the page that links to that file is located.
+Attachment files are saved in [.path]_assets/attachments/_ in the same module where the page that links to that file is located.
 
 A link to an attachment is created in a page using the xref:page-assets.adoc#insert-attachment[AsciiDoc link macro].
 
@@ -154,6 +122,7 @@ Common image file formats include:
 
 Images are inserted into a page using the xref:page-assets.adoc#insert-image[AsciiDoc image macro] (block or inline).
 
+[#videos-dir]
 === Video files
 
 Self-hosted video files are saved in [.path]_assets/videos/_ in the same module where the page that references that video is located.
@@ -165,9 +134,9 @@ Videos are inserted into a page using the xref:page-assets.adoc#insert-video[Asc
 
 === Large files and GitLab / GitHub
 
-If your documentation component contains asset files over X size, we do not recommend that you store them in a regular GitLab / GitHub repository.
+If your documentation component contains large asset files, we do not recommend that you store them in a regular GitLab / GitHub repository.
 
-Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS.
+Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
 
 [#examples-dir]
 == Examples
@@ -179,10 +148,32 @@ These files are inserted into a page using the AsciiDoc include directive.
 [#pages-dir]
 == Pages
 
-AsciiDoc document files go in the [.path]_pages/_ folder.
-These files are converted to HTML and automatically become pages in the generated site.
+AsciiDoc document files go in the [.path]_pages/_ folder of a module.
 
-#Need example of page output from ROOT and page output from other module.#
+image::pages-dir.svg[,260]
+
+These files are converted to HTML and automatically become pages in the generated site.
+When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages in that component's URL.
+
+Let's say the component illustrated above is the documentation for your newest software product, Hyper Lemur.
+What would the URL for [.path]_modules/ROOT/pages/deploy.adoc_ look like?
+
+.URL for deploy.adoc page in ROOT module
+image::root-page-url.svg[]
+
+The base URL of the site is set in the playbook.
+The component name, in this case _hyperlemur_, is set in the [.path]_antora.yml_ file of the documentation component.
+The page name segment is the basename of the AsciiDoc file.
+Notice that the name of the module, ROOT, isn't in the URL.
+Files that are stored directly in the [.path]_ROOT/_ folder are published at the root of the component.
+
+In contrast, pages that are stored in other modules (i.e., not in [.path]_ROOT/_), will be preceded by the name of the module.
+Let's see what the URL for [.path]_modules/a-module/pages/user-management.adoc_ would look like.
+
+.URL for user-management.adoc page in a-module
+image::module-page-url.svg[]
+
+The module name is the name of the module directory where that page is stored.
 
 [#partials-dir]
 === Partial AsciiDoc files
