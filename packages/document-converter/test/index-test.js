@@ -374,15 +374,11 @@ describe('convertDocument()', () => {
 
     it('component + module + subpath + file', () => {
       setAsciiDocContents('xref:component-bar:module-bar:subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/master/module-bar/subpath-foo/subpath-bar/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-bar/module-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(
-            file,
-            '../../../../component-bar/master/module-bar/subpath-foo/subpath-bar/the-page.html',
-            'The Title'
-          )
+          expectLink(file, '../../../../component-bar/module-bar/subpath-foo/subpath-bar/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-bar',
             version: 'master',
@@ -396,11 +392,11 @@ describe('convertDocument()', () => {
 
     it('version + component + subpath + file', () => {
       setAsciiDocContents('xref:v4.5.6@component-bar::subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/ROOT/subpath-foo/subpath-bar/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(file, '../../../../component-bar/v4.5.6/ROOT/subpath-foo/subpath-bar/the-page.html', 'The Title')
+          expectLink(file, '../../../../component-bar/v4.5.6/subpath-foo/subpath-bar/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-bar',
             version: 'v4.5.6',
@@ -432,11 +428,11 @@ describe('convertDocument()', () => {
 
     it('component + subpath + file', () => {
       setAsciiDocContents('xref:component-bar::subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/master/ROOT/subpath-foo/subpath-bar/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(file, '../../../../component-bar/master/ROOT/subpath-foo/subpath-bar/the-page.html', 'The Title')
+          expectLink(file, '../../../../component-bar/subpath-foo/subpath-bar/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-bar',
             version: 'master',
@@ -450,11 +446,11 @@ describe('convertDocument()', () => {
 
     it('component + module + file', () => {
       setAsciiDocContents('xref:component-bar:module-bar:the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/master/module-bar/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-bar/module-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(file, '../../../../component-bar/master/module-bar/the-page.html', 'The Title')
+          expectLink(file, '../../../../component-bar/module-bar/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-bar',
             version: 'master',
@@ -468,11 +464,11 @@ describe('convertDocument()', () => {
 
     it('version + subpath + file', () => {
       setAsciiDocContents('xref:v4.5.6@the-subpath/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/ROOT/the-subpath/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/the-subpath/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(file, '../../../v4.5.6/ROOT/the-subpath/the-page.html', 'The Title')
+          expectLink(file, '../../../v4.5.6/the-subpath/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-foo',
             version: 'v4.5.6',
@@ -504,11 +500,11 @@ describe('convertDocument()', () => {
 
     it('version + component + file', () => {
       setAsciiDocContents('xref:v4.5.6@component-bar::the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/ROOT/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(file, '../../../../component-bar/v4.5.6/ROOT/the-page.html', 'The Title')
+          expectLink(file, '../../../../component-bar/v4.5.6/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-bar',
             version: 'v4.5.6',
@@ -540,11 +536,11 @@ describe('convertDocument()', () => {
 
     it('version + file', () => {
       setAsciiDocContents('xref:v4.5.6@the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/ROOT/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(file, '../../../v4.5.6/ROOT/the-page.html', 'The Title')
+          expectLink(file, '../../../v4.5.6/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-foo',
             version: 'v4.5.6',
@@ -558,11 +554,11 @@ describe('convertDocument()', () => {
 
     it('component + file', () => {
       setAsciiDocContents('xref:component-bar::the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/master/ROOT/the-page.html')
+      const catalog = fakeCatalogWithUrl('/component-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
-          expectLink(file, '../../../../component-bar/master/ROOT/the-page.html', 'The Title')
+          expectLink(file, '../../../../component-bar/the-page.html', 'The Title')
           expect(spyResult(catalog.getById)).to.eql({
             component: 'component-bar',
             version: 'master',
