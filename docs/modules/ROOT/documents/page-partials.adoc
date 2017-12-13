@@ -1,0 +1,39 @@
+= Adding a Partial AsciiDoc File to a Page
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// URLs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-include: {uri-adoc-manual}/#include-directive
+
+[#insert-partial]
+== Insert a partial
+
+To insert a partial AsciiDoc file into a page, use the include directive (`include::[]`).
+
+.Insert a partial file using an include directive
+[source,asciidoc]
+----
+\include::{partialsdir}/log-definition.adoc[]
+----
+
+Let's break this down.
+You start with the include directive prefix, `include::`.
+Next is the target.
+Start the target with the `{partialsdir}/` reference to tell Antora where to look for the file.
+Then put the relative path of the partial after that.
+Finally, end with a pair of square brackets (`+[]+`).
+
+A module's partial AsciiDoc files should be saved in the xref:modules.adoc#partials-dir[+_partials+] catalog.
+You don't need to set the path to the [.path]_{blank}_partials/_ directory in the header of your AsciiDoc file.
+When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
+
+WARNING: Antora doesn't yet support filtering includes by tag or line number.
+
+.More AsciiDoc include directive help
+****
+* {uri-include}[The AsciiDoc include directive]
+****

@@ -1,0 +1,118 @@
+= Organizing Documentation for Antora
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+Antora works with collections of documentation that follow a standard, well-defined project structure.
+The benefits of a standard project structure for documentation are as follows:
+
+* faster onboarding of contributors
+* interoperability with authoring, validation, migration, and bootstrap tools
+* the ability to define page references that span component versions (and thus repositories), are not coupled to output URLs (source-to-source), and can be automatically updated by a tool when source files are moved and renamed
+* better organization system to manage files as the documentation grows
+
+We call a collection of documentation files organized under Antora's standard project structure a [.term]_documentation component_.
+
+When you use documentation components, you can take advantage of the open source tools, plugins, and automated processes built to integrate with the Antora pipeline.
+
+== Documentation component overview
+
+A documentation component is content that adheres to a standard, well-defined organization structure.
+This type of component contains of a collection of AsciiDoc text files and their assets, such as images, as well as a component descriptor file.
+All the documentation in a component should follow the same versioning scheme and be versioned together.
+Your site can be generated using just one documentation component, or as many as you want.
+
+When Antora receives instructions from your playbook to scan a specific repository, its first objective is to find a component descriptor file in that repository.
+The component descriptor file is named [.path]_antora.yml_.
+You can learn more about [.path]_antora.yml_ in the xref:antora_yml.adoc[antora.yml reference].
+
+Once Antora finds this file, it assumes that that directory and all its files and subdirectories are a documentation component.
+The structure of a documentation component is laid out below.
+
+.Component directory hierarchy
+image::component-dir-structure.svg[,240]
+
+The component illustrated in the above figure contains required and reserved directories and files as well as an example of an optional, user created module ([.path]_user-named-module/_).
+When Antora encounters these folders and files in a properly structured component, it automatically assigns preset behavior and metadata to them.
+
+.Component preset legend
+****
+*Required* - Must be present in the documentation component.
+
+*Optional* - Doesn't need to be created if the directory, file, or content type isn't applicable to the component or module.
+
+*Reserved* - Directory or file is associated with specific pipeline operations.
+The contents of a directory or file using a reserved name must adhere to certain requirements.
+****
+
+xref:antora_yml.adoc[antora.yml] ::
+_Required_; _Reserved_
++
+The component descriptor file tells Antora that the contents of the directory are a documentation component.
+This file contains crucial xref:antora_yml.adoc[metadata about the documentation component].
+
+xref:modules.adoc[modules/] ::
+_Required_; _Reserved_
++
+Except for [.path]_antora.yml_, all of the files in a component reside in this directory.
+
+xref:modules.adoc#root[modules/ROOT/] ::
+_Required_; _Reserved_
++
+Directory that contains the xref:modules.adoc#root[mandatory ROOT module].
+The directory name must be written in all uppercase letters.
+
+xref:modules.adoc#assets-dir[<module>/assets/] ::
+_Optional_; _Reserved_
++
+Directory where multimedia and supplemental files are organized by content type.
+
+xref:modules.adoc#attachments-dir[<module>/assets/attachments/] ::
+_Optional_; _Reserved_
++
+Directory that contains supplemental materials, such as PDFs or ZIP files, that readers can download via a link created in a page using the xref:page-assets.adoc#insert-attachment[AsciiDoc link macro].
+
+xref:modules.adoc#images-dir[<module>/assets/images/] ::
+_Optional_; _Reserved_
++
+Directory that contains pictures, screenshots, diagrams, and other graphics files that are displayed in a page using the xref:page-assets.adoc#insert-image[AsciiDoc image macro].
+
+<module>/examples/ ::
+_Optional_; _Reserved_
++
+Directory that contains source, literal, listing, or example block snippets that are inserted into that module's pages.
+
+xref:modules.adoc#pages-dir[<module>/pages/] ::
+_Required_; _Reserved_
++
+Directory that contains all of a module's AsciiDoc files.
+These files are automatically enlisted by Antora and converted to standalone HTML pages.
+
+xref:modules.adoc#partials-dir[<module>/pages/_partials/] ::
+_Optional_; _Reserved_
++
+Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages/_.
+These files are *not* converted to HTML by Antora directly.
+Instead, they must be referenced by an xref:page-partials.adoc[include directive] in a page in the [.path]_pages/_ directory.
+
+<module>/_attributes.adoc ::
+_Required_; _Reserved_
++
+Helper file that enables assets, partials, and examples to be rendered in preview tools such as Atom and the Asciidoctor Chrome extension.
+
+xref:navigation:linked.adoc[<module>/nav.adoc] ::
+_Optional_; _Reserved_
++
+A xref:navigation:linked.adoc[linked navigation file] that contains a single, unordered, AsciiDoc list.
+Each linked navigation file must be declared in the component descriptor.
+The order in which the navigation menus are displayed in the navigation panel is controlled by the order these files are listed in the xref:antora_yml.adoc#nav-key[nav key] of the component descriptor.
+
+modules/user-named-module/ ::
+_Optional_
++
+In addition to the ROOT module, you can create as many additional modules as your documentation component requires.
+
+//We know the structure in the example above represents a documentation component because of the presence of an [.path]_antora.yml_ file.

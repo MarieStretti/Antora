@@ -1,0 +1,93 @@
+= antora.yml
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+A documentation component must contain a component descriptor file named [.path]_antora.yml_.
+
+This file serves two purposes:
+
+. *Component marker*: When Antora finds [.path]_antora.yml_ in a repository, it knows that it has located a documentation component.
+This ability to "`start`" a documentation component anywhere in a directory hierarchy allows you to store a component in a repository with the software it documents, with a demo project, by itself, etc.
+
+. *Component information*: [.path]_antora.yml_ is a component descriptor file.
+It associates the files under this hierarchy with the specified component name and version (aka component version), decoupling the files from the repository and branch in which they live.
+This information is used for creating links to pages in this component.
+The file also identifies files to use for site navigation.
+
+//When we find a component descriptor file, specifically , in a repository, we expect to find the standard structure of a documentation component below it.
+//Thus, the documentation can live anywhere in the repository.
+//The component can even share the same repository as the software it documents.
+//The documentation component is then repeated in each branch of each repository that hosts a documentation component.
+
+== Component descriptor requirements
+
+A documentation component must have a [.term]_component descriptor_ file.
+This file provides stable metadata that Antora and other tools can use when they need to retrieve information about the component and version.
+
+The component descriptor must:
+
+* be located at the root of the documentation component (adjacent to the [.path]_modules/_ directory for that component)
+* be named [.path]_antora.yml_
+* be written in YAML
+* contain the required keys and values
+
+.Component descriptor keys and values
+[source,yml]
+----
+name: component-a # <1>
+title: Component A # <2>
+version: '1.0' # <3>
+nav: # <4>
+- modules/ROOT/nav.adoc
+- ...
+----
+<1> Name key and value
+<2> Title key and value
+<3> Version key and value
+<4> Nav key and values
+
+=== name
+
+The value of the name key is the component name that is used when the component is referenced in a xref:cross-reference/page-to-page-link.adoc#page-id-cname-def[page ID].
+The value can contain letter, number, underscore (`_`), hyphen (`-`), and period (`.`) characters.
+
+=== title
+
+The value of the title key is the display name for the component.
+It's used anywhere in the UI that the component (or its super type, domain) is identified.
+This includes:
+
+* domain selector menu
+* domain selector drawer
+* first breadcrumb position
+
+=== version
+
+The value of the version key is both the display version and the actual version of the component.
+It's used anywhere that the version is referenced or identified.
+This includes:
+
+* page ID (xref:cross-reference/page-to-page-link.adoc#page-id-vname-def[version@])
+* domain selector menu
+* domain selector drawer
+* page version selector
+* edit page URI (not visible)
+
+The key's value can contain letter, number, period (`.`), underscore (`_`), and hyphen (`-`) characters.
+If the value starts with a number, it must be contained within a set of single quote marks (`''`).
+
+.Example version key values
+* '1.0'
+* v2.0-beta
+* latest
+
+[#nav-key]
+=== nav
+
+The nav key accepts a list of xref:navigation:linked.adoc[navigation files].
+Each value specifies the path to a navigation file (e.g., [.path]_modules/module-a/nav.adoc_).
+The order of the values indicates the order the navigation menus will be displayed in the site's navigation panel.
