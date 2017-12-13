@@ -16,7 +16,7 @@ This project includes a predefined software pipeline to quickly get started crea
 
 == Contributing
 
-To learn how to contribute to this project, including how to set up a development workspace, build the project, and submit a merge request, please refer to the link:contributing.adoc[contributing guide].
+To learn how to contribute to this project, including how to link:contributing.adoc#set-up-workspace[set up a development workspace], link:contributing.adoc#build-project[build the project], and link:contributing.adoc#project-rq[submit a merge request], please refer to the link:contributing.adoc[contributing guide].
 
 == Copyright and License
 
@@ -27,4 +27,4 @@ See link:LICENSE[] to find the full license text.
 
 == Authors
 
-Development of Antora is lead and sponsored by OpenDevise Inc.
+Development of Antora is led and sponsored by OpenDevise Inc.

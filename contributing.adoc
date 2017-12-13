@@ -6,11 +6,19 @@
 // Project URIs:
 :uri-org: https://gitlab.com/antora
 :uri-project: {uri-org}/antora
-:uri-repo: {uri-project}.git
+:uri-repo: {uri-project}
+:uri-issue-tracker: {uri-project}/issues
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
 :uri-ci-pipelines: {uri-project}/pipelines
+:uri-adrs: {uri-project}/tree/master/docs/modules/architecture/documents/adr
 :uri-adr-0001: {uri-project}/blob/master/docs/architecture/content/adr/0001-minimum-node-version.adoc
+:uri-content-aggregator-arch: {uri-project}/blob/master/packages/content-aggregator/devdocs/architecture-guidebook.adoc
+:uri-content-classifier-arch: {uri-project}/blob/master/packages/content-classifier/devdocs/architecture-guidebook.adoc
+:uri-document-converter-arch: {uri-project}/blob/master/packages/document-converter/devdocs/architecture-guidebook.adoc
+:uri-page-generator-arch: {uri-project}/blob/master/packages/page-generator/devdocs/architecture-guidebook.adoc
+:uri-playbook-builder-arch: {uri-project}/blob/master/packages/playbook-builder/devdocs/architecture-guidebook.adoc
+:uri-ui-loader-arch: {uri-project}/blob/master/packages/ui-loader/devdocs/architecture-guidebook.adoc
 // External URIs:
 :uri-async-func: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
 :uri-git: https://git-scm.com
@@ -32,58 +40,269 @@
 :uri-eslint-ide: https://eslint.org/docs/user-guide/integrations#editors
 :uri-prettier: https://github.com/prettier/prettier
 
-== You're Invited
+== You're Invited!
 
 In the spirit of open source software, *everyone* is welcome to contribute to this project!
 
 We believe strongly that developing software in the open produces the best outcome.
 In order for that to work, the project relies on your support.
-We have big goals for the project and we need a variety of talent to achieve those goals.
+We have big goals for the project and we rely on a variety of talent to achieve those goals.
 
 The best way to get involved is to just show up and make yourself heard.
 We pride ourselves on having a very friendly and encouraging culture.
 
 Whether you're a user, writer, designer, developer, architect, devops, system administrator, advocate, project manager, or just someone with an idea about how to improve the project, we welcome your participation.
-In return, you'll have better software to use that we built together as a community and a great sense of pride for having been a part of making it.
+In return, you'll get to use better software that we built together as a community and a great sense of pride for having been a part of making it.
 
 We want your choice to participate in the Antora project to be the start of an exciting and rewarding journey.
 From all of us to you, welcome!
 
 == Project Host
 
-This project is hosted on GitLab within the {uri-org}[Antora organization].
-This is the official home of the project and all development is done here.
+This project is hosted on GitLab under the {uri-org}[Antora organization].
+This is the official home of the project.
+All development, project and issue management, and continuous integration is done here.
 
+////
 === Project Resources
 
 The GitLab project provides the following resources for the project:
 
 * git repository
 * issue tracker
-* merge requests (aka pull requests)
+* merge requests (MR)
 * CI server
+////
 
-=== Permissions Required
+== Permissions
 
-You do not need a GitLab.com account to view or clone the issue tracker, read the issues, browse the merge requests, or view the CI results.
-However, you do need a https://gitlab.com/users/sign_in[GitLab.com account] to file an issue, submit a merge request, or--if you're a member of the project--push code to the repository.
+You do not need a GitLab.com account to browse the issues and merge requests, read the source code and documentation, or view the CI results.
+However, you do need a https://gitlab.com/users/sign_in[GitLab.com account] to file an issue and submit a merge request.
 
-=== Issue Tracker, Board, and Labels
+//Issue Tracker and Board
+//== Have an Idea? Found an Error?
+== Have something to report?
 
-If you discover an error or omission in the main application code, tests, or documentation, don't hesitate to submit an issue so we can correct it or submit a patch (via a merge request) for review.
+Do you have an idea?
+Have you found an error?
 
-A merge request should always address an open issue.
-If an issue does not yet exist for the change you're submitting, please create one first.
+*Antora is an issue-driven project.*
 
+If you have an idea for an improvement or have discovered an error or omission, head over to the {uri-issue-tracker}[issue tracker].
+Review the list of issues to check if someone has already filed an issue about that subject.
+If an issue already exists, we welcome you to join the conversation.
+If an issue doesn't exist, please don't hesitate to create a new one.
+
+If you want to help complete an issue by contributing code, documentation, or other enhancements, review our <<contribution-workflow,contribution workflow>>, then submit a merge request (MR) for review.
+
+
+////
+A merge request (MR) must close an issue!
 Please study the {uri-issue-labels}[issue labels] to understand what they mean and how to apply them.
 Issues are organized into categories, represented by the part of the label text in brackets.
 
 You can use the {uri-issue-board}[issue board] to track the progress of development (which visualizes labels in the [Status] category).
 Issues move across the board from left (Backlog) to right (Done).
+////
+
+[#contribution-workflow]
+== Contribution Workflow
+
+*Since Antora is an issue-driven project, a merge request (MR) should always complete an open issue.*
+
+. Review the issue tracker to see if we're already discussing your idea or problem.
+.. If you don't see an issue that fits your scenario, then create a new one.
+. If you'd like to submit code, documentation or other enhancements for an issue, review the following information first.
+.. Antora's <<project-rq,fork-branch-commit-MR rules>>
+.. <<code-workflow,Code workflow and requirements>>
+.. Applicable <<arch-gb,architecture guidebooks>>
+.. Applicable <<adr,ADRs>>
+. Fork the project and name your branch after its issue.
+.. If you're contributing code, you'll want to <<set-up-workspace,set up your development workspace>>.
+. Write, code, tinker, and have fun!
+.. Don't forget to <<lint-rq,lint>> and <<test-rq,test>> your code.
+. When you're ready for feedback, open a MR.
+
+[#project-rq]
+== Fork, Branch, Commit, and Merge Request Rules
+
+To contribute to the project:
+
+. *Fork the project*.
+We do not accept merge requests that do not come from a fork and dedicated branch.
+
+. *Create a dedicated branch in your fork for your changes*.
+Name the branch after the issue number it fixes along with a short textual hint.
+Here's an example of a branch name for issue #2, which was to initiate the Gulp build:
++
+ issue-2-init-gulp-build
+
+. In the issue tracker, mark the issue as *[Status] In Progress* and make sure you're assigned to it so that the rest of the team knows you're working on it.
+
+. *Write concise but explicit commit messages*.
+Write the commit message as though the person reading it cannot see the code change.
+ .. Write the message in lowercase and imperative tense.
+ .. Put the subject on the first line of the commit message (required).
+ .. Separate the subject line from the body using a blank line.
+ .. The body lines should be structured as an unordered list (Markdown syntax).
+ .. In each body line, succinctly identify an important change and/or explain why the change was made (optional).
++
+----
+rename component descriptor filename to antora.yml
+
+- rename component descriptor from docs-component.yml to antora.yml
+- promote component descriptor filename to a constant
+----
+
+. Prior to submitting a MR, *rebase your branch against the latest master*, then push the branch to your fork.
+
+. *Create an MR from your branch* (using the URL shown in the terminal when you push).
+.. *Begin the title of the MR with the issue it resolves* followed by a restatement of the issue.
++
+ resolves #2 initialize gulp build
+
+.. If you're still working on your branch and want feedback on it before it is complete, start the MR with WIP (e.g., `WIP: resolves #2 initialize gulp build`).
+When the MR is ready for final review, you can remove `WIP:` from the MR title using the button in the interface.
+.. In some select cases, the implementation of an issue might be broken up into separate commits if they can be tested and work in isolation.
+This is why only the MR subject mentions the issue being resolved and not the subject of the commit.
+
+. In the issue tracker, mark the issue as *[Status] Merge Requested*.
+
+. *Your MR must pass the CI pipeline*.
+If it fails, update your MR once you've corrected any problems.
+
+. *A project member will be assigned to your MR and review it*.
+.. During review, a project member may request changes to your MR, either in a comment on the MR or the associated issue.
+.. Checkout the <<mr-approval,MR approval guidelines>> if you want to see how your MR will be evaluated.
+
+. *Append a new commit or rewrite an existing commit*, depending on what you think is most appropriate, if you need to incorporate changes into your MR after you've pushed it.
+
+. When your MR is approved, a project member will merge it using a merge commit with semi-linear history.
+.. The maintainer may decide to squash review commits, or request for you to do so.
+Only original work is guaranteed to be preserved in the commit history.
+
+.Future: Commit message linting
+****
+We're experimenting with the wording and structure of our commit messages and plan to implement a set of commit message rules in the future.
+****
+
+[#code-workflow]
+== Coding Requirements and Workflow
+
+. Set up your <<set-up-workspace,development workspace>>.
+. Review any applicable <<arch-gb,architecture guidebooks>>.
+. Make sure you're not violating any <<adr,ADRs>>.
+. Make sure you've forked the project and <<project-rq,named your branch after the issue you're working on>>.
+. Add your code and tests.
+.. Make sure your code adheres to the <<lint-rq,JavaScript standard style and the custom project styles>>.
+.. Make sure your tests adhere to the <<test-rq,test requirements>>.
+. Update the API documentation.
+. Update the applicable architecture guidebooks if your code significantly changes a package's inputs, outputs or primary functionality.
+. Run the <<run-tests,test suite>> (which also lints the code) and correct any errors.
+. Commit your changes.
+. <<run-prettier,Run prettier>>.
++
+WARNING: Prettier's format task will modify your files, so be sure to commit your changes before running it so you can review and rollback if necessary.
+
+. Commit any formatting changes completed by prettier.
+. Push to your fork and open a merge request.
+
+[#adr]
+=== Architecture Decisions Records
+
+Significant project and technology decisions are outlined in our architecture decision records (ADRs).
+
+The {uri-adrs}[ADRs] are numbered in the order they were proposed.
+
+A new ADR should be proposed prior to adding, removing, upgrading or significantly changing software dependencies, frameworks, tools, environments, infrastructure, or CI, CD, and release processes.
+A new ADR should also be proposed when considering major administrative, resource, and scope changes to the Antora organization.
+
+[#arch-gb]
+=== Component Architecture Guidebooks
+
+Each Antora component has an architecture guidebook.
+A guidebook provides an overview of why the component is important and why it's structured as it is.
+It outlines:
+
+* the problem a component solves
+* its high-level functionality
+* its inputs and outputs
+* important code, API, and data model requirements
+* the consequences of the functions and requirements on the Antora pipeline
+
+Before contributing to a component, make sure you are familiar with its guidebook.
+If you make a significant modification to a package, you should also update the guidebook if applicable.
+
+.List of Architecture Guidebooks
+[%hardbreaks]
+{uri-playbook-builder-arch}[Playbook Builder]
+{uri-content-aggregator-arch}[Content Aggregator]
+{uri-content-classifier-arch}[Content Classifier]
+{uri-document-converter-arch}[Document Converter]
+{uri-ui-loader-arch}[UI Loader]
+{uri-page-generator-arch}[Page Generator]
+
+[#lint-rq]
+=== Code structure and style expectations
+
+We read code more than we edit it, so it's important to have consistency throughout the code base.
+
+Antora's JavaScript code must adhere to the {uri-standardjs}[JavaScript Standard Style].
+We've modified a few of the standard styles and added some custom styles.
+The style rules are enforced with eslint (using a customized StandardJS profile), and the code is formatted with prettifier.
+
+==== eslint and prettier
+
+You can find a {uri-standardjs-rules}[list of rules] on the standard JS site.
+We don't use the StandardJS command line tool.
+We use its rules and configuration through ESLint.
+There are {uri-eslint-ide}[text editor plugins for ESLint] that you can use, if that's what you prefer.
+We have modified some of the standard rules and added custom rules, which are documented in [.path]_.eslintrc_.
+
+While not enforced by eslint yet, your code should also comply with the following rules:
+
+* Use SCREAMING_SNAKE_CASE for constant names (not any `const` declaration, but rather a true constant).
+// * we might consider defining all constants for a package in lib/constants.js
+* Keep all require declarations together at the top of the file (no blank lines), and sort them alphabetically, unless there's a reason they can't be.
+* PENDING: Functions should be defined as `const` with a function shorthand `const fn = () => {}`.
+// * or maybe we want to enforce `fn () { }` (see https://eslint.org/docs/rules/func-style)
+* PENDING: Functions should be defined at the top (or should it be the bottom?) of the source file.
+
+When you <<run-tests,run the test suite>>, it will automatically lint (i.e., style check) your JavaScript code first.
+
+If you ever want to run the linter separately, you can use the following gulp task:
+
+ $ gulp lint
+
+While ESLint checks for syntax, it doesn't cover all the aesthetics of a code style.
+We employ {uri-prettier}[prettier] to automatically format the code.
+Run prettier *after* you commit all your code changes as the format task will modify your files.
+
+To run prettier, enter the following gulp task:
+
+ $ gulp format
+
+[#test-rq]
+=== Test structure and coverage expectations
+
+Tests should mirror the structure of the application code to make it easy for developers to find the tests that correspond to the application code.
+
+If you need to add a new test to the suite, you can use [.path]_test/example-test.js_ as a reference.
+It already follows the structure of the project and contains various comments and hints to help you.
+Be sure to follow the directions on what to require and various traps to avoid.
+
+Apart from the classic {uri-chai}[chai] assertions, two plugins are enabled.
+You'll find the documentation for their APIs here:
+
+* {uri-chai-as-promised}[chai-as-promised] to test promises
+* {uri-chai-spies}[chai-spies] to create and test spies on callbacks
+
+You can run the whole <<run-tests,test suite>> manually or continuously.
+You can also select specific tests to run.
 
 == Project Organization
 
-Antora is a JavaScript project organized and packaged as a Node.js module.
+Antora is a JavaScript project organized and packaged as a set of Node.js packages.
 This section describes the organization of the project at a high level so you know where to look for files.
 
 === Project Structure
@@ -91,59 +310,52 @@ This section describes the organization of the project at a high level so you kn
 Here are some of the files and directories you will see when developing this project:
 
 ....
-package.json  <1>
-yarn.lock     <2>
-gulpfile.js   <3>
-lib/          <4>
-  index.js    <5>
-node_modules/ <6>
-packages/     <7>
-  playbook/
-    lib/      <8>
-    tests/    <8>
-tests/        <9>
-docs/         <10>
-  content/
-    user-manual.adoc
-  assets/
-  samples/
+docs/         <1>
+lib/          <2>
+  index.js    <3>
+lib-example/
+  capitalize.js
+node_modules/ <4>
+packages/     <5>
+  content-aggregator/ <6>
+    devdocs/
+      architecture-guidebook.adoc
+    lib/
+    node_modules/ <4>
+    test/
+    package.json
+  content-classifier
+  document-converter/
+  navigation-builder/
+  ...
+tasks/
+test/         <7>
+gulpfile.js   <8>
+package.json  <9>
+yarn.lock     <10>
 ....
-<1> Defines project information and library dependencies.
-<2> Tracks the version of resolved dependencies to ensure builds are reproducible.
-<3> The Gulp build script that defines tasks used for development.
-<4> The application code folder.
-<5> The entry point of the application.
+<1> The end user documentation for Antora.
+<2> The application code folder.
+<3> The entry point of the application.
 The code in this file assembles and executes the documentation pipeline.
-<6> A local installation of Node.js modules used for the development of this project.
-<7> Discrete software components used in the documentation pipeline.
-These packages are located in this repository while incubating.
-They will eventually graduate and migrate to their own repositories.
-<8> The main and test code for the playbook component.
-<9> Integration tests for the whole documentation pipeline.
+<4> A local installation of Node.js modules used for the development of this project.
+<5> Discrete software components used in the documentation pipeline.
+<6> The main code, test code, and architecture documentation for the content aggregator component.
+Developer documentation for discrete software components lives with the code.
+<7> Integration tests for the whole documentation pipeline.
 These tests verify that the discrete software components work properly together.
-<10> The documentation for Antora.
-Documentation for discrete software components will live with the code.
+<8> The Gulp build script that defines tasks used for development.
+<9> Defines project information and library dependencies.
+<10> Tracks the version of resolved dependencies to ensure builds are reproducible.
 
-The application code is organized by component or function.
-We want to avoid having folders that become dumping grounds for source files.
-Instead, each source file should be located in a self-describing location.
+[#set-up-workspace]
+== Development Workspace Setup
 
-Tests should mirror the structure of the application code to make it easy for developers to find the tests that correspond to the application code.
-
-=== Incubating Packages
-
-We envision that each software component will eventually graduate to become a package (i.e., Node.js module) hosted in a dedicated repository.
-However, making this split too early can make it difficult to get started.
-Therefore, we will incubate these packages in the packages folder inside this repository.
-When a component is ready for a first release, we will graduate it to a separate repository and add it as a dependency to this project.
-
-== Development
-
-This section gives you all the necessary information you need to set up your development workspace and begin hacking on the code.
+This section gives you all the information you need to set up your development workspace and begin hacking on the code.
 
 === Prerequisites
 
-In order to obtain the source code, run the test suite, and launch the application, you'll need the following prerequisites:
+In order to obtain the source code, run the test suite, and launch Antora, you'll need the following prerequisites:
 
 * git
 * Node.js / npm
@@ -151,7 +363,7 @@ In order to obtain the source code, run the test suite, and launch the applicati
 * Gulp (CLI only)
 * Development libraries (e.g., a C compiler)
 
-The following sections describe the prerequisites in detail and provide resources or instructions about how to install them.
+The following sections describe the prerequisites in detail and provide resources with additional instructions about how to install them.
 
 ==== git
 
@@ -201,7 +413,6 @@ Once you've installed nvm, open a new terminal and install Node 8 using:
  $ nvm install 8
 
 The above command will install the latest version of Node 8.
-
 
 If you already have other Node versions installed, you can configure Node 8 as the default for any new terminal.
 
@@ -258,6 +469,7 @@ Details about how to get these libraries can be found in the *Installing Depende
 === Obtain the Source Code
 
 The next step is to obtain the source code of the project, which you'll do by cloning the git repository.
+*Remember to fork the repository.*
 
 Clone the source repository using:
 
@@ -282,9 +494,10 @@ The install command uses dependency information defined in [.path]_package.json_
 
 NOTE: If you run into problems while installing dependencies, return to <<Development Libraries>>.
 
+[#build-project]
 === Build the Project
 
-To build this project, which means runs all the main tasks, use:
+To build Antora, which means running all the main tasks, use:
 
  $ gulp build
 
@@ -292,14 +505,17 @@ You can omit the `build` argument since it's the default command:
 
  $ gulp
 
+[#run-tests]
 === Run the Test Suite
 
 This project uses {uri-mocha}[mocha] to run the tests and the assertion library {uri-chai}[chai].
+It's also automatically configured to lint your JavaScript code, which it does first when the suite is run.
+
 To run the test suite, use:
 
  $ gulp test
 
-// NOTE nyc is currently disabled
+//FIXME nyc is currently disabled
 //This command also computes a coverage report using {uri-istanbul}[istanbul].
 //You can browse this report in a web browser by opening the HTML file [.path]_coverage/index.html_.
 
@@ -307,7 +523,17 @@ You can run the test suite for a single package by passing the name of the packa
 
  $ gulp test --package=ui-loader
 
-This filter works for all gulp tasks, including `lint` and `test-watch`, which are covered later.
+This filter works for all gulp tasks, including `lint` and `test-watch`, which are covered next.
+
+If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
+
+ $ gulp test-watch
+
+This command runs the test suite and coverage report each time you save the test or the code under test.
+
+If you want to run the linter separately, you can use the following gulp task:
+
+ $ gulp lint
 
 === Select or Skip Tests
 
@@ -317,53 +543,21 @@ You can read more about this feature in the https://mochajs.org/#exclusive-tests
 You can skip tests by appending `.skip` to the `describe` and/or `it` method calls (e.g., `describe.skip()`).
 You can read more about this feature in the https://mochajs.org/#inclusive-tests[mocha documentation].
 
-=== Expectations for Writing Code
+[#run-prettier]
+=== Run prettier
 
-All JavaScript code in the project must adhere to the {uri-standardjs}[JavaScript Standard Style].
-You can find a {uri-standardjs-rules}[list of rules] on the standard JS site.
-As the name suggests, these rules are pretty standard.
-This project customizes a few of the rules, which are documented in [.path]_.eslintrc_.
+Prettier isn't automatically run as part of the CI pipeline yet, so you'll need to run it manually prior to pushing your code.
+Run prettier *after* you commit all your code changes.
+The format task will modify your files, and if you have to modify your code later, the formatting can make this tedious.
+By committing your code updates, then running prettier and committing any changes it makes as a separate commit, it'll be easier to rollback the changes if you need to.
 
-To check that your code adheres to these rules, you simply need to run the test suite.
-It's automatically configured to lint (i.e., check) your JavaScript code first.
-
-If you want to run the linter separately, you can use the following gulp task:
-
- $ gulp lint
-
-We don't use StandardJS command line tool.
-We use its rules and configuration through ESLint.
-There are {uri-eslint-ide}[text editor plugins for ESLint] that you can use, if that's what you prefer.
-
-While ESLint checks for syntax, it doesn't cover all the aesthetics of a code style.
-For that, we employ {uri-prettier}[prettier].
-To run prettier to automatically format your code, run the following gulp task:
+To run prettier, enter the following gulp task:
 
  $ gulp format
 
-The format task will modify your files, so be sure to commit your changes before running it so you can review and rollback if necessary.
-
-=== Expectations For Writing Tests
-
-If you need to add a new test to the suite, you can use [.path]_test/example-test.js_ as a reference.
-It already follows the structure of the project and contains various comments and hints to help you.
-Be sure to follow the directions on what to require and various traps to avoid.
-
-Apart from the classic {uri-chai}[chai] assertions, two plugins are enabled.
-You'll find the documentation for their APIs here:
-
-* {uri-chai-as-promised}[chai-as-promised] to test promises
-* {uri-chai-spies}[chai-spies] to create and test spies on callbacks
-
-If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
-
- $ gulp test-watch
-
-This command runs the test suite and coverage report each time you save the test or the code under test.
-
 === Continuous Integration
 
-Both the linter and the test suite documented above are run in a continuous integration (CI) environment on every commit to master and on every merge request.
+Both the linter and the test suite are run in a continuous integration (CI) environment on every commit to master and on every merge request.
 A merge request cannot be merged unless the CI pipeline succeeds.
 
 The CI pipeline is run in the https://docs.gitlab.com/ce/ci/[GitLab CI] environment using the https://store.docker.com/images/node[node:8] docker image.
@@ -377,9 +571,9 @@ The pipeline consists of the following stages:
 These stages, as well as any global configuration settings, are defined in the [.path]_.gitlab-ci.yml_ file at the root of the project.
 The CI pipeline essentially boils down to these three commands:
 
-* `yarn install`
+* `yarn`
 * `gulp lint`
-* `gulp test`
+* `gulp test-only`
 
 You can view the results of the pipelines on the {uri-ci-pipelines}[pipelines dashboard].
 
@@ -390,55 +584,49 @@ For example:
 
  fix typo in README [skip ci]
 
-This flag is reserved for non-software changes, as suggested by the example.
+This flag is reserved for small, non-software changes, as suggested by the example.
 
-=== Fork the Project
+== Project Maintainers
 
-To contribute code or documentation to the project:
+The project maintainers are responsible for:
 
-. Fork the project.
-. Create a dedicated branch in your fork with your changes.
-. Name the branch after the issue number it fixes along with a short textual hint.
+* managing organization and project permissions
+* managing the community and code of conduct
+* setting ADR statuses
+* merging requests into master
+* managing and releasing the pipeline
+
+[#mr-approval]
+=== Merge Request Review and Approval Guidelines
+
+Each merge request is assigned at least one reviewer.
+The reviewer is responsible for making sure the MR meets the project and issue criteria, for answering questions the contributor may have regarding the MR, and for suggesting ways the MR can be improved if necessary.
+
+*The MR should not be approved if*:
+
+* it fails the CI pipeline
+* it doesn't meet the project's workflow, code, test or documentation requirements
+* it doesn't meet the acceptance criteria of its associated issue
+
+*If the MR needs to be modified, notify the contributor and add helpful information to the MR or the issue*.
+Once the contributor has modified the MR, evaluate it again.
+
+When the MR meets the project and issue criteria, it can be merged into master.
+*When the branch is ready to be merged into master*:
+
+* Rebase the MR if necessary.
+* Modify the commit message(s) if necessary.
+* Check _remove source branch_.
+* Don't squash the commits, except in especially messy-weird situations.
+** The maintainer only guarantees to preserve the  original work in the MR.
+* Modify the default merge commit message; it should only contain two lines.
+** The first line should specify the merge number.
+** The second line should be the MR subject submitted by the contributor.
 For example:
-
- issue-2-init-gulp-build
-
-=== Submit a Merge Request
-
-Antora is an issue-driven project.
-A merge request (MR) must close an issue!
-
-When you're ready to submit a MR to the project:
-
-. Write a concise but explicit commit message.
- .. Write the message in lowercase and imperative tense.
- .. The subject goes on the first line of the commit message (required).
- .. Separate the subject line from body with a blank line.
- .. Each body line should succinctly identify an important change or why that change was made (optional).
 +
-.Commit message example
 ----
-contributing.adoc: add merge request steps
+merge !46
+
+resolves #59 configure lerna and yarn workspaces
 ----
-. Rebase your branch on the latest master.
-. Push the branch to your fork.
-. Create an MR from your branch (using the URL shown in the terminal when you push).
- .. Each MR must close an issue.
- .. Begin the title of the MR with the issue it resolves followed by a restatement of the issue (e.g., `resolves #2 initialize gulp build`)
- .. In some select cases, the implementation of an issue might be broken up into separate commits if they can be tested and work in isolation.
-
-Once you've submitted your MR, a project member will review it.
-If changes are required, the project member will request them in a comment on the MR.
-You can either append a new commit or rewrite the existing commit, depending on what you think is most appropriate.
-
-Once all change requests have been satisified, the project member will merge the MR using a fast-forward merge (with merge commit).
-
-.Future: Commit message linting
-****
-We're experimenting with the wording and structure of our commit messages.
-Once we've determined what information we want in a commit message we'll be implementing a set of commit message rules.
-****
-
-// === Coding Style: Guidelines and Expectations
-
-// WRITEME
+* Press _Merge_.
