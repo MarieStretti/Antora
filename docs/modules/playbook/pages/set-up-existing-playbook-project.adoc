@@ -7,15 +7,13 @@ endif::[]
 :idseparator: -
 :experimental:
 // URIs
-:uri-antora-repo: https://gitlab.com/antora/antora-direct
-// update uri once repo is renamed
+:uri-antora-repo: https://gitlab.com/antora/antora
 
 *This page is for people joining a documentation project that already uses Antora.*
 
 include::{partialsdir}/playbook-project-summary.adoc[]
 
-Before you can run Antora on your own machine, you'll need to fetch the playbook project for your site and initialize it
-//The Antora pipeline is controlled by a playbook which is hosted in a playbook project.
+Before you can run Antora, you'll need to fetch the playbook project for your site and initialize it.
 
 == Fetch the playbook project
 
@@ -26,24 +24,28 @@ To start, open a terminal and clone the playbook project using git:
    cd "`basename $_`"
 
 //You can copy and paste the whole command directly into your terminal.
+// Good place to put in demo info
 
 The command clones an existing playbook project and then switches to the project folder.
 Stay in this project folder in order to initialize the project using Yarn.
 
-== Install dependencies
+== Install Antora
 
-Initializing the project means downloading and installing Antora and its dependencies.
-These tasks are xref:ROOT:install-prerequisites.adoc#yarn[managed by Yarn].
+Initializing a playbook project means downloading and installing Antora and its dependencies.
+These tasks are managed by Yarn.
+Make sure you've xref:ROOT:install-prerequisites.adoc[installed Antora's prerequisites] before running Yarn.
 
-In your terminal, execute the following command from the root folder of the playbook project:
+In your terminal, execute the following command from the root folder of the playbook project to install Antora and its dependencies:
 
  $ yarn
 
-The default command in Yarn is `install`, so running `yarn` by itself is the equivalent of running `yarn install`.
+//The default command in Yarn is `install`, so running `yarn` by itself is the equivalent of running `yarn install`.
 The install command uses dependency information defined in [.path]_package.json_ and [.path]_yarn.lock_ to resolve dependencies.
 Yarn installs these dependencies inside the project under the [.path]_node_modules_ folder.
 
 NOTE: If you run into problems while installing dependencies, see xref:ROOT:troubleshoot-yarn-nodegit.adoc[Troubleshooting Yarn and NodeGit].
+
+Once you've installed Antora and its dependencies, you can xref:ROOT:run-antora-generate-site.adoc[generate your site] with your playbook.
 
 === Refresh dependencies
 

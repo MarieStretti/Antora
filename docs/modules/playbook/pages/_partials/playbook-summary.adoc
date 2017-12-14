@@ -6,9 +6,9 @@ You'll use the playbook to tell Antora what content you want included in your si
 
 More specifically, the playbook tells Antora:
 
-* [X] The title of the published site.
+* [x] The title of the published site.
 * [x] The URL of the published site (used for canonical URLs and URLs in the sitemap).
 * [x] The component which sits at the root of the site (i.e., home or landing page content).
 * [x] Which content repositories and branches to feed into Antora's generator.
 * [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages in the site.
-* [x] A list of paths of aspect navigation domains to use (navigation which is not linked to any given component).
+* [x] A list of paths of xref:navigation:aspect.adoc[aspect navigation domains] to use (navigation which is not linked to any given component).

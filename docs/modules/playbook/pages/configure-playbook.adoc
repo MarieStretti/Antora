@@ -13,7 +13,7 @@ It's particularly useful for creating a partial site for local preview.
 
 == The default playbook
 
-The default playbook is the file _site.yml_ at the root of the project.
+The default playbook is the file [.path]_site.yml_ at the root of a xref:set-up-existing-playbook.adoc[playbook project].
 It's written in YAML, a common configuration language for configuring automated tasks.
 Antora automatically detects and uses this file if you don't specify an override.
 
@@ -22,27 +22,32 @@ Here's an example of a playbook:
 .site.yml
 [source,yaml,subs=attributes+]
 ----
-site:
-  title: Docs Demo Site
-content: <1>
-- repository: https://github.com/my-antora-demo/server-docs <2>
-  branches: v* <3>
+site: # <1>
+  title: Docs Demo Site # <2>
+content: # <3>
+- repository: https://github.com/my-antora-demo/server-docs # <4>
+  branches: v* # <5>
 - repository: https://github.com/my-antora-demo/aspnet-docs
   branches: master
-theme:
-  repository: https://github.com/my-antora-demo/docs-site-ui
+theme: # <6>
+  repository: https://github.com/my-antora-demo/docs-site-ui # <7>
 ----
-<1> Content key
-<2> Repository key
-<3> Branches key
+<1> Site key
+<2> Site title key
+<3> Content key
+<4> Content repository key
+<5> Content branches key
+<6> Theme key
+<7> Theme respository key
 
 The content key is likely the one you'll tune most often.
 It contains an array of repository specifications.
 
-At a minimum, you must specify the location of each public repository using the `repository` key.
+// public
+At a minimum, you must specify the location of each repository using the `repository` key.
 Antora will then scan and use every branch in that repository that begins with "`v`" or is named "`master`".
 
-=== Modify site.yml
+== Modify site.yml
 
 If you only want to generate pages for a single component, you can trim the content key to a single entry.
 For example, here's how you'd configure the `content` key so that Antora only generates the server component (using the default branch set):
@@ -114,20 +119,24 @@ Here's how you'd exclude all branches that end in `-beta`.
   - '!v*-beta'
 ----
 
-== component.yml
+== antora.yml
 
-The file system name of the repository and branch are ignored once the content is retrieved.
-Instead, metadata about the component is read from a configuration file in the repository.
-Inside each branch is a [.path]_component.yml_ file at the docs component root.
+The file system name of the repository and branch are ignored by Antora once the content is retrieved.
+Instead, metadata about the component is read from a xref:ROOT:antora_yml.adoc[component descriptor file] in the repository.
+Inside each branch is a file named [.path]_antora.yml_ at the documentation component root.
 The file defines the name and version of the component.
 
-As an example, here's the [.path]_component.yml_ file in the v5.0 branch of the server repository:
+As an example, here's the [.path]_antora.yml_ file in the v5.0 branch of the server repository:
 
-.component.yml (excerpt)
+.antora.yml (excerpt)
 [source,yaml]
 ----
 name: server
+title: Server
 version: '5.0'
+nav:
+- modules/start/nav.adoc
+- ...
 ----
 
 This decoupling allows you to have more than one branch that provides the same version of a documentation component, which you can then toggle by configuring the branches key in the playbook.

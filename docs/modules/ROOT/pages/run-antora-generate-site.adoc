@@ -10,12 +10,12 @@ endif::[]
 * [x] How to launch the site generator.
 * [x] How to preview the generated site locally.
 
-Once you've configured your playbook, it's time to run Antora.
+Once you've xref:playbook:configure-playbook.adoc[configured your playbook], it's time to run Antora.
 //Now that you've told Antora which content to use and which UI to apply to that content, it's time to run it.
 
 == Run Antora
 
-You invoke Antora by passing the `generate` command to Node.
+You run Antora by passing the `generate` command to Node.
 This command runs the [.path]_generate.js_ script.
 
  $ node generate
@@ -27,13 +27,13 @@ For example, you can specify a custom playbook as follows:
  $ node generate --playbook=custom-site
 
 Depending on your internet connection speed, it may take anywhere from a few seconds to several minutes to complete the generation process the first time you run it.
-That's because it first has to download (i.e., `git clone`) all the repositories specified in the playbook.
+That's because, first, Antora has to download (i.e., `git clone`) all the repositories specified in the playbook.
 
 When you run Antora again, the repositories are automatically updated (i.e., `git pull`).
 These subsequent runs complete much faster because only the changes to the repositories have to be downloaded.
 
-The repositories are cached under the [.path]_build/sources_ directory.
-If you remove the [.path]_build_ directory, the repositories will have to be downloaded again from scratch.
+The repositories are cached under the [.path]_build/sources/_ directory.
+If you remove the [.path]_build/_ directory, the repositories will have to be downloaded again from scratch.
 
 [#using-private-repositories]
 === Private GitHub repositories

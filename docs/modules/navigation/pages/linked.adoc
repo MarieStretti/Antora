@@ -11,12 +11,11 @@ TODO:
 Info about where to store a nav file and any alternatives.
 Better examples and example output
 Align on the names for nav in general and linked vs aspect: linked and aspect domain, linked and aspect navigation, nav tree, linked page, aspect page, etc.
+Clarify nav file name options and nav storage locations
 ////
 
-Each module contains a navigation file named nav.adoc.
+Each module contains a navigation file named [.path]_nav.adoc_.
 In Antora, this navigation file is called linked navigation.
-That's because the nav.adoc file stored in each module doesn't have to be registered in a playbook.
-These files are enlisted automatically by Antora.
 
 == nav.adoc file structure
 
@@ -47,30 +46,9 @@ The list can have a block title.
 
 The items in a linked navigation file are usually cross references to pages in the same module.
 
-However, using the xref:ROOT:cross-reference/page-to-page-link.adoc[appropriate inline xref macro patterns], you can include references to any document in the site, whether it's stored in the same module or not.
+However, using the xref:ROOT:cross-reference/page-to-page-link.adoc[appropriate xref macro patterns], you can include references to any document in the site, whether it's stored in the same module or not.
 
-// relink xref <<ex-links,external links>>
 You can also include external links, such as pass:[https://support.example.com], and normal (i.e. unlinked) text.
 
 Unlike xref:aspect.adoc#register[aspect navigation files], the linked navigation file in a module doesn't have to be registered in a playbook.
-These files are enlisted automatically by Antora.
-
-////
-.Example linked navigation list
-----
-.xref:index.adoc[Runtime Manager]
-* xref:cloudhub::tutorials.adoc[Tutorials]
- ** xref:cloudhub::building-an-https-service.adoc[Building an HTTPS Service]
-* xref:deployment-strategies.adoc[Deployment Strategies]
- ** xref:deploying-to-cloudhub.adoc[Deploying to CloudHub]
- ** xref:deploying-to-your-own-servers.adoc[Deploying to Your Own Servers]
-* xref:managing-deployed-applications.adoc[Managing Deployed Applications]
- ** xref:cloudhub::managing-applications-on-cloudhub.adoc[Managing Applications on CloudHub]
-  *** xref:managing-queues.adoc[Managing Queues]
-  *** xref:managing-schedules.adoc[Managing Schedules]
-  *** xref:secure-application-properties.adoc[Secure Application Properties]
-  *** xref:object-store::managing-application-data-with-object-stores.adoc[Managing App Data using Object Stores]
-* More Goodness
- ** https://support.example.com[Contact Support]
-----
-////
+Instead, these files are registered in a component's [.path]_antora.yml_ file, under the xref:ROOT:antora_yml.adoc[nav key].
