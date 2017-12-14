@@ -168,7 +168,7 @@ describe('convertDocument()', () => {
   })
 
   describe('should convert AsciiDoc contents with include', () => {
-    function fakeCatalogWithContents (stringContents) {
+    function mockCatalogWithContents (stringContents) {
       return {
         getById: spy(() => ({ contents: Buffer.from(stringContents) })),
       }
@@ -176,7 +176,7 @@ describe('convertDocument()', () => {
 
     it('example', () => {
       setAsciiDocContents('include::{examplesdir}/included-file.json[]')
-      const catalog = fakeCatalogWithContents('{ "foobar": 42 }')
+      const catalog = mockCatalogWithContents('{ "foobar": 42 }')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -195,7 +195,7 @@ describe('convertDocument()', () => {
 
     it('example in a subpath', () => {
       setAsciiDocContents('include::{examplesdir}/the-subpath/included-file.json[]')
-      const catalog = fakeCatalogWithContents('{ "foobar": 42 }')
+      const catalog = mockCatalogWithContents('{ "foobar": 42 }')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -214,7 +214,7 @@ describe('convertDocument()', () => {
 
     it('partial', () => {
       setAsciiDocContents('include::{partialsdir}/included-file.adoc[]')
-      const catalog = fakeCatalogWithContents('Hello *World*!')
+      const catalog = mockCatalogWithContents('Hello *World*!')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -235,7 +235,7 @@ describe('convertDocument()', () => {
 
     it('partial in a sub/subpath)', () => {
       setAsciiDocContents('include::{partialsdir}/subpath-foo/subpath-bar/included-file.adoc[]')
-      const catalog = fakeCatalogWithContents('Hello *World*!')
+      const catalog = mockCatalogWithContents('Hello *World*!')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -299,7 +299,7 @@ describe('convertDocument()', () => {
       )
     }
 
-    function fakeCatalogWithUrl (url) {
+    function mockCatalogWithUrl (url) {
       return {
         getById: spy(() => ({ pub: { url } })),
       }
@@ -307,7 +307,7 @@ describe('convertDocument()', () => {
 
     it('version + component + module + subpath + file', () => {
       setAsciiDocContents('xref:v4.5.6@component-bar:module-bar:subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -332,7 +332,7 @@ describe('convertDocument()', () => {
       setAsciiDocContents(
         'xref:v4.5.6@component-bar:module-bar:subpath-foo/subpath-bar/the-page#the-fragment[The Title]'
       )
-      const catalog = fakeCatalogWithUrl(
+      const catalog = mockCatalogWithUrl(
         '/component-bar/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html'
       )
       return expect(convertDocument(file, null, catalog))
@@ -356,7 +356,7 @@ describe('convertDocument()', () => {
 
     it('version + module + subpath + file', () => {
       setAsciiDocContents('xref:v4.5.6@module-bar:the-subpath/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -374,7 +374,7 @@ describe('convertDocument()', () => {
 
     it('component + module + subpath + file', () => {
       setAsciiDocContents('xref:component-bar:module-bar:subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/module-bar/subpath-foo/subpath-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/module-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -392,7 +392,7 @@ describe('convertDocument()', () => {
 
     it('version + component + subpath + file', () => {
       setAsciiDocContents('xref:v4.5.6@component-bar::subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/subpath-foo/subpath-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/v4.5.6/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -410,7 +410,7 @@ describe('convertDocument()', () => {
 
     it('version + component + module + file', () => {
       setAsciiDocContents('xref:v4.5.6@component-bar:module-bar:the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/module-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/v4.5.6/module-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -428,7 +428,7 @@ describe('convertDocument()', () => {
 
     it('component + subpath + file', () => {
       setAsciiDocContents('xref:component-bar::subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/subpath-foo/subpath-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -446,7 +446,7 @@ describe('convertDocument()', () => {
 
     it('component + module + file', () => {
       setAsciiDocContents('xref:component-bar:module-bar:the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/module-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/module-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -464,7 +464,7 @@ describe('convertDocument()', () => {
 
     it('version + subpath + file', () => {
       setAsciiDocContents('xref:v4.5.6@the-subpath/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/module-foo/the-subpath/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v4.5.6/module-foo/the-subpath/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -482,7 +482,7 @@ describe('convertDocument()', () => {
 
     it('version + module + file', () => {
       setAsciiDocContents('xref:v4.5.6@module-bar:the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/module-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v4.5.6/module-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -500,7 +500,7 @@ describe('convertDocument()', () => {
 
     it('version + component + file', () => {
       setAsciiDocContents('xref:v4.5.6@component-bar::the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/v4.5.6/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/v4.5.6/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -518,7 +518,7 @@ describe('convertDocument()', () => {
 
     it('module + subpath + file', () => {
       setAsciiDocContents('xref:module-bar:subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v1.2.3/module-bar/subpath-foo/subpath-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -536,7 +536,7 @@ describe('convertDocument()', () => {
 
     it('version + file', () => {
       setAsciiDocContents('xref:v4.5.6@the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v4.5.6/module-foo/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v4.5.6/module-foo/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -554,7 +554,7 @@ describe('convertDocument()', () => {
 
     it('component + file', () => {
       setAsciiDocContents('xref:component-bar::the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -572,7 +572,7 @@ describe('convertDocument()', () => {
 
     it('subpath/subpath + file', () => {
       setAsciiDocContents('xref:subpath-foo/subpath-bar/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v1.2.3/module-foo/subpath-foo/subpath-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-foo/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -590,7 +590,7 @@ describe('convertDocument()', () => {
 
     it('subpath + file', () => {
       setAsciiDocContents('xref:the-subpath/the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v1.2.3/module-foo/subpath-foo/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-foo/subpath-foo/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -608,7 +608,7 @@ describe('convertDocument()', () => {
 
     it('module + file', () => {
       setAsciiDocContents('xref:module-bar:the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v1.2.3/module-bar/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -626,7 +626,7 @@ describe('convertDocument()', () => {
 
     it('file', () => {
       setAsciiDocContents('xref:the-page.adoc[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v1.2.3/module-foo/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-foo/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
@@ -644,7 +644,7 @@ describe('convertDocument()', () => {
 
     it('file with #fragment', () => {
       setAsciiDocContents('xref:the-page.adoc#the-fragment[The Title]')
-      const catalog = fakeCatalogWithUrl('/component-foo/v1.2.3/module-foo/the-page.html')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-foo/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
