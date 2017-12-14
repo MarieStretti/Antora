@@ -104,7 +104,8 @@ function transformXref (file, xref, title, catalog) {
   }
 
   const { dir: urlBase } = path.parse(file.pub.url)
-  const relativeUrl = path.relative(urlBase, xrefFile.pub.url)
+  let relativeUrl = path.relative(urlBase, xrefFile.pub.url)
+  if (xrefSrc.fragment) relativeUrl = relativeUrl + '#' + xrefSrc.fragment
 
   return `<a href="${relativeUrl}">${title}</a>`
 }
