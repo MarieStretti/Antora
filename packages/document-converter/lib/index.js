@@ -127,8 +127,8 @@ function getSourceFromXref (xref) {
   }
 
   let module = extractedModule
-  if ((component != null || version != null) && extractedModule == null) {
-    // if component and/or version are defined and module undefined, it implicitly means "ROOT"
+  if (component != null && extractedModule == null) {
+    // if component is defined and module undefined, it implicitly means "ROOT"
     module = 'ROOT'
   }
 
