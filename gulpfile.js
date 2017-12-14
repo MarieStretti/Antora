@@ -17,10 +17,12 @@ const testFiles = args.package
   ? [`packages/${args.package}/test/**/*-test.js`]
   : ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
 
+const isCodeCoverageEnabled = () => process.env.COVERAGE === 'true' || process.env.CI
+
 gulp.task('lint', () => lint(allFiles))
 gulp.task('format', () => format(allFiles))
-gulp.task('test', ['lint'], () => test(testFiles))
-gulp.task('test-only', () => test(testFiles))
+gulp.task('test', ['lint'], () => test(testFiles, isCodeCoverageEnabled()))
+gulp.task('test-only', () => test(testFiles, isCodeCoverageEnabled()))
 gulp.task('test-watch', () => gulp.watch(allFiles, ['test-only']))
 gulp.task('commitlint', () => commitlint())
 

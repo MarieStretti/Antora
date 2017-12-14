@@ -27,7 +27,7 @@ test:
   script: node_modules/.bin/gulp test-only
   artifacts:
     paths:
-    - coverage
+    - coverage/
 commitlint:
   stage: verify
   cache:
