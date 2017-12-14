@@ -19,7 +19,7 @@ First, let's dissect a fully qualified page reference:
 
 [source,asciidoc]
 ----
-xref:version-name@component-name:module-name:local-path.adoc#fragment[link text]
+xref:version-name@component-name:module-name:page.adoc#fragment[link text]
 ----
 
 Here's what each part of the page reference does:
@@ -47,7 +47,7 @@ The module name is directly followed by one colon (`:`).
 If a component name is present, and the name of the module is "`ROOT`", the module name position can be left empty in some cases.
 That's why sometimes you see a component name followed by two colons (`::`).
 
-local-path.adoc ::
+page.adoc ::
 The fourth target position specifies the local path of the destination file relative to the module's documents directory.
 This value may include one or more optional topic folders.
 The destination file name must have the _.adoc_ file extension.
@@ -68,21 +68,21 @@ To learn more about referencing aspect pages, go to the xref:apect-page-link.ado
 
 == Scenario: In the same component and module
 
-When the current document and the destination document are in the same module, you only need to enter the name of the destination file.
+When the current page and the destination page are in the same module, you only need to enter the name of the destination file.
 
-.Link to a document in the same module
+.Link to a page in the same module
 [source,asciidoc]
 ----
 xref:error-handling.adoc[Error Handling]
 ----
 
-.Link to a document in a topic folder
+.Link to a page in a topic folder
 [source,asciidoc]
 ----
 xref:concept/index.adoc[Key Concepts]
 ----
 
-.Link to a document in the same module and in a different version
+.Link to a page in the same module but in a different version
 [source,asciidoc]
 ----
 xref:3.3@error-handling.adoc#message-list[error messages]
@@ -90,21 +90,21 @@ xref:3.3@error-handling.adoc#message-list[error messages]
 
 == Scenario: In the same component but different module
 
-When the current document and the destination document are in the same component but different modules, you'll need to enter the name of the destination module and destination file.
+When the current page and the destination page are in the same component but different modules, you'll need to enter the name of the destination module and destination file.
 
-.Link to a document in another module
+.Link to a page in another module
 [source,asciidoc]
 ----
 xref:getting-started:implement-and-test-api.adoc[implement an API]
 ----
 
-.Link to a document in the ROOT module and in a topic folder
+.Link to a page in the ROOT module and in a topic folder
 [source,asciidoc]
 ----
 xref:ROOT:transports/ajax-reference.adoc[Ajax Transports]
 ----
 
-.Link to a document in the ROOT module and in a different version
+.Link to a page in the ROOT module and in a different version
 [source,asciidoc]
 ----
 The xref:3.4@ROOT:scopes/foreach.adoc[foreach scope] splits a collection.
@@ -112,22 +112,22 @@ The xref:3.4@ROOT:scopes/foreach.adoc[foreach scope] splits a collection.
 
 == Scenario: In a different component
 
-When the current document and the destination document are in different components, you'll need to enter values for all of the target positions.
+When the current page and the destination page are in different components, you'll need to enter values for all of the target positions.
 If a version is not specified in this scenario, the implicit value is `master@`.
 
-.Link to a document in the ROOT module of a versioned component
+.Link to a page in the ROOT module of a versioned component
 [source,asciidoc]
 ----
 How do I xref:2.0@default-ui::modify-template.adoc[modify a template] in the UI project?
 ----
 
-.Link to a document in the ROOT module of a component that doesn't have versions
+.Link to a page in the ROOT module of a component that doesn't have versions
 [source,asciidoc]
 ----
 xref:icons::index.adoc#intro[Introducing the Icon Project]
 ----
 
-.Link to a document in a module of a component that doesn't have versions
+.Link to a page in a module of a component that doesn't have versions
 [source,asciidoc]
 ----
 xref:icons:web:modify-svg.adoc[Getting started with the SVG assets]

@@ -6,7 +6,6 @@ endif::[]
 :idprefix:
 :idseparator: -
 
-[abstract]
 //As described in the {uri-ui-designer-guide}[UI Designer Guide], each UI bundle is stored as a zip that is attached to a release in the GitHub repository that hosts the UI project.
 Each UI bundle is stored as a zip that is attached to a release in the GitLab or GitHub repository that hosts your site's UI project.
 Here's how it works.

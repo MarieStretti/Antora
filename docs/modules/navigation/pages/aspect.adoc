@@ -22,7 +22,7 @@ This behavior keeps the user in the flow of the aspect context.
 
 An aspect domain is created implicitly by defining a navigation tree for it.
 
-=== Define an aspect domain
+== Define an aspect domain
 
 An aspect domain is defined using an aspect navigation file.
 This file can be stored anywhere in the playbook repository.
@@ -73,10 +73,10 @@ nav:
 - aspect-nav/*.adoc
 ----
 
-When you generate the site, you should now see the aspect domain in the navigation domain selector (adjacent to the Home icon).
+When you generate the site, you should see the aspect domain in the navigation domain selector (adjacent to the Home icon).
 The title displayed in that list is the title of the unordered list in the navigation file.
 
-=== The site aspect
+== The site aspect
 
 You can promote one aspect domain to be available on all pages, called the site aspect.
 This global navigation appears under the *Tasks* tab in the navigation panel.

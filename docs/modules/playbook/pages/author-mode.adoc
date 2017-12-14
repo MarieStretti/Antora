@@ -7,9 +7,10 @@ endif::[]
 :idseparator: -
 :experimental:
 
+* [x] How to active author mode.
+
 Although the primary function of Antora is to generate a site for publishing, it also serves as a tool for the author.
 By configuring Antora to use a local repository, you can preview local content, including content you haven't committed.
-This page explains how this mode is activated and how it functions.
 
 == Activate author mode
 
@@ -17,7 +18,7 @@ Author mode is activated when you configure the playbook to use a local clone fo
 Antora will use the repository as it is on your local machine instead of cloning it from its remote location.
 This scenario assumes you've already cloned a repository and want to incorporate it into the site generation.
 
-To begin, create a folder named [.path]_workspace_ in your docs-site project.
+To begin, create a folder named [.path]_workspace_ in your project.
 
  $ mkdir workspace
 
@@ -27,7 +28,10 @@ Switch to the newly created directory and clone one of the repositories:
    git clone https://github.com/my-antora-demo/server-docs
 
 Next, open your playbook file and configure it to use this clone.
-You can specify the repository either as a path relative to the root of the docs-site project or as an absolute path.
+You can specify the repository either as a path relative to the root of the project or as an absolute path.
+
+// also a good place to use the demo
+// need clarification about where these local sources can be in relation to the playbook project
 
 .site.yml (excerpt)
 ----
@@ -42,8 +46,9 @@ Now when you run Antora, the contents of your local repository will be incorpora
 You may be wondering what branches the generator selects when the repository is local and whether it will pick up your uncommitted changes.
 Here's how a local repository is handled:
 
-* The repository is used in place instead of being cloned into build/sources.
-* The repository is not updated; it's assumed the author will manage the repository.
+* The repository contents on your local machine is used instead of its contents from its remote storage location.
+//being cloned from its remote storage location  into build/sources.
+* The local repository is not updated from its remote storage location; Antora assumes the author will manage the repository (explicitly fetch or pull the repository as needed).
 
 Here's how the branches are selected in author mode:
 
@@ -53,4 +58,4 @@ Here's how the branches are selected in author mode:
 Aside from its name, the current branch is effectively ignored.
 
 If you want to use multiple working trees, simply clone the repository multiple times and configure multiple entries in the playbook.
-You can use the `branches` key to filter out the names of branches you don't want.
+You can use the `branches` key to xref:configure-playbook.adoc[filter out the names of branches you don't want].
