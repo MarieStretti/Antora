@@ -6,11 +6,9 @@ const convertDocument = require('@antora/document-converter')
 
 const Buffer = require('buffer').Buffer
 
-// because of how Opal works, we can't use ".to.have.been.called.with({})" on spies
-// it makes the tests hang indefinitely when the test fails
-// instead we directly use the spy calls property
-// expect(mySpy.__spy.calls[0][0]).to.eql({})
-
+// Due to how Opal works, we can't use ".to.have.been.called.with({})" on spies
+// as it causes the test hang indefinitely upon encountering a failure.  To
+// work around this problem, we directly access the spy calls property.
 function spyResult (mySpy) {
   return mySpy.__spy.calls[0][0]
 }
