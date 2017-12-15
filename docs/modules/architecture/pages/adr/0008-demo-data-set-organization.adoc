@@ -1,0 +1,42 @@
+= ADR 0008: Demonstration data set sub-organization name
+:revdate: 2017-12-15
+
+== Status
+
+Pending
+
+== Context
+
+Antora is designed to work with multiple, discrete repositories and multiple branches per repository that are organized as documentation components.
+The content sources, which include files written in AsciiDoc, and the playbook project repository that orchestrates them, can be an obstacle for people interested in evaluating Antora.
+It is highly unlikely that their current documentation is organized for Antora and written in valid AsciiDoc.
+It would be ideal if, when a person is evaluating Antora, they could execute the pipeline on a sample data set.
+
+We believe that creating a sample data set, including source repositories with branches and a playbook project, as well as the resulting site, will help people fully evaluate Antora and experience its capabilities "`hands-on`".
+However, when we create this sample data set and playbook project, we need a publicly accessible, maintainable repository storage location.
+We need to ensure that these repositories do not conflict with Antora's development repositories and its own documentation playbook project.
+We need to decide how we will isolate the demonstration repositories and how we will identify them as demonstration repositories.
+
+== Decision
+
+One solution is to create a sub-organization within the Antora organization to isolate the demonstration repositories.
+The sub-organization will group the source and playbook repositories, making them easy for evaluators to find and review.
+The sub-organization will also reduce come management considerations.
+It can have access to current and future shared resources (such as the permissions, CI/CD processes, testing mechanisms, etc.) that we've already set up (or will set up) in the Antora organization.
+
+Another solution is to set up a new organization for the demonstration repository.
+This solution won't have any more overhead than a sub-organization at this time, however, repository management may become more time consuming as any policy or process changes we make in the Antora organization will probably also need to be applied to the demonstration organization.
+Divergence is likely.
+
+Regardless of whether we set up a new organization or a sub-organization, it will need a name.
+The name should clearly advertise its purpose to evaluators who discover the Antora organization and/or demonstration organization.
+
+== Consequences
+
+A functional set of source repositories, playbook project, and resulting site that include scenarios that showcase Antora's capabilities and features will allow potential users to quickly evaluate and gain hands-on experience with Antora.
+The potential result of a better and robust evaluation and demonstration experience is faster and greater adoption.
+This demonstration data set would also have the secondary benefits of providing further testing materials, training scenarios, and examples for Antora's documentation.
+However, the demonstration data set will require maintenance and QA resources to ensure it is kept aligned with Antora's functionality and provides a consistent and high-quality evaluation experience.
+
+Creating a sub-organization for the demonstration will keep its repositories separate from Antora's development repositories, reducing confusion.
+Also, the sub-organization will benefit from being able to adopt the permissions, policies and shared resources of the parent organization.
