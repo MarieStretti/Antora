@@ -1,7 +1,6 @@
 'use strict'
 
-const path = require('path')
-
+const computeRelativeUrlPath = require('./compute-relative-url-path')
 const convertAsciiDocString = require('./asciidoctor')
 const resolvePage = require('./resolve-page')
 
@@ -95,9 +94,7 @@ function convertPageRef (file, refSpec, content, catalog) {
     return `<a href="#">${refSpec}</a>`
   }
 
-  // FIXME parsing the URL is really ugly; find a better way!
-  const { dir: urlBase } = path.parse(file.pub.url)
-  let targetUrl = path.relative(urlBase, targetPage.pub.url)
+  let targetUrl = computeRelativeUrlPath(file.pub.url, targetPage.pub.url)
   if (fragment) targetUrl = targetUrl + '#' + fragment
 
   return `<a href="${targetUrl}">${content}</a>`
