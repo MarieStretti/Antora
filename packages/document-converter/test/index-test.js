@@ -336,9 +336,7 @@ describe('convertDocument()', () => {
       setAsciiDocContents(
         'xref:v4.5.6@component-bar:module-bar:subpath-foo/subpath-bar/the-page#the-fragment[The Title]'
       )
-      const catalog = mockCatalogWithUrl(
-        '/component-bar/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html'
-      )
+      const catalog = mockCatalogWithUrl('/component-bar/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html')
       return expect(convertDocument(file, null, catalog))
         .to.be.fulfilled()
         .then(() => {
