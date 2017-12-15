@@ -6,7 +6,7 @@ const expect = chai.expect
 const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 
-const spies = require('chai-spies')
+const spies = require('chai-spies-next')
 chai.use(spies)
 
 // this must be loaded after the other plugins
