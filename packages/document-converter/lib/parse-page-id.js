@@ -1,9 +1,9 @@
 'use strict'
 
-// matches pattern version@component:module:topic/page.adoc#fragment
-// ex. 1.0@antora:playbook:ui/bundle.adoc#url
-const PAGE_ID_RX = /^(?:([^@]+)@)?(?:(?:([^:]+):)?(?:([^:]+))?:)?(?:([^:]+)\/)?([^:]+?)(?:\.adoc)?(?:#(.+?))?$/
-const PAGE_ID_RXG = { version: 1, component: 2, module: 3, subpath: 4, stem: 5, fragment: 6 }
+// matches pattern version@component:module:topic/page w/ optional .adoc ext
+// ex. 1.0@antora:playbook:ui/bundle.adoc
+const PAGE_ID_RX = /^(?:([^@]+)@)?(?:(?:([^:]+):)?(?:([^:]+))?:)?(?:([^:]+)\/)?([^:]+?)(?:\.adoc)?$/
+const PAGE_ID_RXG = { version: 1, component: 2, module: 3, subpath: 4, stem: 5 }
 
 /**
  * Parses a contextual page ID string into a file src object.
@@ -15,7 +15,7 @@ const PAGE_ID_RXG = { version: 1, component: 2, module: 3, subpath: 4, stem: 5, 
  * * If a component is specified, but not a version, the version defaults to master.
  * * If a component is specified, but not a module, the module defaults to ROOT.
  *
- * @param {String} spec - the contextual page ID spec (e.g., version@component:module:topic/page#fragment)
+ * @param {String} spec - the contextual page ID spec (e.g., version@component:module:topic/page w/ optional .adoc ext)
  * @param {Object} ctx - the src context (optional)
  *
  * @return {Object} - the resolved file src object for this contextual page ID
@@ -29,7 +29,6 @@ module.exports = (spec, ctx = {}) => {
   let module = match[PAGE_ID_RXG.module]
   let subpath = match[PAGE_ID_RXG.subpath] || ''
   let stem = match[PAGE_ID_RXG.stem]
-  let fragment = match[PAGE_ID_RXG.fragment]
 
   if (component) {
     // if a component is specified, but not a version, assume version is "master"
@@ -38,6 +37,7 @@ module.exports = (spec, ctx = {}) => {
     if (!module) module = 'ROOT'
   }
 
+  // Q: should this type be a File src object or a page ID?
   return {
     component: component || ctx.component,
     version: version || ctx.version,
@@ -48,6 +48,5 @@ module.exports = (spec, ctx = {}) => {
     basename: stem + '.adoc',
     stem,
     extname: '.adoc',
-    fragment,
   }
 }

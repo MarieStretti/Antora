@@ -2,9 +2,9 @@
 'use strict'
 
 const { expect, spy } = require('../../../test/test-utils')
-const resolvePageRef = require('@antora/document-converter/lib/resolve-page-ref')
+const resolvePage = require('@antora/document-converter/lib/resolve-page')
 
-describe('resolvePageRef', () => {
+describe('resolvePage', () => {
   function mockCatalogWithFile (file) {
     return {
       getById: spy(() => file),
@@ -13,13 +13,13 @@ describe('resolvePageRef', () => {
 
   it('should throw error if page ID string has invalid syntax', () => {
     const catalog = mockCatalogWithFile()
-    expect(() => resolvePageRef('component-foo::', catalog)).to.throw()
+    expect(() => resolvePage('component-foo::', catalog)).to.throw()
     expect(catalog.getById).to.not.have.been.called()
   })
 
   it('should return undefined page in result if file not found in catalog', () => {
     const catalog = mockCatalogWithFile()
-    const targetPageIdStr = '1.2.3@the-component:the-module:the-page.adoc#the-fragment'
+    const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
     const targetPageId = {
       component: 'the-component',
       version: '1.2.3',
@@ -28,9 +28,9 @@ describe('resolvePageRef', () => {
       subpath: '',
       basename: 'the-page.adoc',
     }
-    const result = resolvePageRef(targetPageIdStr, catalog)
+    const result = resolvePage(targetPageIdSpec, catalog)
     expect(catalog.getById).to.have.been.called.with(targetPageId)
-    expect(result).to.deep.equal({ page: undefined, fragment: 'the-fragment' })
+    expect(result).to.be.undefined()
   })
 
   it('should resolve qualified page ID string to file in catalog', () => {
@@ -47,7 +47,7 @@ describe('resolvePageRef', () => {
       },
     }
     const catalog = mockCatalogWithFile(targetFile)
-    const targetPageIdStr = '1.2.3@the-component:the-module:the-page.adoc#the-fragment'
+    const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
     const targetPageId = {
       component: 'the-component',
       version: '1.2.3',
@@ -56,9 +56,9 @@ describe('resolvePageRef', () => {
       subpath: '',
       basename: 'the-page.adoc',
     }
-    const result = resolvePageRef(targetPageIdStr, catalog)
+    const result = resolvePage(targetPageIdSpec, catalog)
     expect(catalog.getById).to.have.been.called.with(targetPageId)
-    expect(result).to.deep.equal({ page: targetFile, fragment: 'the-fragment' })
+    expect(result).to.equal(targetFile)
   })
 
   it('should use context to fill out page ID when resolving file in catalog', () => {
@@ -85,7 +85,7 @@ describe('resolvePageRef', () => {
       },
     }
     const catalog = mockCatalogWithFile(targetFile)
-    const targetPageIdStr = 'target-page.adoc#the-fragment'
+    const targetPageIdSpec = 'target-page.adoc'
     const targetPageId = {
       component: 'current-component',
       version: '1.0',
@@ -94,8 +94,8 @@ describe('resolvePageRef', () => {
       subpath: '',
       basename: 'target-page.adoc',
     }
-    const result = resolvePageRef(targetPageIdStr, catalog, context)
+    const result = resolvePage(targetPageIdSpec, catalog, context)
     expect(catalog.getById).to.have.been.called.with(targetPageId)
-    expect(result).to.deep.equal({ page: targetFile, fragment: 'the-fragment' })
+    expect(result).to.equal(targetFile)
   })
 })

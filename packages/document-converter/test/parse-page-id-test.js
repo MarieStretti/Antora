@@ -9,15 +9,28 @@ describe('parsePageId()', () => {
     expect(parsePageId('the-component::')).to.be.undefined()
   })
 
-  it('should extract all coordinates of qualified page ID', () => {
-    const input = '1.0@the-component:the-module:the-topic/the-page.adoc#the-fragment'
+  it('should extract all coordinates of qualified page ID without extension', () => {
+    const input = '1.0@the-component:the-module:the-topic/the-page'
     const expected = {
       version: '1.0',
       component: 'the-component',
       module: 'the-module',
       subpath: 'the-topic',
       stem: 'the-page',
-      fragment: 'the-fragment',
+    }
+    const result = parsePageId(input)
+    expect(result).to.not.be.undefined()
+    expect(result).to.include(expected)
+  })
+
+  it('should extract all coordinates of qualified page ID with extension', () => {
+    const input = '1.0@the-component:the-module:the-topic/the-page.adoc'
+    const expected = {
+      version: '1.0',
+      component: 'the-component',
+      module: 'the-module',
+      subpath: 'the-topic',
+      stem: 'the-page',
     }
     const result = parsePageId(input)
     expect(result).to.not.be.undefined()
@@ -66,7 +79,6 @@ describe('parsePageId()', () => {
       mediaType: 'text/asciidoc',
       extname: '.adoc',
       basename: 'the-page.adoc',
-      fragment: undefined,
     }
     const result = parsePageId(input)
     expect(result).to.not.be.undefined()

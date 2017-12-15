@@ -3,7 +3,7 @@
 const path = require('path')
 
 const convertAsciiDocString = require('./asciidoctor')
-const resolvePageRef = require('./resolve-page-ref')
+const resolvePage = require('./resolve-page')
 
 const examplesdir = 'example$'
 const partialsdir = 'partial$'
@@ -39,7 +39,7 @@ module.exports = async function convertDocument (file, customAttributes, catalog
     file.contents.toString(),
     options,
     (doc, target) => readInclude(file, catalog, target),
-    (pageId, content) => convertPageRef(file, pageId, content, catalog)
+    (refSpec, content) => convertPageRef(file, refSpec, content, catalog)
   )
 
   file.contents = htmlContents
@@ -82,17 +82,17 @@ function readInclude (file, catalog, target) {
   return include
 }
 
-function convertPageRef (file, pageId, content, catalog) {
-  let targetPage, fragment
+function convertPageRef (file, refSpec, content, catalog) {
+  let targetPage
+  const [pageIdSpec, fragment] = splitFirst(refSpec, '#')
   try {
-    ({ page: targetPage, fragment } = resolvePageRef(pageId, catalog, file.src))
-    if (!targetPage) {
+    if (!(targetPage = resolvePage(pageIdSpec, catalog, file.src))) {
       // TODO log "Unresolved page ID"
-      return `<a href="#">${pageId}</a>`
+      return `<a href="#">${refSpec}</a>`
     }
   } catch (e) {
     // TODO log "Invalid page ID syntax" (or e.message)
-    return `<a href="#">${pageId}</a>`
+    return `<a href="#">${refSpec}</a>`
   }
 
   // FIXME parsing the URL is really ugly; find a better way!
@@ -101,4 +101,9 @@ function convertPageRef (file, pageId, content, catalog) {
   if (fragment) targetUrl = targetUrl + '#' + fragment
 
   return `<a href="${targetUrl}">${content}</a>`
+}
+
+function splitFirst (string, separator) {
+  const separatorIdx = string.indexOf('#')
+  return separatorIdx === -1 ? [string] : [string.slice(0, separatorIdx), string.slice(separatorIdx + 1)]
 }
