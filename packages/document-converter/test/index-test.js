@@ -303,6 +303,12 @@ describe('convertDocument()', () => {
       }
     }
 
+    function indexify (pub) {
+      pub.url = pub.url.replace(/\.html$/, '/')
+      pub.absoluteUrl = pub.absoluteUrl.replace(/\.html$/, '/')
+      pub.rootPath += '/..'
+    }
+
     it('version + component + module + subpath + file', () => {
       setAsciiDocContents('xref:v4.5.6@component-bar:module-bar:subpath-foo/subpath-bar/the-page.adoc[The Title]')
       const catalog = mockCatalogWithUrl('/component-bar/v4.5.6/module-bar/subpath-foo/subpath-bar/the-page.html')
@@ -654,6 +660,63 @@ describe('convertDocument()', () => {
             family: 'page',
             subpath: '',
             basename: 'the-page.adoc',
+          })
+        })
+    })
+
+    it('module + file with indexified URLs', () => {
+      indexify(file.pub)
+      setAsciiDocContents('xref:module-bar:the-page.adoc[The Title]')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-bar/the-page/')
+      return expect(convertDocument(file, null, catalog))
+        .to.be.fulfilled()
+        .then(() => {
+          expectLink(file, '../../../module-bar/the-page/', 'The Title')
+          expect(spyResult(catalog.getById)).to.eql({
+            component: 'component-foo',
+            version: 'v1.2.3',
+            module: 'module-bar',
+            family: 'page',
+            subpath: '',
+            basename: 'the-page.adoc',
+          })
+        })
+    })
+
+    it('to file in subpath with indexified URLs', () => {
+      indexify(file.pub)
+      setAsciiDocContents('xref:the-subpath/page-one/the-page.adoc[The Title]')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-foo/the-subpath/page-one/the-page/')
+      return expect(convertDocument(file, null, catalog))
+        .to.be.fulfilled()
+        .then(() => {
+          expectLink(file, 'the-page/', 'The Title')
+          expect(spyResult(catalog.getById)).to.eql({
+            component: 'component-foo',
+            version: 'v1.2.3',
+            module: 'module-foo',
+            family: 'page',
+            subpath: 'the-subpath/page-one',
+            basename: 'the-page.adoc',
+          })
+        })
+    })
+
+    it('to parent file with indexified URLs', () => {
+      indexify(file.pub)
+      setAsciiDocContents('xref:the-subpath.adoc[The Title]')
+      const catalog = mockCatalogWithUrl('/component-foo/v1.2.3/module-foo/the-subpath/')
+      return expect(convertDocument(file, null, catalog))
+        .to.be.fulfilled()
+        .then(() => {
+          expectLink(file, '../', 'The Title')
+          expect(spyResult(catalog.getById)).to.eql({
+            component: 'component-foo',
+            version: 'v1.2.3',
+            module: 'module-foo',
+            family: 'page',
+            subpath: '',
+            basename: 'the-subpath.adoc',
           })
         })
     })
