@@ -101,6 +101,6 @@ function convertPageRef (file, refSpec, content, catalog) {
 }
 
 function splitFirst (string, separator) {
-  const separatorIdx = string.indexOf('#')
+  const separatorIdx = string.indexOf(separator)
   return separatorIdx === -1 ? [string] : [string.slice(0, separatorIdx), string.slice(separatorIdx + 1)]
 }
