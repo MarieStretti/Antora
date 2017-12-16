@@ -2,6 +2,7 @@
 'use strict'
 
 const { expect } = require('../../../test/test-utils')
+
 const buildPlaybook = require('@antora/playbook-builder')
 const path = require('path')
 

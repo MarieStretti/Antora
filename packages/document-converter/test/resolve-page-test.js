@@ -2,6 +2,7 @@
 'use strict'
 
 const { expect, spy } = require('../../../test/test-utils')
+
 const resolvePage = require('@antora/document-converter/lib/resolve-page')
 
 describe('resolvePage', () => {

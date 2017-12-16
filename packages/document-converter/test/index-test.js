@@ -2,9 +2,9 @@
 'use strict'
 
 const { expect, spy } = require('../../../test/test-utils')
-const convertDocument = require('@antora/document-converter')
 
 const Buffer = require('buffer').Buffer
+const convertDocument = require('@antora/document-converter')
 
 // Due to how Opal works, we can't use ".to.have.been.called.with({})" on spies
 // as it causes the test hang indefinitely upon encountering a failure.  To

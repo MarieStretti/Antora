@@ -1,10 +1,11 @@
 /* eslint-env mocha */
 'use strict'
 
+const { expect } = require('../../../test/test-utils')
+
 const _ = require('lodash')
 const aggregateContent = require('@antora/content-aggregator')
 const del = require('del')
-const { expect } = require('../../../test/test-utils')
 const FixtureRepo = require('./repo-utils')
 const path = require('path')
 

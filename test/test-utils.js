@@ -1,5 +1,8 @@
 'use strict'
 
+// IMPORTANT nodegit must be loaded before asciidoctor.js or else promisify gets tripped up by Opal enhancements
+require('nodegit')
+
 const chai = require('chai')
 const expect = chai.expect
 

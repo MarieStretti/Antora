@@ -1,8 +1,9 @@
 /* eslint-env mocha */
 'use strict'
 
-const del = require('del')
 const { expect } = require('../../../test/test-utils')
+
+const del = require('del')
 const fs = require('fs')
 const http = require('http')
 const loadUi = require('@antora/ui-loader')

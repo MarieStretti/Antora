@@ -2,6 +2,7 @@
 'use strict'
 
 const { expect } = require('../../../test/test-utils')
+
 const parsePageId = require('@antora/document-converter/lib/parse-page-id')
 
 describe('parsePageId()', () => {

@@ -2,6 +2,7 @@
 'use strict'
 
 const { expect } = require('../../../test/test-utils')
+
 const classifyContent = require('@antora/content-classifier')
 const path = require('path')
 const mimeTypes = require('@antora/content-aggregator/lib/mime-types-with-asciidoc')
