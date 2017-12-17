@@ -23,17 +23,14 @@ const patchChai = (_, info) => {
 const uninterceptRequire = interceptRequire(patchChai)
 const chai = require('chai')
 uninterceptRequire()
-const expect = chai.expect
 
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
+chai.use(require('chai-as-promised'))
+chai.use(require('chai-spies-next'))
+// dirty-chai must be loaded after the other plugins
+// see https://github.com/prodatakey/dirty-chai#plugin-assertions
+chai.use(require('dirty-chai'))
 
-const spies = require('chai-spies-next')
-chai.use(spies)
-
-// this must be loaded after the other plugins
-// https://github.com/prodatakey/dirty-chai#plugin-assertions
-const dirtyChai = require('dirty-chai')
-chai.use(dirtyChai)
-
-module.exports = { expect, spy: chai.spy }
+module.exports = {
+  expect: chai.expect,
+  spy: chai.spy,
+}
