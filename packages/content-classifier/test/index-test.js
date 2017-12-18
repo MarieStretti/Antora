@@ -532,7 +532,7 @@ describe('classifyContent()', () => {
       expect(page.path).to.equal('modules/ROOT/pages/page-one.adoc')
     })
 
-    it('should return null if nothing is found', () => {
+    it('should return undefined if nothing is found', () => {
       const page = classifyContent(playbook, aggregate).getById({
         component: 'the-component',
         version: 'v1.2.3',
@@ -540,6 +540,44 @@ describe('classifyContent()', () => {
         family: 'page',
         subpath: '',
         basename: 'unknown-page.adoc',
+      })
+      expect(page).not.to.exist()
+    })
+  })
+
+  describe('getByPath()', () => {
+    beforeEach(() => {
+      aggregate = [
+        {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          files: [createFile('modules/ROOT/pages/_partials/tables/options.adoc')],
+        },
+      ]
+    })
+
+    it('should find file by path', () => {
+      const page = classifyContent(playbook, aggregate).getByPath({
+        component: 'the-component',
+        version: 'v1.2.3',
+        path: 'modules/ROOT/pages/_partials/tables/options.adoc',
+      })
+      expect(page.src).to.include({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'partial',
+        subpath: 'tables',
+        basename: 'options.adoc',
+      })
+    })
+
+    it('should return undefined if nothing is found', () => {
+      const page = classifyContent(playbook, aggregate).getByPath({
+        component: 'the-component',
+        version: 'v1.2.3',
+        path: 'modules/ROOT/pages/_partials/does-not-exist.adoc',
       })
       expect(page).not.to.exist()
     })

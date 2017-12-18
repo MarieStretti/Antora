@@ -33,6 +33,10 @@ class ContentCatalog {
     return this[$files][id]
   }
 
+  getByPath ({ component, version, path: path_ }) {
+    return _.find(this[$files], { path: path_, src: { component, version } })
+  }
+
   [$generateId] ({ component, version, module, family, subpath, basename }) {
     return `${family}/${version}@${component}:${module}:${subpath}${subpath ? '/' : ''}${basename}`
   }
@@ -180,7 +184,8 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
   return {
     url,
     absoluteUrl: siteUrl + url,
-    // Do we really need that?
+    // Q: do we really need root paths since they just match out?
+    moduleRootPath: out.moduleRootPath,
     rootPath: out.rootPath,
   }
 }

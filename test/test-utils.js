@@ -33,4 +33,8 @@ chai.use(require('dirty-chai'))
 module.exports = {
   expect: chai.expect,
   spy: chai.spy,
+  expectCalledWith: (observed, args, i = 0) =>
+    chai
+      .expect(observed.__spy.calls[i])
+      .to.eql(Array.isArray(args) ? args : [args], 'expected ' + observed + ' to have been called with args'),
 }

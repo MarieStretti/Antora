@@ -3,7 +3,7 @@
 
 const { expect } = require('../../../test/test-utils')
 
-const parsePageId = require('@antora/document-converter/lib/parse-page-id')
+const parsePageId = require('@antora/asciidoc-loader/lib/parse-page-id')
 
 describe('parsePageId()', () => {
   it('should return undefined if input does not match page ID syntax', () => {
@@ -20,7 +20,6 @@ describe('parsePageId()', () => {
       stem: 'the-page',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
@@ -34,7 +33,6 @@ describe('parsePageId()', () => {
       stem: 'the-page',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
@@ -46,7 +44,6 @@ describe('parsePageId()', () => {
       module: 'the-module',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
@@ -57,14 +54,12 @@ describe('parsePageId()', () => {
       module: 'ROOT',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
   it('should set subpath to blank if page is not in a topic folder', () => {
     const input = 'the-component:the-module:the-page.adoc'
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result.subpath).to.equal('')
   })
 
@@ -82,7 +77,6 @@ describe('parsePageId()', () => {
       basename: 'the-page.adoc',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
@@ -95,7 +89,6 @@ describe('parsePageId()', () => {
       stem: 'the-page',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
@@ -108,7 +101,6 @@ describe('parsePageId()', () => {
       stem: 'the-page',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
@@ -121,7 +113,6 @@ describe('parsePageId()', () => {
       stem: 'the-page',
     }
     const result = parsePageId(input)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 
@@ -139,7 +130,6 @@ describe('parsePageId()', () => {
       stem: 'the-page',
     }
     const result = parsePageId(inputSpec, inputCtx)
-    expect(result).to.not.be.undefined()
     expect(result).to.include(expected)
   })
 })
