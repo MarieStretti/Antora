@@ -251,6 +251,223 @@ include::does-not-resolve.adoc[]`
       expect(firstBlock.$lines()).to.eql(includeContents)
     })
 
+    it('should not apply tag filtering to include contents if tag attribute is empty', () => {
+      const includeContents = ['# tag::hello[]', 'puts "Hello, World!"', '# end::hello[]']
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tag=]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql(includeContents)
+    })
+
+    it('should not apply tag filtering to include contents if tags attribute is empty', () => {
+      const includeContents = ['# tag::hello[]', 'puts "Hello, World!"', '# end::hello[]']
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tags=]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql(includeContents)
+    })
+
+    it('should not apply tag filtering to include contents if tags attribute has empty values', () => {
+      const includeContents = ['# tag::hello[]', 'puts "Hello, World!"', '# end::hello[]']
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tags=;]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql(includeContents)
+    })
+
+    it('should apply tag filtering to include contents if tag is specified', () => {
+      const includeContents = ['# greet example', '# tag::hello[]', 'puts "Hello, World!"', '# end::hello[]']
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tag=hello]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql(includeContents.filter((l) => !l.startsWith('#')))
+    })
+
+    it('should match tag directives enclosed in circumfix comments', () => {
+      const includeContents = ['/* tag::header[] */', 'header { color: red; }', '/* end::header[] */']
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'theme.css',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,css]\n----\ninclude::{examplesdir}/theme.css[tag=header]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql(includeContents.filter((l) => !l.startsWith('/*')))
+    })
+
+    it('should apply tag filtering to include contents if negated tag is specified', () => {
+      const includeContents = ['# tag::hello[]', 'puts "Hello, World!"', '# end::hello[]']
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tag=!hello]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.be.empty()
+    })
+
+    it('should apply tag filtering to include contents if tags are specified', () => {
+      const includeContents = [
+        '# tag::hello[]',
+        'puts "Hello, World!"',
+        '# end::hello[]',
+        '# tag::goodbye[]',
+        'puts "Goodbye, World!"',
+        '# end::goodbye[]',
+      ]
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tags=hello;goodbye]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql(includeContents.filter((l) => !l.startsWith('#')))
+    })
+
+    it('should apply tag filtering to include contents if negated tags are specified', () => {
+      const includeContents = [
+        '# tag::hello[]',
+        'puts "Hello, World!"',
+        '# end::hello[]',
+        '# tag::goodbye[]',
+        'puts "Goodbye, World!"',
+        '# end::goodbye[]',
+      ]
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tags=*;!goodbye]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql(['puts "Hello, World!"'])
+    })
+
+    it('should include nested tags when applying tag filtering to include contents', () => {
+      const includeContents = [
+        '# tag::decl[]',
+        'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
+        '# end::decl[]',
+        '# tag::output[]',
+        '# tag::hello[]',
+        'puts msgs[:hello]',
+        '# end::hello[]',
+        '# tag::goodbye[]',
+        'puts msgs[:goodbye]',
+        '# end::goodbye[]',
+        '# end::output[]',
+      ]
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tags=decl;output;!hello]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql([
+        'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
+        'puts msgs[:goodbye]',
+      ])
+    })
+
+    it('should include all lines except for tag directives when tag wildcard is specified', () => {
+      const includeContents = [
+        'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
+        '# tag::hello[]',
+        'puts msgs[:hello]',
+        '# end::hello[]',
+        '# tag::goodbye[]',
+        'puts msgs[:goodbye]',
+        '# end::goodbye[]',
+      ]
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tags=**]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql([
+        'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
+        'puts msgs[:hello]',
+        'puts msgs[:goodbye]',
+      ])
+    })
+
+    it('should include lines outside of tags if tag wildcard is specified along with specific tags', () => {
+      const includeContents = [
+        'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
+        '# tag::hello[]',
+        'puts msgs[:hello]',
+        '# end::hello[]',
+        '# tag::goodbye[]',
+        'puts msgs[:goodbye]',
+        '# end::goodbye[]',
+      ]
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relativePath: 'ruby/greet.rb',
+        contents: includeContents.join('\n'),
+      })
+      populateFileContents('[source,ruby]\n----\ninclude::{examplesdir}/ruby/greet.rb[tags=**;!*;goodbye]\n----')
+      const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.context).to.equal('listing')
+      expect(firstBlock.$lines()).to.eql([
+        'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
+        'puts msgs[:goodbye]',
+      ])
+    })
+
     // TODO if we're going to support includes in nav files, we need a place for them to live?
     // TODO this test will be affected if we decide to set docdir attribute on document
     it('should read top-level include target relative to current file', () => {
