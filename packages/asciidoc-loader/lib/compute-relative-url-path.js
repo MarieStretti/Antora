@@ -3,19 +3,23 @@
 const path = require('path')
 
 /**
- * Compute the shortest relative path between two URLs, taking into account
- * directory index URLs and extensionless URLs.
+ * Compute the shortest relative path between two URLs.
  *
- * This function assumes it is working with root-relative URLs. It does not
- * consider qualified URLs with different hosts.
+ * This function takes into account directory index URLs and extensionless
+ * URLs. It assumes it's working with root-relative URLs, not qualified URLs
+ * with potentially different hosts.
  *
- * @param {String} from - the root-relative start URL.
- * @param {String} to - the root-relative target URL.
+ * @memberOf module:asciidoc-loader
  *
- * @return {String} - the shortest relative path to travel from the start URL to the target URL.
+ * @param {String} from - The root-relative start URL.
+ * @param {String} to - The root-relative target URL.
+ *
+ * @returns {String} The shortest relative path to travel from the start URL to the target URL.
  */
-module.exports = (from, to) => {
+function computeRelativeUrlPath (from, to) {
   const fromDir = from.endsWith('/') ? from.slice(0, -1) : path.dirname(from)
-  // NOTE use _ as a placeholder to preserve trailing slash of a directory index
+  // NOTE temporarily append _ to preserve the trailing slash of a directory index
   return to.endsWith('/') ? path.relative(fromDir, to + '_').slice(0, -1) : path.relative(fromDir, to)
 }
+
+module.exports = computeRelativeUrlPath

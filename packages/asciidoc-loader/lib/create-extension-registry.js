@@ -5,7 +5,18 @@ const LINE_DELIMITER_RX = /\r\n?|\n/
 const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
 const CIRCUMFIX_COMMENT_SUFFIX_RX = new RegExp(' (?:\\*[/)]|--%?>)$')
 
-module.exports = (asciidoctor, callbacks) => {
+/**
+ * Create an extension registry instance that handles the include directive to work with Antora.
+ *
+ * @memberOf module:asciidoc-loader
+ *
+ * @param {Asciidoctor} asciidoctor - Asciidoctor API.
+ * @param {Object} callbacks - Callback functions.
+ * @param {Function} callbacks.onInclude - A function that resolves the target of an include.
+ *
+ * @returns {Registry} An instance of Asciidoctor's extension registry.
+ */
+function createExtensionRegistry (asciidoctor, callbacks) {
   const registry = asciidoctor.Extensions.create()
   registry.includeProcessor(function () {
     this.handles((target) => !!callbacks.onInclude)
@@ -25,28 +36,26 @@ module.exports = (asciidoctor, callbacks) => {
 
 function getTags (attrs) {
   if (attrs['$key?']('tag')) {
-    const tagSpec = attrs['$[]']('tag')
-    if (tagSpec && tagSpec !== '!') {
-      return tagSpec.startsWith('!') ? { [tagSpec.substr(1)]: false } : { [tagSpec]: true }
+    const tag = attrs['$[]']('tag')
+    if (tag && tag !== '!') {
+      return tag.startsWith('!') ? { [tag.substr(1)]: false } : { [tag]: true }
     }
   } else if (attrs['$key?']('tags')) {
-    const tagsSpec = attrs['$[]']('tags')
-    let tags = {}
-    let hasTags = false
-    if (tagsSpec) {
-      tagsSpec.split(TAG_DELIMITER_RX).forEach((tagSpec) => {
-        if (tagSpec && tagSpec !== '!') {
-          hasTags = true
-          if (tagSpec.startsWith('!')) {
-            tags[tagSpec.substr(1)] = false
+    const tags = attrs['$[]']('tags')
+    if (tags) {
+      let result = {}
+      let any = false
+      tags.split(TAG_DELIMITER_RX).forEach((tag) => {
+        if (tag && tag !== '!') {
+          any = true
+          if (tag.startsWith('!')) {
+            result[tag.substr(1)] = false
           } else {
-            tags[tagSpec] = true
+            result[tag] = true
           }
         }
       })
-      if (hasTags) {
-        return tags
-      }
+      if (any) return result
     }
   }
 }
@@ -91,13 +100,7 @@ function filterByTags (contents, tags) {
       if (m[1]) {
         if (thisTag === activeTag) {
           tagStack.shift()
-          if (tagStack.length) {
-            activeTag = tagStack[0][0]
-            selecting = tagStack[0][1]
-          } else {
-            activeTag = undefined
-            selecting = selectingDefault
-          }
+          ;[activeTag, selecting] = tagStack.length ? tagStack[0] : [undefined, selectingDefault]
         } else if (thisTag in tags) {
           const idx = tagStack.findIndex(([name]) => name === thisTag)
           if (idx !== -1) {
@@ -116,14 +119,16 @@ function filterByTags (contents, tags) {
         tagStack.unshift([(activeTag = thisTag), selecting])
       }
     } else if (selecting) {
-      // record line where we started selecting
       if (!startLineNum) startLineNum = lineNum
       lines.push(line)
     }
   })
+  // Q: use _.difference(Object.keys(tags), usedTags)?
   //const missingTags = Object.keys(tags).filter((e) => !usedTags.includes(e))
   //if (missingTags.length) {
   //  console.log(`tag${missingTags.length > 1 ? 's' : ''} '${missingTags.join(',')}' not found in include`)
   //}
   return [lines, startLineNum || 1]
 }
+
+module.exports = createExtensionRegistry

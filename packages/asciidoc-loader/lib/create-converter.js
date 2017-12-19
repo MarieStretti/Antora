@@ -2,9 +2,9 @@
 
 const $pageRefCallback = Symbol('pageRefCallback')
 
-const ConverterExtensions = ((Opal) => {
+const XrefConverterExtension = ((Opal) => {
   // TODO nest module in Antora module
-  const module = Opal.module(undefined, 'ConverterExtensions')
+  const module = Opal.module(undefined, 'XrefConverterExtension')
   Opal.defn(module, '$inline_anchor', function inlineAnchor (node) {
     if (node.getType() === 'xref') {
       // NOTE refid is undefined if document is self-referencing
@@ -26,11 +26,26 @@ const ConverterExtensions = ((Opal) => {
   return module
 })(global.Opal)
 
-const getConverterFactory = (asciidoctor) => asciidoctor.$$const.Converter.$$const.Factory.$default(false)
-
-module.exports = (asciidoctor, callbacks) => {
+/**
+ * Creates an HTML5 converter instance with Antora enhancements.
+ *
+ * @memberOf module:asciidoc-loader
+ *
+ * @param {Asciidoctor} asciidoctor - Asciidoctor API.
+ * @param {Object} callbacks - Callback functions.
+ * @param {Function} callbacks.onPageRef - A function that converts a page reference.
+ *
+ * @returns {Converter} An enhanced instance of Asciidoctor's HTML5 converter.
+ */
+function createConverter (asciidoctor, callbacks) {
   const converter = getConverterFactory(asciidoctor).$create('html5')
-  converter.$extend(ConverterExtensions)
+  converter.$extend(XrefConverterExtension)
   converter.$on_page_ref(callbacks.onPageRef)
   return converter
 }
+
+function getConverterFactory (asciidoctor) {
+  return asciidoctor.$$const.Converter.$$const.Factory.$default(false)
+}
+
+module.exports = createConverter

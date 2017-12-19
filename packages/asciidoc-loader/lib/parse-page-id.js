@@ -15,12 +15,15 @@ const PAGE_ID_RXG = { version: 1, component: 2, module: 3, subpath: 4, stem: 5 }
  * * If a component is specified, but not a version, the version defaults to master.
  * * If a component is specified, but not a module, the module defaults to ROOT.
  *
- * @param {String} spec - the contextual page ID spec (e.g., version@component:module:topic/page w/ optional .adoc ext)
- * @param {Object} ctx - the src context (optional)
+ * @memberOf module:asciidoc-loader
  *
- * @return {Object} - the resolved file src object for this contextual page ID
+ * @param {String} spec - The contextual page ID spec (e.g.,
+ *   version@component:module:topic/page followed by optional .adoc ext).
+ * @param {Object} [ctx={}] - The src context.
+ *
+ * @returns {Object} The resolved file src object for this contextual page ID.
  */
-module.exports = (spec, ctx = {}) => {
+function parsePageId (spec, ctx = {}) {
   const match = spec.match(PAGE_ID_RX)
   if (!match) return
 
@@ -50,3 +53,5 @@ module.exports = (spec, ctx = {}) => {
     extname: '.adoc',
   }
 }
+
+module.exports = parsePageId
