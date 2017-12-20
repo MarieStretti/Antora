@@ -3,7 +3,7 @@
 
 const { expect } = require('../../../test/test-utils')
 
-const parsePageId = require('@antora/asciidoc-loader/lib/parse-page-id')
+const parsePageId = require('@antora/asciidoc-loader/lib/xref/parse-page-id')
 
 describe('parsePageId()', () => {
   it('should return undefined if input does not match page ID syntax', () => {

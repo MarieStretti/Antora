@@ -3,7 +3,7 @@
 
 const { expect, spy } = require('../../../test/test-utils')
 
-const resolvePage = require('@antora/asciidoc-loader/lib/resolve-page')
+const resolvePage = require('@antora/asciidoc-loader/lib/xref/resolve-page')
 
 describe('resolvePage', () => {
   const mockContentCatalog = (file) => ({

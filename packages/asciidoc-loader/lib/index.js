@@ -8,9 +8,9 @@
 const asciidoctor = require('asciidoctor.js')()
 const createConverter = require('./create-converter')
 const createExtensionRegistry = require('./create-extension-registry')
-const computeRelativeUrlPath = require('./compute-relative-url-path')
+const computeRelativeUrlPath = require('./util/compute-relative-url-path')
 const path = require('path')
-const resolvePage = require('./resolve-page')
+const resolvePage = require('./xref/resolve-page')
 
 const EXAMPLES_DIR_PROXY = 'example$'
 const PARTIALS_DIR_PROXY = 'partial$'
