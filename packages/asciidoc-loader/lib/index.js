@@ -53,8 +53,8 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined) {
     docfile: file.path,
     // Q: should docfilesuffix be file.extname instead?
     docfilesuffix: file.src.extname,
-    imagesdir: file.out.moduleRootPath + '/_images',
-    attachmentsdir: file.out.moduleRootPath + '/_attachments',
+    imagesdir: file.pub.moduleRootPath + '/_images',
+    attachmentsdir: file.pub.moduleRootPath + '/_attachments',
     examplesdir: EXAMPLES_DIR_PROXY,
     partialsdir: PARTIALS_DIR_PROXY,
   }

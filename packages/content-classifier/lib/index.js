@@ -12,7 +12,7 @@ class ContentCatalog {
   }
 
   getFiles () {
-    return _.values(this[$files])
+    return Object.values(this[$files])
   }
 
   addFile (file) {
@@ -184,7 +184,7 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
   return {
     url,
     absoluteUrl: siteUrl + url,
-    // Q: do we really need root paths since they just match out?
+    // Q: do we need root paths since they just match values on out?
     moduleRootPath: out.moduleRootPath,
     rootPath: out.rootPath,
   }

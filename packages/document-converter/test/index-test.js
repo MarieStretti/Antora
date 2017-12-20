@@ -23,11 +23,9 @@ describe('convertDocument()', () => {
         stem: 'page-a',
         extname: '.adoc',
       },
-      out: {
-        moduleRootPath: '..',
-      },
       pub: {
         url: '/component-a/1.2.3/module-a/page-a.html',
+        moduleRootPath: '..',
         rootPath: '../../..',
       },
     }
@@ -86,7 +84,7 @@ article contents`
         expect(attrs).to.include({
           docfile: inputFile.path,
           env: 'site',
-          imagesdir: inputFile.out.moduleRootPath + '/_images',
+          imagesdir: inputFile.pub.moduleRootPath + '/_images',
           keywords: 'CSS, flexbox, layout, box model',
         })
       })

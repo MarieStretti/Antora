@@ -76,11 +76,9 @@ describe('loadAsciiDoc()', () => {
         stem: 'page-a',
         extname: '.adoc',
       },
-      out: {
-        moduleRootPath: '..',
-      },
       pub: {
         url: '/component-a/1.2.3/module-a/page-a.html',
+        moduleRootPath: '..',
         rootPath: '../../..',
       },
     }
@@ -568,7 +566,7 @@ include::does-not-resolve.adoc[]`
       const replace = `/${topic}/page-a.`
       inputFile.path = inputFile.path.replace(search, replace)
       inputFile.src.subpath = topic
-      inputFile.out.moduleRootPath += '/..'
+      inputFile.pub.moduleRootPath += '/..'
       inputFile.pub.url = inputFile.pub.url.replace(search, replace)
       inputFile.pub.rootPath += '/..'
     }

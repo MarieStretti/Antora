@@ -232,6 +232,7 @@ describe('classifyContent()', () => {
       expect(files[0].pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-subpath/page-one.html',
         absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-subpath/page-one.html',
+        moduleRootPath: '..',
         rootPath: '../../../..',
       })
     })
@@ -348,6 +349,7 @@ describe('classifyContent()', () => {
       expect(files[0].pub).to.include({
         url: '/the-component/v1.2.3/the-module/_images/foo.png',
         absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/_images/foo.png',
+        moduleRootPath: '..',
         rootPath: '../../../..',
       })
     })
@@ -366,6 +368,7 @@ describe('classifyContent()', () => {
       expect(files[0].pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-subpath/page-one',
         absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-subpath/page-one',
+        moduleRootPath: '..',
         rootPath: '../../../..',
       })
     })
@@ -384,6 +387,7 @@ describe('classifyContent()', () => {
       expect(files[0].pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-subpath/',
         absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-subpath/',
+        moduleRootPath: '..',
         rootPath: '../../../..',
       })
     })
@@ -402,6 +406,7 @@ describe('classifyContent()', () => {
       expect(files[0].pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-subpath/page-one/',
         absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-subpath/page-one/',
+        moduleRootPath: '../..',
         rootPath: '../../../../..',
       })
     })
@@ -420,6 +425,7 @@ describe('classifyContent()', () => {
       expect(files[0].pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-subpath/',
         absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-subpath/',
+        moduleRootPath: '..',
         rootPath: '../../../..',
       })
     })
