@@ -1,7 +1,7 @@
 'use strict'
 
 const CIRCUMFIX_COMMENT_SUFFIX_RX = new RegExp(' (?:\\*[/)]|--%?>)$')
-const LINE_DELIMITER_RX = /\r\n?|\n/
+const NEWLINE_RX = /\r\n?|\n/
 const TAG_DELIMITER_RX = /[,;]/
 const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
 
@@ -72,7 +72,7 @@ function filterByTags (contents, tags) {
   let activeTag
   let lineNum = 0
   let startLineNum
-  contents.split(LINE_DELIMITER_RX).forEach((line) => {
+  contents.split(NEWLINE_RX).forEach((line) => {
     lineNum += 1
     let m
     let l = line
@@ -92,10 +92,10 @@ function filterByTags (contents, tags) {
           const idx = tagStack.findIndex(([name]) => name === thisTag)
           if (idx !== -1) {
             tagStack.splice(idx, 1)
-            //console.log(`line ${lineNum}: mismatched end tag in include: expected ${activeTag}, found ${thisTag}`)
+            //console.warn(`line ${lineNum}: mismatched end tag in include: expected ${activeTag}, found ${thisTag}`)
           }
           //} else {
-          //  //console.log(`line ${lineNum}: unexpected end tag in include: ${thisTag}`)
+          //  //console.warn(`line ${lineNum}: unexpected end tag in include: ${thisTag}`)
           //}
         }
       } else if (thisTag in tags) {
@@ -113,7 +113,7 @@ function filterByTags (contents, tags) {
   // Q: use _.difference(Object.keys(tags), usedTags)?
   //const missingTags = Object.keys(tags).filter((e) => !usedTags.includes(e))
   //if (missingTags.length) {
-  //  console.log(`tag${missingTags.length > 1 ? 's' : ''} '${missingTags.join(',')}' not found in include`)
+  //  console.warn(`tag${missingTags.length > 1 ? 's' : ''} '${missingTags.join(',')}' not found in include`)
   //}
   return [lines, startLineNum || 1]
 }
