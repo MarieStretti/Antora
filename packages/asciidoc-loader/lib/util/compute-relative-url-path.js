@@ -3,7 +3,7 @@
 const path = require('path')
 
 /**
- * Compute the shortest relative path between two URLs.
+ * Computes the shortest relative path between two URLs.
  *
  * This function takes into account directory index URLs and extensionless
  * URLs. It assumes it's working with root-relative URLs, not qualified URLs

@@ -1,9 +1,9 @@
 'use strict'
 
-const TAG_DELIMITER_RX = /[,;]/
-const LINE_DELIMITER_RX = /\r\n?|\n/
-const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
 const CIRCUMFIX_COMMENT_SUFFIX_RX = new RegExp(' (?:\\*[/)]|--%?>)$')
+const LINE_DELIMITER_RX = /\r\n?|\n/
+const TAG_DELIMITER_RX = /[,;]/
+const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
 
 function createIncludeProcessor (callback) {
   return function () {

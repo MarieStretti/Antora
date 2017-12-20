@@ -2,7 +2,7 @@
 
 const $pageRefCallback = Symbol('pageRefCallback')
 
-const XrefConverterExtension = ((Opal) => {
+const XrefConverterExtension = (() => {
   // TODO nest module in Antora module
   const module = Opal.module(undefined, 'XrefConverterExtension')
   Opal.defn(module, '$inline_anchor', function inlineAnchor (node) {
@@ -24,6 +24,6 @@ const XrefConverterExtension = ((Opal) => {
     this[$pageRefCallback] = callback
   })
   return module
-})(global.Opal)
+})()
 
 module.exports = XrefConverterExtension
