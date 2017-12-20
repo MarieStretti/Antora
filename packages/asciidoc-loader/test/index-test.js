@@ -37,6 +37,7 @@ describe('loadAsciiDoc()', () => {
       const componentRelativePath = path.join('modules', module, familyDirs[family], relativePath)
       const entry = {
         path: componentRelativePath,
+        dirname: path.dirname(componentRelativePath),
         contents: Buffer.from(contents),
         src: {
           basename: path.basename(relativePath),
@@ -67,6 +68,7 @@ describe('loadAsciiDoc()', () => {
   beforeEach(() => {
     inputFile = {
       path: 'modules/module-a/pages/page-a.adoc',
+      dirname: 'modules/module-a/pages',
       src: {
         component: 'component-a',
         version: '1.2.3',
@@ -84,7 +86,7 @@ describe('loadAsciiDoc()', () => {
     }
   })
 
-  it('should load document model from basic AsciiDoc contents', () => {
+  it('should load document model from AsciiDoc contents', () => {
     const contents = `= Document Title
 
 == Section Title
@@ -118,6 +120,7 @@ include::does-not-resolve.adoc[]`
     it('should set correct integration attributes on document', () => {
       populateFileContents('= Document Title')
       const doc = loadAsciiDoc(inputFile)
+      expect(doc.getBaseDir()).to.equal('modules/module-a/pages')
       expect(doc.getAttributes()).to.include({
         // env
         env: 'site',
@@ -132,6 +135,7 @@ include::does-not-resolve.adoc[]`
         // built-in
         docname: 'page-a',
         docfile: 'modules/module-a/pages/page-a.adoc',
+        docdir: doc.getBaseDir(),
         docfilesuffix: '.adoc',
         imagesdir: '../_images',
         attachmentsdir: '../_attachments',

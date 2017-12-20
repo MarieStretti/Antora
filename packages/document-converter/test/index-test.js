@@ -13,6 +13,7 @@ describe('convertDocument()', () => {
   beforeEach(() => {
     inputFile = {
       path: 'modules/module-a/pages/page-a.adoc',
+      dirname: 'modules/module-a/pages',
       src: {
         component: 'component-a',
         version: '1.2.3',
@@ -115,6 +116,7 @@ Get there in a flash with {product-name}.`
     inputFile.contents = Buffer.from(inputFileContents)
     const targetFile = {
       path: 'modules/module-b/page-b.adoc',
+      dirname: 'modules/module-b',
       src: {
         basename: 'page-b.adoc',
       },
@@ -143,6 +145,7 @@ Get there in a flash with {product-name}.`
     inputFile.contents = Buffer.from(inputFileContents)
     const partialFile = {
       path: 'modules/module-a/pages/_partials/definitions.adoc',
+      dirname: 'modules/module-a/pages/_partials',
       contents: Buffer.from(`cloud: someone else's computer`),
       src: {
         component: 'component-a',

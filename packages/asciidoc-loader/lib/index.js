@@ -51,6 +51,9 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined) {
   const builtinAttrs = {
     docname: file.src.stem,
     docfile: file.path,
+    // NOTE docdir implicitly sets base_dir on document
+    // NOTE Opal only expands to absolute path if value begins with ./
+    docdir: file.dirname,
     // Q: should docfilesuffix be file.extname instead?
     docfilesuffix: file.src.extname,
     imagesdir: file.pub.moduleRootPath + '/_images',
@@ -98,12 +101,10 @@ function resolveIncludeFile (target, file, cursor, contentCatalog) {
       basename: targetPathParts.base,
     })
   } else {
-    // NOTE if cursor.dir is absolute, this is a top-level include
-    const basedir = path.isAbsolute(cursor.dir) ? path.dirname(file.path) : cursor.dir
     resolvedIncludeFile = contentCatalog.getByPath({
       component: file.src.component,
       version: file.src.version,
-      path: path.join(basedir, targetPath),
+      path: path.join(cursor.dir, targetPath),
     })
   }
 
