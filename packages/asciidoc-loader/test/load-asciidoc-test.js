@@ -26,7 +26,7 @@ describe('loadAsciiDoc()', () => {
     const indentRx = /^ +/
     const indentLen = Math.min(...lines.filter((l) => l.startsWith(' ')).map((l) => l.match(indentRx)[0].length))
     if (indentLen) {
-      return lines.map((l) => l.startsWith(' ') ? l.substr(indentLen) : l).join('')
+      return lines.map((l) => (l.startsWith(' ') ? l.substr(indentLen) : l)).join('')
     } else {
       return lines.join('')
     }
