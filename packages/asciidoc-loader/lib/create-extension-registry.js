@@ -1,6 +1,6 @@
 'use strict'
 
-const createIncludeProcessor = require('./include/create-include-processor')
+const IncludeProcessor = require('./include/include-processor')
 
 /**
  * Creates an extension registry instance that provides extensions to integrate AsciiDoc into Antora.
@@ -18,7 +18,7 @@ const createIncludeProcessor = require('./include/create-include-processor')
  */
 function createExtensionRegistry (asciidoctor, callbacks) {
   const registry = asciidoctor.Extensions.create()
-  registry.includeProcessor(createIncludeProcessor(callbacks.onInclude))
+  registry.$include_processor(IncludeProcessor.$new(callbacks.onInclude))
   return registry
 }
 

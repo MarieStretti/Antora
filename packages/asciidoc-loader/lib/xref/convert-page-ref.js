@@ -1,7 +1,6 @@
 'use strict'
 
 const computeRelativeUrlPath = require('../util/compute-relative-url-path')
-const Opal = global.Opal
 const resolvePage = require('./resolve-page')
 const splitOnce = require('../util/split-once')
 

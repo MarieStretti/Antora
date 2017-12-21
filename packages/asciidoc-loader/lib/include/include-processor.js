@@ -1,25 +1,35 @@
 'use strict'
 
+const Opal = global.Opal
+
 const CIRCUMFIX_COMMENT_SUFFIX_RX = new RegExp(' (?:\\*[/)]|--%?>)$')
 const NEWLINE_RX = /\r\n?|\n/
 const TAG_DELIMITER_RX = /[,;]/
 const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
 
-function createIncludeProcessor (callback) {
-  return function () {
-    this.handles((target) => !!callback)
-    this.process((doc, reader, target, attrs) => {
-      const resolvedFile = callback(doc, target, doc.reader.getCursor())
-      if (resolvedFile) {
-        let contents = resolvedFile.contents
-        let startLineNum = 1
-        const tags = getTags(attrs)
-        if (tags) [contents, startLineNum] = filterByTags(contents, tags)
-        reader.pushInclude(contents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
-      }
-    })
-  }
-}
+const IncludeProcessor = (() => {
+  const $callback = Symbol('callback')
+  const superclass = Opal.module(null, 'Asciidoctor').$$const.Extensions.$$const.IncludeProcessor
+  const scope = Opal.klass(Opal.module(null, 'Antora'), superclass, 'IncludeProcessor', function () {})
+
+  Opal.defn(scope, '$initialize', function initialize (callback) {
+    Opal.send(this, Opal.find_super_dispatcher(this, 'initialize', initialize))
+    this[$callback] = callback
+  })
+
+  Opal.defn(scope, '$process', function (doc, reader, target, attrs) {
+    const resolvedFile = this[$callback](doc, target, doc.reader.getCursor())
+    if (resolvedFile) {
+      let contents = resolvedFile.contents
+      let startLineNum = 1
+      const tags = getTags(attrs)
+      if (tags) [contents, startLineNum] = applyTagFiltering(contents, tags)
+      reader.pushInclude(contents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
+    }
+  })
+
+  return scope
+})()
 
 function getTags (attrs) {
   if (attrs['$key?']('tag')) {
@@ -47,7 +57,7 @@ function getTags (attrs) {
   }
 }
 
-function filterByTags (contents, tags) {
+function applyTagFiltering (contents, tags) {
   let selecting, selectingDefault, wildcard
   if ('**' in tags) {
     if ('*' in tags) {
@@ -118,4 +128,4 @@ function filterByTags (contents, tags) {
   return [lines, startLineNum || 1]
 }
 
-module.exports = createIncludeProcessor
+module.exports = IncludeProcessor

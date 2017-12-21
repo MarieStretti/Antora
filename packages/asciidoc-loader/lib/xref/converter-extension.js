@@ -22,7 +22,7 @@ const ConverterExtension = (() => {
         }
       }
     }
-    return Opal.send(this, Opal.find_super_dispatcher(this, 'inline_anchor', inlineAnchor), [node], null)
+    return Opal.send(this, Opal.find_super_dispatcher(this, 'inline_anchor', inlineAnchor), [node])
   })
   Opal.defn(scope, '$on_page_ref', function (callback) {
     this[$pageRefCallback] = callback
