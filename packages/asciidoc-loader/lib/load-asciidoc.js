@@ -37,6 +37,7 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined) {
   }
   const defaultAttrs = {
     'attribute-missing': 'warn',
+    'data-uri': null,
     icons: 'font',
     sectanchors: '',
     'source-highlighter': 'highlight.js',
