@@ -22,7 +22,7 @@ class UiCatalog {
   }
 
   getFiles () {
-    return _.values(this[$files])
+    return Object.values(this[$files])
   }
 
   addFile (file) {

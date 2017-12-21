@@ -12,7 +12,7 @@ class ContentCatalog {
   }
 
   getFiles () {
-    return _.values(this[$files])
+    return Object.values(this[$files])
   }
 
   addFile (file) {
@@ -31,6 +31,10 @@ class ContentCatalog {
   getById ({ component, version, module, family, subpath, basename }) {
     const id = this[$generateId]({ component, version, module, family, subpath, basename })
     return this[$files][id]
+  }
+
+  getByPath ({ component, version, path: path_ }) {
+    return _.find(this[$files], { path: path_, src: { component, version } })
   }
 
   [$generateId] ({ component, version, module, family, subpath, basename }) {
@@ -180,7 +184,8 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
   return {
     url,
     absoluteUrl: siteUrl + url,
-    // Do we really need that?
+    // Q: do we need root paths since they just match values on out?
+    moduleRootPath: out.moduleRootPath,
     rootPath: out.rootPath,
   }
 }

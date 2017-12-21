@@ -3,23 +3,21 @@
 
 const { expect, spy } = require('../../../test/test-utils')
 
-const resolvePage = require('@antora/document-converter/lib/resolve-page')
+const resolvePage = require('@antora/asciidoc-loader/lib/xref/resolve-page')
 
 describe('resolvePage', () => {
-  function mockCatalogWithFile (file) {
-    return {
-      getById: spy(() => file),
-    }
-  }
+  const mockContentCatalog = (file) => ({
+    getById: spy(() => file),
+  })
 
   it('should throw error if page ID string has invalid syntax', () => {
-    const catalog = mockCatalogWithFile()
-    expect(() => resolvePage('component-foo::', catalog)).to.throw()
-    expect(catalog.getById).to.not.have.been.called()
+    const contentCatalog = mockContentCatalog()
+    expect(() => resolvePage('component-foo::', contentCatalog)).to.throw()
+    expect(contentCatalog.getById).to.not.have.been.called()
   })
 
   it('should return undefined page in result if file not found in catalog', () => {
-    const catalog = mockCatalogWithFile()
+    const contentCatalog = mockContentCatalog()
     const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
     const targetPageId = {
       component: 'the-component',
@@ -29,8 +27,8 @@ describe('resolvePage', () => {
       subpath: '',
       basename: 'the-page.adoc',
     }
-    const result = resolvePage(targetPageIdSpec, catalog)
-    expect(catalog.getById).to.have.been.called.with(targetPageId)
+    const result = resolvePage(targetPageIdSpec, contentCatalog)
+    expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
     expect(result).to.be.undefined()
   })
 
@@ -47,7 +45,7 @@ describe('resolvePage', () => {
         extname: '.adoc',
       },
     }
-    const catalog = mockCatalogWithFile(targetFile)
+    const contentCatalog = mockContentCatalog(targetFile)
     const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
     const targetPageId = {
       component: 'the-component',
@@ -57,8 +55,8 @@ describe('resolvePage', () => {
       subpath: '',
       basename: 'the-page.adoc',
     }
-    const result = resolvePage(targetPageIdSpec, catalog)
-    expect(catalog.getById).to.have.been.called.with(targetPageId)
+    const result = resolvePage(targetPageIdSpec, contentCatalog)
+    expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
     expect(result).to.equal(targetFile)
   })
 
@@ -85,7 +83,7 @@ describe('resolvePage', () => {
         extname: '.adoc',
       },
     }
-    const catalog = mockCatalogWithFile(targetFile)
+    const contentCatalog = mockContentCatalog(targetFile)
     const targetPageIdSpec = 'target-page.adoc'
     const targetPageId = {
       component: 'current-component',
@@ -95,8 +93,8 @@ describe('resolvePage', () => {
       subpath: '',
       basename: 'target-page.adoc',
     }
-    const result = resolvePage(targetPageIdSpec, catalog, context)
-    expect(catalog.getById).to.have.been.called.with(targetPageId)
+    const result = resolvePage(targetPageIdSpec, contentCatalog, context)
+    expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
     expect(result).to.equal(targetFile)
   })
 })

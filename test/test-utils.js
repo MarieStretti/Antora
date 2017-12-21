@@ -33,4 +33,19 @@ chai.use(require('dirty-chai'))
 module.exports = {
   expect: chai.expect,
   spy: chai.spy,
+  expectCalledWith: (observed, args, i = 0) =>
+    chai
+      .expect(observed.__spy.calls[i])
+      .to.eql(Array.isArray(args) ? args : [args], 'expected ' + observed + ' to have been called with args'),
+  heredoc: ([str]) => {
+    const lines = str.trimRight().split(/^/m)
+    if (lines.length > 1) {
+      if (lines[0] === '\n') lines.shift()
+    } else {
+      return str
+    }
+    const indentRx = /^ +/
+    const indentSize = Math.min(...lines.filter((l) => l.startsWith(' ')).map((l) => l.match(indentRx)[0].length))
+    return (indentSize ? lines.map((l) => (l.startsWith(' ') ? l.substr(indentSize) : l)) : lines).join('')
+  },
 }
