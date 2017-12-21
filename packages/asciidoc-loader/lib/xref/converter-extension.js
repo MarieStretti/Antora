@@ -1,30 +1,33 @@
 'use strict'
 
 const $pageRefCallback = Symbol('pageRefCallback')
-const opal = global.Opal
+const Opal = global.Opal
+const Inline = Opal.const_get_local(Opal.module(null, 'Asciidoctor'), 'Inline')
 
-const XrefConverterExtension = (() => {
-  // TODO nest module in Antora module
-  const module = opal.module(undefined, 'XrefConverterExtension')
-  opal.defn(module, '$inline_anchor', function inlineAnchor (node) {
+const ConverterExtension = (() => {
+  const scope = Opal.module(Opal.module(null, 'Antora'), 'ConverterExtension')
+  Opal.defn(scope, '$inline_anchor', function inlineAnchor (node) {
     if (node.getType() === 'xref') {
-      // NOTE refid is undefined if document is self-referencing
       let refSpec = node.getAttribute('refid')
       if (
         node.getAttribute('path') ||
+        // NOTE refSpec is undefined if inter-document xref refers to current docname and fragment is empty
         (refSpec && refSpec.endsWith('.adoc') && (refSpec = refSpec.slice(0, -5)) !== undefined)
       ) {
-        const content = node.getText()
         const callback = this[$pageRefCallback]
-        if (callback) return callback(refSpec, content === undefined ? refSpec : content)
+        if (callback) {
+          const { content, target } = callback(refSpec, node.getText())
+          // TODO pass attributes (e.g., id, role) once core parses them
+          node = Inline.$new(node.parent, 'anchor', content, Opal.hash({ type: 'link', target }))
+        }
       }
     }
-    return opal.send(this, opal.find_super_dispatcher(this, 'inline_anchor', inlineAnchor), [node], null)
+    return Opal.send(this, Opal.find_super_dispatcher(this, 'inline_anchor', inlineAnchor), [node], null)
   })
-  opal.defn(module, '$on_page_ref', function (callback) {
+  Opal.defn(scope, '$on_page_ref', function (callback) {
     this[$pageRefCallback] = callback
   })
-  return module
+  return scope
 })()
 
-module.exports = XrefConverterExtension
+module.exports = ConverterExtension

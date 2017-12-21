@@ -1,6 +1,6 @@
 'use strict'
 
-const XrefConverterExtension = require('./xref/converter-extension')
+const ConverterExtension = require('./xref/converter-extension')
 
 /**
  * Creates an HTML5 converter instance with Antora enhancements.
@@ -15,7 +15,7 @@ const XrefConverterExtension = require('./xref/converter-extension')
  */
 function createConverter (asciidoctor, callbacks) {
   const converter = getConverterFactory(asciidoctor).$create('html5')
-  converter.$extend(XrefConverterExtension)
+  converter.$extend(ConverterExtension)
   converter.$on_page_ref(callbacks.onPageRef)
   return converter
 }

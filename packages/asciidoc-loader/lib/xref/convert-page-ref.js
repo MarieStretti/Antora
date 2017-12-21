@@ -1,6 +1,7 @@
 'use strict'
 
 const computeRelativeUrlPath = require('../util/compute-relative-url-path')
+const Opal = global.Opal
 const resolvePage = require('./resolve-page')
 const splitOnce = require('../util/split-once')
 
@@ -14,11 +15,10 @@ const splitOnce = require('../util/split-once')
  * @memberOf module:asciidoc-loader
  *
  * @param {String} refSpec - The target of the xref macro that specifies a page reference.
- * @param {String} content - The content (i.e., formatted text) of the link.
+ * @param {String} content - The content (i.e., formatted text) of the link (undefined if not specified).
  * @param {File} currentPage - The virtual file for the current page.
  * @param {ContentCatalog} catalog - The content catalog that contains the virtual files in the site.
- * @returns {String} An HTML link for this page reference, falling back to a self-referencing link
- *   that shows the spec string if the file cannot be resolved in the catalog.
+ * @returns {Object} A map ({ content, target }) with the resolved content and target to make an HTML link.
  */
 function convertPageRef (refSpec, content, currentPage, catalog) {
   let targetPage
@@ -26,17 +26,18 @@ function convertPageRef (refSpec, content, currentPage, catalog) {
   try {
     if (!(targetPage = resolvePage(pageIdSpec, catalog, currentPage.src))) {
       // TODO log "Unresolved page ID"
-      return `<a href="#">${pageIdSpec}.adoc${fragment ? '#' + fragment : ''}</a>`
+      return { content: `${pageIdSpec}.adoc${fragment ? '#' + fragment : ''}`, target: '#' }
     }
   } catch (e) {
     // TODO log "Invalid page ID syntax" (or e.message)
-    return `<a href="#">${refSpec}</a>`
+    return { content: refSpec, target: '#' }
   }
 
-  let targetUrl = computeRelativeUrlPath(currentPage.pub.url, targetPage.pub.url)
-  if (fragment) targetUrl = targetUrl + '#' + fragment
+  let target = computeRelativeUrlPath(currentPage.pub.url, targetPage.pub.url)
+  if (fragment) target = target + '#' + fragment
+  if (!content) content = `${pageIdSpec}.adoc${fragment ? '#' + fragment : ''}`
 
-  return `<a href="${targetUrl}">${content}</a>`
+  return { content, target }
 }
 
 module.exports = convertPageRef

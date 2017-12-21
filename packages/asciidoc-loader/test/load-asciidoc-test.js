@@ -1346,7 +1346,7 @@ describe('loadAsciiDoc()', () => {
         subpath: 'the-topic',
         basename: 'the-page.adoc',
       })
-      expectLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page#frag')
+      expectLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
     })
   })
 })
