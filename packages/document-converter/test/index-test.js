@@ -38,11 +38,13 @@ describe('convertDocument()', () => {
 
       == Section Title
       
-      paragraph
+      Grab the link:{attachmentsdir}/quickstart-project.zip[quickstart project].
       
       * list item 1
       * list item 2
       * list item 3
+
+      image::screenshot.png[]
     `
     inputFile.contents = Buffer.from(inputFileContents)
     expect(convertDocument(inputFile))
@@ -53,7 +55,7 @@ describe('convertDocument()', () => {
           <h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
           <div class="sectionbody">
           <div class="paragraph">
-          <p>paragraph</p>
+          <p>Grab the <a href="../_attachments/quickstart-project.zip">quickstart project</a>.</p>
           </div>
           <div class="ulist">
           <ul>
@@ -67,6 +69,11 @@ describe('convertDocument()', () => {
           <p>list item 3</p>
           </li>
           </ul>
+          </div>
+          <div class="imageblock">
+          <div class="content">
+          <img src="../_images/screenshot.png" alt="screenshot">
+          </div>
           </div>
           </div>
           </div>
