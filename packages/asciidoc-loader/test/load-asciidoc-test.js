@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, expectCalledWith, spy } = require('../../../test/test-utils')
+const { expect, expectCalledWith, heredoc, spy } = require('../../../test/test-utils')
 
 const asciidoctor = require('asciidoctor.js')()
 const loadAsciiDoc = require('@antora/asciidoc-loader')
@@ -11,26 +11,6 @@ describe('loadAsciiDoc()', () => {
   let inputFile
 
   const expectLink = (html, url, content) => expect(html).to.include(`<a href="${url}">${content}</a>`)
-
-  const heredoc = ([str]) => {
-    const lines = str.trimRight().split(/^/m)
-    if (lines.length > 1) {
-      const firstLine = lines[0]
-      if (firstLine === '\n' || firstLine === '\r\n' || firstLine === '\r') {
-        lines.shift()
-      }
-    } else {
-      return str
-    }
-
-    const indentRx = /^ +/
-    const indentLen = Math.min(...lines.filter((l) => l.startsWith(' ')).map((l) => l.match(indentRx)[0].length))
-    if (indentLen) {
-      return lines.map((l) => (l.startsWith(' ') ? l.substr(indentLen) : l)).join('')
-    } else {
-      return lines.join('')
-    }
-  }
 
   const populateFileContents = (contents) => {
     inputFile.contents = Buffer.from(contents)

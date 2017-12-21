@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, expectCalledWith, spy } = require('../../../test/test-utils')
+const { expect, expectCalledWith, heredoc, spy } = require('../../../test/test-utils')
 
 const convertDocument = require('@antora/document-converter')
 
@@ -33,48 +33,54 @@ describe('convertDocument()', () => {
   })
 
   it('should convert AsciiDoc contents on file to HTML', () => {
-    const inputFileContents = `= Page Title
+    const inputFileContents = heredoc`
+      = Page Title
 
-== Section Title
-
-paragraph
-
-* list item 1
-* list item 2
-* list item 3`
+      == Section Title
+      
+      paragraph
+      
+      * list item 1
+      * list item 2
+      * list item 3
+    `
     inputFile.contents = Buffer.from(inputFileContents)
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
       .then(() => {
-        expect(inputFile.contents.toString()).to.eql(`<div class="sect1">
-<h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>paragraph</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>list item 1</p>
-</li>
-<li>
-<p>list item 2</p>
-</li>
-<li>
-<p>list item 3</p>
-</li>
-</ul>
-</div>
-</div>
-</div>`)
+        expect(inputFile.contents.toString()).to.eql(heredoc`
+          <div class="sect1">
+          <h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
+          <div class="sectionbody">
+          <div class="paragraph">
+          <p>paragraph</p>
+          </div>
+          <div class="ulist">
+          <ul>
+          <li>
+          <p>list item 1</p>
+          </li>
+          <li>
+          <p>list item 2</p>
+          </li>
+          <li>
+          <p>list item 3</p>
+          </li>
+          </ul>
+          </div>
+          </div>
+          </div>
+        `)
       })
   })
 
   it('should store document header attributes to file', () => {
-    const inputFileContents = `= Document Title
-:keywords: CSS, flexbox, layout, box model
+    const inputFileContents = heredoc`
+      = Document Title
+      :keywords: CSS, flexbox, layout, box model
 
-article contents`
+      article contents
+    `
     inputFile.contents = Buffer.from(inputFileContents)
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
@@ -96,9 +102,11 @@ article contents`
       'product-name': 'Hi-Speed Tonic',
       'source-highlighter': 'html-pipeline',
     }
-    const inputFileContents = `= Document Title
+    const inputFileContents = heredoc`
+      = Document Title
 
-Get there in a flash with {product-name}.`
+      Get there in a flash with {product-name}.
+    `
     inputFile.contents = Buffer.from(inputFileContents)
     expect(convertDocument(inputFile, customAttrs))
       .to.be.fulfilled()
