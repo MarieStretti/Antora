@@ -13,6 +13,7 @@
 :uri-ci-pipelines: {uri-project}/pipelines
 :uri-adrs: {uri-project}/tree/master/docs/modules/architecture/documents/adr
 :uri-adr-0001: {uri-project}/blob/master/docs/architecture/content/adr/0001-minimum-node-version.adoc
+:uri-asciidoc-loader-arch: {uri-project}/blob/master/packages/asciidoc-loader/devdocs/architecture-guidebook.adoc
 :uri-content-aggregator-arch: {uri-project}/blob/master/packages/content-aggregator/devdocs/architecture-guidebook.adoc
 :uri-content-classifier-arch: {uri-project}/blob/master/packages/content-classifier/devdocs/architecture-guidebook.adoc
 :uri-document-converter-arch: {uri-project}/blob/master/packages/document-converter/devdocs/architecture-guidebook.adoc
@@ -238,6 +239,7 @@ If you make a significant modification to a package, you should also update the 
 {uri-playbook-builder-arch}[Playbook Builder]
 {uri-content-aggregator-arch}[Content Aggregator]
 {uri-content-classifier-arch}[Content Classifier]
+{uri-asciidoc-loader-arch}[AsciiDoc Loader]
 {uri-document-converter-arch}[Document Converter]
 {uri-ui-loader-arch}[UI Loader]
 {uri-page-generator-arch}[Page Generator]

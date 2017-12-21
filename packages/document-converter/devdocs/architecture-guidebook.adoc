@@ -3,122 +3,46 @@
 == Context
 
 In Antora, documentation pages are written in AsciiDoc.
-Each non-partial, AsciiDoc document under the [.path]_pages_ folder gets mapped to a web page in the site.
+Every AsciiDoc document under the [.path]_pages_ folder (excluding partials) gets implicitly mapped to a web page in the site.
 The AsciiDoc must be converted to HTML so the contents of these documents can be displayed as a web page.
 
 == Functional Overview
 
-The files in the `page` family of the content catalog (i.e., text documents taken from the [.path]_pages_ directory) are written in AsciiDoc format.
-The document converter should use an AsciiDoc processor (e.g., Asciidoctor.js) to convert these files to HTML.
+The files in the `page` family of the content catalog (i.e., text documents taken from the [.path]_pages_ directory, excluding partials) are written in AsciiDoc format.
+These AsciiDoc documents are used to populate the main area of the web page.
+The document converter should use an AsciiDoc processor (Asciidoctor.js) to convert these files to HTML by way of the AsciiDoc loader component.
 
-These documents are used to populate the main area of the web page, so the AsciiDoc only needs to be converted to embeddable HTML.
+At this stage, the AsciiDoc only needs to be converted to embeddable HTML.
 That embeddable HTML is later enclosed in a web page template by the page generator component to produce the complete page.
 Page metadata in the document header may be used by the template to control the presentation of auxiliary elements in the web page.
 Therefore, that page metadata should be accessible to the template via the file object.
 
-As part of converting the AsciiDoc to HTML, the document converter should also resolve references in the AsciiDoc.
-Specifically, it should:
+The document converter should delegate to the AsciiDoc loader to load the AsciiDoc into a document object.
+It should then convert that document object to embeddable HTML.
 
-* resolve xref macros that specify page references and verify a match can be found in the content catalog
-* add the appropriate path prefix to image references
-* populate the attribute used in attachment references
-* resolve the contents for include directives from partials and examples within the content catalog
-
-When document conversion is complete, the `contents` property on the file object should be replaced with the embeddable HTML generated from the AsciiDoc, and the `asciidoc` property should capture the available attributes in the document header.
+When document conversion is complete, the `contents` property on the file object should be replaced with the embeddable HTML generated from the AsciiDoc, and the `asciidoc` property should store the attributes from the document header (including those passed to the processor).
 
 == Software Architecture
 
 The document converter component functionality is provided by the document-converter module.
 
 At a high level, this component is an AsciiDoc to HTML converter that operates on the files in the `page` family of the content catalog.
-All the details of converting the AsciiDoc documents to HTML, such as resolving include directives and xref macros, should be encapsulated in this component.
+All the details of loading the AsciiDoc should be handled by the AsciiDoc loader component.
 
-Asciidoctor.js should be used to handle the conversion of AsciiDoc to HTML.
+For each file in the `page` family, this component should:
 
-For each file in the `page` family, the document converter should:
-
-* parse the AsciiDoc into an abstract syntax tree (AST)
- ** pass the value of the `contents` property of the file to the `Asciidoctor.load` API of Asciidoctor.js
- ** pass any options and attributes to `Asciidoctor.load` required for the document to work with Antora (see below)
- ** pass custom attributes defined by the user in the playbook (`asciidoc.attributes`)
-* supply a custom include processor that resolves includes from the `partial` or `example` family in the content catalog
- ** the include processor should be an exportable function so it can be tested and reused
- ** if an include cannot be resolved, the generator should log a warning (meaning, don't be silent)
-* supply a custom xref handler that resolves inter-page xrefs (which will be called during conversion)
- ** the xref handler should be an exportable function so it can be tested and reused
-* retrieve the header attributes from the AST and assign them to the virtual file
- ** name the property `asciidoc.attributes`
-* call convert on the AST
-* assign the converted result to the `contents` property on the file
-* discard the AST
-
-=== AsciiDoc processor options and attributes
-
-Here's a list of options that should be set when calling `Asciidoctor.load`:
-
-* safe = 'safe'
-
-Here's a list of default attributes that should be passed to `Asciidoctor.load`, but should be allowed to be overridden if defined in the playbook:
-
-* source-highlighter = 'highlight.js'
-* sectanchors = ''
-* idprefix = ''
-* idseparator = '-'
-* icons = 'font'
-
-Here's a list of mandatory attributes that should be set when calling `Asciidoctor.load`, which cannot be overridden:
-
-* docname = file.src.stem
-// Q: why not file.src.path?
-* docfile = file.path
-* docfilesuffix = file.src.extname
-* env-site = ''
-* imagesdir = file.out.moduleRootPath + '/_images'
-* attachmentsdir = file.out.moduleRootPath + '/_attachments'
-* examplesdir = file.src.moduleRootPath + '/examples'
-* partialsdir = file.src.moduleRootPath + '/content/_partials'
-
-=== xref handler
-
-The xref handler should intercept the inline xref macro and handle any target that ends with `.adoc`.
-The target is expected to have the following form:
-
- <version@><component:><module:><topic/...><page>.adoc<#fragment>[<text>]
-
-All parts except for the filepath (i.e., `<topic/...><page>.adoc`) are optional.
-For example:
-
- develop/best-practices.adoc
-
-The filepath is relative to a module's [.path]_pages_ directory.
-The `<topic/...>` part is only required if the page is located inside a subdirectory.
-
-If any part is missing, the value from the current context should be consumed.
-For example, if the component is not specified, the component of the referring page (the page containing the xref) should be assumed.
-
-The xref should be translated into a link to the URL of the target page.
-The URL of the target page should be retrieved from the `pub.url` of the target file.
-That URL should be made relative to the current page's URL so that the link can be followed even when the site is not served through a web server.
-
-If the target page cannot be resolved, a warning should be emitted.
-
-=== Include processor
-
-The target of all include directives should be resolved from the content catalog.
-An include target must point to a file local to the current module, either in the `partial` family or the `example` family.
-For example:
-
- include::{partialsdir}/partial.adoc[]
- include::{examplesdir}/example.json[]
-
-Due to current limitations in the AsciiDoc processor, this processor must handle the request to filter the included content by lines or tags.
+* Use the `loadAsciiDoc()` function of the AsciiDoc loader component to transform the virtual AsciiDoc file into a document object
+* Invoke the `getAttributes()` method on the document object to retrieve the attributes
+ ** assign the result to the `asciidoc.attributes` property on the file
+* Invoke the `convert()` method on that object to generate the HTML
+ ** assign the result to the `contents` property on the file
 
 === Inputs and outputs
 
 .Inputs
-* Content catalog (`catalog`)
 * `page` family from the content catalog
-* Playbook (`asciidoc`)
+* Playbook (`asciidoc.attributes`)
+* Content catalog (`catalog`)
 
 .Output
 * _none_ (mutates the files in the `page` family of the content catalog)
@@ -162,8 +86,9 @@ Specifically, this component updates the value of the `contents` property by rep
 The previous value is still accessible via the `history` property on the file.
 It also assigns a hash of header attributes to the `asciidoc.attributes` property on the file object.
 
-When converting each AsciiDoc document, this component incorporates global AsciiDoc attributes defined in the playbook (at the path `asciidoc.attributes`).
 // Q: should it also incorporate attributes from antora.yml?
+When converting each AsciiDoc document, this component incorporates global AsciiDoc attributes defined in the playbook (at the path `asciidoc.attributes`).
+These attributes are passed to the AsciiDoc loader.
 
 == Consequences
 

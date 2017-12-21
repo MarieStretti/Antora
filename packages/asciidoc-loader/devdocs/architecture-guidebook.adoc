@@ -1,0 +1,164 @@
+= AsciiDoc Loader Guidebook
+
+== Context
+
+Various components in Antora need to load AsciiDoc (parse the AsciiDoc into an AST), either for accessing the document's structure or converting it to HTML.
+The code responsible for loading AsciiDoc should be centralized in a dedicated component to ensure that AsciiDoc is loaded consistently throughout the pipeline and to avoid code duplication.
+This component should integrate the AsciiDoc processor (http://asciidoctor.org/docs/asciidoctor.js/[Asciidoctor.js]) into the Antora pipeline, bundling Antora-specific enhancements, without exposing any low-level details about how that integration is performed.
+
+== Functional Overview
+
+The AsciiDoc loader component should entirely handle loading the AsciiDoc source stored in a virtual content file into a parsed AsciiDoc document object (i.e., AST).
+
+At a low-level, the AsciiDoc loader should use the load API of the AsciiDoc processor to load the contents of the specified file to produce an AsciiDoc document object.
+However, to load the AsciiDoc properly, there's more to it.
+
+The loader should do the following when loading the AsciiDoc:
+
+* set attributes that pertain to the integration
+ ** environment attributes (e.g., env=site, site-gen=antora, etc)
+ ** default attributes (e.g., attribute-missing=warn, icons=font, etc)
+ ** custom attributes specified in the playbook
+ ** built-in attributes (e.g., docname, docfile, imagesdir, etc)
+* resolve the target of include directives from the content catalog
+* resolve xref macros that specify page references, verifying a match can be found in the content catalog
+* set other processor options (e.g., safe=safe)
+
+When loading is complete, the method should return the document object.
+This document object can then be used by other components to examine the structure of the document, convert the document to HTML, or perform other processing.
+
+== Software Architecture
+
+The AsciiDoc loader component functionality is provided by the asciidoc-loader module.
+
+All the details of loading AsciiDoc documents into a document object, such as resolving include directives and xref macros, should be encapsulated in this component.
+
+The AsciiDoc source string should be retrieved from the `contents.toString()` property of the specified file.
+Asciidoctor.js should be used to load the AsciiDoc.
+The source string should be passed along with options to the http://asciidoctor.github.io/asciidoctor.js/master/#Asciidoctorload[`Asciidoctor.load`] API of Asciidoctor.js.
+That function should parse the AsciiDoc source into an abstract syntax tree (AST).
+
+=== AsciiDoc processor options
+
+Here's a list of options that should be set when calling `Asciidoctor.load`:
+
+* safe - set to 'safe'
+* attributes - environment, default, custom, and built-in
+* extension_registry - contains an include processor extension that resolves includes from the content catalog
+ ** if the target begins with a family symbol, the target should be looked up by page ID
+ ** if the target does not begin with a family symbol, it should be looked up by path relative to the current file
+ ** if an include cannot be resolved, the generator should log a warning (meaning, don't be silent)
+ ** this extension should be registered per instance, not globally
+* converter - an enhanced HTML5 converter
+ ** intercepts the conversion of inline_anchor to convert xrefs that are page references (allowing other xrefs through)
+ ** this enhancement should be registered on the converter instance, not globally
+
+=== AsciiDoc processor attributes
+
+Here's a list of default attributes that should be passed to `Asciidoctor.load`, which can be overridden in the playbook:
+
+* env = 'site'
+* env-site = ''
+* site-gen = 'antora'
+* site-gen-antora = ''
+* attribute-missing = 'warn'
+* icons = 'font'
+* sectanchors = ''
+* source-highlighter = 'highlight.js'
+
+Here's a list of mandatory, built-in attributes that should be set when calling `Asciidoctor.load`, which cannot be overridden:
+
+* docname = file.src.stem
+* docfile = file.path
+* docdir = file.dirname
+* docfilesuffix = file.src.extname
+* imagesdir = file.pub.moduleRootPath + '/_images'
+* attachmentsdir = file.pub.moduleRootPath + '/_attachments'
+* examplesdir = 'example$'
+* partialsdir = 'partial$'
+
+=== Page reference converter
+
+The page reference converter should intercept conversion of the inline xref macro and handle any targets that end with `.adoc`.
+The target is expected to have the following form:
+
+ <version@><component:><module:><topic/...><page>.adoc<#fragment>[<content>]
+
+All parts except for the filepath (i.e., `<topic/...><page>.adoc`) are optional.
+
+If any part is missing, the value from the current context should be consumed.
+For example, if the component is not specified, the component of the referring page (the page containing the xref) should be assumed.
+
+The xref macro should be translated into a link to the URL of the target page.
+The URL of the target page should be retrieved from the `pub.url` of the target file.
+That URL should be made relative to the current page's URL so that the link can be followed even when the site is not served through a web server.
+
+If the target page cannot be resolved, a warning should be emitted and the target should be used as the link's content.
+
+The page reference converter should be registered on the converter instance (per load) and not globally.
+
+=== Include processor
+
+The target of all include directives should be resolved from the content catalog.
+An include target must either point to a file in the current module, under the `partial` family or the `example` family, or it must be relative to the current document.
+For example:
+
+ include::{partialsdir}/partial.adoc[]
+ include::{examplesdir}/example.json[]
+ include::sibling.adoc[]
+
+Due to current limitations in the AsciiDoc processor, this processor must also handle the request to filter the included content by tags.
+
+The include processor should be registered once per load and not globally.
+
+=== Inputs and outputs
+
+.Inputs
+* Virtual AsciiDoc file
+* Custom attributes from playbook (`asciidoc.attributes`)
+* Content catalog (`catalog`)
+
+.Output
+* AsciiDoc document object
+
+== Code
+
+The AsciiDoc loader is implemented as a dedicated node package (i.e., module).
+The AsciiDoc loader API exports the `loadAsciiDoc` function, which accepts:
+
+* a virtual AsciiDoc file
+// Q: should we pass the whole playbook, playbook.asciidoc, or playbook.asciidoc.attributes?
+* a map of custom AsciiDoc attributes specified in the playbook
+* the content catalog
+
+This function returns the parsed AsciiDoc as a document object (Document).
+
+The API for the AsciiDoc loader should be used as follows:
+
+[source,js]
+----
+const loadAsciiDoc = require('@antora/asciidoc-loader')
+
+//...
+
+const doc = loadAsciiDoc(file, {}, contentCatalog)
+----
+
+== Data
+
+The `loadAsciiDoc` function should read the AsciiDoc source by calling `contents.toString()` on the specified file.
+It should also use properties on that file to set certain attributes, as specified above.
+
+The `loadAsciiDoc` function should return a http://asciidoctor.github.io/asciidoctor.js/master/#document[Document] object.
+
+// Q: should it also incorporate attributes from antora.yml?
+When converting each AsciiDoc document, this component incorporates global AsciiDoc attributes defined in the playbook (at the path `asciidoc.attributes`).
+
+== Consequences
+
+The AsciiDoc loader component ensures AsciiDoc source to be loaded consistently throughout the pipeline.
+It integrates Asciidoctor.js, configuring it to work properly in the Antora environment, without exposing any low-level details about how that integration is performed.
+
+The main function of this component transforms a virtual AsciiDoc file into a parsed AsciiDoc document, which can then be used by other components to examine the document structure, convert all or parts of the document to HTML, or perform other processing.
+
+This component is expected to be used by the document converter component, which converts the contents of the page to HTML, and the navigation builder, which converts navigation files written in AsciiDoc into a navigation model.
