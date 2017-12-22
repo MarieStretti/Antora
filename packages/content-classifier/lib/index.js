@@ -137,8 +137,8 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
   const version = src.version === 'master' ? '' : src.version
   const module = src.module === 'ROOT' ? '' : src.module
 
-  const extname = src.mediaType === 'text/asciidoc' ? '.html' : src.extname
-  let basename = src.stem + extname
+  let basename = src.basename
+  if (src.mediaType === 'text/asciidoc') basename = src.stem + '.html'
 
   let indexifyPathSegment = ''
   if (src.family === 'page' && src.stem !== 'index' && htmlExtensionStyle === 'indexify') {
@@ -156,14 +156,14 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
 
   const modulePath = path.join(src.component, version, module)
   const dirname = path.join(modulePath, familyPathSegment, path.dirname(src.relative), indexifyPathSegment)
-  const outputPath = path.join(dirname, basename)
+  const path_ = path.join(dirname, basename)
   const moduleRootPath = path.relative(dirname, modulePath) || '.'
   const rootPath = path.relative(dirname, '') || '.'
 
   return {
     dirname,
     basename,
-    path: outputPath,
+    path: path_,
     moduleRootPath,
     rootPath,
   }

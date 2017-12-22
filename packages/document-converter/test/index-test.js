@@ -14,6 +14,7 @@ describe('convertDocument()', () => {
     inputFile = {
       path: 'modules/module-a/pages/page-a.adoc',
       dirname: 'modules/module-a/pages',
+      mediaType: 'text/asciidoc',
       src: {
         path: 'modules/module-a/pages/page-a.adoc',
         component: 'component-a',
@@ -24,6 +25,7 @@ describe('convertDocument()', () => {
         basename: 'page-a.adoc',
         stem: 'page-a',
         extname: '.adoc',
+        mediaType: 'text/asciidoc',
         moduleRootPath: '..',
       },
       pub: {
@@ -51,7 +53,8 @@ describe('convertDocument()', () => {
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
       .then(() => {
-        expect(inputFile.contents.toString()).to.eql(heredoc`
+        expect(inputFile.mediaType).to.equal('text/html')
+        expect(inputFile.contents.toString()).to.equal(heredoc`
           <div class="sect1">
           <h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
           <div class="sectionbody">
@@ -82,7 +85,7 @@ describe('convertDocument()', () => {
       })
   })
 
-  it('should store document header attributes to file', () => {
+  it('should save document header attributes to file', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Document Title
       :keywords: CSS, flexbox, layout, box model

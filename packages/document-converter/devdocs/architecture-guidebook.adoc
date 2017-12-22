@@ -38,6 +38,7 @@ For each file in the `page` family, this component should:
  ** Backing up the AsciiDoc contents ensures that the AsciiDoc source of this file can still be included in another page, even if this page gets converted first.
 * Invoke the `convert()` method on that object to generate the HTML.
  ** Assign the result to the `contents` property on the file.
+ ** Set the `mediaType` property to `text/html` (to reflect the current format of `contents`)
 
 === Inputs and outputs
 

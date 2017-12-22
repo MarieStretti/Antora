@@ -106,11 +106,14 @@ Each entry in the aggregate has the following keys:
 Each virtual file object should include the following properties:
 
 .src property
+* `path` - equivalent to the `path` property on the file object
 * `basename`
-* `mediaType`
 * `stem`
 * `extname`
+* `mediaType` - resolved from the MIME types catalog by the value of `extname`
 * `origin`
+
+The `mediaType` property should also be set directly on the file object to match the value of `src.mediaType`.
 
 == Consequences
 

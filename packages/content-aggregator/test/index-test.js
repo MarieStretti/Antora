@@ -250,9 +250,7 @@ describe('aggregateContent()', () => {
     ])
   }
 
-  // Catalog all files
-
-  describe('should catalog all files', () => {
+  describe('should aggregate all files', () => {
     testAll(async (repo) => {
       await initRepoWithFiles(repo)
       playbook.content.sources.push({ url: repo.url })
@@ -310,7 +308,7 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('should catalog all files when component is located at a startPath', () => {
+  describe('should aggregate all files when component is located at a startPath', () => {
     testAll(async (repo) => {
       await repo.initRepo({ name: 'the-component', version: 'v1.2.3', startPath: 'docs' })
       await repo.addFixtureFiles(['should-be-ignored.adoc'])
@@ -344,7 +342,7 @@ describe('aggregateContent()', () => {
 
   // Join files from same component/version
 
-  describe('should catalog files with same component version found in different branches', () => {
+  describe('should aggregate files with same component version found in different branches', () => {
     testAll(async (repo) => {
       await repo.initRepo({ name: 'the-component', version: 'v1.2.3' })
       await repo.addFixtureFiles(['modules/ROOT/pages/page-one.adoc'])
@@ -366,7 +364,7 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('should catalog files with same component version found in different repos', () => {
+  describe('should aggregate files with same component version found in different repos', () => {
     testAll(async (theComponent, theOtherComponent) => {
       await theComponent.initRepo({
         repoName: 'the-component-foo',
@@ -561,6 +559,7 @@ describe('aggregateContent()', () => {
           expect(theAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const pageOne = _.find(theAggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
           expect(pageOne.path).to.equal(pageOne.relative)
+          expect(pageOne.mediaType).to.equal('text/asciidoc')
           expect(pageOne.src).to.eql({
             path: pageOne.path,
             basename: pageOne.basename,

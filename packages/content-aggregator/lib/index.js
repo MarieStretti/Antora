@@ -277,12 +277,13 @@ function assignFileProperties (file, url, branch, startPath = '/') {
   })
 
   const extname = file.extname
+  file.mediaType = mimeTypes.lookup(extname)
   file.src = {
     path: file.path,
     basename: file.basename,
     stem: file.stem,
     extname,
-    mediaType: mimeTypes.lookup(extname),
+    mediaType: file.mediaType,
     origin: {
       git: { url, branch, startPath },
     },

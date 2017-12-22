@@ -10,5 +10,6 @@ module.exports = async function convertDocument (file, customAttrs, contentCatal
     file.src.contents = file.contents
   }
   file.contents = Buffer.from(doc.convert())
+  file.mediaType = 'text/html'
   file.asciidoc = { attributes }
 }
