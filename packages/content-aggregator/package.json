@@ -12,7 +12,6 @@
     "node": ">= 8.0.0"
   },
   "dependencies": {
-    "array-to-stream": "^1.0.2",
     "del": "^3.0.0",
     "fs-extra": "^4.0.2",
     "js-yaml": "^3.10.0",
