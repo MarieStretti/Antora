@@ -15,14 +15,16 @@ describe('convertDocument()', () => {
       path: 'modules/module-a/pages/page-a.adoc',
       dirname: 'modules/module-a/pages',
       src: {
+        path: 'modules/module-a/pages/page-a.adoc',
         component: 'component-a',
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: '',
-        moduleRootPath: '..',
+        relative: 'page-a.adoc',
+        basename: 'page-a.adoc',
         stem: 'page-a',
         extname: '.adoc',
+        moduleRootPath: '..',
       },
       pub: {
         url: '/component-a/1.2.3/module-a/page-a.html',
@@ -33,7 +35,7 @@ describe('convertDocument()', () => {
   })
 
   it('should convert AsciiDoc contents on file to HTML', () => {
-    const inputFileContents = heredoc`
+    inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
       == Section Title
@@ -45,8 +47,7 @@ describe('convertDocument()', () => {
       * list item 3
 
       image::screenshot.png[]
-    `
-    inputFile.contents = Buffer.from(inputFileContents)
+    `)
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
       .then(() => {
@@ -82,13 +83,12 @@ describe('convertDocument()', () => {
   })
 
   it('should store document header attributes to file', () => {
-    const inputFileContents = heredoc`
+    inputFile.contents = Buffer.from(heredoc`
       = Document Title
       :keywords: CSS, flexbox, layout, box model
 
       article contents
-    `
-    inputFile.contents = Buffer.from(inputFileContents)
+    `)
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
       .then(() => {
@@ -109,12 +109,11 @@ describe('convertDocument()', () => {
       'product-name': 'Hi-Speed Tonic',
       'source-highlighter': 'html-pipeline',
     }
-    const inputFileContents = heredoc`
+    inputFile.contents = Buffer.from(heredoc`
       = Document Title
 
       Get there in a flash with {product-name}.
-    `
-    inputFile.contents = Buffer.from(inputFileContents)
+    `)
     expect(convertDocument(inputFile, customAttrs))
       .to.be.fulfilled()
       .then(() => {
@@ -127,14 +126,8 @@ describe('convertDocument()', () => {
   })
 
   it('should convert page reference to URL of page in content catalog', () => {
-    const inputFileContents = 'xref:module-b:page-b.adoc[Page B]'
-    inputFile.contents = Buffer.from(inputFileContents)
+    inputFile.contents = Buffer.from('xref:module-b:page-b.adoc[Page B]')
     const targetFile = {
-      path: 'modules/module-b/page-b.adoc',
-      dirname: 'modules/module-b',
-      src: {
-        basename: 'page-b.adoc',
-      },
       pub: {
         url: '/component-a/1.2.3/module-b/page-b.html',
       },
@@ -148,27 +141,26 @@ describe('convertDocument()', () => {
           version: '1.2.3',
           module: 'module-b',
           family: 'page',
-          subpath: '',
-          basename: 'page-b.adoc',
+          relative: 'page-b.adoc',
         })
         expectLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
       })
   })
 
-  it('should resolve include target from content catalog', () => {
-    const inputFileContents = 'include::{partialsdir}/definitions.adoc[]'
-    inputFile.contents = Buffer.from(inputFileContents)
+  it('should resolve target of include directive to file in content catalog', () => {
+    inputFile.contents = Buffer.from('include::{partialsdir}/definitions.adoc[]')
     const partialFile = {
       path: 'modules/module-a/pages/_partials/definitions.adoc',
       dirname: 'modules/module-a/pages/_partials',
       contents: Buffer.from(`cloud: someone else's computer`),
       src: {
+        path: 'modules/module-a/pages/_partials/definitions.adoc',
+        dirname: 'modules/module-a/pages/_partials',
         component: 'component-a',
         version: '1.2.3',
         module: 'module-a',
         family: 'partial',
-        subpath: '',
-        basename: 'definitions.adoc',
+        relative: 'definitions.adoc',
       },
     }
     const contentCatalog = { getById: spy(() => partialFile) }
@@ -180,8 +172,7 @@ describe('convertDocument()', () => {
           version: '1.2.3',
           module: 'module-a',
           family: 'partial',
-          subpath: '',
-          basename: 'definitions.adoc',
+          relative: 'definitions.adoc',
         })
         expect(inputFile.contents.toString()).to.include('cloud: someone else&#8217;s computer')
       })
