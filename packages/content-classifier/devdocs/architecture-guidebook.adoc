@@ -78,11 +78,12 @@ const pages = catalog.findBy({ family: 'page' })
 ----
 
 .Content catalog API
-* `getFiles()`
-* `addFile()`
-* `findBy({...})` with filter abilities
- ** filterable properties: `component`, `version`, `module`, `family`, `subpath`, `stem`, and `basename`
-* `getByID({...})`
+* `getFiles()` - gets all files in the catalog
+* `addFile()` - add a file to the catalog; stored by ID (see `getById`)
+* `getById({ component, version, module, family, relative })`
+* `getByPath({ component, version, path })`
+* `findBy({...})` - finds files that match example; at least one property must be specified
+ ** filterable properties: `component`, `version`, `module`, `family`, `relative`, `basename`, `path`
 
 == Data
 
@@ -119,27 +120,31 @@ Files in the ROOT module are promoted a level above the named modules when publi
 AsciiDoc files are assumed to have the file extension `.adoc`.
 Files and folders which begin with an underscore are not published.
 
-The content catalog object (instance of `ContentCatalog`) produced by this component should have provide a queryable index of virtual files.
+The content catalog object (instance of `ContentCatalog`) produced by this component should provide a queryable index of virtual files.
 
-Each virtual file in the content catalog should have the `src`, `out`, and `pub` properties fully populated.
-The `src.origin` property information attached to each file should also be carried over from the `aggregate`.
+Each virtual file in the content catalog is a Vinyl file, which already has a built-in set of https://github.com/gulpjs/vinyl#instance-properties[instance properties] to start.
+The content aggregator already set some additional properties on the file object, such as `src.origin`.
+The classifier should complete this work by fully populating the `src`, `out`, and `pub` properties.
 
-Each virtual file object should include the following properties:
+Each virtual file object should include the following Antora-specific properties:
 
 .src property
+* `path` - component root-relative path (no leading forward slash); matches initial value of `path`
 * `component`
 * `version`
 * `module`
 * `family` (attachment, example, partial, image, navigation, or page)
-* `topics`
+* `relative` - family root-relative path (no leading forward slash)
+// moduleRootPath may no longer be needed on src
 * `moduleRootPath`
 * `basename`
-* `mediaType`
 * `stem`
 * `extname`
+* `mediaType`
 * `origin`
 
 .out property
+// dirname may not be needed on out
 * `dirname`
 * `basename`
 * `path`
@@ -148,19 +153,20 @@ Each virtual file object should include the following properties:
 
 .pub property
 * `url`
-* `absoluteUrl` (using the `site` property from the playbook)
+* `absoluteUrl` - the `site.url` property from the playbook + the `url`
+* `moduleRootPath`
 * `rootPath`
 
 == Consequences
 
 The content classifier component is responsible for the fine-grained organization of the virtual files.
-The classifier organizes the files and allows subsequent components to request a specific file by its page ID or other grouping, such as component version or family.
+The classifier organizes the files and allows subsequent components to request a specific file by its page ID, its path, or other grouping, such as family or component and version.
 
-* All destination information for each file has been determined and assigned
-* Files can be queried by component version and/or family so they can be processed in parallel
-* No subsequent components should have to organize the files for processing
-* The content catalog is transmittable
-* Pages can now be found and processed
+* All destination information for each file has been determined and assigned.
+* Files can be queried by component version and/or family so they can be processed in parallel.
+* No subsequent components should have to organize the files for processing.
+* The content catalog is transmittable.
+* Pages can now be found and processed.
 
-The next component in Antora`'s documentation pipeline is the page generator.
+The next component in Antora's documentation pipeline is the page generator.
 The page generator requires the catalog as an input and operates on the files in the `pages` family.
