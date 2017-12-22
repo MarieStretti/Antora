@@ -1,0 +1,40 @@
+= ADR 0009: Project website for Antora
+:revdate: 2017-12-22
+
+== Status
+
+Accepted
+
+== Context
+
+We want people to discover, learn about, and use Antora.
+When people learn about Antora and begin using it, they'll ask questions and provide feedback.
+This feedback will be crucial for keeping the project focused on solving real problems.
+One major route through which people discover and explore a project is through its website.
+
+== Decision
+
+We have decided to create, maintain, and publish a website for the Antora project.
+The website source and UI will be stored in a repository in Antora's GitLab organization.
+The project should be built with Antora, since a key feature of the website will be the documentation for the project.
+It will also push us to be able to use Antora to include landing pages in a site to accompany documentation pages.
+The website URL is \https://antora.org.
+
+The website should communicate and present:
+
+* A simple, clear description of what Antora is.
+* A plain-speaking overview of Antora's capabilities and features, grouped into humanistic categories.
+* New release announcements.
+* Straight-forward access to the latest stable version of the pipeline.
+* Straight-forward access to the Antora, Antora UI, and Antora Demo repositories.
+* User-facing, task-oriented documentation for docs team members.
+
+== Consequences
+
+A project website will help people discover and learn about Antora without them having to navigate through disconnected documents in a repository.
+As a result, adoption and user interaction should increase.
+In turn, the project will be infused with invaluable feedback pertaining to real world concerns and problems.
+
+Creating, maintaining, and hosting the website will require design and implementation time as well as some fixed financial costs (e.g., domain registration, logo, UI assets, etc.).
+Increased user interaction will also require the team to allocate additional time for communicating one-on-one with some users in order to answer questions, discuss features, identify bugs, etc.
+However, over the long term, and given that the website effectively communicates how Antora can help documentation teams, the website will be an essential tool for both the users and the development team.
