@@ -261,19 +261,24 @@ describe('aggregateContent()', () => {
         .to.be.fulfilled()
         .then((theAggregate) => {
           expect(theAggregate).to.have.lengthOf(1)
-          expect(theAggregate[0]).to.deep.include({
-            name: 'the-component',
-            version: 'v1.2.3',
+          const componentVersion = theAggregate[0]
+          expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
+          const expectedPaths = [
+            'README.adoc',
+            COMPONENT_DESC_FILENAME,
+            'modules/ROOT/_attributes.adoc',
+            'modules/ROOT/pages/_attributes.adoc',
+            'modules/ROOT/pages/page-one.adoc',
+            'modules/ROOT/pages/page-two.adoc',
+            'modules/ROOT/pages/topic-a/_attributes.adoc',
+            'modules/ROOT/pages/topic-a/page-three.adoc',
+          ]
+          const files = componentVersion.files
+          expect(files).to.have.lengthOf(expectedPaths.length)
+          expectedPaths.forEach((expectedPath, i) => {
+            expect(files[i].path).to.equal(expectedPath)
+            expect(files[i].relative).to.equal(expectedPath)
           })
-          expect(theAggregate[0].files).to.have.lengthOf(8)
-          expect(theAggregate[0].files[0].path).to.equal('README.adoc')
-          expect(theAggregate[0].files[1].path).to.equal(COMPONENT_DESC_FILENAME)
-          expect(theAggregate[0].files[2].path).to.equal('modules/ROOT/_attributes.adoc')
-          expect(theAggregate[0].files[3].path).to.equal('modules/ROOT/pages/_attributes.adoc')
-          expect(theAggregate[0].files[4].path).to.equal('modules/ROOT/pages/page-one.adoc')
-          expect(theAggregate[0].files[5].path).to.equal('modules/ROOT/pages/page-two.adoc')
-          expect(theAggregate[0].files[6].path).to.equal('modules/ROOT/pages/topic-a/_attributes.adoc')
-          expect(theAggregate[0].files[7].path).to.equal('modules/ROOT/pages/topic-a/page-three.adoc')
         })
     })
   })
@@ -319,12 +324,20 @@ describe('aggregateContent()', () => {
         .to.be.fulfilled()
         .then((theAggregate) => {
           expect(theAggregate).to.have.lengthOf(1)
-          expect(theAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-          expect(theAggregate[0].files).to.have.lengthOf(4)
-          expect(theAggregate[0].files[0].path).to.equal(COMPONENT_DESC_FILENAME)
-          expect(theAggregate[0].files[1].path).to.equal('modules/ROOT/_attributes.adoc')
-          expect(theAggregate[0].files[2].path).to.equal('modules/ROOT/pages/_attributes.adoc')
-          expect(theAggregate[0].files[3].path).to.equal('modules/ROOT/pages/page-one.adoc')
+          const componentVersion = theAggregate[0]
+          expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
+          const expectedPaths = [
+            COMPONENT_DESC_FILENAME,
+            'modules/ROOT/_attributes.adoc',
+            'modules/ROOT/pages/_attributes.adoc',
+            'modules/ROOT/pages/page-one.adoc',
+          ]
+          const files = componentVersion.files
+          expect(files).to.have.lengthOf(expectedPaths.length)
+          expectedPaths.forEach((expectedPath, i) => {
+            expect(files[i].path).to.equal(expectedPath)
+            expect(files[i].relative).to.equal(expectedPath)
+          })
         })
     })
   })
@@ -438,14 +451,22 @@ describe('aggregateContent()', () => {
       .to.be.fulfilled()
       .then((theAggregate) => {
         expect(theAggregate).to.have.lengthOf(1)
-        expect(theAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-        expect(theAggregate[0].files).to.have.lengthOf(6)
-        expect(theAggregate[0].files[0].path).to.equal('README.adoc')
-        expect(theAggregate[0].files[1].path).to.equal(COMPONENT_DESC_FILENAME)
-        expect(theAggregate[0].files[2].path).to.equal('modules/ROOT/_attributes.adoc')
-        expect(theAggregate[0].files[3].path).to.equal('modules/ROOT/pages/_attributes.adoc')
-        expect(theAggregate[0].files[4].path).to.equal('modules/ROOT/pages/page-one.adoc')
-        expect(theAggregate[0].files[5].path).to.equal('modules/ROOT/pages/page-two.adoc')
+        const componentVersion = theAggregate[0]
+        expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
+        const expectedPaths = [
+          'README.adoc',
+          COMPONENT_DESC_FILENAME,
+          'modules/ROOT/_attributes.adoc',
+          'modules/ROOT/pages/_attributes.adoc',
+          'modules/ROOT/pages/page-one.adoc',
+          'modules/ROOT/pages/page-two.adoc',
+        ]
+        const files = theAggregate[0].files
+        expect(files).to.have.lengthOf(expectedPaths.length)
+        expectedPaths.forEach((expectedPath, i) => {
+          expect(files[i].path).to.equal(expectedPath)
+          expect(files[i].relative).to.equal(expectedPath)
+        })
       })
   })
 
@@ -457,13 +478,21 @@ describe('aggregateContent()', () => {
         .to.be.fulfilled()
         .then((theAggregate) => {
           expect(theAggregate).to.have.lengthOf(1)
-          expect(theAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-          expect(theAggregate[0].files).to.have.lengthOf(5)
-          expect(theAggregate[0].files[0].path).to.equal('README.adoc')
-          expect(theAggregate[0].files[1].path).to.equal(COMPONENT_DESC_FILENAME)
-          expect(theAggregate[0].files[2].path).to.equal('modules/ROOT/_attributes.adoc')
-          expect(theAggregate[0].files[3].path).to.equal('modules/ROOT/pages/_attributes.adoc')
-          expect(theAggregate[0].files[4].path).to.equal('modules/ROOT/pages/page-one.adoc')
+          const componentVersion = theAggregate[0]
+          expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
+          const expectedPaths = [
+            'README.adoc',
+            COMPONENT_DESC_FILENAME,
+            'modules/ROOT/_attributes.adoc',
+            'modules/ROOT/pages/_attributes.adoc',
+            'modules/ROOT/pages/page-one.adoc',
+          ]
+          const files = componentVersion.files
+          expect(files).to.have.lengthOf(5)
+          expectedPaths.forEach((expectedPath, i) => {
+            expect(files[i].path).to.equal(expectedPath)
+            expect(files[i].relative).to.equal(expectedPath)
+          })
         })
     }
 
@@ -531,11 +560,13 @@ describe('aggregateContent()', () => {
           expect(theAggregate).to.have.lengthOf(1)
           expect(theAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const pageOne = _.find(theAggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
+          expect(pageOne.path).to.equal(pageOne.relative)
           expect(pageOne.src).to.eql({
-            basename: 'page-one.adoc',
+            path: pageOne.path,
+            basename: pageOne.basename,
+            stem: pageOne.stem,
+            extname: pageOne.extname,
             mediaType: 'text/asciidoc',
-            stem: 'page-one',
-            extname: '.adoc',
             origin: {
               git: {
                 // in our test the git url is the same as the repo url we provided

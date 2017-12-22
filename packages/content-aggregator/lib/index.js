@@ -6,6 +6,7 @@ const File = require('vinyl')
 const fs = require('fs-extra')
 const git = require('nodegit')
 const isMatch = require('matcher').isMatch
+const map = require('map-stream')
 const mimeTypes = require('./mime-types-with-asciidoc')
 const path = require('path')
 const streamToArray = require('stream-to-array')
@@ -203,7 +204,7 @@ function branchMatches (branchName, branchPattern) {
 }
 
 function readComponentDesc (files) {
-  const componentDescFile = files.find((file) => file.relative === COMPONENT_DESC_FILENAME)
+  const componentDescFile = files.find((file) => file.path === COMPONENT_DESC_FILENAME)
   if (componentDescFile == null) {
     throw new Error(COMPONENT_DESC_FILENAME + ' not found')
   }
@@ -254,30 +255,39 @@ function getGitEntries (tree, onEntry) {
 }
 
 async function loadLocalFiles (repo) {
-  const basePath = path.join(repo.url, repo.startPath || '.')
-  return streamToArray(
-    vfs.src('**/*.*', {
-      base: basePath,
-      cwd: basePath,
-    })
-  )
+  const base = path.resolve(repo.url, repo.startPath || '.')
+  const opts = { base, cwd: base }
+  return streamToArray(vfs.src('**/*.*', opts).pipe(map(relativize)))
+}
+
+function relativize (file, next) {
+  file.abspath = file.path
+  // convert absolute path to component root relative path
+  file.path = file.relative
+  // hide original path from history
+  file.history.shift()
+  next(null, file)
 }
 
 function assignFileProperties (file, url, branch, startPath = '/') {
-  file.path = file.relative
-  file.base = process.cwd()
-  file.cwd = process.cwd()
+  Object.defineProperty(file, 'relative', {
+    get: function () {
+      return this.path
+    },
+  })
 
-  const extname = path.extname(file.path)
+  const extname = file.extname
   file.src = {
-    basename: path.basename(file.path),
-    mediaType: mimeTypes.lookup(extname),
-    stem: path.basename(file.path, extname),
+    path: file.path,
+    basename: file.basename,
+    stem: file.stem,
     extname,
+    mediaType: mimeTypes.lookup(extname),
     origin: {
       git: { url, branch, startPath },
     },
   }
+
   return file
 }
 
