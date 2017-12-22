@@ -50,8 +50,8 @@ function resolveIncludeFile (target, file, cursor, catalog) {
     return {
       file: resolvedIncludeFile.src.path,
       path: resolvedIncludeFile.src.basename,
-      // FIXME if this include file is a page that was already converted, the contents will be HTML
-      contents: resolvedIncludeFile.contents.toString(),
+      // NOTE src.contents is set if a page is marked as a partial
+      contents: (resolvedIncludeFile.src.contents || resolvedIncludeFile.contents).toString(),
     }
   } else {
     if (family) target = `{${family}sdir}/${relative}`
