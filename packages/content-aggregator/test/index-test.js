@@ -547,7 +547,7 @@ describe('aggregateContent()', () => {
       })
   })
 
-  describe('should assign correct src properties to files', () => {
+  describe('should assign correct properties to virtual file', () => {
     testAll(async (repo) => {
       await initRepoWithFiles(repo)
       playbook.content.sources.push({ url: repo.url })
@@ -558,14 +558,21 @@ describe('aggregateContent()', () => {
           expect(theAggregate).to.have.lengthOf(1)
           expect(theAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const pageOne = _.find(theAggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
-          expect(pageOne.path).to.equal(pageOne.relative)
-          expect(pageOne.mediaType).to.equal('text/asciidoc')
-          expect(pageOne.src).to.eql({
-            path: pageOne.path,
-            basename: pageOne.basename,
-            stem: pageOne.stem,
-            extname: pageOne.extname,
+          const expectedFile = {
+            path: 'modules/ROOT/pages/page-one.adoc',
+            relative: 'modules/ROOT/pages/page-one.adoc',
+            dirname: 'modules/ROOT/pages',
+            basename: 'page-one.adoc',
+            stem: 'page-one',
+            extname: '.adoc',
             mediaType: 'text/asciidoc',
+          }
+          const expectedFileSrc = {
+            path: expectedFile.path,
+            basename: expectedFile.basename,
+            stem: expectedFile.stem,
+            extname: expectedFile.extname,
+            mediaType: expectedFile.mediaType,
             origin: {
               git: {
                 // in our test the git url is the same as the repo url we provided
@@ -574,7 +581,12 @@ describe('aggregateContent()', () => {
                 startPath: '/',
               },
             },
-          })
+          }
+          if (!repo.isRemote && !repo.isBare) {
+            expectedFileSrc.abspath = path.join(repo.url, expectedFileSrc.path)
+          }
+          expect(pageOne).to.include(expectedFile)
+          expect(pageOne.src).to.eql(expectedFileSrc)
         })
     })
   })

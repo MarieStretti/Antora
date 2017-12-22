@@ -260,13 +260,17 @@ async function loadLocalFiles (repo) {
   return streamToArray(vfs.src('**/*.*', opts).pipe(map(relativize)))
 }
 
+// converts path from absolute to component root relative
 function relativize (file, next) {
-  file.abspath = file.path
-  // convert absolute path to component root relative path
-  file.path = file.relative
-  // hide original path from history
-  file.history.shift()
-  next(null, file)
+  next(
+    null,
+    new File({
+      path: file.relative,
+      contents: file.contents,
+      stat: file.stat,
+      src: { abspath: file.path },
+    })
+  )
 }
 
 function assignFileProperties (file, url, branch, startPath = '/') {
@@ -278,7 +282,7 @@ function assignFileProperties (file, url, branch, startPath = '/') {
 
   const extname = file.extname
   file.mediaType = mimeTypes.lookup(extname)
-  file.src = {
+  file.src = Object.assign(file.src || {}, {
     path: file.path,
     basename: file.basename,
     stem: file.stem,
@@ -287,7 +291,7 @@ function assignFileProperties (file, url, branch, startPath = '/') {
     origin: {
       git: { url, branch, startPath },
     },
-  }
+  })
 
   return file
 }

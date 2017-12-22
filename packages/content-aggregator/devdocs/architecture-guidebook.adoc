@@ -107,6 +107,7 @@ Each virtual file object should include the following properties:
 
 .src property
 * `path` - equivalent to the `path` property on the file object
+* `abspath` - absolute path of source file (only set for local files)
 * `basename`
 * `stem`
 * `extname`
