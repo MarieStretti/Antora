@@ -16,7 +16,7 @@ class ContentCatalog {
   }
 
   addFile (file) {
-    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'subpath', 'basename'))
+    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
     if (_.has(this[$files], id)) {
       throw new Error('Duplicate file')
     }
@@ -24,12 +24,12 @@ class ContentCatalog {
   }
 
   findBy (options) {
-    const srcFilter = _.pick(options, ['component', 'version', 'module', 'family', 'subpath', 'stem', 'basename'])
+    const srcFilter = _.pick(options, ['component', 'version', 'module', 'family', 'relative', 'basename', 'extname'])
     return _.filter(this[$files], { src: srcFilter })
   }
 
-  getById ({ component, version, module, family, subpath, basename }) {
-    const id = this[$generateId]({ component, version, module, family, subpath, basename })
+  getById ({ component, version, module, family, relative }) {
+    const id = this[$generateId]({ component, version, module, family, relative })
     return this[$files][id]
   }
 
@@ -37,8 +37,8 @@ class ContentCatalog {
     return _.find(this[$files], { path: path_, src: { component, version } })
   }
 
-  [$generateId] ({ component, version, module, family, subpath, basename }) {
-    return `${family}/${version}@${component}:${module}:${subpath}${subpath ? '/' : ''}${basename}`
+  [$generateId] ({ component, version, module, family, relative }) {
+    return `${family}/${version}@${component}:${module}:${relative}`
   }
 }
 
@@ -47,7 +47,7 @@ module.exports = (playbook, aggregate) => {
 
   aggregate.forEach(({ name, title, version, nav, files }) => {
     files.forEach((file) => {
-      const pathSegments = file.path.split('/').filter((a) => a !== '')
+      const pathSegments = file.path.split('/')
       partitionSrc(file, pathSegments, nav)
 
       if (file.src.family == null) {
@@ -56,10 +56,17 @@ module.exports = (playbook, aggregate) => {
 
       file.src.component = name
       file.src.version = version
+      // FIXME this assignment breaks if navigation file is not in modules folder
       file.src.module = pathSegments[1]
 
-      const moduleRootPath = '/' + pathSegments.slice(2, -1).join('/')
-      file.src.moduleRootPath = path.relative(moduleRootPath, '/') || '.'
+      const topicDirs = pathSegments.slice(2, -1)
+      if (topicDirs.length) {
+        file.src.moduleRootPath = Array(topicDirs.length)
+          .fill('..')
+          .join('/')
+      } else {
+        file.src.moduleRootPath = '.'
+      }
 
       file.out = resolveOut(file.src, playbook.urls.htmlExtensionStyle)
       file.pub = resolvePub(file.src, file.out, playbook.urls.htmlExtensionStyle, playbook.site.url)
@@ -76,35 +83,36 @@ function partitionSrc (file, pathSegments, nav) {
   const navInfo = getNavInfo(file, nav)
   if (navInfo) {
     file.src.family = 'navigation'
-    // start from 2 (after /modules/foo) end at -1 (before filename.ext)
-    file.src.subpath = pathSegments.slice(2, -1).join('/')
+    // relative from modules/<module>
+    // FIXME don't assume navigation is in module folder
+    file.src.relative = pathSegments.slice(2).join('/')
     file.nav = navInfo
   } else if (pathSegments[0] === 'modules') {
     if (pathSegments[2] === 'pages') {
       if (pathSegments[3] === '_partials') {
-        // QUESTION should this be partial-page instead?
+        // QUESTION should this family be partial-page instead?
         file.src.family = 'partial'
-        // start from 4 (after /modules/foo/pages/_partials) end at -1 (before filename.ext)
-        file.src.subpath = pathSegments.slice(4, -1).join('/')
+        // relative from modules/<module>/pages/_partials
+        file.src.relative = pathSegments.slice(4).join('/')
       } else if (file.src.mediaType === 'text/asciidoc' && file.src.basename !== '_attributes.adoc') {
         file.src.family = 'page'
-        // start from 3 (after /modules/foo/pages) end at -1 (before filename.ext)
-        file.src.subpath = pathSegments.slice(3, -1).join('/')
+        // relative from modules/<module>/pages
+        file.src.relative = pathSegments.slice(3).join('/')
       }
     } else if (pathSegments[2] === 'assets') {
       if (pathSegments[3] === 'images') {
         file.src.family = 'image'
-        // start from 4 (after /modules/foo/assets/images) end at -1 (before filename.ext)
-        file.src.subpath = pathSegments.slice(4, -1).join('/')
+        // relative from modules/<module>/assets/images
+        file.src.relative = pathSegments.slice(4).join('/')
       } else if (pathSegments[3] === 'attachments') {
         file.src.family = 'attachment'
-        // start from 4 (after /modules/foo/assets/attachments) end at -1 (before filename.ext)
-        file.src.subpath = pathSegments.slice(4, -1).join('/')
+        // relative from modules/<module>/assets/attachments
+        file.src.relative = pathSegments.slice(4).join('/')
       }
     } else if (pathSegments[2] === 'examples') {
       file.src.family = 'example'
-      // start from 3 (after /modules/foo/examples) end at -1 (before filename.ext)
-      file.src.subpath = pathSegments.slice(3, -1).join('/')
+      // relative from modules/<module>/examples
+      file.src.relative = pathSegments.slice(3).join('/')
     }
   }
 }
@@ -147,7 +155,7 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
   }
 
   const modulePath = path.join(src.component, version, module)
-  const dirname = path.join(modulePath, familyPathSegment, src.subpath, indexifyPathSegment)
+  const dirname = path.join(modulePath, familyPathSegment, path.dirname(src.relative), indexifyPathSegment)
   const outputPath = path.join(dirname, basename)
   const moduleRootPath = path.relative(dirname, modulePath) || '.'
   const rootPath = path.relative(dirname, '') || '.'
@@ -173,8 +181,7 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
       } else {
         urlSegments[lastUrlSegmentIndex] = urlSegments[lastUrlSegmentIndex].replace(/\..*$/, '')
       }
-    }
-    if (htmlExtensionStyle === 'indexify') {
+    } else if (htmlExtensionStyle === 'indexify') {
       urlSegments[lastUrlSegmentIndex] = ''
     }
   }

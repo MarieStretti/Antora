@@ -19,7 +19,7 @@ Using those inputs, it should carry out the following operations:
 * Further partition the content aggregate into modules and families
  ** Build on the work the content aggregator did to organize the files by component version
 * Reject files which are not in a recognized location
-* Add additional metadata to the virtual files concerning information about their module, family, subpath, etc.
+* Add additional metadata to the virtual files concerning information about their module, family, family-relative path, etc.
 * Compute the output path (disk) and publish path (URL) information for each publishable file
 //* Add a navigation index to the navigation files
 * Create a look up mechanism to find files matching certain criteria
@@ -35,7 +35,7 @@ The content classifier should:
 
 * Access the content aggregate, which is produced by the content aggregator component
 * Walk the files in each component version
- ** The file walker should be aware of the following divisions: module, family, and topic
+ ** The file walker should be aware of the following divisions: module and family
 * Only keep files that match a known family and family file format
 * Discard files that do not match allowed project or file structures
 * Calculate source, output, and published path information for each file
@@ -83,7 +83,7 @@ const pages = catalog.findBy({ family: 'page' })
 * `getById({ component, version, module, family, relative })`
 * `getByPath({ component, version, path })`
 * `findBy({...})` - finds files that match example; at least one property must be specified
- ** filterable properties: `component`, `version`, `module`, `family`, `relative`, `basename`, `path`
+ ** filterable properties: `component`, `version`, `module`, `family`, `relative`, `basename`, `extname`
 
 == Data
 
