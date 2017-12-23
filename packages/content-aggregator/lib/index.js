@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const del = require('del')
 const File = require('vinyl')
 const fs = require('fs-extra')
 const git = require('nodegit')
@@ -86,7 +85,7 @@ async function openOrCloneRepository (repoUrl) {
     }
   } catch (e) {
     if (!isLocalRepo) {
-      del.sync(localPath)
+      fs.removeSync(localPath)
       repository = await git.Clone.clone(repoUrl, localPath, {
         bare: 1,
         fetchOpts: getFetchOptions(),

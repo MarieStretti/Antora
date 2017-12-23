@@ -12,7 +12,6 @@
     "node": ">= 8.0.0"
   },
   "dependencies": {
-    "del": "^3.0.0",
     "fs-extra": "^4.0.2",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
