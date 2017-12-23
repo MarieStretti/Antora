@@ -18,49 +18,47 @@ const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('../constants')
  * @returns {Object} A map containing the file, path, and contents of the resolved file.
  */
 function resolveIncludeFile (target, file, cursor, catalog) {
-  let [targetFamily, targetPath] = splitOnce(target, '/')
-  if (targetFamily === PARTIALS_DIR_PROXY) {
-    targetFamily = 'partial'
-  } else if (targetFamily === EXAMPLES_DIR_PROXY) {
-    targetFamily = 'example'
+  let [family, relative] = splitOnce(target, '/')
+  if (family === PARTIALS_DIR_PROXY) {
+    family = 'partial'
+  } else if (family === EXAMPLES_DIR_PROXY) {
+    family = 'example'
   } else {
-    targetFamily = undefined
-    targetPath = target
+    family = undefined
+    relative = target
   }
 
   let resolvedIncludeFile
-  if (targetFamily) {
-    const targetPathParts = path.parse(targetPath)
+  if (family) {
     resolvedIncludeFile = catalog.getById({
       component: file.src.component,
       version: file.src.version,
       module: file.src.module,
-      family: targetFamily,
-      subpath: targetPathParts.dir,
-      basename: targetPathParts.base,
+      family,
+      relative,
     })
   } else {
     // TODO can we keep track of the virtual file we're currently in instead of relying on cursor.dir?
     resolvedIncludeFile = catalog.getByPath({
       component: file.src.component,
       version: file.src.version,
-      path: path.join(cursor.dir, targetPath),
+      path: path.join(cursor.dir, relative),
     })
   }
 
   if (resolvedIncludeFile) {
     return {
-      file: resolvedIncludeFile.path,
+      file: resolvedIncludeFile.src.path,
       path: resolvedIncludeFile.src.basename,
-      contents: resolvedIncludeFile.contents.toString(),
+      // NOTE src.contents is set if a page is marked as a partial
+      contents: (resolvedIncludeFile.src.contents || resolvedIncludeFile.contents).toString(),
     }
   } else {
-    if (targetFamily) target = `{${targetFamily}sdir}/${targetPath}`
+    if (family) target = `{${family}sdir}/${relative}`
     // FIXME use replace next line instead of pushing an include; maybe raise error
     // TODO log "Unresolved include"
     return {
       file: cursor.file,
-      path: cursor.path,
       contents: `+include::${target}[]+`,
     }
   }

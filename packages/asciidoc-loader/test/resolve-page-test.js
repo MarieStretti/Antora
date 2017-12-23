@@ -10,7 +10,7 @@ describe('resolvePage', () => {
     getById: spy(() => file),
   })
 
-  it('should throw error if page ID string has invalid syntax', () => {
+  it('should throw error if page ID spec has invalid syntax', () => {
     const contentCatalog = mockContentCatalog()
     expect(() => resolvePage('component-foo::', contentCatalog)).to.throw()
     expect(contentCatalog.getById).to.not.have.been.called()
@@ -24,25 +24,21 @@ describe('resolvePage', () => {
       version: '1.2.3',
       module: 'the-module',
       family: 'page',
-      subpath: '',
-      basename: 'the-page.adoc',
+      relative: 'the-page.adoc',
     }
     const result = resolvePage(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
     expect(result).to.be.undefined()
   })
 
-  it('should resolve qualified page ID string to file in catalog', () => {
+  it('should resolve qualified page ID spec to file in catalog', () => {
     const targetFile = {
       src: {
         component: 'the-component',
         version: '1.2.3',
         module: 'the-module',
         family: 'page',
-        subpath: '',
-        stem: 'the-page',
-        basename: 'the-page.adoc',
-        extname: '.adoc',
+        relative: 'the-page.adoc',
       },
     }
     const contentCatalog = mockContentCatalog(targetFile)
@@ -52,8 +48,7 @@ describe('resolvePage', () => {
       version: '1.2.3',
       module: 'the-module',
       family: 'page',
-      subpath: '',
-      basename: 'the-page.adoc',
+      relative: 'the-page.adoc',
     }
     const result = resolvePage(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
@@ -66,10 +61,7 @@ describe('resolvePage', () => {
       version: '1.0',
       module: 'current-module',
       family: 'page',
-      subpath: '',
-      stem: 'current-page',
-      basename: 'current-page.adoc',
-      extname: '.adoc',
+      relative: 'current-page.adoc',
     }
     const targetFile = {
       src: {
@@ -77,10 +69,7 @@ describe('resolvePage', () => {
         version: '1.0',
         module: 'current-module',
         family: 'page',
-        subpath: '',
-        stem: 'target-page',
-        basename: 'target-page.adoc',
-        extname: '.adoc',
+        relative: 'target-page.adoc',
       },
     }
     const contentCatalog = mockContentCatalog(targetFile)
@@ -90,8 +79,7 @@ describe('resolvePage', () => {
       version: '1.0',
       module: 'current-module',
       family: 'page',
-      subpath: '',
-      basename: 'target-page.adoc',
+      relative: 'target-page.adoc',
     }
     const result = resolvePage(targetPageIdSpec, contentCatalog, context)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)

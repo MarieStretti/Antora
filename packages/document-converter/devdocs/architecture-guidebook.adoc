@@ -31,11 +31,14 @@ All the details of loading the AsciiDoc should be handled by the AsciiDoc loader
 
 For each file in the `page` family, this component should:
 
-* Use the `loadAsciiDoc()` function of the AsciiDoc loader component to transform the virtual AsciiDoc file into a document object
-* Invoke the `getAttributes()` method on the document object to retrieve the attributes
- ** assign the result to the `asciidoc.attributes` property on the file
-* Invoke the `convert()` method on that object to generate the HTML
- ** assign the result to the `contents` property on the file
+* Use the `loadAsciiDoc()` function of the AsciiDoc loader component to transform the virtual AsciiDoc file into a document object.
+* Invoke the `getAttributes()` method on the document object to retrieve the attributes.
+ ** Assign the result to the `asciidoc.attributes` property on the file.
+* If the `page-partial` attribute is set on the document, back up the AsciiDoc contents to the `src.contents` of the input file.
+ ** Backing up the AsciiDoc contents ensures that the AsciiDoc source of this file can still be included in another page, even if this page gets converted first.
+* Invoke the `convert()` method on that object to generate the HTML.
+ ** Assign the result to the `contents` property on the file.
+ ** Set the `mediaType` property to `text/html` (to reflect the current format of `contents`)
 
 === Inputs and outputs
 

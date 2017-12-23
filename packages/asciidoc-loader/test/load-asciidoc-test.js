@@ -28,36 +28,41 @@ describe('loadAsciiDoc()', () => {
     }
     const entriesById = {}
     const entriesByPath = {}
-    seed.forEach(({ family, relativePath, contents, component, version, module, indexify }) => {
+    seed.forEach(({ family, relative, contents, component, version, module, indexify }) => {
       if (!component) component = 'component-a'
       if (!version) version = '1.2.3'
       if (!module) module = 'module-a'
       if (!contents) contents = '= Page Title\n\npage contents'
       const componentVersionKey = buildComponentVersionKey(component, version)
-      const componentRelativePath = path.join('modules', module, familyDirs[family], relativePath)
+      const componentRelativePath = path.join('modules', module, familyDirs[family], relative)
       const entry = {
         path: componentRelativePath,
         dirname: path.dirname(componentRelativePath),
         contents: Buffer.from(contents),
         src: {
-          basename: path.basename(relativePath),
+          path: componentRelativePath,
+          component,
+          version,
+          module,
+          relative,
+          basename: path.basename(relative),
         },
       }
       if (family === 'page') {
         const pubVersion = version === 'master' ? '' : version
         const pubModule = module === 'ROOT' ? '' : module
-        const pubRelativePath = relativePath.slice(0, -5) + (indexify ? '/' : '.html')
-        entry.pub = { url: path.join('/', component, pubVersion, pubModule, pubRelativePath) }
+        const pubRelative = relative.slice(0, -5) + (indexify ? '/' : '.html')
+        entry.pub = { url: path.join('/', component, pubVersion, pubModule, pubRelative) }
       }
-      const byIdKey = componentVersionKey + family + '$' + relativePath
+      const byIdKey = componentVersionKey + family + '$' + relative
       const byPathKey = componentVersionKey + componentRelativePath
       entriesById[byIdKey] = entriesByPath[byPathKey] = entry
     })
 
     return {
       getById: spy(
-        ({ component, version, family, subpath, basename }) =>
-          entriesById[buildComponentVersionKey(component, version) + family + '$' + path.join(subpath, basename)]
+        ({ component, version, family, relative }) =>
+          entriesById[buildComponentVersionKey(component, version) + family + '$' + relative]
       ),
       getByPath: spy(
         ({ path: path_, component, version }) => entriesByPath[buildComponentVersionKey(component, version) + path_]
@@ -74,7 +79,8 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: '',
+        relative: 'page-a.adoc',
+        basename: 'page-a.adoc',
         stem: 'page-a',
         extname: '.adoc',
       },
@@ -104,7 +110,7 @@ describe('loadAsciiDoc()', () => {
     expect(allBlocks).to.have.lengthOf(8)
   })
 
-  it('should not register Antora enhancements to Asciidoctor globally', () => {
+  it('should not register Antora enhancements for Asciidoctor globally', () => {
     const contents = heredoc`
       = Document Title
 
@@ -201,8 +207,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'partial',
-        subpath: '',
-        basename: 'does-not-exist.adoc',
+        relative: 'does-not-exist.adoc',
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
@@ -210,11 +215,11 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.$lines()).to.eql(['+' + inputContents + '+'])
     })
 
-    it('should read include target prefixed with {partialsdir}', () => {
+    it('should resolve include target prefixed with {partialsdir}', () => {
       const includeContents = 'Hello, World!'
       const contentCatalog = mockContentCatalog({
         family: 'partial',
-        relativePath: 'greeting.adoc',
+        relative: 'greeting.adoc',
         contents: includeContents,
       })
       populateFileContents('include::{partialsdir}/greeting.adoc[]')
@@ -224,8 +229,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'partial',
-        subpath: '',
-        basename: 'greeting.adoc',
+        relative: 'greeting.adoc',
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
@@ -233,11 +237,11 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.$lines()).to.eql([includeContents])
     })
 
-    it('should read include target prefixed with {examplesdir}', () => {
+    it('should resolve include target prefixed with {examplesdir}', () => {
       const includeContents = 'puts "Hello, World!"'
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/hello.rb',
+        relative: 'ruby/hello.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -252,8 +256,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'example',
-        subpath: 'ruby',
-        basename: 'hello.rb',
+        relative: 'ruby/hello.rb',
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
@@ -270,7 +273,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -294,7 +297,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -318,7 +321,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -343,7 +346,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -367,7 +370,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'theme.css',
+        relative: 'theme.css',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -391,7 +394,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -418,7 +421,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -445,7 +448,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -477,7 +480,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -507,7 +510,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -534,7 +537,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -563,7 +566,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -590,7 +593,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -618,7 +621,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -650,7 +653,7 @@ describe('loadAsciiDoc()', () => {
       `
       const contentCatalog = mockContentCatalog({
         family: 'example',
-        relativePath: 'ruby/greet.rb',
+        relative: 'ruby/greet.rb',
         contents: includeContents,
       })
       populateFileContents(heredoc`
@@ -670,12 +673,11 @@ describe('loadAsciiDoc()', () => {
     })
 
     // TODO if we're going to support includes in nav files, we need a place for them to live?
-    // TODO this test will be affected if we decide to set docdir attribute on document
-    it('should read top-level include target relative to current file', () => {
+    it('should resolve top-level include target relative to current file', () => {
       const includeContents = 'changelog'
       const contentCatalog = mockContentCatalog({
         family: 'page',
-        relativePath: 'changelog.adoc',
+        relative: 'changelog.adoc',
         contents: includeContents,
       })
       populateFileContents('include::changelog.adoc[]')
@@ -691,18 +693,18 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.$lines()).to.eql([includeContents])
     })
 
-    it('should read target of nested include relative to current file', () => {
+    it('should resolve target of nested include relative to current file', () => {
       const outerIncludeContents = 'include::deeply/nested.adoc[]'
       const nestedIncludeContents = 'All that is nested is not lost.'
       const contentCatalog = mockContentCatalog([
         {
           family: 'partial',
-          relativePath: 'outer.adoc',
+          relative: 'outer.adoc',
           contents: outerIncludeContents,
         },
         {
           family: 'partial',
-          relativePath: 'deeply/nested.adoc',
+          relative: 'deeply/nested.adoc',
           contents: nestedIncludeContents,
         },
       ])
@@ -713,8 +715,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'partial',
-        subpath: '',
-        basename: 'outer.adoc',
+        relative: 'outer.adoc',
       })
       expectCalledWith(contentCatalog.getByPath, {
         component: 'component-a',
@@ -731,7 +732,7 @@ describe('loadAsciiDoc()', () => {
       const outerIncludeContents = 'include::deeply/nested.adoc[]'
       const contentCatalog = mockContentCatalog({
         family: 'partial',
-        relativePath: 'outer.adoc',
+        relative: 'outer.adoc',
         contents: outerIncludeContents,
       })
       populateFileContents('include::{partialsdir}/outer.adoc[]')
@@ -741,8 +742,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'partial',
-        subpath: '',
-        basename: 'outer.adoc',
+        relative: 'outer.adoc',
       })
       expectCalledWith(contentCatalog.getByPath, {
         component: 'component-a',
@@ -768,7 +768,7 @@ describe('loadAsciiDoc()', () => {
       const search = '/page-a.'
       const replace = `/${topic}/page-a.`
       inputFile.path = inputFile.path.replace(search, replace)
-      inputFile.src.subpath = topic
+      inputFile.src.relative = path.join(topic, inputFile.src.relative)
       inputFile.pub.moduleRootPath += '/..'
       inputFile.pub.url = inputFile.pub.url.replace(search, replace)
       inputFile.pub.rootPath += '/..'
@@ -800,32 +800,30 @@ describe('loadAsciiDoc()', () => {
 
     it('should skip an unresolved page reference', () => {
       const contentCatalog = mockContentCatalog()
-      populateFileContents('xref:4.5.6@component-b:module-b:subpath-foo/subpath-bar/the-page.adoc[The Page Title]')
+      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        subpath: 'subpath-foo/subpath-bar',
-        basename: 'the-page.adoc',
+        relative: 'topic-foo/topic-bar/the-page.adoc',
       })
-      expectLink(html, '#', '4.5.6@component-b:module-b:subpath-foo/subpath-bar/the-page.adoc')
+      expectLink(html, '#', '4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc')
     })
 
     it('should skip an unresolved page reference with fragment', () => {
       const contentCatalog = mockContentCatalog()
-      populateFileContents('xref:4.5.6@component-b:module-b:subpath-foo/subpath-bar/the-page.adoc#frag[The Page Title]')
+      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc#frag[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        subpath: 'subpath-foo/subpath-bar',
-        basename: 'the-page.adoc',
+        relative: 'topic-foo/topic-bar/the-page.adoc',
       })
-      expectLink(html, '#', '4.5.6@component-b:module-b:subpath-foo/subpath-bar/the-page.adoc#frag')
+      expectLink(html, '#', '4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc#frag')
     })
 
     it('should convert a page reference with version, component, module, and page', () => {
@@ -834,7 +832,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:4.5.6@component-b:module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -843,8 +841,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/module-b/the-page.html', 'The Page Title')
     })
@@ -855,21 +852,20 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        relativePath: 'subpath-foo/subpath-bar/the-page.adoc',
+        relative: 'topic-foo/topic-bar/the-page.adoc',
       })
-      populateFileContents('xref:4.5.6@component-b:module-b:subpath-foo/subpath-bar/the-page.adoc[The Page Title]')
+      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        subpath: 'subpath-foo/subpath-bar',
-        basename: 'the-page.adoc',
+        relative: 'topic-foo/topic-bar/the-page.adoc',
       })
       expectLink(
         html,
-        inputFile.pub.rootPath + '/component-b/4.5.6/module-b/subpath-foo/subpath-bar/the-page.html',
+        inputFile.pub.rootPath + '/component-b/4.5.6/module-b/topic-foo/topic-bar/the-page.html',
         'The Page Title'
       )
     })
@@ -880,21 +876,20 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        relativePath: 'subpath-foo/the-page.adoc',
+        relative: 'topic-foo/the-page.adoc',
       })
-      populateFileContents('xref:4.5.6@component-b:module-b:subpath-foo/the-page.adoc#frag[The Page Title]')
+      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/the-page.adoc#frag[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        subpath: 'subpath-foo',
-        basename: 'the-page.adoc',
+        relative: 'topic-foo/the-page.adoc',
       })
       expectLink(
         html,
-        inputFile.pub.rootPath + '/component-b/4.5.6/module-b/subpath-foo/the-page.html#frag',
+        inputFile.pub.rootPath + '/component-b/4.5.6/module-b/topic-foo/the-page.html#frag',
         'The Page Title'
       )
     })
@@ -905,7 +900,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:4.5.6@module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -914,8 +909,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, '../../4.5.6/module-b/the-page.html', 'The Page Title')
     })
@@ -926,7 +920,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:4.5.6@module-b:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -935,8 +929,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-b',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, '../../4.5.6/module-b/the-topic/the-page.html', 'The Page Title')
     })
@@ -947,7 +940,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'ROOT',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:4.5.6@component-b::the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -956,8 +949,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'ROOT',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-page.html', 'The Page Title')
     })
@@ -968,7 +960,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'ROOT',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:4.5.6@component-b::the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -977,8 +969,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'ROOT',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-topic/the-page.html', 'The Page Title')
     })
@@ -989,7 +980,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'ROOT',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:component-b::the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -998,8 +989,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'ROOT',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, inputFile.pub.rootPath + '/component-b/the-page.html', 'The Page Title')
     })
@@ -1010,7 +1000,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'ROOT',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:component-b::the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1019,8 +1009,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'ROOT',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, inputFile.pub.rootPath + '/component-b/the-topic/the-page.html', 'The Page Title')
     })
@@ -1031,7 +1020,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:component-b:module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1040,8 +1029,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'module-b',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-page.html', 'The Page Title')
     })
@@ -1052,7 +1040,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:component-b:module-b:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1061,8 +1049,7 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         module: 'module-b',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-topic/the-page.html', 'The Page Title')
     })
@@ -1073,7 +1060,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:4.5.6@the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1082,8 +1069,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-a',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, '../../4.5.6/module-a/the-page.html', 'The Page Title')
     })
@@ -1094,7 +1080,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:4.5.6@the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1103,8 +1089,7 @@ describe('loadAsciiDoc()', () => {
         version: '4.5.6',
         module: 'module-a',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, '../../4.5.6/module-a/the-topic/the-page.html', 'The Page Title')
     })
@@ -1115,7 +1100,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1124,8 +1109,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, '../module-b/the-page.html', 'The Page Title')
     })
@@ -1136,7 +1120,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:module-b:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1145,8 +1129,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, '../module-b/the-topic/the-page.html', 'The Page Title')
     })
@@ -1157,7 +1140,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       populateFileContents('xref:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1166,8 +1149,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, 'the-page.html', 'The Page Title')
     })
@@ -1178,7 +1160,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       moveFileIntoTopic('topic-a')
       populateFileContents('xref:the-page.adoc[The Page Title]')
@@ -1188,8 +1170,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, '../the-page.html', 'The Page Title')
     })
@@ -1200,7 +1181,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1209,8 +1190,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, 'the-topic/the-page.html', 'The Page Title')
     })
@@ -1221,7 +1201,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       moveFileIntoTopic('topic-a')
       populateFileContents('xref:the-topic/the-page.adoc[The Page Title]')
@@ -1231,8 +1211,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, '../the-topic/the-page.html', 'The Page Title')
     })
@@ -1243,7 +1222,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
         indexify: true,
       })
       indexifyFile()
@@ -1254,8 +1233,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, '../../module-b/the-page/', 'The Page Title')
     })
@@ -1266,7 +1244,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
         indexify: true,
       })
       indexifyFile()
@@ -1277,8 +1255,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, '../the-topic/the-page/', 'The Page Title')
     })
@@ -1289,7 +1266,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        relativePath: 'the-page.adoc',
+        relative: 'the-page.adoc',
         indexify: true,
       })
       moveFileIntoTopic('topic-a')
@@ -1301,8 +1278,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: '',
-        basename: 'the-page.adoc',
+        relative: 'the-page.adoc',
       })
       expectLink(html, '../../the-page/', 'The Page Title')
     })
@@ -1314,7 +1290,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        relativePath: 'the-topic/the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       populateFileContents('xref:module-b:the-topic/the-page.adoc#frag[]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1323,8 +1299,7 @@ describe('loadAsciiDoc()', () => {
         version: '1.2.3',
         module: 'module-b',
         family: 'page',
-        subpath: 'the-topic',
-        basename: 'the-page.adoc',
+        relative: 'the-topic/the-page.adoc',
       })
       expectLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
     })

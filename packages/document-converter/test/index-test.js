@@ -14,15 +14,19 @@ describe('convertDocument()', () => {
     inputFile = {
       path: 'modules/module-a/pages/page-a.adoc',
       dirname: 'modules/module-a/pages',
+      mediaType: 'text/asciidoc',
       src: {
+        path: 'modules/module-a/pages/page-a.adoc',
         component: 'component-a',
         version: '1.2.3',
         module: 'module-a',
         family: 'page',
-        subpath: '',
-        moduleRootPath: '..',
+        relative: 'page-a.adoc',
+        basename: 'page-a.adoc',
         stem: 'page-a',
         extname: '.adoc',
+        mediaType: 'text/asciidoc',
+        moduleRootPath: '..',
       },
       pub: {
         url: '/component-a/1.2.3/module-a/page-a.html',
@@ -33,7 +37,7 @@ describe('convertDocument()', () => {
   })
 
   it('should convert AsciiDoc contents on file to HTML', () => {
-    const inputFileContents = heredoc`
+    inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
       == Section Title
@@ -45,12 +49,12 @@ describe('convertDocument()', () => {
       * list item 3
 
       image::screenshot.png[]
-    `
-    inputFile.contents = Buffer.from(inputFileContents)
+    `)
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
       .then(() => {
-        expect(inputFile.contents.toString()).to.eql(heredoc`
+        expect(inputFile.mediaType).to.equal('text/html')
+        expect(inputFile.contents.toString()).to.equal(heredoc`
           <div class="sect1">
           <h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
           <div class="sectionbody">
@@ -81,14 +85,13 @@ describe('convertDocument()', () => {
       })
   })
 
-  it('should store document header attributes to file', () => {
-    const inputFileContents = heredoc`
+  it('should save document header attributes to file', () => {
+    inputFile.contents = Buffer.from(heredoc`
       = Document Title
       :keywords: CSS, flexbox, layout, box model
 
       article contents
-    `
-    inputFile.contents = Buffer.from(inputFileContents)
+    `)
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
       .then(() => {
@@ -109,12 +112,11 @@ describe('convertDocument()', () => {
       'product-name': 'Hi-Speed Tonic',
       'source-highlighter': 'html-pipeline',
     }
-    const inputFileContents = heredoc`
+    inputFile.contents = Buffer.from(heredoc`
       = Document Title
 
       Get there in a flash with {product-name}.
-    `
-    inputFile.contents = Buffer.from(inputFileContents)
+    `)
     expect(convertDocument(inputFile, customAttrs))
       .to.be.fulfilled()
       .then(() => {
@@ -127,14 +129,8 @@ describe('convertDocument()', () => {
   })
 
   it('should convert page reference to URL of page in content catalog', () => {
-    const inputFileContents = 'xref:module-b:page-b.adoc[Page B]'
-    inputFile.contents = Buffer.from(inputFileContents)
+    inputFile.contents = Buffer.from('xref:module-b:page-b.adoc[Page B]')
     const targetFile = {
-      path: 'modules/module-b/page-b.adoc',
-      dirname: 'modules/module-b',
-      src: {
-        basename: 'page-b.adoc',
-      },
       pub: {
         url: '/component-a/1.2.3/module-b/page-b.html',
       },
@@ -148,27 +144,26 @@ describe('convertDocument()', () => {
           version: '1.2.3',
           module: 'module-b',
           family: 'page',
-          subpath: '',
-          basename: 'page-b.adoc',
+          relative: 'page-b.adoc',
         })
         expectLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
       })
   })
 
-  it('should resolve include target from content catalog', () => {
-    const inputFileContents = 'include::{partialsdir}/definitions.adoc[]'
-    inputFile.contents = Buffer.from(inputFileContents)
+  it('should resolve target of include directive to file in content catalog', () => {
+    inputFile.contents = Buffer.from('include::{partialsdir}/definitions.adoc[]')
     const partialFile = {
       path: 'modules/module-a/pages/_partials/definitions.adoc',
       dirname: 'modules/module-a/pages/_partials',
       contents: Buffer.from(`cloud: someone else's computer`),
       src: {
+        path: 'modules/module-a/pages/_partials/definitions.adoc',
+        dirname: 'modules/module-a/pages/_partials',
         component: 'component-a',
         version: '1.2.3',
         module: 'module-a',
         family: 'partial',
-        subpath: '',
-        basename: 'definitions.adoc',
+        relative: 'definitions.adoc',
       },
     }
     const contentCatalog = { getById: spy(() => partialFile) }
@@ -180,10 +175,78 @@ describe('convertDocument()', () => {
           version: '1.2.3',
           module: 'module-a',
           family: 'partial',
-          subpath: '',
-          basename: 'definitions.adoc',
+          relative: 'definitions.adoc',
         })
         expect(inputFile.contents.toString()).to.include('cloud: someone else&#8217;s computer')
+      })
+  })
+
+  it('should be able to include a page marked as a partial which has already been converted', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      = Page Title
+      
+      == Recent Changes
+
+      include::changelog.adoc[tag=entries,leveloffset=+1]
+    `)
+    const includedFile = {
+      path: 'modules/module-a/pages/changelog.adoc',
+      dirname: 'modules/module-a/pages',
+      contents: Buffer.from(heredoc`
+        = Changelog
+        :page-partial:
+
+        // tag::entries[]
+        == Version 1.1
+
+        * Bug fixes.
+        // end::entries[]
+      `),
+      src: {
+        path: 'modules/module-a/pages/changelog.adoc',
+        dirname: 'modules/module-a/pages',
+        component: 'component-a',
+        version: '1.2.3',
+        module: 'module-a',
+        family: 'page',
+        relative: 'changelog.adoc',
+      },
+      pub: {
+        url: '/component-a/1.2.3/module-a/changelog.html',
+        moduleRootPath: '..',
+        rootPath: '../../..',
+      },
+    }
+    const contentCatalog = { getByPath: spy(() => includedFile) }
+    expect(convertDocument(includedFile))
+      .to.be.fulfilled()
+      .then(() => {
+        expect(convertDocument(inputFile, {}, contentCatalog))
+          .to.be.fulfilled()
+          .then(() => {
+            expectCalledWith(contentCatalog.getByPath, {
+              component: 'component-a',
+              version: '1.2.3',
+              path: 'modules/module-a/pages/changelog.adoc',
+            })
+            expect(inputFile.contents.toString()).to.include(heredoc`
+              <div class="sect1">
+              <h2 id="_recent_changes"><a class="anchor" href="#_recent_changes"></a>Recent Changes</h2>
+              <div class="sectionbody">
+              <div class="sect2">
+              <h3 id="_version_1_1"><a class="anchor" href="#_version_1_1"></a>Version 1.1</h3>
+              <div class="ulist">
+              <ul>
+              <li>
+              <p>Bug fixes.</p>
+              </li>
+              </ul>
+              </div>
+              </div>
+              </div>
+              </div>
+            `)
+          })
       })
   })
 })

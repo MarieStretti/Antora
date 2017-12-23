@@ -99,17 +99,36 @@ The page reference converter should be registered on the converter instance (per
 
 === Include processor
 
-The target of all include directives should be resolved from the content catalog.
-An include target must either point to a file in the current module, under the `partial` family or the `example` family, or it must be relative to the current document.
-For example:
+A custom include processor should be registered that resolves the target of all include directives from the content catalog.
+The include processor should not be registered globally, but rather once per `loadAsciiDoc` invocation.
+
+The target of an include should either point to a file in the `partial` family or the `example` family of the current module, or to a file relative to the current document.
+
+If the include target begins with a family reference (i.e., `{partialsdir}` or `{examplesdir}`), for example:
 
  include::{partialsdir}/partial.adoc[]
  include::{examplesdir}/example.json[]
+
+then the included file should be looked up in the content catalog by ID.
+
+Otherwise, if the include target is just a bare path, for example:
+
  include::sibling.adoc[]
 
-Due to current limitations in the AsciiDoc processor, this processor must also handle the request to filter the included content by tags.
+then the target should be resolved relative to the current document and looked up in the content catalog by path.
 
-The include processor should be registered once per load and not globally.
+After successfully looking up the file in the catalog, the following data should be passed to the processor's `push_include` method:
+
+* contents = (file.src.contents || file.contents).toString()
+* file = file.src.path
+* path = file.src.basename
+
+When retrieving the contents, the `src.contents` should be checked first, then `contents`.
+The `src.contents` property is set for any file which is both a page and a partial (as indicated by the `page-partial` attribute on the document).
+
+The include processor should also perform tag filtering on the contents if either the `tag` or `tags` attribute is set on the include directive.
+
+If the include file cannot be resolved, then the include directive should be left unprocessed and a warning should be added to the file (pending architecture).
 
 === Inputs and outputs
 
