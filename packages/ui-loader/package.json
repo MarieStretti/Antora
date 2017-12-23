@@ -15,10 +15,10 @@
     "download": "^6.2.5",
     "fs-extra": "^4.0.2",
     "gulp-buffer": "^0.0.2",
+    "gulp-vinyl-zip": "^2.1.0",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "minimatch-all": "^1.1.0",
-    "stream-to-array": "^2.3.0",
-    "gulp-vinyl-zip": "^2.1.0"
+    "stream-to-array": "^2.3.0"
   }
 }
