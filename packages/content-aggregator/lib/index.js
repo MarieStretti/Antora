@@ -19,8 +19,8 @@ const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
 const SEPARATOR_RX = /\/|:/
 
 module.exports = async (playbook) => {
-  const componentVersions = playbook.content.sources.map(async (repo) => {
-    const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(repo.url)
+  const componentVersions = playbook.content.sources.map(async (source) => {
+    const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(source.url)
     const branches = await repository.getReferences(git.Reference.TYPE.OID)
 
     const repoComponentVersions = _(branches)
@@ -33,17 +33,17 @@ module.exports = async (playbook) => {
         return isLocalRepo ? _.last(branches) : _.first(branches)
       })
       .values()
-      .filter(({ branchName }) => branchMatches(branchName, repo.branches || playbook.content.branches))
+      .filter(({ branchName }) => branchMatches(branchName, source.branches || playbook.content.branches))
       .map(async ({ branch, branchName, isHead, isLocal }) => {
         let files
         if (isLocalRepo && !isBare && isHead) {
-          files = await loadLocalFiles(repo)
+          files = await readFilesFromWorktree(path.join(source.url, source.startPath || ''))
         } else {
-          files = await loadGitFiles(repository, branch, repo)
+          files = await readFilesFromGitTree(repository, branch, source.startPath)
         }
 
         const componentVersion = await readComponentDesc(files)
-        componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, repo.startPath))
+        componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
         return componentVersion
       })
       .value()
@@ -220,9 +220,9 @@ function readComponentDesc (files) {
   return componentDesc
 }
 
-async function loadGitFiles (repository, branch, repo) {
-  const tree = await getGitTree(repository, branch, repo.startPath)
-  const entries = await getGitEntries(tree)
+async function readFilesFromGitTree (repository, branch, startPath) {
+  const tree = await getGitTree(repository, branch, startPath)
+  const entries = await walkGitTree(tree)
   const files = entries.map(async (entry) => {
     const blob = await entry.getBlob()
     const contents = blob.content()
@@ -245,7 +245,7 @@ async function getGitTree (repository, branch, startPath) {
   return subTree
 }
 
-function getGitEntries (tree, onEntry) {
+function walkGitTree (tree) {
   return new Promise((resolve, reject) => {
     const walker = tree.walk()
     walker.on('error', (e) => reject(e))
@@ -254,23 +254,31 @@ function getGitEntries (tree, onEntry) {
   })
 }
 
-async function loadLocalFiles (repo) {
-  const base = path.resolve(repo.url, repo.startPath || '.')
+async function readFilesFromWorktree (relativeDir) {
+  const base = path.resolve(relativeDir)
   const opts = { base, cwd: base }
-  return streamToArray(vfs.src('**/*.*', opts).pipe(map(relativize)))
+  // NOTE streamToArray wraps the stream in a Promise so it can be awaited
+  return streamToArray(vfs.src('**/*.*', opts).pipe(relativize()))
 }
 
-// converts path from absolute to component root relative
-function relativize (file, next) {
-  next(
-    null,
-    new File({
-      path: file.relative,
-      contents: file.contents,
-      stat: file.stat,
-      src: { abspath: file.path },
-    })
-  )
+/**
+ * Transforms all files in stream to a component root relative path.
+ *
+ * Applies a mapping function to all vinyl files in the stream so they end up
+ * with a path relative to the component root instead of the file system.
+ */
+function relativize () {
+  return map((file, next) => {
+    next(
+      null,
+      new File({
+        path: file.relative,
+        contents: file.contents,
+        stat: file.stat,
+        src: { abspath: file.path },
+      })
+    )
+  })
 }
 
 function assignFileProperties (file, url, branch, startPath = '/') {

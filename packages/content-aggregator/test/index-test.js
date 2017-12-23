@@ -440,7 +440,7 @@ describe('aggregateContent()', () => {
     await repo.copyAll(['modules/ROOT/pages/page-two.adoc'])
   }
 
-  it('should catalog files in work tree of local repo', async () => {
+  it('should catalog files in worktree of local repo', async () => {
     const repo = new FixtureRepo({ isRemote: false, isBare: false })
     await initRepoWithWorkingFiles(repo)
     playbook.content.sources.push({ url: repo.url })
@@ -468,7 +468,7 @@ describe('aggregateContent()', () => {
       })
   })
 
-  describe('should not catalog files in work tree', () => {
+  describe('should not catalog files in worktree', () => {
     function testNonWorkingFilesCatalog (repo) {
       playbook.content.sources.push({ url: repo.url })
       const aggregate = aggregateContent(playbook)
