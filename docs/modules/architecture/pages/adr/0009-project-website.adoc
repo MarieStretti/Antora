@@ -16,8 +16,8 @@ One major route through which people discover and explore a project is through i
 
 We have decided to create, maintain, and publish a website for the Antora project.
 The website source and UI will be stored in a repository in Antora's GitLab organization.
-The project should be built with Antora, since a key feature of the website will be the documentation for the project.
-It will also push us to be able to use Antora to include landing pages in a site to accompany documentation pages.
+The site does not have to be built with Antora.
+A landing page is a discrete website and we don't want it to overcomplicate the task of publishing the docs for Antora.
 The website URL is \https://antora.org.
 
 The website should communicate and present:
