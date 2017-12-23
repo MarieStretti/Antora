@@ -27,7 +27,7 @@ class UiCatalog {
 
   addFile (file) {
     const id = this[$generateId](file)
-    if (_.has(this[$files], id)) {
+    if (id in this[$files]) {
       throw new Error('Duplicate file')
     }
     this[$files][id] = file

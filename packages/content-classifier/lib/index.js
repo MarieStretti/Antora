@@ -17,7 +17,7 @@ class ContentCatalog {
 
   addFile (file) {
     const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
-    if (_.has(this[$files], id)) {
+    if (id in this[$files]) {
       throw new Error('Duplicate file')
     }
     this[$files][id] = file
