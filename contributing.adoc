@@ -517,6 +517,14 @@ To run the test suite, use:
 
  $ gulp test
 
+If you don't want the `lint` task to run before running the tests, add `!` to the end of the task name:
+
+ $ gulp test!
+
+If you want to run the linter separately, you can use the following gulp task:
+
+ $ gulp lint
+
 //FIXME nyc is currently disabled
 //This command also computes a coverage report using {uri-istanbul}[istanbul].
 //You can browse this report in a web browser by opening the HTML file [.path]_coverage/index.html_.
@@ -525,17 +533,13 @@ You can run the test suite for a single package by passing the name of the packa
 
  $ gulp test --package=ui-loader
 
-This filter works for all gulp tasks, including `lint` and `test-watch`, which are covered next.
+This filter works for all gulp tasks, including `lint` and `test:watch`, which are covered next.
 
 If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
 
- $ gulp test-watch
+ $ gulp test:watch
 
-This command runs the test suite and coverage report each time you save the test or the code under test.
-
-If you want to run the linter separately, you can use the following gulp task:
-
- $ gulp lint
+This command runs the test suite (using `test!`) each time you save the test or the code under test.
 
 === Select or Skip Tests
 
@@ -575,7 +579,7 @@ The CI pipeline essentially boils down to these three commands:
 
 * `yarn`
 * `gulp lint`
-* `gulp test-only`
+* `gulp test!`
 
 You can view the results of the pipelines on the {uri-ci-pipelines}[pipelines dashboard].
 

@@ -38,7 +38,7 @@ test:
     - packages/document-converter/node_modules/
     - packages/playbook-builder/node_modules/
     - packages/ui-loader/node_modules/
-  script: node_modules/.bin/gulp test-only
+  script: node_modules/.bin/gulp test!
   artifacts:
     paths:
     - coverage/

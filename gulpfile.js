@@ -22,8 +22,8 @@ const isCodeCoverageEnabled = () => process.env.COVERAGE === 'true' || process.e
 gulp.task('lint', () => lint(allFiles))
 gulp.task('format', () => format(allFiles))
 gulp.task('test', ['lint'], () => test(testFiles, isCodeCoverageEnabled()))
-gulp.task('test-only', () => test(testFiles, isCodeCoverageEnabled()))
-gulp.task('test-watch', () => gulp.watch(allFiles, ['test-only']))
+gulp.task('test!', () => test(testFiles, isCodeCoverageEnabled()))
+gulp.task('test:watch', () => gulp.watch(allFiles, ['test!']))
 gulp.task('commitlint', () => commitlint())
 
 gulp.task('default', ['test'])
