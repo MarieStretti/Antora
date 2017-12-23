@@ -23,7 +23,9 @@ lint:
     policy: pull
     paths:
     - node_modules/
-  script: node_modules/.bin/gulp lint
+  script:
+  - node_modules/.bin/gulp lint
+  - node_modules/.bin/gulp commitlint
 test:
   stage: verify
   cache:
@@ -40,10 +42,3 @@ test:
   artifacts:
     paths:
     - coverage/
-commitlint:
-  stage: verify
-  cache:
-    policy: pull
-    paths:
-    - node_modules/
-  script: node_modules/.bin/gulp commitlint
