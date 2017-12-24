@@ -206,3 +206,12 @@ _{s}_ Under consideration.
 There are several pending questions about this page.
 Dan isn't a fan of the word "`workflow`".
 Is this the proper location for a high-level tutorial?
+
+Try Antora with the Demo project (P)::
+_{r}_ Could also be called Test Installation with Demo project.
+The purpose of this tutorial would be for users to get quick, hands on experience with Antora--either to test their installation or evaluate it for use--by introducing them and showing them how to use it with the playbook project and documentation components in the organization.
++
+_{s}_ Under consideration.
+Would this be the right location for this tutorial?
+Exactly how detailed would this tutorial be?
+Would it even be a tutorial or more of a mention that they can use the Demo to practice the tutorials, functions, etc. on?
