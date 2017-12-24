@@ -215,3 +215,58 @@ _{s}_ Under consideration.
 Would this be the right location for this tutorial?
 Exactly how detailed would this tutorial be?
 Would it even be a tutorial or more of a mention that they can use the Demo to practice the tutorials, functions, etc. on?
+
+Documentation Component (C, P)::
+_{r}_ Full explanation of a documentation component, including its purpose, structure, and what the user should consider when organizing there source files into components.
++
+_{s}_ Accepted
+
+Structure (P)::
+_{r}_ Full description of the directories and reserved directory and file names in a documentation component.
++
+_{s}_ Accepted
+
+Organizing source files (SC, P)::
+_{r}_ Or: Source file organization. The considerations a user should keep in mind when choosing how to organize their source files.
++
+_{s}_ Under consideration.
+Not sure if this qualifies as an SC or if we've named it correctly.
+
+Versions (P or P#)::
+_{r}_ Whether to version a component or not.
+How versioning impacts managing the content and the published site.
++
+_{s}_ Accepted
+
+Component or module? (P or P#)::
+_{r}_ Whether a collection of files should be a component or a module within a component.
+How components and modules impact managing the content and the published site.
++
+_{s}_ Accepted
+
+One or multiple modules? (P or P#)::
+_{r}_ Whether a collection of files should be organized as a single module or many modules within a component.
+How multiple modules within a component impact managing the content and the published site.
++
+_{s}_ Accepted
+
+Module or topic? (P or P#)::
+_{r}_ Whether a collection of files should be organized as a module or a topic within a component.
+How topics within a module impact managing the content and the published site.
++
+_{s}_ Accepted
+
+Naming directories and files (SC, P)::
+_{r}_ Or: Directory and file names.
+The considerations a user should keep in mind when choosing what to name the folders and files in their documentation.
++
+_{s}_ Under consideration.
+Not sure if this qualifies as an SC or if we've named it correctly.
+
+Source to URL (P or P#)::
+_{r}_ How the names of the component, module, topic directories and the file names affect a page URL.
+The considerations the user should be mindful of both for writers (how filenames can affect system portability) and readers (human readable URLs) when naming.
+May also include how names affect aliases, routes, navigation, and filtering.
++
+_{s}_ Under consideration.
+Not sure how much detail, if any, to include about aliases, routes, navigation, and filtering.
