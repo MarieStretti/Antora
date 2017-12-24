@@ -363,3 +363,39 @@ _{r}_ How to add a video to a page.
 
 Attachments (P)::
 _{r}_ How to link to an attachment.
+
+=== Site Navigation
+
+Site Navigation (C, P)::
+_{r}_ Full explanation of the site navigation, including its purpose, input structure, what the user should consider when organizing the navigation source files, and output behavior.
++
+_{s}_ Accepted
+
+Navigation input (SC, P)::
+_{r}_ Describes the nav.adoc file, including its purpose, format, syntax, structure, and storage locations.
+
+Create a navigation file (P)::
+_{r}_ Tutorial describing when a user needs a navigation tree file, where to save it, and how to fill the tree with navigation entries.
+This last task is broken into sub-tutorials in the page sections (P#) that follow.
+
+Add a page to a tree (P#)::
+_{r}_ Tutorial describing how to add a page to a navigation tree.
+
+Nest pages in a tree (P#)::
+_{r}_ Tutorial describing how to nest pages in a navigation tree.
+
+Add external links and non-page entries (P#)::
+_{r}_ Tutorial describing how to add external links and non-page/non-content entries to a navigation tree.
+
+Menu assembly (P)::
+_{r}_ Describes how to register the navigation files, organize them into the site navigation menu, and any display options
+
+Register a navigation file (P)::
+_{r}_ Tutorial describing how users register navigation files in a component, how to order them in that component navigation tree, and how to order them in a site's navigation menu.
+The last task is split into the sub-tutorial in the page section (P#) that follows.
+
+Order navigation files in a site menu (P#)::
+_{r}_ Tutorial describing how each component's navigation file set gets ordered in the site menu.
+
+Menu level display behavior (P)::
+_{s}_ Under consideration.
