@@ -1,0 +1,369 @@
+= Antora Documentation IA & Roadmap
+:r: Role:
+:s: Status:
+
+== Purpose
+
+This document serves two purposes.
+One, it provides an in-depth outline of Antora's of the categories, sub-categories, pages, and even in some cases a pages sections that we believe will be included in the documentation.
+Two, it will provide a rough projection of which pages we believe should be written by quarter.
+This projection is subject to change so that it aligns with the development roadmap.
+
+== Outline
+
+.Legend
+****
+C::
+Category.
+Entry has children.
+The sub-categories and pages listed under the category are part of that category until another category is encountered.
+
+NC-E::
+Non-content entry.
+The entry is not a link.
+
+P::
+Page.
+Entry is a link to a documentation page.
+
+P#::
+Page section.
+Entry is a link to a section in a documentation page.
+
+Role::
+Short description of the purpose the page will fulfill.
+
+SC::
+Sub-category.
+Entry has children.
+The topics and pages listed under the sub-category are part of that sub-category until another SC or C is encountered.
+
+Status::
+Flag indicating if the entry is 1) under consideration 2) accepted 3) rejected.
+A question mark (`?`) next to the entry means it's been proposed but not considered yet.
+
+T::
+Topic (aka sub-sub-category).
+Entry has children.
+****
+
+
+== Basics / Getting Started / Orientation
+
+Basics (C, NC-E)::
+_{r}_ Category that the introductory pages and quick orientation pages are grouped under.
++
+_{s}_ Under consideration
+
+What is Antora (P)::
+_{r}_ Describes, very concisely, what type of software Antora is, the problems it solves, and who it helps.
++
+_{s}_ Accepted
+
+Features (P)::
+_{r}_ States each name of important Antora important features and capabilities.
+Concisely describes each feature.
+May be laid out as two columns.
++
+_{s}_ Accepted
+
+Architecture and Technologies (P)::
+_{r}_ States the major architectural considerations/advantages of Antora's modular design.
+Lists the major technologies it depends on.
++
+_{s}_ Under consideration
+
+License??::
+_{r}_ Provides license.
+
+Announcements??::
+_{r}_ Major announcements, such as new features, patches, etc. about version.
+
+Help??::
+_{r}_ Where users can find help, such as links to the issue tracker, chat, etc.
+
+////
+Quick Install (for documentation writers/local usage)
+ - List of requirements/Assumptions
+ - Step 1
+ - Step 2
+ - ....
+ - Installation Success
+////
+
+Requirements (SC?, P)::
+_{r}_ Lists the prerequisites and other system considerations that need to be in place before installing Antora.
+These items may or may not be broken down by OS, depending on whether or not there are special instructions per each.
++
+_{s}_ Accepted
+
+Installation (SC, P)::
+_{r}_ Clear, straight-forward instructions for installing Antora on an OS.
++
+_{s}_ Accepted
+
+Assumptions (P#)::
+_{r}_ Probably a section of the Installation page.
+Reminds the user about the requirements/steps they should have already completed.
++
+_{s}_ Under consideration
+
+Download and Install (P)::
+_{r}_ Instructions for downloading and installing Antora on an OS.
+Page may be broken into a section for Linux, macOS, and Windows.
+Page and/or each section will also include instructions on how to verify Antora installed and link to how to test the installation using the demo.
++
+_{s}_ Accepted
+
+Troubleshooting(P)::
+_{r}_ Tips and instructions for overcoming common installation problems.
++
+_{s}_ Accepted
+
+// Methods
+// Method Pros and Cons
+// Next Steps
+
+Upgrade
+Assumptions
+Download and Install
+Test
+Troubleshooting
+
+// Getting Started
+// Basic Tutorial/Usage
+
+Source Inputs
+- Content and asset files
+- Navigation files
+- Documentation components
+  - Component descriptor (antora.yml)
+- UI
+Writing Workflow
+
+Configure
+Playbook project
+- Purpose
+Playbook
+- site.yml purpose / role / capabilities
+- Functions and options
+Playbook Workflow
+
+Publish
+ - HTML
+ - URLs
+ - Navigation menu
+ - Search and filtering capabilities
+ - Sitemap, 404, and other auxiliary pages
+- The antora command
+- Deployment environments
+ - Local
+ - Dev/Testing/Staging
+ - Production
+ Generate Site Workflow
+
+Use Antora with the Demo project
+
+
+// Writing and Managing Documentation Workflows with git
+git + writers
+common git tasks
+forks and branches
+review, edit, and approve
+
+git + administrators / managers / maintainers / leads / approvers
+test and merge
+release
+deploy and publish
+future, current, and past versions
+
+Component
+- purpose
+- structure
+  - Full description of the directories and reserved files in a documentation component
+
+Organizing source files
+- Versions
+- Component or module?
+- One or multiple modules?
+- Module or topic?
+- Directory and file names
+ - Source to Published
+  - Writers
+    - Considerations
+      - Community/System Portability
+  - Readers
+    - Considerations
+      - Human readable urls
+- Aliases and Routing
+- Navigation
+- Filtering
+
+Page Types
+ - Documentation
+  - Single
+  - Assembled
+  - Combo
+ - Home / Start / Landing
+  - Site
+  - Component
+ - Search Results
+ - Filter Results
+ - Generated
+  - Sitemap
+  - 404 and friends
+Page and UI interactions
+
+Page Structure
+File Name and URL
+ - Source
+ - Site
+ - aliases
+Header
+Sections
+AsciiDoc
+Insertions
+Cross references
+
+Writing Tasks
+Create a New Page
+Edit a Page
+Insert another page or partial page
+Insert assets and examples
+Link to other pages
+Change a page's filename
+Move a page
+Remove a page
+Alias a page
+
+
+AsciiDoc
+- Header
+ - page attributes
+  - id
+  - aliases
+  - metadata
+  - syntax
+ - tool attributes
+ - ui
+ - site behavior
+ - aliases and routing
+- Section Titles
+- Paragraphs
+- Text Emphasis
+- Special Characters
+- External Links
+- In-page cross references
+- Page to page cross references
+- UI Macros
+- Lists
+  - ordered
+  - unordered
+  - task
+  - definition / labeled
+- Blockquotes
+- Notices
+- Code
+- Syntax Highlighting
+- Tables
+- Page Table of Contents
+- Math?
+- Images
+- Videos
+- Attachments
+
+Partials
+- Organization
+- Include directive and tags
+
+Examples
+- Organization
+- Include directive and tags
+
+Assets
+- Organization
+- Attachments
+- Link macro
+- Images
+- Image macro
+- Videos
+- Video macro
+
+//Page and Site Metadata
+Metadata
+- Engine and site search
+- Reader Filtering
+ - Tag
+ - Category
+ - Custom
+ - Managing
+ - Scenarios
+
+Site Navigation
+Navigation trees to site menus
+- nav.adoc
+- input and output relationship
+- display
+//- Source Organization and Management
+nav.adoc
+  - purpose
+  - format
+  - locations
+  - registration
+- Tasks
+ - Create a nav.adoc file
+ - Add a page to a navigation tree
+ - Nest page entries in a tree
+ - Add external and non-page entries to a tree
+ - Add nav.adoc files to a site menu
+ - Order nav.adoc files in a site menu
+ - Specify menu level display behavior
+
+Published Output Controls
+//Page, component and site controls
+- Page
+//File header attributes
+ - syntax
+ - alias and URL
+ - metadata
+ - tooling
+ - display
+- Module
+ - _attributes.adoc
+- Component and Version
+  - component descriptor
+- Site
+  - site-wide attributes
+  - playbook
+
+// Site Bootstrap, Site Assembly
+Site Assembly
+Playbook
+- What it is
+- What it is used for
+Assumptions
+Playbook project
+- What it is
+- What it is used for
+Structure
+- Formats
+- Site management
+- Component management
+- UI management
+Tasks
+- Set up a new project
+- Clone or fetch a project
+- Update a project
+- Create a new playbook
+- Generate a site with a playbook
+- Modify a playbook for local publishing
+- Specify and use for testing/staging
+- Specify and use for production
+- Publish multiple sites
+
+UI (for writers)
+What is a site UI?
+What does it do?
+Tasks
+- Apply a template to a page
+- Register a UI bundle in a playbook
