@@ -158,3 +158,26 @@ _{s}_ Under consideration.
 There are several pending questions about this page.
 Dan isn't a fan of the word "`workflow`".
 Is this the proper location for a high-level tutorial?
+
+Configure (SC, P)::
+_{r}_ Quick, basic orientation of how to configure the Antora pipeline in order to produce a documentation site.
++
+_{s}_ Accepted
+
+Playbook project (P or P#)::
+_{r}_ Basic description of a playbook project and what it contains.
++
+_{s}_ Accepted
+
+Playbook (P or P#)::
+_{r}_ Basic overview of playbook, its capabilities, and its functions and options.
++
+_{s}_ Accepted
+
+Playbook Workflow (P)::
+_{r}_ Tutorial that walks through the common steps a documentation writer would take when modifying and using a playbook.
++
+_{s}_ Under consideration.
+There are several pending questions about this page.
+Dan isn't a fan of the word "`workflow`".
+Is this the proper location for a high-level tutorial?
