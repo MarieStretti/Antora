@@ -152,7 +152,7 @@ _{r}_ Basic description of the UI bundle.
 _{s}_ Accepted
 
 Writing Workflow (P)::
-_{r}_ Tutorial that walks through the common steps a documentation writer would take when adding or modifying content in a documentation component.
+_{r}_ Tutorial that walks through the common steps a documentation writer takes when adding or modifying content in a documentation component.
 +
 _{s}_ Under consideration.
 There are several pending questions about this page.
@@ -175,7 +175,32 @@ _{r}_ Basic overview of playbook, its capabilities, and its functions and option
 _{s}_ Accepted
 
 Playbook Workflow (P)::
-_{r}_ Tutorial that walks through the common steps a documentation writer would take when modifying and using a playbook.
+_{r}_ Tutorial that walks through the common steps a documentation writer takes when modifying and using a playbook.
++
+_{s}_ Under consideration.
+There are several pending questions about this page.
+Dan isn't a fan of the word "`workflow`".
+Is this the proper location for a high-level tutorial?
+
+Publish (SC, P)::
+_{r}_ Quick, basic orientation of how to run Antora and what it produces.
++
+_{s}_ Accepted
+
+The antora command (P or P#)::
+_{r}_ Basic description of how to run Antora and generate a documentation site.
+May or may not include information about deployment environments (local; dev/testing/staging; production).
++
+_{s}_ Accepted
+
+Documentation site (P or P#)::
+_{r}_ Basic description of what the generated site includes and how major features, such as URLs and the navigation menu, are determined.
+May also touch on search and filtering capabilities, sitemap, 404 and other auxiliary pages.
++
+_{s}_ Accepted
+
+Generate Site Workflow (P)::
+_{r}_ Tutorial that walks through the common steps a writer takes when running Antora.
 +
 _{s}_ Under consideration.
 There are several pending questions about this page.
