@@ -298,3 +298,68 @@ This may also be where we give a full description of how the filename, alias, an
 _{s}_ Under consideration.
 There's a lot of ambiguity about how much detail this page should include and whether or not this is where the filename, alias, and URL relationship should be explained.
 Is this where a user would look for this info?
+
+=== AsciiDoc
+
+AsciiDoc (C, P)::
+_{r}_ Introduction to the AsciiDoc syntax and a high-level overview of its benefits and capabilities.
+
+Header (P)::
+_{r}_ Purpose of a page header and a description of the attributes it can contain, including usage examples.
+Attributes include: title, aliases, metadata, syntax options, tool conditionals, template conditionals, etc.
+
+Sections (P)::
+_{r}_  How to use sections and a description of their levels, titles and attributes.
+
+Paragraphs (P)::
+_{r}_  How to use paragraphs and a description of their attributes.
+
+Text Emphasis (P)::
+_{r}_  How to use inline text formatting such as bold, italics, highlight, etc.
+
+Special Characters (P)::
+_{r}_  How to use special characters.
+
+External Links (P)::
+_{r}_  How to link to URLs that are not part of the docs site.
+
+In-page cross references (P)::
+_{r}_  How to link to an anchor in the same page.
+
+Page to page cross references (P)::
+_{r}_  How to link from one page in the docs site to another page in the docs site.
+
+UI Macros (P)::
+_{r}_  How to create UI macros.
+
+Lists (P)::
+_{r}_ How to create ordered, unordered, task, and definition lists.
+
+Blockquotes (P)::
+_{r}_ How to create quote blocks.
+
+Admonitions (P)::
+_{r}_ Or: Notices.
+How to create admonition blocks.
+
+Code (P)::
+_{r}_ How to create source code blocks, descriptions of their attributes, different ways to include source code (right in file, include from example file or other source).
+May also include information about syntax highlighting or this topic may be split out into another page.
+
+Tables (P)::
+_{r}_ How to create tables and use table attributes.
+
+Page Table of Contents (P)::
+_{r}_ How to add a TOC to a page and use its attributes.
+
+Math?? (P)::
+_{s}_ Under consideration.
+
+Images (P)::
+_{r}_ How to add an image to a page.
+
+Videos (P)::
+_{r}_ How to add a video to a page.
+
+Attachments (P)::
+_{r}_ How to link to an attachment.
