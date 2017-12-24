@@ -40,14 +40,14 @@ The topics and pages listed under the sub-category are part of that sub-category
 
 Status::
 Flag indicating if the entry is 1) under consideration 2) accepted 3) rejected.
-A question mark (`?`) next to the entry means it's been proposed but not considered yet.
+Two question marks (`??`) next to the entry means it's been proposed but not considered yet.
 
 T::
 Topic (aka sub-sub-category).
 Entry has children.
 ****
 
-== Basics / Getting Started / Orientation
+=== Basics / Getting Started / Orientation
 
 Basics (C, NC-E)::
 _{r}_ Category that the introductory pages and quick orientation pages are grouped under.
@@ -216,6 +216,8 @@ Would this be the right location for this tutorial?
 Exactly how detailed would this tutorial be?
 Would it even be a tutorial or more of a mention that they can use the Demo to practice the tutorials, functions, etc. on?
 
+=== Components and Organization / File Organization & Components / File & Component Organization
+
 Documentation Component (C, P)::
 _{r}_ Full explanation of a documentation component, including its purpose, structure, and what the user should consider when organizing there source files into components.
 +
@@ -270,3 +272,29 @@ May also include how names affect aliases, routes, navigation, and filtering.
 +
 _{s}_ Under consideration.
 Not sure how much detail, if any, to include about aliases, routes, navigation, and filtering.
+
+=== Pages
+
+Pages (C, P)::
+_{r}_ Full explanation of a page, including its purpose, types, structure, and behaviors.
++
+_{s}_ Under consideration.
+
+Types (SC?, P)::
+_{r}_ The common types of documentation pages and their purposes.
+Types include documentation (single, assembled from partials, combo), home/start/landing (page the user lands on from the root of the docs site or component), search and search results page, metadata filter and filter results page, generated pages (sitemap, 404).
++
+_{s}_ Accepted
+
+Page and UI interactions (P)::
+_{r}_ Overview of how each page type and a UI template merge and what the user needs to consider (if anything).
++
+_{s}_ Under consideration.
+
+Structure (SC?, P)::
+_{r}_ An overview of the major parts of a page from the AsciiDoc syntax perspective, including the purpose of the header, sections, insertions (images, partials, examples), and cross references.
+This may also be where we give a full description of how the filename, alias, and URL are related.
++
+_{s}_ Under consideration.
+There's a lot of ambiguity about how much detail this page should include and whether or not this is where the filename, alias, and URL relationship should be explained.
+Is this where a user would look for this info?
