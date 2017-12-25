@@ -391,6 +391,39 @@ _{r}_ How to add a video to a page either via a service (Youtube) or from assets
 Attachments (P)::
 _{r}_ How to link to a downloadable resource in assets/attachments.
 
+Writing Tasks (NC?, SC?)::
+_{s}_ Haven't determined the best place to add this group of common task tutorials.
+This heading is more of place holder than something that is really under consideration.
+
+Create a New Page (P)::
+_{r}_ Tutorial showing how to set up a new AsciiDoc file for use in an Antora pipeline.
+
+Edit a Page (P)::
+_{r}_ Considerations, tips and tricks when modifying a page, especially across versions.
+
+Insert a page or partial page (P)::
+_{r}_ Tutorial showing how to set up partial files and include a page or partial into another page.
+
+Insert assets and examples (P)::
+_{r}_ Tutorial showing how to add assets and examples to a component and then use them in pages.
+
+Link to other pages (P)::
+_{r}_ Tutorial showing how to use cross references across the whole spectrum of scenarios.
+
+Change a page's filename (P)::
+_{r}_ Tutorial showing how to change a filename and update it across the pipeline.
+Alternatives to changing a filename.
+
+Move a page (P)::
+_{r}_ Tutorial showing how to move a file and update it across the pipeline.
+Alternatives to moving a file.
+
+Remove a page (P)::
+_{r}_ Tutorial showing how to delete, remove, or archive a file and update it across the pipeline.
+
+Alias a page (P)::
+_{r}_ Tutorial showing how to add an alias to a page and manage it across the pipeline.
+
 === Site Navigation
 
 Site Navigation (C, P)::
