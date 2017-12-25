@@ -424,6 +424,24 @@ _{r}_ Tutorial showing how to delete, remove, or archive a file and update it ac
 Alias a page (P)::
 _{r}_ Tutorial showing how to add an alias to a page and manage it across the pipeline.
 
+=== Page & Site Metadata / Taxonomy / Metadata / Taxonomy & Metadata
+
+Taxonomy & Metadata (C, P)::
+_{r}_ Introduction to the taxonomy and metadata management capabilities of Antora and AsciiDoc.
+
+_{s}_ This category is very ambiguous at this time.
+What taxonomy/metadata can we add to the site and manage from Antora that affect search engines?
+That affects site search?
+How do we provide reader filtering by tag, category, author, component/product, version, and custom keys and how do we manage that taxonomy/metadata from Antora?
+How does the UI respond to these capabilities?
+At what levels (site, component, module, page, etc.,) can these capabilities be exercised from and what has final say?
+
+Specify taxonomy (P)::
+_{r}_ Describes how to add taxonomy to the site, per component, per module, and to a specific page.
+
+Site metadata (P)::
+_{r}_ Describes how to add metadata to the site (such as a site description).
+
 === Site Navigation
 
 Site Navigation (C, P)::
