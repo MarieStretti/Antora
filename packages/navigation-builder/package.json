@@ -1,0 +1,17 @@
+{
+  "name": "@antora/navigation-builder",
+  "version": "1.0.0-alpha.1",
+  "description": "Builds a navigation catalog from navigation files for adding a navigation menu to pages in the Antora documentation pipeline.",
+  "author": {
+    "name": "OpenDevise Inc.",
+    "url": "https://opendevise.com"
+  },
+  "license": "MPL-2.0",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "dependencies": {
+    "@antora/asciidoc-loader": "1.0.0-alpha.1"
+  }
+}
