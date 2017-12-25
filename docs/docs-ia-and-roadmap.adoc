@@ -575,6 +575,17 @@ Probably a section of the Site Name page.
 Preview Tool Controls (SC, P)::
 _{r}_ The page and module level controls to fully preview a page in editing tools such as Atom and Brackets and in the browser (without generation) using the Asciidoctor Chrome and Firefox extensions.
 
+=== UI / Site UI / Site UI & Page Styles
+
+Site UI & Page Styles (C, P)::
+_{r}_ Purpose of the UI bundle, what it provides, and how the writer can interact with it when creating pages and generating the site.
+
+Register a UI bundle (P)::
+_{r}_ Describes how to add a UI bundle to a playbook.
+
+Apply a template to a page (P)::
+_{r}_ Describes how to get a page to use a specific page template.
+
 === git Tutorials / git Workflows
 
 git + Writers (C, P)::
@@ -582,16 +593,16 @@ _{r}_ Series of tuturials for writers showing them how do git tasks that enhance
 +
 _{s}_ These tutorials are just proposed ideas and very roughly outlined at this time.
 
-Common git tasks (P)::
+Common git Tasks (P)::
 _{r}_ Tutorial showing how to add, commit, amend, and see log.
 
-forks and branches (P)::
+Forks and Branches (P)::
 _{r}_ Tutorial showing how to fork a repository (playbook or component), how to set up the connection between the origin and fork, how to pull, fetch, merge, and rebase, how to get some one else's branch, how to set up and manage branches, and how to push to a branch.
 
-review, edit, and approve (P)::
+Review, Edit, and Approve (P)::
 _{r}_ Tutorial showing how to review a branch locally and using the GitLab/GitHub interface, how to perform edits on an existing branch and commit to it, how to comment and collaborate on a branch in the GitLab/GitHub interface.
 
-git + docs managers (C, P)::
+git + Docs Managers (C, P)::
 _{r}_ Series of tuturials for administrators / managers / maintainers / leads / approvers showing them how do git tasks that enhance their collaboration, review, approval, and release abilities.
 +
 _{s}_ The tutorials are just proposed ideas at this time.
