@@ -80,7 +80,7 @@ module.exports = (playbook, aggregate) => {
 }
 
 function partitionSrc (file, pathSegments, nav) {
-  const navInfo = getNavInfo(file, nav)
+  const navInfo = nav ? getNavInfo(file, nav) : undefined
   if (navInfo) {
     file.src.family = 'navigation'
     // relative from modules/<module>
@@ -127,10 +127,8 @@ function partitionSrc (file, pathSegments, nav) {
  * a navigation file, or undefined if it's not.
  */
 function getNavInfo (file, nav) {
-  const index = _.indexOf(nav, file.path)
-  if (index !== -1) {
-    return { index }
-  }
+  const index = nav.findIndex((candidate) => candidate === file.path)
+  if (index !== -1) return { index }
 }
 
 function resolveOut (src, htmlExtensionStyle = 'default') {
