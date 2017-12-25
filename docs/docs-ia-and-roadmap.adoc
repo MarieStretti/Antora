@@ -574,3 +574,25 @@ Probably a section of the Site Name page.
 
 Preview Tool Controls (SC, P)::
 _{r}_ The page and module level controls to fully preview a page in editing tools such as Atom and Brackets and in the browser (without generation) using the Asciidoctor Chrome and Firefox extensions.
+
+=== git Tutorials / git Workflows
+
+git + Writers (C, P)::
+_{r}_ Series of tuturials for writers showing them how do git tasks that enhance their collaboration abilities.
++
+_{s}_ These tutorials are just proposed ideas and very roughly outlined at this time.
+
+Common git tasks (P)::
+_{r}_ Tutorial showing how to add, commit, amend, and see log.
+
+forks and branches (P)::
+_{r}_ Tutorial showing how to fork a repository (playbook or component), how to set up the connection between the origin and fork, how to pull, fetch, merge, and rebase, how to get some one else's branch, how to set up and manage branches, and how to push to a branch.
+
+review, edit, and approve (P)::
+_{r}_ Tutorial showing how to review a branch locally and using the GitLab/GitHub interface, how to perform edits on an existing branch and commit to it, how to comment and collaborate on a branch in the GitLab/GitHub interface.
+
+git + docs managers (C, P)::
+_{r}_ Series of tuturials for administrators / managers / maintainers / leads / approvers showing them how do git tasks that enhance their collaboration, review, approval, and release abilities.
++
+_{s}_ The tutorials are just proposed ideas at this time.
+The tutorials would step the user through the following tasks: test and merge and branch into a version branch or master; create a release of a branch; deploy and publish component-versions; create, manage, and remove/archive future, current and past branches/versions; set up a repository compatible with Antora; rebase and cherry-pick; rollback merged commits; rollback a release.
