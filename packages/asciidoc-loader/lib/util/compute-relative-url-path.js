@@ -9,7 +9,7 @@ const path = require('path')
  * URLs. It assumes it's working with root-relative URLs, not qualified URLs
  * with potentially different hosts.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {String} from - The root-relative start URL.
  * @param {String} to - The root-relative target URL.

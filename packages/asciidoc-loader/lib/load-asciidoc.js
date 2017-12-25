@@ -19,7 +19,7 @@ const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
  * context either for the author (e.g., env=site) or the pipeline (e.g.,
  * docfile).
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {File} file - The virtual file the contains AsciiDoc source contents.
  * @param {Object} [customAttrs={}] - Custom attributes to assign on the AsciiDoc document.

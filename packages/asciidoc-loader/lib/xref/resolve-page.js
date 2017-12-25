@@ -10,7 +10,7 @@ const parsePageId = require('./parse-page-id')
  * If a file cannot be resolved, the function returns undefined. If the spec
  * does not match the page ID syntax, this function throws an error.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {String} spec - The contextual page ID spec (e.g.,
  *   version@component:module:topic/page followed by optional .adoc ext).

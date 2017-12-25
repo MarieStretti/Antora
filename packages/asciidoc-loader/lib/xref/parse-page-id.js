@@ -15,7 +15,7 @@ const PAGE_ID_RXG = { version: 1, component: 2, module: 3, page: 4 }
  * * If a component is specified, but not a version, the version defaults to master.
  * * If a component is specified, but not a module, the module defaults to ROOT.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {String} spec - The contextual page ID spec (e.g.,
  *   version@component:module:topic/page followed by optional .adoc ext).

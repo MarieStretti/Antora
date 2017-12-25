@@ -11,7 +11,7 @@ const splitOnce = require('../util/split-once')
  * from the content catalog. Resolves the relative URL path from the current page to the target page
  * and uses that path to create an HTML link pointing to the published target page.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {String} refSpec - The target of the xref macro that specifies a page reference.
  * @param {String} content - The content (i.e., formatted text) of the link (undefined if not specified).

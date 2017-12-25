@@ -5,7 +5,7 @@ const ConverterExtension = require('./xref/converter-extension')
 /**
  * Creates an HTML5 converter instance with Antora enhancements.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {Asciidoctor} asciidoctor - Asciidoctor API.
  * @param {Object} callbacks - Callback functions.

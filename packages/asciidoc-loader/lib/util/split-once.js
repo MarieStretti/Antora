@@ -3,7 +3,7 @@
 /**
  * Splits the specified string at the first occurance of the specified separator.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {String} string - The string to split.
  * @param {String} separator - A single character on which to split the string.

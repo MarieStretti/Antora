@@ -8,7 +8,7 @@ const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('../constants')
 /**
  * Resolves the specified include target to a virtual file in the content catalog.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {String} target - The target of the include directive to resolve.
  * @param {File} file - The outermost virtual file from which the include originated (not

@@ -8,7 +8,7 @@ const IncludeProcessor = require('./include/include-processor')
  * This registry includes a built-in include processor that resolves the target of include directives
  * from Antora's virtual content catalog.
  *
- * @memberOf module:asciidoc-loader
+ * @memberof asciidoc-loader
  *
  * @param {Asciidoctor} asciidoctor - Asciidoctor API.
  * @param {Object} callbacks - Callback functions.
