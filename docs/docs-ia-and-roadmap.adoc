@@ -586,6 +586,38 @@ _{r}_ Describes how to add a UI bundle to a playbook.
 Apply a template to a page (P)::
 _{r}_ Describes how to get a page to use a specific page template.
 
+=== Upgrade
+
+Upgrade (C, P)::
+_{r}_ How to upgrade/update to a new Antora version.
+Sections probably include: Assumptions, Download/install/some-upgrade-command instructions, Test new pipeline in staging/safe environment; Deploy new version to production; and Troubleshooting.
++
+_{s}_ Under consideration.
+
+=== Standard Pipeline
+
+Standard Pipeline (C, P)::
+_{r}_ Introduces the high-level processes of the standard pipeline and its package architecture.
++
+_{s}_ Under consideration.
+
+Lifecycle (P)::
+_{r}_ Illustrates and explains the stages of the pipeline.
++
+_{s}_ Under consideration.
+
+API (P)::
+_{r}_ The API documentation for the pipeline.
++
+_{s}_ Under consideration.
+
+=== Custom Pipeline
+
+Custom Pipeline (C, P)::
+_{r}_ Explains how packages, such as a validator, can be added to the pipeline.
++
+_{s}_ Under consideration.
+
 === git Tutorials / git Workflows
 
 git + Writers (C, P)::
