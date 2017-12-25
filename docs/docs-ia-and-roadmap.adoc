@@ -223,10 +223,25 @@ _{r}_ Full explanation of a documentation component, including its purpose, stru
 +
 _{s}_ Accepted
 
-Structure (P)::
+Repository Structure (SC, P)::
 _{r}_ Full description of the directories and reserved directory and file names in a documentation component.
 +
 _{s}_ Accepted
+
+Modules & ROOT (P or P#)::
+_{r}_ Purpose and usage of the modules directory, ROOT module, and user-named modules.
+
+Pages & Partials (P or P#)::
+_{r}_ Purpose and usage of the pages, topic, and partials directories.
+
+Assets (P or P#)::
+_{r}_ Purpose and usage of the assets, images, attachments, video, and user-named directories.
+
+Examples (P or P#)::
+_{r}_ Purpose and usage of the examples directory.
+
+antora.yml (P)::
+_{r}_ Purpose, structure and keys in the component descriptor file.
 
 Organizing source files (SC, P)::
 _{r}_ Or: Source file organization. The considerations a user should keep in mind when choosing how to organize their source files.
@@ -346,6 +361,15 @@ Code (P)::
 _{r}_ How to create source code blocks, descriptions of their attributes, different ways to include source code (right in file, include from example file or other source).
 May also include information about syntax highlighting or this topic may be split out into another page.
 
+Include directive (P)::
+_{r}_ How to use the include directive and its options to insert a partial, example, or page into another page.
+
+Insert a partials file (P#)::
+_{r}_ How to include an AsciiDoc file from the partials directory into a page.
+
+Insert an examples file (P#)::
+_{r}_ How to include a code snippet from the examples directory into a page.
+
 Tables (P)::
 _{r}_ How to create tables and use table attributes.
 
@@ -355,14 +379,17 @@ _{r}_ How to add a TOC to a page and use its attributes.
 Math?? (P)::
 _{s}_ Under consideration.
 
+Icons?? (P)::
+_{s}_ Under consideration.
+
 Images (P)::
-_{r}_ How to add an image to a page.
+_{r}_ How to add an image to a page from the assets/images directory.
 
 Videos (P)::
-_{r}_ How to add a video to a page.
+_{r}_ How to add a video to a page either via a service (Youtube) or from assets/video.
 
 Attachments (P)::
-_{r}_ How to link to an attachment.
+_{r}_ How to link to a downloadable resource in assets/attachments.
 
 === Site Navigation
 
