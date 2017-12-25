@@ -463,5 +463,36 @@ _{r}_ We'll probably need a page that lists common playbook and failure to gener
 +
 _{s}_ Under consideration.
 
-
 // Publish multiple sites
+
+Site Controls (C?, SC?, P)::
+_{r}_ This may be a new category or a subcategory under site assembly.
+Introduction to the keys that can control page names, aliases, and URLs; component names, version names, and the site name and URL.
+
+Page URL (P)::
+_{r}_ How a page URL is created by Antora and how the user can specify the page URL.
+
+Page alias (P#)::
+_{r}_ How to specify a page's URL aliases.
+Probably a section of the Page URL page.
+
+Component Name (P)::
+_{r}_ How a to specify a component's URL and display name.
+
+Component Version (P#)::
+_{r}_ How to specify a component's version display name and which version should be the latest/master/current display version.
+Probably a section of the Component Name page.
+
+Site Name (P)::
+_{r}_ How a to specify the name of a documentation site.
+
+Site URL (P#)::
+_{r}_ How to specify the canonical URL of a documentation site.
+Probably a section of the Site Name page.
+
+Site Component (P#)::
+_{r}_ How to specify the component that represents the canonical start of the documentation site.
+Probably a section of the Site Name page.
+
+Preview Tool Controls (SC, P)::
+_{r}_ The page and module level controls to fully preview a page in editing tools such as Atom and Brackets and in the browser (without generation) using the Asciidoctor Chrome and Firefox extensions.
