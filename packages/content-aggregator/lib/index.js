@@ -12,10 +12,11 @@ const streamToArray = require('stream-to-array')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
-const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH } = require('./constants')
-const EXT_RX = /\.[a-z]+$/
-const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
+const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH, CONTENT_GLOB } = require('./constants')
+const DOT_OR_NOEXT_RX = new RegExp('(?:^|/)(?:\\.|[^/.]+$)')
+const EXT_RX = new RegExp('\\.[^/]+$')
 const SEPARATOR_RX = /\/|:/
+const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
 
 module.exports = async (playbook) => {
   const componentVersions = playbook.content.sources.map(async (source) => {
@@ -222,15 +223,18 @@ function readComponentDesc (files) {
 async function readFilesFromGitTree (repository, branch, startPath) {
   const tree = await getGitTree(repository, branch, startPath)
   const entries = await walkGitTree(tree)
-  const files = entries.map(async (entry) => {
-    const blob = await entry.getBlob()
-    const contents = blob.content()
-    const stat = new fs.Stats({})
-    stat.mode = entry.filemode()
-    stat.size = contents.length
-    return new File({ path: entry.path(), contents, stat })
-  })
-  return Promise.all(files)
+  return Promise.all(
+    entries.map(async (entry) => {
+      const path_ = entry.path()
+      if (DOT_OR_NOEXT_RX.test(path_)) return
+      const blob = await entry.getBlob()
+      const contents = blob.content()
+      const stat = new fs.Stats()
+      stat.mode = entry.filemode()
+      stat.size = contents.length
+      return new File({ path: path_, contents, stat })
+    })
+  ).then((files) => files.filter((file) => file))
 }
 
 async function getGitTree (repository, branch, startPath) {
@@ -255,9 +259,9 @@ function walkGitTree (tree) {
 
 async function readFilesFromWorktree (relativeDir) {
   const base = path.resolve(relativeDir)
-  const opts = { base, cwd: base }
+  const opts = { base, cwd: base, removeBOM: false }
   // NOTE streamToArray wraps the stream in a Promise so it can be awaited
-  return streamToArray(vfs.src('**/*.*', opts).pipe(relativize()))
+  return streamToArray(vfs.src(CONTENT_GLOB, opts).pipe(relativize()))
 }
 
 /**
@@ -265,18 +269,25 @@ async function readFilesFromWorktree (relativeDir) {
  *
  * Applies a mapping function to all vinyl files in the stream so they end up
  * with a path relative to the component root instead of the file system.
+ * This mapper also filters out any directories that got caught in the glob.
  */
 function relativize () {
   return map((file, next) => {
-    next(
-      null,
-      new File({
-        path: file.relative,
-        contents: file.contents,
-        stat: file.stat,
-        src: { abspath: file.path },
-      })
-    )
+    const { contents, stat } = file
+    // NOTE if contents is null, the file is either a directory or it couldn't be read
+    if (contents === null) {
+      next()
+    } else {
+      next(
+        null,
+        new File({
+          path: file.relative,
+          contents,
+          stat,
+          src: { abspath: file.path },
+        })
+      )
+    }
   })
 }
 

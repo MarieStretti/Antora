@@ -308,6 +308,47 @@ describe('aggregateContent()', () => {
     })
   })
 
+  describe('should skip dotfiles, extensionless files, and directories that contain a dot', () => {
+    testAll(async (repo) => {
+      await initRepoWithFiles(repo)
+      const fixturePaths = [
+        // directory with extension
+        'modules/ROOT/pages/ignore.me/page.adoc',
+        // extensionless file
+        'modules/ROOT/pages/ignore-me',
+        // dotfile
+        'modules/ROOT/pages/.ignore-me',
+        // dotfile with extension
+        'modules/ROOT/pages/.ignore-me.txt',
+        // dotdirectory
+        'modules/ROOT/pages/.ignore-it/page.adoc',
+        // dotdirectory with extension
+        'modules/ROOT/pages/.ignore.rc/page.adoc',
+        // dotfile at root
+        '.ignore-me',
+        // dotfile with extension at root
+        '.ignore-me.txt',
+        // dotdirectory at root
+        '.ignore-it/run.sh',
+        // dotdirectory with extension at root
+        '.ignore.rc/run.sh',
+      ]
+      const ignoredPaths = fixturePaths.filter(
+        (path_) =>
+          // the file is allowed, just make sure the directory isn't stored
+          path_ !== 'modules/ROOT/pages/ignore.me/page.adoc'
+      )
+      await repo.addFixtureFiles(fixturePaths)
+      playbook.content.sources.push({ url: repo.url, startPath: repo.startPath })
+      const aggregate = await aggregateContent(playbook)
+      expect(aggregate).to.have.lengthOf(1)
+      const files = aggregate[0].files
+      const paths = files.map((f) => f.path)
+      ignoredPaths.forEach((ignoredPath) => expect(paths).to.not.include(ignoredPath))
+      files.forEach((file) => expect(file.isDirectory()).to.be.false())
+    })
+  })
+
   describe('should aggregate all files when component is located at a startPath', () => {
     testAll(async (repo) => {
       await repo.initRepo({ name: 'the-component', version: 'v1.2.3', startPath: 'docs' })
