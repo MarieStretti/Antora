@@ -41,7 +41,7 @@ module.exports = async (playbook) => {
           files = await readFilesFromGitTree(repository, branch, source.startPath)
         }
 
-        const componentVersion = await readComponentDesc(files)
+        const componentVersion = readComponentDesc(files)
         componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
         return componentVersion
       })
@@ -112,7 +112,7 @@ async function openOrCloneRepository (repoUrl) {
  */
 function isLocalDirectory (url) {
   try {
-    return fs.lstatSync(url).isDirectory()
+    return fs.statSync(url).isDirectory()
   } catch (e) {
     return false
   }
@@ -224,16 +224,16 @@ async function readFilesFromGitTree (repository, branch, startPath) {
 
 async function getGitTree (repository, branch, startPath) {
   const commit = await repository.getBranchCommit(branch)
-  const tree = await commit.getTree()
-  if (startPath == null) {
-    return tree
+  if (startPath) {
+    const tree = await commit.getTree()
+    const subTreeEntry = await tree.entryByPath(startPath)
+    return repository.getTree(subTreeEntry.id())
+  } else {
+    return commit.getTree()
   }
-  const subEntry = await tree.entryByPath(startPath)
-  const subTree = await repository.getTree(subEntry.id())
-  return subTree
 }
 
-async function srcGitTree (tree) {
+function srcGitTree (tree) {
   return new Promise((resolve, reject) => {
     const files = []
     // NOTE walk only visits blobs (i.e., files)
@@ -257,7 +257,7 @@ async function entryToFile (entry) {
   return new File({ path: entry.path(), contents, stat })
 }
 
-async function readFilesFromWorktree (relativeDir) {
+function readFilesFromWorktree (relativeDir) {
   const base = path.resolve(relativeDir)
   const opts = { base, cwd: base, removeBOM: false }
   // NOTE streamToArray wraps the stream in a Promise so it can be awaited
