@@ -14,7 +14,6 @@ const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH, CONTENT_GLOB } = require('./constants')
 const DOT_OR_NOEXT_RX = new RegExp('(?:^|/)(?:\\.|[^/.]+$)')
-const EXT_RX = new RegExp('\\.[^/]+$')
 const SEPARATOR_RX = /\/|:/
 const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
 
@@ -143,10 +142,9 @@ function getCacheDir () {
  * @return {String} - A friendly folder name.
  */
 function generateLocalFolderName (url) {
-  // NOTE we don't use extname since the last path segment could be .git
-  const extMatch = url.includes('.') && url.match(EXT_RX)
-  if (extMatch) {
-    url = url.slice(0, -extMatch[0].length)
+  // NOTE we don't check extname since the last path segment could equal .git
+  if (url.endsWith('.git')) {
+    url = url.slice(0, -4)
   }
   const schemeMatch = url.includes(':') && url.match(URI_SCHEME_RX)
   if (schemeMatch) {
