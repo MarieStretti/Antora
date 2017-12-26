@@ -219,20 +219,7 @@ function readComponentDesc (files) {
 }
 
 async function readFilesFromGitTree (repository, branch, startPath) {
-  const tree = await getGitTree(repository, branch, startPath)
-  const entries = await walkGitTree(tree)
-  return Promise.all(
-    entries.map(async (entry) => {
-      const path_ = entry.path()
-      if (DOT_OR_NOEXT_RX.test(path_)) return
-      const blob = await entry.getBlob()
-      const contents = blob.content()
-      const stat = new fs.Stats()
-      stat.mode = entry.filemode()
-      stat.size = contents.length
-      return new File({ path: path_, contents, stat })
-    })
-  ).then((files) => files.filter((file) => file))
+  return srcGitTree(await getGitTree(repository, branch, startPath))
 }
 
 async function getGitTree (repository, branch, startPath) {
@@ -246,13 +233,28 @@ async function getGitTree (repository, branch, startPath) {
   return subTree
 }
 
-function walkGitTree (tree) {
+async function srcGitTree (tree) {
   return new Promise((resolve, reject) => {
+    const files = []
+    // NOTE walk only visits blobs (i.e., files)
     const walker = tree.walk()
-    walker.on('error', (e) => reject(e))
-    walker.on('end', (entries) => resolve(entries))
+    // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
+    walker.on('entry', (entry) => {
+      if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
+    })
+    walker.on('error', (err) => reject(err))
+    walker.on('end', () => resolve(Promise.all(files)))
     walker.start()
   })
+}
+
+async function entryToFile (entry) {
+  const blob = await entry.getBlob()
+  const contents = blob.content()
+  const stat = new fs.Stats()
+  stat.mode = entry.filemode()
+  stat.size = contents.length
+  return new File({ path: entry.path(), contents, stat })
 }
 
 async function readFilesFromWorktree (relativeDir) {
