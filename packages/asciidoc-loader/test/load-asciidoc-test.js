@@ -11,6 +11,7 @@ describe('loadAsciiDoc()', () => {
   let inputFile
 
   const expectLink = (html, url, content) => expect(html).to.include(`<a href="${url}">${content}</a>`)
+  const expectPageLink = (html, url, content) => expect(html).to.include(`<a href="${url}" class="page">${content}</a>`)
 
   const populateFileContents = (contents) => {
     inputFile.contents = Buffer.from(contents)
@@ -843,7 +844,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a fully-qualified page reference', () => {
@@ -863,7 +864,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'topic-foo/topic-bar/the-page.adoc',
       })
-      expectLink(
+      expectPageLink(
         html,
         inputFile.pub.rootPath + '/component-b/4.5.6/module-b/topic-foo/topic-bar/the-page.html',
         'The Page Title'
@@ -887,7 +888,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'topic-foo/the-page.adoc',
       })
-      expectLink(
+      expectPageLink(
         html,
         inputFile.pub.rootPath + '/component-b/4.5.6/module-b/topic-foo/the-page.html#frag',
         'The Page Title'
@@ -911,7 +912,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, '../../4.5.6/module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, module, topic, and page', () => {
@@ -931,7 +932,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../../4.5.6/module-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, component, and page', () => {
@@ -951,7 +952,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, component, topic, and page', () => {
@@ -971,7 +972,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component and page', () => {
@@ -991,7 +992,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component, topic, and page', () => {
@@ -1011,7 +1012,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component, module, and page', () => {
@@ -1031,7 +1032,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component, module, topic, and page', () => {
@@ -1051,7 +1052,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version and page', () => {
@@ -1071,7 +1072,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-a/the-page.html', 'The Page Title')
+      expectPageLink(html, '../../4.5.6/module-a/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, topic, and page', () => {
@@ -1091,7 +1092,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-a/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../../4.5.6/module-a/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with module and page', () => {
@@ -1111,7 +1112,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, '../module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with module, topic, and page', () => {
@@ -1131,7 +1132,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../module-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../module-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a basic page reference', () => {
@@ -1151,7 +1152,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, 'the-page.html', 'The Page Title')
+      expectPageLink(html, 'the-page.html', 'The Page Title')
     })
 
     it('should convert a basic page reference from within topic', () => {
@@ -1172,7 +1173,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../the-page.html', 'The Page Title')
+      expectPageLink(html, '../the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with topic and page', () => {
@@ -1192,7 +1193,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, 'the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, 'the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with sibling topic and page', () => {
@@ -1213,7 +1214,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with module and page using indexified URLs', () => {
@@ -1235,7 +1236,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../../module-b/the-page/', 'The Page Title')
+      expectPageLink(html, '../../module-b/the-page/', 'The Page Title')
     })
 
     it('should convert a page reference with topic and page using indexified URLs', () => {
@@ -1257,7 +1258,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../the-topic/the-page/', 'The Page Title')
+      expectPageLink(html, '../the-topic/the-page/', 'The Page Title')
     })
 
     it('should convert a basic page reference from within a topic using indexified URLs', () => {
@@ -1280,7 +1281,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../../the-page/', 'The Page Title')
+      expectPageLink(html, '../../the-page/', 'The Page Title')
     })
 
     // TODO eventually this will be the title of the target page
@@ -1301,7 +1302,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
+      expectPageLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
     })
   })
 })
