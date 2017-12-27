@@ -11,12 +11,16 @@ const path = require('path')
 
 function testAll (archive, testFunction) {
   const playbook = { ui: { startPath: '/' } }
-  it('with local bundle', () => {
-    playbook.ui.bundle = path.join('./packages/ui-loader/test/fixtures', archive)
+  it('with relative bundle path', () => {
+    playbook.ui.bundle = path.relative(process.cwd(), path.resolve(__dirname, path.join('fixtures', archive)))
     return testFunction(playbook)
   })
-  it('with remote bundle', () => {
-    playbook.ui.bundle = 'http://localhost:1337/' + archive
+  it('with absolute bundle path', () => {
+    playbook.ui.bundle = path.resolve(__dirname, path.join('fixtures', archive))
+    return testFunction(playbook)
+  })
+  it('with remote bundle URI', () => {
+    playbook.ui.bundle = 'http://localhost:1337' + path.join('/', archive)
     return testFunction(playbook)
   })
 }
@@ -48,7 +52,7 @@ describe('loadUi()', () => {
     cleanCache()
     server = http
       .createServer((request, response) => {
-        const filePath = path.join(process.cwd(), './packages/ui-loader/test/fixtures', request.url)
+        const filePath = path.resolve(__dirname, path.join('fixtures', request.url))
         fs.readFile(filePath, (error, content) => {
           if (error) {
             throw error

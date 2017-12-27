@@ -55,7 +55,7 @@ module.exports = async (playbook) => {
       fs.writeFileSync(zipPath, bundle)
     }
   } else {
-    zipPath = path.join(process.cwd(), playbook.ui.bundle)
+    zipPath = path.resolve(playbook.ui.bundle)
   }
 
   const zipFilesAndDirsStream = zip.src(zipPath).pipe(buffer())
