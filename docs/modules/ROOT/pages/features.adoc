@@ -81,10 +81,6 @@ Writers can use almost any text editor, IDEs such as Atom, Brackets, IntelliJ, e
 AsciiDoc files can also be previewed in Chrome and Firefox with the Asciidoctor extension.
 GitHub and GitLab also render AsciiDoc files right in your browser.
 
-==== Extensive documentation and an active community
-
-Help and support is never in short supply.
-
 ==== Responsive maintainers
 
 Our core developers help lead the Asciidoctor organization, the official home of the AsciiDoc syntax and its parsing engine, Asciidoctor.
@@ -100,6 +96,12 @@ AsciiDoc files can also be used by other tools such as Asciidoctor PDF and EPUB,
 Due to Asciidoctor's robust API, you can customize syntax processing and add special behaviors as discrete extensions.
 
 === Cross references that are impervious to file systems, URLs, and publishing (CI/CD) environments
+
+Antora's cross referencing system is based on abstract coordinates that aren't coupled to filesystem or published site locations.
+
+==== Learn More
+
+The Learn More link would lead to a more detailed feature page (probably need diagrams) that would show a number of the scenarios the cross references aren't stymied by.
 
 .Notes
 --
@@ -118,9 +120,40 @@ Combined with the fact that cross-references usually don't function correctly on
 Writers don't need to remember or construct the path to a file or a page's URL.
 In most cases, to create a cross reference, all you need to know is the filename of the page you want to link to.
 
+==== Learn More
+
+The Learn More link would lead to a docs page and/or a more detailed feature page that would show a number of the use cases the cross references can handle.
+
 .Notes
 --
-- create references between pages that are based on abstract coordinates instead of coupled to the output location (coupling to the URL incurs a cost); references can be validated and managed
 - Page referencing system (page ID: component, version, module, local path) with contextual shorthand; works across repositories; agnostic to storage.
 - Cross reference syntax that can link a file to a file in the same folder AND to a file that is in another repository?
 --
+
+=== Cross references are automatically validated and managed
+
+No more broken links.
+Antora automatically checks and validates cross references prior to deploying a site.
+If errors are found the pipeline pauses and notifies the writer with a list of invalid cross references and the files they're located in.
+
+=== User interface and theme hot swapping
+
+Since Antora has the ability to access multiple repositories, it makes sense that the site UI is also stored separately.
+
+This way the frontend team can use their own workflow and development schedule without having their files mixed with documentation files.
+It also means that you can apply new themes to your documentation just by changing one line in a playbook.
+
+.Notes
+****
+* page_layout attribute in document controls which layout template is applied to page.
+
+* populates templates with a model containing info about the site and backing content.
+
+* UI project fits with designer's workflow and built using tools familiar to designer; standard setup
+
+* (f) No coupling of content to output; failure to decouple UI hinders content reuse
+
+* (g) Rebrand without modifying content
+
+* (h) Use templates to make HTML match your playbook and/or environment; put power to control UI in your hands; shifts some of the decisions to the site manager (distributes roles and responsibilities); template w/ placeholders + UI model = HTML page
+****
