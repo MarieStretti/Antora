@@ -43,91 +43,92 @@ class ContentCatalog {
 }
 
 module.exports = (playbook, aggregate) => {
-  const catalog = new ContentCatalog()
-
-  aggregate.forEach(({ name, title, version, nav, files }) => {
+  const siteUrl = playbook.site.url.endsWith('/') ? playbook.site.url.slice(0, -1) : playbook.site.url
+  return aggregate.reduce((catalog, { name: component, version, nav, files }) => {
     files.forEach((file) => {
-      const pathSegments = file.path.split('/')
-      partitionSrc(file, pathSegments, nav)
+      const family = partitionSrc(file, component, version, nav)
 
-      if (file.src.family == null) {
+      if (!family) {
         return
+      } else if (family === 'page' || family === 'image' || family === 'attachment' || family === 'navigation') {
+        if (family !== 'navigation') file.out = resolveOut(file.src, playbook.urls.htmlExtensionStyle)
+        file.pub = resolvePub(file.src, file.out, playbook.urls.htmlExtensionStyle, siteUrl)
       }
 
-      file.src.component = name
-      file.src.version = version
-      // FIXME this assignment breaks if navigation file is not in modules folder
-      file.src.module = pathSegments[1]
-
-      const topicDirs = pathSegments.slice(2, -1)
-      if (topicDirs.length) {
-        file.src.moduleRootPath = Array(topicDirs.length)
-          .fill('..')
-          .join('/')
-      } else {
-        file.src.moduleRootPath = '.'
-      }
-
-      file.out = resolveOut(file.src, playbook.urls.htmlExtensionStyle)
-      file.pub = resolvePub(file.src, file.out, playbook.urls.htmlExtensionStyle, playbook.site.url)
-
-      // maybe addFile() should be "really" public and handle all the stuff above
       catalog.addFile(file)
     })
-  })
-
-  return catalog
+    return catalog
+  }, new ContentCatalog())
 }
 
-function partitionSrc (file, pathSegments, nav) {
-  const navInfo = nav ? getNavInfo(file, nav) : undefined
+function partitionSrc (file, component, version, nav) {
+  const filepath = file.path
+  const pathSegments = filepath.split('/')
+  const navInfo = nav ? getNavInfo(filepath, nav) : undefined
   if (navInfo) {
-    file.src.family = 'navigation'
-    // relative from modules/<module>
-    // FIXME don't assume navigation is in module folder
-    file.src.relative = pathSegments.slice(2).join('/')
     file.nav = navInfo
+    file.src.family = 'navigation'
+    if (pathSegments[0] === 'modules' && pathSegments.length > 2) {
+      file.src.module = pathSegments[1]
+      // relative to modules/<module>
+      file.src.relative = pathSegments.slice(2).join('/')
+      file.src.moduleRootPath = calculateRootPath(pathSegments.length - 3)
+    } else {
+      // relative to root
+      file.src.relative = filepath
+    }
   } else if (pathSegments[0] === 'modules') {
     if (pathSegments[2] === 'pages') {
       if (pathSegments[3] === '_partials') {
         // QUESTION should this family be partial-page instead?
         file.src.family = 'partial'
-        // relative from modules/<module>/pages/_partials
+        // relative to modules/<module>/pages/_partials
         file.src.relative = pathSegments.slice(4).join('/')
       } else if (file.src.mediaType === 'text/asciidoc' && file.src.basename !== '_attributes.adoc') {
         file.src.family = 'page'
-        // relative from modules/<module>/pages
+        // relative to modules/<module>/pages
         file.src.relative = pathSegments.slice(3).join('/')
       }
     } else if (pathSegments[2] === 'assets') {
       if (pathSegments[3] === 'images') {
         file.src.family = 'image'
-        // relative from modules/<module>/assets/images
+        // relative to modules/<module>/assets/images
         file.src.relative = pathSegments.slice(4).join('/')
       } else if (pathSegments[3] === 'attachments') {
         file.src.family = 'attachment'
-        // relative from modules/<module>/assets/attachments
+        // relative to modules/<module>/assets/attachments
         file.src.relative = pathSegments.slice(4).join('/')
       }
     } else if (pathSegments[2] === 'examples') {
       file.src.family = 'example'
-      // relative from modules/<module>/examples
+      // relative to modules/<module>/examples
       file.src.relative = pathSegments.slice(3).join('/')
+    } else {
+      return
     }
+
+    file.src.module = pathSegments[1]
+    file.src.moduleRootPath = calculateRootPath(pathSegments.length - 3)
+  } else {
+    return
   }
+
+  file.src.component = component
+  file.src.version = version
+  return file.src.family
 }
 
 /**
  * Return navigation properties if this file is registered as a navigation file.
  *
- * @param {File} file - the virtual file to check.
+ * @param {String} filepath - the path of the virtual file to match.
  * @param {Array} nav - the array of navigation entries from the component descriptor.
  *
- * @return {Object} - an object of properties that includes the navigation index, if this file is
- * a navigation file, or undefined if it's not.
+ * @returns {Object} An object of properties, which includes the navigation
+ * index, if this file is a navigation file, or undefined if it's not.
  */
-function getNavInfo (file, nav) {
-  const index = nav.findIndex((candidate) => candidate === file.path)
+function getNavInfo (filepath, nav) {
+  const index = nav.findIndex((candidate) => candidate === filepath)
   if (index !== -1) return { index }
 }
 
@@ -147,8 +148,7 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
   let familyPathSegment = ''
   if (src.family === 'image') {
     familyPathSegment = '_images'
-  }
-  if (src.family === 'attachment') {
+  } else if (src.family === 'attachment') {
     familyPathSegment = '_attachments'
   }
 
@@ -168,29 +168,47 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
 }
 
 function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
-  const urlSegments = out.path.split('/')
-  const lastUrlSegmentIndex = urlSegments.length - 1
-
-  // only change the URLs of pages
-  if (src.family === 'page') {
+  const pub = {}
+  const family = src.family
+  let url
+  if (family === 'navigation') {
+    const urlSegments = [src.component]
+    if (src.version !== 'master') urlSegments.push(src.version)
+    if (src.module && src.module !== 'ROOT') urlSegments.push(src.module)
+    // an artificial URL used for resolving page references in navigation model
+    url = '/' + urlSegments.join('/') + '/'
+    pub.moduleRootPath = '.'
+  } else if (family === 'page') {
+    const urlSegments = out.path.split('/')
+    const lastUrlSegmentIdx = urlSegments.length - 1
     if (htmlExtensionStyle === 'drop') {
-      if (urlSegments[lastUrlSegmentIndex] === 'index.html') {
-        urlSegments[lastUrlSegmentIndex] = ''
-      } else {
-        urlSegments[lastUrlSegmentIndex] = urlSegments[lastUrlSegmentIndex].replace(/\..*$/, '')
+      // drop just the .html extension or, if the filename is index.html, the whole segment
+      if ((urlSegments[lastUrlSegmentIdx] = urlSegments[lastUrlSegmentIdx].slice(0, -5)) === 'index') {
+        urlSegments[lastUrlSegmentIdx] = ''
       }
     } else if (htmlExtensionStyle === 'indexify') {
-      urlSegments[lastUrlSegmentIndex] = ''
+      urlSegments[lastUrlSegmentIdx] = ''
     }
+    url = '/' + urlSegments.join('/')
+  } else {
+    url = '/' + out.path
   }
 
-  const url = '/' + urlSegments.join('/')
+  pub.url = url
+  pub.absoluteUrl = siteUrl + url
 
-  return {
-    url,
-    absoluteUrl: siteUrl + url,
-    // Q: do we need root paths since they just match values on out?
-    moduleRootPath: out.moduleRootPath,
-    rootPath: out.rootPath,
+  if (out) {
+    pub.moduleRootPath = out.moduleRootPath
+    pub.rootPath = out.rootPath
   }
+
+  return pub
+}
+
+function calculateRootPath (depth) {
+  return depth
+    ? Array(depth)
+      .fill('..')
+      .join('/')
+    : '.'
 }
