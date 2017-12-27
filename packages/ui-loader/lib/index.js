@@ -5,13 +5,14 @@ const buffer = require('gulp-buffer')
 const crypto = require('crypto')
 const download = require('download')
 const fs = require('fs-extra')
+const map = require('map-stream')
 const minimatchAll = require('minimatch-all')
 const path = require('path')
 const streamToArray = require('stream-to-array')
 const yaml = require('js-yaml')
 const zip = require('gulp-vinyl-zip')
 
-const { UI_CACHE_PATH } = require('./constants')
+const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
 
 const $files = Symbol('files')
 const $generateId = Symbol('generateId')
@@ -43,53 +44,35 @@ class UiCatalog {
 }
 
 module.exports = async (playbook) => {
-  const uiCatalog = new UiCatalog()
-
-  let zipPath
-  if (isRemote(playbook.ui.bundle)) {
-    const cacheAbsDir = getCacheDir()
-    zipPath = path.join(cacheAbsDir, sha1(playbook.ui.bundle) + '.zip')
-    if (!fs.pathExistsSync(zipPath)) {
-      fs.ensureDirSync(cacheAbsDir)
-      const bundle = await download(playbook.ui.bundle)
-      fs.writeFileSync(zipPath, bundle)
+  const { bundle, startPath, outputDir } = playbook.ui
+  let bundlePath
+  if (isUrl(bundle)) {
+    bundlePath = getCachePath(sha1(bundle) + '.zip')
+    if (!fs.pathExistsSync(bundlePath)) {
+      fs.ensureDirSync(path.dirname(bundlePath))
+      fs.writeFileSync(bundlePath, await download(bundle))
     }
   } else {
-    zipPath = path.resolve(playbook.ui.bundle)
+    bundlePath = path.resolve(bundle)
   }
 
-  const zipFilesAndDirsStream = zip.src(zipPath).pipe(buffer())
+  const files = await streamToArray(
+    zip
+      .src(bundlePath)
+      .pipe(selectFilesStartingFrom(startPath))
+      .pipe(buffer())
+  )
 
-  const zipFilesAndDirs = await streamToArray(zipFilesAndDirsStream)
-  const uiFiles = getFilesFromStartPath(zipFilesAndDirs, playbook.ui.startPath)
-  const { uiDesc } = readUiDesc(uiFiles)
+  const config = loadConfig(files, outputDir)
 
-  let staticFiles
-  if (uiDesc != null) {
-    if ((staticFiles = uiDesc.staticFiles) != null && !Array.isArray(staticFiles)) {
-      staticFiles = [staticFiles]
-    }
-  }
-
-  uiFiles.forEach((file) => {
-    if (staticFiles != null && isStaticFile(file, staticFiles)) {
-      file.type = 'static'
-      file.out = resolveOut(file, '/')
-    } else {
-      file.type = resolveType(file)
-      if (file.type === 'asset') {
-        file.out = resolveOut(file, playbook.ui.outputDir)
-      }
-    }
-
-    uiCatalog.addFile(file)
-  })
-
-  return uiCatalog
+  return files.reduce((catalog, file) => {
+    catalog.addFile(classifyFile(file, config))
+    return catalog
+  }, new UiCatalog())
 }
 
-function isRemote (bundle) {
-  return bundle.startsWith('http://') || bundle.startsWith('https://')
+function isUrl (string) {
+  return string.startsWith('http://') || string.startsWith('https://')
 }
 
 function sha1 (string) {
@@ -98,34 +81,69 @@ function sha1 (string) {
   return shasum.digest('hex')
 }
 
-function getCacheDir () {
-  return path.resolve(UI_CACHE_PATH)
+function getCachePath (relative) {
+  return path.resolve(UI_CACHE_PATH, relative)
 }
 
-function getFilesFromStartPath (filesAndDirs, startPath) {
-  return filesAndDirs
-    .map((file) => {
-      if (file.isDirectory()) {
-        return null
-      }
-      const rootPath = '/' + file.path
-      if (!rootPath.startsWith(startPath)) {
-        return null
-      }
-      file.path = path.relative(startPath, rootPath)
-      return file
+function selectFilesStartingFrom (startPath) {
+  if (!startPath || (startPath = path.join('/', startPath + '/')) === '/') {
+    return map((file, next) => {
+      file.isNull() ? next() : next(null, file)
     })
-    .filter((file) => file != null)
+  } else {
+    startPath = startPath.slice(1)
+    const startPathOffset = startPath.length
+    return map((file, next) => {
+      if (!file.isNull()) {
+        const filePath = file.path
+        if (filePath.length > startPathOffset && filePath.startsWith(startPath)) {
+          file.path = filePath.slice(startPathOffset)
+          next(null, file)
+          return
+        }
+      }
+      next()
+    })
+  }
 }
 
-function readUiDesc (files) {
-  const uiDescFileIndex = _.findIndex(files, { path: 'ui.yml' })
-  if (uiDescFileIndex === -1) {
-    return {}
+function loadConfig (files, outputDir) {
+  const configFileIdx = files.findIndex((file) => file.path === UI_CONFIG_FILENAME)
+  if (configFileIdx !== -1) {
+    const configFile = files[configFileIdx]
+    files.splice(configFileIdx, 1)
+    const config = yaml.safeLoad(configFile.contents.toString())
+    config.outputDir = outputDir
+    const staticFiles = config.staticFiles
+    if (staticFiles) {
+      if (!Array.isArray(staticFiles)) {
+        config.staticFiles = [staticFiles]
+      } else if (staticFiles.length === 0) {
+        delete config.staticFiles
+      }
+    }
+    return config
+  } else {
+    return { outputDir }
   }
-  const [uiDescFile] = files.splice(uiDescFileIndex, 1)
-  const uiDesc = yaml.safeLoad(uiDescFile.contents.toString())
-  return { uiDesc, uiDescFile }
+}
+
+function classifyFile (file, config) {
+  Object.defineProperty(file, 'relative', {
+    get: function () {
+      return this.path
+    },
+  })
+  if (config.staticFiles && isStaticFile(file, config.staticFiles)) {
+    file.type = 'static'
+    file.out = resolveOut(file, '')
+  } else {
+    file.type = resolveType(file)
+    if (file.type === 'asset') {
+      file.out = resolveOut(file, config.outputDir)
+    }
+  }
+  return file
 }
 
 function isStaticFile (file, staticFiles) {
@@ -145,9 +163,9 @@ function resolveType (file) {
   }
 }
 
-function resolveOut (file, outputDir = '/_') {
-  const dirname = path.join('/', outputDir, file.dirname)
+function resolveOut (file, outputDir = '_') {
+  let dirname = path.join(outputDir, file.dirname)
+  if (dirname.startsWith('/')) dirname = dirname.slice(1)
   const basename = file.basename
-  const outputPath = path.join(dirname, basename)
-  return { dirname, basename, path: outputPath }
+  return { dirname, basename, path: path.join(dirname, basename) }
 }

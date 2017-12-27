@@ -10,15 +10,18 @@ const loadUi = require('@antora/ui-loader')
 const path = require('path')
 
 function testAll (archive, testFunction) {
-  const playbook = { ui: { startPath: '/' } }
+  const playbook = { ui: { startPath: '' } }
+
   it('with relative bundle path', () => {
     playbook.ui.bundle = path.relative(process.cwd(), path.resolve(__dirname, path.join('fixtures', archive)))
     return testFunction(playbook)
   })
+
   it('with absolute bundle path', () => {
     playbook.ui.bundle = path.resolve(__dirname, path.join('fixtures', archive))
     return testFunction(playbook)
   })
+
   it('with remote bundle URI', () => {
     playbook.ui.bundle = 'http://localhost:1337' + path.join('/', archive)
     return testFunction(playbook)
@@ -75,23 +78,53 @@ describe('loadUi()', () => {
       return expect(loadUi(playbook))
         .to.be.fulfilled()
         .then((uiCatalog) => {
-          const paths = uiCatalog.getFiles().map((file) => file.path)
+          const files = uiCatalog.getFiles()
+          const paths = files.map((file) => file.path)
           expect(paths).to.have.members(expectedFilePaths)
-          expect(paths).not.to.include('ui.yml')
+          const relativePaths = files.map((file) => file.relative)
+          expect(paths).to.eql(relativePaths)
         })
     })
   })
 
   describe('should load all files in the bundle from specified startPath', () => {
-    testAll('the-ui-bundle-with-start-path.zip', (playbook) => {
-      playbook.ui.startPath = '/the-ui-bundle'
-      return expect(loadUi(playbook))
-        .to.be.fulfilled()
-        .then((uiCatalog) => {
-          const paths = uiCatalog.getFiles().map((file) => file.path)
-          expect(paths).to.have.members(expectedFilePaths)
-          expect(paths).not.to.include('ui.yml')
-        })
+    describe('when startPath is absolute', () => {
+      testAll('the-ui-bundle-with-start-path.zip', (playbook) => {
+        playbook.ui.startPath = '/the-ui-bundle'
+        return expect(loadUi(playbook))
+          .to.be.fulfilled()
+          .then((uiCatalog) => {
+            const paths = uiCatalog.getFiles().map((file) => file.path)
+            expect(paths).to.have.members(expectedFilePaths)
+            expect(paths).not.to.include('the-ui-bundle.txt')
+          })
+      })
+    })
+
+    describe('when startPath is relative', () => {
+      testAll('the-ui-bundle-with-start-path.zip', (playbook) => {
+        playbook.ui.startPath = 'the-ui-bundle'
+        return expect(loadUi(playbook))
+          .to.be.fulfilled()
+          .then((uiCatalog) => {
+            const paths = uiCatalog.getFiles().map((file) => file.path)
+            expect(paths).to.have.members(expectedFilePaths)
+            expect(paths).not.to.include('the-ui-bundle.txt')
+          })
+      })
+    })
+
+    describe('when startPath has trailing slash', () => {
+      testAll('the-ui-bundle-with-start-path.zip', (playbook) => {
+        playbook.ui.startPath = 'the-ui-bundle/'
+        return expect(loadUi(playbook))
+          .to.be.fulfilled()
+          .then((uiCatalog) => {
+            const paths = uiCatalog.getFiles().map((file) => file.path)
+            expect(paths).to.have.members(expectedFilePaths)
+            expect(paths).not.to.include('the-ui-bundle.txt')
+          })
+      })
     })
   })
 
@@ -161,6 +194,8 @@ describe('loadUi()', () => {
         return expect(loadUi(playbook))
           .to.be.fulfilled()
           .then((uiCatalog) => {
+            const filePaths = uiCatalog.getFiles().map((file) => file.path)
+            expect(filePaths).not.to.include('ui.yml')
             const uiAssets = uiCatalog.findByType('asset')
             uiAssets.forEach(({ type }) => expect(type).to.equal('asset'))
             const uiAssetPaths = uiAssets.map((file) => file.path)
@@ -246,31 +281,53 @@ describe('loadUi()', () => {
           })
           const script = uiAssets.find(({ path: p }) => p === 'scripts/01-one.js')
           expect(script.out).to.eql({
-            dirname: '/_/scripts',
+            dirname: '_/scripts',
             basename: '01-one.js',
-            path: '/_/scripts/01-one.js',
+            path: '_/scripts/01-one.js',
           })
         })
     })
   })
 
-  describe('should set the out property on assets with custom playbook.ui.outputDir', () => {
-    testAll('the-ui-bundle.zip', (playbook) => {
-      playbook.ui.outputDir = '/_ui'
-      return expect(loadUi(playbook))
-        .to.be.fulfilled()
-        .then((uiCatalog) => {
-          const uiAssets = uiCatalog.findByType('asset')
-          uiAssets.forEach((file) => {
-            expect(file).to.have.property('out')
+  describe('should set the out property on assets relative to playbook.ui.outputDir', () => {
+    describe('when outputDir is relative', () => {
+      testAll('the-ui-bundle.zip', (playbook) => {
+        playbook.ui.outputDir = '_ui'
+        return expect(loadUi(playbook))
+          .to.be.fulfilled()
+          .then((uiCatalog) => {
+            const uiAssets = uiCatalog.findByType('asset')
+            uiAssets.forEach((file) => {
+              expect(file).to.have.property('out')
+            })
+            const script = uiAssets.find(({ path }) => path === 'scripts/01-one.js')
+            expect(script.out).to.eql({
+              dirname: '_ui/scripts',
+              basename: '01-one.js',
+              path: '_ui/scripts/01-one.js',
+            })
           })
-          const script = uiAssets.find(({ path }) => path === 'scripts/01-one.js')
-          expect(script.out).to.eql({
-            dirname: '/_ui/scripts',
-            basename: '01-one.js',
-            path: '/_ui/scripts/01-one.js',
+      })
+    })
+
+    describe('when outputDir is absolute', () => {
+      testAll('the-ui-bundle.zip', (playbook) => {
+        playbook.ui.outputDir = '/_ui'
+        return expect(loadUi(playbook))
+          .to.be.fulfilled()
+          .then((uiCatalog) => {
+            const uiAssets = uiCatalog.findByType('asset')
+            uiAssets.forEach((file) => {
+              expect(file).to.have.property('out')
+            })
+            const script = uiAssets.find(({ path }) => path === 'scripts/01-one.js')
+            expect(script.out).to.eql({
+              dirname: '_ui/scripts',
+              basename: '01-one.js',
+              path: '_ui/scripts/01-one.js',
+            })
           })
-        })
+      })
     })
   })
 
@@ -285,9 +342,9 @@ describe('loadUi()', () => {
           })
           const xml = staticFiles.find(({ path }) => path === 'foo/bar/one.xml')
           expect(xml.out).to.eql({
-            dirname: '/foo/bar',
+            dirname: 'foo/bar',
             basename: 'one.xml',
-            path: '/foo/bar/one.xml',
+            path: 'foo/bar/one.xml',
           })
         })
     })
@@ -305,7 +362,6 @@ describe('loadUi()', () => {
       .then((uiCatalog) => {
         const paths = uiCatalog.getFiles().map((file) => file.path)
         expect(paths).to.have.members(expectedFilePaths)
-        expect(paths).not.to.include('ui.yml')
 
         server.close()
 
@@ -314,7 +370,6 @@ describe('loadUi()', () => {
           .then((uiCatalog) => {
             const paths = uiCatalog.getFiles().map((file) => file.path)
             expect(paths).to.have.members(expectedFilePaths)
-            expect(paths).not.to.include('ui.yml')
           })
       })
   })
