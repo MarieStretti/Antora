@@ -1,0 +1,126 @@
+= Features
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:experimental:
+
+== Store your documentation in 1 or 100 repositories and 1 or 100 branches.
+
+Store documentation in multiple repositories and multiple branches.
+Even store content in the same repository as the code it documents.
+
+- docs as code
+- limits noise for authors
+- encourages a separation of concerns, responsibilities, & ownership
+- helps code and docs versions to stay in sync
+
+=== How?
+
+Antora can use and mix source content and its assets from as many git repositories and branches as you need.
+And the repositories and branches can be local & remote, public & private, and bare & non-bare.
+
+== Control your documentation with a playbook.
+
+Simply by adding or removing repository addresses or branch names in the playbook, you can control what documentation is published to your site.
+Writers can even tell Antora to use local, un-committed changes when generating the site locally.
+Use a playbook to publish a early-release documentation site that only includes a single version of a product's documentation, while another playbook publishes your public documentation site that doesn't include any beta documentation.
+
+=== How?
+
+Antora runs from a purely configuration playbook project that provides instructions about what to generate & where to get it.
+It's controllable by a non-developer; provides a non-technical interface.
+
+Can have multiple playbooks that can be as similar or different as you want them to be.
+Playbook is selected by cli flag or env var.
+Antora fetches the content it needs on demand.
+
+=== Minimal markup, maximum functionality
+
+Writers can write and edit content without being distracted by large blocks of markup or stopping to remember complex, unintuitive syntax.
+
+Features include:
+
+* Header
+Specify and control the file's title, aliases, metadata, taxonomy, syntax behavior options, writer defined variables, etc.
+* Section IDs and attributes.
+* Text Emphasis, such as bold, italics, monospace, highlight, strikethrough, and custom processing roles.
+* Special Characters, Emojis, UI patterns (kbd:[Ctrl+T]), and inline Icons
+* Ordered and unorder lists, interactive task lists, and definition lists.
+* Tables
+* Notices (Admonitions), Quotes, and Sidebars
+* Images and Icons, inline or block, with extensive display options
+* Videos (self-hosted, YouTube, Vimeo) and Audio with full display and user-control options
+* Source code with copy and paste friendly callouts, callout icons, wrap or scroll controls, and syntax highlighting.
+Source code can be written in the document or sourced from another file using an include directive.
+* Include directive with tags
+Select all or parts of a file and insert it into another file.
+* Table of Contents
+//* Glossary, Bibliography, Appendix, and Index
+* Math
+* Cross References
+In page and page-to-page.
+* Page, section, and line controls to optimize reader experience (Rx)
+
+=== No syntax plugins, extensions, or shortcodes needed. No flavor lock-in.
+// Fully integrated, lightweight and comprehensive markup
+
+AsciiDoc's extensive feature set is available right out of the box with Antora.
+There's no need to find, install, and manage plugins, extensions, or scripts to add basic capabilities or shortcodes to the syntax.
+Along with not having "flavor" lock-in, this means you can use your AsciiDoc files with Antora and all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.) without worrying about incompatibility, lost functionality, or errors.
+
+This means your AsciiDoc files are immediately compatible with all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.).
+You don't need to worry about errors, lost functionality, or downgraded processing performance.
+Real single source portability.
+
+==== Editing and preview tooling
+
+Writers can use almost any text editor, IDEs such as Atom, Brackets, IntelliJ, etc. to write and preview AsciiDoc files.
+AsciiDoc files can also be previewed in Chrome and Firefox with the Asciidoctor extension.
+GitHub and GitLab also render AsciiDoc files right in your browser.
+
+==== Extensive documentation and an active community
+
+Help and support is never in short supply.
+
+==== Responsive maintainers
+
+Our core developers help lead the Asciidoctor organization, the official home of the AsciiDoc syntax and its parsing engine, Asciidoctor.
+They're always improving the syntax and its engine in response to user needs and technology advances.
+Due to this direct relationship, Antora can always use the latest AsciiDoc and Asciidoctor features.
+
+==== Single source portability / usability
+
+AsciiDoc files can also be used by other tools such as Asciidoctor PDF and EPUB, Asciidoctor HTML presentation extensions for Bespoke, Reveal.js.
+
+==== Custom extensions
+
+Due to Asciidoctor's robust API, you can customize syntax processing and add special behaviors as discrete extensions.
+
+=== Cross references that are impervious to file systems, URLs, and publishing (CI/CD) environments
+
+.Notes
+--
+Writer-friendly cross references that are automatically file system, version, and URL portable
+Readable, new-version-proof cross references
+Location and version-proof cross references
+Readable, portable cross references
+Portable and new-version-proof cross references.
+
+Manually updating internal links when a new documentation version is released is huge, error-prone maintenance chore for many docs teams.
+Combined with the fact that cross-references usually don't function correctly on a writer's local machine means broken links are inevitable.
+--
+
+=== Writer-friendly cross references
+
+Writers don't need to remember or construct the path to a file or a page's URL.
+In most cases, to create a cross reference, all you need to know is the filename of the page you want to link to.
+
+.Notes
+--
+- create references between pages that are based on abstract coordinates instead of coupled to the output location (coupling to the URL incurs a cost); references can be validated and managed
+- Page referencing system (page ID: component, version, module, local path) with contextual shorthand; works across repositories; agnostic to storage.
+- Cross reference syntax that can link a file to a file in the same folder AND to a file that is in another repository?
+--
