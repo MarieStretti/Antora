@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const buffer = require('gulp-buffer')
 const crypto = require('crypto')
 const download = require('download')
@@ -9,39 +8,11 @@ const map = require('map-stream')
 const minimatchAll = require('minimatch-all')
 const path = require('path')
 const streamToArray = require('stream-to-array')
+const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
 const zip = require('gulp-vinyl-zip')
 
 const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
-
-const $files = Symbol('files')
-const $generateId = Symbol('generateId')
-
-class UiCatalog {
-  constructor () {
-    this[$files] = {}
-  }
-
-  getFiles () {
-    return Object.values(this[$files])
-  }
-
-  addFile (file) {
-    const id = this[$generateId](file)
-    if (id in this[$files]) {
-      throw new Error('Duplicate file')
-    }
-    this[$files][id] = file
-  }
-
-  findByType (type) {
-    return _.filter(this[$files], { type })
-  }
-
-  [$generateId] (file) {
-    return [file.type, ...file.path.split('/')]
-  }
-}
 
 module.exports = async (playbook) => {
   const { bundle, startPath, outputDir } = playbook.ui
