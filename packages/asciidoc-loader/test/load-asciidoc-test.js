@@ -1166,6 +1166,30 @@ describe('loadAsciiDoc()', () => {
       expectPageLink(html, '../topic-b/the-page.html', 'The Page Title')
     })
 
+    it('should convert a page reference to a root relative path if relativizePageRefs is disabled', () => {
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'page',
+          relative: 'this-page.adoc',
+          contents: 'xref:that-page.adoc[The Page Title]',
+        },
+        {
+          family: 'page',
+          relative: 'that-page.adoc',
+        },
+      ]).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog, { relativizePageRefs: false }).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'that-page.adoc',
+      })
+      expectPageLink(html, '/component-a/module-a/that-page.html', 'The Page Title')
+    })
+
     it('should convert a page reference with module and page using indexified URLs', () => {
       const contentCatalog = mockContentCatalog([
         {
