@@ -64,32 +64,21 @@ module.exports = {
     },
   },
   ui: {
-    url: {
-      doc: 'The repository that hosts the UI.',
+    bundle: {
+      doc: 'The URL of the UI bundle. Can be a path on the local filesystem.',
       format: String,
-      default: undefined,
+      arg: 'ui-bundle',
+      default: null,
     },
-    name: {
-      doc: 'The name of the UI bundle. Defaults to the repository name.',
+    start_path: {
+      doc: 'The root relative start path inside the bundle from which to take files.',
       format: String,
-      default: undefined,
+      default: '',
     },
-    ref: {
-      doc: 'The reference (or version) of the theme bundle to use.',
+    output_dir: {
+      doc: 'The output directory path relative to the site root where the UI files should be written.',
       format: String,
-      default: undefined,
-    },
-    archive: {
-      doc: 'A local theme archive. If specified, used in place of the UI bundle from the repository.',
-      format: String,
-      default: undefined,
-      arg: 'ui-archive',
-    },
-    skip_cache: {
-      doc: 'Skip the local bundle cache and always fetch the UI bundle from the repository.',
-      format: Boolean,
-      default: false,
-      arg: 'skip-ui-cache',
+      default: '_',
     },
   },
   runtime: {

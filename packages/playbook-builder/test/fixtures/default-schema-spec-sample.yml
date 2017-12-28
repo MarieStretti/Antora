@@ -3,3 +3,6 @@ site:
   title: Example site
   keys:
     google_analytics: 'XX-123456'
+ui:
+  bundle: ../ui/build/ui-bundles.zip
+  start_path: dark-theme

@@ -205,6 +205,9 @@ describe('buildPlaybook()', () => {
     expect(playbook.site.url).to.equal('https://example.com')
     expect(playbook.site.title).to.equal('Example site')
     expect(playbook.site.keys.googleAnalytics).to.equal('XX-123456')
+    expect(playbook.ui.bundle).to.equal('../ui/build/ui-bundles.zip')
+    expect(playbook.ui.startPath).to.equal('dark-theme')
+    expect(playbook.ui.outputDir).to.equal('_')
   })
 
   it('is decoupled from the process environment', () => {
