@@ -2,7 +2,6 @@
 
 const loadAsciiDoc = require('@antora/asciidoc-loader')
 const NavigationCatalog = require('./navigation-catalog')
-const path = require('path')
 
 const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
 
@@ -25,37 +24,29 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  * @returns {NavigationCatalog} A navigation catalog built from the navigation
  * files in the content catalog.
  */
-// rename to loadNavigation?
-async function buildNavigation (contentCatalog) {
-  const navCatalog = new NavigationCatalog()
-  const navFiles = contentCatalog.findBy({ family: 'navigation' })
-  if (!navFiles || navFiles.length === 0) return navCatalog
-  const treeSets = await Promise.all(
-    navFiles.map(async (navFile) =>
-      loadNavigationFile(navFile, {}, contentCatalog)
-    )
-  )
-  treeSets
+function buildNavigation (contentCatalog) {
+  const navFiles = contentCatalog.findBy({ family: 'navigation' }) || []
+  if (navFiles.length === 0) return new NavigationCatalog()
+  return navFiles
+    .map((navFile) => loadNavigationFile(navFile, {}, contentCatalog))
     .reduce((accum, treeSet) => accum.concat(treeSet), [])
-    .forEach(({ component, version, tree }) => navCatalog.addTree(component, version, tree))
-  return navCatalog
+    .reduce((catalog, { component, version, tree }) => {
+      catalog.addTree(component, version, tree)
+      return catalog
+    }, new NavigationCatalog())
 }
 
-async function loadNavigationFile (navFile, customAttrs, contentCatalog) {
+function loadNavigationFile (navFile, customAttrs, contentCatalog) {
   const { src: { component, version }, nav: { index } } = navFile
-  // TODO if we pass absolute-page-references to loadAsciiDoc, we wouldn't need to qualify the URL when walking the tree
-  const lists = loadAsciiDoc(navFile, customAttrs, contentCatalog)
-    .blocks
-    .filter((block) => block.context === 'ulist')
-  if (lists.length === 0) return []
-  const urlContext = navFile.pub.url
-  return Promise.all(
-    lists.map(async (list, idx) => {
-      const tree = buildNavigationTree(list.getTitle(), list, urlContext, true)
-      tree.order = idx === 0 ? index : parseFloat((index + (idx / lists.length)).toFixed(4))
-      return { component, version, tree }
-    })
+  const lists = loadAsciiDoc(navFile, customAttrs, contentCatalog, { relativizePageRefs: false }).blocks.filter(
+    (block) => block.context === 'ulist'
   )
+  if (lists.length === 0) return []
+  return lists.map((list, idx) => {
+    const tree = buildNavigationTree(list.getTitle(), list, true)
+    tree.order = idx === 0 ? index : parseFloat((index + idx / lists.length).toFixed(4))
+    return { component, version, tree }
+  })
 }
 
 function getChildList (node) {
@@ -63,33 +54,30 @@ function getChildList (node) {
   if (block0 && block0.context === 'ulist') return block0
 }
 
-function buildNavigationTree (formattedContent, list, urlContext, isRoot) {
+function buildNavigationTree (formattedContent, list, isRoot) {
   let entry
   if (isRoot) {
     entry = {}
-    if (formattedContent) entry.title = partitionContent(formattedContent, urlContext)
+    if (formattedContent) entry.title = partitionContent(formattedContent)
   } else {
-    entry = partitionContent(formattedContent, urlContext)
+    entry = partitionContent(formattedContent)
   }
 
   if (list) {
-    entry.items = list.blocks.map((item) =>
-      buildNavigationTree(item.$text(), getChildList(item), urlContext)
-    )
+    entry.items = list.blocks.map((item) => buildNavigationTree(item.$text(), getChildList(item)))
   }
 
   return entry
 }
 
 // atomize? distill? decompose?
-function partitionContent (content, urlContext) {
+function partitionContent (content) {
   if (content.includes('<a')) {
     const match = content.match(LINK_RX)
     if (match) {
       let url = match[1]
       let urlType = 'external'
       if (match[2] === 'page') {
-        url = path.normalize(path.join(urlContext, url))
         urlType = 'internal'
       } else if (url.startsWith('#')) {
         urlType = 'fragment'
