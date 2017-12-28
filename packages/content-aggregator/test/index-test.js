@@ -72,7 +72,7 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('should read properties from component desc', () => {
+  describe('should read properties from component desc and drop file', () => {
     testAll(async (repo) => {
       await repo.initRepo({
         name: 'the-component',
@@ -92,6 +92,8 @@ describe('aggregateContent()', () => {
             version: 'v1.2.3',
             nav: ['nav-one.adoc', 'nav-two.adoc'],
           })
+          const paths = theAggregate[0].files.map((file) => file.path)
+          expect(paths).to.not.include(COMPONENT_DESC_FILENAME)
         })
     })
   })
@@ -263,7 +265,6 @@ describe('aggregateContent()', () => {
           expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const expectedPaths = [
             'README.adoc',
-            COMPONENT_DESC_FILENAME,
             'modules/ROOT/_attributes.adoc',
             'modules/ROOT/pages/_attributes.adoc',
             'modules/ROOT/pages/page-one.adoc',
@@ -366,7 +367,6 @@ describe('aggregateContent()', () => {
           const componentVersion = theAggregate[0]
           expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const expectedPaths = [
-            COMPONENT_DESC_FILENAME,
             'modules/ROOT/_attributes.adoc',
             'modules/ROOT/pages/_attributes.adoc',
             'modules/ROOT/pages/page-one.adoc',
@@ -494,7 +494,6 @@ describe('aggregateContent()', () => {
         expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
         const expectedPaths = [
           'README.adoc',
-          COMPONENT_DESC_FILENAME,
           'modules/ROOT/_attributes.adoc',
           'modules/ROOT/pages/_attributes.adoc',
           'modules/ROOT/pages/page-one.adoc',
@@ -521,13 +520,12 @@ describe('aggregateContent()', () => {
           expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const expectedPaths = [
             'README.adoc',
-            COMPONENT_DESC_FILENAME,
             'modules/ROOT/_attributes.adoc',
             'modules/ROOT/pages/_attributes.adoc',
             'modules/ROOT/pages/page-one.adoc',
           ]
           const files = componentVersion.files
-          expect(files).to.have.lengthOf(5)
+          expect(files).to.have.lengthOf(expectedPaths.length)
           expectedPaths.forEach((expectedPath, i) => {
             expect(files[i].path).to.equal(expectedPath)
             expect(files[i].relative).to.equal(expectedPath)

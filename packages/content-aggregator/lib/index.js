@@ -41,7 +41,7 @@ module.exports = async (playbook) => {
           files = await readFilesFromGitTree(repository, branch, source.startPath)
         }
 
-        const componentVersion = readComponentDesc(files)
+        const componentVersion = loadComponentDescriptor(files)
         componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
         return componentVersion
       })
@@ -201,21 +201,22 @@ function branchMatches (branchName, branchPattern) {
   return isMatch(branchName, branchPattern)
 }
 
-function readComponentDesc (files) {
-  const componentDescFile = files.find((file) => file.path === COMPONENT_DESC_FILENAME)
-  if (componentDescFile == null) {
+function loadComponentDescriptor (files) {
+  const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
+  if (descriptorFileIdx < 0) {
     throw new Error(COMPONENT_DESC_FILENAME + ' not found')
   }
 
-  const componentDesc = yaml.safeLoad(componentDescFile.contents.toString())
-  if (componentDesc.name == null) {
+  const descriptorFile = files[descriptorFileIdx]
+  files.splice(descriptorFileIdx, 1)
+  const data = yaml.safeLoad(descriptorFile.contents.toString())
+  if (data.name == null) {
     throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name')
-  }
-  if (componentDesc.version == null) {
+  } else if (data.version == null) {
     throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version')
   }
 
-  return componentDesc
+  return data
 }
 
 async function readFilesFromGitTree (repository, branch, startPath) {
