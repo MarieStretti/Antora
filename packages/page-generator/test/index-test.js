@@ -2,9 +2,9 @@
 'use strict'
 
 const { expect } = require('../../../test/test-utils')
-const processTemplatingFiles = require('../lib/index')
+const createPageGenerator = require('@antora/page-generator')
 
-describe('processTemplatingFiles().generatePage()', () => {
+describe('createPageGenerator().generatePage()', () => {
   let helpers
   let layouts
   let partials
@@ -59,7 +59,7 @@ describe('processTemplatingFiles().generatePage()', () => {
       },
       asciidoc: {
         attributes: {
-          'page-title': 'Hello World!',
+          doctitle: 'Hello World!',
           description: 'the description',
           keywords: 'foo,bar,baz',
         },
@@ -68,20 +68,20 @@ describe('processTemplatingFiles().generatePage()', () => {
   })
 
   it('should generate a page with "default" layout by default', async () => {
-    const generatePage = await processTemplatingFiles(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(helpers, layouts, partials)
     delete playbook.ui.defaultLayout
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql('<!--DEFAULT--><html><title>Hello World!</title><h1>HELLO WORLD!</h1><h2>Bonjour</h2></html>')
   })
 
   it('should generate a page with layout specified by playbook.ui.defaultLayout', async () => {
-    const generatePage = await processTemplatingFiles(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(helpers, layouts, partials)
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql('<!--ONE--><html><title>Hello World!</title><h1>HELLO WORLD!</h1><h2>Bonjour</h2></html>')
   })
 
   it('should generate a page with layout specified by page.asciidoc.attributes.page-layout', async () => {
-    const generatePage = await processTemplatingFiles(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(helpers, layouts, partials)
     page.asciidoc.attributes['page-layout'] = 'two'
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql('<!--TWO--><html><title>Hello World!</title><h1>HELLO WORLD!</h1><h2>Bonjour</h2></html>')
@@ -102,7 +102,7 @@ describe('processTemplatingFiles().generatePage()', () => {
         '{{canonicalUrl}}',
       ].join('\n')),
     })
-    const generatePage = await processTemplatingFiles(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(helpers, layouts, partials)
     page.asciidoc.attributes['page-layout'] = 'all-variables'
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql([

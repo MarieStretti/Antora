@@ -1,11 +1,9 @@
 'use strict'
 
-const Buffer = require('buffer').Buffer
-
-const _ = require('lodash')
 const handlebars = require('handlebars')
 const requireFromString = require('require-from-string')
 
+// TODO move to constants
 const compileOptions = { preventIndent: true }
 
 module.exports = async (helpers, layouts, partials) => {
@@ -24,10 +22,10 @@ module.exports = async (helpers, layouts, partials) => {
     handlebars.registerPartial(file.stem, file.contents.toString())
   })
 
-  return (page, playbook, vfileCatalog) => {
-
-    const defaultLayout = _.get(playbook, 'ui.defaultLayout', 'default')
-    const pageLayout = _.get(page, 'asciidoc.attributes.page-layout', defaultLayout)
+  return (page, playbook, contentCatalog) => {
+    const attrs = page.asciidoc.attributes
+    const uiConfig = playbook.ui || {}
+    const pageLayout = attrs['page-layout'] || uiConfig.defaultLayout || 'default'
     const compiledLayout = compiledLayouts[pageLayout]
 
     if (!compiledLayout) {
@@ -36,14 +34,15 @@ module.exports = async (helpers, layouts, partials) => {
 
     const model = {
       site: {
-        url: _.get(playbook, 'site.url'),
-        title: _.get(playbook, 'site.title'),
-        // domains: vfileCatalog.getDomainVersionIndex(),
+        url: playbook.site.url,
+        title: playbook.site.title,
+        // domains: contentCatalog.getDomainVersionIndex(),
       },
-      title: _.get(page, 'asciidoc.attributes.page-title'),
+      // FIXME this should be page.asciidoc.doctitle (not the same)
+      title: attrs.doctitle,
       contents: page.contents.toString(),
-      description: page.asciidoc.attributes.description,
-      keywords: page.asciidoc.attributes.keywords,
+      description: attrs.description,
+      keywords: attrs.keywords,
       domain: {
         name: page.src.component,
         versioned: page.src.version !== 'master',
@@ -53,7 +52,7 @@ module.exports = async (helpers, layouts, partials) => {
           string: page.src.version,
           // url
         },
-        // versions: vfileCatalog.getVersionsIndex(page.src.component),
+        // versions: contentCatalog.getVersionsIndex(page.src.component),
       },
       // versions,
       canonicalUrl: page.pub.canonicalUrl,
@@ -63,9 +62,6 @@ module.exports = async (helpers, layouts, partials) => {
       // home,
     }
 
-    const newContents = Buffer.from(compiledLayout(model))
-
-    page.contents = newContents
+    page.contents = Buffer.from(compiledLayout(model))
   }
 }
-
