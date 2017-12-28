@@ -6,9 +6,7 @@ const { expect, spy } = require('../../../test/test-utils')
 const resolvePage = require('@antora/asciidoc-loader/lib/xref/resolve-page')
 
 describe('resolvePage', () => {
-  const mockContentCatalog = (file) => ({
-    getById: spy(() => file),
-  })
+  const mockContentCatalog = (file) => ({ getById: spy(() => file) })
 
   it('should throw error if page ID spec has invalid syntax', () => {
     const contentCatalog = mockContentCatalog()

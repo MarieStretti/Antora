@@ -25,10 +25,13 @@ const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
  * @param {Object} [customAttrs={}] - Custom attributes to assign on the AsciiDoc document.
  * @param {ContentCatalog} [contentCatalog=undefined] - The content catalog
  *   that provides access to the virtual files in the site.
+ * @param {Object} [opts={}] - Additional processing options.
+ * @param {Boolean} [opts.relativizePageRefs=true] - Configures processor to generate
+ *   page references relative to the current page instead of the site root.
  *
  * @returns {Document} An Asciidoctor Document object created from the specified source.
  */
-function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined) {
+function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined, opts = {}) {
   const envAttrs = {
     env: 'site',
     'env-site': '',
@@ -55,8 +58,9 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined) {
     partialsdir: PARTIALS_DIR_PROXY,
   }
   const attributes = Object.assign(envAttrs, defaultAttrs, customAttrs || {}, builtinAttrs)
+  const relativizePageRefs = opts.relativizePageRefs !== false
   const converter = createConverter(asciidoctor, {
-    onPageRef: (refSpec, content) => convertPageRef(refSpec, content, file, contentCatalog),
+    onPageRef: (refSpec, content) => convertPageRef(refSpec, content, file, contentCatalog, relativizePageRefs),
   })
   const extensionRegistry = createExtensionRegistry(asciidoctor, {
     onInclude: (doc, target, cursor) => resolveIncludeFile(target, file, cursor, contentCatalog),

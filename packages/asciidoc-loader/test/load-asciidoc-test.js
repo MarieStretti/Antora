@@ -1,73 +1,20 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, expectCalledWith, heredoc, spy } = require('../../../test/test-utils')
+const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
 
 const asciidoctor = require('asciidoctor.js')()
 const loadAsciiDoc = require('@antora/asciidoc-loader')
-const path = require('path')
+const mockContentCatalog = require('../../../test/mock-content-catalog')
 
 describe('loadAsciiDoc()', () => {
   let inputFile
 
   const expectLink = (html, url, content) => expect(html).to.include(`<a href="${url}">${content}</a>`)
+  const expectPageLink = (html, url, content) => expect(html).to.include(`<a href="${url}" class="page">${content}</a>`)
 
-  const populateFileContents = (contents) => {
+  const setInputFileContents = (contents) => {
     inputFile.contents = Buffer.from(contents)
-  }
-
-  const buildComponentVersionKey = (component, version) =>
-    (version || '1.2.3') + '@' + (component || 'component-a') + ':'
-
-  const mockContentCatalog = (seed = []) => {
-    if (!Array.isArray(seed)) seed = [seed]
-    const familyDirs = {
-      page: 'pages',
-      partial: 'pages/_partials',
-      example: 'examples',
-    }
-    const entriesById = {}
-    const entriesByPath = {}
-    seed.forEach(({ family, relative, contents, component, version, module, indexify }) => {
-      if (!component) component = 'component-a'
-      if (!version) version = '1.2.3'
-      if (!module) module = 'module-a'
-      if (!contents) contents = '= Page Title\n\npage contents'
-      const componentVersionKey = buildComponentVersionKey(component, version)
-      const componentRelativePath = path.join('modules', module, familyDirs[family], relative)
-      const entry = {
-        path: componentRelativePath,
-        dirname: path.dirname(componentRelativePath),
-        contents: Buffer.from(contents),
-        src: {
-          path: componentRelativePath,
-          component,
-          version,
-          module,
-          relative,
-          basename: path.basename(relative),
-        },
-      }
-      if (family === 'page') {
-        const pubVersion = version === 'master' ? '' : version
-        const pubModule = module === 'ROOT' ? '' : module
-        const pubRelative = relative.slice(0, -5) + (indexify ? '/' : '.html')
-        entry.pub = { url: path.join('/', component, pubVersion, pubModule, pubRelative) }
-      }
-      const byIdKey = componentVersionKey + family + '$' + relative
-      const byPathKey = componentVersionKey + componentRelativePath
-      entriesById[byIdKey] = entriesByPath[byPathKey] = entry
-    })
-
-    return {
-      getById: spy(
-        ({ component, version, family, relative }) =>
-          entriesById[buildComponentVersionKey(component, version) + family + '$' + relative]
-      ),
-      getByPath: spy(
-        ({ path: path_, component, version }) => entriesByPath[buildComponentVersionKey(component, version) + path_]
-      ),
-    }
   }
 
   beforeEach(() => {
@@ -76,7 +23,7 @@ describe('loadAsciiDoc()', () => {
       dirname: 'modules/module-a/pages',
       src: {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
         relative: 'page-a.adoc',
@@ -85,9 +32,9 @@ describe('loadAsciiDoc()', () => {
         extname: '.adoc',
       },
       pub: {
-        url: '/component-a/1.2.3/module-a/page-a.html',
-        moduleRootPath: '..',
-        rootPath: '../../..',
+        url: '/component-a/module-a/page-a.html',
+        moduleRootPath: '.',
+        rootPath: '../..',
       },
     }
   })
@@ -104,7 +51,7 @@ describe('loadAsciiDoc()', () => {
       * list item 2
       * list item 3
     `
-    populateFileContents(contents)
+    setInputFileContents(contents)
     const doc = loadAsciiDoc(inputFile)
     const allBlocks = doc.findBy()
     expect(allBlocks).to.have.lengthOf(8)
@@ -128,7 +75,7 @@ describe('loadAsciiDoc()', () => {
 
   describe('attributes', () => {
     it('should set correct integration attributes on document', () => {
-      populateFileContents('= Document Title')
+      setInputFileContents('= Document Title')
       const doc = loadAsciiDoc(inputFile)
       expect(doc.getBaseDir()).to.equal('modules/module-a/pages')
       expect(doc.getAttributes()).to.include({
@@ -147,8 +94,8 @@ describe('loadAsciiDoc()', () => {
         docfile: 'modules/module-a/pages/page-a.adoc',
         docdir: doc.getBaseDir(),
         docfilesuffix: '.adoc',
-        imagesdir: '../_images',
-        attachmentsdir: '../_attachments',
+        imagesdir: './_images',
+        attachmentsdir: './_attachments',
         partialsdir: 'partial$',
         examplesdir: 'example$',
         // computed
@@ -160,8 +107,22 @@ describe('loadAsciiDoc()', () => {
       })
     })
 
+    it('should set correct integration attributes on document for page in topic folder', () => {
+      inputFile = mockContentCatalog({
+        version: '4.5.6',
+        family: 'page',
+        relative: 'topic-a/page-a.adoc',
+        contents: '= Document Title',
+      }).getFiles()[0]
+      const doc = loadAsciiDoc(inputFile)
+      expect(doc.getAttributes()).to.include({
+        imagesdir: '../_images',
+        attachmentsdir: '../_attachments',
+      })
+    })
+
     it('should add custom attributes to document', () => {
-      populateFileContents('= Document Title')
+      setInputFileContents('= Document Title')
       const customAttrs = {
         'attribute-missing': 'skip',
         icons: '',
@@ -173,14 +134,14 @@ describe('loadAsciiDoc()', () => {
     })
 
     it('should not fail if custom attributes is null', () => {
-      populateFileContents('= Document Title')
+      setInputFileContents('= Document Title')
       const doc1 = loadAsciiDoc(inputFile)
       const doc2 = loadAsciiDoc(inputFile, null)
       expect(doc1.getAttributes().length).to.eql(doc2.getAttributes().length)
     })
 
     it('should not allow custom attributes to override locked attributes', () => {
-      populateFileContents('= Document Title')
+      setInputFileContents('= Document Title')
       const customAttrs = {
         docname: 'foo',
         docfile: 'foo.asciidoc',
@@ -198,13 +159,13 @@ describe('loadAsciiDoc()', () => {
 
   describe('include directive', () => {
     it('should skip include directive if target cannot be resolved', () => {
-      const contentCatalog = mockContentCatalog()
+      const contentCatalog = mockContentCatalog().spyOn('getById')
       const inputContents = 'include::{partialsdir}/does-not-exist.adoc[]'
-      populateFileContents(inputContents)
+      setInputFileContents(inputContents)
       const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'partial',
         relative: 'does-not-exist.adoc',
@@ -221,12 +182,12 @@ describe('loadAsciiDoc()', () => {
         family: 'partial',
         relative: 'greeting.adoc',
         contents: includeContents,
-      })
-      populateFileContents('include::{partialsdir}/greeting.adoc[]')
+      }).spyOn('getById')
+      setInputFileContents('include::{partialsdir}/greeting.adoc[]')
       const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'partial',
         relative: 'greeting.adoc',
@@ -243,8 +204,8 @@ describe('loadAsciiDoc()', () => {
         family: 'example',
         relative: 'ruby/hello.rb',
         contents: includeContents,
-      })
-      populateFileContents(heredoc`
+      }).spyOn('getById')
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/hello.rb[]
@@ -253,7 +214,7 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'example',
         relative: 'ruby/hello.rb',
@@ -276,7 +237,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tag=]
@@ -300,7 +261,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=]
@@ -324,7 +285,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=;]
@@ -349,7 +310,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tag=hello]
@@ -373,7 +334,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'theme.css',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,css]
         ----
         include::{examplesdir}/theme.css[tag=header]
@@ -397,7 +358,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tag=!hello]
@@ -424,7 +385,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=hello;goodbye]
@@ -451,7 +412,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=*;!goodbye]
@@ -483,7 +444,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=decl;output;!hello]
@@ -513,7 +474,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tag=*]
@@ -540,7 +501,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=*;!hello]
@@ -569,7 +530,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=hello;goodbye]
@@ -596,7 +557,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tag=hello]
@@ -624,7 +585,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=**]
@@ -656,7 +617,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'ruby/greet.rb',
         contents: includeContents,
       })
-      populateFileContents(heredoc`
+      setInputFileContents(heredoc`
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=**;!*;goodbye]
@@ -679,12 +640,12 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'changelog.adoc',
         contents: includeContents,
-      })
-      populateFileContents('include::changelog.adoc[]')
+      }).spyOn('getByPath')
+      setInputFileContents('include::changelog.adoc[]')
       const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
       expectCalledWith(contentCatalog.getByPath, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         path: 'modules/module-a/pages/changelog.adoc',
       })
       const firstBlock = doc.getBlocks()[0]
@@ -707,19 +668,19 @@ describe('loadAsciiDoc()', () => {
           relative: 'deeply/nested.adoc',
           contents: nestedIncludeContents,
         },
-      ])
-      populateFileContents('include::{partialsdir}/outer.adoc[]')
+      ]).spyOn('getById', 'getByPath')
+      setInputFileContents('include::{partialsdir}/outer.adoc[]')
       const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'partial',
         relative: 'outer.adoc',
       })
       expectCalledWith(contentCatalog.getByPath, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
       })
       const firstBlock = doc.getBlocks()[0]
@@ -734,19 +695,19 @@ describe('loadAsciiDoc()', () => {
         family: 'partial',
         relative: 'outer.adoc',
         contents: outerIncludeContents,
-      })
-      populateFileContents('include::{partialsdir}/outer.adoc[]')
+      }).spyOn('getById', 'getByPath')
+      setInputFileContents('include::{partialsdir}/outer.adoc[]')
       const doc = loadAsciiDoc(inputFile, {}, contentCatalog)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'partial',
         relative: 'outer.adoc',
       })
       expectCalledWith(contentCatalog.getByPath, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
       })
       const firstBlock = doc.getBlocks()[0]
@@ -757,50 +718,33 @@ describe('loadAsciiDoc()', () => {
   })
 
   describe('page reference macro', () => {
-    const indexifyFile = () => {
-      inputFile.pub = {
-        url: inputFile.pub.url.slice(0, -5) + '/',
-        rootPath: inputFile.pub.rootPath + '/..',
-      }
-    }
-
-    const moveFileIntoTopic = (topic) => {
-      const search = '/page-a.'
-      const replace = `/${topic}/page-a.`
-      inputFile.path = inputFile.path.replace(search, replace)
-      inputFile.src.relative = path.join(topic, inputFile.src.relative)
-      inputFile.pub.moduleRootPath += '/..'
-      inputFile.pub.url = inputFile.pub.url.replace(search, replace)
-      inputFile.pub.rootPath += '/..'
-    }
-
     it('should skip an invalid page reference', () => {
-      const contentCatalog = mockContentCatalog()
-      populateFileContents('xref:component-b::#frag[The Page Title]')
+      const contentCatalog = mockContentCatalog().spyOn('getById')
+      setInputFileContents('xref:component-b::#frag[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expect(contentCatalog.getById).to.not.have.been.called()
       expectLink(html, '#', 'component-b::#frag')
     })
 
     it('should delegate the built-in converter to process an in-page reference', () => {
-      const contentCatalog = mockContentCatalog()
-      populateFileContents('xref:section-a[]\n\n== Section A')
+      const contentCatalog = mockContentCatalog().spyOn('getById')
+      setInputFileContents('xref:section-a[]\n\n== Section A')
       const html = loadAsciiDoc(inputFile, { idprefix: '', idseparator: '-' }, contentCatalog).convert()
       expect(contentCatalog.getById).to.not.have.been.called()
       expectLink(html, '#section-a', 'Section A')
     })
 
     it('should delegate the built-in converter to process a normal link', () => {
-      const contentCatalog = mockContentCatalog()
-      populateFileContents('https://example.com[Example Domain]')
+      const contentCatalog = mockContentCatalog().spyOn('getById')
+      setInputFileContents('https://example.com[Example Domain]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expect(contentCatalog.getById).to.not.have.been.called()
       expectLink(html, 'https://example.com', 'Example Domain')
     })
 
     it('should skip an unresolved page reference', () => {
-      const contentCatalog = mockContentCatalog()
-      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc[The Page Title]')
+      const contentCatalog = mockContentCatalog().spyOn('getById')
+      setInputFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -813,8 +757,8 @@ describe('loadAsciiDoc()', () => {
     })
 
     it('should skip an unresolved page reference with fragment', () => {
-      const contentCatalog = mockContentCatalog()
-      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc#frag[The Page Title]')
+      const contentCatalog = mockContentCatalog().spyOn('getById')
+      setInputFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc#frag[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -833,8 +777,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-b',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@component-b:module-b:the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@component-b:module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -843,7 +787,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a fully-qualified page reference', () => {
@@ -853,8 +797,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-b',
         family: 'page',
         relative: 'topic-foo/topic-bar/the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -863,7 +807,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'topic-foo/topic-bar/the-page.adoc',
       })
-      expectLink(
+      expectPageLink(
         html,
         inputFile.pub.rootPath + '/component-b/4.5.6/module-b/topic-foo/topic-bar/the-page.html',
         'The Page Title'
@@ -877,8 +821,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-b',
         family: 'page',
         relative: 'topic-foo/the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@component-b:module-b:topic-foo/the-page.adoc#frag[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@component-b:module-b:topic-foo/the-page.adoc#frag[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -887,7 +831,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'topic-foo/the-page.adoc',
       })
-      expectLink(
+      expectPageLink(
         html,
         inputFile.pub.rootPath + '/component-b/4.5.6/module-b/topic-foo/the-page.html#frag',
         'The Page Title'
@@ -901,8 +845,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-b',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@module-b:the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
@@ -911,7 +855,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, '../4.5.6/module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, module, topic, and page', () => {
@@ -921,8 +865,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-b',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@module-b:the-topic/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@module-b:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
@@ -931,7 +875,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../4.5.6/module-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, component, and page', () => {
@@ -941,8 +885,8 @@ describe('loadAsciiDoc()', () => {
         module: 'ROOT',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@component-b::the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@component-b::the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -951,7 +895,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, component, topic, and page', () => {
@@ -961,8 +905,8 @@ describe('loadAsciiDoc()', () => {
         module: 'ROOT',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@component-b::the-topic/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@component-b::the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -971,7 +915,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/4.5.6/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component and page', () => {
@@ -981,8 +925,8 @@ describe('loadAsciiDoc()', () => {
         module: 'ROOT',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:component-b::the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:component-b::the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -991,7 +935,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component, topic, and page', () => {
@@ -1001,8 +945,8 @@ describe('loadAsciiDoc()', () => {
         module: 'ROOT',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:component-b::the-topic/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:component-b::the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -1011,7 +955,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component, module, and page', () => {
@@ -1021,8 +965,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-b',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:component-b:module-b:the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:component-b:module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -1031,7 +975,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with component, module, topic, and page', () => {
@@ -1041,8 +985,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-b',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:component-b:module-b:the-topic/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:component-b:module-b:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
@@ -1051,7 +995,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, inputFile.pub.rootPath + '/component-b/module-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version and page', () => {
@@ -1061,8 +1005,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-a',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
@@ -1071,7 +1015,7 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-a/the-page.html', 'The Page Title')
+      expectPageLink(html, '../4.5.6/module-a/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with version, topic, and page', () => {
@@ -1081,8 +1025,8 @@ describe('loadAsciiDoc()', () => {
         module: 'module-a',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:4.5.6@the-topic/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:4.5.6@the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
@@ -1091,217 +1035,259 @@ describe('loadAsciiDoc()', () => {
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../../4.5.6/module-a/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../4.5.6/module-a/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with module and page', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-b',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:module-b:the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-b',
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../module-b/the-page.html', 'The Page Title')
+      expectPageLink(html, '../module-b/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with module, topic, and page', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-b',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:module-b:the-topic/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:module-b:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-b',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../module-b/the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../module-b/the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a basic page reference', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
         relative: 'the-page.adoc',
-      })
-      populateFileContents('xref:the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, 'the-page.html', 'The Page Title')
+      expectPageLink(html, 'the-page.html', 'The Page Title')
     })
 
     it('should convert a basic page reference from within topic', () => {
-      const contentCatalog = mockContentCatalog({
-        component: 'component-a',
-        version: '1.2.3',
-        module: 'module-a',
-        family: 'page',
-        relative: 'the-page.adoc',
-      })
-      moveFileIntoTopic('topic-a')
-      populateFileContents('xref:the-page.adoc[The Page Title]')
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'page',
+          relative: 'the-topic/the-page.adoc',
+          contents: 'xref:the-page.adoc[The Page Title]',
+        },
+        {
+          family: 'page',
+          relative: 'the-page.adoc',
+        },
+      ]).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
         relative: 'the-page.adoc',
       })
-      expectLink(html, '../the-page.html', 'The Page Title')
+      expectPageLink(html, '../the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with topic and page', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:the-topic/the-page.adoc[The Page Title]')
+      }).spyOn('getById')
+      setInputFileContents('xref:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, 'the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, 'the-topic/the-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with sibling topic and page', () => {
-      const contentCatalog = mockContentCatalog({
-        component: 'component-a',
-        version: '1.2.3',
-        module: 'module-a',
-        family: 'page',
-        relative: 'the-topic/the-page.adoc',
-      })
-      moveFileIntoTopic('topic-a')
-      populateFileContents('xref:the-topic/the-page.adoc[The Page Title]')
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'page',
+          relative: 'topic-a/the-page.adoc',
+          contents: 'xref:topic-b/the-page.adoc[The Page Title]',
+        },
+        {
+          family: 'page',
+          relative: 'topic-b/the-page.adoc',
+        },
+      ]).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
-        relative: 'the-topic/the-page.adoc',
+        relative: 'topic-b/the-page.adoc',
       })
-      expectLink(html, '../the-topic/the-page.html', 'The Page Title')
+      expectPageLink(html, '../topic-b/the-page.html', 'The Page Title')
+    })
+
+    it('should convert a page reference to a root relative path if relativizePageRefs is disabled', () => {
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'page',
+          relative: 'this-page.adoc',
+          contents: 'xref:that-page.adoc[The Page Title]',
+        },
+        {
+          family: 'page',
+          relative: 'that-page.adoc',
+        },
+      ]).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog, { relativizePageRefs: false }).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'that-page.adoc',
+      })
+      expectPageLink(html, '/component-a/module-a/that-page.html', 'The Page Title')
     })
 
     it('should convert a page reference with module and page using indexified URLs', () => {
-      const contentCatalog = mockContentCatalog({
-        component: 'component-a',
-        version: '1.2.3',
-        module: 'module-b',
-        family: 'page',
-        relative: 'the-page.adoc',
-        indexify: true,
-      })
-      indexifyFile()
-      populateFileContents('xref:module-b:the-page.adoc[The Page Title]')
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'page',
+          relative: 'this-page.adoc',
+          contents: 'xref:module-b:that-page.adoc[The Page Title]',
+          indexify: true,
+        },
+        {
+          module: 'module-b',
+          family: 'page',
+          relative: 'that-page.adoc',
+          indexify: true,
+        },
+      ]).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-b',
         family: 'page',
-        relative: 'the-page.adoc',
+        relative: 'that-page.adoc',
       })
-      expectLink(html, '../../module-b/the-page/', 'The Page Title')
+      expectPageLink(html, '../../module-b/that-page/', 'The Page Title')
     })
 
     it('should convert a page reference with topic and page using indexified URLs', () => {
-      const contentCatalog = mockContentCatalog({
-        component: 'component-a',
-        version: '1.2.3',
-        module: 'module-a',
-        family: 'page',
-        relative: 'the-topic/the-page.adoc',
-        indexify: true,
-      })
-      indexifyFile()
-      populateFileContents('xref:the-topic/the-page.adoc[The Page Title]')
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'page',
+          relative: 'this-page.adoc',
+          contents: 'xref:the-topic/that-page.adoc[The Page Title]',
+          indexify: true,
+        },
+        {
+          family: 'page',
+          relative: 'the-topic/that-page.adoc',
+          indexify: true,
+        },
+      ]).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
-        relative: 'the-topic/the-page.adoc',
+        relative: 'the-topic/that-page.adoc',
       })
-      expectLink(html, '../the-topic/the-page/', 'The Page Title')
+      expectPageLink(html, '../the-topic/that-page/', 'The Page Title')
     })
 
     it('should convert a basic page reference from within a topic using indexified URLs', () => {
-      const contentCatalog = mockContentCatalog({
-        component: 'component-a',
-        version: '1.2.3',
-        module: 'module-a',
-        family: 'page',
-        relative: 'the-page.adoc',
-        indexify: true,
-      })
-      moveFileIntoTopic('topic-a')
-      indexifyFile()
-      populateFileContents('xref:the-page.adoc[The Page Title]')
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'page',
+          relative: 'topic-a/this-page.adoc',
+          contents: 'xref:that-page.adoc[The Page Title]',
+          indexify: true,
+        },
+        {
+          family: 'page',
+          relative: 'that-page.adoc',
+          indexify: true,
+        },
+      ]).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-a',
         family: 'page',
-        relative: 'the-page.adoc',
+        relative: 'that-page.adoc',
       })
-      expectLink(html, '../../the-page/', 'The Page Title')
+      expectPageLink(html, '../../that-page/', 'The Page Title')
     })
 
-    // TODO eventually this will be the title of the target page
     it('should use default content for page reference if content not specified', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-b',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
-      })
-      populateFileContents('xref:module-b:the-topic/the-page.adoc#frag[]')
+      }).spyOn('getById')
+      setInputFileContents('xref:module-b:the-topic/the-page.adoc#frag[]')
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
-        version: '1.2.3',
+        version: 'master',
         module: 'module-b',
         family: 'page',
         relative: 'the-topic/the-page.adoc',
       })
-      expectLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
+      // TODO eventually this will resolve to the title of the target page
+      expectPageLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
     })
   })
 })

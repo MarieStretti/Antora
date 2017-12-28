@@ -14,6 +14,7 @@ yarn:
     - packages/content-aggregator/node_modules/
     - packages/content-classifier/node_modules/
     - packages/document-converter/node_modules/
+    - packages/navigation-builder/node_modules/
     - packages/playbook-builder/node_modules/
     - packages/ui-loader/node_modules/
     - .yarn-cache/
@@ -36,6 +37,7 @@ test:
     - packages/content-aggregator/node_modules/
     - packages/content-classifier/node_modules/
     - packages/document-converter/node_modules/
+    - packages/navigation-builder/node_modules/
     - packages/playbook-builder/node_modules/
     - packages/ui-loader/node_modules/
   script: node_modules/.bin/gulp test!

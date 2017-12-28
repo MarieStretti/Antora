@@ -18,7 +18,8 @@ const ConverterExtension = (() => {
         if (callback) {
           const { content, target } = callback(refSpec, node.getText())
           // TODO pass attributes (e.g., id, role) once core parses them
-          node = Inline.$new(node.parent, 'anchor', content, Opal.hash({ type: 'link', target }))
+          const attributes = target === '#' ? undefined : Opal.hash({ role: 'page' })
+          node = Inline.$new(node.parent, 'anchor', content, Opal.hash({ type: 'link', target, attributes }))
         }
       }
     }

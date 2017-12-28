@@ -8,7 +8,7 @@ const convertDocument = require('@antora/document-converter')
 describe('convertDocument()', () => {
   let inputFile
 
-  const expectLink = (html, url, content) => expect(html).to.include(`<a href="${url}">${content}</a>`)
+  const expectPageLink = (html, url, content) => expect(html).to.include(`<a href="${url}" class="page">${content}</a>`)
 
   beforeEach(() => {
     inputFile = {
@@ -146,7 +146,7 @@ describe('convertDocument()', () => {
           family: 'page',
           relative: 'page-b.adoc',
         })
-        expectLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
+        expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
       })
   })
 

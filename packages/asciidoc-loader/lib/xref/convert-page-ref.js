@@ -7,9 +7,10 @@ const splitOnce = require('../util/split-once')
 /**
  * Converts the specified page reference to an HTML link.
  *
- * Parses the page reference (page ID and optional fragment) and resolves the corresponding file
- * from the content catalog. Resolves the relative URL path from the current page to the target page
- * and uses that path to create an HTML link pointing to the published target page.
+ * Parses the page reference (page ID and optional fragment), resolves the corresponding file from
+ * the content catalog, then grabs its publication (root-relative) path. If the relativize param is
+ * true, resolves the root relative path to a path relative to the URL of the current page. Uses the
+ * resulting path to create an HTML link pointing to the published target page.
  *
  * @memberof asciidoc-loader
  *
@@ -17,9 +18,10 @@ const splitOnce = require('../util/split-once')
  * @param {String} content - The content (i.e., formatted text) of the link (undefined if not specified).
  * @param {File} currentPage - The virtual file for the current page.
  * @param {ContentCatalog} catalog - The content catalog that contains the virtual files in the site.
+ * @param {Boolean} [relativize=true] - Compute the target relative to the current page.
  * @returns {Object} A map ({ content, target }) with the resolved content and target to make an HTML link.
  */
-function convertPageRef (refSpec, content, currentPage, catalog) {
+function convertPageRef (refSpec, content, currentPage, catalog, relativize = true) {
   let targetPage
   const [pageIdSpec, fragment] = splitOnce(refSpec, '#')
   try {
@@ -32,7 +34,7 @@ function convertPageRef (refSpec, content, currentPage, catalog) {
     return { content: refSpec, target: '#' }
   }
 
-  let target = computeRelativeUrlPath(currentPage.pub.url, targetPage.pub.url)
+  let target = relativize ? computeRelativeUrlPath(currentPage.pub.url, targetPage.pub.url) : targetPage.pub.url
   if (fragment) target = target + '#' + fragment
   if (!content) content = `${pageIdSpec}.adoc${fragment ? '#' + fragment : ''}`
 
