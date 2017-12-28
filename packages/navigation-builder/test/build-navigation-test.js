@@ -4,7 +4,7 @@
 const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
 
 const buildNavigation = require('@antora/navigation-builder')
-const mockContentCatalog = require('./mock-content-catalog')
+const mockContentCatalog = require('../../../test/mock-content-catalog')
 
 describe('buildNavigation()', () => {
   it('should run on all files in the navigation family', async () => {
