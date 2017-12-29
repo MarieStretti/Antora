@@ -33,7 +33,13 @@ class FixtureRepo {
 
   async copyAll (items, startPath = '.') {
     return Promise.all(
-      items.map((item) => fs.copy(path.join(fixturesPath, item), path.join(this.repoPath, startPath, item)))
+      items.map((item) => {
+        const to = path.join(this.repoPath, startPath, item)
+        // copy fixture file if exists, otherwise create an empty file
+        return fs
+          .ensureDir(path.dirname(to))
+          .then(() => fs.copy(path.join(fixturesPath, item), to).catch(() => fs.writeFile(to, '', 'utf8')))
+      })
     )
   }
 

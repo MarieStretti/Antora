@@ -12,10 +12,10 @@ const streamToArray = require('stream-to-array')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
-const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH } = require('./constants')
-const EXT_RX = /\.[a-z]+$/
-const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
+const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH, CONTENT_GLOB } = require('./constants')
+const DOT_OR_NOEXT_RX = new RegExp('(?:^|/)(?:\\.|[^/.]+$)')
 const SEPARATOR_RX = /\/|:/
+const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
 
 module.exports = async (playbook) => {
   const componentVersions = playbook.content.sources.map(async (source) => {
@@ -41,7 +41,7 @@ module.exports = async (playbook) => {
           files = await readFilesFromGitTree(repository, branch, source.startPath)
         }
 
-        const componentVersion = await readComponentDesc(files)
+        const componentVersion = loadComponentDescriptor(files)
         componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
         return componentVersion
       })
@@ -112,7 +112,7 @@ async function openOrCloneRepository (repoUrl) {
  */
 function isLocalDirectory (url) {
   try {
-    return fs.lstatSync(url).isDirectory()
+    return fs.statSync(url).isDirectory()
   } catch (e) {
     return false
   }
@@ -142,10 +142,9 @@ function getCacheDir () {
  * @return {String} - A friendly folder name.
  */
 function generateLocalFolderName (url) {
-  // NOTE we don't use extname since the last path segment could be .git
-  const extMatch = url.includes('.') && url.match(EXT_RX)
-  if (extMatch) {
-    url = url.slice(0, -extMatch[0].length)
+  // NOTE we don't check extname since the last path segment could equal .git
+  if (url.endsWith('.git')) {
+    url = url.slice(0, -4)
   }
   const schemeMatch = url.includes(':') && url.match(URI_SCHEME_RX)
   if (schemeMatch) {
@@ -202,62 +201,68 @@ function branchMatches (branchName, branchPattern) {
   return isMatch(branchName, branchPattern)
 }
 
-function readComponentDesc (files) {
-  const componentDescFile = files.find((file) => file.path === COMPONENT_DESC_FILENAME)
-  if (componentDescFile == null) {
+function loadComponentDescriptor (files) {
+  const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
+  if (descriptorFileIdx < 0) {
     throw new Error(COMPONENT_DESC_FILENAME + ' not found')
   }
 
-  const componentDesc = yaml.safeLoad(componentDescFile.contents.toString())
-  if (componentDesc.name == null) {
+  const descriptorFile = files[descriptorFileIdx]
+  files.splice(descriptorFileIdx, 1)
+  const data = yaml.safeLoad(descriptorFile.contents.toString())
+  if (data.name == null) {
     throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name')
-  }
-  if (componentDesc.version == null) {
+  } else if (data.version == null) {
     throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version')
   }
 
-  return componentDesc
+  return data
 }
 
 async function readFilesFromGitTree (repository, branch, startPath) {
-  const tree = await getGitTree(repository, branch, startPath)
-  const entries = await walkGitTree(tree)
-  const files = entries.map(async (entry) => {
-    const blob = await entry.getBlob()
-    const contents = blob.content()
-    const stat = new fs.Stats({})
-    stat.mode = entry.filemode()
-    stat.size = contents.length
-    return new File({ path: entry.path(), contents, stat })
-  })
-  return Promise.all(files)
+  return srcGitTree(await getGitTree(repository, branch, startPath))
 }
 
 async function getGitTree (repository, branch, startPath) {
   const commit = await repository.getBranchCommit(branch)
-  const tree = await commit.getTree()
-  if (startPath == null) {
-    return tree
+  if (startPath) {
+    const tree = await commit.getTree()
+    const subTreeEntry = await tree.entryByPath(startPath)
+    return repository.getTree(subTreeEntry.id())
+  } else {
+    return commit.getTree()
   }
-  const subEntry = await tree.entryByPath(startPath)
-  const subTree = await repository.getTree(subEntry.id())
-  return subTree
 }
 
-function walkGitTree (tree) {
+function srcGitTree (tree) {
   return new Promise((resolve, reject) => {
+    const files = []
+    // NOTE walk only visits blobs (i.e., files)
     const walker = tree.walk()
-    walker.on('error', (e) => reject(e))
-    walker.on('end', (entries) => resolve(entries))
+    // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
+    walker.on('entry', (entry) => {
+      if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
+    })
+    walker.on('error', (err) => reject(err))
+    walker.on('end', () => resolve(Promise.all(files)))
     walker.start()
   })
 }
 
-async function readFilesFromWorktree (relativeDir) {
+async function entryToFile (entry) {
+  const blob = await entry.getBlob()
+  const contents = blob.content()
+  const stat = new fs.Stats()
+  stat.mode = entry.filemode()
+  stat.size = contents.length
+  return new File({ path: entry.path(), contents, stat })
+}
+
+function readFilesFromWorktree (relativeDir) {
   const base = path.resolve(relativeDir)
-  const opts = { base, cwd: base }
+  const opts = { base, cwd: base, removeBOM: false }
   // NOTE streamToArray wraps the stream in a Promise so it can be awaited
-  return streamToArray(vfs.src('**/*.*', opts).pipe(relativize()))
+  return streamToArray(vfs.src(CONTENT_GLOB, opts).pipe(relativize()))
 }
 
 /**
@@ -265,18 +270,25 @@ async function readFilesFromWorktree (relativeDir) {
  *
  * Applies a mapping function to all vinyl files in the stream so they end up
  * with a path relative to the component root instead of the file system.
+ * This mapper also filters out any directories that got caught in the glob.
  */
 function relativize () {
   return map((file, next) => {
-    next(
-      null,
-      new File({
-        path: file.relative,
-        contents: file.contents,
-        stat: file.stat,
-        src: { abspath: file.path },
-      })
-    )
+    const { contents, stat } = file
+    // NOTE if contents is null, the file is either a directory or it couldn't be read
+    if (contents === null) {
+      next()
+    } else {
+      next(
+        null,
+        new File({
+          path: file.relative,
+          contents,
+          stat,
+          src: { abspath: file.path },
+        })
+      )
+    }
   })
 }
 

@@ -72,7 +72,7 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('should read properties from component desc', () => {
+  describe('should read properties from component desc and drop file', () => {
     testAll(async (repo) => {
       await repo.initRepo({
         name: 'the-component',
@@ -92,6 +92,8 @@ describe('aggregateContent()', () => {
             version: 'v1.2.3',
             nav: ['nav-one.adoc', 'nav-two.adoc'],
           })
+          const paths = theAggregate[0].files.map((file) => file.path)
+          expect(paths).to.not.include(COMPONENT_DESC_FILENAME)
         })
     })
   })
@@ -263,7 +265,6 @@ describe('aggregateContent()', () => {
           expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const expectedPaths = [
             'README.adoc',
-            COMPONENT_DESC_FILENAME,
             'modules/ROOT/_attributes.adoc',
             'modules/ROOT/pages/_attributes.adoc',
             'modules/ROOT/pages/page-one.adoc',
@@ -308,6 +309,47 @@ describe('aggregateContent()', () => {
     })
   })
 
+  describe('should skip dotfiles, extensionless files, and directories that contain a dot', () => {
+    testAll(async (repo) => {
+      await initRepoWithFiles(repo)
+      const fixturePaths = [
+        // directory with extension
+        'modules/ROOT/pages/ignore.me/page.adoc',
+        // extensionless file
+        'modules/ROOT/pages/ignore-me',
+        // dotfile
+        'modules/ROOT/pages/.ignore-me',
+        // dotfile with extension
+        'modules/ROOT/pages/.ignore-me.txt',
+        // dotdirectory
+        'modules/ROOT/pages/.ignore-it/page.adoc',
+        // dotdirectory with extension
+        'modules/ROOT/pages/.ignore.rc/page.adoc',
+        // dotfile at root
+        '.ignore-me',
+        // dotfile with extension at root
+        '.ignore-me.txt',
+        // dotdirectory at root
+        '.ignore-it/run.sh',
+        // dotdirectory with extension at root
+        '.ignore.rc/run.sh',
+      ]
+      const ignoredPaths = fixturePaths.filter(
+        (path_) =>
+          // the file is allowed, just make sure the directory isn't stored
+          path_ !== 'modules/ROOT/pages/ignore.me/page.adoc'
+      )
+      await repo.addFixtureFiles(fixturePaths)
+      playbook.content.sources.push({ url: repo.url, startPath: repo.startPath })
+      const aggregate = await aggregateContent(playbook)
+      expect(aggregate).to.have.lengthOf(1)
+      const files = aggregate[0].files
+      const paths = files.map((f) => f.path)
+      ignoredPaths.forEach((ignoredPath) => expect(paths).to.not.include(ignoredPath))
+      files.forEach((file) => expect(file.isDirectory()).to.be.false())
+    })
+  })
+
   describe('should aggregate all files when component is located at a startPath', () => {
     testAll(async (repo) => {
       await repo.initRepo({ name: 'the-component', version: 'v1.2.3', startPath: 'docs' })
@@ -325,7 +367,6 @@ describe('aggregateContent()', () => {
           const componentVersion = theAggregate[0]
           expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const expectedPaths = [
-            COMPONENT_DESC_FILENAME,
             'modules/ROOT/_attributes.adoc',
             'modules/ROOT/pages/_attributes.adoc',
             'modules/ROOT/pages/page-one.adoc',
@@ -453,7 +494,6 @@ describe('aggregateContent()', () => {
         expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
         const expectedPaths = [
           'README.adoc',
-          COMPONENT_DESC_FILENAME,
           'modules/ROOT/_attributes.adoc',
           'modules/ROOT/pages/_attributes.adoc',
           'modules/ROOT/pages/page-one.adoc',
@@ -480,13 +520,12 @@ describe('aggregateContent()', () => {
           expect(componentVersion).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
           const expectedPaths = [
             'README.adoc',
-            COMPONENT_DESC_FILENAME,
             'modules/ROOT/_attributes.adoc',
             'modules/ROOT/pages/_attributes.adoc',
             'modules/ROOT/pages/page-one.adoc',
           ]
           const files = componentVersion.files
-          expect(files).to.have.lengthOf(5)
+          expect(files).to.have.lengthOf(expectedPaths.length)
           expectedPaths.forEach((expectedPath, i) => {
             expect(files[i].path).to.equal(expectedPath)
             expect(files[i].relative).to.equal(expectedPath)
