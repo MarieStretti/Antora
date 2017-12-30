@@ -9,15 +9,8 @@ yarn:
   - yarn --cache-folder=.yarn-cache
   cache:
     paths:
-    - node_modules/
-    - packages/asciidoc-loader/node_modules/
-    - packages/content-aggregator/node_modules/
-    - packages/content-classifier/node_modules/
-    - packages/document-converter/node_modules/
-    - packages/navigation-builder/node_modules/
-    - packages/playbook-builder/node_modules/
-    - packages/ui-loader/node_modules/
     - .yarn-cache/
+    - node_modules/
 lint:
   stage: verify
   cache:
@@ -32,15 +25,11 @@ test:
   cache:
     policy: pull
     paths:
-    - node_modules/
-    - packages/asciidoc-loader/node_modules/
-    - packages/content-aggregator/node_modules/
-    - packages/content-classifier/node_modules/
-    - packages/document-converter/node_modules/
-    - packages/navigation-builder/node_modules/
-    - packages/playbook-builder/node_modules/
-    - packages/ui-loader/node_modules/
-  script: node_modules/.bin/gulp test!
+    - .yarn-cache/
+  script:
+  - npm install -g yarn
+  - yarn --cache-folder=.yarn-cache
+  - node_modules/.bin/gulp test!
   artifacts:
     paths:
     - coverage/
