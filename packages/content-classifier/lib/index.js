@@ -43,7 +43,8 @@ class ContentCatalog {
 }
 
 module.exports = (playbook, aggregate) => {
-  const siteUrl = playbook.site.url.endsWith('/') ? playbook.site.url.slice(0, -1) : playbook.site.url
+  let siteUrl = playbook.site.url
+  if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
   return aggregate.reduce((catalog, { name: component, version, nav, files }) => {
     files.forEach((file) => {
       const family = partitionSrc(file, component, version, nav)
@@ -195,7 +196,7 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
   }
 
   pub.url = url
-  pub.absoluteUrl = siteUrl + url
+  if (siteUrl) pub.absoluteUrl = siteUrl + url
 
   if (out) {
     pub.moduleRootPath = out.moduleRootPath
