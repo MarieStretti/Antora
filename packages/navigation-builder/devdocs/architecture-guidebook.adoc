@@ -6,12 +6,13 @@ To allow readers to browse pages in the documentation site and navigate to them,
 The links in the navigation menu should be organized in a logical hierarchy.
 Since the documentation site may contain multiple versions of multiple components, there should be multiple navigation menus, each one scoped to a single component version.
 The navigation builder component needs to accept input from the site author that defines the contents of each of these navigation hierarchies.
-From that input, the component should build a navigation model, information from which can be used in a layout template to add a navigation menu to each page.
+From that input, the component should build a navigation model that can be used by the UI layout templates.
 
 == Functional Overview
 
-The main purpose of the navigation builder component is to build a navigation model from navigation files defined by the site authors, which can then be used by the layout template to add a navigation menu to each page.
-The navigation builder retrieves navigation files from the content catalog, translates the contents into navigation items organized in the specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
+The main purpose of the navigation builder component is to build a navigation model from navigation files defined by the site authors.
+This navigation model is then used by a layout template to add a navigation menu to each page.
+The navigation builder retrieves navigation files from the content catalog, translates the contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
 //There are two types of navigation files:
 //
@@ -27,22 +28,23 @@ The navigation is defined using AsciiDoc documents.
 Navigation files are stored with the other files for a component version in the content catalog.
 A navigation file can live anywhere in the content tree.
 
-A content file is promoted to a navigation file when its listed (by path) in the `nav` array in the component descriptor.
+A content file is promoted to a navigation file when it's listed by path in the `nav` array in the component descriptor.
 A component version can declare zero or more navigation files.
-The order the navigation files are listed in the component descriptor determines the order in the navigation model.
+The order the navigation files are listed in the component descriptor determines their order in the navigation model.
 
-Each navigation file contains one or more unordered AsciiDoc list of arbitrary depth that describes the navigation displayed when the user navigates to a particular component version.
-Each navigation entry can be a page reference link, an external link, or inactive text, all of which may contain inline formatting (bold, italic, etc).
-If the list has an optional block title, that block title becomes the title for the navigation menu.
+Each navigation file contains one or more unordered AsciiDoc lists of arbitrary depth that describe the navigation displayed when the user navigates to a particular component version.
+Each navigation entry can be a page reference link, an external link, or inactive text.
+Each of these entry types may contain inline formatting (bold, italic, etc.).
+If the list has an optional block title, that block title becomes the title for the navigation tree.
 
-The navigation model built by this component is subsequently passed on to the layout template by the page generator.
+The navigation model built by this component is subsequently passed on to a layout template by the page generator.
 
 == Software Architecture
 
 The navigation builder component functionality is provided by the navigation-builder module.
 
 This component builds a navigation model from navigation files declared by the descriptor in each component.
-The navigation documents used as input should be retrieved by invoking `findBy({ family: 'navigation'})` on the content catalog.
+The navigation files used as input should be retrieved by invoking `findBy({ family: 'navigation'})` on the content catalog.
 The navigation model is an instance of the NavigationCatalog class.
 
 //The navigation model is partitioned into domains.
@@ -59,15 +61,15 @@ Each navigation file in a component version should be processed as follows:
  ** this function is an interface to Asciidoctor (specifically, Asciidoctor.js)
  ** convert page references to root relative paths by passing the option `relativePageRefs: false`
 * find each top-level unordered list in the document
-* convert each item in each list to:
+* convert each item (i.e., navigation entry) in each list to:
  ** apply formatting (e.g., bold, italic)
  ** resolve the URL to which the item points (if applicable)
-* if the URL points to a page within the site, that URL should be stored as root-relative path (e.g., /component-a/module-a/page.html)
- ** the layout template will use a helper to convert root-relative paths to relative paths, allowing the navigation to work independently from where the site is hosted
+* if the resolved URL points to a page within the site, that URL should be stored as a root-relative path (e.g., /component-a/module-a/page.html)
+ ** the layout template should use a helper to convert root-relative paths to relative paths, allowing the navigation to work independently from where the site is hosted
 * add each list to the catalog as a tree
  ** the order of the trees should be determined first by the order the navigation file is listed in the component descriptor, then by the order of the lists in the navigation file
 
-If a navigation file lives inside a module folder, any page references in that file inherit the context of the module (i.e., they are relative to that module).
+If a navigation file is stored inside a module folder, any page references in that file inherit the context of the module (i.e., they are relative to that module).
 Otherwise, the page references are assumed to be relative to the component version.
 
 .Inputs
@@ -92,7 +94,7 @@ const buildNavigation = require('@antora/navigation-builder')
 const navigationCatalog = buildNavigation(contentCatalog)
 ----
 
-The navigation menus for a component version can be accessed as follows:
+The navigation menu for a component version can be accessed as follows:
 
 [source,js]
 ----
@@ -101,7 +103,8 @@ const navigationMenu = navigationCatalog.getMenu('component-a', '1.0')
 
 == Data
 
-The navigation builder reads files in the `navigation` family from the content catalog, which can be retrieved by invoking `findBy({ family: 'navigation' })` on the content catalog.
+The navigation builder reads in files from the `navigation` family.
+These files can be retrieved by invoking `findBy({ family: 'navigation' })` on the content catalog.
 This component should not modify the files retrieved from the content catalog.
 
 Here's a sample navigation file:
