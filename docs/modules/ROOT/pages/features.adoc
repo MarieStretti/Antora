@@ -7,20 +7,37 @@ endif::[]
 :idseparator: -
 :experimental:
 
-== Store your documentation in 1 or 100 repositories and 1 or 100 branches.
+Antora was built for documentation that's stored, managed, and versioned like code.
 
-Store documentation in multiple repositories and multiple branches.
-Even store content in the same repository as the code it documents.
+Antora was built for storing, versioning, managing and releasing documentation like code.
 
-- docs as code
+Store, version, manage, and release documentation like code with Antora.
+
+== Category: Docs as Code
+
+== Store documentation in 1, 42 or more repositories.
+
+Store documentation files in as many git repositories as you need, Antora can find and assemble them into a documentation site on demand.
+
+== Store documentation in as many branches as you need.
+
+Use branches to release versions of your documentation just like you do for your software.
+Antora can find the branches in each repository and assemble the files into a versioned documentation collection.
+Antora also knows how to ignore branches you don't want published.
+
+== Store documentation in its own repository or in the same repository as the code it describes.
+
+Whether you store the documentation for a product in its own repository, in that same repository as the product's code, or the text pages in one repository and the example code in another repository, Antora can find and assemble the files into a documentation site.
+
+////
+Notes:
+
 - limits noise for authors
 - encourages a separation of concerns, responsibilities, & ownership
 - helps code and docs versions to stay in sync
-
-=== How?
-
-Antora can use and mix source content and its assets from as many git repositories and branches as you need.
-And the repositories and branches can be local & remote, public & private, and bare & non-bare.
+- Antora can use and mix source content and its assets from as many git repositories and branches as you need.
+- The repositories and branches can be local & remote, public & private, and bare & non-bare.
+////
 
 == Control your documentation with a playbook.
 
