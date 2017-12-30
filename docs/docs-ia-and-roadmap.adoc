@@ -1,0 +1,641 @@
+= Antora Documentation IA & Roadmap
+:r: Role:
+:s: Status:
+
+== Purpose
+
+This document serves two purposes.
+One, it provides an in-depth outline of Antora's of the categories, sub-categories, pages, and even in some cases a pages sections that we believe will be included in the documentation.
+Two, it will provide a rough projection of which pages we believe should be written by quarter.
+This projection is subject to change so that it aligns with the development roadmap.
+
+== Outline
+
+.Legend
+****
+C::
+Category.
+Entry has children.
+The sub-categories and pages listed under the category are part of that category until another category is encountered.
+
+NC-E::
+Non-content entry.
+The entry is not a link.
+
+P::
+Page.
+Entry is a link to a documentation page.
+
+P#::
+Page section or partial.
+Entry is a link to a section in a documentation page.
+
+Role::
+Short description of the purpose the page will fulfill.
+
+SC::
+Sub-category.
+Entry has children.
+The topics and pages listed under the sub-category are part of that sub-category until another SC or C is encountered.
+
+Status::
+Flag indicating if the entry is 1) under consideration 2) accepted 3) rejected.
+Two question marks (`??`) next to the entry means it's been proposed but not considered yet.
+
+T::
+Topic (aka sub-sub-category).
+Entry has children.
+****
+
+=== Basics / Getting Started / Orientation
+
+Basics (C, NC-E)::
+_{r}_ Category that the introductory pages and quick orientation pages are grouped under.
++
+_{s}_ Under consideration
+
+What is Antora (P)::
+_{r}_ Describes, very concisely, what type of software Antora is, the problems it solves, and who it helps.
++
+_{s}_ Accepted
+
+Features (P)::
+_{r}_ States each name of important Antora important features and capabilities.
+Concisely describes each feature.
+May be laid out as two columns.
++
+_{s}_ Accepted
+
+Architecture and Technologies (P)::
+_{r}_ States the major architectural considerations/advantages of Antora's modular design.
+Lists the major technologies it depends on.
++
+_{s}_ Under consideration
+
+License??::
+_{r}_ Provides license.
+
+Announcements??::
+_{r}_ Major announcements, such as new features, patches, etc. about version.
+
+Help??::
+_{r}_ Where users can find help, such as links to the issue tracker, chat, etc.
+
+////
+Quick Install (for documentation writers/local usage)
+ - List of requirements/Assumptions
+ - Step 1
+ - Step 2
+ - ....
+ - Installation Success
+////
+
+Requirements (SC?, P)::
+_{r}_ Lists the prerequisites and other system considerations that need to be in place before installing Antora.
+These items may or may not be broken down by OS, depending on whether or not there are special instructions per each.
++
+_{s}_ Accepted
+
+Installation (SC, P)::
+_{r}_ Clear, straight-forward instructions for installing Antora on an OS.
++
+_{s}_ Accepted
+
+Assumptions (P#)::
+_{r}_ Probably a section of the Installation page.
+Reminds the user about the requirements/steps they should have already completed.
++
+_{s}_ Under consideration
+
+Download and Install (P)::
+_{r}_ Instructions for downloading and installing Antora on an OS.
+Page may be broken into a section for Linux, macOS, and Windows.
+Page and/or each section will also include instructions on how to verify Antora installed and link to how to test the installation using the demo.
++
+_{s}_ Accepted
+
+Troubleshooting (P)::
+_{r}_ Tips and instructions for overcoming common installation problems.
++
+_{s}_ Accepted
+
+// Methods
+// Method Pros and Cons
+// Next Steps
+
+Inputs / Sources / Documentation files / Source Inputs (SC, P)::
+_{r}_ Quick, basic orientation of the inputs and how they need to be organized in order for Antora to consume them.
++
+_{s}_ Under consideration.
+Obviously, we're having problem with what to name this SC.
+
+Content and asset files (P or P#)::
+_{r}_ Basic description of the text, image, attachment, partial and example files Antora consumes as documentation inputs.
+Basic introduction of AsciiDoc.
++
+_{s}_ Accepted
+
+Navigation files (P or P#)::
+_{r}_ Basic description of how the navigation content is created and stored.
++
+_{s}_ Accepted
+
+Documentation components (P or P#)::
+_{r}_ Basic overview of what a documentation component is and how it is structured.
+Also includes a review of what the component descriptor is.
++
+_{s}_ Accepted
+
+UI (P or P#)::
+_{r}_ Basic description of the UI bundle.
++
+_{s}_ Accepted
+
+Writing Workflow (P)::
+_{r}_ Tutorial that walks through the common steps a documentation writer takes when adding or modifying content in a documentation component.
++
+_{s}_ Under consideration.
+There are several pending questions about this page.
+Dan isn't a fan of the word "`workflow`".
+Is this the proper location for a high-level tutorial?
+
+Configure (SC, P)::
+_{r}_ Quick, basic orientation of how to configure the Antora pipeline in order to produce a documentation site.
++
+_{s}_ Accepted
+
+Playbook project (P or P#)::
+_{r}_ Basic description of a playbook project and what it contains.
++
+_{s}_ Accepted
+
+Playbook (P or P#)::
+_{r}_ Basic overview of playbook, its capabilities, and its functions and options.
++
+_{s}_ Accepted
+
+Playbook Workflow (P)::
+_{r}_ Tutorial that walks through the common steps a documentation writer takes when modifying and using a playbook.
++
+_{s}_ Under consideration.
+There are several pending questions about this page.
+Dan isn't a fan of the word "`workflow`".
+Is this the proper location for a high-level tutorial?
+
+Publish (SC, P)::
+_{r}_ Quick, basic orientation of how to run Antora and what it produces.
++
+_{s}_ Accepted
+
+The antora command (P or P#)::
+_{r}_ Basic description of how to run Antora and generate a documentation site.
+May or may not include information about deployment environments (local; dev/testing/staging; production).
++
+_{s}_ Accepted
+
+Documentation site (P or P#)::
+_{r}_ Basic description of what the generated site includes and how major features, such as URLs and the navigation menu, are determined.
+May also touch on search and filtering capabilities, sitemap, 404 and other auxiliary pages.
++
+_{s}_ Accepted
+
+Generate Site Workflow (P)::
+_{r}_ Tutorial that walks through the common steps a writer takes when running Antora.
++
+_{s}_ Under consideration.
+There are several pending questions about this page.
+Dan isn't a fan of the word "`workflow`".
+Is this the proper location for a high-level tutorial?
+
+Try Antora with the Demo project (P)::
+_{r}_ Could also be called Test Installation with Demo project.
+The purpose of this tutorial would be for users to get quick, hands on experience with Antora--either to test their installation or evaluate it for use--by introducing them and showing them how to use it with the playbook project and documentation components in the organization.
++
+_{s}_ Under consideration.
+Would this be the right location for this tutorial?
+Exactly how detailed would this tutorial be?
+Would it even be a tutorial or more of a mention that they can use the Demo to practice the tutorials, functions, etc. on?
+
+=== Components and Organization / File Organization & Components / File & Component Organization
+
+Documentation Component (C, P)::
+_{r}_ Full explanation of a documentation component, including its purpose, structure, and what the user should consider when organizing there source files into components.
++
+_{s}_ Accepted
+
+Repository Structure (SC, P)::
+_{r}_ Full description of the directories and reserved directory and file names in a documentation component.
++
+_{s}_ Accepted
+
+Modules & ROOT (P or P#)::
+_{r}_ Purpose and usage of the modules directory, ROOT module, and user-named modules.
+
+Pages & Partials (P or P#)::
+_{r}_ Purpose and usage of the pages, topic, and partials directories.
+
+Assets (P or P#)::
+_{r}_ Purpose and usage of the assets, images, attachments, video, and user-named directories.
+
+Examples (P or P#)::
+_{r}_ Purpose and usage of the examples directory.
+
+antora.yml (P)::
+_{r}_ Purpose, structure and keys in the component descriptor file.
+
+Organizing source files (SC, P)::
+_{r}_ Or: Source file organization. The considerations a user should keep in mind when choosing how to organize their source files.
++
+_{s}_ Under consideration.
+Not sure if this qualifies as an SC or if we've named it correctly.
+
+Versions (P or P#)::
+_{r}_ Whether to version a component or not.
+How versioning impacts managing the content and the published site.
++
+_{s}_ Accepted
+
+Component or module? (P or P#)::
+_{r}_ Whether a collection of files should be a component or a module within a component.
+How components and modules impact managing the content and the published site.
++
+_{s}_ Accepted
+
+One or multiple modules? (P or P#)::
+_{r}_ Whether a collection of files should be organized as a single module or many modules within a component.
+How multiple modules within a component impact managing the content and the published site.
++
+_{s}_ Accepted
+
+Module or topic? (P or P#)::
+_{r}_ Whether a collection of files should be organized as a module or a topic within a component.
+How topics within a module impact managing the content and the published site.
++
+_{s}_ Accepted
+
+Naming directories and files (SC, P)::
+_{r}_ Or: Directory and file names.
+The considerations a user should keep in mind when choosing what to name the folders and files in their documentation.
++
+_{s}_ Under consideration.
+Not sure if this qualifies as an SC or if we've named it correctly.
+
+Source to URL (P or P#)::
+_{r}_ How the names of the component, module, topic directories and the file names affect a page URL.
+The considerations the user should be mindful of both for writers (how filenames can affect system portability) and readers (human readable URLs) when naming.
+May also include how names affect aliases, routes, navigation, and filtering.
++
+_{s}_ Under consideration.
+Not sure how much detail, if any, to include about aliases, routes, navigation, and filtering.
+
+=== Pages
+
+Pages (C, P)::
+_{r}_ Full explanation of a page, including its purpose, types, structure, and behaviors.
++
+_{s}_ Under consideration.
+
+Types (SC?, P)::
+_{r}_ The common types of documentation pages and their purposes.
+Types include documentation (single, assembled from partials, combo), home/start/landing (page the user lands on from the root of the docs site or component), search and search results page, metadata filter and filter results page, generated pages (sitemap, 404).
++
+_{s}_ Accepted
+
+Page and UI interactions (P)::
+_{r}_ Overview of how each page type and a UI template merge and what the user needs to consider (if anything).
++
+_{s}_ Under consideration.
+
+Structure (SC?, P)::
+_{r}_ An overview of the major parts of a page from the AsciiDoc syntax perspective, including the purpose of the header, sections, insertions (images, partials, examples), and cross references.
+This may also be where we give a full description of how the filename, alias, and URL are related.
++
+_{s}_ Under consideration.
+There's a lot of ambiguity about how much detail this page should include and whether or not this is where the filename, alias, and URL relationship should be explained.
+Is this where a user would look for this info?
+
+=== AsciiDoc
+
+AsciiDoc (C, P)::
+_{r}_ Introduction to the AsciiDoc syntax and a high-level overview of its benefits and capabilities.
+
+Header (P)::
+_{r}_ Purpose of a page header and a description of the attributes it can contain, including usage examples.
+Attributes include: title, aliases, metadata, syntax options, tool conditionals, template conditionals, etc.
+
+Sections (P)::
+_{r}_  How to use sections and a description of their levels, titles and attributes.
+
+Paragraphs (P)::
+_{r}_  How to use paragraphs and a description of their attributes.
+
+Text Emphasis (P)::
+_{r}_  How to use inline text formatting such as bold, italics, highlight, etc.
+
+Special Characters (P)::
+_{r}_  How to use special characters.
+
+External Links (P)::
+_{r}_  How to link to URLs that are not part of the docs site.
+
+In-page cross references (P)::
+_{r}_  How to link to an anchor in the same page.
+
+Page to page cross references (P)::
+_{r}_  How to link from one page in the docs site to another page in the docs site.
+
+UI Macros (P)::
+_{r}_  How to create UI macros.
+
+Lists (P)::
+_{r}_ How to create ordered, unordered, task, and definition lists.
+
+Blockquotes (P)::
+_{r}_ How to create quote blocks.
+
+Admonitions (P)::
+_{r}_ Or: Notices.
+How to create admonition blocks.
+
+Code (P)::
+_{r}_ How to create source code blocks, descriptions of their attributes, different ways to include source code (right in file, include from example file or other source).
+May also include information about syntax highlighting or this topic may be split out into another page.
+
+Include directive (P)::
+_{r}_ How to use the include directive and its options to insert a partial, example, or page into another page.
+
+Insert a partials file (P#)::
+_{r}_ How to include an AsciiDoc file from the partials directory into a page.
+
+Insert an examples file (P#)::
+_{r}_ How to include a code snippet from the examples directory into a page.
+
+Tables (P)::
+_{r}_ How to create tables and use table attributes.
+
+Page Table of Contents (P)::
+_{r}_ How to add a TOC to a page and use its attributes.
+
+Math?? (P)::
+_{s}_ Under consideration.
+
+Icons?? (P)::
+_{s}_ Under consideration.
+
+Images (P)::
+_{r}_ How to add an image to a page from the assets/images directory.
+
+Videos (P)::
+_{r}_ How to add a video to a page either via a service (Youtube) or from assets/video.
+
+Attachments (P)::
+_{r}_ How to link to a downloadable resource in assets/attachments.
+
+Writing Tasks (NC?, SC?)::
+_{s}_ Haven't determined the best place to add this group of common task tutorials.
+This heading is more of place holder than something that is really under consideration.
+
+Create a New Page (P)::
+_{r}_ Tutorial showing how to set up a new AsciiDoc file for use in an Antora pipeline.
+
+Edit a Page (P)::
+_{r}_ Considerations, tips and tricks when modifying a page, especially across versions.
+
+Insert a page or partial page (P)::
+_{r}_ Tutorial showing how to set up partial files and include a page or partial into another page.
+
+Insert assets and examples (P)::
+_{r}_ Tutorial showing how to add assets and examples to a component and then use them in pages.
+
+Link to other pages (P)::
+_{r}_ Tutorial showing how to use cross references across the whole spectrum of scenarios.
+
+Change a page's filename (P)::
+_{r}_ Tutorial showing how to change a filename and update it across the pipeline.
+Alternatives to changing a filename.
+
+Move a page (P)::
+_{r}_ Tutorial showing how to move a file and update it across the pipeline.
+Alternatives to moving a file.
+
+Remove a page (P)::
+_{r}_ Tutorial showing how to delete, remove, or archive a file and update it across the pipeline.
+
+Alias a page (P)::
+_{r}_ Tutorial showing how to add an alias to a page and manage it across the pipeline.
+
+=== Page & Site Metadata / Taxonomy / Metadata / Taxonomy & Metadata
+
+Taxonomy & Metadata (C, P)::
+_{r}_ Introduction to the taxonomy and metadata management capabilities of Antora and AsciiDoc.
+
+_{s}_ This category is very ambiguous at this time.
+What taxonomy/metadata can we add to the site and manage from Antora that affect search engines?
+That affects site search?
+How do we provide reader filtering by tag, category, author, component/product, version, and custom keys and how do we manage that taxonomy/metadata from Antora?
+How does the UI respond to these capabilities?
+At what levels (site, component, module, page, etc.,) can these capabilities be exercised from and what has final say?
+
+Specify taxonomy (P)::
+_{r}_ Describes how to add taxonomy to the site, per component, per module, and to a specific page.
+
+Site metadata (P)::
+_{r}_ Describes how to add metadata to the site (such as a site description).
+
+=== Site Navigation
+
+Site Navigation (C, P)::
+_{r}_ Full explanation of the site navigation, including its purpose, input structure, what the user should consider when organizing the navigation source files, and output behavior.
++
+_{s}_ Accepted
+
+Navigation input (SC, P)::
+_{r}_ Describes the nav.adoc file, including its purpose, format, syntax, structure, and storage locations.
+
+Create a navigation file (P)::
+_{r}_ Tutorial describing when a user needs a navigation tree file, where to save it, and how to fill the tree with navigation entries.
+This last task is broken into sub-tutorials in the page sections (P#) that follow.
+
+Add a page to a tree (P#)::
+_{r}_ Tutorial describing how to add a page to a navigation tree.
+
+Nest pages in a tree (P#)::
+_{r}_ Tutorial describing how to nest pages in a navigation tree.
+
+Add external links and non-page entries (P#)::
+_{r}_ Tutorial describing how to add external links and non-page/non-content entries to a navigation tree.
+
+Menu assembly (P)::
+_{r}_ Describes how to register the navigation files, organize them into the site navigation menu, and any display options
+
+Register a navigation file (P)::
+_{r}_ Tutorial describing how users register navigation files in a component, how to order them in that component navigation tree, and how to order them in a site's navigation menu.
+The last task is split into the sub-tutorial in the page section (P#) that follows.
+
+Order navigation files in a site menu (P#)::
+_{r}_ Tutorial describing how each component's navigation file set gets ordered in the site menu.
+
+Menu level display behavior (P)::
+_{s}_ Under consideration.
+
+=== Site Assembly / Site Bootstrap
+
+Site Assembly (C, P)::
+_{r}_ Overview of how the documentation site inputs are aggregated and how Antora knows what to aggregate.
+Introduces the playbook and playbook project and their benefits.
+Introduces how to run Antora with a specific playbook.
+
+Playbook project (SC, P)::
+_{r}_ Describes the playbook project purpose and structure.
+Provides a link to Demo playbook repo to use as a template.
+
+Set up a new project (P)::
+_{r}_ Tutorial describing how to set up and seed a new playbook project.
+
+Clone or fetch a project (P)::
+_{r}_ Tutorial describing how to clone or fetch an existing playbook project from GitLab and GitHub.
+
+Update a project (P)::
+_{r}_ Tutorial describing how to commit and push a modified playbook to its GitLab or GitHub repository.
+
+Playbook (SC, P)::
+_{r}_ Describes the playbook file purpose.
++
+_{s}_ Accepted
+
+Assumptions (P#)::
+_{r}_ Probably a section of the Playbook page.
+Reminds the user about the requirements/steps they should have already completed.
+
+Keys (P or P#)::
+_{r}_ Defines the site, component, branch, and ui keys and values.
+
+Formats (P or P#)::
+_{r}_ Defines the playbook file formats (YAML, JSON, CSON) and provides examples.
+
+Create a new playbook (P)::
+_{r}_ Tutorial describing how to configure a new playbook.
+
+Generate a site (SC, P)::
+_{r}_ Introduces the CLI command and flags used to run Antora and publish a site.
+Also introduces common  playbook configurations and environment scenarios.
+
+Antora CLI (P)::
+_{r}_ Describes the CLI commands used to run Antora with a playbook and other optional flags.
+Provides CLI command examples.
+
+Run Antora (P)::
+_{r}_ Tutorial showing how to run Antora, generate a site, and view that site in a browser.
+
+Configure a local playbook (P)::
+_{r}_ Tutorial showing how to configure and use a playbook for publishing a site locally for testing and previewing.
+
+Configure a production playbook (P)::
+_{r}_ Tutorial showing how to configure and use a playbook for publishing a site to a staging and/or production environment.
+
+Configure a beta site playbook (P)::
+_{r}_ Tutorial showing how to configure and use an alternate playbook for publishing a site to a beta, pre-release, or limited access environment (i.e., using a curated selection of components and branches).
+
+Troubleshooting (P)::
+_{r}_ We'll probably need a page that lists common playbook and failure to generate / publish errors and how to identify and fix them.
++
+_{s}_ Under consideration.
+
+// Publish multiple sites
+
+Site Controls (C?, SC?, P)::
+_{r}_ This may be a new category or a subcategory under site assembly.
+Introduction to the keys that can control page names, aliases, and URLs; component names, version names, and the site name and URL.
+
+Page URL (P)::
+_{r}_ How a page URL is created by Antora and how the user can specify the page URL.
+
+Page alias (P#)::
+_{r}_ How to specify a page's URL aliases.
+Probably a section of the Page URL page.
+
+Component Name (P)::
+_{r}_ How a to specify a component's URL and display name.
+
+Component Version (P#)::
+_{r}_ How to specify a component's version display name and which version should be the latest/master/current display version.
+Probably a section of the Component Name page.
+
+Site Name (P)::
+_{r}_ How a to specify the name of a documentation site.
+
+Site URL (P#)::
+_{r}_ How to specify the canonical URL of a documentation site.
+Probably a section of the Site Name page.
+
+Site Component (P#)::
+_{r}_ How to specify the component that represents the canonical start of the documentation site.
+Probably a section of the Site Name page.
+
+Preview Tool Controls (SC, P)::
+_{r}_ The page and module level controls to fully preview a page in editing tools such as Atom and Brackets and in the browser (without generation) using the Asciidoctor Chrome and Firefox extensions.
+
+=== UI / Site UI / Site UI & Page Styles
+
+Site UI & Page Styles (C, P)::
+_{r}_ Purpose of the UI bundle, what it provides, and how the writer can interact with it when creating pages and generating the site.
+
+Register a UI bundle (P)::
+_{r}_ Describes how to add a UI bundle to a playbook.
+
+Apply a template to a page (P)::
+_{r}_ Describes how to get a page to use a specific page template.
+
+=== Upgrade
+
+Upgrade (C, P)::
+_{r}_ How to upgrade/update to a new Antora version.
+Sections probably include: Assumptions, Download/install/some-upgrade-command instructions, Test new pipeline in staging/safe environment; Deploy new version to production; and Troubleshooting.
++
+_{s}_ Under consideration.
+
+=== Standard Pipeline
+
+Standard Pipeline (C, P)::
+_{r}_ Introduces the high-level processes of the standard pipeline and its package architecture.
++
+_{s}_ Under consideration.
+
+Lifecycle (P)::
+_{r}_ Illustrates and explains the stages of the pipeline.
++
+_{s}_ Under consideration.
+
+API (P)::
+_{r}_ The API documentation for the pipeline.
++
+_{s}_ Under consideration.
+
+=== Custom Pipeline
+
+Custom Pipeline (C, P)::
+_{r}_ Explains how packages, such as a validator, can be added to the pipeline.
++
+_{s}_ Under consideration.
+
+=== git Tutorials / git Workflows
+
+git + Writers (C, P)::
+_{r}_ Series of tuturials for writers showing them how do git tasks that enhance their collaboration abilities.
++
+_{s}_ These tutorials are just proposed ideas and very roughly outlined at this time.
+
+Common git Tasks (P)::
+_{r}_ Tutorial showing how to add, commit, amend, and see log.
+
+Forks and Branches (P)::
+_{r}_ Tutorial showing how to fork a repository (playbook or component), how to set up the connection between the origin and fork, how to pull, fetch, merge, and rebase, how to get some one else's branch, how to set up and manage branches, and how to push to a branch.
+
+Review, Edit, and Approve (P)::
+_{r}_ Tutorial showing how to review a branch locally and using the GitLab/GitHub interface, how to perform edits on an existing branch and commit to it, how to comment and collaborate on a branch in the GitLab/GitHub interface.
+
+git + Docs Managers (C, P)::
+_{r}_ Series of tuturials for administrators / managers / maintainers / leads / approvers showing them how do git tasks that enhance their collaboration, review, approval, and release abilities.
++
+_{s}_ The tutorials are just proposed ideas at this time.
+The tutorials would step the user through the following tasks: test and merge and branch into a version branch or master; create a release of a branch; deploy and publish component-versions; create, manage, and remove/archive future, current and past branches/versions; set up a repository compatible with Antora; rebase and cherry-pick; rollback merged commits; rollback a release.
