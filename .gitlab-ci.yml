@@ -5,7 +5,6 @@ stages:
 yarn:
   stage: setup
   script:
-  - npm install -g yarn
   - yarn --cache-folder=.yarn-cache
   cache:
     paths:
@@ -27,7 +26,6 @@ test:
     paths:
     - .yarn-cache/
   script:
-  - npm install -g yarn
   - yarn --cache-folder=.yarn-cache
   - node_modules/.bin/gulp test!
   artifacts:
