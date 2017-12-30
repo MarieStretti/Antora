@@ -11,10 +11,9 @@ class NavigationCatalog {
   addTree (component, version, tree) {
     const id = this[$generateId](component, version)
     const menu = id in this[$menus] ? this[$menus][id] : (this[$menus][id] = [])
-    // NOTE insert into array in sorted order
-    const insertIdx = menu.findIndex((candidate) => candidate.order > tree.order)
-    insertIdx !== -1 ? menu.splice(insertIdx, 0, tree) : menu.push(tree)
-    //menu.splice(_.sortedIndexBy(menu, tree, 'order'), 0, tree)
+    // NOTE retain order on insert
+    const insertIdx = menu.findIndex((candidate) => candidate.order >= tree.order)
+    ~insertIdx ? menu.splice(insertIdx, 0, tree) : menu.push(tree)
   }
 
   //getMenus () {
