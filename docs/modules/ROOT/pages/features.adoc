@@ -37,7 +37,7 @@ Can have multiple playbooks that can be as similar or different as you want them
 Playbook is selected by cli flag or env var.
 Antora fetches the content it needs on demand.
 
-=== Minimal markup, maximum functionality
+== Minimal markup, maximum functionality
 
 Writers can write and edit content without being distracted by large blocks of markup or stopping to remember complex, unintuitive syntax.
 
@@ -75,31 +75,31 @@ This means your AsciiDoc files are immediately compatible with all of the other 
 You don't need to worry about errors, lost functionality, or downgraded processing performance.
 Real single source portability.
 
-==== Editing and preview tooling
+=== Editing and preview tooling
 
 Writers can use almost any text editor, IDEs such as Atom, Brackets, IntelliJ, etc. to write and preview AsciiDoc files.
 AsciiDoc files can also be previewed in Chrome and Firefox with the Asciidoctor extension.
 GitHub and GitLab also render AsciiDoc files right in your browser.
 
-==== Responsive maintainers
+=== Responsive maintainers
 
 Our core developers help lead the Asciidoctor organization, the official home of the AsciiDoc syntax and its parsing engine, Asciidoctor.
 They're always improving the syntax and its engine in response to user needs and technology advances.
 Due to this direct relationship, Antora can always use the latest AsciiDoc and Asciidoctor features.
 
-==== Single source portability / usability
+=== Single source portability / usability
 
 AsciiDoc files can also be used by other tools such as Asciidoctor PDF and EPUB, Asciidoctor HTML presentation extensions for Bespoke, Reveal.js.
 
-==== Custom extensions
+=== Custom extensions
 
 Due to Asciidoctor's robust API, you can customize syntax processing and add special behaviors as discrete extensions.
 
-=== Cross references that are impervious to file systems, URLs, and publishing (CI/CD) environments
+== Cross references that are impervious to file systems, URLs, and publishing (CI/CD) environments
 
 Antora's cross referencing system is based on abstract coordinates that aren't coupled to filesystem or published site locations.
 
-==== Learn More
+=== Learn More
 
 The Learn More link would lead to a more detailed feature page (probably need diagrams) that would show a number of the scenarios the cross references aren't stymied by.
 
@@ -115,12 +115,12 @@ Manually updating internal links when a new documentation version is released is
 Combined with the fact that cross-references usually don't function correctly on a writer's local machine means broken links are inevitable.
 --
 
-=== Writer-friendly cross references
+== Writer-friendly cross references
 
 Writers don't need to remember or construct the path to a file or a page's URL.
 In most cases, to create a cross reference, all you need to know is the filename of the page you want to link to.
 
-==== Learn More
+=== Learn More
 
 The Learn More link would lead to a docs page and/or a more detailed feature page that would show a number of the use cases the cross references can handle.
 
@@ -130,13 +130,13 @@ The Learn More link would lead to a docs page and/or a more detailed feature pag
 - Cross reference syntax that can link a file to a file in the same folder AND to a file that is in another repository?
 --
 
-=== Cross references are automatically validated and managed
+== Cross references are automatically validated and managed
 
 No more broken links.
 Antora automatically checks and validates cross references prior to deploying a site.
 If errors are found the pipeline pauses and notifies the writer with a list of invalid cross references and the files they're located in.
 
-=== User interface and theme hot swapping
+== User interface and theme hot swapping
 
 Since Antora has the ability to access multiple repositories, it makes sense that the site UI is also stored separately.
 
@@ -157,3 +157,23 @@ It also means that you can apply new themes to your documentation just by changi
 
 * (h) Use templates to make HTML match your playbook and/or environment; put power to control UI in your hands; shifts some of the decisions to the site manager (distributes roles and responsibilities); template w/ placeholders + UI model = HTML page
 ****
+
+== Navigation
+
+(l) describe and control the navigation structure as a content concern; navigation stored with the content; author-controlled, yet can still be manipulated by the UI / designer
+
+(m) use same system to describe navigation references as is used to create references between pages; consistency of references; page reference system are used in navigation, xrefs, and aliases
+
+. page references in navigation files match system used by pages. [m]
+
+=== How?
+
+. reads navigation tree from dedicated AsciiDoc files; converts to navigation model; model is prepared per page and passed to template to be converted to HTML. [l] [m]
+
+== Internal Storage Organization and Navigation are decoupled
+
+(n) define navigation that does not match or is not dictated by the organization / storage of the content (i.e., aspect navigation)
+
+=== How?
+
+. aspect domain/navigation/pages; duplicate of original page w/ unique navigation which is not coupled to any one component; defining aspect navigation implicitly creates domain (under current implementation) [n]
