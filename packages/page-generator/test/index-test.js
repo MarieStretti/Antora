@@ -10,6 +10,7 @@ describe('createPageGenerator().generatePage()', () => {
   let partials
   let page
   let playbook
+  let uiCatalog
 
   beforeEach(() => {
     helpers = [{
@@ -40,12 +41,22 @@ describe('createPageGenerator().generatePage()', () => {
         contents: Buffer.from('<h1>{{upper title}}</h1>{{{contents}}}'),
       },
     ]
+    uiCatalog = {
+      findByType: (type) => {
+        if (type === 'layout') return layouts
+        if (type === 'partial') return partials
+        if (type === 'helper') return helpers
+      }
+    }
     playbook = {
       site: {
         url: 'http://the-site.com',
         title: 'The Site!',
       },
-      ui: { defaultLayout: 'one' },
+      ui: {
+        defaultLayout: 'one',
+        outputDir: '_',
+      },
     }
     page = {
       contents: Buffer.from('<h2>Bonjour</h2>'),
@@ -56,6 +67,7 @@ describe('createPageGenerator().generatePage()', () => {
       pub: {
         absoluteUrl: 'http://the-site.com/the-component/v1.2.3/hello-world.html',
         canonicalUrl: 'http://the-site.com/the-component/hello-world.html',
+        rootPath: '../..',
       },
       asciidoc: {
         attributes: {
@@ -68,20 +80,20 @@ describe('createPageGenerator().generatePage()', () => {
   })
 
   it('should generate a page with "default" layout by default', async () => {
-    const generatePage = await createPageGenerator(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(uiCatalog)
     delete playbook.ui.defaultLayout
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql('<!--DEFAULT--><html><title>Hello World!</title><h1>HELLO WORLD!</h1><h2>Bonjour</h2></html>')
   })
 
   it('should generate a page with layout specified by playbook.ui.defaultLayout', async () => {
-    const generatePage = await createPageGenerator(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(uiCatalog)
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql('<!--ONE--><html><title>Hello World!</title><h1>HELLO WORLD!</h1><h2>Bonjour</h2></html>')
   })
 
   it('should generate a page with layout specified by page.asciidoc.attributes.page-layout', async () => {
-    const generatePage = await createPageGenerator(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(uiCatalog)
     page.asciidoc.attributes['page-layout'] = 'two'
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql('<!--TWO--><html><title>Hello World!</title><h1>HELLO WORLD!</h1><h2>Bonjour</h2></html>')
@@ -102,7 +114,7 @@ describe('createPageGenerator().generatePage()', () => {
         '{{canonicalUrl}}',
       ].join('\n')),
     })
-    const generatePage = await createPageGenerator(helpers, layouts, partials)
+    const generatePage = await createPageGenerator(uiCatalog)
     page.asciidoc.attributes['page-layout'] = 'all-variables'
     generatePage(page, playbook)
     return expect(page.contents.toString()).to.eql([
