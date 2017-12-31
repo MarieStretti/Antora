@@ -15,21 +15,35 @@ Store, version, manage, and release documentation like code with Antora.
 
 == Category: Docs as Code
 
-== Store documentation in 1, 42 or more repositories.
+=== Store documentation in 1, 42 or more repositories.
+// One, 42, or more repositories
 
-Store documentation files in as many git repositories as you need, Antora can find and assemble them into a documentation site on demand.
+Store documentation files in as many git repositories as you need. Antora can find and assemble them into a documentation site on demand.
 
-== Store documentation in as many branches as you need.
+=== Store documentation in as many branches as you need.
+// Version your docs like a pro
+// Manage docs versions like a pro
 
-Use branches to release versions of your documentation just like you do for your software.
+Use branches to release docs versions just like software versions.
 Antora can find the branches in each repository and assemble the files into a versioned documentation collection.
 Antora also knows how to ignore branches you don't want published.
 
-== Store documentation in its own repository or in the same repository as the code it describes.
+=== Workspaces that fit team and content requirements
+// Store documentation in its own repository or in the same repository as the code it describes.
+// Storage locations that work for writers and subject matter experts
+
+Store documentation content in as many repositories as you need so that the teams that maintain it can use the administration, contribution, versioning and release processes that work for them.
 
 Whether you store the documentation for a product in its own repository, in that same repository as the product's code, or the text pages in one repository and the example code in another repository, Antora can find and assemble the files into a documentation site.
 
 ////
+Whether the documentation for a product is stored in its own repository, in the same repository as the product's code, or the text pages in one repository and the example code in another repository, Antora can find and assemble the distributed files into a documentation site.
+
+The source repository combinations are almost endless with Antora.
+Store the documentation for one product in its own repository.
+Store the documentation for another product in the same repository as the product code.
+Store diagrams and example code in a separate repository.
+
 Notes:
 
 - limits noise for authors
@@ -39,13 +53,15 @@ Notes:
 - The repositories and branches can be local & remote, public & private, and bare & non-bare.
 ////
 
-== Control your documentation with a playbook.
+== Category: Playbook
+
+=== Control your documentation with a playbook.
 
 Simply by adding or removing repository addresses or branch names in the playbook, you can control what documentation is published to your site.
 Writers can even tell Antora to use local, un-committed changes when generating the site locally.
 Use a playbook to publish a early-release documentation site that only includes a single version of a product's documentation, while another playbook publishes your public documentation site that doesn't include any beta documentation.
 
-=== How?
+==== How?
 
 Antora runs from a purely configuration playbook project that provides instructions about what to generate & where to get it.
 It's controllable by a non-developer; provides a non-technical interface.
@@ -53,6 +69,10 @@ It's controllable by a non-developer; provides a non-technical interface.
 Can have multiple playbooks that can be as similar or different as you want them to be.
 Playbook is selected by cli flag or env var.
 Antora fetches the content it needs on demand.
+
+// === Configuration as Code
+
+// === Environment Portability
 
 == Minimal markup, maximum functionality
 
@@ -81,16 +101,11 @@ Select all or parts of a file and insert it into another file.
 In page and page-to-page.
 * Page, section, and line controls to optimize reader experience (Rx)
 
-=== No syntax plugins, extensions, or shortcodes needed. No flavor lock-in.
+=== No syntax plugins, extensions, or shortcodes needed
 // Fully integrated, lightweight and comprehensive markup
 
 AsciiDoc's extensive feature set is available right out of the box with Antora.
 There's no need to find, install, and manage plugins, extensions, or scripts to add basic capabilities or shortcodes to the syntax.
-Along with not having "flavor" lock-in, this means you can use your AsciiDoc files with Antora and all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.) without worrying about incompatibility, lost functionality, or errors.
-
-This means your AsciiDoc files are immediately compatible with all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.).
-You don't need to worry about errors, lost functionality, or downgraded processing performance.
-Real single source portability.
 
 === Editing and preview tooling
 
@@ -104,19 +119,30 @@ Our core developers help lead the Asciidoctor organization, the official home of
 They're always improving the syntax and its engine in response to user needs and technology advances.
 Due to this direct relationship, Antora can always use the latest AsciiDoc and Asciidoctor features.
 
-=== Single source portability / usability
+=== No flavor lock-in
+
+// Single source portability / usability
+// Real single source portability
 
 AsciiDoc files can also be used by other tools such as Asciidoctor PDF and EPUB, Asciidoctor HTML presentation extensions for Bespoke, Reveal.js.
+This means your AsciiDoc files are immediately compatible with all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.).
+You don't need to worry about errors, lost functionality, or downgraded processing performance.
 
-=== Custom extensions
+////
+Along with not having "flavor" lock-in, this means you can use your AsciiDoc files with Antora and all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.) without worrying about incompatibility, lost functionality, or errors.
+////
+
+=== Custom processing with Asciidoctor's API
 
 Due to Asciidoctor's robust API, you can customize syntax processing and add special behaviors as discrete extensions.
 
-== Cross references that are impervious to file systems, URLs, and publishing (CI/CD) environments
+== Category: Cross References
+
+=== Cross references that are impervious to file systems, URLs, and publishing (CI/CD) environments
 
 Antora's cross referencing system is based on abstract coordinates that aren't coupled to filesystem or published site locations.
 
-=== Learn More
+==== Learn More
 
 The Learn More link would lead to a more detailed feature page (probably need diagrams) that would show a number of the scenarios the cross references aren't stymied by.
 
@@ -132,12 +158,12 @@ Manually updating internal links when a new documentation version is released is
 Combined with the fact that cross-references usually don't function correctly on a writer's local machine means broken links are inevitable.
 --
 
-== Writer-friendly cross references
+=== Writer-friendly cross references
 
 Writers don't need to remember or construct the path to a file or a page's URL.
 In most cases, to create a cross reference, all you need to know is the filename of the page you want to link to.
 
-=== Learn More
+==== Learn More
 
 The Learn More link would lead to a docs page and/or a more detailed feature page that would show a number of the use cases the cross references can handle.
 
@@ -147,18 +173,23 @@ The Learn More link would lead to a docs page and/or a more detailed feature pag
 - Cross reference syntax that can link a file to a file in the same folder AND to a file that is in another repository?
 --
 
-== Cross references are automatically validated and managed
+=== Cross references are automatically validated and managed
 
 No more broken links.
 Antora automatically checks and validates cross references prior to deploying a site.
 If errors are found the pipeline pauses and notifies the writer with a list of invalid cross references and the files they're located in.
 
-== User interface and theme hot swapping
+== Category: Site UI and Theme
 
-Since Antora has the ability to access multiple repositories, it makes sense that the site UI is also stored separately.
+=== Decoupled UI = Happy Web Team
 
-This way the frontend team can use their own workflow and development schedule without having their files mixed with documentation files.
-It also means that you can apply new themes to your documentation just by changing one line in a playbook.
+Since Antora can access multiple repositories, it makes sense that the site UI is stored in its own repository.
+The web team can use their own workflow and development schedule without having their files mixed with documentation files.
+
+=== UI Hot Swap
+
+Switch between site UIs just by changing the UI address in the playbook.
+Since site UIs can be stored in separate repositories and branches, developing, testing, and publishing new themes has no impact on your documentation files or their repositories.
 
 .Notes
 ****
