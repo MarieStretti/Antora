@@ -175,18 +175,33 @@ It also means that you can apply new themes to your documentation just by changi
 * (h) Use templates to make HTML match your playbook and/or environment; put power to control UI in your hands; shifts some of the decisions to the site manager (distributes roles and responsibilities); template w/ placeholders + UI model = HTML page
 ****
 
-== Navigation
+== Category: Navigation
 
+=== For writers
+
+A site's navigation is stored in AsciiDoc files right along with your documentation files.
+Links are added to the navigation using the same cross referencing syntax used in the pages.
+There's no special syntax or UI template logic to learn.
+
+=== No content or organization restrictions
+
+Add regular (non-linked) text, images, and links to pages not in your docs site to the navigation.
+Organize the links in your site navigation in the order and nesting arrangement of your choice.
+
+////
+.Notes
 (l) describe and control the navigation structure as a content concern; navigation stored with the content; author-controlled, yet can still be manipulated by the UI / designer
 
 (m) use same system to describe navigation references as is used to create references between pages; consistency of references; page reference system are used in navigation, xrefs, and aliases
 
 . page references in navigation files match system used by pages. [m]
+////
 
 === How?
 
 . reads navigation tree from dedicated AsciiDoc files; converts to navigation model; model is prepared per page and passed to template to be converted to HTML. [l] [m]
 
+////
 == Internal Storage Organization and Navigation are decoupled
 
 (n) define navigation that does not match or is not dictated by the organization / storage of the content (i.e., aspect navigation)
@@ -194,3 +209,4 @@ It also means that you can apply new themes to your documentation just by changi
 === How?
 
 . aspect domain/navigation/pages; duplicate of original page w/ unique navigation which is not coupled to any one component; defining aspect navigation implicitly creates domain (under current implementation) [n]
+////
