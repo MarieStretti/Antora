@@ -1,97 +1,133 @@
 'use strict'
 
-const hbs = require('handlebars')
+const handlebars = require('handlebars')
 const path = require('path')
 const requireFromString = require('require-from-string')
 const versionCompare = require('@antora/content-classifier/lib/util/version-compare-desc')
 
-// TODO move to constants
-const compileOptions = { preventIndent: true }
+const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants')
 
-// TODO this method could prepare the shared model
-module.exports = (uiCatalog) => {
+function createPageGenerator (playbook, contentCatalog, uiCatalog) {
   uiCatalog.findByType('helper').forEach((file) =>
-    hbs.registerHelper(file.stem, requireFromString(file.contents.toString(), file.path))
+    handlebars.registerHelper(file.stem, requireFromString(file.contents.toString(), file.path))
   )
 
-  uiCatalog.findByType('partial').forEach((file) => hbs.registerPartial(file.stem, file.contents.toString()))
+  uiCatalog.findByType('partial').forEach((file) =>
+    handlebars.registerPartial(file.stem, file.contents.toString())
+  )
 
-  const compiledLayouts = uiCatalog.findByType('layout').reduce((accum, file) => {
-    accum[file.stem] = hbs.compile(file.contents.toString(), compileOptions)
+  const layouts = uiCatalog.findByType('layout').reduce((accum, file) => {
+    accum[file.stem] = handlebars.compile(file.contents.toString(), HANDLEBARS_COMPILE_OPTIONS)
     return accum
   }, {})
 
-  return (page, playbook, contentCatalog, navigationCatalog) => {
-    let siteUrl = playbook.site.url
-    if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
-    const uiConfig = playbook.ui || {}
-    let uiRootPath = path.join(page.pub.rootPath, uiConfig.outputDir)
-    if (uiRootPath.charAt(uiRootPath.length - 1) === '/') uiRootPath = uiRootPath.substr(0, uiRootPath.length - 1)
-    const attrs = page.asciidoc.attributes
-    const pageLayout = attrs['page-layout'] || uiConfig.defaultLayout || 'default'
-    const compiledLayout = compiledLayouts[pageLayout]
+  return createPageGeneratorInternal(buildSiteUiModel(playbook, contentCatalog), layouts)
+}
 
-    // FIXME warn, but fall back to default layout
-    if (!compiledLayout) {
-      throw new Error(`Template ${pageLayout} could not be found in`, compiledLayouts)
+function createPageGeneratorInternal (site, layouts) {
+  return function (file, contentCatalog, navigationCatalog) {
+    // QUESTION should we pass the playbook to the uiModel?
+    const uiModel = buildUiModel(file, contentCatalog, navigationCatalog, site)
+
+    let layout = uiModel.page.layout
+    if (!(layout in layouts)) {
+      const defaultLayout = uiModel.site.ui.defaultLayout
+      if (layout === defaultLayout) {
+        throw new Error(`Layout ${layout} not found in`, layouts)
+      }
+      if (!(defaultLayout in layouts)) {
+        throw new Error(`Neither layout ${layout} or default layout ${defaultLayout} found in`, layouts)
+      }
+      // TODO log a warning that the default template is being used; perhaps on file?
+      layout = defaultLayout
     }
 
-    const components = contentCatalog.getComponents()
-    components.sort((a, b) => a.title.localeCompare(b.title))
-
-    const component = contentCatalog.getComponent(page.src.component)
-
-    const navigation = navigationCatalog.getMenu(page.src.component, page.src.version)
-
-    const breadcrumbs = getBreadcrumbs(page.pub.url, navigation)
-
-    const versions = component.versions.length > 1 ? getPageVersions(page.src, contentCatalog, { sparse: true }) : undefined
-
-    if (siteUrl) page.pub.canonicalUrl = siteUrl + (versions ? versions[0].url : page.pub.url)
-
-    const model = {
-      site: {
-        title: playbook.site.title,
-        url: siteUrl,
-        keys: playbook.site.keys,
-        components,
-      },
-      title: attrs.doctitle, // FIXME this should be page.asciidoc.doctitle (not the same)
-      url: page.pub.url, // rename to currentUrl?
-      //version: page.src.version,
-      contents: page.contents,
-      description: attrs.description,
-      keywords: attrs.keywords,
-      // FIXME use component instead of reconstructing
-      component: {
-        name: component.name,
-        title: component.title,
-        // FIXME versioned should be whether versions for page is > 1
-        versioned: page.src.version !== 'master',
-        url: component.url,
-        // NOTE root will be added later once we have a root component
-        root: false,
-        // Q: should this be version: { version: ..., url: ... }?
-        version: page.src.version,
-        versions: component.versions,
-      },
-      breadcrumbs,
-      navigation,
-      versions,
-      canonicalUrl: page.pub.canonicalUrl,
-      //editUrl: page.pub.editUrl,
-      uiRootPath,
-      siteRootPath: page.pub.rootPath,
-      // siteRootUrl should only be set if there's a start/home page for the site
-      //siteRootUrl
-      // FIXME this should be precomputed as page.pub.home; not necessarily root index page
-      // TODO also map start (or startPage)
-      // NOTE we won't have a home until we have a root (and/or start) component
-      home: false,
-    }
-
-    page.contents = Buffer.from(compiledLayout(model))
+    // QUESTION should we call trim() on result?
+    file.contents = Buffer.from(layouts[layout](uiModel))
   }
+}
+
+function buildUiModel (file, contentCatalog, navigationCatalog, site) {
+  return {
+    page: buildPageUiModel(file, contentCatalog, navigationCatalog, site),
+    site,
+    siteRootPath: file.pub.rootPath,
+    uiRootPath: path.join(file.pub.rootPath, site.ui.url),
+    // TODO siteRootUrl should only be set if there's a start/home page for the site
+    // FIXME this really belongs on site, perhaps as site.startUrl (and needs to be relativized)
+    //siteRootUrl
+  }
+}
+
+function buildSiteUiModel (playbook, contentCatalog) {
+  const model = { title: playbook.site.title }
+
+  let siteUrl = playbook.site.url
+  if (siteUrl) {
+    if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
+    model.url = siteUrl
+  }
+
+  // QUESTION should components be pre-sorted?
+  model.components = contentCatalog.getComponents().sort((a, b) => a.title.localeCompare(b.title))
+
+  //let keys = playbook.site.keys
+  //if (keys) model.keys = keys
+
+  const uiConfig = playbook.ui
+  model.ui = {
+    url: path.resolve('/', uiConfig.outputDir),
+    defaultLayout: uiConfig.defaultLayout || DEFAULT_LAYOUT_NAME,
+  }
+
+  return model
+}
+
+function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
+  // QUESTION should attributes be scoped to AsciiDoc, or should this work regardless of markup language? file.data?
+  const asciidoc = file.asciidoc || {}
+  const attributes = asciidoc.attributes || {}
+  const pageAttributes = {}
+  Object.keys(attributes).filter((name) => !name.indexOf('page-')).forEach((name) => {
+    pageAttributes[name.substr(5)] = attributes[name]
+  })
+
+  const { component: componentName, version: versionString } = file.src
+  const url = file.pub.url
+
+  const component = contentCatalog.getComponent(componentName)
+  let versions
+  // QUESTION can we cache versions on file.rel so only computed once per page version group?
+  if (component.versions.length > 1) {
+    versions = getPageVersions(file.src, component, contentCatalog, { sparse: true })
+  }
+  const navigation = navigationCatalog.getMenu(componentName, versionString) || []
+  const breadcrumbs = getBreadcrumbs(url, navigation)
+
+  const model = {
+    contents: file.contents,
+    title: asciidoc.doctitle,
+    url,
+    description: attributes.description,
+    keywords: attributes.keywords,
+    attributes: pageAttributes,
+    layout: pageAttributes.layout || site.ui.defaultLayout,
+    version: versionString,
+    versions,
+    component,
+    navigation,
+    breadcrumbs,
+    //editUrl: file.pub.editUrl,
+    // NOTE we won't have a home until we have a root (and/or start) component
+    // FIXME should be precomputed as file.pub.home; not necessarily root index page
+    home: false,
+  }
+
+  if (site.url) {
+    model.canonicalUrl = file.pub.canonicalUrl = site.url + (versions ? versions[0].url : url)
+  }
+
+  return model
 }
 
 function getBreadcrumbs (matchUrl, menu) {
@@ -103,7 +139,9 @@ function getBreadcrumbs (matchUrl, menu) {
 }
 
 function findBreadcrumbPath (matchUrl, currentItem, currentPath = []) {
-  if (currentItem.url === matchUrl && currentItem.urlType === 'internal') return currentPath.concat(currentItem)
+  if (currentItem.url === matchUrl && currentItem.urlType === 'internal') {
+    return currentPath.concat(currentItem)
+  }
   const items = currentItem.items
   let numItems
   if (items && (numItems = items.length)) {
@@ -119,18 +157,18 @@ function findBreadcrumbPath (matchUrl, currentItem, currentPath = []) {
 }
 
 // QUESTION should this go in ContentCatalog?
-function getPageVersions (currentPageSrc, contentCatalog, opts = {}) {
-  const versionlessPageId = {
-    component: currentPageSrc.component,
-    module: currentPageSrc.module,
+// should it accept module and relative instead of pageSrc?
+function getPageVersions (pageSrc, component, contentCatalog, opts = {}) {
+  const pageIdSansVersion = {
+    component: pageSrc.component,
+    module: pageSrc.module,
     family: 'page',
-    relative: currentPageSrc.relative,
+    relative: pageSrc.relative,
   }
   if (opts.sparse) {
-    const component = contentCatalog.getComponent(currentPageSrc.component)
     if (component.versions.length > 1) {
       let pageVersions = contentCatalog
-        .findBy(versionlessPageId)
+        .findBy(pageIdSansVersion)
         .reduce((accum, page) => {
           accum[page.src.version] = { version: page.src.version, url: page.pub.url }
           return accum
@@ -140,10 +178,17 @@ function getPageVersions (currentPageSrc, contentCatalog, opts = {}) {
         (version in pageVersions) ? pageVersions[version] : { version, url, missing: true }
       ).sort((a, b) => versionCompare(a.version, b.version))
     }
-  } else if (pages.length > 1) {
-    return contentCatalog
-      .findBy(versionlessPageId)
-      .map((page) => ({ version: page.src.version, url: page.pub.url, }))
-      .sort((a, b) => versionCompare(a.version, b.version))
+  } else {
+    const pages = contentCatalog.findBy(pageIdSansVersion)
+    if (pages.length > 1) {
+      return pages
+        .map((page) => ({ version: page.src.version, url: page.pub.url, }))
+        .sort((a, b) => versionCompare(a.version, b.version))
+    }
   }
 }
+
+module.exports = createPageGenerator
+module.exports.buildSiteUiModel = buildSiteUiModel
+module.exports.buildPageUiModel = buildPageUiModel
+module.exports.buildUiModel = buildUiModel
