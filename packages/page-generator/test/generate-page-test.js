@@ -193,7 +193,8 @@ describe('createPageGenerator()', () => {
 
     it('should execute the default template against the UI model', () => {
       const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const result = generatePage(file, contentCatalog, navigationCatalog)
+      expect(result).to.equal(file)
       expect(file.contents).to.be.instanceOf(Buffer)
       expect(file.contents.toString().trim()).to.equal(heredoc`
         <!DOCTYPE html>

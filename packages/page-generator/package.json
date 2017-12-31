@@ -1,7 +1,7 @@
 {
   "name": "@antora/page-generator",
   "version": "1.0.0-alpha.1",
-  "description": "Wraps converted content in a page layout to produce the standalone pages in an Antora documentation pipeline.",
+  "description": "Wraps the embeddable HTML contents on a file from the content catalog in a standalone page layout to yield pages in an Antora documentation pipeline.",
   "author": {
     "name": "OpenDevise Inc.",
     "url": "https://opendevise.com"
