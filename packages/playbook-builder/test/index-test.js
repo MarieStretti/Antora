@@ -213,7 +213,7 @@ describe('buildPlaybook()', () => {
   it('is decoupled from the process environment', () => {
     const originalEnv = process.env
     process.env = { PLAYBOOK: defaultSchemaSpec }
-    expect(() => buildPlaybook().to.throw())
+    expect(() => buildPlaybook()).to.throw()
     process.env = originalEnv
   })
 
