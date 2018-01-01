@@ -98,6 +98,32 @@ describe('classifyContent()', () => {
       expect(component.versions[1].title).to.equal('The Component (Patch)')
     })
 
+    it('should configure latestVersion property to resolve to greatest version', () => {
+      aggregate.push({
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v2.0.0',
+        files: [],
+      })
+      aggregate.push({
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.0.0',
+        files: [],
+      })
+      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.latestVersion).to.exist()
+      expect(component.latestVersion.version).to.equal('v2.0.0')
+      // use low-level operation to ensure property is dynamic
+      component.versions.unshift({
+        version: 'v3.0.0',
+        title: 'The Component',
+        url: '/the-component/v3.0.0/index.html',
+      })
+      expect(component.latestVersion.version).to.equal('v3.0.0')
+    })
+
     it('should not set url if start page cannot be resolved', () => {
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
       expect(component).to.exist()

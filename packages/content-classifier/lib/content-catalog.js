@@ -47,7 +47,15 @@ class ContentCatalog {
         }
       }
     } else {
-      this[$components][name] = { name, title, url, versions: [{ title, version, url }] }
+      this[$components][name] = Object.defineProperty(
+        { name, title, url, versions: [{ title, version, url }] },
+        'latestVersion',
+        {
+          get: function () {
+            return this.versions[0]
+          },
+        }
+      )
     }
   }
 
