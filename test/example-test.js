@@ -16,7 +16,7 @@ const {
 } = require('../lib-example/capitalize.js')
 
 // NOTE: these requires are only there to test arrays
-const toStream = require('array-to-stream')
+const toStream = require('streamify-array')
 const toArray = require('stream-to-array')
 
 describe('text-utils#capitalize', () => {

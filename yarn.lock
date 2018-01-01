@@ -207,12 +207,6 @@ array-slice@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/array-slice/-/array-slice-1.1.0.tgz#e368ea15f89bc7069f7ffb89aec3a6c7d4ac22d4"
 
-array-to-stream@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/array-to-stream/-/array-to-stream-1.0.2.tgz#f6ebff6128d0613785103443d4a7b300c4780bbe"
-  dependencies:
-    readable-stream "^2.1.5"
-
 array-union@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/array-union/-/array-union-1.0.2.tgz#9a34410e4f4e3da23dea375be5be70f24778ec39"
@@ -4391,6 +4385,10 @@ stream-to-array@^2.3.0:
   resolved "https://registry.yarnpkg.com/stream-to-array/-/stream-to-array-2.3.0.tgz#bbf6b39f5f43ec30bc71babcb37557acecf34353"
   dependencies:
     any-promise "^1.1.0"
+
+streamify-array@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/streamify-array/-/streamify-array-1.0.0.tgz#57226d8ffb317d9086a5d3020f6118ec9731d03a"
 
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
