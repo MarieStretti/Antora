@@ -35,7 +35,7 @@ The order the navigation files are listed in the component descriptor determines
 Each navigation file contains one or more unordered AsciiDoc lists of arbitrary depth that describe the navigation displayed when the user navigates to a particular component version.
 Each navigation entry can be a page reference link, an external link, or inactive text.
 Each of these entry types may contain inline formatting (bold, italic, etc.).
-If the list has an optional block title, that block title becomes the title for the navigation tree.
+If the list has an optional block title, it becomes the navigation item at the root of the navigation tree (its properties get stored directly on the root node).
 
 The navigation model built by this component is subsequently passed on to a layout template by the page generator.
 
@@ -122,25 +122,26 @@ Here's a sample navigation file:
 The navigation builder generates an instance of NavigationCatalog.
 The NavigationCatalog provides access to navigation menus.
 
-Navigation menus are indexed in the catalog by component version (each component version has one navigation menu).
+Navigation menus are indexed in the catalog by component version (meaning each component version has one navigation menu).
 A navigation menu can be retrieved from the navigation catalog by component and version.
 A navigation menu contains a collection of navigation trees.
-Each navigation tree represents a hierarchy of navigation items, often mapping 1-to-1 to a module.
+Each navigation tree represents a hierarchy of navigation items, typically mapping 1-to-1 to a module, though not required.
 
-The root of a navigation tree has an optional title and items.
+The root of the navigation tree is marked with the root flag.
+The root of the navigation tree is also a navigation item, representing the title, though its content and url properties are optional.
+If the navigation tree does not have the content property defined, it simply means the navigation tree has no title.
+
 Each navigation item has the following properties:
 
-* content - the formatted text shown to the user
+* root - defined (true) if the navigation item is at the root of the navigation tree
+* content - the formatted text displayed in the UI
 * url - the URL to which the item points
  ** if this is a page reference, the URL should be a root-relative path, which will be relativized by the template
 * urlType - one of internal (page reference), external, or fragment (only set if url is set)
 * items - a navigation subtree
 
-The title has the same model as a navigation item, except it cannot have nested items.
-If present, the title acts as the top level of the navigation tree.
-Otherwise, the top level is the first collection of items.
-
-Only the content is required for the title and each navigation item.
+Only the content property is required for each navigation item.
+The exception is the root item, which must only have the items property.
 
 == Consequences
 
