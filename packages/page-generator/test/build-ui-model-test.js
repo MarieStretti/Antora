@@ -12,7 +12,6 @@ describe('build UI model', () => {
   let file
   let menu
   let navigationCatalog
-  let site
 
   beforeEach(() => {
     playbook = {
@@ -67,7 +66,7 @@ describe('build UI model', () => {
         component: 'the-component',
         version: '1.0',
         module: 'ROOT',
-        relative: 'the-page.adoc'
+        relative: 'the-page.adoc',
       },
       pub: {
         url: '/the-component/1.0/the-page.html',
@@ -163,7 +162,7 @@ describe('build UI model', () => {
         attributes: {
           description: 'A description of this page',
           keywords: 'keyword-a, keyword-b',
-        }
+        },
       }
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.title).to.equal(file.asciidoc.doctitle)
@@ -176,18 +175,18 @@ describe('build UI model', () => {
         attributes: {
           'page-foo': 'bar',
           'page-tags': 'basics,guide',
-        }
+        },
       }
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.attributes).to.eql({
-        'foo': 'bar',
-        'tags': 'basics,guide',
+        foo: 'bar',
+        tags: 'basics,guide',
       })
     })
 
     it('should set layout property to value of page-layout attribute', () => {
       file.asciidoc = {
-        attributes: { 'page-layout': 'chapter' }
+        attributes: { 'page-layout': 'chapter' },
       }
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.layout).to.equal('chapter')
@@ -307,7 +306,7 @@ describe('build UI model', () => {
                 url: '/the-component/1.0/page-b.html',
                 urlType: 'internal',
               },
-            ]
+            ],
           }),
           {
             content: 'The Page',
@@ -367,7 +366,7 @@ describe('build UI model', () => {
     })
 
     it('should set versions property based on versions of page from catalog', () => {
-      component.url = '/the-component/2.0/index.html',
+      component.url = '/the-component/2.0/index.html'
       component.versions.unshift({
         version: '2.0',
         title: 'The Component',
@@ -411,7 +410,7 @@ describe('build UI model', () => {
           module: 'ROOT',
           family: 'page',
           relative: 'the-page.adoc',
-        }
+        },
       ])
       expect(model.versions).to.exist()
       expect(model.versions).to.have.lengthOf(3)
@@ -423,7 +422,7 @@ describe('build UI model', () => {
     })
 
     it('should add sparse entry in value of versions property if page is missing for version', () => {
-      component.url = '/the-component/2.0/index.html',
+      component.url = '/the-component/2.0/index.html'
       component.versions.unshift({
         version: '2.0',
         title: 'The Component',
@@ -456,7 +455,7 @@ describe('build UI model', () => {
           module: 'ROOT',
           family: 'page',
           relative: 'the-page.adoc',
-        }
+        },
       ])
       expect(model.versions).to.exist()
       expect(model.versions).to.have.lengthOf(3)
@@ -469,7 +468,7 @@ describe('build UI model', () => {
 
     it('should set canonicalUrl property to url of greatest version', () => {
       site.url = 'http://example.com'
-      component.url = '/the-component/2.0/index.html',
+      component.url = '/the-component/2.0/index.html'
       component.versions.unshift({
         version: '2.0',
         title: 'The Component',
@@ -503,7 +502,7 @@ describe('build UI model', () => {
       site = {
         ui: {
           url: '/_',
-        }
+        },
       }
     })
 

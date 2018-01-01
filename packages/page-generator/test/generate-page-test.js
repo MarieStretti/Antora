@@ -30,84 +30,102 @@ describe('createPageGenerator()', () => {
     helpers = [
       {
         stem: 'upper',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           module.exports = (str) => str.toUpperCase()
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
       {
         stem: 'eq',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           module.exports = (a, b) => a === b
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
     ]
 
     layouts = [
       {
         stem: 'default',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           <!DOCTYPE html>
           <html class="default">
           {{> head}}
           {{> body}}
           </html>
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
       {
         stem: 'chapter',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           <!DOCTYPE html>
           <html class="chapter">
           {{> head}}
           {{> body}}
           </html>
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
     ]
 
     partials = [
       {
         stem: 'head',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           <title>{{page.title}}</title>
           {{#if page.description}}
           <meta name="description" content="{{page.description}}">
           {{/if}}
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
       {
         stem: 'body',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           <article>
             <h1>{{{page.title}}}</h1>
             {{{page.contents}}}
           </article>
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
       {
         stem: 'body-upper-title',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           <h1>{{{upper page.title}}}</h1>
           {{{page.contents}}}
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
       {
         stem: 'body-component-equality',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           {{#each site.components}}
           {{#if (eq . @root.page.component)}}
           <p>The current component is {{./name}}.</p>
           {{/if}}
           {{/each}}
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
       {
         stem: 'body-undefined-property-reference',
-        contents: Buffer.from(heredoc`
+        contents: Buffer.from(
+          heredoc`
           {{#unless page.noSuchThang.name}}
           <p>No such thang.</p>
           {{/unless}}
-        ` + '\n'),
+          ` + '\n'
+        ),
       },
     ]
 
@@ -143,7 +161,7 @@ describe('createPageGenerator()', () => {
     let navigationCatalog
 
     beforeEach(() => {
-      component = { 
+      component = {
         name: 'the-component',
         title: 'The Component',
         url: '/the-component/1.0/index.html',
@@ -165,7 +183,7 @@ describe('createPageGenerator()', () => {
           component: 'the-component',
           version: '1.0',
           module: 'ROOT',
-          relative: 'the-page.adoc'
+          relative: 'the-page.adoc',
         },
         pub: {
           url: '/the-component/1.0/the-page.html',
@@ -176,7 +194,7 @@ describe('createPageGenerator()', () => {
           attributes: {
             description: 'The description of the page.',
           },
-        }
+        },
       }
 
       contentCatalog = {

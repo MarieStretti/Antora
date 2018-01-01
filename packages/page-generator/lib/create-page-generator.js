@@ -25,13 +25,11 @@ const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants
  *   HTML contents in a standalone page layout).
  */
 function createPageGenerator (playbook, contentCatalog, uiCatalog) {
-  uiCatalog.findByType('helper').forEach((file) =>
-    handlebars.registerHelper(file.stem, requireFromString(file.contents.toString(), file.path))
-  )
+  uiCatalog
+    .findByType('helper')
+    .forEach((file) => handlebars.registerHelper(file.stem, requireFromString(file.contents.toString(), file.path)))
 
-  uiCatalog.findByType('partial').forEach((file) =>
-    handlebars.registerPartial(file.stem, file.contents.toString())
-  )
+  uiCatalog.findByType('partial').forEach((file) => handlebars.registerPartial(file.stem, file.contents.toString()))
 
   const layouts = uiCatalog.findByType('layout').reduce((accum, file) => {
     accum[file.stem] = handlebars.compile(file.contents.toString(), HANDLEBARS_COMPILE_OPTIONS)
@@ -124,20 +122,18 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   const asciidoc = file.asciidoc || {}
   const attributes = asciidoc.attributes || {}
   const pageAttributes = {}
-  Object.keys(attributes).filter((name) => !name.indexOf('page-')).forEach((name) => {
-    pageAttributes[name.substr(5)] = attributes[name]
-  })
+  Object.keys(attributes)
+    .filter((name) => !name.indexOf('page-'))
+    .forEach((name) => (pageAttributes[name.substr(5)] = attributes[name]))
 
-  const { component: componentName, version: versionString } = file.src
+  const { component: componentName, version } = file.src
   const url = file.pub.url
 
   const component = contentCatalog.getComponent(componentName)
-  let versions
   // QUESTION can we cache versions on file.rel so only computed once per page version group?
-  if (component.versions.length > 1) {
-    versions = getPageVersions(file.src, component, contentCatalog, { sparse: true })
-  }
-  const navigation = navigationCatalog.getMenu(componentName, versionString) || []
+  const versions =
+    component.versions.length > 1 ? getPageVersions(file.src, component, contentCatalog, { sparse: true }) : undefined
+  const navigation = navigationCatalog.getMenu(componentName, version) || []
   const breadcrumbs = getBreadcrumbs(url, navigation)
 
   const model = {
@@ -148,9 +144,9 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     keywords: attributes.keywords,
     attributes: pageAttributes,
     layout: pageAttributes.layout || site.ui.defaultLayout,
-    version: versionString,
-    versions,
     component,
+    version,
+    versions,
     navigation,
     breadcrumbs,
     //editUrl: file.pub.editUrl,
@@ -203,22 +199,20 @@ function getPageVersions (pageSrc, component, contentCatalog, opts = {}) {
   }
   if (opts.sparse) {
     if (component.versions.length > 1) {
-      let pageVersions = contentCatalog
-        .findBy(pageIdSansVersion)
-        .reduce((accum, page) => {
-          accum[page.src.version] = { version: page.src.version, url: page.pub.url }
-          return accum
-        }, {})
+      let pageVersions = contentCatalog.findBy(pageIdSansVersion).reduce((accum, page) => {
+        accum[page.src.version] = { version: page.src.version, url: page.pub.url }
+        return accum
+      }, {})
 
-      return component.versions.map(({ version, url }) =>
-        (version in pageVersions) ? pageVersions[version] : { version, url, missing: true }
-      ).sort((a, b) => versionCompare(a.version, b.version))
+      return component.versions
+        .map(({ version, url }) => (version in pageVersions ? pageVersions[version] : { version, url, missing: true }))
+        .sort((a, b) => versionCompare(a.version, b.version))
     }
   } else {
     const pages = contentCatalog.findBy(pageIdSansVersion)
     if (pages.length > 1) {
       return pages
-        .map((page) => ({ version: page.src.version, url: page.pub.url, }))
+        .map((page) => ({ version: page.src.version, url: page.pub.url }))
         .sort((a, b) => versionCompare(a.version, b.version))
     }
   }
