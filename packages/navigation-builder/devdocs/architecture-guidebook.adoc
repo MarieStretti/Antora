@@ -4,25 +4,16 @@
 
 To allow readers to browse pages in the documentation site and navigate to them, they need a navigation menu that provides links to those pages.
 The links in the navigation menu should be organized in a logical hierarchy.
-Since the documentation site may contain multiple versions of multiple components, there should be multiple navigation menus, each one scoped to a single component version.
-The navigation builder component needs to accept input from the site author that defines the contents of each of these navigation hierarchies.
-From that input, the component should build a navigation model that can be used by the UI layout templates.
+Since the documentation site may contain multiple versions of multiple components, there should be multiple navigation menus, each one scoped to a version of a component.
+The navigation builder component needs to accept input from the site author that defines the contents of each of these navigation hierarchies (i.e., trees).
+From that input, the component should build a navigation model of menus that can be used by the UI layout templates.
 
 == Functional Overview
 
 The main purpose of the navigation builder component is to build a navigation model from navigation files defined by the site authors.
 This navigation model is then used by a layout template to add a navigation menu to each page.
-The navigation builder retrieves navigation files from the content catalog, translates the contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
-//There are two types of navigation files:
-//
-//* *linked* -- the navigation for a specific component version
-//* *aspect* -- global, cross-cutting navigation not linked to any one component
-//
-//The *linked* navigation files are stored with the files for a component version and are listed in the component descriptor.
-//A component version can declare zero or more linked navigation files.
-//The *aspect* navigation files are stored in the playbook repository and are listed in the playbook.
-//The playbook can declare zero or more aspect navigation files.
+The navigation builder retrieves navigation files from the content catalog, translates the contents of those files into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
 The navigation is defined using AsciiDoc documents.
 Navigation files are stored with the other files for a component version in the content catalog.
@@ -30,9 +21,9 @@ A navigation file can live anywhere in the content tree.
 
 A content file is promoted to a navigation file when it's listed by path in the `nav` array in the component descriptor.
 A component version can declare zero or more navigation files.
-The order the navigation files are listed in the component descriptor determines their order in the navigation model.
+The order the navigation files are listed in the component descriptor determines the order of the corresponding navigation trees in the navigation menu.
 
-Each navigation file contains one or more unordered AsciiDoc lists of arbitrary depth that describe the navigation displayed when the user navigates to a particular component version.
+Each navigation file contains one or more unordered AsciiDoc lists of arbitrary depth that describe the navigation displayed when the user navigates to a particular version of a component.
 Each navigation entry can be a page reference link, an external link, or inactive text.
 Each of these entry types may contain inline formatting (bold, italic, etc.).
 If the list has an optional block title, it becomes the navigation item at the root of the navigation tree (its properties get stored directly on the root node).
@@ -46,14 +37,6 @@ The navigation builder component functionality is provided by the navigation-bui
 This component builds a navigation model from navigation files declared by the descriptor in each component.
 The navigation files used as input should be retrieved by invoking `findBy({ family: 'navigation'})` on the content catalog.
 The navigation model is an instance of the NavigationCatalog class.
-
-//The navigation model is partitioned into domains.
-//For linked navigation, the navigation is indexed by component then version, known as a linked domain.
-//For aspect navigation, this component generates a corresponding aspect domain dynamically based on the navigation filename.
-//These navigation models can then be looked up by domain.
-
-//The linked navigation files should be retrieved by calling `findBy({ family: 'navigation'})` on the content catalog.
-//The aspect navigation files should be resolved from the `nav` property of the playbook.
 
 Each navigation file in a component version should be processed as follows:
 
@@ -149,3 +132,29 @@ The navigation builder prepares the navigation model and makes it available to s
 All other steps should read navigation information from this model.
 Other components may contribute to this model.
 The navigation menu retrieved from this model is used by the layout template to populate the navigation UI elements.
+
+////
+Aspect vs Linked Navigation
+
+== Functional Overview
+
+There are two types of navigation files:
+
+* *linked* -- the navigation for a specific component version
+* *aspect* -- global, cross-cutting navigation not linked to any one component
+
+The *linked* navigation files are stored with the files for a component version and are listed in the component descriptor.
+A component version can declare zero or more linked navigation files.
+The *aspect* navigation files are stored in the playbook repository and are listed in the playbook.
+The playbook can declare zero or more aspect navigation files.
+
+== Software Architecture
+
+The navigation model is partitioned into domains.
+For linked navigation, the navigation is indexed by component then version, known as a linked domain.
+For aspect navigation, this component generates a corresponding aspect domain dynamically based on the navigation filename.
+These navigation models can then be looked up by domain.
+
+The linked navigation files should be retrieved by calling `findBy({ family: 'navigation'})` on the content catalog.
+The aspect navigation files should be resolved from the `nav` property of the playbook.
+////
