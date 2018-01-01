@@ -1,13 +1,13 @@
 'use strict'
 
 const buffer = require('gulp-buffer')
+const collect = require('stream-to-array')
 const crypto = require('crypto')
 const download = require('download')
 const fs = require('fs-extra')
 const map = require('map-stream')
 const minimatchAll = require('minimatch-all')
 const path = require('path')
-const streamToArray = require('stream-to-array')
 const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
 const zip = require('gulp-vinyl-zip')
@@ -51,7 +51,7 @@ async function loadUi (playbook) {
     bundlePath = path.resolve(bundle)
   }
 
-  const files = await streamToArray(
+  const files = await collect(
     zip
       .src(bundlePath)
       .pipe(selectFilesStartingFrom(startPath))

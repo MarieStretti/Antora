@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const collect = require('stream-to-array')
 const File = require('vinyl')
 const fs = require('fs-extra')
 const git = require('nodegit')
@@ -8,7 +9,6 @@ const isMatch = require('matcher').isMatch
 const map = require('map-stream')
 const mimeTypes = require('./mime-types-with-asciidoc')
 const path = require('path')
-const streamToArray = require('stream-to-array')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
@@ -261,8 +261,8 @@ async function entryToFile (entry) {
 function readFilesFromWorktree (relativeDir) {
   const base = path.resolve(relativeDir)
   const opts = { base, cwd: base, removeBOM: false }
-  // NOTE streamToArray wraps the stream in a Promise so it can be awaited
-  return streamToArray(vfs.src(CONTENT_GLOB, opts).pipe(relativize()))
+  // NOTE collect wraps the stream in a Promise so it can be awaited
+  return collect(vfs.src(CONTENT_GLOB, opts).pipe(relativize()))
 }
 
 /**
