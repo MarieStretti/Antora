@@ -140,6 +140,20 @@ describe('build UI model', () => {
       expect(model.component.name).to.equal('the-component')
     })
 
+    it('should set componentVersion property to component version from content catalog', () => {
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.componentVersion).to.exist()
+      expect(model.componentVersion).to.equal(component.versions[0])
+    })
+
+    it('should set the module and version properties to values from file src object', () => {
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.module).to.exist()
+      expect(model.module).to.equal('ROOT')
+      expect(model.version).to.exist()
+      expect(model.version).to.equal('1.0')
+    })
+
     it('should set url property to pub url of file', () => {
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.url).to.equal('/the-component/1.0/the-page.html')
