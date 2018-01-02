@@ -34,11 +34,10 @@ describe('buildNavigation()', () => {
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
       order: 0,
-      title: {
-        content: 'Module A',
-        url: '/component-a/module-a/index.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'Module A',
+      url: '/component-a/module-a/index.html',
+      urlType: 'internal',
       items: [
         {
           content: 'Requirements',
@@ -68,6 +67,7 @@ describe('buildNavigation()', () => {
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
       order: 0,
+      root: true,
       items: [
         {
           content: 'Module A',
@@ -113,11 +113,10 @@ describe('buildNavigation()', () => {
     expect(menuA).to.have.lengthOf(1)
     expect(menuA[0]).to.eql({
       order: 0,
-      title: {
-        content: 'Component A',
-        url: '/component-a/module-a/index.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'Component A',
+      url: '/component-a/module-a/index.html',
+      urlType: 'internal',
       items: [
         {
           content: 'The Page',
@@ -131,11 +130,10 @@ describe('buildNavigation()', () => {
     expect(menuB).to.have.lengthOf(1)
     expect(menuB[0]).to.eql({
       order: 0,
-      title: {
-        content: 'Component B',
-        url: '/component-b/index.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'Component B',
+      url: '/component-b/index.html',
+      urlType: 'internal',
       items: [
         {
           content: 'The Page',
@@ -146,8 +144,6 @@ describe('buildNavigation()', () => {
     })
   })
 
-  // FIXME the implementation for this feature needs to be reworked
-  // we're hardcoding the calculation for the urlContext in the buildNavigation function
   it('should resolve page references relative to module of navigation file', async () => {
     const navContents = heredoc`
       * xref:page-a.adoc[This Module]
@@ -167,7 +163,7 @@ describe('buildNavigation()', () => {
       { version: '0.9', family: 'page', relative: 'page-c.adoc' },
       { component: 'component-b', version: 'master', module: 'ROOT', family: 'page', relative: 'page-d.adoc' },
     ]).spyOn('getById')
-    const navCatalog = await buildNavigation(contentCatalog)
+    await buildNavigation(contentCatalog)
     expectCalledWith(
       contentCatalog.getById,
       [
@@ -220,10 +216,33 @@ describe('buildNavigation()', () => {
       ],
       3
     )
+  })
+
+  it('should store url for page reference as root relative path with urlType set to internal', async () => {
+    const navContents = heredoc`
+      * xref:page-a.adoc[This Module]
+      * xref:module-b:page-b.adoc[Other Module]
+      * xref:0.9@page-c.adoc#detail[Older Version]
+      * xref:component-b::page-d.adoc[Other Component]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'navigation',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'page-a.adoc' },
+      { module: 'module-b', family: 'page', relative: 'page-b.adoc' },
+      { version: '0.9', family: 'page', relative: 'page-c.adoc' },
+      { component: 'component-b', version: 'master', module: 'ROOT', family: 'page', relative: 'page-d.adoc' },
+    ])
+    const navCatalog = await buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
+      root: true,
       items: [
         {
           content: 'This Module',
@@ -275,6 +294,7 @@ describe('buildNavigation()', () => {
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
       order: 0,
+      root: true,
       items: [
         {
           content: 'Basics',
@@ -331,7 +351,8 @@ describe('buildNavigation()', () => {
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
       order: 0,
-      title: { content: 'By Level' },
+      root: true,
+      content: 'By Level',
       items: [
         {
           content: 'Basics',
@@ -383,11 +404,10 @@ describe('buildNavigation()', () => {
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
-      title: {
-        content: 'AsciiDoc',
-        url: '/component-a/module-a/asciidoc/index.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'AsciiDoc',
+      url: '/component-a/module-a/asciidoc/index.html',
+      urlType: 'internal',
       items: [
         {
           content: 'Syntax Primer',
@@ -431,9 +451,8 @@ describe('buildNavigation()', () => {
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
-      title: {
-        content: 'Module A',
-      },
+      root: true,
+      content: 'Module A',
       items: [
         {
           content: 'Page A',
@@ -472,9 +491,8 @@ describe('buildNavigation()', () => {
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
-      title: {
-        content: 'Module A',
-      },
+      root: true,
+      content: 'Module A',
       items: [
         {
           content: 'Basics',
@@ -522,9 +540,8 @@ describe('buildNavigation()', () => {
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
-      title: {
-        content: '<em>Module A</em>',
-      },
+      root: true,
+      content: '<em>Module A</em>',
       items: [
         {
           content: '<strong>Commands</strong>',
@@ -573,6 +590,7 @@ describe('buildNavigation()', () => {
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
+      root: true,
       items: [
         {
           content: 'Basics',
@@ -642,11 +660,10 @@ describe('buildNavigation()', () => {
     expect(menu).to.have.lengthOf(2)
     expect(menu[0]).to.eql({
       order: 0,
-      title: {
-        content: 'Basics',
-        url: '/component-a/module-a/basics.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'Basics',
+      url: '/component-a/module-a/basics.html',
+      urlType: 'internal',
       items: [
         {
           content: 'Requirements',
@@ -657,11 +674,10 @@ describe('buildNavigation()', () => {
     })
     expect(menu[1]).to.eql({
       order: 0.5,
-      title: {
-        content: 'Hosting',
-        url: '/component-a/module-a/hosting.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'Hosting',
+      url: '/component-a/module-a/hosting.html',
+      urlType: 'internal',
       items: [
         {
           content: 'GitLab Pages',
@@ -723,16 +739,21 @@ describe('buildNavigation()', () => {
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(5)
+    expect(menu[0].root).to.be.true()
     expect(menu[0].order).to.equal(0)
-    expect(menu[0].title.content).to.equal('Module D')
+    expect(menu[0].content).to.equal('Module D')
+    expect(menu[1].root).to.be.true()
     expect(menu[1].order).to.equal(1)
-    expect(menu[1].title.content).to.equal('Module C')
+    expect(menu[1].content).to.equal('Module C')
+    expect(menu[2].root).to.be.true()
     expect(menu[2].order).to.equal(1.5)
-    expect(menu[2].title.content).to.equal('More Module C')
+    expect(menu[2].content).to.equal('More Module C')
+    expect(menu[3].root).to.be.true()
     expect(menu[3].order).to.equal(2)
-    expect(menu[3].title.content).to.equal('Module A')
+    expect(menu[3].content).to.equal('Module A')
+    expect(menu[4].root).to.be.true()
     expect(menu[4].order).to.equal(3)
-    expect(menu[4].title.content).to.equal('Module B')
+    expect(menu[4].content).to.equal('Module B')
   })
 
   it('should skip blocks that are not unordered lists', async () => {
@@ -770,8 +791,8 @@ describe('buildNavigation()', () => {
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(2)
-    expect(menu[0].title.content).to.equal('Basics')
-    expect(menu[1].title.content).to.equal('Hosting')
+    expect(menu[0].content).to.equal('Basics')
+    expect(menu[1].content).to.equal('Hosting')
   })
 
   it('should skip navigation file if it contains no unordered lists', async () => {
@@ -793,7 +814,7 @@ describe('buildNavigation()', () => {
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
-    expect(menu[0].title.content).to.equal('Basics')
+    expect(menu[0].content).to.equal('Basics')
   })
 
   // FIXME we want to support includes relative to nav.adoc, but those files aren't added to catalog
@@ -861,11 +882,10 @@ describe('buildNavigation()', () => {
     expect(menu).to.have.lengthOf(2)
     expect(menu[0]).to.eql({
       order: 0,
-      title: {
-        content: 'Basics',
-        url: '/component-a/module-a/index.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'Basics',
+      url: '/component-a/module-a/index.html',
+      urlType: 'internal',
       items: [
         {
           content: 'Requirements',
@@ -876,11 +896,10 @@ describe('buildNavigation()', () => {
     })
     expect(menu[1]).to.eql({
       order: 0.5,
-      title: {
-        content: 'Advanced',
-        url: '/component-a/module-a/advanced/index.html',
-        urlType: 'internal',
-      },
+      root: true,
+      content: 'Advanced',
+      url: '/component-a/module-a/advanced/index.html',
+      urlType: 'internal',
       items: [
         {
           content: 'Caching',

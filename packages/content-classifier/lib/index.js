@@ -1,50 +1,12 @@
 'use strict'
 
+const ContentCatalog = require('./content-catalog')
 const path = require('path')
-const _ = require('lodash')
 
-const $files = Symbol('files')
-const $generateId = Symbol('generateId')
-
-class ContentCatalog {
-  constructor () {
-    this[$files] = {}
-  }
-
-  getFiles () {
-    return Object.values(this[$files])
-  }
-
-  addFile (file) {
-    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
-    if (id in this[$files]) {
-      throw new Error('Duplicate file')
-    }
-    this[$files][id] = file
-  }
-
-  findBy (options) {
-    const srcFilter = _.pick(options, ['component', 'version', 'module', 'family', 'relative', 'basename', 'extname'])
-    return _.filter(this[$files], { src: srcFilter })
-  }
-
-  getById ({ component, version, module, family, relative }) {
-    const id = this[$generateId]({ component, version, module, family, relative })
-    return this[$files][id]
-  }
-
-  getByPath ({ component, version, path: path_ }) {
-    return _.find(this[$files], { path: path_, src: { component, version } })
-  }
-
-  [$generateId] ({ component, version, module, family, relative }) {
-    return `${family}/${version}@${component}:${module}:${relative}`
-  }
-}
-
-module.exports = (playbook, aggregate) => {
-  const siteUrl = playbook.site.url.endsWith('/') ? playbook.site.url.slice(0, -1) : playbook.site.url
-  return aggregate.reduce((catalog, { name: component, version, nav, files }) => {
+function classifyContent (playbook, aggregate) {
+  let siteUrl = playbook.site.url
+  if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
+  return aggregate.reduce((catalog, { name: component, version, title, start_page: startPage, nav, files }) => {
     files.forEach((file) => {
       const family = partitionSrc(file, component, version, nav)
 
@@ -57,6 +19,9 @@ module.exports = (playbook, aggregate) => {
 
       catalog.addFile(file)
     })
+    const startPageUrl = resolveStartPageUrl(startPage, component, version, catalog)
+    // Q: should we use separate call to set start URL? catalog.setStartUrl(component, version, startPageUrl)
+    catalog.registerComponentVersion(component, version, title, startPageUrl)
     return catalog
   }, new ContentCatalog())
 }
@@ -195,7 +160,7 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
   }
 
   pub.url = url
-  pub.absoluteUrl = siteUrl + url
+  if (siteUrl) pub.absoluteUrl = siteUrl + url
 
   if (out) {
     pub.moduleRootPath = out.moduleRootPath
@@ -205,6 +170,17 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
   return pub
 }
 
+function resolveStartPageUrl (startPage, component, version, catalog) {
+  let startPageId = { component, version, module: 'ROOT', family: 'page', relative: 'index.adoc' }
+  if (startPage && ~startPage.indexOf(':')) {
+    const [startPageModule, startPageRelative] = startPage.split(':')
+    startPageId.module = startPageModule
+    startPageId.relative = startPageRelative
+  }
+  const resolvedStartPage = catalog.getById(startPageId)
+  if (resolvedStartPage) return resolvedStartPage.pub.url
+}
+
 function calculateRootPath (depth) {
   return depth
     ? Array(depth)
@@ -212,3 +188,5 @@ function calculateRootPath (depth) {
       .join('/')
     : '.'
 }
+
+module.exports = classifyContent

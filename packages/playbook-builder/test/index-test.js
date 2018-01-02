@@ -208,6 +208,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.ui.bundle).to.equal('../ui/build/ui-bundles.zip')
     expect(playbook.ui.startPath).to.equal('dark-theme')
     expect(playbook.ui.outputDir).to.equal('_')
+    expect(playbook.ui.defaultLayout).to.equal('default')
   })
 
   it('is decoupled from the process environment', () => {

@@ -43,7 +43,8 @@ function loadNavigationFile (navFile, customAttrs, contentCatalog) {
   )
   if (lists.length === 0) return []
   return lists.map((list, idx) => {
-    const tree = buildNavigationTree(list.getTitle(), list, true)
+    const tree = buildNavigationTree(list.getTitle(), list)
+    tree.root = true
     tree.order = idx === 0 ? index : parseFloat((index + idx / lists.length).toFixed(4))
     return { component, version, tree }
   })
@@ -54,14 +55,8 @@ function getChildList (node) {
   if (block0 && block0.context === 'ulist') return block0
 }
 
-function buildNavigationTree (formattedContent, list, isRoot) {
-  let entry
-  if (isRoot) {
-    entry = {}
-    if (formattedContent) entry.title = partitionContent(formattedContent)
-  } else {
-    entry = partitionContent(formattedContent)
-  }
+function buildNavigationTree (formattedContent, list) {
+  const entry = formattedContent ? partitionContent(formattedContent) : {}
 
   if (list) {
     entry.items = list.blocks.map((item) => buildNavigationTree(item.$text(), getChildList(item)))

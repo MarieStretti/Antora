@@ -85,7 +85,33 @@ describe('convertDocument()', () => {
       })
   })
 
-  it('should save document header attributes to file', () => {
+  it('should set formatted document title to asciidoc.doctitle property on file object', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      = _Awesome_ Document Title
+
+      article contents
+    `)
+    expect(convertDocument(inputFile))
+      .to.be.fulfilled()
+      .then(() => {
+        expect(inputFile.asciidoc).to.exist()
+        expect(inputFile.asciidoc.doctitle).to.equal('<em>Awesome</em> Document Title')
+      })
+  })
+
+  it('should not set asciidoc.doctitle property on file object if document has no header', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      article contents only
+    `)
+    expect(convertDocument(inputFile))
+      .to.be.fulfilled()
+      .then(() => {
+        expect(inputFile.asciidoc).to.exist()
+        expect(inputFile.asciidoc.doctitle).to.not.exist()
+      })
+  })
+
+  it('should save document header attributes to asciidoc.attributes property on file object', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Document Title
       :keywords: CSS, flexbox, layout, box model
@@ -95,9 +121,9 @@ describe('convertDocument()', () => {
     expect(convertDocument(inputFile))
       .to.be.fulfilled()
       .then(() => {
-        expect(inputFile.asciidoc).to.not.be.undefined()
+        expect(inputFile.asciidoc).to.exist()
         const attrs = inputFile.asciidoc.attributes
-        expect(attrs).to.not.be.undefined()
+        expect(attrs).to.exist()
         expect(attrs).to.include({
           docfile: inputFile.path,
           env: 'site',
@@ -121,9 +147,9 @@ describe('convertDocument()', () => {
       .to.be.fulfilled()
       .then(() => {
         expect(inputFile.contents.toString()).to.include(customAttrs['product-name'])
-        expect(inputFile.asciidoc).to.not.be.undefined()
+        expect(inputFile.asciidoc).to.exist()
         const attrs = inputFile.asciidoc.attributes
-        expect(attrs).to.not.be.undefined()
+        expect(attrs).to.exist()
         expect(attrs).to.include(customAttrs)
       })
   })
