@@ -37,7 +37,11 @@ module.exports = {
     chai
       .expect(observed.__spy.calls[i])
       .to.eql(Array.isArray(args) ? args : [args], 'expected ' + observed + ' to have been called with args'),
-  heredoc: ([str]) => {
+  heredoc: (literals, ...values) => {
+    const str =
+      literals.length > 1
+      ? values.reduce((accum, value, idx) => accum + value + literals[idx + 1], literals[0])
+      : literals[0]
     const lines = str.trimRight().split(/^/m)
     if (lines.length > 1) {
       if (lines[0] === '\n') lines.shift()
