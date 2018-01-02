@@ -80,6 +80,11 @@ module.exports = {
       format: String,
       default: '_',
     },
+    default_layout: {
+      doc: 'The default layout to apply to pages that do not specify a layout.',
+      format: String,
+      default: undefined,
+    },
   },
   runtime: {
     quiet: {
