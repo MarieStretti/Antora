@@ -18,7 +18,7 @@ const SEPARATOR_RX = /\/|:/
 const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
 
 module.exports = async (playbook) => {
-  const componentVersions = playbook.content.sources.map(async (source) => {
+  const componentVersions = await Promise.all(playbook.content.sources.map(async (source) => {
     const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(source.url)
     const branches = await repository.getReferences(git.Reference.TYPE.OID)
 
@@ -34,28 +34,29 @@ module.exports = async (playbook) => {
       .values()
       .filter(({ branchName }) => branchMatches(branchName, source.branches || playbook.content.branches))
       .map(async ({ branch, branchName, isHead, isLocal }) => {
-        let files
+        let filesPromise
         if (isLocalRepo && !isBare && isHead) {
-          files = await readFilesFromWorktree(path.join(source.url, source.startPath || ''))
+          filesPromise = readFilesFromWorktree(path.join(source.url, source.startPath || ''))
         } else {
-          files = await readFilesFromGitTree(repository, branch, source.startPath)
+          filesPromise = readFilesFromGitTree(repository, branch, source.startPath)
         }
 
-        const componentVersion = loadComponentDescriptor(files)
-        componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
-        return componentVersion
+        return filesPromise.then((files) => {
+          const componentVersion = loadComponentDescriptor(files)
+          componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
+          return componentVersion
+        })
       })
       .value()
 
-    const allRepoComponentVersions = await Promise.all(repoComponentVersions)
+    return Promise.all(repoComponentVersions).then((value) => {
+      // nodegit repositories need to be manually closed
+      repository.free()
+      return value
+    })
+  }))
 
-    // nodegit repositories need to be manually closed
-    repository.free()
-
-    return allRepoComponentVersions
-  })
-
-  return buildAggregate(await Promise.all(componentVersions))
+  return buildAggregate(componentVersions)
 }
 
 async function openOrCloneRepository (repoUrl) {
