@@ -50,7 +50,7 @@ module.exports = async (playbook) => {
     const allRepoComponentVersions = await Promise.all(repoComponentVersions)
 
     // nodegit repositories need to be manually closed
-    await repository.free()
+    repository.free()
 
     return allRepoComponentVersions
   })
