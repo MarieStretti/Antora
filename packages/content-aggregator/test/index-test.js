@@ -5,15 +5,17 @@ const { expect } = require('../../../test/test-utils')
 
 const _ = require('lodash')
 const aggregateContent = require('@antora/content-aggregator')
-const del = require('del')
-const FixtureRepo = require('./repo-utils')
+const FixtureRepository = require('./repo-utils')
+const fs = require('fs-extra')
 const path = require('path')
 
 const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
+const CWD = process.cwd()
+const WORK_DIR = path.resolve(__dirname, 'work')
 
 function testAll (testFunction, count = 1) {
   function test (fixtureRepoOptions) {
-    const repos = Array.from({ length: count }).map(() => new FixtureRepo(fixtureRepoOptions))
+    const repos = Array.from({ length: count }).map(() => new FixtureRepository(fixtureRepoOptions))
     return testFunction(...repos)
   }
 
@@ -24,8 +26,9 @@ function testAll (testFunction, count = 1) {
 }
 
 function cleanReposAndCache () {
-  del.sync('.antora-cache')
-  del.sync(path.resolve(__dirname, 'repos', '*'), { dot: true })
+  fs.removeSync(FixtureRepository.BASE_DIR)
+  fs.removeSync(WORK_DIR)
+  process.chdir(CWD)
 }
 
 describe('aggregateContent()', () => {
@@ -33,6 +36,8 @@ describe('aggregateContent()', () => {
 
   beforeEach(() => {
     cleanReposAndCache()
+    fs.ensureDirSync(WORK_DIR)
+    process.chdir(WORK_DIR)
     playbook = {
       content: {
         sources: [],
@@ -482,7 +487,7 @@ describe('aggregateContent()', () => {
   }
 
   it('should catalog files in worktree of local repo', async () => {
-    const repo = new FixtureRepo({ isRemote: false, isBare: false })
+    const repo = new FixtureRepository({ isRemote: false, isBare: false })
     await initRepoWithWorkingFiles(repo)
     playbook.content.sources.push({ url: repo.url })
     const aggregate = aggregateContent(playbook)
@@ -534,26 +539,26 @@ describe('aggregateContent()', () => {
     }
 
     it('on local bare repo', async () => {
-      const repo = new FixtureRepo({ isRemote: false, isBare: true })
+      const repo = new FixtureRepository({ isRemote: false, isBare: true })
       await initRepoWithWorkingFiles(repo)
       return testNonWorkingFilesCatalog(repo)
     })
 
     it('on remote repo', async () => {
-      const repo = new FixtureRepo({ isRemote: true, isBare: false })
+      const repo = new FixtureRepository({ isRemote: true, isBare: false })
       await initRepoWithWorkingFiles(repo)
       return testNonWorkingFilesCatalog(repo)
     })
 
     it('on remote bare repo', async () => {
-      const repo = new FixtureRepo({ isRemote: true, isBare: true })
+      const repo = new FixtureRepository({ isRemote: true, isBare: true })
       await initRepoWithWorkingFiles(repo)
       return testNonWorkingFilesCatalog(repo)
     })
   })
 
   it('should refetch from remote into local cache', async () => {
-    const repo = new FixtureRepo({ isRemote: true, isBare: true })
+    const repo = new FixtureRepository({ isRemote: true, isBare: true })
     await repo.initRepo({ name: 'the-component', version: 'v1.2.3' })
     await repo.addFixtureFiles(['modules/ROOT/pages/page-one.adoc'])
 

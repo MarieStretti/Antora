@@ -5,18 +5,18 @@ const git = require('nodegit')
 const path = require('path')
 
 const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
-const fixturesPath = path.resolve(__dirname, 'fixtures')
-const reposBasePath = path.resolve(__dirname, 'repos')
+const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
 
-class FixtureRepo {
+class FixtureRepository {
   constructor ({ isRemote, isBare }) {
     this.isRemote = isRemote
     this.isBare = isBare
+    this.baseDir = FixtureRepository.BASE_DIR
   }
 
   async initRepo ({ repoName, name, title, version, nav, startPath }) {
     this.startPath = startPath
-    this.repoPath = path.join(reposBasePath, repoName || name || 'default-repo')
+    this.repoPath = path.join(this.baseDir, repoName || name || 'default-repo')
     this.url = this.repoPath
     if (this.isRemote) {
       this.url = 'file://' + this.url
@@ -38,7 +38,7 @@ class FixtureRepo {
         // copy fixture file if exists, otherwise create an empty file
         return fs
           .ensureDir(path.dirname(to))
-          .then(() => fs.copy(path.join(fixturesPath, item), to).catch(() => fs.writeFile(to, '', 'utf8')))
+          .then(() => fs.copy(path.join(FIXTURES_DIR, item), to).catch(() => fs.writeFile(to, '', 'utf8')))
       })
     )
   }
@@ -115,4 +115,6 @@ class FixtureRepo {
   }
 }
 
-module.exports = FixtureRepo
+FixtureRepository.BASE_DIR = path.resolve(__dirname, 'repos')
+
+module.exports = FixtureRepository

@@ -3,11 +3,13 @@
 
 const { expect } = require('../../../test/test-utils')
 
-const del = require('del')
-const fs = require('fs')
+const fs = require('fs-extra')
 const http = require('http')
 const loadUi = require('@antora/ui-loader')
 const path = require('path')
+
+const CWD = process.cwd()
+const WORK_DIR = path.resolve(__dirname, 'work')
 
 function testAll (archive, testFunction) {
   const playbook = { ui: { startPath: '' } }
@@ -29,7 +31,8 @@ function testAll (archive, testFunction) {
 }
 
 function cleanCache () {
-  del.sync('.antora-cache')
+  fs.removeSync(WORK_DIR)
+  process.chdir(CWD)
 }
 
 describe('loadUi()', () => {
@@ -53,6 +56,8 @@ describe('loadUi()', () => {
 
   beforeEach(() => {
     cleanCache()
+    fs.ensureDirSync(WORK_DIR)
+    process.chdir(WORK_DIR)
     server = http
       .createServer((request, response) => {
         const filePath = path.resolve(__dirname, path.join('fixtures', request.url))
