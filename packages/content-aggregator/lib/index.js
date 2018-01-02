@@ -18,43 +18,45 @@ const SEPARATOR_RX = /\/|:/
 const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
 
 module.exports = async (playbook) => {
-  const componentVersions = await Promise.all(playbook.content.sources.map(async (source) => {
-    const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(source.url)
-    const branches = await repository.getReferences(git.Reference.TYPE.OID)
+  const componentVersions = await Promise.all(
+    playbook.content.sources.map(async (source) => {
+      const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(source.url)
+      const branches = await repository.getReferences(git.Reference.TYPE.OID)
 
-    const repoComponentVersions = _(branches)
-      .map((branch) => getBranchInfo(branch))
-      .groupBy('branchName')
-      .mapValues((unorderedBranches) => {
-        // isLocal comes from reference.isBranch() which is 0 or 1
-        // so we'll end up with truthy isLocal last in the array
-        const branches = _.sortBy(unorderedBranches, 'isLocal')
-        return isLocalRepo ? _.last(branches) : _.first(branches)
-      })
-      .values()
-      .filter(({ branchName }) => branchMatches(branchName, source.branches || playbook.content.branches))
-      .map(async ({ branch, branchName, isHead, isLocal }) => {
-        let filesPromise
-        if (isLocalRepo && !isBare && isHead) {
-          filesPromise = readFilesFromWorktree(path.join(source.url, source.startPath || ''))
-        } else {
-          filesPromise = readFilesFromGitTree(repository, branch, source.startPath)
-        }
-
-        return filesPromise.then((files) => {
-          const componentVersion = loadComponentDescriptor(files)
-          componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
-          return componentVersion
+      const repoComponentVersions = _(branches)
+        .map((branch) => getBranchInfo(branch))
+        .groupBy('branchName')
+        .mapValues((unorderedBranches) => {
+          // isLocal comes from reference.isBranch() which is 0 or 1
+          // so we'll end up with truthy isLocal last in the array
+          const branches = _.sortBy(unorderedBranches, 'isLocal')
+          return isLocalRepo ? _.last(branches) : _.first(branches)
         })
-      })
-      .value()
+        .values()
+        .filter(({ branchName }) => branchMatches(branchName, source.branches || playbook.content.branches))
+        .map(async ({ branch, branchName, isHead, isLocal }) => {
+          let filesPromise
+          if (isLocalRepo && !isBare && isHead) {
+            filesPromise = readFilesFromWorktree(path.join(source.url, source.startPath || ''))
+          } else {
+            filesPromise = readFilesFromGitTree(repository, branch, source.startPath)
+          }
 
-    return Promise.all(repoComponentVersions).then((value) => {
-      // nodegit repositories need to be manually closed
-      repository.free()
-      return value
+          return filesPromise.then((files) => {
+            const componentVersion = loadComponentDescriptor(files)
+            componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
+            return componentVersion
+          })
+        })
+        .value()
+
+      return Promise.all(repoComponentVersions).then((value) => {
+        // nodegit repositories need to be manually closed
+        repository.free()
+        return value
+      })
     })
-  }))
+  )
 
   return buildAggregate(componentVersions)
 }
