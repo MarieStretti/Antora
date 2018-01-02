@@ -1,0 +1,8 @@
+= Index Page
+:imagesdir: ../assets/images
+
+Content.
+
+See xref:the-page.adoc[the page].
+
+include::{partialsdir}/diagrams.adoc[]
