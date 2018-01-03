@@ -94,8 +94,8 @@ describe('loadAsciiDoc()', () => {
         docfile: 'modules/module-a/pages/page-a.adoc',
         docdir: doc.getBaseDir(),
         docfilesuffix: '.adoc',
-        imagesdir: './_images',
-        attachmentsdir: './_attachments',
+        imagesdir: '_images',
+        attachmentsdir: '_attachments',
         partialsdir: 'partial$',
         examplesdir: 'example$',
         // computed

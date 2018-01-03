@@ -72,8 +72,8 @@ Here's a list of mandatory, built-in attributes that should be set when calling 
 * docfile = file.path
 * docdir = file.dirname
 * docfilesuffix = file.src.extname
-* imagesdir = file.pub.moduleRootPath + '/_images'
-* attachmentsdir = file.pub.moduleRootPath + '/_attachments'
+* imagesdir = path.join(file.pub.moduleRootPath, '_images')
+* attachmentsdir = path.join(file.pub.moduleRootPath, '_attachments')
 * examplesdir = 'example$'
 * partialsdir = 'partial$'
 
