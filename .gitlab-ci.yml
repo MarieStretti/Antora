@@ -4,12 +4,12 @@ stages:
 - verify
 yarn:
   stage: setup
-  script:
-  - yarn --cache-folder=.yarn-cache
   cache:
     paths:
     - .yarn-cache/
     - node_modules/
+  script:
+  - yarn --cache-folder=.yarn-cache
 lint:
   stage: verify
   cache:
