@@ -399,5 +399,28 @@ describe('commander', () => {
         defaultValue: 'localhost',
       })
     })
+
+    it('should add option from convict config to command', () => {
+      const configSchema = {
+        host: {
+          arg: 'host',
+          default: 'localhost',
+          doc: 'Server hostname',
+          format: String,
+        },
+      }
+      const cli = createCli({})
+      cli
+        .command('generate')
+        .optionsFromConvict(convict(configSchema))
+      const options = cli.commands.find((candidate) => candidate.name() === 'generate').options
+      expect(options).to.have.lengthOf(1)
+      expect(options[0]).to.include({
+        long: '--host',
+        flags: '--host <host>',
+        description: 'Server hostname',
+        defaultValue: 'localhost',
+      })
+    })
   })
 })
