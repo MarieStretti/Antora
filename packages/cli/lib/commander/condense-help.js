@@ -1,8 +1,11 @@
+'use strict'
+
 const { Command } = require('commander')
 
 const helpInformation = Command.prototype.helpInformation
 const indentation = '  '
 
+// TODO include common options when outputting help for a (sub)command
 Command.prototype.helpInformation = function () {
   return helpInformation.call(this).split(/^/m).reduce((accum, line) => {
     if (line === '\n') {

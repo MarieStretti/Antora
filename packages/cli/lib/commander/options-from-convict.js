@@ -1,6 +1,8 @@
 'use strict'
 
-require('commander').Command.prototype.optionsFromConvict = function (convictConfig, opts = {}) {
+const { Command } = require('commander')
+
+Command.prototype.optionsFromConvict = function (convictConfig, opts = {}) {
   let exclude = opts.exclude
   if (exclude && !Array.isArray(exclude)) exclude = Array(exclude)
   getOptions(convictConfig).forEach((option) => {
@@ -20,7 +22,7 @@ function collectOptions (properties, options = [], context = undefined) {
   return Object.entries(properties).reduce((accum, [key, value]) => {
     const path = context ? `${context}.${key}` : key
     if ('properties' in value) {
-      return collectOptions(value.properties, options, path)
+      return collectOptions(value.properties, accum, path)
     } else if ('arg' in value) {
       const { arg, format, default: default_ } = value
       const option = { name: arg, form: `--${arg}`, description: value.doc, format: format }
@@ -37,9 +39,9 @@ function collectOptions (properties, options = [], context = undefined) {
       } else if (default_ !== undefined) {
         option.default = default_
       }
-      // Q why can't we use return options.concat(option)?
-      options.push(option)
-      return options
+      return accum.concat(option)
+    } else {
+      return accum
     }
   }, options)
 }
