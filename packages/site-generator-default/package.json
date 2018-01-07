@@ -16,7 +16,7 @@
     "@antora/content-classifier": "1.0.0-alpha.1",
     "@antora/document-converter": "1.0.0-alpha.1",
     "@antora/navigation-builder": "1.0.0-alpha.1",
-    "@antora/page-generator": "1.0.0-alpha.1",
+    "@antora/page-composer": "1.0.0-alpha.1",
     "@antora/playbook-builder": "1.0.0-alpha.1",
     "@antora/ui-loader": "1.0.0-alpha.1",
     "streamify-array": "^1.0.0",

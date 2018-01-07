@@ -1,4 +1,4 @@
-= Page Generator Guidebook
+= Page Composer Guidebook
 
 == Context
 
@@ -11,9 +11,9 @@ This page becomes a page in the generated site.
 == Functional Overview
 
 At this point in the pipeline, the files in the `page` family from the content catalog (i.e., text documents taken from the pages directory) are embeddable HTML.
-The page generator component needs to transform the contents of these files to complete HTML.
+The page composer component needs to transform the contents of these files to complete HTML.
 
-The main purpose of the page generator component is to a apply a page template to the embeddable HTML produced by the document converter.
+The main purpose of the page composer component is to a apply a page template to the embeddable HTML produced by the document converter.
 The page template wraps the main content in a UI shell that provides the foundation structure of an HTML page, adds common navigation in the header and footer areas, populates a navigation tree for navigating to other pages in the site, and includes a toolbar for performing actions such as switching between versions of the current page.
 Since each site's UI needs to fit the unique requirements of the site owner, the page templates need to be customizable.
 That's why the page templates are managed as a separate project and provided as input to the Antora pipeline.
@@ -36,7 +36,7 @@ Thus, this component should:
 
 == Software Architecture
 
-The page generator component functionality is provided by the page-generator module.
+The page composer component functionality is provided by the page-composer module.
 
 At a high level, this component is a template renderer.
 It applies a page template for each file in the `page` family from the content catalog.
@@ -45,7 +45,7 @@ All the details of applying the template to produce component HTML, which includ
 Page templates are assumed to be written in Handlebars.
 Therefore, this component should use a Handlebars library to apply the template.
 
-For each file in the `page` family, the page generator should:
+For each file in the `page` family, the page composer should:
 
 * Populate a template model that includes the contents of the current file (embeddable HTML) as well as information about the page's context such as the component, version, and navigation model
  ** The links in navigation model and breadcrumbs should be converted to be relative to the URL of the current page
@@ -67,19 +67,19 @@ For each file in the `page` family, the page generator should:
 
 == Code
 
-The page generator is implemented as a dedicated node package (i.e., module).
-The page generator API exports the `generatePages()` function, which takes a playbook, content catalog, UI catalog, and navigation model and converts all files in the `page` family from the content catalog.
-It also exports the `generatePage()` function, which can be used to operate on a single file.
+The page composer is implemented as a dedicated node package (i.e., module).
+The page composer API exports the `composePages()` function, which takes a playbook, content catalog, UI catalog, and navigation model and converts all files in the `page` family from the content catalog.
+It also exports the `composePage()` function, which can be used to operate on a single file.
 
-The API for the page generator should be used as follows:
+The API for the page composer should be used as follows:
 
 [source,js]
 ----
-const generatePages = require('@antora/page-generator')
+const composePages = require('@antora/page-composer')
 
 //...
 
-generatePages(playbook, catalog, uiCatalog)
+composePages(playbook, catalog, uiCatalog)
 ----
 
 == Data
@@ -88,7 +88,7 @@ The document converter mutates the files in the `page` family from the content c
 Specifically, this component updates the value of the `contents` property for each file by replacing the embeddable HTML with the HTML produced by the template.
 The previous value is still accessible via the `history` property on the file.
 
-The page generator must populate a template model for each page to pass to the template.
+The page composer must populate a template model for each page to pass to the template.
 The model should have the following properties:
 
 * title - the title of the page, retrieved from the `asciidoc.attributes['page-title']` property of the file
@@ -124,10 +124,10 @@ For example, to access the site title in the template, you can use:
 
 == Consequences
 
-Each page is generated using the specified page template, which is supplied by the UI bundle.
-Relying on a page template to produce the pages gives the site owner complete control over the generation of the pages, and thus complete control over the UI.
+Each page is composed using the specified page template, which is supplied by the UI bundle.
+Relying on a page template to produce the pages gives the site owner complete control over the construction of the pages, and thus complete control over the UI.
 The template model that is passed to the UI gives the author of the template enough information to create a wide variety of layouts that are influenced by the content.
 This ensures that the site can meet the requirements of the site owner.
 It's also possible to use different layouts for different pages by defining the layout at the page or component level.
 
-Once the page generator runs, the pages in the site are ready to be published.
+Once the page composer runs, the pages in the site are ready to be published.

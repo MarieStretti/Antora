@@ -10,7 +10,7 @@ const loadUi = require('@antora/ui-loader')
 const classifyContent = require('@antora/content-classifier')
 const convertDocument = require('@antora/document-converter')
 const buildNavigation = require('@antora/navigation-builder')
-const createPageGenerator = require('@antora/page-generator')
+const createPageComposer = require('@antora/page-composer')
 
 process.on('unhandledRejection', (reason) => {
   console.error(`An unexpected error occurred: Unhandled promise rejection: ${reason.stack}`)
@@ -35,10 +35,10 @@ async function generateSite (args, env, outputDir) {
   const uiCatalog = await uiCatalogPromise
 
   // TODO we could do this in same stream as convertDocument; but then we'd have an ordering problem
-  pages.reduce((generatePage, page) => {
-    generatePage(page, contentCatalog, navigationCatalog)
-    return generatePage
-  }, createPageGenerator(playbook, contentCatalog, uiCatalog))
+  pages.reduce((composePage, page) => {
+    composePage(page, contentCatalog, navigationCatalog)
+    return composePage
+  }, createPageComposer(playbook, contentCatalog, uiCatalog))
 
   // TODO this should be handled by publishSite (or publish or publishFiles)
   // FIXME we need a way to get publishable files (just files with out property?); getPublishableFiles()?

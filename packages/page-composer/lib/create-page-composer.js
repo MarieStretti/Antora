@@ -8,23 +8,23 @@ const versionCompare = require('@antora/content-classifier/lib/util/version-comp
 const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants')
 
 /**
- * Generates a function to generate a page.
+ * Generates a function to wrap the page contents in a page layout.
  *
  * Compiles the Handlebars layouts, along with the partials and helpers, and
  * builds the shared site UI model. Passes these objects to a generated
  * function, which can then be used to apply a layout template to pages.
  *
- * @memberof page-generator
+ * @memberof page-composer
  *
  * @param {Object} playbook - The configuration object for Antora.
  * @param {ContentCatalog} contentCatalog - The content catalog
  *   that provides access to the virtual files in the site.
  * @param {UiCatalog} uiCatalog - The file catalog
  *   that provides access to the UI files for the site.
- * @returns {Function} A function to generate a page (i.e., wrap the embeddable
+ * @returns {Function} A function to compose a page (i.e., wrap the embeddable
  *   HTML contents in a standalone page layout).
  */
-function createPageGenerator (playbook, contentCatalog, uiCatalog) {
+function createPageComposer (playbook, contentCatalog, uiCatalog) {
   uiCatalog
     .findByType('helper')
     .forEach((file) => handlebars.registerHelper(file.stem, requireFromString(file.contents.toString(), file.path)))
@@ -36,10 +36,10 @@ function createPageGenerator (playbook, contentCatalog, uiCatalog) {
     return accum
   }, {})
 
-  return createPageGeneratorInternal(buildSiteUiModel(playbook, contentCatalog), layouts)
+  return createPageComposerInternal(buildSiteUiModel(playbook, contentCatalog), layouts)
 }
 
-function createPageGeneratorInternal (site, layouts) {
+function createPageComposerInternal (site, layouts) {
   /**
    * Wraps the embeddable HTML contents of the specified file in a page layout.
    *
@@ -48,7 +48,7 @@ function createPageGeneratorInternal (site, layouts) {
    * of the file. If no layout is specified on the file, the default layout is
    * used.
    *
-   * @memberof page-generator
+   * @memberof page-composer
    *
    * @param {File} file - The virtual file the contains embeddeable HTML
    *   contents to wrap in a layout.
@@ -58,7 +58,7 @@ function createPageGeneratorInternal (site, layouts) {
    *   that provides access to the navigation menu for each component version.
    * @returns {File} The file whose contents was wrapped in the specified page layout.
    */
-  return function generatePage (file, contentCatalog, navigationCatalog) {
+  return function composePage (file, contentCatalog, navigationCatalog) {
     // QUESTION should we pass the playbook to the uiModel?
     const uiModel = buildUiModel(file, contentCatalog, navigationCatalog, site)
 
@@ -220,7 +220,7 @@ function getPageVersions (pageSrc, component, contentCatalog, opts = {}) {
   }
 }
 
-module.exports = createPageGenerator
+module.exports = createPageComposer
 module.exports.buildSiteUiModel = buildSiteUiModel
 module.exports.buildPageUiModel = buildPageUiModel
 module.exports.buildUiModel = buildUiModel

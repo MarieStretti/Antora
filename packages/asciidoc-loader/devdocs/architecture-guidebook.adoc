@@ -47,7 +47,7 @@ Here's a list of options that should be set when calling `Asciidoctor.load`:
 * extension_registry - contains an include processor extension that resolves includes from the content catalog
  ** if the target begins with a family symbol, the target should be looked up by page ID
  ** if the target does not begin with a family symbol, it should be looked up by path relative to the current file
- ** if an include cannot be resolved, the generator should log a warning (meaning, don't be silent)
+ ** if an include cannot be resolved, the loader should log a warning (meaning, don't be silent)
  ** this extension should be registered per instance, not globally
 * converter - an enhanced HTML5 converter
  ** intercepts the conversion of inline_anchor to convert xrefs that are page references (allowing other xrefs through)
