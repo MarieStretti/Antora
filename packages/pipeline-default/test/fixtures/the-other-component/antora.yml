@@ -1,6 +1,0 @@
-name: the-other-component
-title: The Other Component
-version: master
-start_page: core:index.adoc
-nav:
-- modules/core/nav.adoc

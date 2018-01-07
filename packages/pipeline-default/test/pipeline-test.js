@@ -6,58 +6,54 @@ const { expect } = require('../../../test/test-utils')
 const cheerio = require('cheerio')
 const fs = require('fs-extra')
 const generateSite = require('@antora/pipeline-default')
-const git = require('nodegit')
 const path = require('path')
+const RepositoryBuilder = require('../../../test/repository-builder')
 
+const CONTENT_REPOS_DIR = path.resolve(__dirname, 'content-repos')
 const CWD = process.cwd()
 const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
 const WORK_DIR = path.resolve(__dirname, 'work')
-const PROJECT_DIR = path.resolve(__dirname, '../../..')
 const TIMEOUT = 5000
 const UI_BUNDLE_URI =
   'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
 
 describe('generateSite()', () => {
   let $
-  let currentBranch
-  let startPath
+  let destDir
   let playbookSpec
   let playbookSpecFile
-  let destDir
+  let repositoryBuilder
   let uiBundleUri
-
-  const getCurrentBranch = async () => {
-    const repo = await git.Repository.open(PROJECT_DIR)
-    const result = (await repo.getCurrentBranch()).name().replace(/^.+\//, '')
-    repo.free()
-    return result
-  }
 
   const readFile = (file, dir) => fs.readFileSync(dir ? path.join(dir, file) : file, 'utf8')
 
   const loadHtmlFile = (relative) => cheerio.load(readFile(relative, destDir))
 
   before(async function () {
-    currentBranch = await getCurrentBranch()
-    startPath = path.relative(PROJECT_DIR, path.join(FIXTURES_DIR, 'the-component-2.0'))
-    playbookSpecFile = path.join(WORK_DIR, 'the-site.json')
     destDir = path.join(WORK_DIR, '_site')
+    playbookSpecFile = path.join(WORK_DIR, 'the-site.json')
+    repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
     uiBundleUri = UI_BUNDLE_URI
   })
 
-  beforeEach(() => {
-    fs.emptyDirSync(destDir)
-    process.chdir(WORK_DIR)
+  beforeEach(async () => {
+    fs.removeSync(CONTENT_REPOS_DIR)
+    await (await (await (await repositoryBuilder.init('the-component')).checkoutBranch('v2.0'))
+      .addComponentDescriptorToWorktree({ name: 'the-component', version: '2.0', nav: ['modules/ROOT/nav.adoc'] })
+      .importFilesFromFixture('the-component')).close('master')
     playbookSpec = {
       site: { title: 'The Site' },
       content: {
-        sources: [{ url: PROJECT_DIR, branches: currentBranch, start_path: startPath }],
+        sources: [{ url: path.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v2.0' }],
       },
       ui: { bundle: uiBundleUri },
     }
+    fs.emptyDirSync(destDir)
+    process.chdir(WORK_DIR)
   })
 
   after(() => {
+    fs.removeSync(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
       fs.removeSync(destDir)
       fs.removeSync(playbookSpecFile)
@@ -68,7 +64,7 @@ describe('generateSite()', () => {
   })
 
   it('should generate site into output directory', async () => {
-    fs.writeJsonSync(playbookSpecFile, playbookSpec)
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile], {}, destDir)
     expect(path.join(destDir, '_'))
       .to.be.a.directory()
@@ -106,7 +102,7 @@ describe('generateSite()', () => {
 
   it('should indexify URLs to internal pages', async () => {
     playbookSpec.urls = { html_extension_style: 'indexify' }
-    fs.writeJsonSync(playbookSpecFile, playbookSpec)
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile], {}, destDir)
     expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
@@ -121,7 +117,7 @@ describe('generateSite()', () => {
 
   it('should qualify applicable links using site url if set in playbook', async () => {
     playbookSpec.site.url = 'https://example.com/docs/'
-    fs.writeJsonSync(playbookSpecFile, playbookSpec)
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile], {}, destDir)
     expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
@@ -130,12 +126,11 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   it('should provide navigation to multiple versions of a component', async () => {
-    playbookSpec.content.sources.push({
-      url: PROJECT_DIR,
-      branches: currentBranch,
-      start_path: path.relative(PROJECT_DIR, path.join(FIXTURES_DIR, 'the-component-1.0')),
-    })
-    fs.writeJsonSync(playbookSpecFile, playbookSpec)
+    await (await (await (await repositoryBuilder.open('the-component')).checkoutBranch('v1.0'))
+      .addComponentDescriptorToWorktree({ name: 'the-component', version: '1.0', nav: ['modules/ROOT/nav.adoc'] })
+      .importFilesFromFixture('the-component', { exclude: ['modules/ROOT/pages/new-page.adoc'] })).close('master')
+    playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile], {}, destDir)
     expect(path.join(destDir, 'the-component'))
       .to.be.a.directory()
@@ -187,26 +182,30 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   it('should provide navigation to all versions of all components', async () => {
-    playbookSpec.content.sources.push(
-      ...[
-        {
-          url: PROJECT_DIR,
-          branches: currentBranch,
-          start_path: path.relative(PROJECT_DIR, path.join(FIXTURES_DIR, 'the-component-1.0')),
-        },
-        {
-          url: PROJECT_DIR,
-          branches: currentBranch,
-          start_path: path.relative(PROJECT_DIR, path.join(FIXTURES_DIR, 'the-other-component')),
-        },
-        {
-          url: PROJECT_DIR,
-          branches: currentBranch,
-          start_path: path.relative(PROJECT_DIR, path.join(FIXTURES_DIR, 'the-other-component-1.0')),
-        },
-      ]
-    )
-    fs.writeJsonSync(playbookSpecFile, playbookSpec)
+    await (await (await (await repositoryBuilder.open('the-component')).checkoutBranch('v1.0'))
+      .addComponentDescriptorToWorktree({ name: 'the-component', version: '1.0', nav: ['modules/ROOT/nav.adoc'] })
+      .importFilesFromFixture('the-component', { exclude: ['modules/ROOT/pages/new-page.adoc'] })).close('master')
+    await (await (await (await repositoryBuilder.init('the-other-component'))
+      .addComponentDescriptorToWorktree({
+        name: 'the-other-component',
+        version: 'master',
+        start_page: 'core:index.adoc',
+        nav: ['modules/core/nav.adoc'],
+      })
+      .importFilesFromFixture('the-other-component')).checkoutBranch('v1.0'))
+      .addComponentDescriptorToWorktree({
+        name: 'the-other-component',
+        version: '1.0',
+        start_page: 'core:index.adoc',
+        nav: ['modules/core/nav.adoc'],
+      })
+      .close('master')
+    playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
+    playbookSpec.content.sources.push({
+      url: path.join(CONTENT_REPOS_DIR, 'the-other-component'),
+      branches: ['master', 'v1.0'],
+    })
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile], {}, destDir)
     expect(path.join(destDir, 'the-other-component')).to.be.a.directory()
     expect(path.join(destDir, 'the-other-component/core/index.html')).to.be.a.file()
