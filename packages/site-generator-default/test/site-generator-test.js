@@ -5,7 +5,7 @@ const { expect } = require('../../../test/test-utils')
 
 const cheerio = require('cheerio')
 const fs = require('fs-extra')
-const generateSite = require('@antora/pipeline-default')
+const generateSite = require('@antora/site-generator-default')
 const path = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
@@ -30,7 +30,7 @@ describe('generateSite()', () => {
   const loadHtmlFile = (relative) => cheerio.load(readFile(relative, destDir))
 
   before(async function () {
-    destDir = path.join(WORK_DIR, '_site')
+    destDir = '_site'
     playbookSpecFile = path.join(WORK_DIR, 'the-site.json')
     repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
     uiBundleUri = UI_BUNDLE_URI
@@ -48,14 +48,15 @@ describe('generateSite()', () => {
       },
       ui: { bundle: uiBundleUri },
     }
-    fs.emptyDirSync(destDir)
+    fs.ensureDirSync(WORK_DIR)
     process.chdir(WORK_DIR)
+    fs.removeSync(destDir.split('/')[0])
   })
 
   after(() => {
     fs.removeSync(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
-      fs.removeSync(destDir)
+      fs.removeSync(destDir.split('/')[0])
       fs.removeSync(playbookSpecFile)
     } else {
       fs.removeSync(WORK_DIR)

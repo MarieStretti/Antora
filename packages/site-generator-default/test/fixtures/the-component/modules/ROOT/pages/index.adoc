@@ -1,5 +1,4 @@
 = Index Page
-:imagesdir: ../assets/images
 
 Content.
 
