@@ -2,6 +2,8 @@
 
 // IMPORTANT nodegit must be loaded before asciidoctor.js or else promisify gets tripped up by Opal enhancements
 require('nodegit')
+// IMPORTANT eagerly load Opal since we can assume we're always running in this context
+require('opal-runtime')
 
 const interceptRequire = require('intercept-require')
 const patchChai = (_, info) => {
