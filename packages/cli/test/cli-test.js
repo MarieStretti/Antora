@@ -11,10 +11,7 @@ const RepositoryBuilder = require('../../../test/repository-builder')
 
 const ANTORA_CLI = require.resolve(path.join('@antora/cli', pkg.bin.antora))
 const CONTENT_REPOS_DIR = path.resolve(__dirname, 'content-repos')
-const CWD = process.cwd()
 const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
-const ISTANBUL_CLI = path.resolve('node_modules/.bin/istanbul')
-const PACKAGE_DIR = path.dirname(require.resolve('@antora/cli/package.json'))
 const TIMEOUT = 30000
 const UI_BUNDLE_URI =
   'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
@@ -41,25 +38,7 @@ describe('cli', () => {
   // FIXME the antora generate command should work without changing cwd
   const runAntora = (args = undefined, env = process.env) => {
     if (!Array.isArray(args)) args = args ? args.split(' ') : []
-    let cmd
-    if (process.env.running_under_istanbul) {
-      cmd = ISTANBUL_CLI
-      args = [
-        'cover',
-        '--root',
-        PACKAGE_DIR,
-        '--dir',
-        path.join(CWD, 'coverage/cli'),
-        '--include-pid',
-        '--report',
-        'json',
-        ANTORA_CLI,
-        '--',
-      ].concat(args)
-    } else {
-      cmd = ANTORA_CLI
-    }
-    return Kapok.start(cmd, args, { cwd: WORK_DIR, env })
+    return Kapok.start(ANTORA_CLI, args, { cwd: WORK_DIR, env })
   }
 
   before(async () => {

@@ -14,7 +14,7 @@ module.exports = (files, analyzeCodeCoverage = false) => {
       )
       onSuccess = () => console.log('Coverage report: ' + coverageReportUrl)
     }
-    return run('istanbul', ['cover', '_mocha', ...files], onSuccess)
+    return run('nyc', ['_mocha', ...files], onSuccess)
   } else {
     return run('_mocha', files)
   }
