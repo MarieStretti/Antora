@@ -3,7 +3,6 @@
 
 const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
 
-const asciidoctor = require('asciidoctor.js')()
 const loadAsciiDoc = require('@antora/asciidoc-loader')
 const mockContentCatalog = require('../../../test/mock-content-catalog')
 
@@ -67,10 +66,19 @@ describe('loadAsciiDoc()', () => {
     `
     const defaultStderrWrite = process.stderr.write
     process.stderr.write = (msg) => {}
-    const html = asciidoctor.convert(contents, { safe: 'safe' })
+    const html = global.Opal.Asciidoctor.convert(contents, { safe: 'safe' })
     expectLink(html, '#1.0@component-b::index.adoc', 'Component B')
     expect(html).to.include('Unresolved directive in &lt;stdin&gt; - include::does-not-resolve.adoc[]')
     process.stderr.write = defaultStderrWrite
+  })
+
+  it('should use UTF-8 as the default String encoding', () => {
+    expect(String('foo'.encoding)).to.equal('UTF-8')
+  })
+
+  it('should return correct bytes for String', () => {
+    expect('foo'.$bytesize()).to.equal(3)
+    expect('foo'.$each_byte().$to_a()).to.eql([102, 111, 111])
   })
 
   describe('attributes', () => {
