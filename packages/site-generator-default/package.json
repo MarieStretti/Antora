@@ -1,0 +1,26 @@
+{
+  "name": "@antora/site-generator-default",
+  "version": "1.0.0-alpha.1",
+  "description": "The default site generator pipeline for producing and publishing static documentation sites with Antora.",
+  "author": {
+    "name": "OpenDevise Inc.",
+    "url": "https://opendevise.com"
+  },
+  "license": "MPL-2.0",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "dependencies": {
+    "@antora/content-aggregator": "1.0.0-alpha.1",
+    "@antora/content-classifier": "1.0.0-alpha.1",
+    "@antora/document-converter": "1.0.0-alpha.1",
+    "@antora/navigation-builder": "1.0.0-alpha.1",
+    "@antora/page-composer": "1.0.0-alpha.1",
+    "@antora/playbook-builder": "1.0.0-alpha.1",
+    "@antora/ui-loader": "1.0.0-alpha.1",
+    "streamify-array": "^1.0.0",
+    "through2": "^2.0.3",
+    "vinyl-fs": "^3.0.0"
+  }
+}

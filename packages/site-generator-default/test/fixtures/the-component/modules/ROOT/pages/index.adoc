@@ -1,0 +1,7 @@
+= Index Page
+
+Content.
+
+See xref:the-page.adoc[the page].
+
+include::{partialsdir}/diagrams.adoc[]

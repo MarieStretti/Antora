@@ -2,9 +2,9 @@
 'use strict'
 
 const { expect, heredoc, spy } = require('../../../test/test-utils')
-const createPageGenerator = require('@antora/page-generator')
+const createPageComposer = require('@antora/page-composer')
 
-describe('createPageGenerator()', () => {
+describe('createPageComposer()', () => {
   let contentCatalog
   let helpers
   let layouts
@@ -142,18 +142,18 @@ describe('createPageGenerator()', () => {
     }
   })
 
-  it('should create a page generator function', () => {
-    const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-    expect(generatePage).to.be.instanceOf(Function)
+  it('should create a page composer function', () => {
+    const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+    expect(composePage).to.be.instanceOf(Function)
   })
 
   it('should operate on helper, partial, and layout files from UI catalog', () => {
-    createPageGenerator(playbook, contentCatalog, uiCatalog)
+    createPageComposer(playbook, contentCatalog, uiCatalog)
     const types = uiCatalog.findByType.__spy.calls.map((call) => call[0]).sort((a, b) => a.localeCompare(b, 'en'))
     expect(types).to.eql(['helper', 'layout', 'partial'])
   })
 
-  describe('generatePage()', () => {
+  describe('composePage()', () => {
     let component
     let components
     let file
@@ -210,8 +210,8 @@ describe('createPageGenerator()', () => {
     })
 
     it('should execute the default template against the UI model', () => {
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      const result = generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      const result = composePage(file, contentCatalog, navigationCatalog)
       expect(result).to.equal(file)
       expect(file.contents).to.be.instanceOf(Buffer)
       expect(file.contents.toString().trim()).to.equal(heredoc`
@@ -229,8 +229,8 @@ describe('createPageGenerator()', () => {
 
     it('should apply helper function to template variable', () => {
       replaceCallToBodyPartial('{{> body-upper-title}}')
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<h1>THE PAGE</h1>')
     })
 
@@ -241,58 +241,58 @@ describe('createPageGenerator()', () => {
         b
         c</pre>
       `)
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<pre>a\nb\nc</pre>')
     })
 
     it('should be able to compare component with entry in component list for equality', () => {
       replaceCallToBodyPartial('{{> body-component-equality}}')
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<p>The current component is the-component.</p>')
     })
 
     it('should be able to access a property that is not defined', () => {
       replaceCallToBodyPartial('{{> body-undefined-property-reference}}')
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<p>No such thang.</p>')
     })
 
     it('should use default layout specified in playbook', () => {
       playbook.ui.defaultLayout = 'chapter'
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<html class="chapter">')
     })
 
     it('should use the layout specified by page-layout attribute on file', () => {
       file.asciidoc.attributes['page-layout'] = 'chapter'
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<html class="chapter">')
     })
 
     it('should use default layout if layout specified in page-layout attribute does not exist', () => {
       file.asciidoc.attributes['page-layout'] = 'does-not-exist'
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      generatePage(file, contentCatalog, navigationCatalog)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<html class="default">')
     })
 
     // QUESTION should this be checked in the function generator?
     it('should throw an error if default layout cannot be found', () => {
       playbook.ui.defaultLayout = 'does-not-exist'
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      expect(() => generatePage(file, contentCatalog, navigationCatalog)).to.throw(/layout does-not-exist not found/i)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      expect(() => composePage(file, contentCatalog, navigationCatalog)).to.throw(/layout does-not-exist not found/i)
     })
 
     it('should throw an error if layout specified in page-layout attribute does not exist and is default', () => {
       playbook.ui.defaultLayout = 'also-does-not-exist'
       file.asciidoc.attributes['page-layout'] = 'does-not-exist'
-      const generatePage = createPageGenerator(playbook, contentCatalog, uiCatalog)
-      expect(() => generatePage(file, contentCatalog, navigationCatalog)).to.throw(/neither layout/i)
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      expect(() => composePage(file, contentCatalog, navigationCatalog)).to.throw(/neither layout/i)
     })
 
     // QUESTION what should we do with a template execution error? (e.g., missing partial or helper)

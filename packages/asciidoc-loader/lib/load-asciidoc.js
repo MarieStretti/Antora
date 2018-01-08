@@ -4,6 +4,7 @@ const asciidoctor = require('asciidoctor.js')()
 const convertPageRef = require('./xref/convert-page-ref')
 const createConverter = require('./create-converter')
 const createExtensionRegistry = require('./create-extension-registry')
+const path = require('path')
 const resolveIncludeFile = require('./include/resolve-include-file')
 
 const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
@@ -52,8 +53,8 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined, opts 
     // NOTE Opal only expands to absolute path if value begins with ./
     docdir: file.dirname,
     docfilesuffix: file.src.extname,
-    imagesdir: file.pub.moduleRootPath + '/_images',
-    attachmentsdir: file.pub.moduleRootPath + '/_attachments',
+    imagesdir: path.join(file.pub.moduleRootPath, '_images'),
+    attachmentsdir: path.join(file.pub.moduleRootPath, '_attachments'),
     examplesdir: EXAMPLES_DIR_PROXY,
     partialsdir: PARTIALS_DIR_PROXY,
   }

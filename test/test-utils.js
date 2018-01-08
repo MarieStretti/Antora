@@ -24,7 +24,9 @@ const uninterceptRequire = interceptRequire(patchChai)
 const chai = require('chai')
 uninterceptRequire()
 
+chai.use(require('chai-fs'))
 chai.use(require('chai-as-promised'))
+chai.use(require('chai-cheerio'))
 chai.use(require('chai-spies-next'))
 // dirty-chai must be loaded after the other plugins
 // see https://github.com/prodatakey/dirty-chai#plugin-assertions
