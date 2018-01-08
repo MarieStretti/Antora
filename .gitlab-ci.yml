@@ -27,8 +27,8 @@ test:
     - .yarn-cache/
   script:
   - yarn --cache-folder=.yarn-cache
-  # pipeline tests require us to be on a branch
-  - git checkout -b $CI_COMMIT_REF_NAME
+  # enable the next line to switch to a branch
+  #- git checkout -B $CI_COMMIT_REF_NAME
   - node_modules/.bin/gulp test!
   artifacts:
     paths:
