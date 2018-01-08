@@ -10,56 +10,87 @@ const convict = require('convict')
 
 describe('commander', () => {
   describe('parse()', () => {
+    class ProcessExit extends Error {
+      constructor (code) {
+        super('process exit')
+        this.code = code
+      }
+    }
+
+    const trapExit = (block) => {
+      const $exit = process.exit
+      process.exit = (code) => { throw new ProcessExit(code) }
+      try {
+        block()
+      } finally {
+        process.exit = $exit
+      }
+    }
+
     const createCli = (name) =>
       new Command()
         .name(name)
+        .option('--silent', 'Silence is golden')
         .command('pull')
         .parent.command('run').parent
 
-    it('should not append default command if no default command is provided', () => {
-      const command = createCli('cli').parse(['node', 'cli'])
-      expect(command.rawArgs.slice(2)).to.be.empty()
+    it('should output help if no commands, options, or arguments are specified', () => {
+      trapExit(() => {
+        let helpShown
+        const command = createCli('cli')
+        command.outputHelp = () => (helpShown = true)
+        expect(() => { command.parse(['node', 'cli']) })
+          .to.throw(ProcessExit).with.property('code', 0)
+        expect(command.rawArgs.slice(2)).to.eql(['--help'])
+        expect(helpShown).to.be.true()
+      })
     })
 
-    it('should append default command if no command is present', () => {
-      const command = createCli('cli').parse(['node', 'cli'], { defaultCommand: 'run' })
-      expect(command.rawArgs.slice(2)).to.eql(['run'])
+    it('should not insert default command if no default command is provided', () => {
+      const command = createCli('cli').parse(['node', 'cli', '--silent'])
+      expect(command.rawArgs.slice(2)).to.eql(['--silent'])
     })
 
-    it('should not append default command if already present', () => {
+    it('should insert default command if no command is present', () => {
+      const command = createCli('cli').parse(['node', 'cli', '--silent'], { defaultCommand: 'run' })
+      expect(command.rawArgs.slice(2)).to.eql(['run', '--silent'])
+    })
+
+    it('should not insert default command if already present', () => {
       const command = createCli('cli').parse(['node', 'cli', 'run'], { defaultCommand: 'run' })
       expect(command.rawArgs.slice(2)).to.eql(['run'])
     })
 
-    it('should not append default command if -h is specified', () => {
-      let $exit = process.exit
-      try {
-        process.exit = () => {}
-        const command = createCli('cli').allowUnknownOption()
-        command.outputHelp = () => {}
-        command.parse(['node', 'cli', '-h'], { defaultCommand: 'run' })
+    it('should not insert default command if -h is specified', () => {
+      trapExit(() => {
+        let helpShown
+        const command = createCli('cli')
+        command.outputHelp = () => (helpShown = true)
+        expect(() => { command.parse(['node', 'cli', '-h']) })
+          .to.throw(ProcessExit).with.property('code', 0)
         expect(command.rawArgs.slice(2)).to.eql(['-h'])
-      } finally {
-        process.exit = $exit
-      }
+        expect(helpShown).to.be.true()
+      })
     })
 
-    it('should not append default command if --help is specified', () => {
-      let $exit = process.exit
-      try {
-        process.exit = () => {}
-        const command = createCli('cli').allowUnknownOption()
-        command.outputHelp = () => {}
-        command.parse(['node', 'cli', '-h'], { defaultCommand: 'run' })
-        expect(command.rawArgs.slice(2)).to.eql(['-h'])
-      } finally {
-        process.exit = $exit
-      }
+    it('should not insert default command if --help is specified', () => {
+      trapExit(() => {
+        let helpShown
+        const command = createCli('cli')
+        command.outputHelp = () => (helpShown = true)
+        expect(() => { command.parse(['node', 'cli', '--help']) })
+          .to.throw(ProcessExit).with.property('code', 0)
+        expect(command.rawArgs.slice(2)).to.eql(['--help'])
+        expect(helpShown).to.be.true()
+      })
     })
 
     it('should insert default command before other arguments and options', () => {
-      const command = createCli('cli').parse(['node', 'cli', '--url', 'https://example.com'], { defaultCommand: 'run' })
-      expect(command.rawArgs.slice(2)).to.eql(['run', '--url', 'https://example.com'])
+      const command = createCli('cli').parse(
+        ['node', 'cli', '--title', 'Site', '--url', 'https://example.com'],
+        { defaultCommand: 'run' }
+      )
+      expect(command.rawArgs.slice(2)).to.eql(['run', '--title', 'Site', '--url', 'https://example.com'])
     })
   })
 

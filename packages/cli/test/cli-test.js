@@ -100,6 +100,18 @@ describe('cli', () => {
       .done()
   })
 
+  it('should output version when invoked with "version"', () => {
+    return runAntora('version')
+      .assert(VERSION)
+      .done()
+  })
+
+  it('should output usage when called with no commands, options, or arguments', () => {
+    return runAntora()
+      .assert(/^Usage: antora/)
+      .done()
+  })
+
   it('should output usage when called with "-h"', () => {
     return runAntora('-h')
       .assert(/^Usage: antora/)
@@ -177,17 +189,26 @@ describe('cli', () => {
     )
   })
 
-  it('should exit with error if generate command is run without an argument', () => {
+  it('should show error message if generate command is run without an argument', () => {
     return runAntora('generate')
       .assert(/missing required argument `playbook'/)
       .done()
   })
 
-  it('should show error if specified playbook file does not exist', () => {
+  it('should show error message if specified playbook file does not exist', () => {
     return runAntora('generate does-not-exist.json')
       .assert(/playbook .* does not exist/)
       .done()
-  })
+  }).timeout(TIMEOUT)
+
+  it('should show stack if --stacktrace option is specified and exception is thrown during generation', () => {
+    playbookSpec.ui.bundle = false
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    return runAntora('--stacktrace generate the-site')
+      .assert(/^Error: ui\.bundle: must be of type String/)
+      .assert(/at /)
+      .done()
+  }).timeout(TIMEOUT)
 
   it('should generate site to output folder when playbook is passed to the generate command', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
