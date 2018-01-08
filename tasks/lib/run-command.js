@@ -1,6 +1,6 @@
 'use strict'
 
-const PluginError = require('gulp-util').PluginError
+const PluginError = require('plugin-error')
 const spawn = require('npm-run').spawn
 
 module.exports = function (command, args, onSuccess) {
