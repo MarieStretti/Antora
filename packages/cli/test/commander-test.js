@@ -14,9 +14,7 @@ describe('commander', () => {
       new Command()
         .name(name)
         .command('pull')
-        .parent
-        .command('run')
-        .parent
+        .parent.command('run').parent
 
     it('should not append default command if no default command is provided', () => {
       const command = createCli('cli').parse(['node', 'cli'])
@@ -410,9 +408,7 @@ describe('commander', () => {
         },
       }
       const cli = createCli({})
-      cli
-        .command('generate')
-        .optionsFromConvict(convict(configSchema))
+      cli.command('generate').optionsFromConvict(convict(configSchema))
       const options = cli.commands.find((candidate) => candidate.name() === 'generate').options
       expect(options).to.have.lengthOf(1)
       expect(options[0]).to.include({

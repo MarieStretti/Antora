@@ -32,33 +32,33 @@ cli
     // TODO detect custom generator
     // TODO support passing a preconfigured convict config as third option; gets new args and env
     if (command.clean) require('fs-extra').emptyDirSync(command.toDir)
-    cli._promise = require('@antora/site-generator-default')(args, process.env, command.toDir)
-      .catch((reason) => {
-        console.error('error: ' + reason.message)
-        process.exit(1)
-      })
+    cli._promise = require('@antora/site-generator-default')(args, process.env, command.toDir).catch((reason) => {
+      console.error('error: ' + reason.message)
+      process.exit(1)
+    })
   })
   .options.sort((a, b) => a.long.localeCompare(b.long))
 
-cli
-  .command('help [command]', { noHelp: true })
-  .action((name, command) => {
-    if (name) {
-      const helpCommand = cli.commands.find((candidate) => candidate.name() === name)
-      if (helpCommand) {
-        process.stdout.write(helpCommand.helpInformation())
-      } else {
-        console.error(`'${name}' is not a valid command in ${cli.name()}. See '${cli.name()} --help' for a list of commands.`)
-        process.exit(1)
-      }
+cli.command('help [command]', { noHelp: true }).action((name, command) => {
+  if (name) {
+    const helpCommand = cli.commands.find((candidate) => candidate.name() === name)
+    if (helpCommand) {
+      process.stdout.write(helpCommand.helpInformation())
     } else {
-      cli.outputHelp()
+      console.error(
+        `'${name}' is not a valid command in ${cli.name()}. See '${cli.name()} --help' for a list of commands.`
+      )
+      process.exit(1)
     }
-  })
+  } else {
+    cli.outputHelp()
+  }
+})
 
-cli
-  .on('--help', () => {
-    console.log(`\nRun '${cli.name()} <command> --help' to see options and examples for a command (e.g., ${cli.name()} generate --help).`)
-  })
+cli.on('--help', () => {
+  console.log(
+    `\nRun '${cli.name()} <command> --help' to see options and examples for a command (e.g., ${cli.name()} generate --help).`
+  )
+})
 
 module.exports = run

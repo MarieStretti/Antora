@@ -31,12 +31,11 @@ describe('cli', () => {
   let uiBundleUri
 
   const createContentRepository = async () => {
-    return (await (await (await new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
-      .init('the-component'))
-      .checkoutBranch('v1.0'))
+    return (await (await (await new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR).init(
+      'the-component'
+    )).checkoutBranch('v1.0'))
       .addComponentDescriptorToWorktree({ name: 'the-component', version: '1.0', nav: ['modules/ROOT/nav.adoc'] })
-      .importFilesFromFixture('the-component'))
-      .close('master')
+      .importFilesFromFixture('the-component')).close('master')
   }
 
   // FIXME the antora generate command should work without changing cwd
@@ -47,10 +46,13 @@ describe('cli', () => {
       cmd = ISTANBUL_CLI
       args = [
         'cover',
-        '--root', PACKAGE_DIR,
-        '--dir', path.join(CWD, 'coverage/cli'),
+        '--root',
+        PACKAGE_DIR,
+        '--dir',
+        path.join(CWD, 'coverage/cli'),
         '--include-pid',
-        '--report', 'json',
+        '--report',
+        'json',
         ANTORA_CLI,
         '--',
       ].concat(args)
@@ -144,30 +146,35 @@ describe('cli', () => {
 
   it('should output options from playbook schema for generate command', () => {
     let options
-    return runAntora('generate -h')
-      .ignoreUntil(/^Options:/)
-      // -h option is always listed last
-      .joinUntil(/^ *-h, --help/, { join: '\n' })
-      .assert((optionsText) => {
-        options = optionsText.split('\n').reduce((accum, line) => {
-          const [sig, ...dsc] = line.split('  ')
-          accum[sig.trim()] = dsc.join('').trim()
-          return accum
-        }, {})
-        return true
-      })
-      .done().then(() => {
-        const optionForms = Object.keys(options)
-        expect(optionForms).to.not.be.empty()
-        expect(optionForms).to.include('--title <title>')
-        expect(optionForms).to.include('--url <url>')
-        expect(optionForms).to.include('--html-url-extension-style <default|drop|indexify>')
-        expect(options['--html-url-extension-style <default|drop|indexify>']).to.have.string('(default: default)')
-        // check for sorted option, except drop -h as it always comes last
-        expect(optionForms.slice(0, -1)).to.eql(
-          Object.keys(options).slice(0, -1).sort((a, b) => a.localeCompare(b))
-        )
-      })
+    return (
+      runAntora('generate -h')
+        .ignoreUntil(/^Options:/)
+        // -h option is always listed last
+        .joinUntil(/^ *-h, --help/, { join: '\n' })
+        .assert((optionsText) => {
+          options = optionsText.split('\n').reduce((accum, line) => {
+            const [sig, ...dsc] = line.split('  ')
+            accum[sig.trim()] = dsc.join('').trim()
+            return accum
+          }, {})
+          return true
+        })
+        .done()
+        .then(() => {
+          const optionForms = Object.keys(options)
+          expect(optionForms).to.not.be.empty()
+          expect(optionForms).to.include('--title <title>')
+          expect(optionForms).to.include('--url <url>')
+          expect(optionForms).to.include('--html-url-extension-style <default|drop|indexify>')
+          expect(options['--html-url-extension-style <default|drop|indexify>']).to.have.string('(default: default)')
+          // check for sorted option, except drop -h as it always comes last
+          expect(optionForms.slice(0, -1)).to.eql(
+            Object.keys(options)
+              .slice(0, -1)
+              .sort((a, b) => a.localeCompare(b))
+          )
+        })
+    )
   })
 
   it('should exit with error if generate command is run without an argument', () => {
@@ -186,10 +193,10 @@ describe('cli', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
-      runAntora('generate the-site')
-        .on('exit', () => resolve())
+      runAntora('generate the-site').on('exit', () => resolve())
     }).then(() => {
-      expect(destAbsDir).to.be.a.directory()
+      expect(destAbsDir)
+        .to.be.a.directory()
         .with.subDirs(['_', 'the-component'])
       expect(path.join(destAbsDir, 'the-component'))
         .to.be.a.directory()
@@ -202,10 +209,10 @@ describe('cli', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
-      runAntora(['generate', 'the-site', '--title', 'Awesome Docs'])
-        .on('exit', () => resolve())
+      runAntora(['generate', 'the-site', '--title', 'Awesome Docs']).on('exit', () => resolve())
     }).then(() => {
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(path.join(destAbsDir, 'the-component/1.0/index.html'))
+        .to.be.a.file()
         .with.contents.that.match(new RegExp('<title>Index Page :: Awesome Docs</title>'))
     })
   }).timeout(TIMEOUT)
@@ -214,10 +221,12 @@ describe('cli', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
-      runAntora('generate the-site', Object.assign({ URL: 'https://docs.example.com' }, process.env))
-        .on('exit', () => resolve())
+      runAntora('generate the-site', Object.assign({ URL: 'https://docs.example.com' }, process.env)).on('exit', () =>
+        resolve()
+      )
     }).then(() => {
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(path.join(destAbsDir, 'the-component/1.0/index.html'))
+        .to.be.a.file()
         .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
     })
   }).timeout(TIMEOUT)
@@ -227,10 +236,10 @@ describe('cli', () => {
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
       // TODO once we have common options, we'll need to be sure they get moved before the default command
-      runAntora('the-site.json --url https://docs.example.com')
-        .on('exit', () => resolve())
+      runAntora('the-site.json --url https://docs.example.com').on('exit', () => resolve())
     }).then(() => {
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(path.join(destAbsDir, 'the-component/1.0/index.html'))
+        .to.be.a.file()
         .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
     })
   }).timeout(TIMEOUT)
@@ -242,8 +251,7 @@ describe('cli', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
-      runAntora('generate the-site.json --clean')
-        .on('exit', () => resolve())
+      runAntora('generate the-site.json --clean').on('exit', () => resolve())
     }).then(() => {
       expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
       expect(residualFile).not.to.be.a.path()
@@ -256,8 +264,7 @@ describe('cli', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
-      runAntora('generate the-site.json --to-dir ' + destDir)
-        .on('exit', () => resolve())
+      runAntora('generate the-site.json --to-dir ' + destDir).on('exit', () => resolve())
     }).then(() => {
       expect(destAbsDir).to.be.a.directory()
       expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
