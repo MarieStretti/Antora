@@ -117,8 +117,12 @@ describe('buildPlaybook()', () => {
     expect(() => buildPlaybook([], { PLAYBOOK: iniSpec }, schema)).to.throw()
   })
 
-  it('should throw error if spec file is specified but cannot be found', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: 'non-existent/file.yml' }, schema)).to.throw()
+  it('should throw error if specified spec file does not exist', () => {
+    expect(() => buildPlaybook([], { PLAYBOOK: 'non-existent/file.yml' }, schema)).to.throw('does not exist')
+  })
+
+  it('should throw error if spec file without extension cannot be resolved', () => {
+    expect(() => buildPlaybook([], { PLAYBOOK: 'non-existent/file' }, schema)).to.throw('could not be resolved')
   })
 
   it('should use default value if spec file is not specified', () => {

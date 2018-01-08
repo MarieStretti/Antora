@@ -8,20 +8,20 @@ module.exports = {
   },
   site: {
     url: {
-      doc: 'The base URL of the published site (optional). Should not include a trailing slash.',
+      doc: 'The base URL of the published site. Should not include a trailing slash.',
       format: String,
       default: undefined,
       env: 'URL',
       arg: 'url',
     },
     title: {
-      doc: 'The title of the site (optional).',
+      doc: 'The title of the site.',
       format: String,
       default: undefined,
       arg: 'title',
     },
     root: {
-      doc: 'The name of the component to use as the root of the site (optional).',
+      doc: 'The name of the component to use as the root of the site.',
       format: String,
       default: undefined,
     },
@@ -102,13 +102,13 @@ module.exports = {
   },
   urls: {
     html_extension_style: {
-      doc: 'Controls how the URL extension for HTML pages is handled (default, drop, or indexify).',
+      doc: 'Controls how the URL extension for HTML pages is handled.',
       format: ['default', 'drop', 'indexify'],
       default: 'default',
       arg: 'html-url-extension-style',
     },
     aspect_page_strategy: {
-      doc: 'Controls how links to pages in aspect domains are generated (path or query).',
+      doc: 'Controls how links to pages in aspect domains are generated.',
       format: ['path', 'query'],
       default: 'path',
       arg: 'aspect-page-url-strategy',

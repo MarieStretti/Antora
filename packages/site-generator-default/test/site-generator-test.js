@@ -49,6 +49,7 @@ describe('generateSite()', () => {
       ui: { bundle: uiBundleUri },
     }
     fs.ensureDirSync(WORK_DIR)
+    fs.removeSync(playbookSpecFile)
     process.chdir(WORK_DIR)
     fs.removeSync(destDir.split('/')[0])
   })

@@ -1,0 +1,23 @@
+{
+  "name": "@antora/cli",
+  "version": "1.0.0-alpha.1",
+  "description": "The command line interface for Antora.",
+  "author": {
+    "name": "OpenDevise Inc.",
+    "url": "https://opendevise.com"
+  },
+  "license": "MPL-2.0",
+  "main": "lib/cli.js",
+  "bin": {
+    "antora": "bin/antora.js"
+  },
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "dependencies": {
+    "@antora/playbook-builder": "1.0.0-alpha.1",
+    "commander": "^2.12.2",
+    "fs-extra": "^5.0.0"
+  },
+  "preferGlobal": true
+}
