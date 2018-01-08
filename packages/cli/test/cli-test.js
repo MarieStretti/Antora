@@ -106,7 +106,7 @@ describe('cli', () => {
       .done()
   })
 
-  it('should output usage when called with no commands, options, or arguments', () => {
+  it('should output usage when called with no command, options, or arguments', () => {
     return runAntora()
       .assert(/^Usage: antora/)
       .done()

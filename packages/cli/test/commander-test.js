@@ -19,7 +19,9 @@ describe('commander', () => {
 
     const trapExit = (block) => {
       const $exit = process.exit
-      process.exit = (code) => { throw new ProcessExit(code) }
+      process.exit = (code) => {
+        throw new ProcessExit(code)
+      }
       try {
         block()
       } finally {
@@ -32,15 +34,20 @@ describe('commander', () => {
         .name(name)
         .option('--silent', 'Silence is golden')
         .command('pull')
-        .parent.command('run').parent
+        .action(() => {})
+        .parent.command('run')
+        .option('--title <title>', 'Site title')
+        .option('--url <url>', 'Site URL')
+        .action(() => {}).parent
 
-    it('should output help if no commands, options, or arguments are specified', () => {
+    it('should output help if no command, options, or arguments are specified', () => {
       trapExit(() => {
         let helpShown
         const command = createCli('cli')
         command.outputHelp = () => (helpShown = true)
-        expect(() => { command.parse(['node', 'cli']) })
-          .to.throw(ProcessExit).with.property('code', 0)
+        expect(() => command.parse(['node', 'cli']))
+          .to.throw(ProcessExit)
+          .with.property('code', 0)
         expect(command.rawArgs.slice(2)).to.eql(['--help'])
         expect(helpShown).to.be.true()
       })
@@ -49,11 +56,13 @@ describe('commander', () => {
     it('should not insert default command if no default command is provided', () => {
       const command = createCli('cli').parse(['node', 'cli', '--silent'])
       expect(command.rawArgs.slice(2)).to.eql(['--silent'])
+      expect(command).to.have.property('silent', true)
     })
 
     it('should insert default command if no command is present', () => {
       const command = createCli('cli').parse(['node', 'cli', '--silent'], { defaultCommand: 'run' })
       expect(command.rawArgs.slice(2)).to.eql(['run', '--silent'])
+      expect(command).to.have.property('silent', true)
     })
 
     it('should not insert default command if already present', () => {
@@ -66,8 +75,9 @@ describe('commander', () => {
         let helpShown
         const command = createCli('cli')
         command.outputHelp = () => (helpShown = true)
-        expect(() => { command.parse(['node', 'cli', '-h']) })
-          .to.throw(ProcessExit).with.property('code', 0)
+        expect(() => command.parse(['node', 'cli', '-h']))
+          .to.throw(ProcessExit)
+          .with.property('code', 0)
         expect(command.rawArgs.slice(2)).to.eql(['-h'])
         expect(helpShown).to.be.true()
       })
@@ -78,19 +88,23 @@ describe('commander', () => {
         let helpShown
         const command = createCli('cli')
         command.outputHelp = () => (helpShown = true)
-        expect(() => { command.parse(['node', 'cli', '--help']) })
-          .to.throw(ProcessExit).with.property('code', 0)
+        expect(() => command.parse(['node', 'cli', '--help']))
+          .to.throw(ProcessExit)
+          .with.property('code', 0)
         expect(command.rawArgs.slice(2)).to.eql(['--help'])
         expect(helpShown).to.be.true()
       })
     })
 
     it('should insert default command before other arguments and options', () => {
-      const command = createCli('cli').parse(
-        ['node', 'cli', '--title', 'Site', '--url', 'https://example.com'],
-        { defaultCommand: 'run' }
-      )
-      expect(command.rawArgs.slice(2)).to.eql(['run', '--title', 'Site', '--url', 'https://example.com'])
+      const command = createCli('cli').parse(['node', 'cli', '--title', 'Docs', '--url', 'https://docs.example.com'], {
+        defaultCommand: 'run',
+      })
+      expect(command.rawArgs.slice(2)).to.eql(['run', '--title', 'Docs', '--url', 'https://docs.example.com'])
+      const runCommand = command.commands.find((candidate) => candidate.name() === 'run')
+      expect(runCommand).to.exist()
+      expect(runCommand).to.have.property('title', 'Docs')
+      expect(runCommand).to.have.property('url', 'https://docs.example.com')
     })
   })
 
