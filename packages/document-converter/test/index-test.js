@@ -41,9 +41,9 @@ describe('convertDocument()', () => {
       = Page Title
 
       == Section Title
-      
+
       Grab the link:{attachmentsdir}/quickstart-project.zip[quickstart project].
-      
+
       * list item 1
       * list item 2
       * list item 3
@@ -210,7 +210,7 @@ describe('convertDocument()', () => {
   it('should be able to include a page marked as a partial which has already been converted', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Page Title
-      
+
       == Recent Changes
 
       include::changelog.adoc[tag=entries,leveloffset=+1]

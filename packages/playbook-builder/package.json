@@ -1,21 +1,44 @@
 {
   "name": "@antora/playbook-builder",
-  "version": "1.0.0-alpha.1",
-  "description": "Accepts user input and builds a playbook object for configuring an Antora documentation pipeline.",
+  "version": "1.0.0-alpha.0",
+  "description": "Builds a playbook object from user input for configuring successive components in an Antora documentation pipeline",
+  "license": "MPL-2.0",
   "author": {
     "name": "OpenDevise Inc.",
     "url": "https://opendevise.com"
   },
-  "license": "MPL-2.0",
-  "main": "lib/index.js",
-  "engines": {
-    "node": ">= 8.0.0"
+  "homepage": "https://antora.org",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/antora/antora.git"
   },
+  "bugs": {
+    "url": "https://gitlab.com/antora/antora/issues"
+  },
+  "main": "lib/index.js",
   "dependencies": {
     "camelcase-keys": "^4.2.0",
     "convict": "^4.0.2",
     "cson-parser": "^2.0.0",
     "deep-freeze": "^0.0.1",
     "js-yaml": "^3.10.0"
-  }
+  },
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "scripts": {
+    "prepublish": "node ../../scripts/prepublish",
+    "postpublish": "node ../../scripts/postpublish"
+  },
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "antora",
+    "antora-component",
+    "config",
+    "documentation",
+    "static site",
+    "web publishing"
+  ]
 }
