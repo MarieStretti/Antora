@@ -14,7 +14,7 @@
   },
   "main": "lib/cli.js",
   "bin": {
-    "antora": "bin/antora.js"
+    "antora": "bin/antora"
   },
   "dependencies": {
     "@antora/playbook-builder": "1.0.0-alpha.0",
