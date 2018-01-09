@@ -1,5 +1,8 @@
 {
   "private": true,
+  "scripts": {
+    "test": "gulp test"
+  },
   "devDependencies": {
     "@commitlint/cli": "^5.2.0",
     "chai": "^4.1.2",
