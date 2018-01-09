@@ -8,10 +8,7 @@
     "url": "https://opendevise.com"
   },
   "homepage": "https://antora.org",
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.com/antora/antora.git"
-  },
+  "repository": "gitlab:antora/antora",
   "bugs": {
     "url": "https://gitlab.com/antora/antora/issues"
   },
