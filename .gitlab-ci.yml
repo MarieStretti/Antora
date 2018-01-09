@@ -7,16 +7,16 @@ yarn:
   cache:
     paths:
     - .yarn-cache/
-    - node_modules/
   script:
-  - yarn --cache-folder=.yarn-cache
+  - yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
 lint:
   stage: verify
   cache:
     policy: pull
     paths:
-    - node_modules/
+    - .yarn-cache/
   script:
+  - yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
   - node_modules/.bin/gulp lint
   - node_modules/.bin/gulp commitlint
 test:
@@ -26,9 +26,9 @@ test:
     paths:
     - .yarn-cache/
   script:
-  - yarn --cache-folder=.yarn-cache
-  # enable the next line to switch to a branch
+  # enable next line to guarantee we're on a branch
   #- git checkout -B $CI_COMMIT_REF_NAME
+  - yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
   - node_modules/.bin/gulp test!
   artifacts:
     paths:
