@@ -28,7 +28,7 @@
     "node": ">= 8.0.0"
   },
   "scripts": {
-    "prepublish": "node ../../scripts/prepublish",
+    "prepublishOnly": "node ../../scripts/prepublish",
     "postpublish": "node ../../scripts/postpublish"
   },
   "files": [
