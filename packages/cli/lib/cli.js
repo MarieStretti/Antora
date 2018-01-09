@@ -9,6 +9,7 @@ const VERSION = require('../package.json').version
 
 async function run () {
   const result = cli.parse(process.argv, { defaultCommand: 'generate' })
+  /* istanbul ignore else */
   if (cli._promise) await cli._promise
   return result
 }
