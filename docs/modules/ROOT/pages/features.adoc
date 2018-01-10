@@ -7,6 +7,12 @@ endif::[]
 :idseparator: -
 :experimental:
 
+A static site generator for teams writing and managing documentation for multiple products, versions, and site environments.
+
+A documentation pipeline that can manage lots of source repositories, version branches, and publishing environments.
+
+A modular, portable pipeline built for docs and engineering teams with multiple products, workflow policies, and publishing environments.
+
 A modular documentation pipeline that adapts to team workflows and technology shifts.
 Built on the best practices of docs as code and continuous integration and delivery.
 
@@ -24,6 +30,9 @@ give writers the ability to create & manage their documentation content and site
 * With Antora, you can generate and publish documentation sites from documents composed in AsciiDoc without needing expertise in web technologies, build automation, or system administration.
 * With Antora, you write documents in AsciiDoc and, from them, generate and publish documentation sites without needing expertise in web technologies, build automation, or system administration.
 
+Create, remix, test and publish sites from documentation stored in multiple repositories and branches.
+Create documentation sites from files stored in multiple repositories and branches.
+Remix
 // short form
 An Asciidoctor documentation toolchain and workflow that empowers technical writing teams to create, manage, collaborate on, remix, and publish documentation sites sourced from a variety of versioned content repositories without needing expertise in web technologies, build automation, or system administration.
 
@@ -98,17 +107,17 @@ With Antora, you write documents in AsciiDoc and, from them, generate and publis
 
 == Docs as Code
 
-=== Store your documentation in as many repositories as you need
+=== Store documentation in multiple repositories
 // Store documentation in 1, 42 or more repositories.
 // One, 42, or more repositories
 
 Store documentation files in as many git repositories as you need. Antora can find and assemble them into a documentation site on demand.
 
-=== Store documentation in as many branches as you need.
+=== Manage documentation versions like a pro
 // Version your docs like a pro
 // Manage versions like a pro
 
-Use branches to release docs versions just like software versions.
+Use branches to release documentation versions just like software versions.
 Antora can find repository branches and assemble the files in each branch into a versioned documentation collection.
 Antora also knows how to ignore branches you don't want published.
 
@@ -125,7 +134,7 @@ The site UI is also stored in its own repository so the web team can maintain th
 === Remote and local, private and public, bare and non-bare
 
 Antora can collect files from a combination of local, remote, public, and private git repositories.
-// git client supports
+// support git client
 
 ////
 Whether the documentation for a product is stored in its own repository, in the same repository as the product's code, or the text pages in one repository and the example code in another repository, Antora can find and assemble the distributed files into a documentation site.
@@ -145,12 +154,11 @@ Notes:
 ////
 
 == Site Orchestration for Everyone
-// Site Orchestration for the Rest of Us
-// Playbook
 
 === The Antora Playbook
 
-You don't need any scripting or programming knowledge to create and use an Antora playbook.
+With an Antora playbook, anyone can assemble and generate a documentation site.
+You don't need any build automation or system administration knowledge to create or use an Antora playbook.
 A playbook is a straight-forward set of concise instructions that tells Antora what documentation to assemble, where to find it, and what UI to apply to the site.
 
 ==== How?
@@ -161,15 +169,17 @@ It's controllable by a non-developer; provides a non-technical interface.
 === Site Remixes for Any Occasion
 // Control your documentation with a playbook.
 
-With Antora's playbooks, you can control what documentation and what versions of that documentation gets published to a site.
+An Antora playbook let's you control what documentation and what versions of that documentation gets published to a site.
 You can even tell Antora to use un-committed changes when generating the site on a local machine.
+
+Here are a few common site remixes:
 
 * Publish the documentation for all products and product versions to a single site.
 * Publish the documentation for each product to its own unique site with its own branded UI.
 * Only publish documentation for stable product versions to a docs site.
 * Publish a product's beta release documentation to a private site.
-* Publish a new product's documentation to a special launch URL with a custom UI, and publish it to your canonical docs site URL with your standard UI.
-* And much more
+* Launch a new product's documentation on a temporary URL with a custom UI, and, at the same time, publish it to a canonical docs site URL with your standard UI.
+* And many more ...
 
 // Can have multiple playbooks that can be as similar or different as you want them to be.
 // Playbook is selected by cli flag or env var.
