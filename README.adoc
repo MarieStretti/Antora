@@ -14,18 +14,18 @@ image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
 
 {uri-project}[Antora] is a modular, multi-repository site generator designed for creating documentation sites composed in AsciiDoc and processed with {uri-asciidoctor}[Asciidoctor].
 
-More specifically, Antora is a modular Asciidoctor documentation toolchain and workflow that enables technical writing teams to create, manage, collaborate on, remix, and publish documentation sites sourced from a variety of versioned content repositories without needing expertise in web technologies, build automation, or system administration.
+The Antora pipeline and workflow helps documentation and engineering teams create, manage, collaborate on, remix, and publish documentation sites sourced from multiple versioned git repositories without needing expertise in web technologies, build automation, or system administration.
 
-This project includes a command-line interface and preassembled generator pipeline to quickly get you started creating documentation sites with Antora.
+This project includes a command-line interface (CLI) and preassembled generator pipeline so you can quickly start publishing documentation sites with Antora.
 
 == Quickstart
 
-This section offers a basic tutorial for anyone who wants to quickly evaluate Antora.
-A more comprehensive tutorial will be made available in the documentation.
+This section offers a basic tutorial for evaluating Antora.
+A more comprehensive tutorial will be in the documentation.
 
 === Prerequisites
 
-To install Antora, all you need on your machine is Node 8 (including npm, which is typically bundled with Node).
+To install Antora, you need Node 8 (including npm, which is typically bundled with Node).
 To check which version of Node you have installed, if any, open a terminal and type:
 
  $ node --version
@@ -33,7 +33,7 @@ To check which version of Node you have installed, if any, open a terminal and t
 If this command fails with an error, you don't have Node installed.
 If the command doesn't report a Node 8 version (e.g., v8.9.4), you don't have a suitable version of Node installed.
 
-If Node 8 is provided by the package manager for your operation system, we encourage you to install Node that way.
+If Node 8 is provided by the package manager for your operating system, we encourage you to install Node that way.
 Otherwise, we recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
 Follow the {uri-nvm-install}[nvm installation instructions] to set up nvm on your machine.
 
@@ -41,7 +41,7 @@ Once you've installed nvm, open a new terminal and install Node 8 using:
 
  $ nvm install 8
 
-You can switch to this version of Node at any time using the following command:
+Switch to this version of Node using the following command:
 
  $ nvm use 8
 
@@ -49,34 +49,36 @@ To make Node 8 the default in new terminals, type:
 
  $ nvm alias default 8
 
-Now that you have Node installed, you can proceed with installing Antora.
+Now that you have Node, you can proceed with installing Antora.
 
-=== How to Install
+=== Install Antora
 
-To run Antora, you need the CLI and a site generator pipeline.
-Once these packages are installed, you can use the `antora` command to generate your site.
+To run Antora, you need the Antora CLI and an Antora site generator pipeline.
+Once these packages are installed, you use the `antora` command to generate your site.
 
-Let's start by installing the CLI using npm.
-You'll need to install it globally so the `antora` command becomes available on your PATH.
+Let's start by installing the Antora CLI using npm.
+You'll need to install it globally so the `antora` command is available on your PATH.
+
+In your terminal, type:
 
  $ npm install -g @antora/cli
 
 NOTE: If you prefer Yarn over npm, you can choose to install Antora using `yarn global add @antora/cli`.
 
-You can verify that the `antora` command is available on your PATH by running:
+Verify that the `antora` command is available on your PATH by running:
 
  $ antora -v
 
 If installed correctly, this command should complete successfully and report the version of Antora.
 
-Next, you'll need to install a site generator pipeline using npm.
-The default site generator will be sufficient for most users.
+Next, install the default Antora site generator pipeline using npm.
+The default pipeline will be sufficient for most users.
+
+To install the default pipeline globally, type:
 
  $ npm install -g @antora/site-generator-default
 
-The `generate` subcommand of `antora` will look for this package to be installed by default.
-
-NOTE: You can choose to install the site generator inside the project containing your playboook file instead of installing it globally.
+NOTE: You can also install the pipeline inside the project containing your playboook file instead of installing it globally.
 
 [CAUTION]
 ====
@@ -93,17 +95,21 @@ If that happens, you need to create the following missing symlink:
 Once you've made that symlink, run the `npm install` command again.
 ====
 
-Since Antora is a modular site generator, it will be possible to substitute the default generator pipeline with your own.
+==== Custom pipeline
 
-Now that the `antora` command and the default site generator are installed, you are ready to give Antora a try.
+The `generate` subcommand of `antora` will automatically use the default pipeline.
+However, Antora is designed to allow components to be exchanged, added or removed from a pipeline to suit individual use cases.
+It will be possible to substitute the default pipeline with a custom pipeline.
 
-=== How to Use
+Now that the Antora CLI and default pipeline are installed, you are ready to set up a playbook and generate a documentation site.
 
-To run Antora, you'll need a playbook file that points to at least one content (source) repository and a UI bundle.
+=== Run Antora and Generate a Site
+
+To run Antora, you need a playbook file that points to at least one content (source) repository and a UI bundle.
 Since the Antora repository is set up as an Antora documentation project, we can use that for now as our content source.
 Antora also provides a default UI for us to use.
 
-==== Creating a Playbook File
+==== Create a Playbook File
 
 First, create a new directory for your site.
 Next, add a playbook file named `demo-site.yml` and populate it with the following contents:
@@ -121,25 +127,27 @@ ui:
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
 ----
 
-You'll notice we're looking for a documentation component under the [.path]_docs/_ subdirectory of the master branch of the Antora git repository.
+Notice we're looking for a documentation component under the [.path]_docs/_ subdirectory of the master branch of the Antora git repository.
 We're also using Antora's default UI as the UI for the site.
 Antora will take care of assembling all this input together to produce a documentation site.
 
-==== Running Antora
+==== Run Antora
 
-To run Antora, you simply point the `antora` command at the playbook file:
+To run Antora, point the `antora` command at the playbook file:
+
+In your terminal, type:
 
  $ antora demo-site.yml
 
-Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets into the destination folder, which by default is _build/site_.
+Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets into the destination folder, which, by default, is _build/site_.
 
 A site generated by Antora is designed to be viewable without a web server.
-All you need to do to view the site is navigate to an HTML page inside the destination folder in your browser.
+To view the site, navigate to an HTML page inside the destination folder in your browser.
 Using this example, look for the file link:build/site/antora/component-structure.html[].
 
 === More Information
 
-To learn more about how Antora works, we encourage you to read the article series https://opendevise.com/blog/tag/architecting-antora/[Architecting Antora].
+To learn more about how Antora works, read the article series https://opendevise.com/blog/tag/architecting-antora/[Architecting Antora].
 
 == Contributing
 
@@ -147,7 +155,7 @@ To learn how to contribute to this project, including how to <<contributing.adoc
 
 == Copyright and License
 
-Copyright (C) 2017 OpenDevise Inc. and the Antora Project.
+Copyright (C) 2017-2018 OpenDevise Inc. and the Antora Project.
 
 Use of this software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).
 See link:LICENSE[] to find the full license text.
