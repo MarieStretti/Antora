@@ -259,15 +259,49 @@ describe('cli', () => {
   }).timeout(TIMEOUT)
 
   it('should output to directory specified by --to-dir option', () => {
-    destDir = destDir + '-beta'
-    destAbsDir = destAbsDir + '-beta'
+    // NOTE we must use a subdirectory of destDir so it gets cleaned up properly
+    const betaDestDir = path.join(destDir, 'beta')
+    const betaDestAbsDir = path.join(destAbsDir, 'beta')
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
-      runAntora('generate the-site.json --to-dir ' + destDir).on('exit', () => resolve())
+      runAntora('generate the-site.json --to-dir ' + betaDestDir).on('exit', () => resolve())
     }).then(() => {
+      expect(betaDestAbsDir).to.be.a.directory()
+      expect(path.join(betaDestAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+    })
+  }).timeout(TIMEOUT)
+
+  it('should discover locally installed default site generator', () => {
+    const globalModulePath = require.resolve('@antora/site-generator-default')
+    const localNodeModules = path.join(WORK_DIR, 'node_modules')
+    const localModulePath = path.join(localNodeModules, '@antora/site-generator-default')
+    fs.ensureDirSync(localModulePath)
+    fs.writeFileSync(path.join(localModulePath, 'index.js'), `module.exports = require('${globalModulePath}')`)
+    fs.writeJsonSync(path.join(localModulePath, 'package.json'), { main: 'index.js' }, { spaces: 2 })
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    return new Promise((resolve) => {
+      runAntora('generate the-site').on('exit', (code) => {
+        fs.removeSync(localNodeModules)
+        resolve(code)
+      })
+    }).then((exitCode) => {
+      expect(exitCode).to.equal(0)
       expect(destAbsDir).to.be.a.directory()
       expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
   }).timeout(TIMEOUT)
+
+  it('should show error message if site generator fails to load', () => {
+    const localNodeModules = path.join(WORK_DIR, 'node_modules')
+    const localModulePath = path.join(localNodeModules, '@antora/site-generator-default')
+    fs.ensureDirSync(localModulePath)
+    fs.writeFileSync(path.join(localModulePath, 'index.js'), 'throw false')
+    fs.writeJsonSync(path.join(localModulePath, 'package.json'), { main: 'index.js' }, { spaces: 2 })
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    return runAntora('generate the-site')
+      .assert(/no site generator/i)
+      .on('exit', () => fs.removeSync(localNodeModules))
+      .done()
+  })
 })
