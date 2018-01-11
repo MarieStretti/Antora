@@ -17,9 +17,11 @@ const path = require('path')
  * @returns {String} The shortest relative path to travel from the start URL to the target URL.
  */
 function computeRelativeUrlPath (from, to) {
-  const fromDir = from.charAt(from.length - 1) === '/' ? from.substr(0, from.length - 1) : path.dirname(from)
-  // NOTE temporarily append _ to preserve the trailing slash of a directory index
-  return to.charAt(to.length - 1) === '/' ? path.relative(fromDir, to + '_').slice(0, -1) : path.relative(fromDir, to)
+  if (to.charAt(to.length - 1) === '/') {
+    return from === to ? './' : path.relative(path.dirname(from + '.'), to) + '/'
+  } else {
+    return path.relative(path.dirname(from + '.'), to)
+  }
 }
 
 module.exports = computeRelativeUrlPath
