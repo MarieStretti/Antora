@@ -146,26 +146,19 @@ function getCacheDir () {
  */
 function generateLocalFolderName (url) {
   // NOTE we don't check extname since the last path segment could equal .git
-  if (url.endsWith('.git')) {
-    url = url.slice(0, -4)
-  }
+  if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
   const schemeMatch = ~url.indexOf(':') && url.match(URI_SCHEME_RX)
-  if (schemeMatch) {
-    url = url.slice(schemeMatch[0].length)
-  }
-  if (url.charAt() === '/') {
-    url = url.slice(1)
-  }
-  if (url.charAt(url.length - 1) === '/') {
-    url = url.slice(0, -1)
-  }
+  if (schemeMatch) url = url.substr(schemeMatch[0].length)
+  if (url.charAt() === '/') url = url.substr(1)
+  const lastIdx = url.length - 1
+  if (url.charAt(lastIdx) === '/') url = url.substr(0, lastIdx)
   const segments = url.split(SEPARATOR_RX)
   let firstSegment = segments[0]
   if (firstSegment.length === 0) {
     segments.splice(0, 1)
   } else {
     const atIdx = firstSegment.indexOf('@')
-    if (~atIdx) firstSegment = firstSegment.slice(atIdx + 1)
+    if (~atIdx) firstSegment = firstSegment.substr(atIdx + 1)
     segments[0] = firstSegment
   }
   return segments.join('%')

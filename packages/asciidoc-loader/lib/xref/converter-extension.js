@@ -12,7 +12,7 @@ const ConverterExtension = (() => {
       if (
         node.getAttribute('path') ||
         // NOTE refSpec is undefined if inter-document xref refers to current docname and fragment is empty
-        (refSpec && refSpec.endsWith('.adoc') && (refSpec = refSpec.slice(0, -5)) !== undefined)
+        (refSpec && refSpec.endsWith('.adoc') && (refSpec = refSpec.substr(0, refSpec.length - 5)) !== undefined)
       ) {
         const callback = this[$pageRefCallback]
         if (callback) {

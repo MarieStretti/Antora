@@ -86,13 +86,13 @@ function selectFilesStartingFrom (startPath) {
       file.isNull() ? next() : next(null, file)
     })
   } else {
-    startPath = startPath.slice(1)
+    startPath = startPath.substr(1)
     const startPathOffset = startPath.length
     return map((file, next) => {
       if (!file.isNull()) {
         const filePath = file.path
         if (filePath.length > startPathOffset && filePath.startsWith(startPath)) {
-          file.path = filePath.slice(startPathOffset)
+          file.path = filePath.substr(startPathOffset)
           next(null, file)
           return
         }
@@ -160,7 +160,7 @@ function resolveType (file) {
 
 function resolveOut (file, outputDir = '_') {
   let dirname = path.join(outputDir, file.dirname)
-  if (dirname.charAt() === '/') dirname = dirname.slice(1)
+  if (dirname.charAt() === '/') dirname = dirname.substr(1)
   const basename = file.basename
   return { dirname, basename, path: path.join(dirname, basename) }
 }

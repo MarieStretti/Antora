@@ -90,7 +90,7 @@ function applyTagFiltering (contents, tags) {
       (l.endsWith('[]') ||
         (~l.indexOf('[] ') &&
           (m = l.match(CIRCUMFIX_COMMENT_SUFFIX_RX)) &&
-          (l = l.slice(0, m.index)).endsWith('[]'))) &&
+          (l = l.substr(0, m.index)).endsWith('[]'))) &&
       (m = l.match(TAG_DIRECTIVE_RX))
     ) {
       const thisTag = m[2]

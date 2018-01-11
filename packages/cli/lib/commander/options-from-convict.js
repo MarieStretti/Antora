@@ -28,10 +28,10 @@ function collectOptions (properties, options = [], context = undefined) {
       const option = { name: arg, form: `--${arg}`, description: value.doc, format: format }
       if (Array.isArray(format)) {
         option.form += ` <${format.join('|')}>`
-        //option.form += ` <${arg.split('-').slice(-1)}>`
+        //option.form += ` <${arg.substr(arg.lastIndexOf('-') + 1, arg.length)}>`
         //option.description += ` (${format.join(', ')})`
       } else if (format !== 'boolean') {
-        option.form += ` <${arg.split('-').slice(-1)}>`
+        option.form += ` <${arg.substr(arg.lastIndexOf('-') + 1, arg.length)}>`
       }
       if (default_ === null) {
         option.mandatory = true
