@@ -4,6 +4,8 @@ const { buildArtifactUrl } = require('./lib/gitlab')
 const run = require('./lib/run-command')
 
 module.exports = (files, analyzeCodeCoverage = false) => {
+  const args = [...files]
+  if (process.env.CI) args.unshift('--forbid-only')
   if (analyzeCodeCoverage) {
     let onSuccess
     if (process.env.GITLAB_CI) {
@@ -14,8 +16,9 @@ module.exports = (files, analyzeCodeCoverage = false) => {
       )
       onSuccess = () => console.log('Coverage report: ' + coverageReportUrl)
     }
-    return run('nyc', ['_mocha', ...files], onSuccess)
+    args.unshift('_mocha')
+    return run('nyc', args, onSuccess)
   } else {
-    return run('_mocha', files)
+    return run('_mocha', args)
   }
 }
