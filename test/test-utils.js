@@ -2,8 +2,11 @@
 
 // IMPORTANT nodegit must be loaded before asciidoctor.js or else promisify gets tripped up by Opal enhancements
 require('nodegit')
-// IMPORTANT eagerly load Opal since we can assume we're always running in this context
-require('opal-runtime')
+// IMPORTANT eagerly load Opal since we'll always be in this context; change String encoding from UTF-16LE to UTF-8
+const Opal = require('opal-runtime').Opal
+if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF-8') {
+  String.prototype.encoding = Opal.const_get_local(Opal.const_get_qualified('::', 'Encoding'), 'UTF_8') // eslint-disable-line
+}
 
 const interceptRequire = require('intercept-require')
 const patchChai = (_, info) => {
