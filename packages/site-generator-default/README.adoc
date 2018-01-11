@@ -1,0 +1,6 @@
+= Antora Default Site Generator
+
+This is the default site generator pipeline for Antora.
+This pipeline is invoked by Antora's CLI to produce and publish static documentation sites.
+
+https://antora.org[Antora] is a modular, multi-repository site generator designed for creating documentation sites written in AsciiDoc and processed with Asciidoctor.

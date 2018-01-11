@@ -1,17 +1,38 @@
 {
   "name": "@antora/navigation-builder",
-  "version": "1.0.0-alpha.1",
-  "description": "Builds a navigation catalog from navigation files for adding a navigation menu to pages in the Antora documentation pipeline.",
+  "version": "1.0.0-alpha.0",
+  "description": "Builds a navigation catalog from navigation files for adding site navigation to pages in an Antora documentation pipeline.",
+  "license": "MPL-2.0",
   "author": {
     "name": "OpenDevise Inc.",
     "url": "https://opendevise.com"
   },
-  "license": "MPL-2.0",
+  "homepage": "https://antora.org",
+  "repository": "gitlab:antora/antora",
+  "bugs": {
+    "url": "https://gitlab.com/antora/antora/issues"
+  },
   "main": "lib/index.js",
+  "dependencies": {
+    "@antora/asciidoc-loader": "1.0.0-alpha.0"
+  },
   "engines": {
     "node": ">= 8.0.0"
   },
-  "dependencies": {
-    "@antora/asciidoc-loader": "1.0.0-alpha.1"
-  }
+  "scripts": {
+    "prepublishOnly": "node ../../scripts/prepublish",
+    "postpublish": "node ../../scripts/postpublish"
+  },
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "antora",
+    "antora-component",
+    "navigation",
+    "asciidoc",
+    "documentation",
+    "static site",
+    "web publishing"
+  ]
 }

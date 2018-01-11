@@ -1,18 +1,38 @@
 {
   "name": "@antora/content-classifier",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.0",
   "description": "Organizes aggregated content into a virtual file catalog for use in an Antora documentation pipeline.",
+  "license": "MPL-2.0",
   "author": {
     "name": "OpenDevise Inc.",
     "url": "https://opendevise.com"
   },
-  "license": "MPL-2.0",
-  "main": "lib/index.js",
-  "engines": {
-    "node": ">= 8.0.0"
+  "homepage": "https://antora.org",
+  "repository": "gitlab:antora/antora",
+  "bugs": {
+    "url": "https://gitlab.com/antora/antora/issues"
   },
+  "main": "lib/index.js",
   "dependencies": {
     "lodash": "^4.17.4",
     "semver-compare": "^1.0.0"
-  }
+  },
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "scripts": {
+    "prepublish": "node ../../scripts/prepublish",
+    "postpublish": "node ../../scripts/postpublish"
+  },
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "antora",
+    "antora-component",
+    "content",
+    "documentation",
+    "static site",
+    "web publishing"
+  ]
 }

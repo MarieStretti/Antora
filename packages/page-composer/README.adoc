@@ -1,0 +1,6 @@
+= Antora Page Composer
+
+The page composer is a component in Antora responsible for wrapping the embeddable HTML contents of each page file in a content catalog in a page layout.
+This step yields the standalone HTML pages in the generated site produced by an Antora documentation pipeline.
+
+https://antora.org[Antora] is a modular, multi-repository site generator designed for creating documentation sites written in AsciiDoc and processed with Asciidoctor.

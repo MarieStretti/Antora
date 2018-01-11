@@ -1,17 +1,38 @@
 {
   "name": "@antora/asciidoc-loader",
-  "version": "1.0.0-alpha.1",
-  "description": "Loads AsciiDoc content into an AST for use in an Antora documentation pipeline.",
+  "version": "1.0.0-alpha.0",
+  "description": "Loads AsciiDoc content into an Asciidoctor Document object (AST) for use in an Antora documentation pipeline.",
+  "license": "MPL-2.0",
   "author": {
     "name": "OpenDevise Inc.",
     "url": "https://opendevise.com"
   },
-  "license": "MPL-2.0",
+  "homepage": "https://antora.org",
+  "repository": "gitlab:antora/antora",
+  "bugs": {
+    "url": "https://gitlab.com/antora/antora/issues"
+  },
   "main": "lib/index.js",
+  "dependencies": {
+    "asciidoctor.js": "^1.5.6-preview.4"
+  },
   "engines": {
     "node": ">= 8.0.0"
   },
-  "dependencies": {
-    "asciidoctor.js": "^1.5.6-preview.4"
-  }
+  "scripts": {
+    "prepublishOnly": "node ../../scripts/prepublish",
+    "postpublish": "node ../../scripts/postpublish"
+  },
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "antora",
+    "antora-component",
+    "asciidoc",
+    "asciidoctor",
+    "documentation",
+    "static site",
+    "web publishing"
+  ]
 }

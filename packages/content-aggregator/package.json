@@ -1,16 +1,18 @@
 {
   "name": "@antora/content-aggregator",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.0",
   "description": "Fetches and aggregates content from distributed sources for use in an Antora documentation pipeline.",
+  "license": "MPL-2.0",
   "author": {
     "name": "OpenDevise Inc.",
     "url": "https://opendevise.com"
   },
-  "license": "MPL-2.0",
-  "main": "lib/index.js",
-  "engines": {
-    "node": ">= 8.0.0"
+  "homepage": "https://antora.org",
+  "repository": "gitlab:antora/antora",
+  "bugs": {
+    "url": "https://gitlab.com/antora/antora/issues"
   },
+  "main": "lib/index.js",
   "dependencies": {
     "fs-extra": "^5.0.0",
     "js-yaml": "^3.10.0",
@@ -22,5 +24,25 @@
     "through2": "^2.0.3",
     "vinyl": "^2.1.0",
     "vinyl-fs": "^3.0.0"
-  }
+  },
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "scripts": {
+    "prepublishOnly": "node ../../scripts/prepublish",
+    "postpublish": "node ../../scripts/postpublish"
+  },
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "antora",
+    "antora-component",
+    "git",
+    "nodegit",
+    "content",
+    "documentation",
+    "static site",
+    "web publishing"
+  ]
 }
