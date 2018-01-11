@@ -5,7 +5,7 @@ const collect = require('stream-to-array')
 const crypto = require('crypto')
 const download = require('download')
 const fs = require('fs-extra')
-const map = require('map-stream')
+const map = require('through2').obj
 const minimatchAll = require('minimatch-all')
 const path = require('path')
 const UiCatalog = require('./ui-catalog')
@@ -82,13 +82,11 @@ function getCachePath (relative) {
 
 function selectFilesStartingFrom (startPath) {
   if (!startPath || (startPath = path.join('/', startPath + '/')) === '/') {
-    return map((file, next) => {
-      file.isNull() ? next() : next(null, file)
-    })
+    return map((file, encoding, next) => file.isNull() ? next() : next(null, file))
   } else {
     startPath = startPath.substr(1)
     const startPathOffset = startPath.length
-    return map((file, next) => {
+    return map((file, encoding, next) => {
       if (!file.isNull()) {
         const filePath = file.path
         if (filePath.length > startPathOffset && filePath.startsWith(startPath)) {

@@ -6,7 +6,7 @@ const File = require('vinyl')
 const fs = require('fs-extra')
 const git = require('nodegit')
 const isMatch = require('matcher').isMatch
-const map = require('map-stream')
+const map = require('through2').obj
 const mimeTypes = require('./mime-types-with-asciidoc')
 const path = require('path')
 const vfs = require('vinyl-fs')
@@ -268,7 +268,7 @@ function readFilesFromWorktree (relativeDir) {
  * This mapper also filters out any directories that got caught in the glob.
  */
 function relativize () {
-  return map((file, next) => {
+  return map((file, encoding, next) => {
     const { contents, stat } = file
     // NOTE if contents is null, the file is either a directory or it couldn't be read
     if (contents === null) {
