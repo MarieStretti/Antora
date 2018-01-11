@@ -67,7 +67,7 @@ function buildNavigationTree (formattedContent, list) {
 
 // atomize? distill? decompose?
 function partitionContent (content) {
-  if (content.includes('<a')) {
+  if (~content.indexOf('<a')) {
     const match = content.match(LINK_RX)
     if (match) {
       let url = match[1]

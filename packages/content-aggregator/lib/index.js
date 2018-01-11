@@ -149,7 +149,7 @@ function generateLocalFolderName (url) {
   if (url.endsWith('.git')) {
     url = url.slice(0, -4)
   }
-  const schemeMatch = url.includes(':') && url.match(URI_SCHEME_RX)
+  const schemeMatch = ~url.indexOf(':') && url.match(URI_SCHEME_RX)
   if (schemeMatch) {
     url = url.slice(schemeMatch[0].length)
   }
@@ -164,9 +164,8 @@ function generateLocalFolderName (url) {
   if (firstSegment.length === 0) {
     segments.splice(0, 1)
   } else {
-    if (firstSegment.includes('@')) {
-      firstSegment = firstSegment.slice(firstSegment.indexOf('@') + 1)
-    }
+    const atIdx = firstSegment.indexOf('@')
+    if (~atIdx) firstSegment = firstSegment.slice(atIdx + 1)
     segments[0] = firstSegment
   }
   return segments.join('%')

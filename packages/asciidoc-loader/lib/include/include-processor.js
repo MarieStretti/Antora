@@ -88,7 +88,7 @@ function applyTagFiltering (contents, tags) {
     let l = line
     if (
       (l.endsWith('[]') ||
-        (l.includes('[] ') &&
+        (~l.indexOf('[] ') &&
           (m = l.match(CIRCUMFIX_COMMENT_SUFFIX_RX)) &&
           (l = l.slice(0, m.index)).endsWith('[]'))) &&
       (m = l.match(TAG_DIRECTIVE_RX))
