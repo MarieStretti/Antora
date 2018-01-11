@@ -1,15 +1,12 @@
 'use strict'
 
-const loadAsciiDoc = require('@antora/asciidoc-loader')
-
-module.exports = async function convertDocument (file, customAttrs, contentCatalog) {
-  const doc = loadAsciiDoc(file, customAttrs, contentCatalog)
-  const attributes = doc.getAttributes()
-  // Q: should we backup the AsciiDoc contents for all pages? what's the impact?
-  if ('page-partial' in attributes) {
-    file.src.contents = file.contents
-  }
-  file.asciidoc = doc.hasHeader() ? { attributes, doctitle: doc.getDocumentTitle() } : { attributes }
-  file.contents = Buffer.from(doc.convert())
-  file.mediaType = 'text/html'
-}
+/**
+ * Document Converter component for Antora
+ *
+ * Using the AsciiDoc Loader, converts the AsciiDoc contents on files to
+ * embeddable HTML and assigns AsciiDoc-related metadata, such as page
+ * attributes, to the file.
+ *
+ * @namespace document-converter
+ */
+module.exports = require('./convert-document')
