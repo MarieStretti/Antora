@@ -20,7 +20,7 @@ function versionCompareDesc (a, b) {
   if (a === b) return 0
   if (a === 'master') return -1
   if (b === 'master') return 1
-  return -1 * semverCompare(a.charAt(0) === 'v' ? a.substr(1) : a, b.charAt(0) === 'v' ? b.substr(1) : b)
+  return -1 * semverCompare(a.charAt() === 'v' ? a.substr(1) : a, b.charAt() === 'v' ? b.substr(1) : b)
 }
 
 module.exports = versionCompareDesc

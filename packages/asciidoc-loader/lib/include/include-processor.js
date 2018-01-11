@@ -35,7 +35,7 @@ function getTags (attrs) {
   if (attrs['$key?']('tag')) {
     const tag = attrs['$[]']('tag')
     if (tag && tag !== '!') {
-      return tag.startsWith('!') ? { [tag.substr(1)]: false } : { [tag]: true }
+      return tag.charAt() === '!' ? { [tag.substr(1)]: false } : { [tag]: true }
     }
   } else if (attrs['$key?']('tags')) {
     const tags = attrs['$[]']('tags')
@@ -45,7 +45,7 @@ function getTags (attrs) {
       tags.split(TAG_DELIMITER_RX).forEach((tag) => {
         if (tag && tag !== '!') {
           any = true
-          if (tag.startsWith('!')) {
+          if (tag.charAt() === '!') {
             result[tag.substr(1)] = false
           } else {
             result[tag] = true

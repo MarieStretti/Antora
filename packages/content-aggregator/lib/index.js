@@ -153,10 +153,10 @@ function generateLocalFolderName (url) {
   if (schemeMatch) {
     url = url.slice(schemeMatch[0].length)
   }
-  if (url.startsWith('/')) {
+  if (url.charAt() === '/') {
     url = url.slice(1)
   }
-  if (url.endsWith('/')) {
+  if (url.charAt(url.length - 1) === '/') {
     url = url.slice(0, -1)
   }
   const segments = url.split(SEPARATOR_RX)

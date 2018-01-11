@@ -160,7 +160,7 @@ function resolveType (file) {
 
 function resolveOut (file, outputDir = '_') {
   let dirname = path.join(outputDir, file.dirname)
-  if (dirname.startsWith('/')) dirname = dirname.slice(1)
+  if (dirname.charAt() === '/') dirname = dirname.slice(1)
   const basename = file.basename
   return { dirname, basename, path: path.join(dirname, basename) }
 }

@@ -74,7 +74,7 @@ function partitionContent (content) {
       let urlType = 'external'
       if (match[2] === 'page') {
         urlType = 'internal'
-      } else if (url.startsWith('#')) {
+      } else if (url.charAt() === '#') {
         urlType = 'fragment'
       }
       return { content: match[3], url, urlType }
