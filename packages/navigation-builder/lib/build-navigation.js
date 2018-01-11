@@ -67,14 +67,14 @@ function buildNavigationTree (formattedContent, list) {
 
 // atomize? distill? decompose?
 function partitionContent (content) {
-  if (content.includes('<a')) {
+  if (~content.indexOf('<a')) {
     const match = content.match(LINK_RX)
     if (match) {
       let url = match[1]
       let urlType = 'external'
       if (match[2] === 'page') {
         urlType = 'internal'
-      } else if (url.startsWith('#')) {
+      } else if (url.charAt() === '#') {
         urlType = 'fragment'
       }
       return { content: match[3], url, urlType }

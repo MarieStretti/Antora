@@ -328,7 +328,7 @@ describe('loadAsciiDoc()', () => {
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n').filter((l) => !l.startsWith('#')))
+      expect(firstBlock.$lines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
     })
 
     it('should match tag directives enclosed in circumfix comments', () => {
@@ -403,7 +403,7 @@ describe('loadAsciiDoc()', () => {
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n').filter((l) => !l.startsWith('#')))
+      expect(firstBlock.$lines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
     })
 
     it('should apply tag filtering to include contents if negated tags are specified', () => {

@@ -148,9 +148,8 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
     const lastUrlSegmentIdx = urlSegments.length - 1
     if (htmlExtensionStyle === 'drop') {
       // drop just the .html extension or, if the filename is index.html, the whole segment
-      if ((urlSegments[lastUrlSegmentIdx] = urlSegments[lastUrlSegmentIdx].slice(0, -5)) === 'index') {
-        urlSegments[lastUrlSegmentIdx] = ''
-      }
+      const lastUrlSegment = urlSegments[lastUrlSegmentIdx]
+      urlSegments[lastUrlSegmentIdx] = lastUrlSegment === 'index.html' ? '' : lastUrlSegment.substr(0, lastUrlSegment.length - 5)
     } else if (htmlExtensionStyle === 'indexify') {
       urlSegments[lastUrlSegmentIdx] = ''
     }

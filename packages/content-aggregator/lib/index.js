@@ -6,7 +6,7 @@ const File = require('vinyl')
 const fs = require('fs-extra')
 const git = require('nodegit')
 const isMatch = require('matcher').isMatch
-const map = require('map-stream')
+const map = require('through2').obj
 const mimeTypes = require('./mime-types-with-asciidoc')
 const path = require('path')
 const vfs = require('vinyl-fs')
@@ -146,27 +146,19 @@ function getCacheDir () {
  */
 function generateLocalFolderName (url) {
   // NOTE we don't check extname since the last path segment could equal .git
-  if (url.endsWith('.git')) {
-    url = url.slice(0, -4)
-  }
-  const schemeMatch = url.includes(':') && url.match(URI_SCHEME_RX)
-  if (schemeMatch) {
-    url = url.slice(schemeMatch[0].length)
-  }
-  if (url.startsWith('/')) {
-    url = url.slice(1)
-  }
-  if (url.endsWith('/')) {
-    url = url.slice(0, -1)
-  }
+  if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
+  const schemeMatch = ~url.indexOf(':') && url.match(URI_SCHEME_RX)
+  if (schemeMatch) url = url.substr(schemeMatch[0].length)
+  if (url.charAt() === '/') url = url.substr(1)
+  const lastIdx = url.length - 1
+  if (url.charAt(lastIdx) === '/') url = url.substr(0, lastIdx)
   const segments = url.split(SEPARATOR_RX)
   let firstSegment = segments[0]
   if (firstSegment.length === 0) {
     segments.splice(0, 1)
   } else {
-    if (firstSegment.includes('@')) {
-      firstSegment = firstSegment.slice(firstSegment.indexOf('@') + 1)
-    }
+    const atIdx = firstSegment.indexOf('@')
+    if (~atIdx) firstSegment = firstSegment.substr(atIdx + 1)
     segments[0] = firstSegment
   }
   return segments.join('%')
@@ -276,7 +268,7 @@ function readFilesFromWorktree (relativeDir) {
  * This mapper also filters out any directories that got caught in the glob.
  */
 function relativize () {
-  return map((file, next) => {
+  return map((file, encoding, next) => {
     const { contents, stat } = file
     // NOTE if contents is null, the file is either a directory or it couldn't be read
     if (contents === null) {

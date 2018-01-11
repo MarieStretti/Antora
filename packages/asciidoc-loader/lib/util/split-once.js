@@ -12,7 +12,7 @@
  */
 function splitOnce (string, separator) {
   const separatorIdx = string.indexOf(separator)
-  return separatorIdx === -1 ? [string] : [string.slice(0, separatorIdx), string.slice(separatorIdx + 1)]
+  return ~separatorIdx ? [string.substr(0, separatorIdx), string.substr(separatorIdx + 1)] : [string]
 }
 
 module.exports = splitOnce
