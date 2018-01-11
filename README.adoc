@@ -14,9 +14,9 @@ image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
 
 {uri-project}[Antora] is a modular, multi-repository site generator designed for creating documentation sites composed in AsciiDoc and processed with {uri-asciidoctor}[Asciidoctor].
 
-The Antora pipeline and workflow helps documentation and engineering teams create, manage, collaborate on, remix, and publish documentation sites sourced from multiple versioned git repositories without needing expertise in web technologies, build automation, or system administration.
+Antora's toolchain and workflow help documentation and engineering teams create, manage, collaborate on, remix, and publish documentation sites sourced from multiple versioned git repositories without needing expertise in web technologies, build automation, or system administration.
 
-This project includes a command-line interface (CLI) and preassembled generator pipeline so you can quickly start publishing documentation sites with Antora.
+This project includes a command-line interface (CLI) and a preassembled site generator pipeline so you can quickly start publishing documentation sites with Antora.
 
 == Quickstart
 
@@ -25,7 +25,8 @@ A more comprehensive tutorial will be in the documentation.
 
 === Prerequisites
 
-To install Antora, you need Node 8 (including npm, which is typically bundled with Node).
+To install Antora, you only need Node 8 (including npm, which is typically bundled with Node).
+
 To check which version of Node you have installed, if any, open a terminal and type:
 
  $ node --version
@@ -49,15 +50,15 @@ To make Node 8 the default in new terminals, type:
 
  $ nvm alias default 8
 
-Now that you have Node, you can proceed with installing Antora.
+Now that you have Node installed, you can proceed with installing Antora.
 
 === Install Antora
 
 To run Antora, you need the Antora CLI and an Antora site generator pipeline.
 Once these packages are installed, you use the `antora` command to generate your site.
 
-Let's start by installing the Antora CLI using npm.
-You'll need to install it globally so the `antora` command is available on your PATH.
+We'll begin by installing the Antora CLI using npm.
+You should install this package globally so the `antora` command is available on your PATH.
 
 In your terminal, type:
 
@@ -65,43 +66,55 @@ In your terminal, type:
 
 NOTE: If you prefer Yarn over npm, you can choose to install Antora using `yarn global add @antora/cli`.
 
-Verify that the `antora` command is available on your PATH by running:
+Verify the `antora` command is available on your PATH by running:
 
  $ antora -v
 
-If installed correctly, this command should complete successfully and report the version of Antora.
+If installation worked, this command should complete successfully and report the version of Antora.
 
-Next, install the default Antora site generator pipeline using npm.
-The default pipeline will be sufficient for most users.
-
-To install the default pipeline globally, type:
+Next, install the default Antora site generator using npm (or yarn):
 
  $ npm install -g @antora/site-generator-default
 
-NOTE: You can also install the pipeline inside the project containing your playboook file instead of installing it globally.
+You can opt to install the site generator inside the project containing your playboook file instead of installing it globally.
 
+.Troubleshooting nodegit installation
 [CAUTION]
 ====
-Installation may fail on Linux with the following error:
+The nodegit dependency may fail on certain Linux distributions with the following error:
 
 ....
 Error: libcurl-gnutls.so.4: cannot open shared object file: No such file or directory
 ....
 
-If that happens, you need to create the following missing symlink:
+This is an open issue in nodegit.
+See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246].
+
+If this happens, you either need to create the missing symlink or force nodegit to be recompiled (instead of using a precompiled binary).
+
+To create the missing symlink, run the following command:
 
  $ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
 
 Once you've made that symlink, run the `npm install` command again.
+
+ $ npm install -g @antora/site-generator-default
+
+If you aren't comfortable making a system-wide change, you can instead force nodegit to be recompiled instead by passing the `BUILD_ONLY` environment variable to the `npm install` command.
+
+ $ BUILD_ONLY=true npm install -g @antora/site-generator-default
+
+Be aware that recompiling nodegit will make installation take considerably longer.
 ====
 
-==== Custom pipeline
+==== Custom Site Generator Pipeline
 
-The `generate` subcommand of `antora` will automatically use the default pipeline.
-However, Antora is designed to allow components to be exchanged, added or removed from a pipeline to suit individual use cases.
-It will be possible to substitute the default pipeline with a custom pipeline.
+The `generate` subcommand of `antora` automatically uses the default site generator.
+However, Antora is designed with an open architecture to accomodate a myriad of use cases.
+That means you can assemble your own site generator pipeline, perhaps to add, substitute, and/or remove components used in the pipeline of the default site generator.
+It will be possible in the near future to configure the CLI to use your custom site generator pipeline in place of the default one.
 
-Now that the Antora CLI and default pipeline are installed, you are ready to set up a playbook and generate a documentation site.
+Now that the Antora CLI and default site generator are installed, you are ready to set up a playbook and generate a documentation site.
 
 === Run Antora and Generate a Site
 
@@ -130,6 +143,9 @@ ui:
 Notice we're looking for a documentation component under the [.path]_docs/_ subdirectory of the master branch of the Antora git repository.
 We're also using Antora's default UI as the UI for the site.
 Antora will take care of assembling all this input together to produce a documentation site.
+
+The UI bundle can be loaded from a URI or a local filesystem path.
+If you want to use your own UI bundle, follow the instructions in the README for the https://gitlab.com/antora/antora-ui-default/blob/master/README.adoc[Default UI].
 
 ==== Run Antora
 
