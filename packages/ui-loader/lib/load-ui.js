@@ -82,7 +82,7 @@ function getCachePath (relative) {
 
 function selectFilesStartingFrom (startPath) {
   if (!startPath || (startPath = path.join('/', startPath + '/')) === '/') {
-    return map((file, encoding, next) => file.isNull() ? next() : next(null, file))
+    return map((file, encoding, next) => (file.isNull() ? next() : next(null, file)))
   } else {
     startPath = startPath.substr(1)
     const startPathOffset = startPath.length
