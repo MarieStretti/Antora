@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * Navigation Builder Component
+ * Navigation Builder component for Antora
  *
  * @module navigation-builder
  */

@@ -16,7 +16,7 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  * combines those trees in sorted order as a navigation menu, which gets
  * stored in the navigation catalog by component/version pair.
  *
- * @memberOf module:navigation-builder
+ * @memberof navigation-builder
  *
  * @param {ContentCatalog} [contentCatalog=undefined] - The content catalog
  *   that provides access to the virtual files in the site.

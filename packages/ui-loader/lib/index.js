@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * UI Loader component for Antora.
+ * UI Loader component for Antora
  *
  * Loads the UI files from the specified bundle and makes them available
  * through the UiCatalog.
