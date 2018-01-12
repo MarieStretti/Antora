@@ -1,6 +1,6 @@
 {
   "name": "@antora/site-generator-default",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "The default site generator pipeline for producing and publishing static documentation sites with Antora.",
   "license": "MPL-2.0",
   "author": {
@@ -14,13 +14,13 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@antora/content-aggregator": "1.0.0-alpha.0",
-    "@antora/content-classifier": "1.0.0-alpha.0",
-    "@antora/document-converter": "1.0.0-alpha.0",
-    "@antora/navigation-builder": "1.0.0-alpha.0",
-    "@antora/page-composer": "1.0.0-alpha.0",
-    "@antora/playbook-builder": "1.0.0-alpha.0",
-    "@antora/ui-loader": "1.0.0-alpha.0",
+    "@antora/content-aggregator": "1.0.0-alpha.1",
+    "@antora/content-classifier": "1.0.0-alpha.1",
+    "@antora/document-converter": "1.0.0-alpha.1",
+    "@antora/navigation-builder": "1.0.0-alpha.1",
+    "@antora/page-composer": "1.0.0-alpha.1",
+    "@antora/playbook-builder": "1.0.0-alpha.1",
+    "@antora/ui-loader": "1.0.0-alpha.1",
     "streamify-array": "^1.0.0",
     "through2": "^2.0.3",
     "vinyl-fs": "^3.0.0"
