@@ -29,7 +29,7 @@ The default site generator will be sufficient for most users.
 npm install -g @antora/site-generator-default
 ```
 
-The `antora` command (specifically the `generate` subcommand) will look for this package by default.
+The `antora` command (specifically the implicit `generate` subcommand) will look for this package by default.
 
 == How to Use
 
