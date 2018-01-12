@@ -34,12 +34,12 @@ The `antora` command (specifically the `generate` subcommand) will look for this
 == How to Use
 
 To run Antora, you'll need a playbook file and at least one content (source) repository.
-Consult the documentation for details.
+Consult the https://gitlab.com/antora/antora#readme[evaluation quickstart] to find an example.
 
-Once you have your sources set up, just point the `antora` command at your playbook file:
+Once you have your content sources set up, just point the `antora` command at your playbook file:
 
 ```
-antora my-site.yml
+antora docs-site.yml
 ```
 
-The `antora` command will write the generated site to the _build/site_ folder by default.
+The `antora` command will output the generated site to the _build/site_ folder by default.
