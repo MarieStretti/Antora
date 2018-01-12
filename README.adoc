@@ -38,6 +38,9 @@ If Node 8 is provided by the package manager for your operating system, we encou
 Otherwise, we recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
 Follow the {uri-nvm-install}[nvm installation instructions] to set up nvm on your machine.
 
+NOTE: Most CI environments use nvm to install the version of Node used for the build job.
+Thus, by using nvm, you closely align your setup with the environment used to generate and publish the production site.
+
 Once you've installed nvm, open a new terminal and install Node 8 using:
 
  $ nvm install 8
@@ -72,7 +75,7 @@ Verify the `antora` command is available on your PATH by running:
 
 If installation worked, this command should complete successfully and report the version of Antora.
 
-Next, install the default Antora site generator using npm (or yarn):
+Next, install the default Antora site generator using npm (or Yarn):
 
  $ npm install -g @antora/site-generator-default
 
@@ -149,7 +152,7 @@ If you want to use your own UI bundle, follow the instructions in the README for
 
 ==== Run Antora
 
-To run Antora, you simply point the `antora` command at your playbook file.
+To generate the site, you simply point the `antora` command at your playbook file.
 
 In your terminal, type:
 
