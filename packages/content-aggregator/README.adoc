@@ -2,4 +2,4 @@
 
 The content aggregator is a component in Antora responsible for fetching and aggregating content distributed across multiple local and remote git repositories for use in an Antora documentation pipeline.
 
-https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from multiple, versioned content repositories and processed with Asciidoctor.
+https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from versioned content repositories and processed with Asciidoctor.

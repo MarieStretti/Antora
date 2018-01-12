@@ -3,4 +3,4 @@
 This is the default site generator pipeline for Antora.
 This pipeline is invoked by the generate command of Antora's CLI to produce and publish static documentation sites.
 
-https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from multiple, versioned content repositories and processed with Asciidoctor.
+https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from versioned content repositories and processed with Asciidoctor.
