@@ -3,4 +3,4 @@
 The playbook builder is the configuration component for Antora.
 It's responsible for building a playbook object from user input that's used for configuring successive documentation components in an Antora pipeline.
 
-https://antora.org[Antora] is a modular, multi-repository site generator designed for creating documentation sites written in AsciiDoc and processed with Asciidoctor.
+https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from multiple, versioned content repositories and processed with Asciidoctor.

@@ -3,4 +3,4 @@
 The navigation builder is a component in Antora responsible for building a navigation catalog sourced from navigation files.
 This navigation catalog can be used to add site navigation to pages in an Antora documentation pipeline.
 
-https://antora.org[Antora] is a modular, multi-repository site generator designed for creating documentation sites written in AsciiDoc and processed with Asciidoctor.
+https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from multiple, versioned content repositories and processed with Asciidoctor.
