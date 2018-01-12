@@ -5,6 +5,6 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== 1.0.0-alpha.1 (2018-01-11)
+== 1.0.0-alpha.1 (2018-01-12)
 
 * Initial alpha release.
