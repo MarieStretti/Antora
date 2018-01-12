@@ -11,21 +11,21 @@ Once these packages are installed, you can use the `antora` command to generate 
 
 Let's start by installing the CLI.
 
-```
+```sh
 npm install -g @antora/cli
 ```
 
 This package adds the `antora` command to your PATH.
 You can check by running:
 
-```
+```sh
 antora -v
 ```
 
 Next, install a site generator.
 The default site generator will be sufficient for most users.
 
-```
+```sh
 npm install -g @antora/site-generator-default
 ```
 
@@ -38,7 +38,7 @@ Consult the https://gitlab.com/antora/antora#readme[evaluation quickstart] to fi
 
 Once you have your content sources set up, just point the `antora` command at your playbook file:
 
-```
+```sh
 antora docs-site.yml
 ```
 
