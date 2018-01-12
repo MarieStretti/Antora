@@ -2,8 +2,9 @@
 
 This document provides a summary of all notable changes to the core Antora components by release.
 For a detailed view of what's changed, refer to the repository's https://gitlab.com/antora/antora/commits/master[commit history].
-This project uses semantic versioning.
 
-== 1.0.0-alpha.1 (2018-01-09)
+This project utilizes semantic versioning.
+
+== 1.0.0-alpha.1 (2018-01-11)
 
 * Initial alpha release.
