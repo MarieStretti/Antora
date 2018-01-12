@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * AsciiDoc Loader component for Antora.
+ * AsciiDoc Loader component for Antora
  *
  * Uses Asciidoctor.js to loads AsciiDoc content in a way that integrates with
  * the Antora environment. In particular, it resolves include files and page

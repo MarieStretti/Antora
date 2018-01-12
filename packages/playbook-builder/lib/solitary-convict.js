@@ -1,10 +1,12 @@
+'use strict'
+
 const convict = require('convict')
 
 /**
  * A convict function wrapper that decouples it from the process environment.
  * This wrapper allows the args array and env map to be specified as options.
  */
-module.exports = (schema, opts = {}) => {
+function solitaryConvict (schema, opts = {}) {
   let processArgv
   let args = opts.args || []
   processArgv = process.argv
@@ -34,3 +36,5 @@ module.exports = (schema, opts = {}) => {
 
   return config
 }
+
+module.exports = solitaryConvict
