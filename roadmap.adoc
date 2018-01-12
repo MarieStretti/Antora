@@ -1,0 +1,81 @@
+= Roadmap
+// Settings:
+:toc-title: Contents
+:toclevels: 1
+:toc:
+// Project URIs:
+:uri-project: https://antora.org
+:uri-group: https://gitlab.com/antora
+:uri-core-repo: {uri-group}/antora
+:uri-core-issues: {uri-core-repo}/boards?=
+:uri-core-milestones: {uri-core-repo}/milestones
+:uri-core-changelog: {uri-core-repo}/blob/master/CHANGELOG.adoc
+:uri-ui-repo: {uri-group}/antora-ui-default
+:uri-ui-issues: {uri-ui-repo}/issues
+
+This roadmap provides the current development direction and schedule for Antora.
+It is for guidance and informational purposes only.
+The proposed features, their scope, and the release timeline are not firm commitments.
+
+== Antora Default Pipeline
+
+For a detailed list of current and scheduled development tasks, refer to the core components {uri-core-issues}[issue tracker] and {uri-core-milestones}[milestones].
+
+See the {uri-core-changelog}[changelog] for a summary of notable changes by release.
+
+=== v1.0.0-beta
+
+* Implement logging / tracer component
+* Implement site mapper component
+* Implement redirector / router component
+* Implement publisher component
+* Add option to playbook to skip worktree(s)
+* Set the edit URL property on files in the content catalog
+* Set up automated releases
+* Set up UI acceptance test suite
+* Document full feature overview
+* Publish initial Demo playbook project and docs components A and B
+
+=== v1.0.0
+
+* Document logging / tracer features
+* Document sitemap features
+* Document aliases, redirect, route features
+* Document site publishing features
+* Set up docs.antora.org playbook and publish documentation
+* Document packaging and release process
+* Document versioning process
+* Document maintenance and bug fix priority policies
+
+=== Unscheduled
+
+* Allow current branch to be specified in playbook using a token
+* Add support for a moduleless (single module) docs component
+* Allow module paths to be configurable
+* Separate content aggregator and git source collector
+
+== Antora CLI
+
+For a detailed list of current and scheduled development tasks, refer to the core components {uri-core-issues}[issue tracker] and {uri-core-milestones}[milestones].
+
+See the {uri-core-changelog}[changelog] for a summary of notable changes by release.
+
+=== v1.0.0-beta
+
+* Document CLI options and arguments
+
+=== v1.0.0
+
+...
+
+== Antora Default UI
+
+For a detailed list of current and scheduled development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
+
+=== v1.0.0-beta
+
+* Extract all colors into CSS variables
+
+=== v1.0.0
+
+* Upgrade preview site sample content
