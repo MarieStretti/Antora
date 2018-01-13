@@ -23,21 +23,24 @@ For a detailed list of current and scheduled development tasks, refer to the cor
 
 See the {uri-core-changelog}[changelog] for a summary of notable changes by release.
 
-=== v1.0.0-beta
+=== v1.0.0-alpha.x
 
+* Fetch content repositories upon request {uri-ui-issues}/104[104]
+* Set up automated releases {uri-ui-issues}/7[7]
+* Allow current branch to be specified in playbook using a token {uri-ui-issues}/84[84]
+* Set the edit URL property on files in the content catalog {uri-ui-issues}/87[87]
 * Implement logging / tracer component
 * Implement site mapper component
 * Implement redirector / router component
-* Implement publisher component
-* Add option to playbook to skip worktree(s)
-* Set the edit URL property on files in the content catalog
-* Set up automated releases
+* Implement publisher component {uri-ui-issues}/74[74]
+* Add option to playbook to skip worktree(s) {uri-ui-issues}/82[82]
+* macOS and Windows installation testing {uri-ui-issues}/102[102], {uri-ui-issues}/103[103]
+
+=== v1.0.0-beta.x
+
 * Set up UI acceptance test suite
 * Document full feature overview
 * Publish initial Demo playbook project and docs components A and B
-
-=== v1.0.0
-
 * Document logging / tracer features
 * Document sitemap features
 * Document aliases, redirect, route features
@@ -47,12 +50,17 @@ See the {uri-core-changelog}[changelog] for a summary of notable changes by rele
 * Document versioning process
 * Document maintenance and bug fix priority policies
 
-=== Unscheduled
+=== v1.0.0
 
-* Allow current branch to be specified in playbook using a token
-* Add support for a moduleless (single module) docs component
+*Release Timeframe*: 2018 Q1
+
+=== v2.0.0-alpha.x
+
+* Add support for a moduleless docs component
 * Allow module paths to be configurable
-* Separate content aggregator and git source collector
+* Separate content aggregator and git source collector/provider
+
+*Release Timeframe*: 2018 Q2
 
 == Antora CLI
 
@@ -60,22 +68,39 @@ For a detailed list of current and scheduled development tasks, refer to the cor
 
 See the {uri-core-changelog}[changelog] for a summary of notable changes by release.
 
-=== v1.0.0-beta
+=== v1.0.0-alpha.x
+
+* Add fetch option to CLI {uri-ui-issues}/104[104]
+* Improve help environment variables
+* Provide custom pipeline
+
+=== v1.0.0-beta.x
 
 * Document CLI options and arguments
 
 === v1.0.0
 
-...
+*Release Timeframe*: 2018 Q1
 
 == Antora Default UI
 
 For a detailed list of current and scheduled development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
 
-=== v1.0.0-beta
+=== v1.0.0-alpha.x
 
 * Extract all colors into CSS variables
+* Improve sidebar positioning
+* Improve breadcrumbs and navigation
+* Improve SVG options stability
+* Integrate search
+* Upgrade to Gulp 4
+* Set up UI bundle hosting
+* Expand template model documentation
+
+=== v1.0.0-beta.x
+
+* Upgrade preview site sample content
 
 === v1.0.0
 
-* Upgrade preview site sample content
+*Release Timeframe*: 2018 Q1
