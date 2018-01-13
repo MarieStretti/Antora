@@ -25,7 +25,31 @@ A more comprehensive tutorial will be in the documentation.
 
 === Prerequisites
 
-To install Antora, you only need Node 8 (including npm, which is typically bundled with Node).
+To install Antora, you only need Node 8 (including npm, typically bundled with Node) and base build tools.
+Let's start with the build tools, since you may also need them to manage Node.
+
+==== Base Build Tools
+
+The base build tools are required for installing the nodegit package, a dependency of Antora.
+
+If you're running Linux, select the appropriate base build tools package for your distribution.
+
+* Fedora: `dnf install @development-tools`
+* Debian/Ubuntu: `apt-get install build-essential`
+* Arch Linux: `pacman -S base-devel`
+* Alpine Linux: `apk add build-base`
+
+If you're running macOS, you need the https://railsapps.github.io/xcode-command-line-tools.html[Xcode command line tools].
+Even if you've installed these tools in the past, it's good to do it again.
+You can trigger installation using the following command:
+
+ xcode-select --install
+
+This selection of tools provides other useful commands you'll need in your workflow, such as `git`.
+
+Once you have these tools installed, you can expect the remaining installation to go smoothly.
+
+==== Node 8
 
 To check which version of Node you have installed, if any, open a terminal and type:
 
@@ -81,7 +105,7 @@ Next, install the default Antora site generator using npm (or Yarn):
 
 You can opt to install the site generator inside the project containing your playboook file instead of installing it globally.
 
-.Troubleshooting nodegit installation
+.Troubleshooting nodegit Installation
 [CAUTION]
 ====
 The nodegit dependency may fail on certain Linux distributions with the following error:
@@ -98,6 +122,10 @@ If this happens, you either need to create the missing symlink or force nodegit 
 To create the missing symlink, run the following command:
 
  $ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
+
+or, if that fails:
+
+ $ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
 
 Once you've made that symlink, run the `npm install` command again.
 
