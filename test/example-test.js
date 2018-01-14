@@ -88,19 +88,24 @@ describe('text-utils#capitalizeKeys', () => {
 })
 
 describe('text-utils#asyncCapitalize', () => {
-  // try to avoid async/await in tests
-  // The API from "chai-as-promised" like #to.eventually.equal() gives better logs
-  it('should uppercase first letter AND lowercase other letters', () => {
+  it('should uppercase first letter AND lowercase other letters', async () => {
     const text = 'hELLO'
-    const capitalizedText = asyncCapitalize(text)
-    return expect(capitalizedText).to.be.fulfilled.and.eventually.equal('Hello')
+    const capitalizedText = await asyncCapitalize(text)
+    expect(capitalizedText).to.equal('Hello')
   })
 
-  it('should reject null value', () => {
+  it('should reject null value', async () => {
     const text = null
-    const capitalizedText = asyncCapitalize(text)
-    // don't forget to return the promise as the result of the it() test function!
-    return expect(capitalizedText).to.be.rejectedWith(TypeError)
+    let awaitAsyncCapitalize
+    try {
+      const capitalizedText = await asyncCapitalize(text)
+      awaitAsyncCapitalize = () => capitalizedText
+    } catch (err) {
+      awaitAsyncCapitalize = () => {
+        throw err
+      }
+    }
+    expect(awaitAsyncCapitalize).to.throw(TypeError)
   })
 })
 
@@ -115,37 +120,36 @@ describe('text-utils#capitalizeStream', () => {
     errorCallback = spy('errorCallback')
   })
 
-  it('should capitalize all items of a stream', () => {
+  it('should capitalize all items of a stream', async () => {
     const textStream = toStream(['zerO', 'onE', 'twO', 'threE'])
     const capitalizedStream = textStream
       .pipe(capitalizeStream())
       .on('error', errorCallback)
       .on('end', endCallback)
     // it's easier to convert streams to arrays to test their result
-    const capitalizedArray = toArray(capitalizedStream)
-    // don't forget to return the promise as the result of the it() test function!
-    return expect(capitalizedArray)
-      .to.be.fulfilled.and.to.eventually.eql(['Zero', 'One', 'Two', 'Three'])
-      .then(() => {
-        // callback need to be tested asynchronously (after the stream is finished)
-        expect(errorCallback).not.to.have.been.called()
-        expect(endCallback).to.have.been.called.once()
-      })
+    const capitalizedArray = await toArray(capitalizedStream)
+    expect(capitalizedArray).to.eql(['Zero', 'One', 'Two', 'Three'])
+    expect(errorCallback).not.to.have.been.called()
+    expect(endCallback).to.have.been.called.once()
   })
 
-  it('should emit an error if one of the items is not a String', () => {
+  it('should emit an error if one of the items is not a String', async () => {
     const textStream = toStream(['zerO', 'onE', 22, 'threE'])
     const capitalizedStream = textStream
       .pipe(capitalizeStream())
       .on('error', errorCallback)
       .on('end', endCallback)
-    const capitalizedArray = toArray(capitalizedStream)
-    // don't forget to return the promise as the result of the it() test function!
-    return expect(capitalizedArray)
-      .to.be.rejectedWith(TypeError)
-      .then(() => {
-        expect(errorCallback).to.have.been.called.once()
-        expect(endCallback).not.to.have.been.called.once()
-      })
+    let awaitToArray
+    try {
+      const capitalizedArray = await toArray(capitalizedStream)
+      awaitToArray = () => capitalizedArray
+    } catch (err) {
+      awaitToArray = () => {
+        throw err
+      }
+    }
+    expect(awaitToArray).to.throw(TypeError)
+    expect(errorCallback).to.have.been.called.once()
+    expect(endCallback).not.to.have.been.called.once()
   })
 })

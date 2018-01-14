@@ -6,7 +6,6 @@
   "devDependencies": {
     "@commitlint/cli": "^5.2.0",
     "chai": "^4.1.2",
-    "chai-as-promised": "^7.1.1",
     "chai-cheerio": "^1.0.0",
     "chai-fs": "^2.0.0",
     "chai-spies-next": "^0.9.3",
