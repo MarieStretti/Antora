@@ -21,6 +21,10 @@
     "commander": "^2.12.2",
     "fs-extra": "^5.0.0"
   },
+  "devDependencies": {
+    "convict": "^4.0.2",
+    "kapok-js": "^0.10.1"
+  },
   "engines": {
     "node": ">= 8.0.0"
   },

@@ -25,6 +25,9 @@
     "through2": "^2.0.3",
     "vinyl-fs": "^3.0.0"
   },
+  "devDependencies": {
+    "fs-extra": "^5.0.0"
+  },
   "engines": {
     "node": ">= 8.0.0"
   },
