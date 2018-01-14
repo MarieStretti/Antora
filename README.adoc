@@ -25,7 +25,7 @@ A more comprehensive tutorial will be in the documentation.
 
 === Prerequisites
 
-To install Antora, you only need Node 8 (including npm, typically bundled with Node) and base build tools.
+To install Antora, you only need Node 8 (including npm, typically bundled with Node) and the base build tools.
 Let's start with the build tools, since you may also need them to manage Node.
 
 ==== Base Build Tools
@@ -50,6 +50,10 @@ This selection of tools provides other useful commands you'll need in your workf
 Once you have these tools installed, you can expect the remaining installation to go smoothly.
 
 ==== Node 8
+
+Antora requires Node 8, the current long-term support (LTS) release of Node.
+While you can use Node 9, we don't recommend it because there are no precompiled binaries for Node 9 of nodegit, a dependency of Antora.
+If you use Node 9, installation will take considerably longer.
 
 To check which version of Node you have installed, if any, open a terminal and type:
 
