@@ -3,7 +3,6 @@
 
 const { expect } = require('../../../test/test-utils')
 
-const _ = require('lodash')
 const aggregateContent = require('@antora/content-aggregator')
 const FixtureRepository = require('./repo-utils')
 const fs = require('fs-extra')
@@ -282,7 +281,7 @@ describe('aggregateContent()', () => {
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-      const pageOne = _.find(aggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
+      const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
       expect(pageOne.contents.toString()).to.equal(
         [
           '= Page One',
@@ -379,9 +378,9 @@ describe('aggregateContent()', () => {
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-      const pageOne = _.find(aggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
+      const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
       expect(pageOne.src.origin.git.branch).to.equal('master')
-      const pageTwo = _.find(aggregate[0].files, { path: 'modules/ROOT/pages/page-two.adoc' })
+      const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
       expect(pageTwo.src.origin.git.branch).to.equal('v1.2.3-fix-stuffs')
     })
   })
@@ -407,9 +406,9 @@ describe('aggregateContent()', () => {
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-      const pageOne = _.find(aggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
+      const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
       expect(pageOne.src.origin.git.url).to.equal(theComponent.url)
-      const pageTwo = _.find(aggregate[0].files, { path: 'modules/ROOT/pages/page-two.adoc' })
+      const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
       expect(pageTwo.src.origin.git.url).to.equal(theOtherComponent.url)
     }, 2)
   })
@@ -527,7 +526,7 @@ describe('aggregateContent()', () => {
 
     expect(firstAggregate).to.have.lengthOf(1)
     expect(firstAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-    const pageOne = _.find(firstAggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
+    const pageOne = firstAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
     expect(pageOne).not.to.be.null()
 
     await repo.createBranch({ name: 'the-component', version: 'v2.0.0' })
@@ -537,10 +536,14 @@ describe('aggregateContent()', () => {
 
     expect(secondAggregate).to.have.lengthOf(2)
     expect(secondAggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-    const pageTwoInVersionOne = _.find(secondAggregate[0].files, { path: 'modules/ROOT/pages/page-two.adoc' })
+    const pageTwoInVersionOne = secondAggregate[0].files.find(
+      (file) => file.path === 'modules/ROOT/pages/page-two.adoc'
+    )
     expect(pageTwoInVersionOne).to.be.undefined()
     expect(secondAggregate[1]).to.deep.include({ name: 'the-component', version: 'v2.0.0' })
-    const pageTwoInVersionTwo = _.find(secondAggregate[1].files, { path: 'modules/ROOT/pages/page-two.adoc' })
+    const pageTwoInVersionTwo = secondAggregate[1].files.find(
+      (file) => file.path === 'modules/ROOT/pages/page-two.adoc'
+    )
     expect(pageTwoInVersionTwo.path).to.equal('modules/ROOT/pages/page-two.adoc')
   })
 
@@ -551,7 +554,7 @@ describe('aggregateContent()', () => {
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.2.3' })
-      const pageOne = _.find(aggregate[0].files, { path: 'modules/ROOT/pages/page-one.adoc' })
+      const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
       const expectedFile = {
         path: 'modules/ROOT/pages/page-one.adoc',
         relative: 'modules/ROOT/pages/page-one.adoc',
