@@ -199,7 +199,7 @@ Using this example, look for the file link:build/site/antora/component-structure
 ==== Changing Content
 
 Antora also supports local content, which is essential for authoring.
-If you want to make modifications to the documentation, you'll first need to clone the repository:
+If you want to make modifications to the documentation, you'll first need to clone the content repository (which in this example just happens to be the Antora repository):
 
  $ git clone https://gitlab.com/antora/antora.git
 
