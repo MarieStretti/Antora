@@ -7,9 +7,15 @@ endif::[]
 :idseparator: -
 :experimental:
 
+// on website as of 1/15
+A static site generator for making documentation sites from one or more versioned content repositories.
+
+////
+Alternatives
+
 A static site generator for teams writing and managing documentation for multiple products, versions, and site environments.
 
-A documentation pipeline that can manage lots of source repositories, version branches, and publishing environments.
+A documentation pipeline that can manage multiple of source repositories, version branches, and publishing environments.
 
 A modular, portable pipeline built for docs and engineering teams with multiple products, workflow policies, and publishing environments.
 
@@ -21,88 +27,14 @@ built for changing technical and team requirements
 built on continuous delivery best practices
 give writers the ability to create & manage their documentation content and sites, without needing a deep understanding of web tech; don't need to be sysadmins or developers doesn't require expertise in web technologies, build automation, or system administration
 
-* give writers the ability to create & manage a docs site, docs sites, or a partial docs site, without needing a deep understanding of web tech; don't need to be sysadmins or developers
-* documentation system that simplifies management of the Customer's content and workflow, facilitates contributions, and enables automatic publishing of the generated documentation site by integrating with a CI/CD pipeline.
-* should observe a measurable improvement in the efficiency of their documentation workflow, experience increased productivity and participation, and have the ability to launch new documentation initiatives.
-* Antora is a documentation toolchain and workflow for Asciidoctor that enables technical writing teams to create, manage, collaborate on, remix, and publish documentation sites sourced from a variety of versioned content repositories.
-* With Antora, you can generate and publish documentation sites from AsciiDoc documents without having expertise in web technologies, build automation, or system administration.
-* With Antora, you can transform documents written in AsciiDoc to a documentation site without needing expertise in web technologies, build automation, or system administration.
-* With Antora, you can generate and publish documentation sites from documents composed in AsciiDoc without needing expertise in web technologies, build automation, or system administration.
-* With Antora, you write documents in AsciiDoc and, from them, generate and publish documentation sites without needing expertise in web technologies, build automation, or system administration.
-
-Create, remix, test and publish sites from documentation stored in multiple repositories and branches.
-Create documentation sites from files stored in multiple repositories and branches.
-Remix
-// short form
+Short form
 An Asciidoctor documentation toolchain and workflow that empowers technical writing teams to create, manage, collaborate on, remix, and publish documentation sites sourced from a variety of versioned content repositories without needing expertise in web technologies, build automation, or system administration.
 
-// site data
+From site data file
 An Asciidoctor documentation toolchain that helps technical teams create, manage, collaborate on, remix, release, and publish documentation sites sourced from multiple versioned repositories.
 
-// project site footer
+From project site footer
 A documentation pipeline that enables docs, product, and engineering teams to create, manage, remix, and publish documentation sites composed in AsciiDoc and sourced from multiple versioned repositories.
-
-Write, manage, and release documentation like code.
-Built for technical writers, developers, and teams working on multiple software projects.
-Enterprise scale and performance.
-
-
-Antora was built for documentation that's stored, managed, and versioned like code.
-
-Antora was built for storing, versioning, managing and releasing documentation like code.
-
-Store, version, manage, and release documentation like code with Antora.
-
-////
-* The product provides ways for teams to collaborate on docs/content initiatives across departments.
-
-* end-to-end pipeline that can source content from multiple hybrid (public/private, bare/non-bare, local/remote/work tree) versioned content repositories to generate an integrated docs site (the content from these repositories get pulled together to tell one story)
-
-* give writers the ability to create & manage a docs site, docs sites, or a partial docs site, without needing a deep understanding of web tech; don't need to be sysadmins or developers
-
-* navigation stored as content; can describe a hierarchy that's either parallel or orthogonal to the organization of the content
-
-* provides a recommended workflow & tools for authoring, previewing, reviewing, editing, managing, & publishing changes and/or additions to content
-
-* product extends beyond just the generator by setting up an end-to-end publishing workflow; generator isn't only tool that plays a role
-
-* built with and for Asciidoctor; this matters because:
- ** the AsciiDoc syntax is an approachable content format that is rich enough to capture all the technical information you need to communicate and supplemental metadata; furthermore, it lets you achieve maximum reuse of that content
- ** Asciidoctor processor can take this information, both visible and non-visible, and use it to produce pages in the docs and influence that generation
-
-* page referencing system that provides a means for linking between pages in a way that can be validated and migrated
-
-* easily manage content versions
-
-* handles UI as a discrete component, allowing the UI (aka theme) to be hot swapped without changing the content
- ** UI ⇔ content interface (via UI bundle)
-
-* allows a designer to develop the UI independently of the content / official docs site; allows UI to be developed independently of the site
-
-* gives designer 100% control over that UI (HTML, CSS, JavaScript, etc), including auxiliary (non-content) pages
-
-* facilitates interface between docs team & other departments / teams
-
-* provides implementation (or path to) "docs as code" practice
- ** docs alongside code
- ** docs in git and the git workflow
- ** managed as software; automation, branches, releases, etc.
-
-* abstractions between processing the content & where that content originated, which makes the docs site (maximally) adaptable to the changing needs of the business
- ** shielded from those types of changes
- ** no rippling impact
- ** grows with you; no need for new clothes after growth spurt
-
-documentation system that simplifies management of the Customer's content and workflow, facilitates contributions, and enables automatic publishing of the generated documentation site by integrating with a CI/CD pipeline.
-should observe a measurable improvement in the efficiency of their documentation workflow, experience increased productivity and participation, and have the ability to launch new documentation initiatives.
-
-== About Antora & Asciidoctor
-
-*Antora* is a documentation toolchain and workflow for Asciidoctor that enables technical writing teams to create, manage, collaborate on, remix, and publish documentation sites sourced from a variety of versioned content repositories.
-//With Antora, you can generate and publish documentation sites from AsciiDoc documents without having expertise in web technologies, build automation, or system administration.
-//With Antora, you can transform documents written in AsciiDoc to a documentation site without needing expertise in web technologies, build automation, or system administration.
-//With Antora, you can generate and publish documentation sites from documents composed in AsciiDoc without needing expertise in web technologies, build automation, or system administration.
-With Antora, you write documents in AsciiDoc and, from them, generate and publish documentation sites without needing expertise in web technologies, build automation, or system administration.
 ////
 
 == Docs as Code
@@ -111,51 +43,48 @@ With Antora, you write documents in AsciiDoc and, from them, generate and publis
 // Store documentation in 1, 42 or more repositories.
 // One, 42, or more repositories
 
-Store documentation files in as many git repositories as you need. Antora can find and assemble them into a documentation site on demand.
+// on website
+No matter how many git repositories you use, Antora can retrieve and aggregate all the content from them to assemble a documentation site.
 
 === Manage documentation versions like a pro
 // Version your docs like a pro
 // Manage versions like a pro
 
-Use branches to release documentation versions just like software versions.
+// on website
+Use branches to version documentation just like software.
 Antora can find repository branches and assemble the files in each branch into a versioned documentation collection.
-Antora also knows how to ignore branches you don't want published.
+Antora also knows how to ignore branches you don’t want published.
 
 === Workspaces that fit team and content requirements
 // Store documentation in its own repository or in the same repository as the code it describes.
 // Storage locations that work for writers and subject matter experts
 
-Store documentation content in as many repositories as you need so that the teams that maintain it can use the administration, contribution, versioning and release processes that work for them.
-
-Whether you store the documentation for a product in its own repository, in that same repository as the product's code, or the text pages in one repository and the example code in another repository, Antora can find and assemble the files into a documentation site.
-
-The site UI is also stored in its own repository so the web team can maintain the UI without conflicting with the docs team workflow or content files.
-
-=== Remote and local, private and public, bare and non-bare
-
-Antora can collect files from a combination of local, remote, public, and private git repositories.
-// support git client
+// on website
+Since documentation files can be stored in separate repositories, the teams that maintain them can use the administration policies, version schema, and release schedule that works for them.
 
 ////
-Whether the documentation for a product is stored in its own repository, in the same repository as the product's code, or the text pages in one repository and the example code in another repository, Antora can find and assemble the distributed files into a documentation site.
+notes
+
+Whether you store the documentation for a product in its own repository, in that same repository as the product's code, or the text pages in one repository and the example code in another repository, Antora can find and assemble the files into a documentation site.
 
 The source repository combinations are almost endless with Antora.
 Store the documentation for one product in its own repository.
 Store the documentation for another product in the same repository as the product code.
 Store diagrams and example code in a separate repository.
 
-Notes:
-
-- limits noise for authors
-- encourages a separation of concerns, responsibilities, & ownership
-- helps code and docs versions to stay in sync
-- Antora can use and mix source content and its assets from as many git repositories and branches as you need.
-- The repositories and branches can be local & remote, public & private, and bare & non-bare.
+The site UI is also stored in its own repository so the web team can maintain the UI without conflicting with the docs team workflow or content files.
 ////
+
+=== Remote and local, private and public, bare and non-bare
+
+// on website
+Antora can collect files from a combination of local, remote public, and remote private repositories over any protocol supported by git.
 
 == Site Orchestration for Everyone
 
 === The Antora Playbook
+
+// on website
 
 With an Antora playbook, anyone can assemble and generate a documentation site.
 You don't need any build automation or system administration knowledge to create or use an Antora playbook.
@@ -164,13 +93,19 @@ A playbook is a straight-forward set of concise instructions that tells Antora w
 ==== How?
 
 Antora runs from a purely configuration playbook project that provides instructions about what to generate and where to get it.
-It's controllable by a non-developer; provides a non-technical interface.
+// It's controllable by a non-developer and provides a non-technical interface.
+
+=== Run your playbook using the Antora CLI
+
+//on website
+Just point the Antora CLI at your playbook to configure and execute the default site generator.
+Out comes your site!
 
 === Site Remixes for Any Occasion
-// Control your documentation with a playbook.
 
-An Antora playbook let's you control what documentation and what versions of that documentation gets published to a site.
-You can even tell Antora to use un-committed changes when generating the site on a local machine.
+// on website
+With Antora’s playbooks, you can control which versions of the documentation get published to a site.
+You can even tell Antora to use uncommitted changes when generating the site on a local machine.
 
 Here are a few common site remixes:
 
@@ -182,39 +117,23 @@ Here are a few common site remixes:
 * And many more ...
 
 // Can have multiple playbooks that can be as similar or different as you want them to be.
-// Playbook is selected by cli flag or env var.
 // Antora fetches the content it needs on demand.
+
+=== Open Architecture
+
+// on website
+Antora features an open architecture.
+Despite providing an opinionated default site generator, you’re free to reuse the core components to assemble your own custom generator pipeline.
 
 === Environment Portability
 // Publish anywhere without modifying documentation files
+// Multi-channel publishing <- website title
 
-Because Antora decouples the content files, navigation, site UI, and other documentation assets from their source infrastructure, it can automatically adapt the docs site to its publishing environment.
-Whether the site is published locally, to revolving testing, QA, or staging environments, or to an alternative URL for a campaign or event, the site is fully functional.
-This ability to publish a site anywhere without any modification to the source content is possible because Antora's cross referencing system isn't based on file paths or URLs.
-
-////
-.Notes
-
-(o) adapt site to be hosted or previewed in different host environments; conforms to environment, leveraging its features or adjusting to its constraints; site is not bound to the infrastructure; (host environments each have a unique set of characteristics and the site must adapt)
-
-. HTML URL strategy setting to make vanity URLs, adapt to hosting environment, or aid with local preview; generator responds accordingly to environment; [o]
-
-. relative URLS; allows site to be viewable from any context, including file:// URLs. [q] [s] [o]
-
-(q) have a portable site; can move it and it doesn't break because all references are relative (or can be adapted)
-
-. component descriptor decouples component info from storage location / mechanism. [q] [a]
-
-. "catalogs"; an implicit organization of different media types; generator recognizes this structure (assets (images, attachments), content, fragments, samples); root paths get managed automatically. [i] [q] [f]
-
-(s) author can work locally, preview WIP in context of complete system; can also work outside the content of the site, such as in an editor or review environment
-
-. can take branches for a single component from different repositories; local branches take precedence over remote branches. [a] [s]
-
-. uses git work tree in place of current branch when repository is local (and non-bare). [s]
-
-. shared attribute files which are loaded by client / editor to provide the necessary context; infuse editor tool with context; these files are ignored at generation because generator already knows all this; [s]
-////
+//on website
+Antora automatically adapts a docs site to its publishing environment.
+Whether the site is published locally, to revolving testing, QA, or staging environments, or to an alternate URL for a campaign or event, the site is fully functional.
+This environment portability is possible because Antora’s cross referencing system isn’t based on a hardcoded base URL or system path.
+//Because Antora decouples the content files, navigation, site UI, and other documentation assets from their source infrastructure, it can automatically adapt the docs site to its publishing environment.
 
 // === Configuration as Code
 
@@ -226,7 +145,7 @@ Features include:
 // strikethrough?
 
 * Bold, italic, monospace, highlight, and custom text roles
-* Special Characters, font icons, and UI patterns (kbd:[Ctrl+T])
+* Special Characters, font icons, and UI references (kbd:[Ctrl+T])
 * Ordered, unorder, definition, and interactive task lists
 * Videos (self-hosted, YouTube, Vimeo) and audio with display and user-control options
 * Images and icons, inline or block, with display options
@@ -258,59 +177,55 @@ AsciiDoc files can also be previewed in Chrome and Firefox with the Asciidoctor 
 
 === Responsive maintainers
 
-Our core developers help lead the Asciidoctor organization, the official home of the AsciiDoc syntax and its parsing engine, Asciidoctor.
-They're always improving the syntax and its engine in response to user needs and technology advances.
-Due to this direct relationship, Antora can always use the latest AsciiDoc and Asciidoctor features.
+// on website
+Antora’s core developers help lead the Asciidoctor organization, home of the AsciiDoc syntax and Asciidoctor, the AsciiDoc processor. Due to this direct relationship, Antora is always in sync with AsciiDoc and Asciidoctor features.
 
 === No flavor lock-in
-
 // Single source portability / usability
 // Real single source portability
+
+// on website
+Documentation written with AsciiDoc works with all of the software and tools in the Asciidoctor ecosystem.
+You don’t need to worry about incompatible syntax or lost functionality.
 
 AsciiDoc files can also be used by other tools such as Asciidoctor PDF and EPUB, Asciidoctor HTML presentation extensions for Bespoke, Reveal.js.
 This means your AsciiDoc files are immediately compatible with all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.).
 You don't need to worry about errors, lost functionality, or downgraded processing performance.
 
-////
-Along with not having "flavor" lock-in, this means you can use your AsciiDoc files with Antora and all of the other software that uses AsciiDoc (editors, HTML presentations, Asciidoctor PDF and EPUB generators, etc.) without worrying about incompatibility, lost functionality, or errors.
-////
+=== Extension API
 
-=== Custom processing with Asciidoctor's API
-
-Custom syntax and conversion behaviors can be added as discrete extensions with the Asciidoctor API.
+// on website
+Custom syntax and output transformations can be added as discrete extensions with Asciidoctor’s extension API.
 
 == Cross References
 
 === Impervious to file systems, environments, and URLs
+// Decoupled from filesystems, environments, and URLs <- title on website
 
-Antora's cross referencing system is based on abstract coordinates that aren't coupled to filesystem or published site locations.
-It doesn't matter where you publish your documentation site &mdash; on a local machine, a staging environment, or a production environment &mdash; the page-to-page cross references always work. That's because Antora's page referencing system isn't coupled to file system paths or URLs.
+//on website
+It doesn’t matter where you publish your documentation site &mdash; on a local machine, a staging environment, or a production environment &mdash; the page-to-page cross references always work.
+That’s because Antora’s page referencing system isn’t coupled to filesystem paths or URLs.
 
-==== Learn More
+
+////
+Learn More link
 
 The Learn More link would lead to a more detailed feature page (probably need diagrams) that would show a number of the scenarios the cross references aren't stymied by.
+////
 
-.Notes
---
-Writer-friendly cross references that are automatically file system, version, and URL portable
-Readable, new-version-proof cross references
-Location and version-proof cross references
-Readable, portable cross references
-Portable and new-version-proof cross references.
-
-Manually updating internal links when a new documentation version is released is huge, error-prone maintenance chore for many docs teams.
-Combined with the fact that cross-references usually don't function correctly on a writer's local machine means broken links are inevitable.
---
 
 === Writer-friendly cross references
 
 Writers don't need to remember or construct the path to a file or a page's URL.
 In most cases, to create a cross reference, all you need to know is the filename of the page you want to link to.
 
-==== Learn More
+////
+Learn More link
 
 The Learn More link would lead to a docs page and/or a more detailed feature page that would show a number of the use cases the cross references can handle.
+////
 
+////
 .Notes
 --
 - Page referencing system (page ID: component, version, module, local path) with contextual shorthand; works across repositories; agnostic to storage.
@@ -322,12 +237,41 @@ The Learn More link would lead to a docs page and/or a more detailed feature pag
 No more broken links.
 Antora automatically checks and validates cross references prior to deploying a site.
 If errors are found the pipeline pauses and notifies the writer with a list of invalid cross references and the files they're located in.
+////
+
+== Site Navigation
+
+=== Described using AsciiDoc lists
+
+A site’s navigation is described by one or more AsciiDoc lists that are stored alongside your documentation files.
+Links are added using the same cross referencing syntax used in the pages themselves.
+There's no special syntax or UI template logic to learn.
+
+=== No content or organization restrictions
+
+// on website
+Add normal text, images, icons, and external links to the navigation.
+Order and nest the links in the arrangement of your choice.
+
+////
+.Notes
+(l) describe and control the navigation structure as a content concern; navigation stored with the content; author-controlled, yet can still be manipulated by the UI / designer
+
+(m) use same system to describe navigation references as is used to create references between pages; consistency of references; page reference system are used in navigation, xrefs, and aliases
+
+. page references in navigation files match system used by pages. [m]
+
+=== How?
+
+. reads navigation tree from dedicated AsciiDoc files; converts to navigation model; model is prepared per page and passed to template to be converted to HTML. [l] [m]
+////
 
 == Site UI and Theme
 
-=== Decoupled UI
+=== Discrete UI
 
-Site UIs are stored in separate repositories so that developing, testing, and publishing new or updated themes has no impact on your documentation files or their repositories. Antora retrieves the specified site UI and UI version just like it fetches the content files from their repositories.
+Site UIs are stored in separate repositories so that developing, testing, and publishing new or updated themes has no impact on your documentation files or their repositories.
+Antora retrieves the specified site UI just like it fetches the content files from their repositories.
 
 === Web team workspaces
 
@@ -337,6 +281,7 @@ Web teams can use their preferred repository structure, development workflow and
 
 Switch between site UIs just by changing the UI address in the playbook.
 
+////
 .Notes
 ****
 * page_layout attribute in document controls which layout template is applied to page.
@@ -351,48 +296,13 @@ Switch between site UIs just by changing the UI address in the playbook.
 
 * (h) Use templates to make HTML match your playbook and/or environment; put power to control UI in your hands; shifts some of the decisions to the site manager (distributes roles and responsibilities); template w/ placeholders + UI model = HTML page
 ****
-
-== Site Navigation
-
-=== AsciiDoc lists
-
-A site's navigation is described using one or more AsciiDoc lists that are stored with your documentation files.
-Links are added with the same cross referencing syntax used in the pages.
-There's no special syntax or UI template logic to learn.
-
-=== No content or organization restrictions
-
-Add normal text, images, icons, and links to pages not in your docs site to the navigation.
-Order and nest the links in the arrangement of your choice.
-
-////
-.Notes
-(l) describe and control the navigation structure as a content concern; navigation stored with the content; author-controlled, yet can still be manipulated by the UI / designer
-
-(m) use same system to describe navigation references as is used to create references between pages; consistency of references; page reference system are used in navigation, xrefs, and aliases
-
-. page references in navigation files match system used by pages. [m]
-////
-
-=== How?
-
-. reads navigation tree from dedicated AsciiDoc files; converts to navigation model; model is prepared per page and passed to template to be converted to HTML. [l] [m]
-
-////
-== Internal Storage Organization and Navigation are decoupled
-
-(n) define navigation that does not match or is not dictated by the organization / storage of the content (i.e., aspect navigation)
-
-=== How?
-
-. aspect domain/navigation/pages; duplicate of original page w/ unique navigation which is not coupled to any one component; defining aspect navigation implicitly creates domain (under current implementation) [n]
 ////
 
 == URLs and Routes
 
 === URLs for humans and SEO
 
-A page's URL is generated from its file name.
+A page’s URL is derived from its filename, yet still isolated from its full filesystem path.
 
 === Route and redirect controls
 
@@ -402,8 +312,8 @@ Routes and redirects can be specified at the site, component, version, module an
 
 === Multi-level metadata controls
 
-Add and remove metadata at the site, component, version, module, and page level.
+Add and remove metadata at the site, component, module, and page level using AsciiDoc attributes.
 
 === Built-in and custom taxonomy types
 
-Assign taxonomy types and values from site to page level.
+Assign taxonomy types and values at the site or page level.
