@@ -36,7 +36,7 @@ describe('convertDocument()', () => {
     }
   })
 
-  it('should convert AsciiDoc contents on file to HTML', () => {
+  it('should convert AsciiDoc contents on file to HTML', async () => {
     inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
@@ -50,90 +50,78 @@ describe('convertDocument()', () => {
 
       image::screenshot.png[]
     `)
-    expect(convertDocument(inputFile))
-      .to.be.fulfilled()
-      .then(() => {
-        expect(inputFile.mediaType).to.equal('text/html')
-        expect(inputFile.contents.toString()).to.equal(heredoc`
-          <div class="sect1">
-          <h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
-          <div class="sectionbody">
-          <div class="paragraph">
-          <p>Grab the <a href="../_attachments/quickstart-project.zip">quickstart project</a>.</p>
-          </div>
-          <div class="ulist">
-          <ul>
-          <li>
-          <p>list item 1</p>
-          </li>
-          <li>
-          <p>list item 2</p>
-          </li>
-          <li>
-          <p>list item 3</p>
-          </li>
-          </ul>
-          </div>
-          <div class="imageblock">
-          <div class="content">
-          <img src="../_images/screenshot.png" alt="screenshot">
-          </div>
-          </div>
-          </div>
-          </div>
-        `)
-      })
+    await convertDocument(inputFile)
+    expect(inputFile.mediaType).to.equal('text/html')
+    expect(inputFile.contents.toString()).to.equal(heredoc`
+      <div class="sect1">
+      <h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
+      <div class="sectionbody">
+      <div class="paragraph">
+      <p>Grab the <a href="../_attachments/quickstart-project.zip">quickstart project</a>.</p>
+      </div>
+      <div class="ulist">
+      <ul>
+      <li>
+      <p>list item 1</p>
+      </li>
+      <li>
+      <p>list item 2</p>
+      </li>
+      <li>
+      <p>list item 3</p>
+      </li>
+      </ul>
+      </div>
+      <div class="imageblock">
+      <div class="content">
+      <img src="../_images/screenshot.png" alt="screenshot">
+      </div>
+      </div>
+      </div>
+      </div>
+    `)
   })
 
-  it('should set formatted document title to asciidoc.doctitle property on file object', () => {
+  it('should set formatted document title to asciidoc.doctitle property on file object', async () => {
     inputFile.contents = Buffer.from(heredoc`
       = _Awesome_ Document Title
 
       article contents
     `)
-    expect(convertDocument(inputFile))
-      .to.be.fulfilled()
-      .then(() => {
-        expect(inputFile.asciidoc).to.exist()
-        expect(inputFile.asciidoc.doctitle).to.equal('<em>Awesome</em> Document Title')
-      })
+    await convertDocument(inputFile)
+    expect(inputFile.asciidoc).to.exist()
+    expect(inputFile.asciidoc.doctitle).to.equal('<em>Awesome</em> Document Title')
   })
 
-  it('should not set asciidoc.doctitle property on file object if document has no header', () => {
+  it('should not set asciidoc.doctitle property on file object if document has no header', async () => {
     inputFile.contents = Buffer.from(heredoc`
       article contents only
     `)
-    expect(convertDocument(inputFile))
-      .to.be.fulfilled()
-      .then(() => {
-        expect(inputFile.asciidoc).to.exist()
-        expect(inputFile.asciidoc.doctitle).to.not.exist()
-      })
+    await convertDocument(inputFile)
+    expect(inputFile.asciidoc).to.exist()
+    expect(inputFile.asciidoc.doctitle).to.not.exist()
   })
 
-  it('should save document header attributes to asciidoc.attributes property on file object', () => {
+  it('should save document header attributes to asciidoc.attributes property on file object', async () => {
     inputFile.contents = Buffer.from(heredoc`
       = Document Title
       :keywords: CSS, flexbox, layout, box model
 
       article contents
     `)
-    expect(convertDocument(inputFile))
-      .to.be.fulfilled()
-      .then(() => {
-        expect(inputFile.asciidoc).to.exist()
-        const attrs = inputFile.asciidoc.attributes
-        expect(attrs).to.exist()
-        expect(attrs).to.include({
-          docfile: inputFile.path,
-          env: 'site',
-          imagesdir: inputFile.pub.moduleRootPath + '/_images',
-          keywords: 'CSS, flexbox, layout, box model',
-        })
-      })
+    await convertDocument(inputFile)
+    expect(inputFile.asciidoc).to.exist()
+    const attrs = inputFile.asciidoc.attributes
+    expect(attrs).to.exist()
+    expect(attrs).to.include({
+      docfile: inputFile.path,
+      env: 'site',
+      imagesdir: inputFile.pub.moduleRootPath + '/_images',
+      keywords: 'CSS, flexbox, layout, box model',
+    })
   })
 
-  it('should pass custom attributes to processor', () => {
+  it('should pass custom attributes to processor', async () => {
     const customAttrs = {
       'product-name': 'Hi-Speed Tonic',
       'source-highlighter': 'html-pipeline',
@@ -143,18 +131,15 @@ describe('convertDocument()', () => {
 
       Get there in a flash with {product-name}.
     `)
-    expect(convertDocument(inputFile, customAttrs))
-      .to.be.fulfilled()
-      .then(() => {
-        expect(inputFile.contents.toString()).to.include(customAttrs['product-name'])
-        expect(inputFile.asciidoc).to.exist()
-        const attrs = inputFile.asciidoc.attributes
-        expect(attrs).to.exist()
-        expect(attrs).to.include(customAttrs)
-      })
+    await convertDocument(inputFile, customAttrs)
+    expect(inputFile.contents.toString()).to.include(customAttrs['product-name'])
+    expect(inputFile.asciidoc).to.exist()
+    const attrs = inputFile.asciidoc.attributes
+    expect(attrs).to.exist()
+    expect(attrs).to.include(customAttrs)
   })
 
-  it('should convert page reference to URL of page in content catalog', () => {
+  it('should convert page reference to URL of page in content catalog', async () => {
     inputFile.contents = Buffer.from('xref:module-b:page-b.adoc[Page B]')
     const targetFile = {
       pub: {
@@ -162,21 +147,18 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getById: spy(() => targetFile) }
-    expect(convertDocument(inputFile, {}, contentCatalog))
-      .to.be.fulfilled()
-      .then(() => {
-        expectCalledWith(contentCatalog.getById, {
-          component: 'component-a',
-          version: '1.2.3',
-          module: 'module-b',
-          family: 'page',
-          relative: 'page-b.adoc',
-        })
-        expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
-      })
+    await convertDocument(inputFile, {}, contentCatalog)
+    expectCalledWith(contentCatalog.getById, {
+      component: 'component-a',
+      version: '1.2.3',
+      module: 'module-b',
+      family: 'page',
+      relative: 'page-b.adoc',
+    })
+    expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
   })
 
-  it('should resolve target of include directive to file in content catalog', () => {
+  it('should resolve target of include directive to file in content catalog', async () => {
     inputFile.contents = Buffer.from('include::{partialsdir}/definitions.adoc[]')
     const partialFile = {
       path: 'modules/module-a/pages/_partials/definitions.adoc',
@@ -193,21 +175,18 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getById: spy(() => partialFile) }
-    expect(convertDocument(inputFile, {}, contentCatalog))
-      .to.be.fulfilled()
-      .then(() => {
-        expectCalledWith(contentCatalog.getById, {
-          component: 'component-a',
-          version: '1.2.3',
-          module: 'module-a',
-          family: 'partial',
-          relative: 'definitions.adoc',
-        })
-        expect(inputFile.contents.toString()).to.include('cloud: someone else&#8217;s computer')
-      })
+    await convertDocument(inputFile, {}, contentCatalog)
+    expectCalledWith(contentCatalog.getById, {
+      component: 'component-a',
+      version: '1.2.3',
+      module: 'module-a',
+      family: 'partial',
+      relative: 'definitions.adoc',
+    })
+    expect(inputFile.contents.toString()).to.include('cloud: someone else&#8217;s computer')
   })
 
-  it('should be able to include a page marked as a partial which has already been converted', () => {
+  it('should be able to include a page marked as a partial which has already been converted', async () => {
     inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
@@ -244,35 +223,29 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getByPath: spy(() => includedFile) }
-    expect(convertDocument(includedFile))
-      .to.be.fulfilled()
-      .then(() => {
-        expect(convertDocument(inputFile, {}, contentCatalog))
-          .to.be.fulfilled()
-          .then(() => {
-            expectCalledWith(contentCatalog.getByPath, {
-              component: 'component-a',
-              version: '1.2.3',
-              path: 'modules/module-a/pages/changelog.adoc',
-            })
-            expect(inputFile.contents.toString()).to.include(heredoc`
-              <div class="sect1">
-              <h2 id="_recent_changes"><a class="anchor" href="#_recent_changes"></a>Recent Changes</h2>
-              <div class="sectionbody">
-              <div class="sect2">
-              <h3 id="_version_1_1"><a class="anchor" href="#_version_1_1"></a>Version 1.1</h3>
-              <div class="ulist">
-              <ul>
-              <li>
-              <p>Bug fixes.</p>
-              </li>
-              </ul>
-              </div>
-              </div>
-              </div>
-              </div>
-            `)
-          })
-      })
+    await convertDocument(includedFile)
+    await convertDocument(inputFile, {}, contentCatalog)
+    expectCalledWith(contentCatalog.getByPath, {
+      component: 'component-a',
+      version: '1.2.3',
+      path: 'modules/module-a/pages/changelog.adoc',
+    })
+    expect(inputFile.contents.toString()).to.include(heredoc`
+      <div class="sect1">
+      <h2 id="_recent_changes"><a class="anchor" href="#_recent_changes"></a>Recent Changes</h2>
+      <div class="sectionbody">
+      <div class="sect2">
+      <h3 id="_version_1_1"><a class="anchor" href="#_version_1_1"></a>Version 1.1</h3>
+      <div class="ulist">
+      <ul>
+      <li>
+      <p>Bug fixes.</p>
+      </li>
+      </ul>
+      </div>
+      </div>
+      </div>
+      </div>
+    `)
   })
 })
