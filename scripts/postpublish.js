@@ -1,11 +1,11 @@
 'use strict'
 
-const fs = require('fs-extra')
+const fs = require('fs')
 
 // Remove README.md and restore hidden README.adoc
 fs.unlink('README.md', (unlinkErr) => {
   if (unlinkErr) throw unlinkErr
 })
-fs.move('.README.adoc', 'README.adoc', (moveErr) => {
-  if (moveErr) throw moveErr
+fs.rename('.README.adoc', 'README.adoc', (renameErr) => {
+  if (renameErr) throw renameErr
 })
