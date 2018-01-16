@@ -12,7 +12,7 @@ const args = minimist(process.argv.slice(2))
 
 const allFiles = args.package
   ? [`packages/${args.package}/{lib,test}/**/*.js`]
-  : ['gulpfile.js', '{lib*,tasks,test}/**/*.js', 'packages/*/{lib,test}/**/*.js']
+  : ['gulpfile.js', '{lib*,scripts,tasks,test}/**/*.js', 'packages/*/{lib,test}/**/*.js']
 const testFiles = args.package
   ? [`packages/${args.package}/test/**/*-test.js`]
   : ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
