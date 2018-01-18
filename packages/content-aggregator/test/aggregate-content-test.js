@@ -166,10 +166,10 @@ describe('aggregateContent()', () => {
   // Filter branches
 
   async function initRepoWithBranches (repo) {
-    await repo.initRepo({ name: 'the-component', version: 'unknown' })
-    await repo.createBranch({ name: 'the-component', version: 'v1.0.0' })
-    await repo.createBranch({ name: 'the-component', version: 'v2.0.0' })
-    await repo.createBranch({ name: 'the-component', version: 'v3.0.0' })
+    await repo.initRepo({ name: 'the-component', version: 'latest-and-greatest' })
+    await repo.createBranch({ name: 'the-component', version: 'v1.0' })
+    await repo.createBranch({ name: 'the-component', version: 'v3.0' })
+    await repo.createBranch({ name: 'the-component', version: 'v2.0' })
   }
 
   describe('should filter branches by exact name', () => {
@@ -181,7 +181,7 @@ describe('aggregateContent()', () => {
       })
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'unknown' })
+      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'latest-and-greatest' })
     })
   })
 
@@ -194,9 +194,9 @@ describe('aggregateContent()', () => {
       })
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(3)
-      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
-      expect(aggregate[1]).to.deep.include({ name: 'the-component', version: 'v2.0.0' })
-      expect(aggregate[2]).to.deep.include({ name: 'the-component', version: 'v3.0.0' })
+      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.0' })
+      expect(aggregate[1]).to.deep.include({ name: 'the-component', version: 'v2.0' })
+      expect(aggregate[2]).to.deep.include({ name: 'the-component', version: 'v3.0' })
     })
   })
 
@@ -205,34 +205,52 @@ describe('aggregateContent()', () => {
       await initRepoWithBranches(repo)
       playbook.content.sources.push({
         url: repo.url,
-        branches: ['master', 'v1.*', 'v3.*'],
+        branches: ['master', 'v1*', 'v3.*'],
       })
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(3)
-      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'unknown' })
-      expect(aggregate[1]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
-      expect(aggregate[2]).to.deep.include({ name: 'the-component', version: 'v3.0.0' })
+      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'latest-and-greatest' })
+      expect(aggregate[1]).to.deep.include({ name: 'the-component', version: 'v1.0' })
+      expect(aggregate[2]).to.deep.include({ name: 'the-component', version: 'v3.0' })
     })
   })
 
-  describe('should filter branches using playbook default filter "content.branches"', () => {
+  describe('should only select refs which are branches', () => {
+    testAll(async (repo) => {
+      await initRepoWithBranches(repo)
+      await repo.createTag('v1.0', 'v1.0.0')
+      playbook.content.sources.push({
+        url: repo.url,
+        branches: 'v*',
+      })
+      const aggregate = await aggregateContent(playbook)
+      expect(aggregate).to.have.lengthOf(3)
+      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.0' })
+      expect(aggregate[1]).to.deep.include({ name: 'the-component', version: 'v2.0' })
+      expect(aggregate[2]).to.deep.include({ name: 'the-component', version: 'v3.0' })
+    })
+  })
+
+  describe('should filter branches using default filter as array', () => {
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
       playbook.content.sources.push({ url: repo.url })
-      playbook.content.branches = ['v1.0.0', 'v2*']
+      playbook.content.branches = ['v1.0', 'v2*']
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(2)
-      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
-      expect(aggregate[1]).to.deep.include({ name: 'the-component', version: 'v2.0.0' })
+      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.0' })
+      expect(aggregate[1]).to.deep.include({ name: 'the-component', version: 'v2.0' })
     })
+  })
 
+  describe('should filter branches using default filter as string', () => {
     testAll(async (repo) => {
       await initRepoWithBranches(repo)
       playbook.content.sources.push({ url: repo.url })
-      playbook.content.branches = 'v1.0.*'
+      playbook.content.branches = 'v1.*'
       const aggregate = await aggregateContent(playbook)
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.0.0' })
+      expect(aggregate[0]).to.deep.include({ name: 'the-component', version: 'v1.0' })
     })
   })
 

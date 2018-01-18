@@ -5,8 +5,8 @@ const collect = require('stream-to-array')
 const File = require('vinyl')
 const fs = require('fs-extra')
 const git = require('nodegit')
-const isMatch = require('matcher').isMatch
-const map = require('through2').obj
+const { obj: map } = require('through2')
+const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
 const path = require('path')
 const vfs = require('vinyl-fs')
@@ -35,46 +35,28 @@ const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
  * @returns {Object} A map of files organized by component version.
  */
 async function aggregateContent (playbook) {
+  const defaultBranchPatterns = playbook.content.branches
   const componentVersions = await Promise.all(
     playbook.content.sources.map(async (source) => {
       const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(source.url)
-      const branches = await repository.getReferences(git.Reference.TYPE.OID)
-
-      const repoComponentVersions = _(branches)
-        .map((branch) => getBranchInfo(branch))
-        .groupBy('branchName')
-        .mapValues((unorderedBranches) => {
-          // isLocal comes from reference.isBranch() which is 0 or 1
-          // so we'll end up with truthy isLocal last in the array
-          const branches = _.sortBy(unorderedBranches, 'isLocal')
-          return isLocalRepo ? _.last(branches) : _.first(branches)
-        })
-        .values()
-        .filter(({ branchName }) => branchMatches(branchName, source.branches || playbook.content.branches))
-        .map(async ({ branch, branchName, isHead, isLocal }) => {
-          let filesPromise
-          if (isLocalRepo && !isBare && isHead) {
-            filesPromise = readFilesFromWorktree(path.join(source.url, source.startPath || ''))
-          } else {
-            filesPromise = readFilesFromGitTree(repository, branch, source.startPath)
-          }
-
-          return filesPromise.then((files) => {
-            const componentVersion = loadComponentDescriptor(files)
-            componentVersion.files = files.map((file) => assignFileProperties(file, url, branchName, source.startPath))
-            return componentVersion
-          })
-        })
-        .value()
-
-      return Promise.all(repoComponentVersions).then((value) => {
+      const componentVersions = (await selectBranches(repository, source.branches || defaultBranchPatterns)).map(
+        async ({ ref, localName, current }) => {
+          const files =
+            isLocalRepo && !isBare && current
+              ? await readFilesFromWorktree(path.join(source.url, source.startPath || ''))
+              : await readFilesFromGitTree(repository, ref, source.startPath)
+          const componentVersion = loadComponentDescriptor(files)
+          componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, source.startPath))
+          return componentVersion
+        }
+      )
+      return Promise.all(componentVersions).then((value) => {
         // nodegit repositories need to be manually closed
         repository.free()
         return value
       })
     })
   )
-
   return buildAggregate(componentVersions)
 }
 
@@ -199,18 +181,34 @@ function getFetchOptions () {
   }
 }
 
-function getBranchInfo (branch) {
-  const branchName = branch.shorthand().replace(/^origin\//, '')
-  const isLocal = branch.isBranch() === 1
-  const isHead = branch.isHead() === 1
-  return { branch, branchName, isLocal, isHead }
-}
+async function selectBranches (repo, branchPatterns) {
+  if (branchPatterns && !Array.isArray(branchPatterns)) branchPatterns = [branchPatterns]
+  const refs = await repo.getReferences(git.Reference.TYPE.OID)
+  return Object.values(
+    refs.reduce((accum, ref) => {
+      const segments = ref.name().split('/')
+      let branch
+      let localName
+      if (segments[1] === 'heads') {
+        localName = segments.slice(2).join('/')
+        branch = { ref, localName, current: !!ref.isHead() }
+      } else if (segments[1] === 'remotes' && segments[2] === 'origin') {
+        localName = segments.slice(3).join('/')
+        branch = { ref, localName, remote: 'origin' }
+      } else {
+        return accum
+      }
 
-function branchMatches (branchName, branchPattern) {
-  if (Array.isArray(branchPattern)) {
-    return branchPattern.some((pattern) => isMatch(branchName, pattern))
-  }
-  return isMatch(branchName, branchPattern)
+      // NOTE if branch is present in accum, we already know it matches the pattern
+      if (localName in accum) {
+        if (!branch.remote) accum[localName] = branch
+      } else if (!branchPatterns || matcher([localName], branchPatterns).length) {
+        accum[localName] = branch
+      }
+
+      return accum
+    }, {})
+  )
 }
 
 function loadComponentDescriptor (files) {
@@ -231,12 +229,12 @@ function loadComponentDescriptor (files) {
   return data
 }
 
-async function readFilesFromGitTree (repository, branch, startPath) {
-  return srcGitTree(await getGitTree(repository, branch, startPath))
+async function readFilesFromGitTree (repository, branchRef, startPath) {
+  return srcGitTree(await getGitTree(repository, branchRef, startPath))
 }
 
-async function getGitTree (repository, branch, startPath) {
-  const commit = await repository.getBranchCommit(branch)
+async function getGitTree (repository, branchRef, startPath) {
+  const commit = await repository.getBranchCommit(branchRef)
   if (startPath) {
     const tree = await commit.getTree()
     const subTreeEntry = await tree.entryByPath(startPath)

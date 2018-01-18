@@ -104,6 +104,11 @@ class FixtureRepository {
     await this.setDocsComponent({ name, version })
   }
 
+  async createTag (branch, name) {
+    const ref = await this.repository.getBranch(branch)
+    await this.repository.createTag(ref.target(), name, name)
+  }
+
   async addFixtureFiles (files, startPath) {
     await this.copyAll(files, startPath)
     await this.commitAll('Add example files')
