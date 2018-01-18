@@ -1,0 +1,86 @@
+= Default Site Generator Guidebook
+
+== Context
+
+To orchestrate generation of the site in a standard way using the available components in Antora.
+This component should delegate all work to the functions it imports from other components, not provide any additional functionality.
+It acts as the glue to assemble the components into an execution pipeline, connecting the inputs of one component to the output of another.
+
+== Functional Overview
+
+Each component in Antora focuses on accomplishing a well-defined task.
+The default site generator assembles these tasks into a pipeline so they come together to generate a site in a standard way.
+The main purpose of the site generator is to arrange the tasks in a logical sequence and connect the output of one task to the input of a subsequent task.
+It starts with the provided user input and ends when the site is published to the configured destination(s).
+In other words, this component is the glue.
+
+The site generator should also handle cross-cutting infrastructure concerns.
+For instance, it should be responsible for configuring the logger and handling uncaught errors.
+It should also dynamically load extensions or register additional integrations as requested.
+
+The site generator is the interface between the CLI and Antora's components.
+It provides the API for which the `generate` command will execute.
+
+In the future, this component may be able to dynamically load extensions or register additional integrations.
+
+== Software Architecture
+
+The default site generator is provided by the site-generator-default module.
+The qualifier goes at the end of the name so alternate implementations get listed together alphabetically (e.g., site-generator-acme).
+
+The generator pipeline should delegate to the following functions imported from the specified module:
+
+* buildPlaybook (playbook-builder)
+* aggregateContent (content-aggregator)
+* loadUi (ui-loader)
+* classifyContent (content-classifier)
+* convertDocument (document-converter)
+* buildNavigation (navigation-builder)
+* createPageComposer (page-composer)
+* TODO mapSite (site-mapper)
+* TODO publishSite (site-publisher)
+
+The goal is for the generator pipeline to do as little work as possible.
+If it looks like it's doing too much work, then the component to which it's delegating should be improved.
+
+The pipeline should execute asynchronous behavior, such as loading the UI, as early as possible, then await the result as soon as it's needed.
+This ensures background processes can make the best use of the execution time.
+
+.Inputs
+* An an array of arguments in the form `--name=value` or `--name`
+* A map of environment variables
+
+.Output
+* Nothing (or perhaps a success code)
+
+== Code
+
+The default site generator is implemented as a dedicated node package (i.e., module).
+The default site generator API exports the asynchronous function `generateSite()`, which accepts an array of command-line arguments (in the form `--name=value`), a map of environment variables, and an output directory (though this parameter will go away once the site publisher is available).
+The `generateSite()` function does not return a value.
+
+The API for the default site generator should be used as follows:
+
+[source,js]
+----
+const generateSite = require('@antora/default-site-generator')
+
+//...
+
+await generateSite(args, env, 'build/site')
+----
+
+== Data
+
+Aside from user input in the form of arguments and environment variables, all data is handled internally and defined by the other components.
+
+== Consequences
+
+Antora has an open architecture in which each component performs a well-defined task.
+But something needs to assemble those components together into a logical pipeline.
+That's where the default site generator comes in.
+The default site generator provides a composite function that uses all the other components to generate a site in a standard way.
+
+Antora has an open architecture, so the default site generator is just one way to put the components together.
+But it's critical in that it provides an off-the-shelf experience to satisfy the most typical use case and to demonstrate Antora's capabilities.
+Most users will begin with the default site generator and only strike it out on their own if and when they outgrow it.
