@@ -233,6 +233,7 @@ _{r}_ Purpose and usage of the modules directory, ROOT module, and user-named mo
 
 Pages & Partials (P or P#)::
 _{r}_ Purpose and usage of the pages, topic, and partials directories.
+Role of index.adoc in ROOT and/or other modules, and what to do if there isn't a file named index.adoc in a component.
 
 Assets (P or P#)::
 _{r}_ Purpose and usage of the assets, images, attachments, video, and user-named directories.
@@ -241,7 +242,7 @@ Examples (P or P#)::
 _{r}_ Purpose and usage of the examples directory.
 
 antora.yml (P)::
-_{r}_ Purpose, structure and keys in the component descriptor file.
+_{r}_ Purpose, structure and keys (name, title, version, start_page, nav) in the component descriptor file.
 
 Organizing source files (SC, P)::
 _{r}_ Or: Source file organization. The considerations a user should keep in mind when choosing how to organize their source files.
@@ -273,6 +274,9 @@ How topics within a module impact managing the content and the published site.
 +
 _{s}_ Accepted
 
+index.adoc file or no index.adoc file? (P or P#)::
+_{r}_ Whether you want a component to use Antora's page root conventions and/or URL where `./ROOT/index.adoc` would be displayed as the URL `company.com/component-name/`.
+
 Naming directories and files (SC, P)::
 _{r}_ Or: Directory and file names.
 The considerations a user should keep in mind when choosing what to name the folders and files in their documentation.
@@ -297,7 +301,7 @@ _{s}_ Under consideration.
 
 Types (SC?, P)::
 _{r}_ The common types of documentation pages and their purposes.
-Types include documentation (single, assembled from partials, combo), home/start/landing (page the user lands on from the root of the docs site or component), search and search results page, metadata filter and filter results page, generated pages (sitemap, 404).
+Types include documentation (single, assembled from partials, combo), home/start/landing and index.adoc/start_page (page the user lands on from the root of the docs site or component), search and search results page, metadata filter and filter results page, generated pages (sitemap, 404).
 +
 _{s}_ Accepted
 
