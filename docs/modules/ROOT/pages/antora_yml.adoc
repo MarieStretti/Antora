@@ -41,14 +41,16 @@ The component descriptor must:
 name: component-a # <1>
 title: Component A # <2>
 version: '1.0' # <3>
-nav: # <4>
+start_page: module:filename.adoc # <4>
+nav: # <5>
 - modules/ROOT/nav.adoc
 - ...
 ----
 <1> Name key and value
 <2> Title key and value
 <3> Version key and value
-<4> Nav key and values
+<4> Start page key and value
+<5> Nav key and values
 
 === name
 
@@ -84,6 +86,26 @@ If the value starts with a number, it must be contained within a set of single q
 * '1.0'
 * v2.0-beta
 * latest
+
+[#start-page-key]
+=== start_page
+
+By default, Antora search a component for a file named `index.adoc`, first in the ROOT module, and then if it doesn't find it there, then in any other modules in that component.
+Antora uses the index file as the root of a component.
+If you don't want to name a file index.adoc in a component, then you must set the start_page key and explicitly assign a file to the key.
+The value uses the page coordinate system.
+You must specify what module the start page is located in and the path to the appropriate file.
+
+[source,yml]
+----
+start_page: ROOT:overview.adoc
+
+# or
+
+start_page: security:protocols/ssh.adoc
+----
+
+IMPORTANT: The start_page key and value is required when a component doesn't contain an `index.adoc` file, otherwise Antora will issue an error message.
 
 [#nav-key]
 === nav
