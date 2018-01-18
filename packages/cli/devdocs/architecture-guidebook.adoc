@@ -1,0 +1,97 @@
+= CLI Guidebook
+
+== Context
+
+To provide an interface that can be used to launch Antora--typically the site generator pipeline--from a command-line prompt or a script.
+This package should add the `antora` command to the user's PATH when installed.
+The `antora` command (or application) should be capable of showing usage documentation, which lists the options (flags and switches), (sub)commands, arguments, and environment variables that it accepts as input.
+
+NOTE: We use the term application for this module instead of component since, unlike the other modules, this is an application the user will install from npmjs.com (i.e., `npm install -g @antora/cli`).
+
+== Functional Overview
+
+The main purpose of the CLI is to give the user a way to execute functionality provided by Antora using the `antora` command.
+The `antora` command accepts input from the user in the form of command-line arguments and environment variables, determines which action to perform, then delegates the work to other components or component pipelines in Antora.
+It should not perform any work that's otherwise handled by other components.
+
+We anticipate having to use this command to perform different actions (e.g., generate, validate, new, etc.).
+Therefore, it should be designed as a command-style (aka action-style) interface, where the first positional argument following the name of the command is the action to perform (e.g., `antora generate`).
+The core components and add-ons may be loaded statically or dynamically depending on the action.
+To reduce burden on the user, we'll assume the implicit command `generate` if no command is specified explicitly (e.g., `antora`).
+
+The `generate` command should build and register its options based on the playbook schema.
+It shouldn't validate the option values, but rather delegate to the playbook builder component to handle that step.
+If a generator pipeline is not specified, the `generate` command should load and use the default site generator.
+
+If an error (or errors) occur during execution, the error message(s) should be displayed in a readable format the user and the command should exit with a status of 1.
+Otherwise, the command should exit with a status of 0.
+
+== Software Architecture
+
+The CLI is provided by the cli module.
+This module should expose the `antora` bin script.
+
+The `antora` command should be implemented using a command-line interface library such as https://github.com/tj/commander.js[commander.js].
+It should be implemented as a single-level command-style (aka action-style) interface (e.g., `antora generate`).
+
+The `generate` command should accept the form `antora generate [options] <playbook>`.
+The options should be built from the playbook schema.
+The playbook argument should be rewritten as the `playbook` option (to adhere to what the playbook builder accepts).
+If a generator pipeline is specified, it should be loaded.
+If no generator pipeline is specified, the default site generator should be loaded.
+The arguments array and environment variables should then be passed to the generator pipeline.
+
+If executed with no arguments, the `help` command (i.e., `antora help`), or the `-h` switch (i.e., `antora -h`), the usage statement should be displayed.
+The usage statement should show the description, the common options, and the list of commands.
+If a command is specified after the `help` command (i.e., `antora help generate`), or the `-h` switch is passed to a command (i.e., `antora generate -h`), the usage statement for that command should be displayed.
+
+If executed with the `-v` switch (i.e., `antora -v`), the command should show the version of the CLI.
+
+.Inputs
+* Command-line arguments and environment variables
+
+.Output
+* Messages written to STDOUT and STDERR
+* Exit code
+
+== Code
+
+The CLI is implemented as a dedicated node package (i.e., module).
+The module exposes the `antora` bin script, which is added to the user's PATH when the module is installed.
+
+CLI usage examples:
+
+.Display the usage statement (implicit)
+ $ antora
+
+.Display the usage statement (explicit)
+ $ antora -h
+
+.Display the CLI version
+ $ antora -v
+
+.Display the usage statement for the generate command
+ $ antora generate -h
+
+.Run the generate command
+ $ antora generate site.yml
+
+.Run the generate command with additional options
+ $ antora generate --to-dir site --html-extension-style=indexify site.yml
+
+== Data
+
+The only data this module works with are command-line arguments and environment variables.
+It should restrict command-line arguments (which consist of options and unnamed arguments) to those that a given command accepts.
+
+== Consequences
+
+The CLI is the primary means by which users (i.e., site authors) will interface with Antora.
+The CLI provides a way to interact with, configure, customize, and ultimately launch the Antora tooling.
+
+Without a CLI, the only way users could use Antora is to invoke it programmatically.
+While there are users who will choose to take this approach, the CLI is crucial for putting Antora in the hands of the general purpose user.
+The interface also provides "`in app`" documentation (aka usage) that allows the user to discover functionality in Antora.
+
+The command-style interface gives the application the ability to be expanded to support additional actions without requiring the user to install additional interfaces.
+The ability for the command to load add-on code allows the same interface to be used to invoke custom behavior and pipelines.
