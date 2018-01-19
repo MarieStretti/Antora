@@ -44,6 +44,7 @@ version: '1.0' # <3>
 start_page: module:filename.adoc # <4>
 nav: # <5>
 - modules/ROOT/nav.adoc
+- modules/module-three/nav.adoc
 - ...
 ----
 <1> Name key and value
@@ -90,12 +91,13 @@ If the value starts with a number, it must be contained within a set of single q
 [#start-page-key]
 === start_page
 
-By default, Antora search a component for a file named `index.adoc`, first in the ROOT module, and then if it doesn't find it there, then in any other modules in that component.
-Antora uses the index file as the root of a component.
-If you don't want to name a file index.adoc in a component, then you must set the start_page key and explicitly assign a file to the key.
-The value uses the page coordinate system.
-You must specify what module the start page is located in and the path to the appropriate file.
+By default, Antora automatically uses the file [.path]_index.adoc_ in the ROOT module of a component as the start page of that component (i.e., _pass:[https://company.com/docs/component/]_).
 
+If a component doesn't have an [.path]_index.adoc_ file, then the `start_page` key must be set in the component's [.path]_antora.yml_ file and assigned a file to use as the component's start page.
+The value uses the page ID structure.
+and must specify the module and path to the file.
+
+.Start page value examples
 [source,yml]
 ----
 start_page: ROOT:overview.adoc
@@ -105,11 +107,11 @@ start_page: ROOT:overview.adoc
 start_page: security:protocols/ssh.adoc
 ----
 
-IMPORTANT: The start_page key and value is required when a component doesn't contain an `index.adoc` file, otherwise Antora will issue an error message.
+IMPORTANT: A component must contain a file named [.path]_index.adoc_ or a start page set in its component descriptor.
 
 [#nav-key]
 === nav
 
 The nav key accepts a list of xref:navigation:linked.adoc[navigation files].
-Each value specifies the path to a navigation file (e.g., [.path]_modules/module-a/nav.adoc_).
+Each value specifies the path to a navigation file (e.g., [.path]_modules/module-name/nav.adoc_).
 The order of the values indicates the order the navigation menus will be displayed in the site's navigation panel.
