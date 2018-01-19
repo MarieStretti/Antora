@@ -7,18 +7,28 @@ const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
 class RepositoryBuilder {
-  constructor (repoBase, fixtureBase) {
+  constructor (repoBase, fixtureBase, opts = {}) {
     this.repoBase = repoBase
     this.fixtureBase = fixtureBase
+    this.remote = opts.remote
+    this.bare = opts.bare
   }
 
-  async open (repoName = 'test-repo') {
-    this.repository = await git.Repository.open((this.repoPath = path.join(this.repoBase, repoName)))
+  async open (repoName) {
+    if (repoName) {
+      this.repoPath = path.join(this.repoBase, repoName)
+    } else if (!this.repoPath) {
+      throw new Error('No repository name specified and no previous repository was opened by this builder.')
+    }
+    this.repository = await git.Repository.open(this.repoPath)
     return this
   }
 
   async init (repoName = 'test-repo') {
-    this.repository = await git.Repository.init((this.repoPath = path.join(this.repoBase, repoName)), 0)
+    this.url = this.repoPath = path.join(this.repoBase, repoName)
+    if (this.remote) this.url = 'file://' + this.url
+    if (this.bare) this.url += '/.git'
+    this.repository = await git.Repository.init(this.repoPath, 0)
     this.addToWorktree('.gitignore')
     return this.commitAll()
   }
@@ -35,19 +45,29 @@ class RepositoryBuilder {
     return this
   }
 
-  addComponentDescriptorToWorktree (data) {
-    if (!data.title) {
+  async addComponentDescriptorToWorktree (data) {
+    const path_ = (this.startPath = data.startPath || '') ? path.join(this.startPath, 'antora.yml') : 'antora.yml'
+    delete data.startPath
+    if (data.name && !data.title) {
       data.title = data.name
         .split('-')
         .map((w) => w.charAt(0).toUpperCase() + w.substr(1))
         .join(' ')
     }
-    return this.addToWorktree('antora.yml', yaml.safeDump(data))
+    return this.addToWorktree(path_, yaml.safeDump(data))
   }
 
-  addToWorktree (path_, contents = '') {
-    fs.writeFileSync(path.join(this.repoPath, path_), contents)
-    return this
+  async addComponentDescriptor (data) {
+    return this.addComponentDescriptorToWorktree(data).then(() => this.commitAll('add component descriptor'))
+  }
+
+  async addToWorktree (path_, contents = '') {
+    return new Promise((resolve, reject) => {
+      const to = path.join(this.repoPath, path_)
+      fs
+        .ensureDir(path.dirname(to))
+        .then(() => fs.writeFile(to, contents, (err) => (err ? reject(err) : resolve(this))))
+    })
   }
 
   async importFilesFromFixture (fixtureName = '', opts = {}) {
@@ -61,7 +81,9 @@ class RepositoryBuilder {
     })
   }
 
-  async addFilesFromFixture (paths, fixtureName = '') {
+  async addFilesFromFixture (paths, fixtureName = '', toStartPath = true) {
+    if (!Array.isArray(paths)) paths = [paths]
+    if (toStartPath && this.startPath) paths = paths.map((path_) => path.join(this.startPath, path_))
     await this.copyToWorktree(paths, path.join(this.fixtureBase, fixtureName))
     return this.commitAll('add fixtures')
   }
@@ -70,12 +92,17 @@ class RepositoryBuilder {
     return Promise.all(
       paths.map((path_) => {
         const to = path.join(this.repoPath, path_)
-        // copy fixture file if exists, otherwise create an empty file
+        // NOTE copy fixture file if exists, otherwise create an empty file
         return fs
           .ensureDir(path.dirname(to))
           .then(() => fs.copy(path.join(fromBase, path_), to).catch(() => fs.writeFile(to, '')))
       })
     ).then(() => this)
+  }
+
+  async removeFromWorktree (paths) {
+    if (!Array.isArray(paths)) paths = [paths]
+    return Promise.all(paths.map((path_) => fs.remove(path.join(this.repoPath, path_)))).then(() => this)
   }
 
   async commitAll (message = 'make it so') {
@@ -87,6 +114,12 @@ class RepositoryBuilder {
     const treeOid = await index.writeTree()
     const parentCommit = await repo.getHeadCommit()
     await repo.createCommit('HEAD', author, author, message, treeOid, parentCommit === null ? null : [parentCommit])
+    return this
+  }
+
+  async createTag (name, refname = 'HEAD') {
+    const ref = await this.repository.getReference(refname)
+    await this.repository.createTag(ref.target(), name, name)
     return this
   }
 

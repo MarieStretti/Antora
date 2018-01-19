@@ -27,13 +27,19 @@ describe('cli', () => {
   let destDir
   let uiBundleUri
 
-  const createContentRepository = async () => {
-    return (await (await (await new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR).init(
-      'the-component'
-    )).checkoutBranch('v1.0'))
-      .addComponentDescriptorToWorktree({ name: 'the-component', version: '1.0', nav: ['modules/ROOT/nav.adoc'] })
-      .importFilesFromFixture('the-component')).close('master')
-  }
+  const createContentRepository = async () =>
+    new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      .init('the-component')
+      .then((repoBuilder) => repoBuilder.checkoutBranch('v1.0'))
+      .then((repoBuilder) =>
+        repoBuilder.addComponentDescriptorToWorktree({
+          name: 'the-component',
+          version: '1.0',
+          nav: ['modules/ROOT/nav.adoc'],
+        })
+      )
+      .then((repoBuilder) => repoBuilder.importFilesFromFixture('the-component'))
+      .then((repoBuilder) => repoBuilder.close('master'))
 
   // FIXME the antora generate command should work without changing cwd
   const runAntora = (args = undefined, env = process.env) => {
