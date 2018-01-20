@@ -1,4 +1,5 @@
-.xref:index.adoc[Playbook]
-* xref:set-up-existing-playbook-project.adoc[Set up an Existing Playbook Project]
-* xref:configure-playbook.adoc[Configure Playbook]
-* xref:author-mode.adoc[Configure Author Workspace Playbook]
+* Site Assembly
+** xref:index.adoc[Playbook]
+*** xref:configure-playbook.adoc[Configure Playbook]
+** xref:set-up-existing-playbook-project.adoc[Use an Existing Playbook]
+** xref:author-mode.adoc[Configure Author Workspace Playbook]
