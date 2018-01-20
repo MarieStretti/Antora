@@ -154,7 +154,7 @@ function generateLocalFolderName (url) {
   const segments = url.split(SEPARATOR_RX)
   let firstSegment = segments[0]
   if (firstSegment.length === 0) {
-    segments.splice(0, 1)
+    segments.shift()
   } else {
     const atIdx = firstSegment.indexOf('@')
     if (~atIdx) firstSegment = firstSegment.substr(atIdx + 1)
