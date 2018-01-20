@@ -100,7 +100,7 @@ function applyTagFiltering (contents, tags) {
           ;[activeTag, selecting] = tagStack.length ? tagStack[0] : [undefined, selectingDefault]
         } else if (thisTag in tags) {
           const idx = tagStack.findIndex(([name]) => name === thisTag)
-          if (idx !== -1) {
+          if (~idx) {
             tagStack.splice(idx, 1)
             //console.warn(`line ${lineNum}: mismatched end tag in include: expected ${activeTag}, found ${thisTag}`)
           }

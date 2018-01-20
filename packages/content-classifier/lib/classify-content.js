@@ -109,7 +109,7 @@ function partitionSrc (file, component, version, nav) {
  */
 function getNavInfo (filepath, nav) {
   const index = nav.findIndex((candidate) => candidate === filepath)
-  if (index !== -1) return { index }
+  if (~index) return { index }
 }
 
 function resolveOut (src, htmlExtensionStyle = 'default') {

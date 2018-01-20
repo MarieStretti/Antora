@@ -102,7 +102,7 @@ function selectFilesStartingFrom (startPath) {
 
 function loadConfig (files, outputDir) {
   const configFileIdx = files.findIndex((file) => file.path === UI_CONFIG_FILENAME)
-  if (configFileIdx !== -1) {
+  if (~configFileIdx) {
     const configFile = files[configFileIdx]
     files.splice(configFileIdx, 1)
     const config = yaml.safeLoad(configFile.contents.toString())
