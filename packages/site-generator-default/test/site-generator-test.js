@@ -29,7 +29,7 @@ describe('generateSite()', () => {
 
   const loadHtmlFile = (relative) => cheerio.load(readFile(relative, destDir))
 
-  before(async function () {
+  before(async () => {
     destDir = '_site'
     playbookSpecFile = path.join(WORK_DIR, 'the-site.json')
     repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
@@ -38,9 +38,18 @@ describe('generateSite()', () => {
 
   beforeEach(async () => {
     fs.removeSync(CONTENT_REPOS_DIR)
-    await (await (await (await repositoryBuilder.init('the-component')).checkoutBranch('v2.0'))
-      .addComponentDescriptorToWorktree({ name: 'the-component', version: '2.0', nav: ['modules/ROOT/nav.adoc'] })
-      .importFilesFromFixture('the-component')).close('master')
+    await repositoryBuilder
+      .init('the-component')
+      .then(() => repositoryBuilder.checkoutBranch('v2.0'))
+      .then(() =>
+        repositoryBuilder.addComponentDescriptorToWorktree({
+          name: 'the-component',
+          version: '2.0',
+          nav: ['modules/ROOT/nav.adoc'],
+        })
+      )
+      .then(() => repositoryBuilder.importFilesFromFixture('the-component'))
+      .then(() => repositoryBuilder.close('master'))
     playbookSpec = {
       site: { title: 'The Site' },
       content: {
@@ -128,9 +137,22 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   it('should provide navigation to multiple versions of a component', async () => {
-    await (await (await (await repositoryBuilder.open('the-component')).checkoutBranch('v1.0'))
-      .addComponentDescriptorToWorktree({ name: 'the-component', version: '1.0', nav: ['modules/ROOT/nav.adoc'] })
-      .importFilesFromFixture('the-component', { exclude: ['modules/ROOT/pages/new-page.adoc'] })).close('master')
+    await repositoryBuilder
+      .open()
+      .then(() => repositoryBuilder.checkoutBranch('v1.0'))
+      .then(() =>
+        repositoryBuilder.addComponentDescriptorToWorktree({
+          name: 'the-component',
+          version: '1.0',
+          nav: ['modules/ROOT/nav.adoc'],
+        })
+      )
+      .then(() =>
+        repositoryBuilder.importFilesFromFixture('the-component', {
+          exclude: ['modules/ROOT/pages/new-page.adoc'],
+        })
+      )
+      .then(() => repositoryBuilder.close('master'))
     playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile], {}, destDir)
@@ -184,24 +206,45 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   it('should provide navigation to all versions of all components', async () => {
-    await (await (await (await repositoryBuilder.open('the-component')).checkoutBranch('v1.0'))
-      .addComponentDescriptorToWorktree({ name: 'the-component', version: '1.0', nav: ['modules/ROOT/nav.adoc'] })
-      .importFilesFromFixture('the-component', { exclude: ['modules/ROOT/pages/new-page.adoc'] })).close('master')
-    await (await (await (await repositoryBuilder.init('the-other-component'))
-      .addComponentDescriptorToWorktree({
-        name: 'the-other-component',
-        version: 'master',
-        start_page: 'core:index.adoc',
-        nav: ['modules/core/nav.adoc'],
-      })
-      .importFilesFromFixture('the-other-component')).checkoutBranch('v1.0'))
-      .addComponentDescriptorToWorktree({
-        name: 'the-other-component',
-        version: '1.0',
-        start_page: 'core:index.adoc',
-        nav: ['modules/core/nav.adoc'],
-      })
-      .close('master')
+    await repositoryBuilder
+      .open()
+      .then(() => repositoryBuilder.checkoutBranch('v1.0'))
+      .then(() =>
+        repositoryBuilder.addComponentDescriptorToWorktree({
+          name: 'the-component',
+          version: '1.0',
+          nav: ['modules/ROOT/nav.adoc'],
+        })
+      )
+      .then(() =>
+        repositoryBuilder.importFilesFromFixture('the-component', {
+          exclude: ['modules/ROOT/pages/new-page.adoc'],
+        })
+      )
+      .then(() => repositoryBuilder.close('master'))
+
+    await repositoryBuilder
+      .init('the-other-component')
+      .then(() =>
+        repositoryBuilder.addComponentDescriptorToWorktree({
+          name: 'the-other-component',
+          version: 'master',
+          start_page: 'core:index.adoc',
+          nav: ['modules/core/nav.adoc'],
+        })
+      )
+      .then(() => repositoryBuilder.importFilesFromFixture('the-other-component'))
+      .then(() => repositoryBuilder.checkoutBranch('v1.0'))
+      .then(() =>
+        repositoryBuilder.addComponentDescriptorToWorktree({
+          name: 'the-other-component',
+          version: '1.0',
+          start_page: 'core:index.adoc',
+          nav: ['modules/core/nav.adoc'],
+        })
+      )
+      .then(() => repositoryBuilder.close('master'))
+
     playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
     playbookSpec.content.sources.push({
       url: path.join(CONTENT_REPOS_DIR, 'the-other-component'),

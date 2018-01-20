@@ -51,16 +51,16 @@ module.exports = {
     },
   },
   content: {
+    branches: {
+      doc: 'The default branch pattern to use when no specific pattern is provided',
+      format: Array,
+      default: ['v*', 'master'],
+    },
     sources: {
       doc: 'The list of git repositories + branch patterns to use.',
       format: Array,
       default: [],
       env: 'CONTENT_SOURCES',
-    },
-    branches: {
-      doc: 'The default branch pattern to use when no specific pattern is provided',
-      format: Array,
-      default: ['v*', 'master'],
     },
   },
   ui: {
