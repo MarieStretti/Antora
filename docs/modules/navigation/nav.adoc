@@ -1,2 +1,3 @@
-.xref:linked.adoc[Navigation]
-* xref:aspect.adoc[Aspect Navigation]
+* Navigation
+** xref:linked.adoc[Basic Navigation]
+// ** xref:aspect.adoc[Aspect Navigation]
