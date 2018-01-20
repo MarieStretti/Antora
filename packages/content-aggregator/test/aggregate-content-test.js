@@ -8,7 +8,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
-const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
+const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH } = require('@antora/content-aggregator/lib/constants')
 const CONTENT_REPOS_DIR = path.resolve(__dirname, 'content-repos')
 const CWD = process.cwd()
 const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
@@ -295,6 +295,22 @@ describe('aggregateContent()', () => {
   })
 
   describe('aggregate files from repository', () => {
+    describe('should clone repository into cache folder', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        await aggregateContent(playbookSpec)
+        const contentCacheAbsDir = path.join(WORK_DIR, CONTENT_CACHE_PATH)
+        if (repoBuilder.remote) {
+          const repoDir = repoBuilder.url.replace(/^file:\/+/, '').replace(/\/?\.git$/, '').replace(/\//g, '%')
+          expect(contentCacheAbsDir).to.be.a.directory()
+          expect(path.join(contentCacheAbsDir, repoDir)).to.be.a.directory().and.include.files(['HEAD'])
+        } else {
+          expect(contentCacheAbsDir).to.not.be.a.path()
+        }
+      })
+    })
+
     describe('should aggregate all files', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithFiles(repoBuilder)
