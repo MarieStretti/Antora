@@ -2,34 +2,38 @@ image: node:8
 stages:
 - init
 - verify
+- deploy
 yarn:
   stage: init
   cache:
-    paths:
+    paths: &cache_paths
     - .yarn-cache/
   script:
-  - yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
+  - &run_yarn
+    yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
 lint:
   stage: verify
-  cache:
+  cache: &pull_cache
     policy: pull
-    paths:
-    - .yarn-cache/
+    paths: *cache_paths
   script:
-  - yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
-  - node_modules/.bin/gulp lint
-  - node_modules/.bin/gulp commitlint
+  - *run_yarn
+  - $(npm bin)/gulp lint
+  - $(npm bin)/gulp commitlint
 test:
   stage: verify
-  cache:
-    policy: pull
-    paths:
-    - .yarn-cache/
+  cache: *pull_cache
   script:
-  # enable next line to guarantee we're on a branch
-  #- git checkout -B $CI_COMMIT_REF_NAME
-  - yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
-  - node_modules/.bin/gulp test!
+  - *run_yarn
+  - $(npm bin)/gulp test!
   artifacts:
     paths:
     - coverage/
+release:
+  stage: deploy
+  only:
+  - releases@antora/antora
+  environment: releases
+  script:
+  - yarn --no-progress global add lerna@$(node -p 'require("./lerna.json").lerna')
+  - scripts/release.sh

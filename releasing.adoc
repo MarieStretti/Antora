@@ -1,1 +1,178 @@
 = Releasing
+ifdef::env-browser[]
+:toc:
+:toc-title: Contents
+endif::[]
+
+This document describes how releases of the packages (aka modules) in this repository are versioned and published.
+
+== Overview
+
+Here's what happens when a release is made:
+
+* The version property in [.path]_lerna.json_ and each [.path]_package.json_ file under [.path]_packages/_ is set to the new version.
+* The changes are committed to the git branch from which the release is made.
+* An unsigned, annotated tag with the name of the version prefixed with "`v`" (i.e., v1.0.0) is added to the git repository.
+* Each package under [.path]_packages/_ is packed and published to the @antora scope of the https://npmjs.com[npm registry].
+ ** Publishing to the npm registry also makes the packages available in the https://yarnpkg.com[Yarn registry].
+ ** The packages cannot be unpublished from the npm registry once published.
+* The tag and corresponding commit on the branch from which the release is made are pushed to "`origin`" remote (i.e., the repository on GitLab).
+
+If the CI pipeline succeeds, we can assume the release was successful.
+The logs of the release activity are available through the GitLab CI interface.
+The release logic will prevent the same CI job from making another release.
+
+Keep in mind that the release does not update the CHANGELOG.
+Updates to this file must be made manually, prior to the release.
+
+== Versioning
+
+Version numbers are chosen for releases according to https://semver.org[semantic versioning] rules.
+All packages in this repository are released together and thus share a common version.
+Changes to the repository as a whole should be considered when selecting the version number for a release.
+
+The current published version is tracked in the file [.path]_lerna.json_ at the root of this repository.
+This value is used to generate the next version in the sequence (unless an explicit version is provided).
+
+The version number (e.g., 1.1.0) or increment keyword (e.g., patch) for a release is set using the [.path]_releaserc_ file at the root of the project.
+This process is described in detail later.
+
+== Release Process
+
+Releases are published from the CI pipeline by the release job.
+The release job is defined in the file [.path]_.gitlab-ci.yml_.
+The release job only runs on the releases branch.
+It runs in a phase named "`deploy`" at the end of the CI pipeline.
+
+The release job delegates to https://lernajs.io[Lerna] to perform the release.
+The version of Lerna used by the release job is set in the file [.path]_lerna.json_ at the root of this repository.
+The call to Lerna is managed by [.path]_scripts/release.sh_, which sets up and tears down the environment in which Lerna runs.
+
+=== Credentials
+
+In order to perform a release, Lerna must be able to:
+
+* publish packages to https://www.npmjs.com[npmjs.com]
+* push commits to this git repository
+
+Lerna needs to be able to publish packages using npm.
+The auth token for publishing to npmjs.com is stored in the RELEASE_NPM_TOKEN secret variable defined in the CI/CD configuration.
+Lerna uses this token to authenticate as the release manager (currently https://www.npmjs.com/~mojavelinux[mojavelinux]).
+This is done by writing the token to an [.path]_.npmrc_ file inside the folder for each package (e.g., [.path]_packages/cli/.npmrc_).
+
+After the package is published, commits (the tag and the corresponding commit to master) must be pushed from the CI job to the git repository.
+A dedicated SSH key (with no passphrase) has been generated for this purpose using `ssh-keygen -t rsa -b 4096 -C antora-releases -f antora-releases`.
+The private SSH key is stored in the RELEASE_SSH_PRIV_KEY secret variable defined in the CI/CD configuration.
+The corresponding public SSH key is registered as a deploy key in the repository configuration.
+During the release job, an SSH agent session is started, initialized, and killed by [.path]_scripts/release.sh_.
+The private key is read from the RELEASE_SSH_PRIV_KEY environment variable and added to the SSH agent session.
+The git client is then configured to push changes over SSH.
+
+The RELEASE_GIT_NAME and RELEASE_GIT_EMAIL secret variables, also defined in the CI/CD configuration, are used to set the git user (name and email) for the release commits.
+The values currently used are those for the release manager.
+
+These secret variables are scoped to the releases environment.
+The release job associates itself with the releases environment, allowing it to receive the secret variables.
+
+=== README Dance
+
+The npmjs registry does not currently support READMEs written in AsciiDoc.
+To complicate matters, the npm client doesn't allow the README to be specified when packaging, and it has an affinity for README.adoc.
+So we have to do some fancy footwork to stuff a Markdown version of the README into the package that's being shipped off to the registry.
+Thanks to npm lifecycle hooks, this is possible.
+
+Each package registers scripts for the following two lifecycle hooks:
+
+* https://gitlab.com/antora/antora/blob/master/scripts/prepublish.js[prepublishOnly]
+* https://gitlab.com/antora/antora/blob/master/scripts/postpublish.js[postpublish]
+
+In the *prepublishOnly* script, the [.path]_README.adoc_ file is moved out of the way, its contents are transformed to Markdown and saved as [.path]_README.md_.
+The packaging script then picks up the generated [.path]_README.md_ file and bundles it with the package (but skips the hidden README.adoc).
+
+The *postpublish* script restores the original state by removing the [.path]_README.md_ file and moving [.path]_README.adoc_ back into place.
+As a result, the npm registry displays the Markdown version of the README, but we get to maintain the content in AsciiDoc format.
+
+=== Version Selection
+
+By default, Lerna is configured to select the next prerelease version in the sequence when selecting the version number.
+This can be overridden using a [.path]_releaserc_ file.
+
+The version number or increment keyword for a release can be set using the [.path]_releaserc_ file at the root of the project.
+This value is specified by defining the RELEASE_VERSION shell variable.
+For example:
+
+.releaserc
+[source,bash]
+----
+RELEASE_VERSION=patch
+----
+
+Lines containing other data, such as a date, are ignored, but may be added for informational purposes.
+
+If the value assigned to the RELEASE_VERSION variable matches one of the increment keywords (major, minor, patch, premajor, preminor, prepatch, prerelease), that value is passed to Lerna's `--cd-version` flag.
+Consult the Lerna documentation for details about how these values determine the next version number.
+Otherwise, the value is assumed to be an explicit version number, which is used as is by passing it to Lerna's `--repo-version` flag.
+
+The [.path]_releaserc_ file can also control the branch from which the release will be cut.
+But default, the release is cut from the master branch.
+To override this default, set the RELEASE_BRANCH shell variable in the [.path]_releaserc_ file.
+For example:
+
+.releaserc
+[source,bash]
+----
+RELEASE_VERSION=patch
+RELEASE_BRANCH=1.x
+----
+
+Modifying the [.path]_releaserc_ file is the central mechanism for triggering a release, as covered in the next section.
+
+=== Release Trigger
+
+A branch named "`releases`" has been reserved for performing releases.
+Each release is triggered by pushing a commit to the releases branch, which in turn activates the release job in the CI pipeline.
+The release job only runs on the releases branch.
+
+NOTE: In the future, we may decide to add multiple release branches, one for each version line (e.g., 1.x, 2.x, master, etc.)
+
+The release branch must be ahead of master.
+In other words, the common fork point between the master and releases branches must be the HEAD of the master branch.
+Otherwise, the release job will refuse to publish the release.
+
+The release job immediately clones the master branch and performs the release from there.
+Thus, the releases branch is merely a utility.
+It's used to:
+
+* trigger the CI pipeline
+* pass release instructions via the [.path]_releaserc_ file
+* track whether a release has already been performed from a given CI pipeline (by examining the fork point)
+ ** this prevents the CI pipeline from being inadvertently rerun
+
+In order to trigger another release, it's necessary to rebase the releases branch on top of master, update the [.path]_releaserc_ file if necessary, then force push the branch.
+(Unfortunately, that means the branch cannot be protected).
+
+== Future Ideas
+
+In the future, we may consider other ways to trigger a release aside from using a dedicated branch.
+
+=== Pipeline Triggers
+
+One possible approach is to use a https://docs.gitlab.com/ee/ci/triggers/[pipeline trigger] against the master branch.
+The reason we decided to defer using this strategy is because there's no clear way to disable a job for a certain trigger or distinguish one trigger from another.
+If we want to use pipeline triggers for other purposes, there's a risk we could inadvertently trigger a release.
+Even with protections in place, such as checking for a special environment variable, the release job would still run on any trigger.
+
+=== Commit Tags
+
+Another way to trigger a release is to use a commit tag.
+When pushing a commit to master, either directly or by merging an MR, we could use a special tag in the commit message to indicate that a release could follow.
+For example, the commit message might look like:
+
+ add a cool new feature [ci release]
+
+The increment keyword could be specified as an optional qualifier:
+
+ totally change the API [ci release major]
+
+The upside to this approach is that it's very easy to control when a release is performed and to track what triggered it.
+The downside is that it adds noise to commit messages.
