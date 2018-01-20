@@ -182,10 +182,21 @@ function getFetchOptions () {
 }
 
 async function selectBranches (repo, branchPatterns, remote) {
-  if (branchPatterns && !Array.isArray(branchPatterns)) branchPatterns = [branchPatterns]
-  const refs = await repo.getReferences(git.Reference.TYPE.OID)
+  if (branchPatterns) {
+    if (branchPatterns === 'HEAD' || branchPatterns === '.') {
+      branchPatterns = [(await repo.getCurrentBranch()).shorthand()]
+    } else if (Array.isArray(branchPatterns)) {
+      let currentBranchIdx
+      if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
+        branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
+      }
+    } else {
+      branchPatterns = [branchPatterns]
+    }
+  }
+
   return Object.values(
-    refs.reduce((accum, ref) => {
+    (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
       const segments = ref.name().split('/')
       let branch
       let localName
