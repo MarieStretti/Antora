@@ -15,7 +15,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "fs-extra": "^5.0.0",
-    "got": "^8.0.1",
+    "got": "^8.0.2",
     "gulp-buffer": "^0.0.2",
     "gulp-vinyl-zip": "^2.1.0",
     "js-yaml": "^3.10.0",

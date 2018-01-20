@@ -23,7 +23,7 @@
     "@antora/ui-loader": "1.0.0-alpha.1",
     "streamify-array": "^1.0.0",
     "through2": "^2.0.3",
-    "vinyl-fs": "^3.0.0"
+    "vinyl-fs": "^3.0.1"
   },
   "devDependencies": {
     "fs-extra": "^5.0.0"
