@@ -3,8 +3,8 @@
 const buffer = require('gulp-buffer')
 const collect = require('stream-to-array')
 const crypto = require('crypto')
-const download = require('download')
 const fs = require('fs-extra')
+const got = require('got')
 const map = require('through2').obj
 const minimatchAll = require('minimatch-all')
 const path = require('path')
@@ -44,8 +44,7 @@ async function loadUi (playbook) {
   if (isUrl(bundle)) {
     bundlePath = getCachePath(sha1(bundle) + '.zip')
     if (!fs.pathExistsSync(bundlePath)) {
-      fs.ensureDirSync(path.dirname(bundlePath))
-      fs.writeFileSync(bundlePath, await download(bundle))
+      await got(bundle, { encoding: null }).then(({ body }) => fs.outputFile(bundlePath, body))
     }
   } else {
     bundlePath = path.resolve(bundle)
