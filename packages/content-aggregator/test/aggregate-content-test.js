@@ -292,6 +292,68 @@ describe('aggregateContent()', () => {
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
       })
     })
+
+    describe('should allow current branch to be selected', () => {
+      it('should select current branch if pattern is HEAD', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+          .then(() => repoBuilder.open())
+          .then(() => repoBuilder.close('v3.0'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'HEAD' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+
+      it('should select current branch if pattern is .', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+          .then(() => repoBuilder.open())
+          .then(() => repoBuilder.close('v3.0'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: '.' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+
+      it('should select current branch if pattern includes HEAD', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+          .then(() => repoBuilder.open())
+          .then(() => repoBuilder.close('v3.0'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['master', 'HEAD'] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+
+      it('should select current branch if pattern includes .', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+          .then(() => repoBuilder.open())
+          .then(() => repoBuilder.close('v3.0'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['master', '.'] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+
+      it('should ignore HEAD if not on a branch', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+          .then(() => repoBuilder.open())
+          .then(() => repoBuilder.repository.detachHead())
+          .then(() => repoBuilder.close())
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['HEAD', 'v*'] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(3)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v2.0' })
+        expect(aggregate[2]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
   })
 
   describe('aggregate files from repository', () => {
