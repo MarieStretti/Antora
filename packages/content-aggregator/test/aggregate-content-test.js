@@ -364,9 +364,14 @@ describe('aggregateContent()', () => {
         await aggregateContent(playbookSpec)
         const contentCacheAbsDir = path.join(WORK_DIR, CONTENT_CACHE_PATH)
         if (repoBuilder.remote) {
-          const repoDir = repoBuilder.url.replace(/^file:\/+/, '').replace(/\/?\.git$/, '').replace(/\//g, '%')
+          const repoDir = repoBuilder.url
+            .replace(/^file:\/+/, '')
+            .replace(/\/?\.git$/, '')
+            .replace(/\//g, '%')
           expect(contentCacheAbsDir).to.be.a.directory()
-          expect(path.join(contentCacheAbsDir, repoDir)).to.be.a.directory().and.include.files(['HEAD'])
+          expect(path.join(contentCacheAbsDir, repoDir))
+            .to.be.a.directory()
+            .and.include.files(['HEAD'])
         } else {
           expect(contentCacheAbsDir).to.not.be.a.path()
         }
