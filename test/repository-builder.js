@@ -123,6 +123,12 @@ class RepositoryBuilder {
     return this
   }
 
+  async addRemote (name, url, fetch = true) {
+    const remote = await git.Remote.create(this.repository, name, url)
+    if (fetch) await this.repository.fetch(remote)
+    return this
+  }
+
   async close (branchName = undefined) {
     if (branchName) await this.checkoutBranch(branchName)
     this.repository.free()

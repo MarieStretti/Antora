@@ -38,8 +38,9 @@ async function aggregateContent (playbook) {
   const defaultBranchPatterns = playbook.content.branches
   const componentVersions = await Promise.all(
     playbook.content.sources.map(async (source) => {
-      const { repository, isLocalRepo, isBare, url } = await openOrCloneRepository(source.url)
-      const componentVersions = (await selectBranches(repository, source.branches || defaultBranchPatterns)).map(
+      const { repository, isLocalRepo, isBare, remote, url } = await openOrCloneRepository(source.url, source.remote)
+      const branchPatterns = source.branches || defaultBranchPatterns
+      const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
         async ({ ref, localName, current }) => {
           const files =
             isLocalRepo && !isBare && current
@@ -60,8 +61,9 @@ async function aggregateContent (playbook) {
   return buildAggregate(componentVersions)
 }
 
-async function openOrCloneRepository (repoUrl) {
+async function openOrCloneRepository (repoUrl, remote) {
   const isLocalRepo = isLocalDirectory(repoUrl)
+  if (!remote) remote = 'origin'
 
   let localPath
   let repository
@@ -80,30 +82,28 @@ async function openOrCloneRepository (repoUrl) {
       repository = await git.Repository.openBare(localPath)
       if (!isLocalRepo) {
         // fetches new branches and deletes old local ones
-        await repository.fetch('origin', Object.assign({ prune: 1 }, getFetchOptions()))
+        await repository.fetch(remote, Object.assign({ prune: 1 }, getFetchOptions()))
       }
     } else {
       repository = await git.Repository.open(localPath)
     }
   } catch (e) {
     if (!isLocalRepo) {
+      // NOTE if we clone the repository, we can assume the remote is origin
+      remote = 'origin'
       fs.removeSync(localPath)
-      repository = await git.Clone.clone(repoUrl, localPath, {
-        bare: 1,
-        fetchOpts: getFetchOptions(),
-      })
+      repository = await git.Clone.clone(repoUrl, localPath, { bare: 1, fetchOpts: getFetchOptions() })
     }
   }
 
   let url
   try {
-    const remoteObject = await repository.getRemote('origin')
-    url = remoteObject.url()
+    url = (await repository.getRemote(remote)).url()
   } catch (e) {
     url = repoUrl
   }
 
-  return { repository, isLocalRepo, isBare, url }
+  return { repository, isLocalRepo, isBare, remote, url }
 }
 
 /**
@@ -181,7 +181,7 @@ function getFetchOptions () {
   }
 }
 
-async function selectBranches (repo, branchPatterns) {
+async function selectBranches (repo, branchPatterns, remote) {
   if (branchPatterns && !Array.isArray(branchPatterns)) branchPatterns = [branchPatterns]
   const refs = await repo.getReferences(git.Reference.TYPE.OID)
   return Object.values(
@@ -192,9 +192,9 @@ async function selectBranches (repo, branchPatterns) {
       if (segments[1] === 'heads') {
         localName = segments.slice(2).join('/')
         branch = { ref, localName, current: !!ref.isHead() }
-      } else if (segments[1] === 'remotes' && segments[2] === 'origin') {
+      } else if (segments[1] === 'remotes' && segments[2] === remote) {
         localName = segments.slice(3).join('/')
-        branch = { ref, localName, remote: 'origin' }
+        branch = { ref, localName, remote }
       } else {
         return accum
       }

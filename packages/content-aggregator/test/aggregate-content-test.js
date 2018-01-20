@@ -16,8 +16,10 @@ const WORK_DIR = path.resolve(__dirname, 'work')
 
 function testAll (testFunction, length = 1) {
   function test (repoBuilderOpts) {
-    const repoBuilders = Array.from({ length }, () =>
-      new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, repoBuilderOpts))
+    const repoBuilders = Array.from(
+      { length },
+      () => new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, repoBuilderOpts)
+    )
     return testFunction(...repoBuilders)
   }
 
@@ -635,5 +637,42 @@ describe('aggregateContent()', () => {
       (file) => file.path === 'modules/ROOT/pages/page-two.adoc'
     )
     expect(pageTwoInVersionTwo.path).to.equal('modules/ROOT/pages/page-two.adoc')
+  })
+
+  it('should discover components in specified remote', async () => {
+    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const remoteComponentDesc = {
+      repoName: 'the-component-remote',
+      name: 'the-component',
+      version: 'v2.0',
+    }
+    // NOTE master branch in remote will get shadowed
+    await initRepoWithFiles(remoteRepoBuilder, remoteComponentDesc, undefined, async () =>
+      remoteRepoBuilder.checkoutBranch('v2.0')
+    )
+
+    const localRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, async () =>
+      localRepoBuilder.addRemote('upstream', remoteRepoBuilder.url)
+    )
+
+    playbookSpec.content.sources.push({ url: localRepoBuilder.url, remote: 'upstream' })
+
+    const aggregate = await aggregateContent(playbookSpec)
+    expect(aggregate).to.have.lengthOf(2)
+    expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+    expect(aggregate[1]).to.include({ name: 'the-component', version: 'v2.0' })
+  })
+
+  // technically, we don't know what it did w/ the remote we specified, but it should work regardless
+  it('should ignore remote if cloned', async () => {
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    await initRepoWithFiles(repoBuilder)
+
+    playbookSpec.content.sources.push({ url: repoBuilder.url, remote: 'upstream' })
+
+    const aggregate = await aggregateContent(playbookSpec)
+    expect(aggregate).to.have.lengthOf(1)
+    expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
   })
 })
