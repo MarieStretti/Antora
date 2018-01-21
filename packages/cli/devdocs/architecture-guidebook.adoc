@@ -2,15 +2,15 @@
 
 == Context
 
-To provide an interface that can be used to launch Antora--typically the site generator pipeline--from a command-line prompt or a script.
+Antora needs an interface that can be used to launch it--typically the site generator pipeline--from a command-line prompt or script.
 This package should add the `antora` command to the user's PATH when installed.
-The `antora` command (or application) should be capable of showing usage documentation, which lists the options (flags and switches), (sub)commands, arguments, and environment variables that it accepts as input.
+The `antora` command (or application) should be capable of showing usage documentation, which should list the options (flags and switches), (sub)commands, arguments, and environment variables that it accepts as input.
 
 NOTE: We use the term application for this module instead of component since, unlike the other modules, this is an application the user will install from npmjs.com (i.e., `npm install -g @antora/cli`).
 
 == Functional Overview
 
-The main purpose of the CLI is to give the user a way to execute functionality provided by Antora using the `antora` command.
+The main purpose of the command-line interface (CLI) is to give the user a way to execute functionality provided by Antora using the `antora` command.
 The `antora` command accepts input from the user in the form of command-line arguments and environment variables, determines which action to perform, then delegates the work to other components or component pipelines in Antora.
 It should not perform any work that's otherwise handled by other components.
 
@@ -23,7 +23,7 @@ The `generate` command should build and register its options based on the playbo
 It shouldn't validate the option values, but rather delegate to the playbook builder component to handle that step.
 If a generator pipeline is not specified, the `generate` command should load and use the default site generator.
 
-If an error (or errors) occur during execution, the error message(s) should be displayed in a readable format the user and the command should exit with a status of 1.
+If an error (or errors) occurs during execution, the error message(s) should be displayed in a readable format for the user and the command should exit with a status of 1.
 Otherwise, the command should exit with a status of 0.
 
 == Software Architecture
@@ -41,8 +41,8 @@ If a generator pipeline is specified, it should be loaded.
 If no generator pipeline is specified, the default site generator should be loaded.
 The arguments array and environment variables should then be passed to the generator pipeline.
 
-If executed with no arguments, the `help` command (i.e., `antora help`), or the `-h` switch (i.e., `antora -h`), the usage statement should be displayed.
-The usage statement should show the description, the common options, and the list of commands.
+If executed with no arguments, the `help` command (i.e., `antora help`), or the `-h` switch (i.e., `antora -h`), usage statement should be displayed.
+The usage statement should show the description, common options, and list of commands.
 If a command is specified after the `help` command (i.e., `antora help generate`), or the `-h` switch is passed to a command (i.e., `antora generate -h`), the usage statement for that command should be displayed.
 
 If executed with the `-v` switch (i.e., `antora -v`), the command should show the version of the CLI.
