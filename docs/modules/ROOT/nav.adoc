@@ -5,8 +5,7 @@
 *** xref:fetch-content.adoc[Fetch Content]
 *** xref:load-ui.adoc[Load a UI]
 ** xref:install-prerequisites.adoc[System Requirements]
-*** xref:troubleshoot-yarn-nodegit.adoc[Troubleshoot Yarn and NodeGit]
-** Install
+** xref:install-antora.adoc[Install Antora]
 ** Source Files
 *** Content and asset files
 *** Navigation files

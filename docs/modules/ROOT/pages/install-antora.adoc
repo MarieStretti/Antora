@@ -1,0 +1,60 @@
+= Install Antora
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+Assumptions:
+
+* [x] You've xref:install-prerequisites.adoc[installed the base build tools and Node 8].
+
+On this page, you'll learn:
+
+* [x] How to install the Antora CLI.
+* [x] How to install the default Antora site generator.
+
+To generate documentation sites with Antora, you need the Antora CLI and an Antora pipeline.
+Once these packages are installed, you can use the `antora` command to publish a site.
+
+== Install the Antora CLI
+
+We'll begin by installing the Antora CLI using npm.
+You should install this package globally so the `antora` command is available on your PATH.
+
+Open a terminal and type:
+
+ $ npm install -g @antora/cli
+
+NOTE: If you prefer Yarn over npm, you can choose to install Antora using `yarn global add @antora/cli`.
+
+Verify the `antora` command is available on your PATH by running:
+
+ $ antora -v
+
+If the installation worked, this command should complete successfully and report the version of Antora.
+
+.CLI installation success
+....
+$ antora -v
+1.0.0-alpha.1
+....
+
+== Install the Default Antora Site Generator
+
+Next, install the default Antora site generator using npm (or Yarn).
+
+To install the site generator globally, type:
+
+ $ npm install -g @antora/site-generator-default
+
+If you don't want to install the site generator globally, you can opt to install it inside a single project containing a playbook file.
+
+Move into the playbook's directory and then type:
+
+ $ npm install @antora/site-generator-default
+
+CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, go to xref:troubleshoot-nodegit.adoc[Troubleshooting nodegit].
+
+Now that the Antora CLI and default Antora site generator are installed, you are ready to set up a playbook and generate a documentation site.

@@ -1,0 +1,55 @@
+= Troubleshoot nodegit
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// URIs
+:uri-nodegit: http://www.nodegit.org
+:uri-nodegit-dev: http://www.nodegit.org/guides/install/from-source
+
+Antora interfaces with git repositories using {uri-nodegit}[nodegit].
+During installation of the site generator, Antora pulls in nodegit as a dependency and installs it automatically.
+However, if your Antora installation fails, nodegit is the most probable culprit.
+
+== nodegit and Linux
+
+The nodegit dependency may fail on certain Linux distributions when you attempt to install the default Antora site generator.
+
+When the nodegit dependency fails, you'll see the following error output to you terminal.
+
+....
+Error: libcurl-gnutls.so.4: cannot open shared object file: No such file or directory
+....
+
+This is an open issue in nodegit.
+See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246].
+
+If you see this error, you either need to create the missing symlink or force nodegit to be recompiled (instead of using a precompiled binary).
+
+=== Option 1: Create missing symlink
+
+To create the missing symlink, run the following command:
+
+ $ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
+
+If that fails, run:
+
+ $ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
+
+Once you've made that symlink, run the `npm install` command again to install the site generator.
+
+ $ npm install -g @antora/site-generator-default
+
+=== Option 2: Recompile nodegit
+
+If you aren't comfortable making a system-wide change, you can recompile nodegit on your machine instead.
+
+Force nodegit to recompile by passing the `BUILD_ONLY` environment variable to the `npm install` command.
+
+ $ BUILD_ONLY=true npm install -g @antora/site-generator-default
+
+Be aware that recompiling nodegit will make installation take considerably longer.
+
+Now that the default Antora site generator is installed, you are ready to set up a playbook and generate a documentation site.

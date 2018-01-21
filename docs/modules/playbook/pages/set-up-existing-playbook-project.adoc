@@ -27,6 +27,8 @@ To start, open a terminal and clone the playbook project using git:
 // Good place to put in demo info
 
 The command clones an existing playbook project and then switches to the project folder.
+
+////
 Stay in this project folder in order to initialize the project using Yarn.
 
 == Install Antora
@@ -69,9 +71,8 @@ You can see that this is the only dependency declared in [.path]_package.json_:
 *You do not need to clone the Antora repository listed in this excerpt*.
 Yarn does that for you.
 
-// Antora has its own transitive dependencies, but those are fetched automatically by Yarn.
+Antora has its own transitive dependencies, but those are fetched automatically by Yarn.
 
-////
 === Generate the Site
 
 To generate the site using the default configuration, run the following command:
