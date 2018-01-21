@@ -13,10 +13,11 @@ endif::[]
 :uri-nvm-install: {uri-nvm}#installation
 :uri-yarn: https://yarnpkg.com
 
-You'll learn:
+On this page, you'll learn:
 
 * [x] What tools you need on your computer before you can install Antora.
-* [x] How to install these tools on your computer.
+* [x] How to install the base build tools.
+* [x] How to install Node 8.
 
 If you've never installed Antora before, you'll need to complete the steps on this page before you can generate a documentation site.
 
@@ -67,7 +68,7 @@ Or, if your package manager doesn't provide Node and you have nvm installed, go 
 
  $ nvm alias default 8
 
-Now you can proceed with installing Antora.
+Now you're ready to xref:install-antora.adoc[install Antora].
 
 CAUTION: While you can use Node 9, we don't recommend it because there are no precompiled binaries for Node 9 of nodegit, a dependency of Antora.
 If you use Node 9, installation will take considerably longer.
@@ -86,7 +87,7 @@ Once you've installed nvm, open a new terminal and install Node 8.
  $ nvm install 8
 
 The above command will install the latest version of Node 8 and automatically set it as your default alias.
-Now that you have Node installed, you can install Antora.
+Now that you have Node installed, you can xref:install-antora.adoc[install Antora].
 
 [#upgrade-node]
 === Upgrade and alias Node with nvm
@@ -103,7 +104,7 @@ Next, set Node 8 as the default for any new terminal.
 
 The above command will set the latest version of Node 8 as your default.
 
-Now that you've upgraded your Node version, you're ready to install Antora.
+Now that you've upgraded your Node version, you're ready to xref:install-antora.adoc[install Antora].
 
 ////
 == git
@@ -115,25 +116,4 @@ Check to see if you have git installed.
  $ git --version
 
 If that command doesn't return any information, {uri-git-dl}[download and install] the git package for your system.
-
-[#yarn]
-== Yarn
-
-{uri-yarn}[Yarn] (command: `yarn`) is the preferred package manager and script runner for the Node ecosystem.
-You'll need Yarn to download Antora and manage its dependencies as new versions are released.
-
-Install Yarn globally with the following command:
-
- $ npm install -g yarn
-
-(You got access to the `npm` command when you installed Node.)
-
-Next, verify Yarn is installed by checking the version:
-
- $ yarn --version
-
-If you see a version, you are all set.
-If your Yarn installation failed, see xref:troubleshoot-yarn-nodegit.adoc[Troubleshooting Yarn and NodeGit].
-
-Now that you have Node and Yarn installed, you're ready to xref:playbook:set-up-existing-playbook-project.adoc[clone and initialize an Antora playbook project].
 ////
