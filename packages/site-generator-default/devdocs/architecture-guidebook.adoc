@@ -76,10 +76,10 @@ Aside from user input in the form of arguments and environment variables, all da
 == Consequences
 
 Each component in Antora performs a well-defined task.
-But something needs to assemble those components together into a logical pipeline.
+But those components need to be assembled into a logical pipeline in order to generate a functional documentation site.
 That's the default site generator's job.
-The default site generator provides a composite function that uses all the other components to generate a site in a standard way.
+The default site generator provides a composite function that uses all the other components to generate a site.
 
-The default site generator provides provides an off-the-shelf experience to satisfy the typical use case and to demonstrate Antora's capabilities.
+The default site generator also provides an off-the-shelf experience to satisfy the typical use case and to demonstrate Antora's capabilities.
 However, it is just one way to arrange Antora's components.
 Due to Antora's open architecture, users will be able to assemble their own pipelines to meet additional requirements and custom use cases.
