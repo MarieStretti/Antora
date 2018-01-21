@@ -195,7 +195,7 @@ describe('cli', () => {
       .done()
   }).timeout(TIMEOUT)
 
-  it('should generate site to output folder when playbook is passed to the generate command', () => {
+  it('should generate site to fs destination when playbook is passed to the generate command', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
@@ -211,7 +211,7 @@ describe('cli', () => {
     })
   }).timeout(TIMEOUT)
 
-  it('should allow CLI option to override property set in playbook file', () => {
+  it('should allow CLI option to override properties set in playbook file', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
@@ -223,7 +223,7 @@ describe('cli', () => {
     })
   }).timeout(TIMEOUT)
 
-  it('should allow environment variable to override property set in playbook file', () => {
+  it('should allow environment variable to override properties set in playbook file', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {

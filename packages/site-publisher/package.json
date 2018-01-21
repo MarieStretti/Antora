@@ -1,7 +1,7 @@
 {
-  "name": "@antora/site-generator-default",
+  "name": "@antora/site-publisher",
   "version": "1.0.0-alpha.1",
-  "description": "The default site generator pipeline for producing and publishing static documentation sites with Antora.",
+  "description": "Publishes the files generated in an Antora documentation pipeline to the destination(s) specified in the playbook.",
   "license": "MPL-2.0",
   "author": {
     "name": "OpenDevise Inc.",
@@ -14,16 +14,14 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@antora/content-aggregator": "1.0.0-alpha.1",
-    "@antora/content-classifier": "1.0.0-alpha.1",
-    "@antora/document-converter": "1.0.0-alpha.1",
-    "@antora/navigation-builder": "1.0.0-alpha.1",
-    "@antora/page-composer": "1.0.0-alpha.1",
-    "@antora/playbook-builder": "1.0.0-alpha.1",
-    "@antora/site-publisher": "1.0.0-alpha.1",
-    "@antora/ui-loader": "1.0.0-alpha.1"
+    "streamify-array": "^1.0.0",
+    "through2": "^2.0.3",
+    "gulp-vinyl-zip": "^2.1.0",
+    "vinyl": "^2.1.0",
+    "vinyl-fs": "^3.0.1"
   },
   "devDependencies": {
+    "gulp-buffer": "^0.0.2",
     "fs-extra": "^5.0.0"
   },
   "engines": {
@@ -39,8 +37,7 @@
   "keywords": [
     "antora",
     "antora-component",
-    "generator",
-    "pipeline",
+    "publisher",
     "documentation",
     "static site",
     "web publishing"

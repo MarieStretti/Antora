@@ -36,21 +36,20 @@ cli
   .optionsFromConvict(solitaryConvict(configSchema), { exclude: 'playbook' })
   // FIXME promote these to be playbook options
   .option('--clean', 'Remove output directory before generating site.')
-  .option('--to-dir <dir>', 'The directory where the site should be generated.', 'build/site')
   .action(async (playbookFile, command) => {
     let generateSite
     try {
       // TODO honor generator option (or auto-detect)
       generateSite = requireSiteGenerator('@antora/site-generator-default')
     } catch (e) {
-      console.error('error: No site generator installed. Try installing @antora/site-generator-default.')
+      console.error('error: No site generator found. Try installing @antora/site-generator-default.')
       process.exit(1)
     }
     const args = cli.rawArgs.slice(cli.rawArgs.indexOf(command.name()) + 1)
     args.splice(args.indexOf(playbookFile), 0, '--playbook')
-    // TODO support passing a preconfigured convict config as third option; gets new args and env
-    if (command.clean) require('fs-extra').emptyDirSync(command.toDir)
-    cli._promise = generateSite(args, process.env, command.toDir).catch((reason) => {
+    if (command.clean) require('fs-extra').emptyDirSync(command.toDir || 'build/site')
+    // TODO support passing a preloaded convict config as third option; gets new args and env
+    cli._promise = generateSite(args, process.env).catch((reason) => {
       console.error(cli.stacktrace ? reason.stack : 'error: ' + reason.message)
       process.exit(1)
     })

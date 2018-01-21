@@ -62,7 +62,6 @@ module.exports = {
       doc: 'The list of git repositories + branch patterns to use.',
       format: Array,
       default: [],
-      env: 'CONTENT_SOURCES',
     },
   },
   ui: {
@@ -121,5 +120,18 @@ module.exports = {
     format: Boolean,
     default: false,
     arg: 'redirects',
+  },
+  output: {
+    dir: {
+      doc: 'The directory where the site should be published. (default: build/site)',
+      format: String,
+      default: undefined,
+      arg: 'to-dir',
+    },
+    destinations: {
+      doc: 'A list of destinations where the generated site should be published.',
+      format: Array,
+      default: undefined,
+    },
   },
 }
