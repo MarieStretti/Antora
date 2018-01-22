@@ -61,11 +61,8 @@ Antora applies these properties when generating and assembling the site.
 The title of the documentation site.
 
 // site url: The base URL of the published site. Should not include a trailing slash. used for canonical URLs and URLs in the sitemap
-
 // site root: The name of the component to use as the root of the site.
-
 // site keys google_analytics: The Google Analytics account key.
-
 // site keys swiftype: The key to activate the Swiftype widget.
 
 == content
@@ -85,9 +82,14 @@ Filesystem paths can be relative to the location of the playbook or absolute.
 
 ==== branches
 
-The branches key accepts a comma-separated list of branch names.
+The branches key accepts a list of branch name patterns.
+Branch names can be an exact name (e.g., `v1.0`) or a shell glob pattern such as `v3.*`.
+Branches can also be excluded when the pattern starts with the bang (`!`) character.
+
+Branch names can be specified in a comma-separated list or as list items on individual lines.
+
 When no branches are specified for a content repository URL, Antora will use the [.term]_default branch set_.
-The default branch set is every branch that begins with "`v`" or is named "`master`".
+The default branch set is every branch that begins with `v` or is named `master`.
 
 == ui
 

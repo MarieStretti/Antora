@@ -7,7 +7,7 @@ endif::[]
 :idseparator: -
 :experimental:
 
-* [x] How to active author mode.
+* [x] How to activate author mode.
 
 Although the primary function of Antora is to generate a site for publishing, it also serves as a tool for the author.
 By configuring Antora to use a local repository, you can preview local content, including content you haven't committed.
@@ -36,7 +36,8 @@ You can specify the repository either as a path relative to the root of the proj
 .site.yml (excerpt)
 ----
 content:
-- repository: workspace/server-docs
+  sources:
+  - url: workspace/server-docs
 ----
 
 Now when you run Antora, the contents of your local repository will be incorporated into the pipeline.
