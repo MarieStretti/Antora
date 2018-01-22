@@ -400,6 +400,7 @@ describe('aggregateContent()', () => {
         expectedPaths.forEach((expectedPath, i) => {
           expect(files[i].path).to.equal(expectedPath)
           expect(files[i].relative).to.equal(expectedPath)
+          expect(files[i].stat.isFile()).to.be.true()
         })
       })
     })
