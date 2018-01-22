@@ -8,44 +8,64 @@ endif::[]
 
 * [x] How to configure Antora using a playbook.
 
-With Antora's playbook, you can control what content is included in your site.
-It's particularly useful for creating a partial site for local preview.
+== What is a playbook?
 
-== The default playbook
+With an Antora playbook, you can control what content is included in your site.
+// It's particularly useful for creating a partial site for local preview.
 
-The default playbook is the file [.path]_site.yml_ at the root of a xref:set-up-existing-playbook.adoc[playbook project].
+A playbook is a file located at the root of a xref:set-up-existing-playbook.adoc[playbook project].
 It's written in YAML, a common configuration language for configuring automated tasks.
-Antora automatically detects and uses this file if you don't specify an override.
+// Antora automatically detects and uses this file if you don't specify an override.
 
-Here's an example of a playbook:
+Here's an example of a playbook file named [.path]_site.yml_:
 
-.site.yml
+.Playbook file named site.yml
 [source,yaml,subs=attributes+]
 ----
 site: # <1>
-  title: Docs Demo Site # <2>
+  title: Demo Docs Site # <2>
 content: # <3>
-- repository: https://github.com/my-antora-demo/server-docs # <4>
-  branches: v* # <5>
-- repository: https://github.com/my-antora-demo/aspnet-docs
-  branches: master
-theme: # <6>
-  repository: https://github.com/my-antora-demo/docs-site-ui # <7>
+  sources: # <4>
+  - url: https://gitlab.com/antora/demo/demo-component-a.git # <5>
+    branches: master # <6>
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+    branches: v1.0
+ui: # <7>
+  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <8>
 ----
 <1> Site key
-<2> Site title key
+<2> Site title key and value
 <3> Content key
-<4> Content repository key
-<5> Content branches key
-<6> Theme key
-<7> Theme respository key
+<4> Sources key and value(s)
+<5> Content repository URL key and value
+<6> Content repository branches key and value(s)
+<7> UI key
+<8> UI bundle repository key and value
+
+Let's work through the purpose and usage of each one of these keys and values.
+
+== site
+
+=== title
+
+== content and sources
 
 The content key is likely the one you'll tune most often.
-It contains an array of repository specifications.
+It contains an array of source repository specifications.
 
-// public
-At a minimum, you must specify the location of each repository using the `repository` key.
+=== url
+
+At a minimum, you must specify the location of each content repository using the `url` key.
+
+=== branches
+
 Antora will then scan and use every branch in that repository that begins with "`v`" or is named "`master`".
+
+== ui
+
+=== bundle
+
+The UI bundle can be loaded from a URI or a local filesystem path.
 
 == Modify site.yml
 
