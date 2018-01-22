@@ -6,15 +6,22 @@ endif::[]
 :idseparator: -
 :experimental:
 
-* [x] How to configure Antora using a playbook.
+On this page, you'll learn:
+
+* [x] What an Antora playbook is and what it does for a documentation pipeline.
+* [x] The purpose of each playbook key.
+* [x] The values each playbook key accepts and how to construct them.
 
 == What is a playbook?
 
-With an Antora playbook, you can control what content is included in your site.
+An Antora playbook is a configuration file.
+It tells an Antora pipeline what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
+
+// With an Antora playbook, you can control what content is included in your site.
 // It's particularly useful for creating a partial site for local preview.
 
-A playbook is a file located at the root of a xref:set-up-existing-playbook.adoc[playbook project].
-It's written in YAML, a common configuration language for configuring automated tasks.
+A playbook is usually located at the root of a xref:set-up-existing-playbook.adoc[playbook project] and is written in YAML, a common configuration language for configuring automated tasks.
+Playbooks can also be composed in JSON and CSON format.
 // Antora automatically detects and uses this file if you don't specify an override.
 
 Here's an example of a playbook file named [.path]_site.yml_:
@@ -42,43 +49,78 @@ ui: # <7>
 <7> UI key
 <8> UI bundle repository key and value
 
-Let's work through the purpose and usage of each one of these keys and values.
+Let's explore the purpose and usage of each these keys and values.
 
 == site
 
+The site key is where the global site properties are defined, such as the title of the documentation site and the base URL of the published site.
+Antora applies these properties when generating and assembling the site.
+
 === title
 
-== content and sources
+The title of the documentation site.
 
-The content key is likely the one you'll tune most often.
-It contains an array of source repository specifications.
+// site url: The base URL of the published site. Should not include a trailing slash. used for canonical URLs and URLs in the sitemap
 
-=== url
+// site root: The name of the component to use as the root of the site.
 
-At a minimum, you must specify the location of each content repository using the `url` key.
+// site keys google_analytics: The Google Analytics account key.
 
-=== branches
+// site keys swiftype: The key to activate the Swiftype widget.
 
-Antora will then scan and use every branch in that repository that begins with "`v`" or is named "`master`".
+== content
+
+The content key contains an array of source repository specifications.
+These source repository specifications are arranged in the sources key.
+
+=== sources
+
+The sources key contains the list of git repository locations, branch name patterns, and other repository properties that Antora uses when aggregating the site content.
+
+==== url
+
+At a minimum, you must specify the location of each content repository using the url key.
+The key accepts valid URIs or local filesystem paths.
+Filesystem paths can be relative to the location of the playbook or absolute.
+
+==== branches
+
+The branches key accepts a comma-separated list of branch names.
+When no branches are specified for a content repository URL, Antora will use the [.term]_default branch set_.
+The default branch set is every branch that begins with "`v`" or is named "`master`".
 
 == ui
 
+The ui key contains an array of UI bundle and page layout specifications.
+
+// ui start_path: The root relative start path inside the bundle from which to take files.
+
+// ui output_dir: The output directory path relative to the site root where the UI files should be written.
+
+// default_layout: The default layout to apply to pages that do not specify a layout.
+
 === bundle
 
+The URL of the UI bundle.
 The UI bundle can be loaded from a URI or a local filesystem path.
+Filesystem paths can be relative to the location of the playbook or absolute.
+
+// urls:
+// urls html_extension_style: Controls how the URL extension for HTML pages is handled.
+
+// redirects: Generate nginx config file containing URL redirects for page aliases. Boolean
 
 == Modify site.yml
 
 If you only want to generate pages for a single component, you can trim the content key to a single entry.
-For example, here's how you'd configure the `content` key so that Antora only generates the server component (using the default branch set):
-
-//SAW: define "default branch set"
+For example, here's how you'd configure the `sources` key so that Antora only generates the server component using the default branch set:
 
 .site.yml (excerpt)
 [source,yaml]
 ----
 content:
-- repository: https://github.com/my-antora-demo/server-docs
+  sources:
+  - url: https://github.com/my-docs/server-docs
 ----
 
 == Create a custom playbook
@@ -94,17 +136,20 @@ Populate it as follows:
 site:
   title: Custom Docs Site
 content:
-- repository: https://github.com/my-antora-demo/server-docs
-theme:
-  repository: https://github.com/my-antora-demo/docs-site-ui
+  sources:
+  - url: https://github.com/my-docs/server-docs
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+    branches: v1.0
 ----
 
+////
 Then pass your custom playbook to Antora using the `--playbook` flag and the custom playbook's name.
 
  $ node generate --playbook=custom-site
 
 TIP: You don't have to specify the file extension (i.e., `.yml`).
 It gets added automatically if missing.
+////
 
 == Specify source branches
 
@@ -120,10 +165,12 @@ You'd enter the following branches values into the playbook:
 .site.yml (excerpt)
 [source,yaml]
 ----
-- repository: https://github.com/my-antora-demo/server-docs
-  branches:
-  - v3.*
-  - '!v3.2'
+content:
+  sources:
+  - url: https://github.com/my-docs/server-docs
+    branches:
+    - v3.*
+    - '!v3.2'
 ----
 
 IMPORTANT: A negated value must be enclosed in single quotes, per YAML rules.
@@ -133,10 +180,12 @@ Here's how you'd exclude all branches that end in `-beta`.
 .site.yml (excerpt)
 [source,yaml]
 ----
-- repository: https://github.com/my-antora-demo/server-docs
-  branches:
-  - v*
-  - '!v*-beta'
+content:
+  sources:
+  - url: https://github.com/my-docs/server-docs
+    branches:
+    - v*
+    - '!v*-beta'
 ----
 
 == antora.yml
