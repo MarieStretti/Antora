@@ -10,7 +10,7 @@ const minimatchAll = require('minimatch-all')
 const path = require('path')
 const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
-const zip = require('gulp-vinyl-zip')
+const vzip = require('gulp-vinyl-zip')
 
 const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
 
@@ -51,7 +51,7 @@ async function loadUi (playbook) {
   }
 
   const files = await collect(
-    zip
+    vzip
       .src(bundlePath)
       .pipe(selectFilesStartingFrom(startPath))
       .pipe(buffer())
