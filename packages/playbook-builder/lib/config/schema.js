@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = {
   playbook: {
     doc: 'Location of the playbook file.',

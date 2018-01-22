@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict'
+
 const cli = require('./commander')
 // Q: can we ask the playbook builder for the config schema?
 const configSchema = require('@antora/playbook-builder/lib/config/schema')
