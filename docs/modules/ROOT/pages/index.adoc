@@ -28,7 +28,7 @@ This strategy makes it possible for content branches to be reused, substituted, 
 This is a sharp contrast to many other site generators, which intermix all these concerns, making the documentation difficult to manage, maintain, and enhance.
 
 Let's go over how to xref:component-structure.adoc[organize your documentation] so Antora can use it.
-We'll also show you how to set up Antora and run it.
+We'll also show you how to xref:install-prerequisites.adoc[set up Antora] and xref:run-antora-generate-site.adoc[run it].
 
 == Pipeline steps
 

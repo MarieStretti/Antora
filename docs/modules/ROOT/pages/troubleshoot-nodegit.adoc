@@ -52,4 +52,8 @@ Force nodegit to recompile by passing the `BUILD_ONLY` environment variable to t
 
 Be aware that recompiling nodegit will make installation take considerably longer.
 
-Now that the default Antora site generator is installed, you are ready to set up a playbook and generate a documentation site.
+Now that the default Antora site generator is installed, you are ready to:
+
+* Set up a xref:playbook:index.adoc[playbook] or use the Demo playbook.
+* Organize a xref:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
+* xref:run-antora-generate-site.adoc[Run Antora] and generate a documentation site.

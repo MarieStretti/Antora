@@ -13,9 +13,10 @@
 *** Documentation component
 ** Configure
 *** Playbook files
-** Publish
-*** xref:run-antora-generate-site.adoc[Run Antora]
-*** Docs site
+// ** Publish
+** xref:run-antora-generate-site.adoc[Run Antora]
+*** xref:run-antora-generate-site.adoc#local-site-preview[Local Preview]
+** Docs site
 * File & Component Organization
 ** xref:component-structure.adoc[Organize Your Files for Antora]
 ** xref:modules.adoc[ROOTs & Modules]
