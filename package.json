@@ -32,7 +32,6 @@
   },
   "nyc": {
     "cache": true,
-    "cacheDir": ".nyc_cache",
     "include": [
       "lib-example/*.js",
       "packages/*/{bin,lib}/**/*.js"
