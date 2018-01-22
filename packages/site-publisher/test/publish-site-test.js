@@ -253,6 +253,42 @@ describe('publishSite()', () => {
     expect(playbook.output.destinations).to.be.empty()
   })
 
+  it('should clean all destinations if clean is set on output', async () => {
+    const destDir1 = 'site1'
+    const destDir2 = 'site2'
+    const cleanMeFile1 = path.join(destDir1, 'clean-me.txt')
+    const cleanMeFile2 = path.join(destDir2, 'clean-me.txt')
+    playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir1 }))
+    playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir2 }))
+    playbook.output.clean = true
+    fs.outputFileSync(cleanMeFile1, 'clean me!')
+    fs.outputFileSync(cleanMeFile2, 'clean me!')
+    await publishSite(playbook, contentCatalog, uiCatalog)
+    expect(cleanMeFile1).to.not.be.a.path()
+    expect(cleanMeFile2).to.not.be.a.path()
+    verifyFsOutput(destDir1)
+    verifyFsOutput(destDir2)
+    expect(playbook.output.destinations[0].clean).to.not.exist()
+    expect(playbook.output.destinations[1].clean).to.not.exist()
+  })
+
+  it('should clean specified destinations', async () => {
+    const destDir1 = 'site1'
+    const destDir2 = 'site2'
+    const leaveMeFile1 = path.join(destDir1, 'leave-me.txt')
+    const cleanMeFile2 = path.join(destDir2, 'clean-me.txt')
+    playbook.output.destinations.push({ provider: 'fs', path: destDir1 })
+    playbook.output.destinations.push({ provider: 'fs', path: destDir2, clean: true })
+    fs.outputFileSync(leaveMeFile1, 'leave me!')
+    fs.outputFileSync(cleanMeFile2, 'clean me!')
+    await publishSite(playbook, contentCatalog, uiCatalog)
+    expect(leaveMeFile1).to.be.a.file()
+      .with.contents('leave me!')
+    expect(cleanMeFile2).to.not.be.a.path()
+    verifyFsOutput(destDir1)
+    verifyFsOutput(destDir2)
+  })
+
   // TODO this should eventually attempt to require the unknown provider
   it('should throw error if destination provider is unsupported', async () => {
     playbook.output.destinations.push({ provider: 'unknown' })

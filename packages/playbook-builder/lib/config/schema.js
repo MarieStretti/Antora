@@ -10,7 +10,7 @@ module.exports = {
   },
   site: {
     url: {
-      doc: 'The base URL of the published site. Should not include a trailing slash.',
+      doc: 'The base URL of the published site. Should not include trailing slash.',
       format: String,
       default: undefined,
       env: 'URL',
@@ -122,6 +122,12 @@ module.exports = {
     arg: 'redirects',
   },
   output: {
+    clean: {
+      doc: 'Remove destination path before publishing (fs only).',
+      format: Boolean,
+      default: false,
+      arg: 'clean',
+    },
     dir: {
       doc: 'The directory where the site should be published. (default: build/site)',
       format: String,

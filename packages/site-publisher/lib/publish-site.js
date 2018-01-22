@@ -5,13 +5,15 @@ const streamify = require('streamify-array')
 
 const { DEFAULT_DEST_FS } = require('./constants.js')
 
+// perhaps we should return a report of virtual files that were published (by provider)
 async function publishSite (playbook, contentCatalog, uiCatalog) {
   const destinations = getDestinations(playbook.output)
 
   if (!destinations.length) return
 
+  const clean = playbook.output.clean
   const publishers = destinations.map((destination) => {
-    const { provider, options } = resolveDestination(destination)
+    const { provider, options } = resolveDestination(destination, clean)
     switch (provider) {
       case 'archive':
       case 'fs':
@@ -23,10 +25,13 @@ async function publishSite (playbook, contentCatalog, uiCatalog) {
   })
 
   // Q: add getPublishableFiles / getOutFiles; return a stream? or getOutFilesAsStream?
-  // Q: do we need to recreate stream for each publisher?
-  const files = streamify(contentCatalog.getFiles().concat(uiCatalog.getFiles()).filter((file) => file.out))
-  // perhaps we should return a report of virtual files that were published (by provider)
-  return Promise.all(publishers.map(async (publish) => publish(files)))
+  /*
+  const files = cloneable(streamify(contentCatalog.getFiles().concat(uiCatalog.getFiles()).filter((file) => file.out)))
+  return Promise.all(publishers.map((publish, idx) => publish(idx ? files.clone() : files)))
+  */
+  const files = contentCatalog.getFiles().concat(uiCatalog.getFiles()).filter((file) => file.out)
+  // NOTE streamify mutates argument, so we must pass a copy of files
+  return Promise.all(publishers.map((publish) => publish(streamify(files.slice(0)))))
 }
 
 function createRequireProvider () {
@@ -55,10 +60,11 @@ function getDestinations (output) {
   return destinations
 }
 
-function resolveDestination (destination) {
+function resolveDestination (destination, clean) {
   const provider = destination.provider
   const options = Object.assign({}, destination)
   delete options.provider
+  if (clean) options.clean = true
   return { provider, options }
 }
 
