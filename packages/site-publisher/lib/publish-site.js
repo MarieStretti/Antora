@@ -17,7 +17,7 @@ async function publishSite (playbook, contentCatalog, uiCatalog) {
     switch (provider) {
       case 'archive':
       case 'fs':
-        return requireProvider('./providers/' + provider).bind(null, options)
+        return require('./providers/' + provider).bind(null, options)
       default:
         try {
           // FIXME use playbook dir instead of process.cwd()
