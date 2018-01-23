@@ -29,7 +29,10 @@ async function publishSite (playbook, contentCatalog, uiCatalog) {
   })
 
   // Q: add getPublishableFiles / getOutFiles; return a stream? or getOutFilesAsStream?
-  const files = contentCatalog.getFiles().concat(uiCatalog.getFiles()).filter((file) => file.out)
+  const files = contentCatalog
+    .getFiles()
+    .concat(uiCatalog.getFiles())
+    .filter((file) => file.out)
   //const stream = cloneable(new ReadableArray(files))
   //return Promise.all(publishers.map((publish, idx) => publish(idx ? stream.clone() : stream)))
   return Promise.all(publishers.map((publish) => publish(new ReadableArray(files), playbook)))

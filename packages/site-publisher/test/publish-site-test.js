@@ -27,8 +27,7 @@ describe('publishSite()', () => {
   let playbook
   let uiCatalog
 
-  const createFile = (outPath, contents) =>
-    new File({ contents: Buffer.from(contents), out: { path: outPath } })
+  const createFile = (outPath, contents) => new File({ contents: Buffer.from(contents), out: { path: outPath } })
 
   const generateHtml = (title, content) => heredoc`
     <!DOCTYPE html>
@@ -54,7 +53,9 @@ describe('publishSite()', () => {
     })
 
   const verifyArchiveOutput = (destFile) => {
-    expect(destFile).to.be.a.file().and.not.empty()
+    expect(destFile)
+      .to.be.a.file()
+      .and.not.empty()
     return collectFilesFromZip(destFile).then((files) => {
       expect(files).to.have.lengthOf(6)
       const filePaths = files.map((file) => file.path)
@@ -72,18 +73,26 @@ describe('publishSite()', () => {
   }
 
   const verifyFsOutput = (destDir) => {
-    expect(destDir).to.be.a.directory().with.subDirs(['_', 'the-component'])
-    expect(path.join(destDir, '_/css/site.css')).to.be.a.file()
+    expect(destDir)
+      .to.be.a.directory()
+      .with.subDirs(['_', 'the-component'])
+    expect(path.join(destDir, '_/css/site.css'))
+      .to.be.a.file()
       .with.contents('body { color: red; }')
-    expect(path.join(destDir, '_/js/site.js')).to.be.a.file()
+    expect(path.join(destDir, '_/js/site.js'))
+      .to.be.a.file()
       .with.contents(';(function () {})()')
-    expect(path.join(destDir, 'the-component/1.0/index.html')).to.be.a.file()
+    expect(path.join(destDir, 'the-component/1.0/index.html'))
+      .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(path.join(destDir, 'the-component/1.0/the-page.html')).to.be.a.file()
+    expect(path.join(destDir, 'the-component/1.0/the-page.html'))
+      .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(path.join(destDir, 'the-component/1.0/the-module/index.html')).to.be.a.file()
+    expect(path.join(destDir, 'the-component/1.0/the-module/index.html'))
+      .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(path.join(destDir, 'the-component/1.0/the-module/the-page.html')).to.be.a.file()
+    expect(path.join(destDir, 'the-component/1.0/the-module/the-page.html'))
+      .to.be.a.file()
       .with.contents.that.match(HTML_RX)
   }
 
@@ -230,7 +239,9 @@ describe('publishSite()', () => {
   it('should not publish site if destinations is empty', async () => {
     await publishSite(playbook, contentCatalog, uiCatalog)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
-    expect(WORK_DIR).to.be.a.directory().and.be.empty()
+    expect(WORK_DIR)
+      .to.be.a.directory()
+      .and.be.empty()
   })
 
   it('should publish site to fs at specified destination override when another destination is specified', async () => {
@@ -284,7 +295,8 @@ describe('publishSite()', () => {
     fs.outputFileSync(leaveMeFile1, 'leave me!')
     fs.outputFileSync(cleanMeFile2, 'clean me!')
     await publishSite(playbook, contentCatalog, uiCatalog)
-    expect(leaveMeFile1).to.be.a.file()
+    expect(leaveMeFile1)
+      .to.be.a.file()
       .with.contents('leave me!')
     expect(cleanMeFile2).to.not.be.a.path()
     verifyFsOutput(destDir1)
@@ -298,7 +310,8 @@ describe('publishSite()', () => {
     playbook.output.destinations.push({ provider: path.resolve('reporter-abs.js'), path: destFile })
     await publishSite(playbook, contentCatalog, uiCatalog)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
-    expect(destFile).to.be.a.file()
+    expect(destFile)
+      .to.be.a.file()
       .with.contents('published 6 files for The Site')
   })
 
@@ -311,7 +324,8 @@ describe('publishSite()', () => {
       playbook.output.destinations.push({ provider: providerFile, path: destFile })
       await publishSite(playbook, contentCatalog, uiCatalog)
       expect(DEFAULT_DEST_FS).to.not.be.a.path()
-      expect(destFile).to.be.a.file()
+      expect(destFile)
+        .to.be.a.file()
         .with.contents('published 6 files for The Site')
     } finally {
       fs.removeSync(providerFile)
@@ -325,7 +339,8 @@ describe('publishSite()', () => {
     playbook.output.destinations.push({ provider: './reporter-rel', path: destFile })
     await publishSite(playbook, contentCatalog, uiCatalog)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
-    expect(destFile).to.be.a.file()
+    expect(destFile)
+      .to.be.a.file()
       .with.contents('published 6 files for The Site')
   })
 
@@ -336,7 +351,8 @@ describe('publishSite()', () => {
     playbook.output.destinations.push({ provider: 'reporter-mod', path: destFile })
     await publishSite(playbook, contentCatalog, uiCatalog)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
-    expect(destFile).to.be.a.file()
+    expect(destFile)
+      .to.be.a.file()
       .with.contents('published 6 files for The Site')
   })
 
