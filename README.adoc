@@ -1,4 +1,6 @@
 = Antora
+// Settings:
+ifdef::env-gitlab[:outfilesuffix: .adoc]
 // Project URIs:
 :uri-project: https://antora.org
 :uri-repo: https://gitlab.com/antora/antora
