@@ -70,10 +70,13 @@ For each UI file that is publishable (of type static or asset), Antora computes 
 Organize UI files into UI catalog::
 The virtual UI files are sorted into a transmittable collection.
 
-////
-
 Wrap converted AsciiDoc content in page template::
-Antora wraps the embeddable HTML in the assigned page template from the UI bundle.
+Antora determines which page template each page requests.
+It populates the identified UI template with the page's embeddable HTML, site metadata, context data (component, version) for page, version, and product selectors, and navigation model information for menus and breadcrumbs.
++
+Relying on a page template to produce the pages gives the site owner complete control over the construction of the pages, and thus complete control over the UI.
+
+////
 
 Convert navigation tree::
 Antora converts the navigate tree to HTML and adds it to the site.
