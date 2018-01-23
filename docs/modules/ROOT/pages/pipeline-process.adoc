@@ -10,17 +10,39 @@ endif::[]
 When an Antora pipeline runs, it performs the following operations:
 
 Read playbook::
-When you're ready to generate a site, you give Antora a playbook and tell it to run. 
+When you're ready to generate a site, you give Antora a playbook and tell it to run.
 The pipeline loads and reads the playbook.
 A xref:playbook:configure-playbook.adoc[playbook is a configuration] file, written in YAML, JSON, or CSON that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
-Locate content repositories::
-Searches for and finds the content repositories and their branches listed in the playbook.
-These repositories can be local and remote.
+Locate content repositories and branches::
+Using the content source URLs and branch names listed in the playbook, Antora searches for and locates the specified repositories and branches.
 
 Clone or fetch remote content repository branches::
-Downloads the contents of each branch specified in the playbook into content repositories.
-//using git via NodeGit
+Antora downloads the contents of each remote repository and branch it located.
+
+Find the documentation component in each branch::
+Antora identifies a group of files as a documentation component when it finds a component descriptor file named [.path]_antora.yml_.
++
+A xref:component-structure.adoc[documentation component] is a set of files that are versioned together and  usually share a common subject, such as all of the content source files for a software product.
+Component source files can be stored in a single repository, at the root of a repository or in a subpath, or distributed across multiple repositories.
+
+Transform input files into virtual file objects::
+Antora collects all of the files--text, images, samples, and other supporting materials--from each documentation component subtree.
+Then it creates a virtual file of each input file.
+
+Assign files to component-version collections::
+Antora reads the component descriptor (i.e., [.path]_antora.yml_) files.
++
+A xref:antora_yml.adoc[component descriptor] associates the files under it with a specified component name and version (aka component-version).
+This allows the files to be decoupled from the repository and branch in which they live.
+The component descriptor file makes Antora's repository-spanning, file system and URL agnostic xref:cross-reference/page-to-page-link.adoc[cross references] possible.
++
+Antora assigns the descriptor information and other source metadata to the appropriate virtual files.
+Then it sorts each file into a virtual collection based on the assigned component-version data.
+
+Organize files into a content catalog::
+Sorts the aggregated files into a content catalog.
+The files are classified by documentation component, version, format and other assigned metadata values.
 
 Locate UI bundle::
 Searches for and finds the UI bundle listed in the playbook.
@@ -29,16 +51,6 @@ The UI bundle can be cached locally or remote.
 Download UI bundle::
 Downloads the UI bundle if it isn't cached.
 //using the GitLab or GitHub API
-
-Identify matching branches::
-Scans the local content repositories and selects the branches that match the values in the playbook.
-
-Aggregate files::
-Collects all of the files--text, images, samples, and other supporting materials--from the matched branches.
-
-Organize files into a content catalog::
-Sorts the aggregated files into a content catalog.
-The files are classified by documentation component, version, format and other assigned metadata values.
 
 ////
 Read AsciiDoc files::
