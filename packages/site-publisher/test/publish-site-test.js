@@ -5,6 +5,7 @@ const { expect, heredoc } = require('../../../test/test-utils')
 
 const buffer = require('gulp-buffer')
 const fs = require('fs-extra')
+const os = require('os')
 const path = require('path')
 const publishSite = require('@antora/site-publisher')
 const vzip = require('gulp-vinyl-zip')
@@ -292,20 +293,36 @@ describe('publishSite()', () => {
 
   it('should load custom provider from absolute path', async () => {
     const destFile = 'report.txt'
-    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter.js')
+    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter-abs.js')
     playbook.site = { title: 'The Site' }
-    playbook.output.destinations.push({ provider: path.resolve('reporter.js'), path: destFile })
+    playbook.output.destinations.push({ provider: path.resolve('reporter-abs.js'), path: destFile })
     await publishSite(playbook, contentCatalog, uiCatalog)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile).to.be.a.file()
       .with.contents('published 6 files for The Site')
   })
 
+  it('should load custom provider from an absolute path outside working directory', async () => {
+    const destFile = 'report.txt'
+    const providerFile = path.join(os.tmpdir(), `reporter-${process.pid}-${Date.now()}.js`)
+    try {
+      fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), providerFile)
+      playbook.site = { title: 'The Site' }
+      playbook.output.destinations.push({ provider: providerFile, path: destFile })
+      await publishSite(playbook, contentCatalog, uiCatalog)
+      expect(DEFAULT_DEST_FS).to.not.be.a.path()
+      expect(destFile).to.be.a.file()
+        .with.contents('published 6 files for The Site')
+    } finally {
+      fs.removeSync(providerFile)
+    }
+  })
+
   it('should load custom provider from relative path', async () => {
     const destFile = 'report.txt'
-    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter.js')
+    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter-rel.js')
     playbook.site = { title: 'The Site' }
-    playbook.output.destinations.push({ provider: './reporter', path: destFile })
+    playbook.output.destinations.push({ provider: './reporter-rel', path: destFile })
     await publishSite(playbook, contentCatalog, uiCatalog)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile).to.be.a.file()
@@ -314,9 +331,9 @@ describe('publishSite()', () => {
 
   it('should load custom provider from node modules path', async () => {
     const destFile = 'report.txt'
-    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'node_modules/reporter/index.js')
+    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'node_modules/reporter-mod/index.js')
     playbook.site = { title: 'The Site' }
-    playbook.output.destinations.push({ provider: 'reporter', path: destFile })
+    playbook.output.destinations.push({ provider: 'reporter-mod', path: destFile })
     await publishSite(playbook, contentCatalog, uiCatalog)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile).to.be.a.file()
