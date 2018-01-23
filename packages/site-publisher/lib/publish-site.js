@@ -1,8 +1,7 @@
 'use strict'
 
-const path = require('path')
 const ReadableArray = require('./util/readable-array')
-const requireProvider = createRequireProvider()
+const requireProvider = require('./require-provider')()
 
 const { DEFAULT_DEST_FS } = require('./constants.js')
 
@@ -22,16 +21,7 @@ async function publishSite (playbook, contentCatalog, uiCatalog) {
       default:
         try {
           // FIXME use playbook dir instead of process.cwd()
-          // TODO add second option to requireProvider to resolve relative to specified path
-          let requirePath
-          if (path.isAbsolute(provider)) {
-            requirePath = provider
-          } else if (provider.charAt(0) === '.') {
-            requirePath = path.resolve(process.cwd(), provider)
-          } else {
-            requirePath = require.resolve(provider, { paths: [path.join(process.cwd(), 'node_modules')] })
-          }
-          return requireProvider(requirePath).bind(null, options)
+          return requireProvider(provider, process.cwd()).bind(null, options)
         } catch (e) {
           throw new Error('Unsupported destination provider: ' + provider)
         }
@@ -43,11 +33,6 @@ async function publishSite (playbook, contentCatalog, uiCatalog) {
   //const stream = cloneable(new ReadableArray(files))
   //return Promise.all(publishers.map((publish, idx) => publish(idx ? stream.clone() : stream)))
   return Promise.all(publishers.map((publish) => publish(new ReadableArray(files), playbook)))
-}
-
-function createRequireProvider () {
-  const cache = {}
-  return (name) => (name in cache ? cache[name] : (cache[name] = require(name)))
 }
 
 function getDestinations (output) {
