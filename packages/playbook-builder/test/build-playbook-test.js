@@ -213,16 +213,20 @@ describe('buildPlaybook()', () => {
     expect(playbook.ui.startPath).to.equal('dark-theme')
     expect(playbook.ui.outputDir).to.equal('_')
     expect(playbook.ui.defaultLayout).to.equal('default')
+    expect(playbook.output.destinations).to.have.lengthOf(1)
+    expect(playbook.output.dir).to.equal('_site')
+    expect(playbook.output.destinations[0].provider).to.equal('archive')
+    expect(playbook.output.destinations[0].path).to.equal('site.zip')
   })
 
-  it('is decoupled from the process environment', () => {
+  it('should be decoupled from the process environment', () => {
     const originalEnv = process.env
     process.env = { PLAYBOOK: defaultSchemaSpec }
     expect(() => buildPlaybook()).to.throw()
     process.env = originalEnv
   })
 
-  it('leaves the process environment unchanged', () => {
+  it('should leave the process environment unchanged', () => {
     const processArgv = process.argv
     const processEnv = process.env
     const args = ['--one-one', 'the-args-value']
