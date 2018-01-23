@@ -50,6 +50,9 @@ Antora further sorts the aggregated files into a content catalog that can be que
 Convert AsciiDoc files to embeddable HTML::
 The AsciiDoc files in the page family of the content catalog are converted to embeddable HTML with Asciidoctor.js.
 
+Convert navigation files::
+Antora retrieves navigation files from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
+
 Locate and fetch UI bundle::
 Antora finds the UI bundle using the URL listed in the playbook and fetches it.
 The UI bundle can be cached locally or remote.
@@ -68,14 +71,6 @@ Organize UI files into UI catalog::
 The virtual UI files are sorted into a transmittable collection.
 
 ////
-Read AsciiDoc files::
-Antora selects the AsciiDoc files from content catalog and reads them into the appropriate processing stream.
-
-Read navigation files::
-Antora selects the navigation files from the content catalog and reads them into the appropriate processing stream..
-
-Convert AsciiDoc files::
-Antora converts the AsciiDoc files to embeddable HTML with Asciidoctor.
 
 Wrap converted AsciiDoc content in page template::
 Antora wraps the embeddable HTML in the assigned page template from the UI bundle.
