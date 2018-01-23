@@ -1,7 +1,7 @@
 'use strict'
 
+const ReadableArray = require('./util/readable-array')
 const requireProvider = createRequireProvider()
-const streamify = require('streamify-array')
 
 const { DEFAULT_DEST_FS } = require('./constants.js')
 
@@ -25,13 +25,10 @@ async function publishSite (playbook, contentCatalog, uiCatalog) {
   })
 
   // Q: add getPublishableFiles / getOutFiles; return a stream? or getOutFilesAsStream?
-  /*
-  const files = cloneable(streamify(contentCatalog.getFiles().concat(uiCatalog.getFiles()).filter((file) => file.out)))
-  return Promise.all(publishers.map((publish, idx) => publish(idx ? files.clone() : files)))
-  */
   const files = contentCatalog.getFiles().concat(uiCatalog.getFiles()).filter((file) => file.out)
-  // NOTE streamify mutates argument, so we must pass a copy of files
-  return Promise.all(publishers.map((publish) => publish(streamify(files.slice(0)))))
+  //const stream = cloneable(new ReadableArray(files))
+  //return Promise.all(publishers.map((publish, idx) => publish(idx ? stream.clone() : stream)))
+  return Promise.all(publishers.map((publish) => publish(new ReadableArray(files))))
 }
 
 function createRequireProvider () {
