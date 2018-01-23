@@ -36,7 +36,7 @@ async function generateSite (args, env) {
     pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
   })(createPageComposer(playbook, contentCatalog, uiCatalog))
 
-  return publishSite(playbook, contentCatalog, uiCatalog)
+  return publishSite(playbook, [contentCatalog, uiCatalog])
 }
 
 module.exports = generateSite

@@ -23,9 +23,8 @@ class File extends require('vinyl') {
 }
 
 describe('publishSite()', () => {
-  let contentCatalog
+  let catalogs
   let playbook
-  let uiCatalog
 
   const createFile = (outPath, contents) => new File({ contents: Buffer.from(contents), out: { path: outPath } })
 
@@ -102,7 +101,7 @@ describe('publishSite()', () => {
         destinations: [],
       },
     }
-    contentCatalog = {
+    const contentCatalog = {
       getFiles: () => [
         createFile('the-component/1.0/index.html', generateHtml('Index (ROOT)', 'index')),
         createFile('the-component/1.0/the-page.html', generateHtml('The Page (ROOT)', 'the page')),
@@ -110,12 +109,13 @@ describe('publishSite()', () => {
         createFile('the-component/1.0/the-module/the-page.html', generateHtml('The Page (the-module)', 'the page')),
       ],
     }
-    uiCatalog = {
+    const uiCatalog = {
       getFiles: () => [
         createFile('_/css/site.css', 'body { color: red; }'),
         createFile('_/js/site.js', ';(function () {})()'),
       ],
     }
+    catalogs = [contentCatalog, uiCatalog]
     fs.emptyDirSync(WORK_DIR)
     process.chdir(WORK_DIR)
   })
@@ -127,21 +127,21 @@ describe('publishSite()', () => {
 
   it('should publish site to fs at default destination when no destinations are specified', async () => {
     playbook.output.destinations = undefined
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     verifyFsOutput(DEFAULT_DEST_FS)
     expect(playbook.output.destinations).to.be.undefined()
   })
 
   it('should publish site to fs at default destination', async () => {
     playbook.output.destinations.push({ provider: 'fs' })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     verifyFsOutput(DEFAULT_DEST_FS)
   })
 
   it('should publish site to fs at specified relative destination', async () => {
     const destDir = 'path/to/_site'
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     verifyFsOutput(destDir)
   })
 
@@ -149,7 +149,7 @@ describe('publishSite()', () => {
     const destDir = path.resolve('_site')
     expect(path.isAbsolute(destDir)).to.be.true()
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     verifyFsOutput(destDir)
   })
 
@@ -158,7 +158,7 @@ describe('publishSite()', () => {
     playbook.output.destinations.push(Object.freeze({ provider: 'fs' }))
     Object.freeze(playbook.output.destinations)
     playbook.output.dir = destDir
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     verifyFsOutput(destDir)
     expect(playbook.output.destinations[0].path).to.not.exist()
@@ -170,7 +170,7 @@ describe('publishSite()', () => {
     fs.ensureFileSync(destDir)
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
     try {
-      await publishSite(playbook, contentCatalog, uiCatalog)
+      await publishSite(playbook, catalogs)
       awaitPublishSite = () => {}
     } catch (err) {
       awaitPublishSite = () => {
@@ -182,14 +182,14 @@ describe('publishSite()', () => {
 
   it('should publish site to archive at default destination', async () => {
     playbook.output.destinations.push({ provider: 'archive' })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     await verifyArchiveOutput(DEFAULT_DEST_ARCHIVE)
   })
 
   it('should publish site to archive at specified destination', async () => {
     const destFile = 'path/to/site.zip'
     playbook.output.destinations.push({ provider: 'archive', path: destFile })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     await verifyArchiveOutput(destFile)
   })
 
@@ -198,7 +198,7 @@ describe('publishSite()', () => {
     const destDir2 = 'site2'
     playbook.output.destinations.push({ provider: 'fs', path: destDir1 })
     playbook.output.destinations.push({ provider: 'fs', path: destDir2 })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     verifyFsOutput(destDir1)
     verifyFsOutput(destDir2)
   })
@@ -211,7 +211,7 @@ describe('publishSite()', () => {
     playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir2 }))
     Object.freeze(playbook.output.destinations)
     playbook.output.dir = destDirOverride
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(destDir1).to.not.be.a.path()
     verifyFsOutput(destDirOverride)
     verifyFsOutput(destDir2)
@@ -223,7 +223,7 @@ describe('publishSite()', () => {
     const destFile2 = 'site2.zip'
     playbook.output.destinations.push({ provider: 'archive', path: destFile1 })
     playbook.output.destinations.push({ provider: 'archive', path: destFile2 })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     await verifyArchiveOutput(destFile1)
     await verifyArchiveOutput(destFile2)
   })
@@ -231,13 +231,13 @@ describe('publishSite()', () => {
   it('should publish site to fs directory and archive file', async () => {
     playbook.output.destinations.push({ provider: 'fs' })
     playbook.output.destinations.push({ provider: 'archive' })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     verifyFsOutput(DEFAULT_DEST_FS)
     await verifyArchiveOutput(DEFAULT_DEST_ARCHIVE)
   })
 
   it('should not publish site if destinations is empty', async () => {
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(WORK_DIR)
       .to.be.a.directory()
@@ -249,7 +249,7 @@ describe('publishSite()', () => {
     playbook.output.destinations.push(Object.freeze({ provider: 'archive' }))
     Object.freeze(playbook.output.destinations)
     playbook.output.dir = destDir
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     verifyFsOutput(destDir)
     await verifyArchiveOutput(DEFAULT_DEST_ARCHIVE)
@@ -260,7 +260,7 @@ describe('publishSite()', () => {
     const destDir = 'output'
     Object.freeze(playbook.output.destinations)
     playbook.output.dir = destDir
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     verifyFsOutput(destDir)
     expect(playbook.output.destinations).to.be.empty()
@@ -276,7 +276,7 @@ describe('publishSite()', () => {
     playbook.output.clean = true
     fs.outputFileSync(cleanMeFile1, 'clean me!')
     fs.outputFileSync(cleanMeFile2, 'clean me!')
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(cleanMeFile1).to.not.be.a.path()
     expect(cleanMeFile2).to.not.be.a.path()
     verifyFsOutput(destDir1)
@@ -294,7 +294,7 @@ describe('publishSite()', () => {
     playbook.output.destinations.push({ provider: 'fs', path: destDir2, clean: true })
     fs.outputFileSync(leaveMeFile1, 'leave me!')
     fs.outputFileSync(cleanMeFile2, 'clean me!')
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(leaveMeFile1)
       .to.be.a.file()
       .with.contents('leave me!')
@@ -308,7 +308,7 @@ describe('publishSite()', () => {
     fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter-abs.js')
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: path.resolve('reporter-abs.js'), path: destFile })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile)
       .to.be.a.file()
@@ -322,7 +322,7 @@ describe('publishSite()', () => {
       fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), providerFile)
       playbook.site = { title: 'The Site' }
       playbook.output.destinations.push({ provider: providerFile, path: destFile })
-      await publishSite(playbook, contentCatalog, uiCatalog)
+      await publishSite(playbook, catalogs)
       expect(DEFAULT_DEST_FS).to.not.be.a.path()
       expect(destFile)
         .to.be.a.file()
@@ -337,7 +337,7 @@ describe('publishSite()', () => {
     fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter-rel.js')
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: './reporter-rel', path: destFile })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile)
       .to.be.a.file()
@@ -349,7 +349,7 @@ describe('publishSite()', () => {
     fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'node_modules/reporter-mod/index.js')
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: 'reporter-mod', path: destFile })
-    await publishSite(playbook, contentCatalog, uiCatalog)
+    await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile)
       .to.be.a.file()
@@ -360,7 +360,7 @@ describe('publishSite()', () => {
     playbook.output.destinations.push({ provider: 'unknown' })
     let awaitPublishSite
     try {
-      await publishSite(playbook, contentCatalog, uiCatalog)
+      await publishSite(playbook, catalogs)
       awaitPublishSite = () => {}
     } catch (err) {
       awaitPublishSite = () => {

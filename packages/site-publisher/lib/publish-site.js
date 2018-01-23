@@ -5,8 +5,37 @@ const requireProvider = require('./require-provider')()
 
 const { DEFAULT_DEST_FS } = require('./constants.js')
 
-// perhaps we should return a report of virtual files that were published (by provider)
-async function publishSite (playbook, contentCatalog, uiCatalog) {
+/**
+ * Publishes all publishable files in the specified catalogs using the
+ * destination providers specified in the playbook.
+ *
+ * This function starts by retrieving all publishable files from the specified
+ * collection of catalogs (currently those files with an out property). It then
+ * resolves the publish function for each destination provider specified in the
+ * playbook (i.e., `output.destinations`). If the provider is not known, the
+ * publish function for that provider is resolved by requiring a module (or
+ * relative path) having the same name as the provider.  Once the publish
+ * function is resolved, the configuration specified in the playbook for that
+ * provider is bound to the function as its first argument.  This function then
+ * iterates over all publish providers and passes the a Readable of the
+ * publishable files as the second argument and the playbook as the third.
+ *
+ * If a directory is specified directly on the output property of the playbook
+ * (i.e., `output.dir`), that directory is used to create or override the first
+ * fs provider in the list of destinations. If the clean property is set directly
+ * on the output property of the playbook (i.e., `output.clean`), the clean
+ * property is added to the configuration for each provider.
+ *
+ * @memberof site-publisher
+ *
+ * @param {Object} playbook - The configuration object for Antora that provides
+ *   access to the output destinations.
+ * @param {Array<Catalog>} catalogs - The collection of catalogs from which to retrieve the
+ *   publishable virtual files.
+ * @returns Nothing.
+ */
+// QUESTION should this function return a report of virtual files that were published (by provider)
+async function publishSite (playbook, catalogs) {
   const destinations = getDestinations(playbook.output)
 
   if (!destinations.length) return
@@ -29,10 +58,12 @@ async function publishSite (playbook, contentCatalog, uiCatalog) {
   })
 
   // Q: add getPublishableFiles / getOutFiles; return a stream? or getOutFilesAsStream?
-  const files = contentCatalog
-    .getFiles()
-    .concat(uiCatalog.getFiles())
-    .filter((file) => file.out)
+  const files = catalogs.reduce((accum, catalog) => {
+    catalog.getFiles().forEach((file) => {
+      if (file.out) accum.push(file)
+    })
+    return accum
+  }, [])
   //const stream = cloneable(new ReadableArray(files))
   //return Promise.all(publishers.map((publish, idx) => publish(idx ? stream.clone() : stream)))
   return Promise.all(publishers.map((publish) => publish(new ReadableArray(files), playbook)))
