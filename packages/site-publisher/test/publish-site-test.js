@@ -11,6 +11,7 @@ const vzip = require('gulp-vinyl-zip')
 
 const CWD = process.cwd()
 const { DEFAULT_DEST_FS, DEFAULT_DEST_ARCHIVE } = require('@antora/site-publisher/lib/constants')
+const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
 const HTML_RX = /<html>[\S\s]+<\/html>/
 const WORK_DIR = path.resolve(__dirname, 'work')
 
@@ -289,7 +290,39 @@ describe('publishSite()', () => {
     verifyFsOutput(destDir2)
   })
 
-  // TODO this should eventually attempt to require the unknown provider
+  it('should load custom provider from absolute path', async () => {
+    const destFile = 'report.txt'
+    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter.js')
+    playbook.site = { title: 'The Site' }
+    playbook.output.destinations.push({ provider: path.resolve('reporter.js'), path: destFile })
+    await publishSite(playbook, contentCatalog, uiCatalog)
+    expect(DEFAULT_DEST_FS).to.not.be.a.path()
+    expect(destFile).to.be.a.file()
+      .with.contents('published 6 files for The Site')
+  })
+
+  it('should load custom provider from relative path', async () => {
+    const destFile = 'report.txt'
+    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter.js')
+    playbook.site = { title: 'The Site' }
+    playbook.output.destinations.push({ provider: './reporter', path: destFile })
+    await publishSite(playbook, contentCatalog, uiCatalog)
+    expect(DEFAULT_DEST_FS).to.not.be.a.path()
+    expect(destFile).to.be.a.file()
+      .with.contents('published 6 files for The Site')
+  })
+
+  it('should load custom provider from node modules path', async () => {
+    const destFile = 'report.txt'
+    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'node_modules/reporter/index.js')
+    playbook.site = { title: 'The Site' }
+    playbook.output.destinations.push({ provider: 'reporter', path: destFile })
+    await publishSite(playbook, contentCatalog, uiCatalog)
+    expect(DEFAULT_DEST_FS).to.not.be.a.path()
+    expect(destFile).to.be.a.file()
+      .with.contents('published 6 files for The Site')
+  })
+
   it('should throw error if destination provider is unsupported', async () => {
     playbook.output.destinations.push({ provider: 'unknown' })
     let awaitPublishSite
@@ -301,6 +334,6 @@ describe('publishSite()', () => {
         throw err
       }
     }
-    expect(awaitPublishSite).to.throw('Unsupported destination provider')
+    expect(awaitPublishSite).to.throw('Unsupported destination provider: unknown')
   })
 })
