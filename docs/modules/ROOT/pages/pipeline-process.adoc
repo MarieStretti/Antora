@@ -7,6 +7,8 @@ endif::[]
 :idseparator: -
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
+== Content Stream
+
 When an Antora pipeline runs, it performs the following operations:
 
 Read playbook::
@@ -40,9 +42,14 @@ The component descriptor file makes Antora's repository-spanning, file system an
 Antora assigns the descriptor information and other source metadata to the appropriate virtual files.
 Then it sorts each file into a virtual collection based on the assigned component-version data.
 
+Compute additional metadata::
+Using site properties from the playbook and information assigned to the files in the previous step, Antora adds module, family, family-relative path, and other metadata values to each file.
+It also computes the output path (disk) and publish path (URL) information for each publishable file.
+
 Organize files into a content catalog::
-Sorts the aggregated files into a content catalog.
-The files are classified by documentation component, version, format and other assigned metadata values.
+Antora further sorts the aggregated files into a content catalog that can be queried and transmitted.
+
+== UI Stream
 
 Locate UI bundle::
 Searches for and finds the UI bundle listed in the playbook.
