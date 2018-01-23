@@ -7,8 +7,6 @@ endif::[]
 :idseparator: -
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
-== Content Stream
-
 When an Antora pipeline runs, it performs the following operations:
 
 Read playbook::
@@ -52,15 +50,22 @@ Antora further sorts the aggregated files into a content catalog that can be que
 Convert AsciiDoc files to embeddable HTML::
 The AsciiDoc files in the page family of the content catalog are converted to embeddable HTML with Asciidoctor.js.
 
-== UI Stream
-
-Locate UI bundle::
-Searches for and finds the UI bundle listed in the playbook.
+Locate and fetch UI bundle::
+Antora finds the UI bundle using the URL listed in the playbook and fetches it.
 The UI bundle can be cached locally or remote.
 
-Download UI bundle::
-Downloads the UI bundle if it isn't cached.
-//using the GitLab or GitHub API
+Transform UI files into virtual file objects::
+Antora extracts the UI files in the bundle and creates a virtual file object for each file containing the file's contents and path information.
+
+Classify UI files::
+Antora identifies the static UI files using the UI descriptor file ([.path]_ui.yml_) and sets the file type to static.
+It sets the type for all other files based on their location (asset, layout, helper, partial).
+
+Compute UI file output paths::
+For each UI file that is publishable (of type static or asset), Antora computes its output path.
+
+Organize UI files into UI catalog::
+The virtual UI files are sorted into a transmittable collection.
 
 ////
 Read AsciiDoc files::
