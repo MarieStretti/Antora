@@ -7,10 +7,12 @@ endif::[]
 :idseparator: -
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
-When Antora runs, it performs the following operations:
+When an Antora pipeline runs, it performs the following operations:
 
 Read playbook::
-Receives a playbook and reads it.
+When you're ready to generate a site, you give Antora a playbook and tell it to run. 
+The pipeline loads and reads the playbook.
+A xref:playbook:configure-playbook.adoc[playbook is a configuration] file, written in YAML, JSON, or CSON that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
 Locate content repositories::
 Searches for and finds the content repositories and their branches listed in the playbook.
