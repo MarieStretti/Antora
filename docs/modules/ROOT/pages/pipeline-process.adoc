@@ -49,6 +49,9 @@ It also computes the output path (disk) and publish path (URL) information for e
 Organize files into a content catalog::
 Antora further sorts the aggregated files into a content catalog that can be queried and transmitted.
 
+Convert AsciiDoc files to embeddable HTML::
+The AsciiDoc files in the page family of the content catalog are converted to embeddable HTML with Asciidoctor.js.
+
 == UI Stream
 
 Locate UI bundle::
