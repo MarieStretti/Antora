@@ -29,7 +29,3 @@ This is a sharp contrast to many other site generators, which intermix all these
 
 Let's go over how to xref:component-structure.adoc[organize your documentation] so Antora can use it.
 We'll also show you how to xref:install-prerequisites.adoc[set up Antora] and xref:run-antora-generate-site.adoc[run it].
-
-== Pipeline steps
-
-include::{partialsdir}/pipeline-steps-list.adoc[]
