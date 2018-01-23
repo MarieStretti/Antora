@@ -4,6 +4,7 @@
 const { expect, heredoc } = require('../../../test/test-utils')
 
 const buffer = require('gulp-buffer')
+const File = require('vinyl')
 const fs = require('fs-extra')
 const os = require('os')
 const path = require('path')
@@ -15,12 +16,6 @@ const { DEFAULT_DEST_FS, DEFAULT_DEST_ARCHIVE } = require('@antora/site-publishe
 const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
 const HTML_RX = /<html>[\S\s]+<\/html>/
 const WORK_DIR = path.resolve(__dirname, 'work')
-
-class File extends require('vinyl') {
-  get relative () {
-    return this.path
-  }
-}
 
 describe('publishSite()', () => {
   let catalogs

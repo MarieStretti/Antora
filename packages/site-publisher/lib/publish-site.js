@@ -1,6 +1,6 @@
 'use strict'
 
-const ReadableArray = require('./util/readable-array')
+const ReadableOutputFileArray = require('./readable-output-file-array')
 const requireProvider = require('./require-provider')()
 
 const { DEFAULT_DEST_FS } = require('./constants.js')
@@ -17,8 +17,10 @@ const { DEFAULT_DEST_FS } = require('./constants.js')
  * relative path) having the same name as the provider.  Once the publish
  * function is resolved, the configuration specified in the playbook for that
  * provider is bound to the function as its first argument.  This function then
- * iterates over all publish providers and passes the a Readable of the
- * publishable files as the second argument and the playbook as the third.
+ * iterates over all publish providers and passes a Readable of the publishable
+ * files as the second argument and the playbook as the third. The path of each
+ * file has been updated to match the `out.path` value (currently by
+ * instantiating a copy of the file).
  *
  * If a directory is specified directly on the output property of the playbook
  * (i.e., `output.dir`), that directory is used to create or override the first
@@ -64,9 +66,8 @@ async function publishSite (playbook, catalogs) {
     })
     return accum
   }, [])
-  //const stream = cloneable(new ReadableArray(files))
-  //return Promise.all(publishers.map((publish, idx) => publish(idx ? stream.clone() : stream)))
-  return Promise.all(publishers.map((publish) => publish(new ReadableArray(files), playbook)))
+
+  return Promise.all(publishers.map((publish) => publish(new ReadableOutputFileArray(files), playbook)))
 }
 
 function getDestinations (output) {

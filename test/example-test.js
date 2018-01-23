@@ -14,9 +14,7 @@ const {
   asyncCapitalize,
   capitalizeStream,
 } = require('../lib-example/capitalize.js')
-
-// NOTE: these requires are only there to test arrays
-const ReadableArray = require('@antora/site-publisher/lib/util/readable-array')
+const ReadableArray = require('../lib-example/readable-array.js')
 const toArray = require('stream-to-array')
 
 describe('text-utils#capitalize', () => {
