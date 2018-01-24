@@ -264,7 +264,7 @@ function srcGitTree (tree) {
     walker.on('entry', (entry) => {
       if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
     })
-    walker.on('error', (err) => reject(err))
+    walker.on('error', reject)
     walker.on('end', () => resolve(Promise.all(files)))
     walker.start()
   })

@@ -42,7 +42,7 @@ describe('publishSite()', () => {
         .src(file)
         .pipe(buffer())
         .on('data', (entry) => accum.push(entry))
-        .on('error', (err) => reject(err))
+        .on('error', reject)
         .on('end', () => resolve(accum))
     })
 
