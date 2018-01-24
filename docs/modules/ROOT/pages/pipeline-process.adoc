@@ -7,56 +7,85 @@ endif::[]
 :idseparator: -
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
-When Antora runs, it performs the following operations:
+The steps listed on this page describe the operations the default site generator pipeline performs.
+Keep in mind that Antora is a modular pipeline.
+This architecture allows special use case and custom components, such as validators, to be inserted into the pipeline at multiple points as needed.
+Also, the pipeline executes operations asynchronously, so many of the steps listed below may occur in a different order or simultaneously.
+For example, the UI is loaded as early as possible, then waits until its templates are needed.
+
+== Default Pipeline Steps
 
 Read playbook::
-Receives a playbook and reads it.
+When you're ready to generate a site, you give Antora a playbook and tell it to run.
+The pipeline loads and reads the playbook.
+A xref:playbook:configure-playbook.adoc[playbook is a configuration] file, written in YAML, JSON, or CSON that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
-Locate content repositories::
-Searches for and finds the content repositories and their branches listed in the playbook.
-These repositories can be local and remote.
+Locate content repositories and branches::
+Using the content source URLs and branch names listed in the playbook, Antora searches for and locates the specified repositories and branches.
 
 Clone or fetch remote content repository branches::
-Downloads the contents of each branch specified in the playbook into content repositories.
-//using git via NodeGit
+Antora downloads the contents of each remote repository and branch it located.
 
-Locate UI bundle::
-Searches for and finds the UI bundle listed in the playbook.
-The UI bundle can be cached locally or remote.
+Find the documentation component in each branch::
+Antora identifies a group of files as a documentation component when it finds a component descriptor file named [.path]_antora.yml_.
++
+A xref:component-structure.adoc[documentation component] is a set of files that are versioned together and  usually share a common subject, such as all of the content source files for a software product.
+Component source files can be stored in a single repository, at the root of a repository or in a subpath, or distributed across multiple repositories.
 
-Download UI bundle::
-Downloads the UI bundle if it isn't cached.
-//using the GitLab or GitHub API
+Transform input files into virtual file objects::
+Antora collects all of the files--text, images, samples, and other supporting materials--from each documentation component subtree.
+Then it creates a virtual file of each input file.
 
-Identify matching branches::
-Scans the local content repositories and selects the branches that match the values in the playbook.
+Assign files to component-version collections::
+Antora reads the component descriptor (i.e., [.path]_antora.yml_) files.
++
+A xref:antora_yml.adoc[component descriptor] associates the files under it with a specified component name and version (aka component-version).
+This allows the files to be decoupled from the repository and branch in which they live.
+The component descriptor file makes Antora's repository-spanning, file system and URL agnostic xref:cross-reference/page-to-page-link.adoc[cross references] possible.
++
+Antora assigns the descriptor information and other source metadata to the appropriate virtual files.
+Then it sorts each file into a virtual collection based on the assigned component-version data.
 
-Aggregate files::
-Collects all of the files--text, images, samples, and other supporting materials--from the matched branches.
+Compute additional metadata::
+Using site properties from the playbook and information assigned to the files in the previous step, Antora adds module, family, family-relative path, and other metadata values to each file.
+It also computes the output path (disk) and publish path (URL) information for each publishable file.
 
 Organize files into a content catalog::
-Sorts the aggregated files into a content catalog.
-The files are classified by documentation component, version, format and other assigned metadata values.
+Antora further sorts the aggregated files into a content catalog that can be queried and transmitted.
 
-////
-Read AsciiDoc files::
-Antora selects the AsciiDoc files from content catalog and reads them into the appropriate processing stream.
+Convert AsciiDoc files to embeddable HTML::
+The AsciiDoc files in the page family of the content catalog are converted to embeddable HTML with Asciidoctor.js.
 
-Read navigation files::
-Antora selects the navigation files from the content catalog and reads them into the appropriate processing stream..
+Convert navigation files::
+Antora retrieves xref:navigation/linked.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
-Convert AsciiDoc files::
-Antora converts the AsciiDoc files to embeddable HTML with Asciidoctor.
+Locate and fetch UI bundle::
+Antora finds the UI bundle using the URL listed in the playbook and fetches it.
+The UI bundle can be cached locally or remote.
 
-Wrap converted AsciiDoc content in page template::
-Antora wraps the embeddable HTML in the assigned page template from the UI bundle.
+Transform UI files into virtual file objects::
+Antora extracts the UI files in the bundle and creates a virtual file object for each file containing the file's contents and path information.
 
-Convert navigation tree::
-Antora converts the navigate tree to HTML and adds it to the site.
+Classify UI files::
+Antora identifies the static UI files using the UI descriptor file ([.path]_ui.yml_) and sets the file type to static.
+It sets the type for all other files based on their location (asset, layout, helper, partial).
 
-Read asset files::
-images, attachments, and UI resources
+Compute UI file output paths::
+For each UI file that is publishable (of type static or asset), Antora computes its output path.
 
-Write site files::
-Writes all site files to [.path]_build/site_.
-////
+Organize UI files into UI catalog::
+The virtual UI files are sorted into a transmittable collection.
+
+Wrap converted AsciiDoc content in page templates::
+Antora determines which page template each page requests.
+It populates the identified UI template with the page's embeddable HTML, site metadata, context data (component, version) for page, version, and product selectors, and navigation model information for menus and breadcrumbs.
++
+Relying on a page template to produce the pages gives the site owner complete control over the construction of the pages, and thus complete control over the UI.
+
+Produce sitemap::
+Antora generates a site map that can be used as an internal report or published as a site page.
+
+Publish site::
+Antora writes the generated pages to a destination(s) specified in the playbook.
+More than one destination may be specified, and different destination types are supported.
+Destination types include local and remote filesystems, ZIP archives, and others.
