@@ -4,7 +4,9 @@
 const { expect } = require('../../../test/test-utils')
 
 const buildPlaybook = require('@antora/playbook-builder')
-const path = require('path')
+const ospath = require('path')
+
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 
 describe('buildPlaybook()', () => {
   let schema, expectedPlaybook
@@ -62,16 +64,16 @@ describe('buildPlaybook()', () => {
     }
   })
 
-  const ymlSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.yml')
-  const extensionlessSpec = path.resolve(__dirname, 'fixtures', 'spec-sample')
-  const extensionlessJsonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample-json')
-  const extensionlessCsonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample-cson')
-  const jsonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.json')
-  const csonSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.cson')
-  const iniSpec = path.resolve(__dirname, 'fixtures', 'spec-sample.ini')
-  const badSpec = path.resolve(__dirname, 'fixtures', 'bad-spec-sample.yml')
-  const coerceValueSpec = path.resolve(__dirname, 'fixtures', 'coerce-value-spec-sample.yml')
-  const defaultSchemaSpec = path.resolve(__dirname, 'fixtures', 'default-schema-spec-sample.yml')
+  const ymlSpec = ospath.join(FIXTURES_DIR, 'spec-sample.yml')
+  const extensionlessSpec = ospath.join(FIXTURES_DIR, 'spec-sample')
+  const extensionlessJsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-json')
+  const extensionlessCsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-cson')
+  const jsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample.json')
+  const csonSpec = ospath.join(FIXTURES_DIR, 'spec-sample.cson')
+  const iniSpec = ospath.join(FIXTURES_DIR, 'spec-sample.ini')
+  const badSpec = ospath.join(FIXTURES_DIR, 'bad-spec-sample.yml')
+  const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
+  const defaultSchemaSpec = ospath.join(FIXTURES_DIR, 'default-schema-spec-sample.yml')
 
   it('should throw error if no playbook spec file can be loaded', () => {
     expect(() => buildPlaybook([], {}, schema)).to.throw()

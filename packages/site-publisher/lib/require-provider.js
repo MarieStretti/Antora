@@ -1,6 +1,6 @@
 'use strict'
 
-const path = require('path')
+const ospath = require('path')
 
 /**
  * Generates a function to resolve and require a custom provider.
@@ -30,13 +30,13 @@ function createRequireProvider () {
   return function requireProvider (request, requireBase) {
     let resolved = requestCache.get(request)
     if (!resolved) {
-      if (path.isAbsolute(request)) {
+      if (ospath.isAbsolute(request)) {
         resolved = request
-      } else if (request.charAt(0) === '.') {
-        resolved = path.join(requireBase, request)
+      } else if (request.charAt() === '.') {
+        resolved = ospath.join(requireBase, request)
       } else {
         resolved = require.resolve(request, {
-          paths: [path.join(requireBase, 'node_modules')].concat(require.resolve.paths('')),
+          paths: [ospath.join(requireBase, 'node_modules')].concat(require.resolve.paths('')),
         })
       }
       requestCache.set(request, resolved)

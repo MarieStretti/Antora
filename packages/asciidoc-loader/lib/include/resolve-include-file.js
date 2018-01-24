@@ -1,6 +1,6 @@
 'use strict'
 
-const path = require('path')
+const { posix: path } = require('path')
 const splitOnce = require('../util/split-once')
 
 const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('../constants')

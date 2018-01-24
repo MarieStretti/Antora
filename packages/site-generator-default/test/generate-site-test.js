@@ -6,13 +6,13 @@ const { expect } = require('../../../test/test-utils')
 const cheerio = require('cheerio')
 const fs = require('fs-extra')
 const generateSite = require('@antora/site-generator-default')
-const path = require('path')
+const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
-const CONTENT_REPOS_DIR = path.resolve(__dirname, 'content-repos')
+const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
 const CWD = process.cwd()
-const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
-const WORK_DIR = path.resolve(__dirname, 'work')
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
+const WORK_DIR = ospath.join(__dirname, 'work')
 const TIMEOUT = 5000
 const UI_BUNDLE_URI =
   'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
@@ -25,13 +25,13 @@ describe('generateSite()', () => {
   let repositoryBuilder
   let uiBundleUri
 
-  const readFile = (file, dir) => fs.readFileSync(dir ? path.join(dir, file) : file, 'utf8')
+  const readFile = (file, dir) => fs.readFileSync(dir ? ospath.join(dir, file) : file, 'utf8')
 
   const loadHtmlFile = (relative) => cheerio.load(readFile(relative, destDir))
 
   before(async () => {
     destDir = '_site'
-    playbookSpecFile = path.join(WORK_DIR, 'the-site.json')
+    playbookSpecFile = ospath.join(WORK_DIR, 'the-site.json')
     repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
     uiBundleUri = UI_BUNDLE_URI
   })
@@ -53,7 +53,7 @@ describe('generateSite()', () => {
     playbookSpec = {
       site: { title: 'The Site' },
       content: {
-        sources: [{ url: path.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v2.0' }],
+        sources: [{ url: ospath.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v2.0' }],
       },
       ui: { bundle: uiBundleUri },
       output: {
@@ -67,6 +67,7 @@ describe('generateSite()', () => {
   })
 
   after(() => {
+    process.chdir(CWD)
     fs.removeSync(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
       fs.removeSync(destDir.split('/')[0])
@@ -74,21 +75,20 @@ describe('generateSite()', () => {
     } else {
       fs.removeSync(WORK_DIR)
     }
-    process.chdir(CWD)
   })
 
   it('should generate site into output directory specified in playbook file', async () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
-    expect(path.join(destDir, '_'))
+    expect(ospath.join(destDir, '_'))
       .to.be.a.directory()
       .with.subDirs.with.members(['css', 'js', 'font', 'img'])
-    expect(path.join(destDir, '_/css/site.css')).to.be.a.file()
-    expect(path.join(destDir, '_/js/site.js')).to.be.a.file()
-    expect(path.join(destDir, 'the-component'))
+    expect(ospath.join(destDir, '_/css/site.css')).to.be.a.file()
+    expect(ospath.join(destDir, '_/js/site.js')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
-    expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head > title')).to.have.text('Index Page :: The Site')
     // assert relative UI path is correct
@@ -105,9 +105,9 @@ describe('generateSite()', () => {
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', 'index.html')
     expect($('article h1')).to.have.text('Index Page')
     expect($('article img')).to.have.attr('src', '_images/activity-diagram.svg')
-    expect(path.join(destDir, 'the-component/2.0/_images')).to.be.a.directory()
-    expect(path.join(destDir, 'the-component/2.0/_images/activity-diagram.svg')).to.be.a.file()
-    expect(path.join(destDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/_images')).to.be.a.directory()
+    expect(ospath.join(destDir, 'the-component/2.0/_images/activity-diagram.svg')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     expect($('nav.nav-menu .is-current-page')).to.have.lengthOf(1)
     expect($('nav.nav-menu .is-current-page > a.nav-link')).to.have.attr('href', 'the-page.html')
@@ -115,13 +115,13 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   it('should generate site into output directory specified in arguments', async () => {
-    const destDirOverride = path.join(destDir, 'beta')
+    const destDirOverride = ospath.join(destDir, 'beta')
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile, '--to-dir', destDirOverride])
-    expect(path.join(destDirOverride, '_'))
+    expect(ospath.join(destDirOverride, '_'))
       .to.be.a.directory()
       .with.subDirs.with.members(['css', 'js', 'font', 'img'])
-    expect(path.join(destDirOverride, 'the-component'))
+    expect(ospath.join(destDirOverride, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
   }).timeout(TIMEOUT)
@@ -130,12 +130,12 @@ describe('generateSite()', () => {
     playbookSpec.urls = { html_extension_style: 'indexify' }
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
-    expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('article a.page')).to.have.attr('href', 'the-page/')
     expect($('nav.crumbs a')).to.have.attr('href', './')
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', './')
-    expect(path.join(destDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page/index.html')
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', '../')
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../../_/css/site.css')
@@ -145,7 +145,7 @@ describe('generateSite()', () => {
     playbookSpec.site.url = 'https://example.com/docs/'
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
-    expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head link[rel=canonical]')).to.have.attr('href', 'https://example.com/docs/the-component/2.0/index.html')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', 'https://example.com/docs')
@@ -171,10 +171,10 @@ describe('generateSite()', () => {
     playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile], {}, destDir)
-    expect(path.join(destDir, 'the-component'))
+    expect(ospath.join(destDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['1.0', '2.0'])
-    expect(path.join(destDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     // assert that all versions of page are shown
     expect($('.page-versions')).to.exist()
@@ -188,8 +188,8 @@ describe('generateSite()', () => {
       .to.have.lengthOf(1)
       .and.to.have.text('1.0')
       .and.to.have.attr('href', '../1.0/the-page.html')
-    expect(path.join(destDir, 'the-component/1.0/new-page.html')).to.not.be.a.path()
-    expect(path.join(destDir, 'the-component/2.0/new-page.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/1.0/new-page.html')).to.not.be.a.path()
+    expect(ospath.join(destDir, 'the-component/2.0/new-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/new-page.html')
     expect($('.page-versions a.version')).to.have.lengthOf(2)
     expect($('.page-versions a.version:not(.is-current)'))
@@ -213,7 +213,7 @@ describe('generateSite()', () => {
     )
       .to.have.text('1.0')
       .and.to.have.attr('href', '../1.0/index.html')
-    expect(path.join(destDir, 'the-component/1.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/1.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/1.0/the-page.html')
     expect($('.navigation-explore .component.is-current .version')).to.have.lengthOf(2)
     expect($('.navigation-explore .component.is-current .version.is-latest a')).to.have.text('2.0')
@@ -262,13 +262,13 @@ describe('generateSite()', () => {
 
     playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
     playbookSpec.content.sources.push({
-      url: path.join(CONTENT_REPOS_DIR, 'the-other-component'),
+      url: ospath.join(CONTENT_REPOS_DIR, 'the-other-component'),
       branches: ['master', 'v1.0'],
     })
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
-    expect(path.join(destDir, 'the-other-component')).to.be.a.directory()
-    expect(path.join(destDir, 'the-other-component/core/index.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-other-component')).to.be.a.directory()
+    expect(ospath.join(destDir, 'the-other-component/core/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-other-component/core/index.html')
     expect($('.navigation-explore .component')).to.have.lengthOf(2)
     // assert sorted by title
@@ -289,7 +289,7 @@ describe('generateSite()', () => {
     expect($('.navigation-explore .component.is-current .version').eq(0))
       .to.have.class('is-current')
       .and.to.have.class('is-latest')
-    expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     // assert component link points to start page
     expect($('.navigation-explore .component:not(.is-current) a').eq(0)).to.have.attr(

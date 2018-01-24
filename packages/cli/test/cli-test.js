@@ -6,17 +6,18 @@ const { expect } = require('../../../test/test-utils')
 const fs = require('fs-extra')
 const { default: Kapok } = require('kapok-js')
 const pkg = require('@antora/cli/package.json')
-const path = require('path')
+const os = require('os')
+const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
-const ANTORA_CLI = require.resolve(path.join('@antora/cli', pkg.bin.antora))
-const CONTENT_REPOS_DIR = path.resolve(__dirname, 'content-repos')
-const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
+const ANTORA_CLI = ospath.resolve('node_modules', '.bin', os.platform() === 'win32' ? 'antora.cmd' : 'antora')
+const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const TIMEOUT = 30000
 const UI_BUNDLE_URI =
   'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
 const VERSION = pkg.version
-const WORK_DIR = path.resolve(__dirname, 'work')
+const WORK_DIR = ospath.join(__dirname, 'work')
 
 Kapok.config.shouldShowLog = false
 
@@ -51,19 +52,19 @@ describe('cli', () => {
     fs.removeSync(CONTENT_REPOS_DIR)
     await createContentRepository()
     destDir = 'build/site'
-    destAbsDir = path.join(WORK_DIR, destDir)
-    playbookSpecFile = path.join(WORK_DIR, 'the-site.json')
+    destAbsDir = ospath.join(WORK_DIR, destDir)
+    playbookSpecFile = ospath.join(WORK_DIR, 'the-site.json')
     uiBundleUri = UI_BUNDLE_URI
   })
 
   beforeEach(() => {
     fs.ensureDirSync(WORK_DIR)
     fs.removeSync(playbookSpecFile)
-    fs.removeSync(path.join(WORK_DIR, destDir.split('/')[0]))
+    fs.removeSync(ospath.join(WORK_DIR, destDir.split('/')[0]))
     playbookSpec = {
       site: { title: 'The Site' },
       content: {
-        sources: [{ url: path.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v1.0' }],
+        sources: [{ url: ospath.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v1.0' }],
       },
       ui: { bundle: uiBundleUri },
     }
@@ -72,7 +73,7 @@ describe('cli', () => {
   after(() => {
     fs.removeSync(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
-      fs.removeSync(path.join(WORK_DIR, destDir.split('/')[0]))
+      fs.removeSync(ospath.join(WORK_DIR, destDir.split('/')[0]))
       fs.removeSync(playbookSpecFile)
     } else {
       fs.removeSync(WORK_DIR)
@@ -204,10 +205,10 @@ describe('cli', () => {
       expect(destAbsDir)
         .to.be.a.directory()
         .with.subDirs(['_', 'the-component'])
-      expect(path.join(destAbsDir, 'the-component'))
+      expect(ospath.join(destAbsDir, 'the-component'))
         .to.be.a.directory()
         .with.subDirs(['1.0'])
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
   }).timeout(TIMEOUT)
 
@@ -217,7 +218,7 @@ describe('cli', () => {
     return new Promise((resolve) => {
       runAntora(['generate', 'the-site', '--title', 'Awesome Docs']).on('exit', () => resolve())
     }).then(() => {
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html'))
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<title>Index Page :: Awesome Docs</title>'))
     })
@@ -231,7 +232,7 @@ describe('cli', () => {
         resolve()
       )
     }).then(() => {
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html'))
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
     })
@@ -244,47 +245,48 @@ describe('cli', () => {
       // TODO once we have common options, we'll need to be sure they get moved before the default command
       runAntora('the-site.json --url https://docs.example.com').on('exit', () => resolve())
     }).then(() => {
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html'))
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
     })
   }).timeout(TIMEOUT)
 
   it('should clean output directory before generating when --clean switch is used', () => {
-    const residualFile = path.join(destAbsDir, 'the-component/1.0/old-page.html')
-    fs.ensureDirSync(path.dirname(residualFile))
+    const residualFile = ospath.join(destAbsDir, 'the-component/1.0/old-page.html')
+    fs.ensureDirSync(ospath.dirname(residualFile))
     fs.writeFileSync(residualFile, '<!DOCTYPE html><html><body>contents</body></html>')
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
       runAntora('generate the-site.json --clean').on('exit', () => resolve())
     }).then(() => {
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
       expect(residualFile).not.to.be.a.path()
     })
   }).timeout(TIMEOUT)
 
   it('should output to directory specified by --to-dir option', () => {
     // NOTE we must use a subdirectory of destDir so it gets cleaned up properly
-    const betaDestDir = path.join(destDir, 'beta')
-    const betaDestAbsDir = path.join(destAbsDir, 'beta')
+    const betaDestDir = ospath.join(destDir, 'beta')
+    const betaDestAbsDir = ospath.join(destAbsDir, 'beta')
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => {
       runAntora('generate the-site.json --to-dir ' + betaDestDir).on('exit', () => resolve())
     }).then(() => {
       expect(betaDestAbsDir).to.be.a.directory()
-      expect(path.join(betaDestAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(ospath.join(betaDestAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
   }).timeout(TIMEOUT)
 
   it('should discover locally installed default site generator', () => {
     const globalModulePath = require.resolve('@antora/site-generator-default')
-    const localNodeModules = path.join(WORK_DIR, 'node_modules')
-    const localModulePath = path.join(localNodeModules, '@antora/site-generator-default')
+    const localNodeModules = ospath.join(WORK_DIR, 'node_modules')
+    const localModulePath = ospath.join(localNodeModules, '@antora/site-generator-default')
     fs.ensureDirSync(localModulePath)
-    fs.writeFileSync(path.join(localModulePath, 'index.js'), `module.exports = require('${globalModulePath}')`)
-    fs.writeJsonSync(path.join(localModulePath, 'package.json'), { main: 'index.js' }, { spaces: 2 })
+    const localScript = `module.exports = require(${JSON.stringify(globalModulePath)})`
+    fs.writeFileSync(ospath.join(localModulePath, 'index.js'), localScript)
+    fs.writeJsonSync(ospath.join(localModulePath, 'package.json'), { main: 'index.js' }, { spaces: 2 })
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     return new Promise((resolve) => {
       runAntora('generate the-site').on('exit', (code) => {
@@ -294,16 +296,16 @@ describe('cli', () => {
     }).then((exitCode) => {
       expect(exitCode).to.equal(0)
       expect(destAbsDir).to.be.a.directory()
-      expect(path.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
   }).timeout(TIMEOUT)
 
   it('should show error message if site generator fails to load', () => {
-    const localNodeModules = path.join(WORK_DIR, 'node_modules')
-    const localModulePath = path.join(localNodeModules, '@antora/site-generator-default')
+    const localNodeModules = ospath.join(WORK_DIR, 'node_modules')
+    const localModulePath = ospath.join(localNodeModules, '@antora/site-generator-default')
     fs.ensureDirSync(localModulePath)
-    fs.writeFileSync(path.join(localModulePath, 'index.js'), 'throw false')
-    fs.writeJsonSync(path.join(localModulePath, 'package.json'), { main: 'index.js' }, { spaces: 2 })
+    fs.writeFileSync(ospath.join(localModulePath, 'index.js'), 'throw false')
+    fs.writeJsonSync(ospath.join(localModulePath, 'package.json'), { main: 'index.js' }, { spaces: 2 })
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     return runAntora('generate the-site')
       .assert(/no site generator/i)

@@ -2,12 +2,22 @@
 
 const fs = require('fs-extra')
 const git = require('nodegit')
-const path = require('path')
+const ospath = require('path')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
+const FS = '/'
+const RS = '\\'
+const RS_RX = /\\/g
+
 class RepositoryBuilder {
   constructor (repoBase, fixtureBase, opts = {}) {
+    if (!ospath.isAbsolute(repoBase)) {
+      throw new Error('repoBase argument must be an absolute path')
+    }
+    if (!ospath.isAbsolute(fixtureBase)) {
+      throw new Error('fixtureBase argument must be an absolute path')
+    }
     this.repoBase = repoBase
     this.fixtureBase = fixtureBase
     this.remote = opts.remote
@@ -16,7 +26,7 @@ class RepositoryBuilder {
 
   async open (repoName) {
     if (repoName) {
-      this.repoPath = path.join(this.repoBase, repoName)
+      this.repoPath = ospath.join(this.repoBase, repoName)
     } else if (!this.repoPath) {
       throw new Error('No repository name specified and no previous repository was opened by this builder.')
     }
@@ -25,9 +35,13 @@ class RepositoryBuilder {
   }
 
   async init (repoName = 'test-repo') {
-    this.url = this.repoPath = path.join(this.repoBase, repoName)
-    if (this.remote) this.url = 'file://' + this.url
-    if (this.bare) this.url += '/.git'
+    this.url = this.repoPath = ospath.join(this.repoBase, repoName)
+    if (this.remote) {
+      this.url = 'file://' + (ospath.sep === RS ? FS + this.url.replace(RS_RX, FS) : this.url)
+      if (this.bare) this.url += FS + '.git'
+    } else if (this.bare) this.url += ospath.sep + '.git'
+    // WARNING nodegit fails to create repository path on Windows if path contains backslashes (nodegit#1431)
+    await fs.ensureDir(this.repoPath)
     this.repository = await git.Repository.init(this.repoPath, 0)
     await this.addToWorktree('.gitignore')
     return this.commitAll()
@@ -46,7 +60,7 @@ class RepositoryBuilder {
   }
 
   async addComponentDescriptorToWorktree (data) {
-    const path_ = (this.startPath = data.startPath || '') ? path.join(this.startPath, 'antora.yml') : 'antora.yml'
+    const path_ = (this.startPath = data.startPath || '') ? ospath.join(this.startPath, 'antora.yml') : 'antora.yml'
     delete data.startPath
     if (data.name && !data.title) {
       data.title = data.name
@@ -63,19 +77,20 @@ class RepositoryBuilder {
 
   async addToWorktree (path_, contents = '') {
     return new Promise((resolve, reject) => {
-      const to = path.join(this.repoPath, path_)
-      fs
-        .ensureDir(path.dirname(to))
+      const to = ospath.join(this.repoPath, path_)
+      const toDir = ospath.dirname(to)
+      const ensureDir = toDir === this.repoPath ? Promise.resolve() : fs.ensureDir(toDir)
+      ensureDir
         .then(() => fs.writeFile(to, contents, (err) => (err ? reject(err) : resolve(this))))
     })
   }
 
   async importFilesFromFixture (fixtureName = '', opts = {}) {
     return new Promise((resolve) => {
-      const exclude = opts.exclude
+      const exclude = opts.exclude && opts.exclude.map((path_) => ospath.normalize(path_))
       const paths = []
       vfs
-        .src('**/*.*', { cwd: path.join(this.fixtureBase, fixtureName), cwdbase: true, read: false })
+        .src('**/*.*', { cwd: ospath.join(this.fixtureBase, fixtureName), cwdbase: true, read: false })
         .on('data', (file) => (exclude && exclude.includes(file.relative) ? null : paths.push(file.relative)))
         .on('end', async () => resolve(this.addFilesFromFixture(paths, fixtureName)))
     })
@@ -83,26 +98,26 @@ class RepositoryBuilder {
 
   async addFilesFromFixture (paths, fixtureName = '', toStartPath = true) {
     if (!Array.isArray(paths)) paths = [paths]
-    if (toStartPath && this.startPath) paths = paths.map((path_) => path.join(this.startPath, path_))
-    await this.copyToWorktree(paths, path.join(this.fixtureBase, fixtureName))
+    if (toStartPath && this.startPath) paths = paths.map((path_) => ospath.join(this.startPath, path_))
+    await this.copyToWorktree(paths, ospath.join(this.fixtureBase, fixtureName))
     return this.commitAll('add fixtures')
   }
 
   async copyToWorktree (paths, fromBase) {
     return Promise.all(
       paths.map((path_) => {
-        const to = path.join(this.repoPath, path_)
+        const to = ospath.join(this.repoPath, path_)
         // NOTE copy fixture file if exists, otherwise create an empty file
         return fs
-          .ensureDir(path.dirname(to))
-          .then(() => fs.copy(path.join(fromBase, path_), to).catch(() => fs.writeFile(to, '')))
+          .ensureDir(ospath.dirname(to))
+          .then(() => fs.copy(ospath.join(fromBase, path_), to).catch(() => fs.writeFile(to, '')))
       })
     ).then(() => this)
   }
 
   async removeFromWorktree (paths) {
     if (!Array.isArray(paths)) paths = [paths]
-    return Promise.all(paths.map((path_) => fs.remove(path.join(this.repoPath, path_)))).then(() => this)
+    return Promise.all(paths.map((path_) => fs.remove(ospath.join(this.repoPath, path_)))).then(() => this)
   }
 
   async commitAll (message = 'make it so') {

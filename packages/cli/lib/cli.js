@@ -6,7 +6,7 @@ const cli = require('./commander')
 // Q: can we ask the playbook builder for the config schema?
 const configSchema = require('@antora/playbook-builder/lib/config/schema')
 const fs = require('fs')
-const path = require('path')
+const ospath = require('path')
 const solitaryConvict = require('@antora/playbook-builder/lib/solitary-convict')
 
 const VERSION = require('../package.json').version
@@ -19,8 +19,8 @@ async function run () {
 }
 
 function requireSiteGenerator (name) {
-  const localPath = path.resolve('node_modules', name)
-  return require(fs.existsSync(path.join(localPath, 'package.json')) ? localPath : name)
+  const localPath = ospath.resolve('node_modules', name)
+  return require(fs.existsSync(ospath.join(localPath, 'package.json')) ? localPath : name)
 }
 
 cli

@@ -2,20 +2,25 @@
 
 const _ = require('lodash')
 const collect = require('stream-to-array')
-const File = require('vinyl')
+const File = require('./file')
 const fs = require('fs-extra')
 const git = require('nodegit')
 const { obj: map } = require('through2')
 const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
-const path = require('path')
+const ospath = require('path')
+const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : (p) => p
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH, CONTENT_GLOB } = require('./constants')
-const DOT_OR_NOEXT_RX = new RegExp('(?:^|/)(?:\\.|[^/.]+$)')
+const DOT_OR_NOEXT_RX = {
+  '/': new RegExp('(?:^|/)(?:\\.|[^/.]+$)'),
+  '\\': /(?:^|\\)(?:\.|[^\\.]+$)/,
+}
+const DRIVE_RX = /^[a-z]:\//
 const SEPARATOR_RX = /\/|:/
-const URI_SCHEME_RX = /^[a-z]+:\/{0,2}/
+const URI_SCHEME_RX = /^[a-z]+:\/*/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -44,18 +49,23 @@ async function aggregateContent (playbook) {
         async ({ ref, localName, current }) => {
           const files =
             isLocalRepo && !isBare && current
-              ? await readFilesFromWorktree(path.join(source.url, source.startPath || ''))
+              ? await readFilesFromWorktree(ospath.resolve(source.url, source.startPath || ''))
               : await readFilesFromGitTree(repository, ref, source.startPath)
           const componentVersion = loadComponentDescriptor(files)
           componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, source.startPath))
           return componentVersion
         }
       )
-      return Promise.all(componentVersions).then((value) => {
-        // nodegit repositories need to be manually closed
-        repository.free()
-        return value
-      })
+      // nodegit repositories must be manually closed
+      return Promise.all(componentVersions)
+        .then((resolvedValue) => {
+          repository.free()
+          return resolvedValue
+        })
+        .catch((reason) => {
+          repository.free()
+          throw reason
+        })
     })
   )
   return buildAggregate(componentVersions)
@@ -71,9 +81,9 @@ async function openOrCloneRepository (repoUrl, remote) {
 
   if (isLocalRepo) {
     localPath = repoUrl
-    isBare = !isLocalDirectory(path.join(localPath, '.git'))
+    isBare = !isLocalDirectory(ospath.join(localPath, '.git'))
   } else {
-    localPath = path.join(getCacheDir(), generateLocalFolderName(repoUrl))
+    localPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
     isBare = true
   }
 
@@ -126,7 +136,7 @@ function isLocalDirectory (url) {
  * @return {String} - The absolute directory path.
  */
 function getCacheDir () {
-  const cacheAbsPath = path.resolve(CONTENT_CACHE_PATH)
+  const cacheAbsPath = ospath.resolve(CONTENT_CACHE_PATH)
   fs.ensureDirSync(cacheAbsPath)
   return cacheAbsPath
 }
@@ -144,11 +154,17 @@ function getCacheDir () {
  * @return {String} - A friendly folder name.
  */
 function generateLocalFolderName (url) {
+  url = url.toLowerCase()
   // NOTE we don't check extname since the last path segment could equal .git
   if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
   const schemeMatch = ~url.indexOf(':') && url.match(URI_SCHEME_RX)
   if (schemeMatch) url = url.substr(schemeMatch[0].length)
-  if (url.charAt() === '/') url = url.substr(1)
+  if (ospath.sep === '\\') {
+    // Q: could we make this posixify unnecessary? (test suite seems to rely on it)
+    url = posixify(url)
+    const driveMatch = ~url.indexOf(':') && url.match(DRIVE_RX)
+    if (driveMatch) url = driveMatch[0].charAt() + url.substr(2)
+  }
   const lastIdx = url.length - 1
   if (url.charAt(lastIdx) === '/') url = url.substr(0, lastIdx)
   const segments = url.split(SEPARATOR_RX)
@@ -257,12 +273,13 @@ async function getGitTree (repository, branchRef, startPath) {
 
 function srcGitTree (tree) {
   return new Promise((resolve, reject) => {
+    const excludePattern = DOT_OR_NOEXT_RX[ospath.sep]
     const files = []
     // NOTE walk only visits blobs (i.e., files)
     const walker = tree.walk()
     // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
     walker.on('entry', (entry) => {
-      if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
+      if (!excludePattern.test(entry.path())) files.push(entryToFile(entry))
     })
     walker.on('error', reject)
     walker.on('end', () => resolve(Promise.all(files)))
@@ -276,22 +293,23 @@ async function entryToFile (entry) {
   const stat = new fs.Stats()
   stat.mode = entry.filemode()
   stat.size = contents.length
-  return new File({ path: entry.path(), contents, stat })
+  // nodegit currently returns paths containing backslashes on Windows; see nodegit#1433
+  return new File({ path: posixify(entry.path()), contents, stat })
 }
 
 function readFilesFromWorktree (relativeDir) {
-  const base = path.resolve(relativeDir)
+  const base = ospath.resolve(relativeDir)
   const opts = { base, cwd: base, removeBOM: false }
   // NOTE collect wraps the stream in a Promise so it can be awaited
   return collect(vfs.src(CONTENT_GLOB, opts).pipe(relativize()))
 }
 
 /**
- * Transforms all files in stream to a component root relative path.
+ * Transforms the path of every file in the stream to a relative posix path.
  *
- * Applies a mapping function to all vinyl files in the stream so they end up
- * with a path relative to the component root instead of the file system.
- * This mapper also filters out any directories that got caught in the glob.
+ * Applies a mapping function to all files in the stream so they end up with a
+ * posixified path relative to the file's base instead of the filesystem root.
+ * This mapper also filters out any directories that got caught up in the glob.
  */
 function relativize () {
   return map((file, encoding, next) => {
@@ -303,7 +321,7 @@ function relativize () {
       next(
         null,
         new File({
-          path: file.relative,
+          path: posixify(file.relative),
           contents,
           stat,
           src: { abspath: file.path },
@@ -314,12 +332,6 @@ function relativize () {
 }
 
 function assignFileProperties (file, url, branch, startPath = '/') {
-  Object.defineProperty(file, 'relative', {
-    get: function () {
-      return this.path
-    },
-  })
-
   const extname = file.extname
   file.mediaType = mimeTypes.lookup(extname)
   file.src = Object.assign(file.src || {}, {

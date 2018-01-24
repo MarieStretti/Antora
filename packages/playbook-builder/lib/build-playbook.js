@@ -6,7 +6,7 @@ const cson = require('cson-parser')
 const freezeDeep = require('deep-freeze')
 const fs = require('fs')
 const json = require('json5')
-const path = require('path')
+const ospath = require('path')
 const yaml = require('js-yaml')
 
 /**
@@ -33,8 +33,8 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
 
   const specFileRelPath = config.get('playbook')
   if (specFileRelPath) {
-    let specFileAbsPath = path.resolve(process.cwd(), specFileRelPath)
-    if (path.extname(specFileAbsPath)) {
+    let specFileAbsPath = ospath.resolve(specFileRelPath)
+    if (ospath.extname(specFileAbsPath)) {
       if (!fs.existsSync(specFileAbsPath)) throw new Error('playbook spec file does not exist')
     } else if (fs.existsSync(specFileAbsPath + '.yml')) {
       specFileAbsPath += '.yml'
@@ -62,7 +62,7 @@ function loadConvictConfig (args, env, customSchema) {
 function parseSpecFile (specFilePath) {
   const data = fs.readFileSync(specFilePath, 'utf8')
 
-  switch (path.extname(specFilePath)) {
+  switch (ospath.extname(specFilePath)) {
     case '.yml':
       return yaml.safeLoad(data)
     case '.json':

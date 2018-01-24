@@ -7,7 +7,9 @@ const fs = require('fs-extra')
 const got = require('got')
 const map = require('through2').obj
 const minimatchAll = require('minimatch-all')
-const path = require('path')
+const ospath = require('path')
+const path = ospath.posix
+const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : (p) => p
 const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
 const vzip = require('gulp-vinyl-zip')
@@ -47,7 +49,7 @@ async function loadUi (playbook) {
       await got(bundle, { encoding: null }).then(({ body }) => fs.outputFile(bundlePath, body))
     }
   } else {
-    bundlePath = path.resolve(bundle)
+    bundlePath = ospath.resolve(bundle)
   }
 
   const files = await collect(
@@ -76,25 +78,34 @@ function sha1 (string) {
 }
 
 function getCachePath (relative) {
-  return path.resolve(UI_CACHE_PATH, relative)
+  return ospath.resolve(UI_CACHE_PATH, relative)
 }
 
 function selectFilesStartingFrom (startPath) {
   if (!startPath || (startPath = path.join('/', startPath + '/')) === '/') {
-    return map((file, encoding, next) => (file.isNull() ? next() : next(null, file)))
+    return map((file, enc, next) => {
+      if (file.isNull()) {
+        next()
+      } else {
+        file.history.push(posixify(file.history.pop()))
+        next(null, file)
+      }
+    })
   } else {
     startPath = startPath.substr(1)
     const startPathOffset = startPath.length
-    return map((file, encoding, next) => {
-      if (!file.isNull()) {
-        const filePath = file.path
-        if (filePath.length > startPathOffset && filePath.startsWith(startPath)) {
-          file.path = filePath.substr(startPathOffset)
+    return map((file, enc, next) => {
+      if (file.isNull()) {
+        next()
+      } else {
+        const filepath = posixify(file.history.pop())
+        if (filepath.length > startPathOffset && filepath.startsWith(startPath)) {
+          file.history.push(filepath.substr(startPathOffset))
           next(null, file)
-          return
+        } else {
+          next()
         }
       }
-      next()
     })
   }
 }

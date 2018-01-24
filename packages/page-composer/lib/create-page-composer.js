@@ -1,7 +1,7 @@
 'use strict'
 
 const handlebars = require('handlebars')
-const path = require('path')
+const { posix: path } = require('path')
 const requireFromString = require('require-from-string')
 const versionCompare = require('@antora/content-classifier/lib/util/version-compare-desc')
 
