@@ -20,7 +20,7 @@ It tells an Antora pipeline what content to use, how the content should be proce
 // With an Antora playbook, you can control what content is included in your site.
 // It's particularly useful for creating a partial site for local preview.
 
-A playbook is usually located at the root of a xref:set-up-existing-playbook.adoc[playbook project] and is written in YAML, a common configuration language for configuring automated tasks.
+A playbook is usually located at the root of a xref:set-up-existing-playbook-project.adoc[playbook project] and is written in YAML, a common configuration language for configuring automated tasks.
 Playbooks can also be composed in JSON and CSON format.
 // Antora automatically detects and uses this file if you don't specify an override.
 
@@ -61,7 +61,7 @@ Antora applies these properties when generating and assembling the site.
 The title of the documentation site.
 
 // site url: The base URL of the published site. Should not include a trailing slash. used for canonical URLs and URLs in the sitemap
-// site root: The name of the component to use as the root of the site.
+// site root/component: The name of the component to use as the root of the site.
 // site keys google_analytics: The Google Analytics account key.
 // site keys swiftype: The key to activate the Swiftype widget.
 
@@ -77,8 +77,17 @@ The sources key contains the list of git repository locations, branch name patte
 ==== url
 
 At a minimum, you must specify the location of each content repository using the url key.
-The key accepts valid URIs or local filesystem paths.
-Filesystem paths can be relative to the location of the playbook or absolute.
+The key accepts any URL that git supports.
+This includes:
+// URIs or local filesystem paths.
+// Filesystem paths can be relative to the location of the playbook or absolute.
+
+* filesystem paths relative to the current directory
+* absolute filesystem paths
+* file URLs that start with pass:[file:///]
+* http and https URLs (e.g., pass:[https://gitlab.com/org/repo])
+* SSH URIs (e.g., pass:[git@github.com:org/repo] or pass:[ssh://git@github.com:org/repo])
+* git URIs (e.g., pass:[git://gitlab.com/org/repo])
 
 ==== branches
 
