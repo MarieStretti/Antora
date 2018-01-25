@@ -29,7 +29,7 @@ class RepositoryBuilder {
     if (this.remote) this.url = 'file://' + this.url
     if (this.bare) this.url += '/.git'
     this.repository = await git.Repository.init(this.repoPath, 0)
-    this.addToWorktree('.gitignore')
+    await this.addToWorktree('.gitignore')
     return this.commitAll()
   }
 
