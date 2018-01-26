@@ -1,0 +1,30 @@
+= Command-line Interface
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+Antora provides a command-line interface (CLI) so you can interact with it through your terminal.
+
+// Installation instructions
+When installed, the CLI adds the `antora` command to your PATH.
+The `antora` command accepts user inputs in the form of command-line arguments and environment variables, determines which action to perform, then delegates the work to other components or component pipelines in Antora.
+//The `antora` command (or application) should be capable of showing usage documentation, which should list the options (flags and switches), (sub)commands, arguments, and environment variables that it accepts as input.
+
+== Terminal conventions
+
+We use some typical conventions when showing terminal examples.
+
+Prompt (`$`)::
+The terminal's command prompt is indicated by a dollar sign ('$').
+Don't include the prompt when you type commands.
+
+Directory::
+A directory name may be shown before the command prompt in some examples.
+If displayed, the following command should be executed from that directory.
+
+Command Output::
+If Antora returns information after a command is executed, that output is displayed in the terminal underneath the command.
+The command prompt (`$`) will not be displayed on output lines.
