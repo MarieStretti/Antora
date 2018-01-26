@@ -80,8 +80,7 @@ class RepositoryBuilder {
       const to = ospath.join(this.repoPath, path_)
       const toDir = ospath.dirname(to)
       const ensureDir = toDir === this.repoPath ? Promise.resolve() : fs.ensureDir(toDir)
-      ensureDir
-        .then(() => fs.writeFile(to, contents, (err) => (err ? reject(err) : resolve(this))))
+      ensureDir.then(() => fs.writeFile(to, contents, (err) => (err ? reject(err) : resolve(this))))
     })
   }
 

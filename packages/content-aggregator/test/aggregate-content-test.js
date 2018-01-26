@@ -443,7 +443,8 @@ describe('aggregateContent()', () => {
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
         const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
-        expect(pageOne.contents.toString()).to.equal(heredoc`
+        expect(pageOne.contents.toString()).to.equal(
+          heredoc`
           = Page One
           ifndef::env-site,env-github[]
           include::_attributes.adoc[]
@@ -451,7 +452,8 @@ describe('aggregateContent()', () => {
           :keywords: foo, bar
 
           Hey World!
-        ` + '\n')
+          ` + '\n'
+        )
       })
     })
 
