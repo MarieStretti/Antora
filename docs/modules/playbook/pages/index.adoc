@@ -29,7 +29,7 @@ It will not be accurate until Antora is officially released.
 
 include::{partialsdir}/playbook-project-summary.adoc[]
 
-== site.yml
+== Playbook File
 
 include::{partialsdir}/playbook-summary.adoc[]
 
