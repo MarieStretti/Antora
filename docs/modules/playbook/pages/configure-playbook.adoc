@@ -152,6 +152,18 @@ Let's look at an example where the component descriptor file, [.path]_antora.yml
 
 image::start-path-dir.svg[,260]
 
+In order for Antora to locate the documentation component in this repository, the start path needs to be specified as shown in the following example.
+
+.Set start_path (excerpt)
+[source,yaml,subs=attributes+]
+----
+content:
+  sources:
+  - url: https://github.com/org/repo
+    branches: master, v2.6
+    start_path: packages/docs
+----
+
 == ui
 
 The ui key contains an array of UI bundle and page layout specifications.
