@@ -37,8 +37,9 @@ content: # <3>
     branches: master # <6>
   - url: https://gitlab.com/antora/demo/demo-component-b
     branches: v1.0
-ui: # <7>
-  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <8>
+    start_path: docs # <7>
+ui: # <8>
+  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <9>
 ----
 <1> Site key
 <2> Site title key and value
@@ -46,8 +47,9 @@ ui: # <7>
 <4> Sources key and value(s)
 <5> Content repository URL key and value
 <6> Content repository branches key and value(s)
-<7> UI key
-<8> UI bundle repository key and value
+<7> Start path key and value
+<8> UI key
+<9> UI bundle repository key and value
 
 Let's explore the purpose and usage of each these keys and values.
 
@@ -140,6 +142,15 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-b
     branches: master, v*
 ----
+
+==== start_path
+
+Antora automatically looks for the component descriptor file at the root of a repository.
+When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using the `start_path` key.
+
+Let's look at an example where the component descriptor file, [.path]_antora.yml_, isn't stored at the repository root.
+
+image::start-path-dir.svg[,260]
 
 == ui
 
