@@ -9,7 +9,7 @@ const { obj: map } = require('through2')
 const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
 const ospath = require('path')
-const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : (p) => p
+const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
@@ -159,7 +159,7 @@ function generateLocalFolderName (url) {
   if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
   const schemeMatch = ~url.indexOf(':') && url.match(URI_SCHEME_RX)
   if (schemeMatch) url = url.substr(schemeMatch[0].length)
-  if (ospath.sep === '\\') {
+  if (posixify) {
     // Q: could we make this posixify unnecessary? (test suite seems to rely on it)
     url = posixify(url)
     const driveMatch = ~url.indexOf(':') && url.match(DRIVE_RX)
@@ -294,7 +294,7 @@ async function entryToFile (entry) {
   stat.mode = entry.filemode()
   stat.size = contents.length
   // nodegit currently returns paths containing backslashes on Windows; see nodegit#1433
-  return new File({ path: posixify(entry.path()), contents, stat })
+  return new File({ path: posixify ? posixify(entry.path()) : entry.path(), contents, stat })
 }
 
 function readFilesFromWorktree (relativeDir) {
@@ -321,7 +321,7 @@ function relativize () {
       next(
         null,
         new File({
-          path: posixify(file.relative),
+          path: posixify ? posixify(file.relative) : file.relative,
           contents,
           stat,
           src: { abspath: file.path },

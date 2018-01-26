@@ -9,7 +9,7 @@ const map = require('through2').obj
 const minimatchAll = require('minimatch-all')
 const ospath = require('path')
 const path = ospath.posix
-const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : (p) => p
+const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
 const vzip = require('gulp-vinyl-zip')
@@ -87,7 +87,7 @@ function selectFilesStartingFrom (startPath) {
       if (file.isNull()) {
         next()
       } else {
-        file.history.push(posixify(file.history.pop()))
+        if (posixify) file.history.push(posixify(file.history.pop()))
         next(null, file)
       }
     })
@@ -98,7 +98,7 @@ function selectFilesStartingFrom (startPath) {
       if (file.isNull()) {
         next()
       } else {
-        const filepath = posixify(file.history.pop())
+        const filepath = posixify ? posixify(file.history.pop()) : file.history.pop()
         if (filepath.length > startPathOffset && filepath.startsWith(startPath)) {
           file.history.push(filepath.substr(startPathOffset))
           next(null, file)
