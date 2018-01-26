@@ -250,8 +250,9 @@ If you make a significant modification to a package, you should also update the 
 We read code more than we edit it, so it's important to have consistency throughout the code base.
 
 Antora's JavaScript code must adhere to the {uri-standardjs}[JavaScript Standard Style].
-We've modified a few of the standard styles and added some custom styles.
-The style rules are enforced with eslint (using a customized StandardJS profile), and the code is formatted with prettifier.
+We've modified a few of the standard style rules (e.g., max-len) and added some custom ones (e.g., comma-dangle, arrow-parens).
+The style rules are enforced using eslint with a tailored StandardJS profile.
+The code is formatted using prettier, which applies fixes for the standard style rules as well as a few of its own.
 
 ==== eslint and prettier
 
@@ -263,12 +264,12 @@ We have modified some of the standard rules and added custom rules, which are do
 
 While not enforced by eslint yet, your code should also comply with the following rules:
 
-* Use SCREAMING_SNAKE_CASE for constant names (not any `const` declaration, but rather a true constant).
+* Use SCREAMING_SNAKE_CASE for constant names (not any `const` declaration, but rather a formal constant).
 // * we might consider defining all constants for a package in lib/constants.js
 * Keep all require declarations together at the top of the file (no blank lines), and sort them alphabetically, unless there's a reason they can't be.
-* PENDING: Functions should be defined as `const` with a function shorthand `const fn = () => {}`.
-// * or maybe we want to enforce `fn () { }` (see https://eslint.org/docs/rules/func-style)
-* PENDING: Functions should be defined at the top (or should it be the bottom?) of the source file.
+* Functions should be defined using the `function` keyword in main code and using `const` with a function shorthand `const fn = () => {}` in tests.
+// * TODO enforce `fn () { }` (see https://eslint.org/docs/rules/func-style)
+* Functions should be defined at the top of the source file and exports at the bottom.
 
 When you <<run-tests,run the test suite>>, it will automatically lint (i.e., style check) your JavaScript code first.
 
