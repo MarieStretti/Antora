@@ -5,6 +5,7 @@ const { expect, heredoc } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
+const git = require('nodegit')
 const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
@@ -674,6 +675,38 @@ describe('aggregateContent()', () => {
         const relatives = files.map((file) => file.relative)
         expect(paths).to.have.members(expectedPaths)
         expect(relatives).to.have.members(expectedPaths)
+      })
+
+      it('should populate file with correct contents from worktree of clone', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+        await initRepoWithFilesAndWorktree(repoBuilder)
+        const clonePath = ospath.join(CONTENT_REPOS_DIR, 'clone')
+        await git.Clone.clone(repoBuilder.url, clonePath)
+        const wipPageContents = heredoc`
+          = WIP
+
+          This is going to be something special.
+        `
+        await fs.writeFile(ospath.join(clonePath, 'modules/ROOT/pages/wip-page.adoc'), wipPageContents)
+        playbookSpec.content.sources.push({ url: clonePath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const files = aggregate[0].files
+        const pageOne = files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+        expect(pageOne.contents.toString()).to.equal(
+          heredoc`
+          = Page One
+          ifndef::env-site,env-github[]
+          include::_attributes.adoc[]
+          endif::[]
+          :keywords: foo, bar
+
+          Hey World!
+          ` + '\n'
+        )
+        const wipPage = files.find((file) => file.path === 'modules/ROOT/pages/wip-page.adoc')
+        expect(wipPage.contents.toString()).to.equal(wipPageContents)
       })
     })
 

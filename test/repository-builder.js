@@ -43,6 +43,7 @@ class RepositoryBuilder {
     // WARNING nodegit fails to create repository path on Windows if path contains backslashes (nodegit#1431)
     await fs.ensureDir(this.repoPath)
     this.repository = await git.Repository.init(this.repoPath, 0)
+    await this.addToWorktree('.gitattributes', '* text=auto eol=lf')
     await this.addToWorktree('.gitignore')
     return this.commitAll()
   }
