@@ -94,6 +94,7 @@ describe('generateSite()', () => {
     // assert relative UI path is correct
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../_/css/site.css')
     expect($('script')).to.have.attr('src', '../../_/js/site.js')
+    expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', '../..')
     // assert current component version is correct
     expect($('.navigation-explore .current .title')).to.have.text('The Component')
     expect($('.navigation-explore .component.is-current .title')).to.have.text('The Component')
