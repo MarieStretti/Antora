@@ -33,9 +33,9 @@ site: # <1>
   title: Demo Docs Site # <2>
 content: # <3>
   sources: # <4>
-  - url: https://gitlab.com/antora/demo/demo-component-a.git # <5>
+  - url: https://gitlab.com/antora/demo/demo-component-a # <5>
     branches: master # <6>
-  - url: https://gitlab.com/antora/demo/demo-component-b.git
+  - url: https://gitlab.com/antora/demo/demo-component-b
     branches: v1.0
 ui: # <7>
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <8>
@@ -85,9 +85,13 @@ This includes:
 * filesystem paths relative to the current directory
 * absolute filesystem paths
 * file URLs that start with pass:[file:///]
-* http and https URLs (e.g., pass:[https://gitlab.com/org/repo])
+* http and https URLs (e.g., pass:[https://github.com/org/repo.git])
+** You don't need to add the trailing _.git_ to GitLab and GitHub repository URLs.
+Whether or not the trailing _.git_ is required depends on the capabilities of the repository host.
 * SSH URIs (e.g., pass:[git@github.com:org/repo] or pass:[ssh://git@github.com:org/repo])
 * git URIs (e.g., pass:[git://gitlab.com/org/repo])
+
+// For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
 
 ==== branches
 
@@ -97,8 +101,45 @@ Branches can also be excluded when the pattern starts with the bang (`!`) charac
 
 Branch names can be specified in a comma-separated list or as list items on individual lines.
 
+.Branch value list structures (excerpt)
+[source,yaml,subs=attributes+]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a
+    branches: master, v1.0.0, v1.5.0 # <1>
+  - url: https://gitlab.com/antora/demo/demo-component-b
+    branches:
+    - v4.* # <2>
+    - '!v4.7'
+    - v6.0.0-beta
+----
+<1> Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
+<2> Each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
+
 When no branches are specified for a content repository URL, Antora will use the [.term]_default branch set_.
 The default branch set is every branch that begins with `v` or is named `master`.
+
+.Use default branch set (excerpt)
+[source,yaml,subs=attributes+]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a
+  - url: https://gitlab.com/antora/demo/demo-component-b
+----
+
+The result of the example above is the same as if you specified the branches explicitly, like in the example below.
+
+[source,yaml,subs=attributes+]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a
+    branches: master, v*
+  - url: https://gitlab.com/antora/demo/demo-component-b
+    branches: master, v*
+----
 
 == ui
 
@@ -141,7 +182,7 @@ Instead of modifying the main playbook, you can create a custom playbook and pas
 Start by creating a new file named [.path]_custom-site.yml_.
 Populate it as follows:
 
-.custom-site.yml
+.custom-site.yml (excerpt)
 [source,yaml,subs=attributes+]
 ----
 site:
@@ -149,7 +190,7 @@ site:
 content:
   sources:
   - url: https://github.com/my-docs/server-docs
-  - url: https://gitlab.com/antora/demo/demo-component-b.git
+  - url: https://gitlab.com/antora/demo/demo-component-b
     branches: v1.0
 ----
 
