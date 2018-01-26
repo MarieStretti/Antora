@@ -6,5 +6,7 @@ module.exports = async (destConfig, filesStream, playbook) => {
   const files = []
   let file
   while ((file = filesStream.read())) files.push(file)
-  fs.writeFileSync(destConfig.path, `published ${files.length} files for ${playbook.site.title}`)
+  let destPath = destConfig.path
+  if (fs.existsSync(destPath)) destPath += '.1'
+  fs.writeFileSync(destPath, `published ${files.length} files for ${playbook.site.title}`)
 }

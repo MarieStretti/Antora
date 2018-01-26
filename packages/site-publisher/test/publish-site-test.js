@@ -22,7 +22,11 @@ describe('publishSite()', () => {
   let catalogs
   let playbook
 
-  const createFile = (outPath, contents) => new File({ contents: Buffer.from(contents), out: { path: outPath } })
+  const createFile = (outPath, contents) => {
+    const file = new File({ contents: Buffer.from(contents) })
+    if (outPath) file.out = { path: outPath }
+    return file
+  }
 
   const generateHtml = (title, content) => heredoc`
     <!DOCTYPE html>
@@ -105,6 +109,7 @@ describe('publishSite()', () => {
         createFile('the-component/1.0/the-page.html', generateHtml('The Page (ROOT)', 'the page')),
         createFile('the-component/1.0/the-module/index.html', generateHtml('Index (the-module)', 'index')),
         createFile('the-component/1.0/the-module/the-page.html', generateHtml('The Page (the-module)', 'the page')),
+        createFile(undefined, 'included content'),
       ],
     }
     const uiCatalog = {
@@ -120,7 +125,7 @@ describe('publishSite()', () => {
 
   after(() => {
     process.chdir(CWD)
-    fs.removeSync(WORK_DIR)
+    //fs.removeSync(WORK_DIR)
   })
 
   it('should publish site to fs at default destination when no destinations are specified', async () => {
@@ -176,6 +181,21 @@ describe('publishSite()', () => {
       }
     }
     expect(awaitPublishSite).to.throw('mkdir')
+  })
+
+  it('should publish a large number of files', async () => {
+    const contentCatalog = catalogs[0]
+    const files = contentCatalog.getFiles()
+    for (let i = 1; i <= 32; i++) {
+      files.push(createFile('the-component/1.0/page-' + i + '.html', generateHtml('Page ' + i, 'page ' + i)))
+    }
+    contentCatalog.getFiles = () => files
+    playbook.output.destinations.push({ provider: 'fs' })
+    await publishSite(playbook, catalogs)
+    verifyFsOutput(DEFAULT_DEST_FS)
+    expect(ospath.resolve(DEFAULT_DEST_FS, 'the-component/1.0/page-32.html'))
+      .to.be.a.file()
+      .with.contents.that.match(HTML_RX)
   })
 
   it('should publish site to archive at default destination', async () => {
@@ -350,6 +370,23 @@ describe('publishSite()', () => {
     await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile)
+      .to.be.a.file()
+      .with.contents('published 6 files for The Site')
+  })
+
+  it('should load custom provider multiple times', async () => {
+    const destFile = 'report.txt'
+    const destFile2 = 'report.txt.1'
+    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), 'reporter-multi.js')
+    playbook.site = { title: 'The Site' }
+    playbook.output.destinations.push({ provider: './reporter-multi', path: destFile })
+    playbook.output.destinations.push({ provider: './reporter-multi', path: destFile })
+    await publishSite(playbook, catalogs)
+    expect(DEFAULT_DEST_FS).to.not.be.a.path()
+    expect(destFile)
+      .to.be.a.file()
+      .with.contents('published 6 files for The Site')
+    expect(destFile2)
       .to.be.a.file()
       .with.contents('published 6 files for The Site')
   })
