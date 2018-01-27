@@ -196,10 +196,27 @@ describe('cli', () => {
       .done()
   }).timeout(TIMEOUT)
 
-  it('should generate site to fs destination when playbook is passed to the generate command', () => {
+  it('should generate site to fs destination when playbook file is passed to generate command', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => runAntora('generate the-site').on('exit', resolve)).then((exitCode) => {
+      expect(exitCode).to.equal(0)
+      expect(destAbsDir)
+        .to.be.a.directory()
+        .with.subDirs(['_', 'the-component'])
+      expect(ospath.join(destAbsDir, 'the-component'))
+        .to.be.a.directory()
+        .with.subDirs(['1.0'])
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+    })
+  }).timeout(TIMEOUT)
+
+  // TODO once paths are resolved relative to the playbook, run this test from a different directory
+  it('should generate site to fs destination when absolute playbook file is passed to generate command', () => {
+    playbookSpec.content.sources[0].url = ospath.relative(WORK_DIR, playbookSpec.content.sources[0].url)
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    // Q: how do we assert w/ kapok when there's no output; use promise as workaround
+    return new Promise((resolve) => runAntora(['generate', playbookSpecFile]).on('exit', resolve)).then((exitCode) => {
       expect(exitCode).to.equal(0)
       expect(destAbsDir)
         .to.be.a.directory()
