@@ -1,0 +1,6 @@
+= Antora Site Publisher
+
+The site publisher is the component in Antora responsible for publishing (i.e., writing) the generated files to the destination(s) specified in the playbook.
+More than one destination may be specified, and this component supports different destination types (via providers) such as the filesystem, an archive, and others.
+
+https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from versioned content repositories and processed with Asciidoctor.

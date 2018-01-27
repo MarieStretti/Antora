@@ -7,3 +7,8 @@ ui:
   bundle: ../ui/build/ui-bundles.zip
   start_path: dark-theme
   default_layout: default
+output:
+  dir: _site
+  destinations:
+  - provider: archive
+    path: site.zip

@@ -2,7 +2,7 @@
 
 // This file is mainly present to be used by reference unit tests
 
-const map = require('map-stream')
+const { obj: map } = require('through2')
 
 function capitalize (text) {
   return text[0].toUpperCase() + text.slice(1).toLowerCase()
@@ -32,7 +32,7 @@ function asyncCapitalize (text) {
 }
 
 function capitalizeStream () {
-  return map((text, next) => {
+  return map((text, enc, next) => {
     if (typeof text !== 'string') {
       return next(new TypeError('cannot capitalized a non String'))
     }

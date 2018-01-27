@@ -10,7 +10,7 @@ module.exports = {
   },
   site: {
     url: {
-      doc: 'The base URL of the published site. Should not include a trailing slash.',
+      doc: 'The base URL of the published site. Should not include trailing slash.',
       format: String,
       default: undefined,
       env: 'URL',
@@ -62,7 +62,6 @@ module.exports = {
       doc: 'The list of git repositories + branch patterns to use.',
       format: Array,
       default: [],
-      env: 'CONTENT_SOURCES',
     },
   },
   ui: {
@@ -121,5 +120,24 @@ module.exports = {
     format: Boolean,
     default: false,
     arg: 'redirects',
+  },
+  output: {
+    clean: {
+      doc: 'Remove destination path before publishing (fs only).',
+      format: Boolean,
+      default: false,
+      arg: 'clean',
+    },
+    dir: {
+      doc: 'The directory where the site should be published. (default: build/site)',
+      format: String,
+      default: undefined,
+      arg: 'to-dir',
+    },
+    destinations: {
+      doc: 'A list of destinations where the generated site should be published.',
+      format: Array,
+      default: undefined,
+    },
   },
 }

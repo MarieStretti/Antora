@@ -56,6 +56,9 @@ describe('generateSite()', () => {
         sources: [{ url: path.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v2.0' }],
       },
       ui: { bundle: uiBundleUri },
+      output: {
+        destinations: [{ provider: 'fs', path: destDir }],
+      },
     }
     fs.ensureDirSync(WORK_DIR)
     fs.removeSync(playbookSpecFile)
@@ -74,12 +77,12 @@ describe('generateSite()', () => {
     process.chdir(CWD)
   })
 
-  it('should generate site into output directory', async () => {
+  it('should generate site into output directory specified in playbook file', async () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
-    await generateSite(['--playbook', playbookSpecFile], {}, destDir)
+    await generateSite(['--playbook', playbookSpecFile])
     expect(path.join(destDir, '_'))
       .to.be.a.directory()
-      .with.subDirs.that.include.members(['css', 'js', 'font', 'img'])
+      .with.subDirs.with.members(['css', 'js', 'font', 'img'])
     expect(path.join(destDir, '_/css/site.css')).to.be.a.file()
     expect(path.join(destDir, '_/js/site.js')).to.be.a.file()
     expect(path.join(destDir, 'the-component'))
@@ -111,10 +114,22 @@ describe('generateSite()', () => {
     expect($('.page-versions')).to.not.exist()
   }).timeout(TIMEOUT)
 
+  it('should generate site into output directory specified in arguments', async () => {
+    const destDirOverride = path.join(destDir, 'beta')
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookSpecFile, '--to-dir', destDirOverride])
+    expect(path.join(destDirOverride, '_'))
+      .to.be.a.directory()
+      .with.subDirs.with.members(['css', 'js', 'font', 'img'])
+    expect(path.join(destDirOverride, 'the-component'))
+      .to.be.a.directory()
+      .with.subDirs(['2.0'])
+  }).timeout(TIMEOUT)
+
   it('should indexify URLs to internal pages', async () => {
     playbookSpec.urls = { html_extension_style: 'indexify' }
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
-    await generateSite(['--playbook', playbookSpecFile], {}, destDir)
+    await generateSite(['--playbook', playbookSpecFile])
     expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('article a.page')).to.have.attr('href', 'the-page/')
@@ -129,7 +144,7 @@ describe('generateSite()', () => {
   it('should qualify applicable links using site url if set in playbook', async () => {
     playbookSpec.site.url = 'https://example.com/docs/'
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
-    await generateSite(['--playbook', playbookSpecFile], {}, destDir)
+    await generateSite(['--playbook', playbookSpecFile])
     expect(path.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head link[rel=canonical]')).to.have.attr('href', 'https://example.com/docs/the-component/2.0/index.html')
@@ -251,7 +266,7 @@ describe('generateSite()', () => {
       branches: ['master', 'v1.0'],
     })
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
-    await generateSite(['--playbook', playbookSpecFile], {}, destDir)
+    await generateSite(['--playbook', playbookSpecFile])
     expect(path.join(destDir, 'the-other-component')).to.be.a.directory()
     expect(path.join(destDir, 'the-other-component/core/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-other-component/core/index.html')

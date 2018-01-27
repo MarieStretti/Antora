@@ -1,7 +1,7 @@
 {
-  "name": "@antora/cli",
+  "name": "@antora/site-publisher",
   "version": "1.0.0-alpha.1",
-  "description": "The command line interface for Antora.",
+  "description": "Publishes the files generated in an Antora documentation pipeline to the destination(s) specified in the playbook.",
   "license": "MPL-2.0",
   "author": {
     "name": "OpenDevise Inc.",
@@ -12,18 +12,15 @@
   "bugs": {
     "url": "https://gitlab.com/antora/antora/issues"
   },
-  "main": "lib/cli.js",
-  "bin": {
-    "antora": "bin/antora"
-  },
+  "main": "lib/index.js",
   "dependencies": {
-    "@antora/playbook-builder": "1.0.0-alpha.1",
-    "commander": "^2.13.0"
+    "fs-extra": "^5.0.0",
+    "gulp-vinyl-zip": "^2.1.0",
+    "vinyl": "^2.1.0",
+    "vinyl-fs": "^3.0.1"
   },
   "devDependencies": {
-    "convict": "^4.0.2",
-    "fs-extra": "^5.0.0",
-    "kapok-js": "^0.10.1"
+    "gulp-buffer": "^0.0.2"
   },
   "engines": {
     "node": ">= 8.0.0"
@@ -33,13 +30,12 @@
     "postpublish": "node ../../scripts/postpublish"
   },
   "files": [
-    "bin/",
     "lib/"
   ],
   "keywords": [
     "antora",
-    "cli",
-    "generator",
+    "antora-component",
+    "publisher",
     "documentation",
     "static site",
     "web publishing"

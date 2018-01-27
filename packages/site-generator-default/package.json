@@ -20,10 +20,8 @@
     "@antora/navigation-builder": "1.0.0-alpha.1",
     "@antora/page-composer": "1.0.0-alpha.1",
     "@antora/playbook-builder": "1.0.0-alpha.1",
-    "@antora/ui-loader": "1.0.0-alpha.1",
-    "streamify-array": "^1.0.0",
-    "through2": "^2.0.3",
-    "vinyl-fs": "^3.0.1"
+    "@antora/site-publisher": "1.0.0-alpha.1",
+    "@antora/ui-loader": "1.0.0-alpha.1"
   },
   "devDependencies": {
     "fs-extra": "^5.0.0"

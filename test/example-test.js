@@ -14,9 +14,7 @@ const {
   asyncCapitalize,
   capitalizeStream,
 } = require('../lib-example/capitalize.js')
-
-// NOTE: these requires are only there to test arrays
-const toStream = require('streamify-array')
+const ReadableArray = require('../lib-example/readable-array.js')
 const toArray = require('stream-to-array')
 
 describe('text-utils#capitalize', () => {
@@ -121,7 +119,7 @@ describe('text-utils#capitalizeStream', () => {
   })
 
   it('should capitalize all items of a stream', async () => {
-    const textStream = toStream(['zerO', 'onE', 'twO', 'threE'])
+    const textStream = new ReadableArray(['zerO', 'onE', 'twO', 'threE'])
     const capitalizedStream = textStream
       .pipe(capitalizeStream())
       .on('error', errorCallback)
@@ -134,7 +132,7 @@ describe('text-utils#capitalizeStream', () => {
   })
 
   it('should emit an error if one of the items is not a String', async () => {
-    const textStream = toStream(['zerO', 'onE', 22, 'threE'])
+    const textStream = new ReadableArray(['zerO', 'onE', 22, 'threE'])
     const capitalizedStream = textStream
       .pipe(capitalizeStream())
       .on('error', errorCallback)
