@@ -9,10 +9,12 @@ if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF
 }
 
 const interceptRequire = require('intercept-require')
+// IMPORTANT this patch prevents chai from hanging when computing a deep equals diff when Opal is loaded
+// see https://github.com/chaijs/chai/issues/1109
 const patchChai = (_, info) => {
   if (
     info.moduleId.endsWith('/getEnumerableProperties') &&
-    (info.absPath || `/node_modules/${info.moduleId}`).endsWith(
+    (info.absPath.replace(/\\/g, '/') || `/node_modules/${info.moduleId}`).endsWith(
       '/node_modules/chai/lib/chai/utils/getEnumerableProperties.js'
     )
   ) {

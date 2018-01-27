@@ -7,21 +7,26 @@ const buffer = require('gulp-buffer')
 const File = require('vinyl')
 const fs = require('fs-extra')
 const os = require('os')
-const path = require('path')
+const ospath = require('path')
 const publishSite = require('@antora/site-publisher')
 const vzip = require('gulp-vinyl-zip')
 
 const CWD = process.cwd()
 const { DEFAULT_DEST_FS, DEFAULT_DEST_ARCHIVE } = require('@antora/site-publisher/lib/constants')
-const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const HTML_RX = /<html>[\S\s]+<\/html>/
-const WORK_DIR = path.resolve(__dirname, 'work')
+const TMP_DIR = os.tmpdir()
+const WORK_DIR = ospath.join(__dirname, 'work')
 
 describe('publishSite()', () => {
   let catalogs
   let playbook
 
-  const createFile = (outPath, contents) => new File({ contents: Buffer.from(contents), out: { path: outPath } })
+  const createFile = (outPath, contents) => {
+    const file = new File({ contents: Buffer.from(contents) })
+    if (outPath) file.out = { path: outPath }
+    return file
+  }
 
   const generateHtml = (title, content) => heredoc`
     <!DOCTYPE html>
@@ -52,40 +57,42 @@ describe('publishSite()', () => {
       .and.not.empty()
     return collectFilesFromZip(destFile).then((files) => {
       expect(files).to.have.lengthOf(6)
-      const filePaths = files.map((file) => file.path)
-      expect(filePaths).to.have.members([
-        'the-component/1.0/index.html',
-        'the-component/1.0/the-page.html',
-        'the-component/1.0/the-module/index.html',
-        'the-component/1.0/the-module/the-page.html',
-        '_/css/site.css',
-        '_/js/site.js',
+      const filepaths = files.map((file) => file.path)
+      expect(filepaths).to.have.members([
+        ospath.join('the-component', '1.0', 'index.html'),
+        ospath.join('the-component', '1.0', 'the-page.html'),
+        ospath.join('the-component', '1.0', 'the-module', 'index.html'),
+        ospath.join('the-component', '1.0', 'the-module', 'the-page.html'),
+        ospath.join('_', 'css', 'site.css'),
+        ospath.join('_', 'js', 'site.js'),
       ])
-      const indexFile = files.find((file) => file.path === 'the-component/1.0/index.html')
+      const indexPath = ospath.join('the-component', '1.0', 'index.html')
+      const indexFile = files.find((file) => file.path === indexPath)
       expect(indexFile.contents.toString()).to.match(HTML_RX)
     })
   }
 
   const verifyFsOutput = (destDir) => {
+    destDir = ospath.resolve(destDir)
     expect(destDir)
       .to.be.a.directory()
       .with.subDirs(['_', 'the-component'])
-    expect(path.join(destDir, '_/css/site.css'))
+    expect(ospath.join(destDir, '_/css/site.css'))
       .to.be.a.file()
       .with.contents('body { color: red; }')
-    expect(path.join(destDir, '_/js/site.js'))
+    expect(ospath.join(destDir, '_/js/site.js'))
       .to.be.a.file()
       .with.contents(';(function () {})()')
-    expect(path.join(destDir, 'the-component/1.0/index.html'))
+    expect(ospath.join(destDir, 'the-component/1.0/index.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(path.join(destDir, 'the-component/1.0/the-page.html'))
+    expect(ospath.join(destDir, 'the-component/1.0/the-page.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(path.join(destDir, 'the-component/1.0/the-module/index.html'))
+    expect(ospath.join(destDir, 'the-component/1.0/the-module/index.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(path.join(destDir, 'the-component/1.0/the-module/the-page.html'))
+    expect(ospath.join(destDir, 'the-component/1.0/the-module/the-page.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
   }
@@ -102,6 +109,7 @@ describe('publishSite()', () => {
         createFile('the-component/1.0/the-page.html', generateHtml('The Page (ROOT)', 'the page')),
         createFile('the-component/1.0/the-module/index.html', generateHtml('Index (the-module)', 'index')),
         createFile('the-component/1.0/the-module/the-page.html', generateHtml('The Page (the-module)', 'the page')),
+        createFile(undefined, 'included content'),
       ],
     }
     const uiCatalog = {
@@ -116,8 +124,8 @@ describe('publishSite()', () => {
   })
 
   after(() => {
-    fs.removeSync(WORK_DIR)
     process.chdir(CWD)
+    //fs.removeSync(WORK_DIR)
   })
 
   it('should publish site to fs at default destination when no destinations are specified', async () => {
@@ -141,8 +149,8 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to fs at specified absolute destination', async () => {
-    const destDir = path.resolve('_site')
-    expect(path.isAbsolute(destDir)).to.be.true()
+    const destDir = ospath.resolve('_site')
+    expect(ospath.isAbsolute(destDir)).to.be.true()
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
     await publishSite(playbook, catalogs)
     verifyFsOutput(destDir)
@@ -172,7 +180,22 @@ describe('publishSite()', () => {
         throw err
       }
     }
-    expect(awaitPublishSite).to.throw('not a directory')
+    expect(awaitPublishSite).to.throw('mkdir')
+  })
+
+  it('should publish a large number of files', async () => {
+    const contentCatalog = catalogs[0]
+    const files = contentCatalog.getFiles()
+    for (let i = 1; i <= 32; i++) {
+      files.push(createFile('the-component/1.0/page-' + i + '.html', generateHtml('Page ' + i, 'page ' + i)))
+    }
+    contentCatalog.getFiles = () => files
+    playbook.output.destinations.push({ provider: 'fs' })
+    await publishSite(playbook, catalogs)
+    verifyFsOutput(DEFAULT_DEST_FS)
+    expect(ospath.resolve(DEFAULT_DEST_FS, 'the-component/1.0/page-32.html'))
+      .to.be.a.file()
+      .with.contents.that.match(HTML_RX)
   })
 
   it('should publish site to archive at default destination', async () => {
@@ -264,8 +287,8 @@ describe('publishSite()', () => {
   it('should clean all destinations if clean is set on output', async () => {
     const destDir1 = 'site1'
     const destDir2 = 'site2'
-    const cleanMeFile1 = path.join(destDir1, 'clean-me.txt')
-    const cleanMeFile2 = path.join(destDir2, 'clean-me.txt')
+    const cleanMeFile1 = ospath.join(destDir1, 'clean-me.txt')
+    const cleanMeFile2 = ospath.join(destDir2, 'clean-me.txt')
     playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir1 }))
     playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir2 }))
     playbook.output.clean = true
@@ -283,8 +306,8 @@ describe('publishSite()', () => {
   it('should clean specified destinations', async () => {
     const destDir1 = 'site1'
     const destDir2 = 'site2'
-    const leaveMeFile1 = path.join(destDir1, 'leave-me.txt')
-    const cleanMeFile2 = path.join(destDir2, 'clean-me.txt')
+    const leaveMeFile1 = ospath.join(destDir1, 'leave-me.txt')
+    const cleanMeFile2 = ospath.join(destDir2, 'clean-me.txt')
     playbook.output.destinations.push({ provider: 'fs', path: destDir1 })
     playbook.output.destinations.push({ provider: 'fs', path: destDir2, clean: true })
     fs.outputFileSync(leaveMeFile1, 'leave me!')
@@ -300,9 +323,9 @@ describe('publishSite()', () => {
 
   it('should load custom provider from absolute path', async () => {
     const destFile = 'report.txt'
-    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter-abs.js')
+    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), 'reporter-abs.js')
     playbook.site = { title: 'The Site' }
-    playbook.output.destinations.push({ provider: path.resolve('reporter-abs.js'), path: destFile })
+    playbook.output.destinations.push({ provider: ospath.resolve('reporter-abs.js'), path: destFile })
     await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile)
@@ -312,9 +335,9 @@ describe('publishSite()', () => {
 
   it('should load custom provider from an absolute path outside working directory', async () => {
     const destFile = 'report.txt'
-    const providerFile = path.join(os.tmpdir(), `reporter-${process.pid}-${Date.now()}.js`)
+    const providerFile = ospath.join(TMP_DIR, `reporter-${process.pid}-${Date.now()}.js`)
     try {
-      fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), providerFile)
+      fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), providerFile)
       playbook.site = { title: 'The Site' }
       playbook.output.destinations.push({ provider: providerFile, path: destFile })
       await publishSite(playbook, catalogs)
@@ -329,7 +352,7 @@ describe('publishSite()', () => {
 
   it('should load custom provider from relative path', async () => {
     const destFile = 'report.txt'
-    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'reporter-rel.js')
+    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), 'reporter-rel.js')
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: './reporter-rel', path: destFile })
     await publishSite(playbook, catalogs)
@@ -341,12 +364,29 @@ describe('publishSite()', () => {
 
   it('should load custom provider from node modules path', async () => {
     const destFile = 'report.txt'
-    fs.copySync(path.join(FIXTURES_DIR, 'reporter.js'), 'node_modules/reporter-mod/index.js')
+    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), 'node_modules/reporter-mod/index.js')
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: 'reporter-mod', path: destFile })
     await publishSite(playbook, catalogs)
     expect(DEFAULT_DEST_FS).to.not.be.a.path()
     expect(destFile)
+      .to.be.a.file()
+      .with.contents('published 6 files for The Site')
+  })
+
+  it('should load custom provider multiple times', async () => {
+    const destFile = 'report.txt'
+    const destFile2 = 'report.txt.1'
+    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), 'reporter-multi.js')
+    playbook.site = { title: 'The Site' }
+    playbook.output.destinations.push({ provider: './reporter-multi', path: destFile })
+    playbook.output.destinations.push({ provider: './reporter-multi', path: destFile })
+    await publishSite(playbook, catalogs)
+    expect(DEFAULT_DEST_FS).to.not.be.a.path()
+    expect(destFile)
+      .to.be.a.file()
+      .with.contents('published 6 files for The Site')
+    expect(destFile2)
       .to.be.a.file()
       .with.contents('published 6 files for The Site')
   })

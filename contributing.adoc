@@ -285,6 +285,45 @@ To run prettier, enter the following gulp task:
 
  $ gulp format
 
+==== Paths
+
+Paths, including both virtual file paths and filesystem paths, have to be handled carefully in Antora.
+This section describes what you need to know.
+
+In the virtual file catalog, all files have POSIX paths, which are independent of the platform on which Antora is running.
+A POSIX (aka Unix-style) path is a path that uses forward slashes to separate directories and descends from a single root (no drive letter) (e.g., path/to/file.adoc).
+They basically look the same as URL paths (the part after the domain).
+
+Only when interfacing with the filesystem (input and output) can the path be platform dependent.
+We use a virtual file object (currently Vinyl) to move files between the physical and virtual filesystem.
+When reading a file from the physical filesystem into the virtual filesystem (and nodegit), it's *always* necessary to "`posixify`" the path (convert backslashes to forward slashes if the platform's path separator is backslash).
+When writing a file to the physical filesystem, the path should be converted from a virtual path using Node's path module.
+
+IMPORTANT: When assigning a POSIX path to a virtual (Vinyl) file, use `history.push` instead of `path =` to circumvent platform-specific normalization.
+We eventually want to remove the need for this workaround.
+
+To help make the distinction between virtual and physical paths in the code clear, we've introduced a convention.
+
+When working with path calculations that pertain to virtual files as well as URLs, we must always use the https://nodejs.org/api/path.html#path_path_posix[path.posix] module.
+This module exposes the POSIX-specific path operations regardless of the platform on which Antora is running.
+The path.posix module should always be imported to the symbol `path`:
+
+[source,js]
+----
+const { posix: path } = require('path')
+----
+
+When working with physical files (i.e., interfacing with the filesystem), we must always use the default path module.
+This module provides platform-specific path operations (e.g., is aware of drive letters in Windows, can transparently convert POSIX paths to Windows paths when appropriate, etc).
+The default path module should always be imported to the symbol `ospath`:
+
+[source,js]
+----
+const ospath = require('path')
+----
+
+Following this practice ensure it's easy to tell from anywhere in the code whether the path is real (and thus platform-dependent) or virtual (and thus POSIX).
+
 [#test-rq]
 === Test structure and coverage expectations
 

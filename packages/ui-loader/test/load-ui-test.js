@@ -6,33 +6,28 @@ const { expect } = require('../../../test/test-utils')
 const fs = require('fs-extra')
 const http = require('http')
 const loadUi = require('@antora/ui-loader')
-const path = require('path')
+const ospath = require('path')
 
 const CWD = process.cwd()
-const WORK_DIR = path.resolve(__dirname, 'work')
+const WORK_DIR = ospath.join(__dirname, 'work')
 
 function testAll (archive, testFunction) {
   const playbook = { ui: { startPath: '' } }
 
   it('with relative bundle path', () => {
-    playbook.ui.bundle = path.relative(process.cwd(), path.resolve(__dirname, path.join('fixtures', archive)))
+    playbook.ui.bundle = ospath.relative(WORK_DIR, ospath.resolve(__dirname, 'fixtures', archive))
     return testFunction(playbook)
   })
 
   it('with absolute bundle path', () => {
-    playbook.ui.bundle = path.resolve(__dirname, path.join('fixtures', archive))
+    playbook.ui.bundle = ospath.resolve(__dirname, 'fixtures', archive)
     return testFunction(playbook)
   })
 
   it('with remote bundle URI', () => {
-    playbook.ui.bundle = 'http://localhost:1337' + path.join('/', archive)
+    playbook.ui.bundle = 'http://localhost:1337/' + archive
     return testFunction(playbook)
   })
-}
-
-function cleanCache () {
-  fs.removeSync(WORK_DIR)
-  process.chdir(CWD)
 }
 
 describe('loadUi()', () => {
@@ -54,16 +49,33 @@ describe('loadUi()', () => {
 
   let server
 
+  const clean = (fin) => {
+    process.chdir(CWD)
+    const timeout = 5000
+    let retry = true
+    let start = Date.now()
+    while (retry) {
+      try {
+        // NOTE work dir stores the cache
+        fs.removeSync(WORK_DIR)
+        retry = false
+      } catch (e) {
+        if (Date.now() - start > timeout) throw e
+      }
+    }
+    if (!fin) {
+      fs.ensureDirSync(WORK_DIR)
+      process.chdir(WORK_DIR)
+    }
+  }
+
   beforeEach(() => {
-    cleanCache()
-    fs.ensureDirSync(WORK_DIR)
-    process.chdir(WORK_DIR)
+    clean()
     server = http
       .createServer((request, response) => {
-        const filePath = path.resolve(__dirname, path.join('fixtures', request.url))
-        fs.readFile(filePath, (error, content) => {
-          if (error) {
-            throw error
+        fs.readFile(ospath.resolve(ospath.join(__dirname, 'fixtures', request.url)), (err, content) => {
+          if (err) {
+            throw err
           }
           const contentType = 'application/zip'
           response.writeHead(200, { 'Content-Type': contentType })
@@ -74,8 +86,8 @@ describe('loadUi()', () => {
   })
 
   afterEach(() => {
+    clean(true)
     server.close()
-    cleanCache()
   })
 
   describe('should load all files in the UI bundle', () => {
@@ -173,8 +185,8 @@ describe('loadUi()', () => {
     describe('should differentiate static files from assets', () => {
       testAll('the-ui-bundle-with-static-files.zip', async (playbook) => {
         const uiCatalog = await loadUi(playbook)
-        const filePaths = uiCatalog.getFiles().map((file) => file.path)
-        expect(filePaths).not.to.include('ui.yml')
+        const filepaths = uiCatalog.getFiles().map((file) => file.path)
+        expect(filepaths).not.to.include('ui.yml')
         const uiAssets = uiCatalog.findByType('asset')
         uiAssets.forEach(({ type }) => expect(type).to.equal('asset'))
         const uiAssetPaths = uiAssets.map((file) => file.path)

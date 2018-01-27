@@ -3,6 +3,12 @@
 const { Readable } = require('stream')
 const Vinyl = require('vinyl')
 
+class File extends Vinyl {
+  get relative () {
+    return this.path
+  }
+}
+
 class ReadableOutputFileArray extends Readable {
   constructor (array) {
     super({ objectMode: true })
@@ -13,12 +19,6 @@ class ReadableOutputFileArray extends Readable {
     const read = this.array.splice(0, size)
     while (read.length) this.push(toOutputFile(read.shift()))
     if (!this.array.length) this.push(null)
-  }
-}
-
-class File extends Vinyl {
-  get relative () {
-    return this.path
   }
 }
 

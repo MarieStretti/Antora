@@ -1,32 +1,33 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect } = require('../../../test/test-utils')
+const { expect, heredoc } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
-const path = require('path')
+const git = require('nodegit')
+const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH } = require('@antora/content-aggregator/lib/constants')
-const CONTENT_REPOS_DIR = path.resolve(__dirname, 'content-repos')
+const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
 const CWD = process.cwd()
-const FIXTURES_DIR = path.resolve(__dirname, 'fixtures')
-const WORK_DIR = path.resolve(__dirname, 'work')
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
+const WORK_DIR = ospath.join(__dirname, 'work')
 
-function testAll (testFunction, length = 1) {
-  function test (repoBuilderOpts) {
+function testAll (testFunction, numRepoBuilders = 1) {
+  function makeTest (repoBuilderOpts) {
     const repoBuilders = Array.from(
-      { length },
+      { length: numRepoBuilders },
       () => new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, repoBuilderOpts)
     )
     return testFunction(...repoBuilders)
   }
 
-  it('on local repo', () => test({ remote: false, bare: false }))
-  it('on local bare repo', () => test({ remote: false, bare: true }))
-  it('on remote repo', () => test({ remote: true, bare: false }))
-  it('on remote bare repo', () => test({ remote: true, bare: true }))
+  it('on local repo', () => makeTest())
+  it('on local bare repo', () => makeTest({ bare: true }))
+  it('on remote repo', () => makeTest({ remote: true }))
+  it('on remote bare repo', () => makeTest({ remote: true, bare: true }))
 }
 
 describe('aggregateContent()', () => {
@@ -62,23 +63,51 @@ describe('aggregateContent()', () => {
       .then(() => repoBuilder.close())
   }
 
-  beforeEach(async () => {
+  // NOTE remove can fail multiple times on Windows
+  const clean = (fin) => {
+    process.chdir(CWD)
+    const timeout = 5000
+    let retry
+    let start
+    retry = true
+    start = Date.now()
+    while (retry) {
+      try {
+        fs.removeSync(CONTENT_REPOS_DIR)
+        retry = false
+      } catch (e) {
+        if (Date.now() - start > timeout) throw e
+      }
+    }
+    retry = true
+    start = Date.now()
+    while (retry) {
+      try {
+        // NOTE work dir stores the cache
+        fs.removeSync(WORK_DIR)
+        retry = false
+      } catch (e) {
+        if (Date.now() - start > timeout) throw e
+      }
+    }
+    if (!fin) {
+      fs.ensureDirSync(WORK_DIR)
+      process.chdir(WORK_DIR)
+    }
+  }
+
+  beforeEach(() => {
     playbookSpec = {
       content: {
         sources: [],
         branches: ['v*', 'master'],
       },
     }
-    fs.removeSync(CONTENT_REPOS_DIR)
-    // NOTE work dir stores the cache
-    fs.emptyDirSync(WORK_DIR)
-    process.chdir(WORK_DIR)
+    clean()
   })
 
   after(() => {
-    fs.removeSync(CONTENT_REPOS_DIR)
-    fs.removeSync(WORK_DIR)
-    process.chdir(CWD)
+    clean(true)
   })
 
   describe('read component descriptor', () => {
@@ -362,14 +391,16 @@ describe('aggregateContent()', () => {
         await initRepoWithFiles(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         await aggregateContent(playbookSpec)
-        const contentCacheAbsDir = path.join(WORK_DIR, CONTENT_CACHE_PATH)
+        const contentCacheAbsDir = ospath.join(WORK_DIR, CONTENT_CACHE_PATH)
         if (repoBuilder.remote) {
           const repoDir = repoBuilder.url
+            .toLowerCase()
             .replace(/^file:\/+/, '')
+            .replace(/^([a-z]):(?=\/)/, '$1')
             .replace(/\/?\.git$/, '')
             .replace(/\//g, '%')
           expect(contentCacheAbsDir).to.be.a.directory()
-          expect(path.join(contentCacheAbsDir, repoDir))
+          expect(ospath.join(contentCacheAbsDir, repoDir))
             .to.be.a.directory()
             .and.include.files(['HEAD'])
         } else {
@@ -397,11 +428,11 @@ describe('aggregateContent()', () => {
         ]
         const files = componentVersion.files
         expect(files).to.have.lengthOf(expectedPaths.length)
-        expectedPaths.forEach((expectedPath, i) => {
-          expect(files[i].path).to.equal(expectedPath)
-          expect(files[i].relative).to.equal(expectedPath)
-          expect(files[i].stat.isFile()).to.be.true()
-        })
+        const paths = files.map((file) => file.path)
+        const relatives = files.map((file) => file.relative)
+        expect(paths).to.have.members(expectedPaths)
+        expect(relatives).to.have.members(expectedPaths)
+        files.forEach((file) => expect(file.stat.isFile()).to.be.true())
       })
     })
 
@@ -414,16 +445,15 @@ describe('aggregateContent()', () => {
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
         const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
         expect(pageOne.contents.toString()).to.equal(
-          [
-            '= Page One',
-            'ifndef::env-site,env-github[]',
-            'include::_attributes.adoc[]',
-            'endif::[]',
-            ':keywords: foo, bar',
-            '',
-            'Hey World!',
-            '',
-          ].join('\n')
+          heredoc`
+          = Page One
+          ifndef::env-site,env-github[]
+          include::_attributes.adoc[]
+          endif::[]
+          :keywords: foo, bar
+
+          Hey World!
+          ` + '\n'
         )
       })
     })
@@ -486,10 +516,10 @@ describe('aggregateContent()', () => {
         expect(componentVersion).to.include(componentDesc)
         const files = componentVersion.files
         expect(files).to.have.lengthOf(fixturePaths.length)
-        fixturePaths.forEach((expectedPath, i) => {
-          expect(files[i].path).to.equal(expectedPath)
-          expect(files[i].relative).to.equal(expectedPath)
-        })
+        const paths = files.map((file) => file.path)
+        const relatives = files.map((file) => file.relative)
+        expect(paths).to.have.members(fixturePaths)
+        expect(relatives).to.have.members(fixturePaths)
       })
     })
 
@@ -526,7 +556,7 @@ describe('aggregateContent()', () => {
           },
         }
         if (!(repoBuilder.remote || repoBuilder.bare)) {
-          expectedFileSrc.abspath = path.join(repoBuilder.url, expectedFileSrc.path)
+          expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, expectedFileSrc.path)
         }
         expect(pageOne).to.include(expectedFile)
         expect(pageOne.src).to.eql(expectedFileSrc)
@@ -641,10 +671,42 @@ describe('aggregateContent()', () => {
         ]
         const files = aggregate[0].files
         expect(files).to.have.lengthOf(expectedPaths.length)
-        expectedPaths.forEach((expectedPath, i) => {
-          expect(files[i].path).to.equal(expectedPath)
-          expect(files[i].relative).to.equal(expectedPath)
-        })
+        const paths = files.map((file) => file.path)
+        const relatives = files.map((file) => file.relative)
+        expect(paths).to.have.members(expectedPaths)
+        expect(relatives).to.have.members(expectedPaths)
+      })
+
+      it('should populate file with correct contents from worktree of clone', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+        await initRepoWithFilesAndWorktree(repoBuilder)
+        const clonePath = ospath.join(CONTENT_REPOS_DIR, 'clone')
+        await git.Clone.clone(repoBuilder.url, clonePath)
+        const wipPageContents = heredoc`
+          = WIP
+
+          This is going to be something special.
+        `
+        await fs.writeFile(ospath.join(clonePath, 'modules/ROOT/pages/wip-page.adoc'), wipPageContents)
+        playbookSpec.content.sources.push({ url: clonePath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const files = aggregate[0].files
+        const pageOne = files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+        expect(pageOne.contents.toString()).to.equal(
+          heredoc`
+          = Page One
+          ifndef::env-site,env-github[]
+          include::_attributes.adoc[]
+          endif::[]
+          :keywords: foo, bar
+
+          Hey World!
+          ` + '\n'
+        )
+        const wipPage = files.find((file) => file.path === 'modules/ROOT/pages/wip-page.adoc')
+        expect(wipPage.contents.toString()).to.equal(wipPageContents)
       })
     })
 
@@ -663,10 +725,10 @@ describe('aggregateContent()', () => {
         ]
         const files = componentVersion.files
         expect(files).to.have.lengthOf(expectedPaths.length)
-        expectedPaths.forEach((expectedPath, i) => {
-          expect(files[i].path).to.equal(expectedPath)
-          expect(files[i].relative).to.equal(expectedPath)
-        })
+        const paths = files.map((file) => file.path)
+        const relatives = files.map((file) => file.relative)
+        expect(paths).to.have.members(expectedPaths)
+        expect(relatives).to.have.members(expectedPaths)
       }
 
       it('on local bare repo', async () => {

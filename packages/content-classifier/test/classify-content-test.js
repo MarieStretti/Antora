@@ -4,7 +4,7 @@
 const { expect } = require('../../../test/test-utils')
 
 const classifyContent = require('@antora/content-classifier')
-const path = require('path')
+const { posix: path } = require('path')
 const mimeTypes = require('@antora/content-aggregator/lib/mime-types-with-asciidoc')
 const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
 

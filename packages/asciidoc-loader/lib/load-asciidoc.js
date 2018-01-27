@@ -10,7 +10,7 @@ const asciidoctor = require('asciidoctor.js')()
 const convertPageRef = require('./xref/convert-page-ref')
 const createConverter = require('./create-converter')
 const createExtensionRegistry = require('./create-extension-registry')
-const path = require('path')
+const { posix: path } = require('path')
 const resolveIncludeFile = require('./include/resolve-include-file')
 
 const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')

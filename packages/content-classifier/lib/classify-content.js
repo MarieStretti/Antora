@@ -1,7 +1,7 @@
 'use strict'
 
 const ContentCatalog = require('./content-catalog')
-const path = require('path')
+const { posix: path } = require('path')
 
 /**
  * Organizes the coarse aggregate of virtual files into a {ContentCatalog}.

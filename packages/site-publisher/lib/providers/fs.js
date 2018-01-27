@@ -6,6 +6,7 @@ const { dest: vfsDest } = require('vinyl-fs')
 
 const { DEFAULT_DEST_FS } = require('../constants.js')
 
+// FIXME relative path should be resolved relative to dir of playbook file
 async function publishToFs (config, files) {
   const destDir = config.path || DEFAULT_DEST_FS
   return config.clean

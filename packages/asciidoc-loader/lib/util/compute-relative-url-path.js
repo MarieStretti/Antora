@@ -1,6 +1,6 @@
 'use strict'
 
-const path = require('path')
+const { posix: path } = require('path')
 
 /**
  * Computes the shortest relative path between two URLs.
