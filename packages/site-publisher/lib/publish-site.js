@@ -67,7 +67,9 @@ async function publishSite (playbook, catalogs) {
     return accum
   }, [])
 
-  return Promise.all(publishers.map((publish) => publish(new ReadableOutputFileArray(files), playbook)))
+  return Promise.all(publishers.map((publish) => publish(new ReadableOutputFileArray(files), playbook))).then(
+    () => undefined
+  )
 }
 
 function getDestinations (output) {
