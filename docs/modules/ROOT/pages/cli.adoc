@@ -1,4 +1,4 @@
-= Command-line Interface
+= Command Line Interface
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -7,12 +7,12 @@ endif::[]
 :idseparator: -
 :table-caption!:
 
-Antora provides a command-line interface (CLI) so you can interact with it through your terminal.
+Antora provides a command line interface (CLI) so you can interact with it through your terminal.
 When installed, the CLI adds the `antora` command to your PATH.
 
 == Terminal conventions
 
-We use some typical conventions when showing terminal examples.
+If you're new to using a terminal, these are the conventions we use when showing terminal examples.
 
 Prompt (`$`)::
 The terminal's command prompt is indicated by a dollar sign ('$').
@@ -23,23 +23,21 @@ A directory name may be shown before the command prompt in some examples.
 If displayed, the following command should be executed from that directory.
 
 Command Output::
-If Antora returns information after a command is executed, that output is displayed in the terminal underneath the command.
+If Antora returns information after a command is executed, the output is displayed in the terminal underneath the command.
 The command prompt (`$`) will not be displayed on output lines.
 
-== Command Structure
+== Command structure
 
-The `antora` command accepts user inputs in the form of command-line arguments and environment variables.
+The `antora` command accepts user inputs in the form of arguments and environment variables.
 
  $ antora <command> [options] <arguments>
 
-. All functions start with a call to Antora (`antora`).
+. All functions start with a base call to Antora (`antora`).
 . The command tells Antora what operation to perform.
-. Additional options, also called flags or switches, can be specified after a command.
-. Arguments, such as the name of the playbook filename and environment variables, are specified last.
+. Additional options can be specified after a command.
+. Arguments, such as the name of the playbook and environment variables, are specified last.
 
-// Shows usage documentation, which should list the options (flags and switches), (sub)commands, arguments, and environment variables that it accepts as input.
-
-== Commands and Options
+== Commands and options
 
 .CLI Commands
 [cols="1,2" width=65%]
@@ -47,11 +45,12 @@ The `antora` command accepts user inputs in the form of command-line arguments a
 |Command |Purpose
 
 |antora
-|The base command.
+|The required base command.
 
 |generate [options] <playbook>
 |Generate the documentation site specified by the <playbook>.
-This command is implicitly executed if no command is specified.
+This command is implicitly executed if it isn't specified.
+<<cli-run-ex,See examples>>.
 |===
 
 .CLI Options
@@ -74,6 +73,7 @@ This command is implicitly executed if no command is specified.
 
 This option is implicit when a playbook file is provided.
 The playbook file is either explicitly provided (e.g., `antora my-docs.yml`) or implicitly provided when a playbook named [.path]_site.yml_ is located in the site directory.
+<<cli-run-ex,See examples>>.
 |String
 |[.path]_site.yml_
 
@@ -123,12 +123,41 @@ This option overrides the site url value specified in the playbook.
 |false
 |===
 
-== Get Help with the CLI
+== Get help with the CLI
 
 When you're using the Antora CLI and need help, type `-h` or `--help` after the command.
 
-.Display the usage help for the antora command
+.Display help for the antora command
  $ antora --help
 
-.Display the usage help for the generate command
+.Display help for the generate command
  $ antora generate -h
+
+[#cli-run-ex]
+== Run the generate command
+
+You can run the generate command implicitly or explicitly.
+
+.Example 1: Run the generate command (implicit)
+ $ antora site.yml
+
+In Example 1, Antora generates a documentation site using the playbook [.path]_site.yml_.
+
+.Example 2: Run the generate command (explicit)
+ $ antora generate test-site
+
+In Example 2, Antora generates a documentation site using the playbook [.path]_test-site_.
+When the playbook argument doesn't have a file extension, Antora will look for a YAML, JSON or CSON file matching the playbook name.
+
+.Example 3: Run the generate command with --to-dir option (implicit)
+ $ antora --to-dir prod site.yml
+
+In Example 3, Antora generates a documentation site using the playbook [.path]_site.yml_.
+A directory named [.path]_/prod_ will be created and the site files written into it.
+
+.Example 4: Run the generate command with --to-dir and --title options (explicit)
+ $ antora generate --to-dir site --title "My Awesome Docs" beta-site.json
+
+In Example 4, Antora generates a documentation site using the playbook [.path]_beta-site.json_.
+The site title will be _My Awesome Docs_.
+A directory named [.path]_/site_ will be created and the site files written into it.
