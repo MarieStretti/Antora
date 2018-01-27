@@ -42,6 +42,7 @@ The `antora` command accepts user inputs in the form of command-line arguments a
 == Commands and Options
 
 .CLI Commands
+[cols="1,2" width=65%]
 |===
 |Command |Purpose
 
@@ -54,42 +55,70 @@ This command is implicitly executed if no command is specified.
 |===
 
 .CLI Options
+[cols="2,3,1,1"]
 |===
-|Option |Purpose
+|Option |Purpose |Format |Default
 
 |--clean
 |Remove the previous output directory before generating the site.
+|Boolean
+|false
 
 |-h, --help, help
 |Output the command usage information.
+|Boolean
+|false
+
+|--playbook <playbook>
+|The playbook file Antora uses to generate the site.
+
+This option is implicit when a playbook file is provided.
+The playbook file is either explicitly provided (e.g., `antora my-docs.yml`) or implicitly provided when a playbook named [.path]_site.yml_ is located in the site directory.
+|String
+|[.path]_site.yml_
 
 |--quiet
 |Do not write any messages to stdout.
+|Boolean
+|false
 
 |--silent
 |Supress all messages.
+|Boolean
+|false
 
 |--stacktrace
 |Print the stacktrace to the console if the application fails.
+|Boolean
+|false
 
 |--title <title>
 |Specify the title of the site.
 This option overrides the xref:playbook:configure-playbook.adoc#site-title-key[site title value] specified in the playbook.
+|String
+|undefined
 
 |--to-dir <dir>
 |The directory where the site should be generated.
-The default output directory is [.path]_build/site_.
+|String
+|[.path]_build/site_
 
 |--ui-bundle <bundle>
 |The UI bundle URL.
 The URL can be a path on the local filesystem.
 This option overrides the xref:playbook:configure-playbook.adoc#ui-bundle-key[ui bundle value] specified in the playbook.
+|String
+|null
 
 |--url <url>
 |The base URL of the published site.
 The URL should not include a trailing slash.
 This option overrides the site url value specified in the playbook.
+|String
+|undefined
 
 |-v, --version
 |Output the Antora version information.
+|Boolean
+|false
 |===
