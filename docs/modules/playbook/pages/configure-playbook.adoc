@@ -58,6 +58,7 @@ Let's explore the purpose and usage of each these keys and values.
 The site key is where the global site properties are defined, such as the title of the documentation site and the base URL of the published site.
 Antora applies these properties when generating and assembling the site.
 
+[#site-title-key]
 === title
 
 The title of the documentation site.
@@ -174,6 +175,7 @@ The ui key contains an array of UI bundle and page layout specifications.
 
 // default_layout: The default layout to apply to pages that do not specify a layout.
 
+[#ui-bundle-key]
 === bundle
 
 The URL of the UI bundle.

@@ -32,3 +32,4 @@
 ** xref:cross-reference/page-to-page-link.adoc[Link to a Page]
 *** xref:cross-reference/in-same-page-link.adoc[Link in the Same Page]
 // ** xref:cross-reference/aspect-page-link.adoc[Link to an Aspect Page]
+* xref:cli.adoc[CLI Commands & Options]
