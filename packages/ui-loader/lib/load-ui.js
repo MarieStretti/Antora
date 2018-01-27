@@ -3,6 +3,7 @@
 const buffer = require('gulp-buffer')
 const collect = require('stream-to-array')
 const crypto = require('crypto')
+const File = require('./file')
 const fs = require('fs-extra')
 const got = require('got')
 const map = require('through2').obj
@@ -87,8 +88,10 @@ function selectFilesStartingFrom (startPath) {
       if (file.isNull()) {
         next()
       } else {
-        if (posixify) file.history.push(posixify(file.history.pop()))
-        next(null, file)
+        next(
+          null,
+          new File({ path: posixify ? posixify(file.path) : file.path, contents: file.contents, stat: file.stat })
+        )
       }
     })
   } else {
@@ -98,10 +101,9 @@ function selectFilesStartingFrom (startPath) {
       if (file.isNull()) {
         next()
       } else {
-        const filepath = posixify ? posixify(file.history.pop()) : file.history.pop()
-        if (filepath.length > startPathOffset && filepath.startsWith(startPath)) {
-          file.history.push(filepath.substr(startPathOffset))
-          next(null, file)
+        const path_ = posixify ? posixify(file.path) : file.path
+        if (path_.length > startPathOffset && path_.startsWith(startPath)) {
+          next(null, new File({ path: path_.substr(startPathOffset), contents: file.contents, stat: file.stat }))
         } else {
           next()
         }
@@ -132,11 +134,6 @@ function loadConfig (files, outputDir) {
 }
 
 function classifyFile (file, config) {
-  Object.defineProperty(file, 'relative', {
-    get: function () {
-      return this.path
-    },
-  })
   if (config.staticFiles && isStaticFile(file, config.staticFiles)) {
     file.type = 'static'
     file.out = resolveOut(file, '')
