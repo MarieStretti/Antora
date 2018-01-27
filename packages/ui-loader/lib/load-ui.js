@@ -49,8 +49,8 @@ async function loadUi (playbook) {
     if (!fs.pathExistsSync(bundlePath)) {
       await got(bundle, { encoding: null }).then(({ body }) => fs.outputFile(bundlePath, body))
     }
-  } else {
-    bundlePath = ospath.resolve(bundle)
+  } else if (!fs.pathExistsSync(bundlePath = ospath.resolve(bundle))) {
+    throw new Error('UI bundle does not exist: ' + bundlePath)
   }
 
   const files = await collect(
