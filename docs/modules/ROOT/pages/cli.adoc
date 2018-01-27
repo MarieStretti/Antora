@@ -122,3 +122,13 @@ This option overrides the site url value specified in the playbook.
 |Boolean
 |false
 |===
+
+== Get Help with the CLI
+
+When you're using the Antora CLI and need help, type `-h` or `--help` after the command.
+
+.Display the usage help for the antora command
+ $ antora --help
+
+.Display the usage help for the generate command
+ $ antora generate -h
