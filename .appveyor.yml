@@ -1,0 +1,20 @@
+version: "{build}"
+branches:
+  except:
+  - releases
+skip_tags: true
+clone_depth: 2
+environment:
+  matrix:
+  - nodejs_version: 8
+cache:
+- "%LOCALAPPDATA%/Yarn"
+install:
+- ps: Install-Product node $env:nodejs_version
+- yarn --no-progress --pure-lockfile
+build: off
+test_script:
+- node_modules/.bin/gulp test
+on_success:
+- 7z a coverage.zip coverage
+- appveyor PushArtifact coverage.zip
