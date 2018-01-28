@@ -1,4 +1,4 @@
-= Configure a Playbook
+= Playbook Keys
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -8,21 +8,8 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] What an Antora playbook is and what it does for a documentation pipeline.
 * [x] The purpose of each playbook key.
 * [x] The values each playbook key accepts and how to construct them.
-
-== What is a playbook?
-
-An Antora playbook is a configuration file.
-It tells an Antora pipeline what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
-
-// With an Antora playbook, you can control what content is included in your site.
-// It's particularly useful for creating a partial site for local preview.
-
-A playbook is usually located at the root of a xref:set-up-existing-playbook-project.adoc[playbook project] and is written in YAML, a common configuration language for configuring automated tasks.
-Playbooks can also be composed in JSON and CSON format.
-// Antora automatically detects and uses this file if you don't specify an override.
 
 Here's an example of a playbook file named [.path]_site.yml_:
 
