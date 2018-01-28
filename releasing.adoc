@@ -41,7 +41,7 @@ This process is described in detail later.
 
 Releases are published from the CI pipeline by the release job.
 The release job is defined in the file [.path]_.gitlab-ci.yml_.
-The release job only runs on the releases branch.
+The release job only runs on the "`releases`" branch.
 It runs in a phase named "`deploy`" at the end of the CI pipeline.
 
 The release job delegates to https://lernajs.io[Lerna] to perform the release.
@@ -58,20 +58,20 @@ In order to perform a release, Lerna must be able to:
 Lerna needs to be able to publish packages using npm.
 The auth token for publishing to npmjs.com is stored in the RELEASE_NPM_TOKEN secret variable defined in the CI/CD configuration.
 Lerna uses this token to authenticate as the release manager (currently https://www.npmjs.com/~mojavelinux[mojavelinux]).
-This is done by writing the token to an [.path]_.npmrc_ file inside the folder for each package (e.g., [.path]_packages/cli/.npmrc_).
+This is done by writing the token to an [.path]_.npmrc_ file inside the folder of each package (e.g., [.path]_packages/cli/.npmrc_).
 
-After the package is published, commits (the tag and the corresponding commit to master) must be pushed from the CI job to the git repository.
+After the package is published, the tag and the corresponding commit to master must be pushed from the CI job to the git repository.
 A dedicated SSH key (with no passphrase) has been generated for this purpose using `ssh-keygen -t rsa -b 4096 -C antora-releases -f antora-releases`.
 The private SSH key is stored in the RELEASE_SSH_PRIV_KEY secret variable defined in the CI/CD configuration.
 The corresponding public SSH key is registered as a deploy key in the repository configuration.
 During the release job, an SSH agent session is started, initialized, and killed by [.path]_scripts/release.sh_.
 The private key is read from the RELEASE_SSH_PRIV_KEY environment variable and added to the SSH agent session.
-The git client is then configured to push changes over SSH.
+The git client is then configured to push the commits over SSH.
 
 The RELEASE_GIT_NAME and RELEASE_GIT_EMAIL secret variables, also defined in the CI/CD configuration, are used to set the git user (name and email) for the release commits.
-The values currently used are those for the release manager.
+The values used are those of the release manager.
 
-These secret variables are scoped to the releases environment.
+The secret variables described in this section are scoped to the releases environment.
 The release job associates itself with the releases environment, allowing it to receive the secret variables.
 
 === README Dance
@@ -130,8 +130,9 @@ Modifying the [.path]_releaserc_ file is the central mechanism for triggering a 
 === Release Trigger
 
 A branch named "`releases`" has been reserved for performing releases.
-Each release is triggered by pushing a commit to the releases branch, which in turn activates the release job in the CI pipeline.
-The release job only runs on the releases branch.
+A release is triggered by pushing a commit to the releases branch (typically by modifying the [.path]_releaserc_ file).
+The commit message should be something like "`cut release`".
+This commit activates the release job in the CI pipeline, which is configured to only run on the releases branch.
 
 NOTE: In the future, we may decide to add multiple release branches, one for each version line (e.g., 1.x, 2.x, master, etc.)
 
