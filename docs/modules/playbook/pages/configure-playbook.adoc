@@ -8,8 +8,12 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] The purpose of each playbook key.
-* [x] The values each playbook key accepts and how to construct them.
+* [x] How to structure an Antora playbook.
+* [x] The role of each playbook key.
+* [x] The values each playbook key accepts.
+
+== Playbook file structure
+// the general layout of a playbook file
 
 Here's an example of a playbook file named [.path]_site.yml_:
 
@@ -50,7 +54,7 @@ output: # <10>
 <14> Output provider key
 <15> Output path key
 
-Let's explore the purpose and usage of each these keys and values.
+Let's explore the purpose and usage of each key and its values.
 
 == site
 
@@ -81,7 +85,6 @@ The sources key contains the list of git repository locations, branch name patte
 At a minimum, you must specify the location of each content repository using the url key.
 The key accepts any URL that git supports.
 This includes:
-// URIs or local filesystem paths.
 // Filesystem paths can be relative to the location of the playbook or absolute.
 
 * filesystem paths relative to the current directory
@@ -94,75 +97,31 @@ Whether or not the trailing _.git_ is required depends on the capabilities of th
 * git URIs (e.g., pass:[git://gitlab.com/org/repo])
 
 // For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
-
 ==== branches
 
 The branches key accepts a list of branch name patterns.
-Branch names can be an exact name (e.g., `v1.0`) or a shell glob pattern such as `v3.*`.
-Branches can also be excluded when the pattern starts with the bang (`!`) character.
+The names can be specified in a comma-separated list or as single items on individual lines.
+The values can be the exact name or a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
 
-Branch names can be specified in a comma-separated list or as list items on individual lines.
+When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_.
+Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
 
-.Branch value list structures (excerpt)
-[source,yaml,subs=attributes+]
-----
-content:
-  sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
-    branches: master, v1.0.0, v1.5.0 # <1>
-  - url: https://gitlab.com/antora/demo/demo-component-b
-    branches:
-    - v4.* # <2>
-    - '!v4.7'
-    - v6.0.0-beta
-----
-<1> Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
-<2> Each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
+Learn more:
 
-When no branches are specified for a content repository URL, Antora will use the [.term]_default branch set_.
-The default branch set is every branch that begins with `v` or is named `master`.
-
-.Use default branch set (excerpt)
-[source,yaml,subs=attributes+]
-----
-content:
-  sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
-  - url: https://gitlab.com/antora/demo/demo-component-b
-----
-
-The result of the example above is the same as if you specified the branches explicitly, like in the example below.
-
-[source,yaml,subs=attributes+]
-----
-content:
-  sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
-    branches: master, v*
-  - url: https://gitlab.com/antora/demo/demo-component-b
-    branches: master, v*
-----
+* xref:source-keys.adoc#default-branch[Use the default branches set]
+* xref:source-keys.adoc#comma-branch[Separate branch names with commas]
+* xref:source-keys.adoc#marker-branch[Separate branch names with markers]
+* xref:source-keys.adoc#exact-branch[Specify branches by name]
+* xref:source-keys.adoc#glob-branch[Specify and exclude branches by glob patterns]
 
 ==== start_path
 
 Antora automatically looks for the component descriptor file at the root of a repository.
 When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using the `start_path` key.
 
-Let's look at an example where the component descriptor file, [.path]_antora.yml_, isn't stored at the repository root.
+Learn more:
 
-image::start-path-dir.svg[,260]
-
-In order for Antora to locate the documentation component in this repository, the start path needs to be specified as shown in the following example.
-
-.Set start_path (excerpt)
-[source,yaml,subs=attributes+]
-----
-content:
-  sources:
-  - url: https://github.com/org/repo
-    branches: master, v2.6
-    start_path: packages/docs
-----
+* xref:source-keys.adoc#add-start-path[Specify a start path for a content repository]
 
 == ui
 
@@ -255,19 +214,6 @@ In the example above, the archived site will be located at [.path]_launch/sites/
 
 When no path information is specified for the `archive` provider, the site will be saved to [.path]_site.zip_.
 
-== Modify site.yml
-
-If you only want to generate pages for a single component, you can trim the content key to a single entry.
-For example, here's how you'd configure the `sources` key so that Antora only generates the server component using the default branch set:
-
-.site.yml (excerpt)
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://github.com/my-docs/server-docs
-----
-
 == Create a custom playbook
 
 Instead of modifying the main playbook, you can create a custom playbook and pass it to Antora.
@@ -285,52 +231,6 @@ content:
   - url: https://github.com/my-docs/server-docs
   - url: https://gitlab.com/antora/demo/demo-component-b
     branches: v1.0
-----
-
-////
-Then pass your custom playbook to Antora using the `--playbook` flag and the custom playbook's name.
-
- $ node generate --playbook=custom-site
-
-TIP: You don't have to specify the file extension (i.e., `.yml`).
-It gets added automatically if missing.
-////
-
-== Specify source branches
-
-If you want to limit the branches Antora scans and uses, you can specify an array of branch patterns using the branches key.
-
-Each pattern is either an exact branch name or a shell glob pattern such as as `v3.*`.
-If the pattern starts with a `!` character, then it is negated (i.e., the matches are excluded).
-This is how you can deselect branches that were matched by a previous glob.
-
-For example, let's say you want to include all 3.x versions of the server component except for 3.2.
-You'd enter the following branches values into the playbook:
-
-.site.yml (excerpt)
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://github.com/my-docs/server-docs
-    branches:
-    - v3.*
-    - '!v3.2'
-----
-
-IMPORTANT: A negated value must be enclosed in single quotes, per YAML rules.
-
-Here's how you'd exclude all branches that end in `-beta`.
-
-.site.yml (excerpt)
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://github.com/my-docs/server-docs
-    branches:
-    - v*
-    - '!v*-beta'
 ----
 
 == antora.yml
