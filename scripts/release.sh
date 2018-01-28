@@ -41,9 +41,9 @@ for package in packages/*; do echo "//registry.npmjs.org/:_authToken=$RELEASE_NP
 
 # release!
 if case $RELEASE_VERSION in major|minor|patch|pre*) ;; *) false;; esac; then
-  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --yes
+  npm_config_access=public lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --yes
 else
-  lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
+  npm_config_access=public lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
 fi
 
 # nuke npm credentials
