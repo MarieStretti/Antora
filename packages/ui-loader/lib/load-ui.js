@@ -46,11 +46,15 @@ async function loadUi (playbook) {
   if (isUrl(bundleUri)) {
     // TODO add support for a forced update flag
     const cachePath = getCachePath(sha1(bundleUri) + '.zip')
-    resolveBundle = fs.pathExists(cachePath).then((exists) =>
-      exists
-        ? cachePath
-        : got(bundleUri, { encoding: null }).then(({ body }) => fs.outputFile(cachePath, body).then(() => cachePath))
-    )
+    resolveBundle = fs.pathExists(cachePath).then((exists) => {
+      if (exists) {
+        return cachePath
+      } else {
+        return got(bundleUri, { encoding: null }).then(({ body }) =>
+          fs.outputFile(cachePath, body).then(() => cachePath)
+        )
+      }
+    })
   } else {
     const localPath = ospath.resolve(bundleUri)
     resolveBundle = fs.pathExists(localPath).then((exists) => {
@@ -130,11 +134,13 @@ function bufferizeContents () {
   return map((file, _, next) => {
     // NOTE gulp-vinyl-zip automatically converts the contents of an empty file to a Buffer
     if (file.isStream()) {
-      file.contents.pipe(collectBuffer((err, data) => {
-        if (err) return next(err)
-        file.contents = data
-        next(null, file)
-      }))
+      file.contents.pipe(
+        collectBuffer((err, data) => {
+          if (err) return next(err)
+          file.contents = data
+          next(null, file)
+        })
+      )
     } else {
       next(null, file)
     }

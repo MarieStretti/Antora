@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const collect = require('stream-to-array')
 const File = require('./file')
 const fs = require('fs-extra')
 const git = require('nodegit')
@@ -298,10 +297,15 @@ async function entryToFile (entry) {
 }
 
 function readFilesFromWorktree (relativeDir) {
-  const base = ospath.resolve(relativeDir)
-  const opts = { base, cwd: base, removeBOM: false }
-  // NOTE collect wraps the stream in a Promise so it can be awaited
-  return collect(vfs.src(CONTENT_GLOB, opts).pipe(relativize()))
+  return new Promise((resolve, reject) => {
+    const base = ospath.resolve(relativeDir)
+    const opts = { base, cwd: base, removeBOM: false }
+    vfs
+      .src(CONTENT_GLOB, opts)
+      .on('error', reject)
+      .pipe(relativizeFiles())
+      .pipe(collectFiles(resolve))
+  })
 }
 
 /**
@@ -309,26 +313,30 @@ function readFilesFromWorktree (relativeDir) {
  *
  * Applies a mapping function to all files in the stream so they end up with a
  * posixified path relative to the file's base instead of the filesystem root.
- * This mapper also filters out any directories that got caught up in the glob.
+ * This mapper also filters out any directories (indicated by file.isNull())
+ * that got caught up in the glob.
  */
-function relativize () {
-  return map((file, encoding, next) => {
-    const { contents, stat } = file
-    // NOTE if contents is null, the file is either a directory or it couldn't be read
-    if (contents === null) {
+function relativizeFiles () {
+  return map((file, enc, next) => {
+    if (file.isNull()) {
       next()
     } else {
       next(
         null,
         new File({
           path: posixify ? posixify(file.relative) : file.relative,
-          contents,
-          stat,
+          contents: file.contents,
+          stat: file.stat,
           src: { abspath: file.path },
         })
       )
     }
   })
+}
+
+function collectFiles (done) {
+  const accum = []
+  return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
 }
 
 function assignFileProperties (file, url, branch, startPath = '/') {
@@ -340,11 +348,8 @@ function assignFileProperties (file, url, branch, startPath = '/') {
     stem: file.stem,
     extname,
     mediaType: file.mediaType,
-    origin: {
-      git: { url, branch, startPath },
-    },
+    origin: { git: { url, branch, startPath } },
   })
-
   return file
 }
 

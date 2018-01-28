@@ -17,8 +17,7 @@ function testAll (archive, testBlock) {
   }
 
   it('with relative bundle path', () =>
-    makeTest(ospath.relative(WORK_DIR, ospath.resolve(__dirname, 'fixtures', archive)))
-  )
+    makeTest(ospath.relative(WORK_DIR, ospath.resolve(__dirname, 'fixtures', archive))))
 
   it('with absolute bundle path', () => makeTest(ospath.resolve(__dirname, 'fixtures', archive)))
 
