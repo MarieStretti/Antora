@@ -1,0 +1,46 @@
+= Output Keys
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] How to configure the output directory key.
+* [x] How to configure the destinations provider key.
+* [x] How to configure the destinations path key.
+
+== Directory key
+
+The output dir key specifies the directory where the generated site will be published.
+Its default value is [.path]_build/site_.
+
+== Destinations provider key
+
+The destinations provider key specifies the protocol Antora should use to publish the site.
+
+Antora has two built-in provider protocols.
+
+.Built-in providers
+* Filesystem (`fs`)
+* Archive (`archive`)
+
+You can also set up custom providers for SSH, SFTP, etc.
+
+=== Default provider
+
+The default provider protocol is the filesystem (`fs`).
+When no provider is specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified in the `dir` key.
+
+=== Publish a site as a ZIP file
+
+.Archive provider
+[source,yaml,subs=attributes+]
+----
+output:
+ destinations:
+ - provider: archive
+----
+
+In the example above, the archived site will be located at [.path]_build/site.zip_.
