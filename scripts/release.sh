@@ -50,9 +50,9 @@ done
 
 # release!
 if case $RELEASE_VERSION in major|minor|patch|pre*) ;; *) false;; esac; then
-  echo lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --yes
+  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --yes
 else
-  echo lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
+  lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
 fi
 
 # nuke npm settings
