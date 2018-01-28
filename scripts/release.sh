@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Package (aka module) release script.
 # Refer to ../releasing.adoc for details about how this script works.
@@ -26,10 +26,13 @@ ssh-keygen -F gitlab.com >/dev/null 2>&1 || ssh-keyscan -H -t rsa gitlab.com >> 
 eval $(ssh-agent -s) >/dev/null
 echo -n "$RELEASE_SSH_PRIV_KEY" | ssh-add -
 
-# clone the branch from which we're releasing and switch to it
+# clone the branch from which we're releasing
 git branch -f $RELEASE_BRANCH origin/$RELEASE_BRANCH
 git clone -b $RELEASE_BRANCH --no-local . build/$CI_PROJECT_NAME
+
+# switch to clone
 cd build/$CI_PROJECT_NAME
+git status -s -b
 
 # configure git to push changes
 git remote set-url origin "git@gitlab.com:$CI_PROJECT_PATH.git"
@@ -55,13 +58,19 @@ else
   lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
 fi
 
+git status -s -b
+
 # nuke npm settings
-for package in packages/*; do
-  unlink $package/.npmrc
-  unlink $package/scripts/prepublish.js
-  unlink $package/scripts/postpublish.js
-  rmdir $package/scripts
-done
+#for package in packages/*; do
+#  unlink $package/.npmrc
+#  unlink $package/scripts/prepublish.js
+#  unlink $package/scripts/postpublish.js
+#  rmdir $package/scripts
+#done
+
+# nuke clone
+cd -
+rm -rf build
 
 # kill the ssh-agent
 eval $(ssh-agent -k) >/dev/null
