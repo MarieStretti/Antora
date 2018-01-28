@@ -128,7 +128,7 @@ function selectFilesStartingFrom (startPath) {
 
 function bufferizeContents () {
   return map((file, _, next) => {
-    // NOTE gulp-vinyl-zip automatically converts empty files to a Buffer
+    // NOTE gulp-vinyl-zip automatically converts the contents of an empty file to a Buffer
     if (file.isStream()) {
       file.contents.pipe(collectBuffer((err, data) => {
         if (err) return next(err)

@@ -25,11 +25,11 @@
     "nodegit": "^0.20.3",
     "npm-run": "^4.1.2",
     "nyc": "^11.4.1",
-    "plugin-error": "^1.0.0",
+    "plugin-error": "^1.0.1",
     "prettier-eslint-cli": "^4.4.2",
     "stream-to-array": "^2.3.0",
     "through2": "^2.0.3",
-    "vinyl-fs": "^3.0.1"
+    "vinyl-fs": "^3.0.2"
   },
   "nyc": {
     "cache": true,
