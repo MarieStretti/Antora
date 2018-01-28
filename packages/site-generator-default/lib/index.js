@@ -10,4 +10,4 @@
  *
  * @namespace site-generator-default
  */
-module.exports = require('./site-generator')
+module.exports = require('./generate-site')
