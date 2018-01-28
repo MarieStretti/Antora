@@ -11,7 +11,7 @@ This document describes how releases of the packages (aka modules) in this repos
 Here's what happens when a release is made:
 
 * The version property in [.path]_lerna.json_ and each [.path]_package.json_ file under [.path]_packages/_ is set to the new version.
-* The changes are committed to the git branch from which the release is made.
+* The changes are committed to the git branch from which the release is made (only changed files are committed).
 * An unsigned, annotated tag with the name of the version prefixed with "`v`" (i.e., v1.0.0) is added to the git repository.
 * Each package under [.path]_packages/_ is packed and published to the @antora scope of the https://npmjs.com[npm registry].
  ** Publishing to the npm registry also makes the packages available in the https://yarnpkg.com[Yarn registry].
@@ -74,8 +74,8 @@ The values used are those of the release manager.
 The secret variables described in this section are scoped to the releases environment.
 The release job associates itself with the releases environment, allowing it to receive the secret variables.
 
-Since we're publishing packages to a scope (i.e., @antora), we have to set the `npm_config_access=public` environment variable when calling Lerna in order to include new packages in a release.
-Scoped packages are not public by default.
+Since we're publishing packages to a scope (i.e., @antora), we have to set `access=public` in [.path]_.npmrc_ in order to successfully publish new packages.
+Otherwie, scoped packages are not public by default.
 
 === README Dance
 
