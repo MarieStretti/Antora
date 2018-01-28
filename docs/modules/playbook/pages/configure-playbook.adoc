@@ -40,16 +40,26 @@ content: # <3>
     start_path: docs # <7>
 ui: # <8>
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <9>
+output: # <10>
+ dir: _site # <11>
+ destinations: # <12>
+ - provider: archive # <13>
+   path: site.zip # <14>
 ----
 <1> Site key
-<2> Site title key and value
+<2> <<site-title-key,Site title key and value>>
 <3> Content key
 <4> Sources key and value(s)
 <5> Content repository URL key and value
 <6> Content repository branches key and value(s)
 <7> Start path key and value
 <8> UI key
-<9> UI bundle repository key and value
+<9> <<ui-bundle-key,UI bundle repository key and value>>
+<10> Published output key
+<11> Output directory key and value
+<12> Output destinations key and value(s)
+<13> Output provider key and value
+<14> Output path key and value
 
 Let's explore the purpose and usage of each these keys and values.
 
@@ -186,6 +196,69 @@ Filesystem paths can be relative to the location of the playbook or absolute.
 // urls html_extension_style: Controls how the URL extension for HTML pages is handled.
 
 // redirects: Generate nginx config file containing URL redirects for page aliases. Boolean
+
+== output
+
+The output key contains an array of destination path and protocol provider specifications.
+These keys tell Antora what protocol provider to use when publishing the site, such as SSH, and where to publish the site.
+
+.Output keys (excerpt)
+[source,yaml,subs=attributes+]
+----
+output:
+ dir: launch/sites
+ destinations:
+ - provider: archive
+   path: blue.zip
+ - provider: fs
+   path: red
+----
+
+////
+=== clean
+
+Remove destination path before publishing (fs only).
+format: Boolean
+default: false
+arg: clean
+////
+
+=== dir
+
+The output dir key specifies the directory where the generated site will be published.
+Its default value is [.path]_build/site_.
+
+=== destinations
+
+The destinations key contains a list of provider protocols and paths that determine how and where the site will be published.
+You can publish a site to multiple destinations.
+
+==== provider
+
+The provider key specifies the protocol Antora should use for writing the generated site.
+The default, implicit provider is the filesystem (`fs`).
+You can use the `archive` provider to publish the site as a ZIP archive.
+
+==== path
+
+The path key allows you to add file paths per provider.
+For example, if using the `archive` provider, you can specify the name of the ZIP file with the path key.
+
+.Provider and path keys (excerpt)
+[source,yaml,subs=attributes+]
+----
+output:
+ dir: launch/sites
+ destinations:
+ - provider: archive
+   path: blue.zip
+ - provider: fs
+   path: red
+----
+
+In the example above, the archived site will be located at [.path]_launch/sites/blue.zip_ and the non-archived site will be located at [.path]_launch/sites/red_.
+
+When no path information is specified for the `archive` provider, the site will be saved to [.path]_site.zip_.
 
 == Modify site.yml
 
