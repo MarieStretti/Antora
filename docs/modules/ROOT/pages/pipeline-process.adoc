@@ -18,7 +18,7 @@ For example, the UI is loaded as early as possible, then waits until its templat
 Read playbook::
 When you're ready to generate a site, you give Antora a playbook and tell it to run.
 The pipeline loads and reads the playbook.
-A xref:playbook:configure-playbook.adoc[playbook is a configuration] file, written in YAML, JSON, or CSON that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
+A xref:playbook:playbook.adoc[playbook is a configuration] file, written in YAML, JSON, or CSON that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
 Locate content repositories and branches::
 Using the content source URLs and branch names listed in the playbook, Antora searches for and locates the specified repositories and branches.
@@ -57,7 +57,7 @@ Convert AsciiDoc files to embeddable HTML::
 The AsciiDoc files in the page family of the content catalog are converted to embeddable HTML with Asciidoctor.js.
 
 Convert navigation files::
-Antora retrieves xref:navigation/linked.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
+Antora retrieves xref:navigation:linked.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
 Locate and fetch UI bundle::
 Antora finds the UI bundle using the URL listed in the playbook and fetches it.

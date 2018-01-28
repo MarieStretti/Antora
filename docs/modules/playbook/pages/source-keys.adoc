@@ -44,6 +44,7 @@ content:
   - url: https://github.com/my-docs/server-docs
 ----
 
+[#branches]
 == Branches key
 
 The branches key accepts a list of branch name patterns.

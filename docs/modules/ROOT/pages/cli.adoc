@@ -94,7 +94,7 @@ The playbook file is either explicitly provided (e.g., `antora my-docs.yml`) or 
 
 |--title <title>
 |Specify the title of the site.
-This option overrides the xref:playbook:configure-playbook.adoc#site-title-key[site title value] specified in the playbook.
+This option overrides the xref:playbook:playbook-keys.adoc#site-title-key[site title value] specified in the playbook.
 |String
 |undefined
 
@@ -106,7 +106,7 @@ This option overrides the xref:playbook:configure-playbook.adoc#site-title-key[s
 |--ui-bundle <bundle>
 |The UI bundle URL.
 The URL can be a path on the local filesystem.
-This option overrides the xref:playbook:configure-playbook.adoc#ui-bundle-key[ui bundle value] specified in the playbook.
+This option overrides the xref:playbook:playbook-keys.adoc#ui-bundle-key[ui bundle value] specified in the playbook.
 |String
 |null
 
