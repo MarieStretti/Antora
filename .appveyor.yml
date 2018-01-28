@@ -1,4 +1,4 @@
-version: "{build}"
+version: '{build}'
 branches:
   except:
   - releases
@@ -7,11 +7,11 @@ clone_depth: 2
 environment:
   matrix:
   - nodejs_version: 8
-cache:
-- "%LOCALAPPDATA%/Yarn"
 install:
 - ps: Install-Product node $env:nodejs_version
 - yarn --no-progress --pure-lockfile
+cache:
+- '%LOCALAPPDATA%/Yarn'
 build: off
 test_script:
 - node_modules/.bin/gulp test
