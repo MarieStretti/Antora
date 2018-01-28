@@ -10,7 +10,7 @@ This project utilizes semantic versioning.
 == Added
 
 * *site-publisher:* First release of component
-* *content-aggregator:* Recognize HEAD and . as placeholder for the current branch in playbook
+* *content-aggregator:* Recognize HEAD and . in playbook as placeholder for current branch
 * Update installations instructions in README to cover Windows
 * Add AppVeyor CI build for testing on Windows
 * Configure CI to automate releases
