@@ -129,10 +129,10 @@ Issues move across the board from left (Backlog) to right (Done).
 
 To contribute to the project:
 
-. *Fork the project*.
+. *Fork the project.*
 We do not accept merge requests that do not come from a fork and dedicated branch.
 
-. *Create a dedicated branch in your fork for your changes*.
+. *Create a dedicated branch in your fork for your changes.*
 Name the branch after the issue number it fixes along with a short textual hint.
 Here's an example of a branch name for issue #2, which was to initiate the Gulp build:
 +
@@ -140,7 +140,12 @@ Here's an example of a branch name for issue #2, which was to initiate the Gulp 
 
 . In the issue tracker, mark the issue as *[Status] In Progress* and make sure you're assigned to it so that the rest of the team knows you're working on it.
 
-. *Write concise but explicit commit messages*.
+. *Make your changes.*
+ .. Use as many commits as you think are necessary, but each commit should consist of a logical change.
+ .. Write tests to verify each change.
+ .. If necessary, add yourself to the list of contributors in the package.json file for the package you're modifying.
+
+. *Write concise but explicit commit messages.*
 Write the commit message as though the person reading it cannot see the code change.
  .. Write the message in lowercase and imperative tense.
  .. Put the subject on the first line of the commit message (required).
@@ -169,10 +174,10 @@ This is why only the MR subject mentions the issue being resolved and not the su
 
 . In the issue tracker, mark the issue as *[Status] Merge Requested*.
 
-. *Your MR must pass the CI pipeline*.
+. *Your MR must pass the CI pipeline.*
 If it fails, update your MR once you've corrected any problems.
 
-. *A project member will be assigned to your MR and review it*.
+. *A project member will be assigned to your MR and review it.*
 .. During review, a project member may request changes to your MR, either in a comment on the MR or the associated issue.
 .. Checkout the <<mr-approval,MR approval guidelines>> if you want to see how your MR will be evaluated.
 
@@ -664,7 +669,7 @@ When the MR meets the project and issue criteria, it can be merged into master.
 * Modify the commit message(s) if necessary.
 * Check _remove source branch_.
 * Don't squash the commits, except in especially messy-weird situations.
-** The maintainer only guarantees to preserve the  original work in the MR.
+** The maintainer only guarantees to preserve the original work in the MR.
 * Modify the default merge commit message; it should only contain two lines.
 ** The first line should specify the merge number.
 ** The second line should be the MR subject submitted by the contributor.
