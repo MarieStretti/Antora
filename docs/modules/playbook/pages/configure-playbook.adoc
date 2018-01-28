@@ -41,25 +41,27 @@ content: # <3>
 ui: # <8>
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <9>
 output: # <10>
- dir: _site # <11>
- destinations: # <12>
- - provider: archive # <13>
-   path: site.zip # <14>
+ clean: false # <11>
+ dir: _site # <12>
+ destinations: # <13>
+ - provider: archive # <14>
+   path: site.zip # <15>
 ----
 <1> Site key
 <2> <<site-title-key,Site title key and value>>
 <3> Content key
-<4> Sources key and value(s)
-<5> Content repository URL key and value
-<6> Content repository branches key and value(s)
-<7> Start path key and value
+<4> Sources key
+<5> Content repository URL key
+<6> Content repository branches key
+<7> Start path key
 <8> UI key
-<9> <<ui-bundle-key,UI bundle repository key and value>>
+<9> <<ui-bundle-key,UI bundle repository key>>
 <10> Published output key
-<11> Output directory key and value
-<12> Output destinations key and value(s)
-<13> Output provider key and value
-<14> Output path key and value
+<11> Clean output directory key
+<12> Output directory key
+<13> Output destinations key
+<14> Output provider key
+<15> Output path key
 
 Let's explore the purpose and usage of each these keys and values.
 
@@ -206,6 +208,7 @@ These keys tell Antora what protocol provider to use when publishing the site, s
 [source,yaml,subs=attributes+]
 ----
 output:
+ clean: true
  dir: launch/sites
  destinations:
  - provider: archive
@@ -214,14 +217,15 @@ output:
    path: red
 ----
 
-////
 === clean
 
-Remove destination path before publishing (fs only).
-format: Boolean
-default: false
-arg: clean
-////
+The clean key is a boolean function.
+By default, it is set to false.
+When turned "`on`", i.e., set to `true`, it will remove the destination path and all the files in that path, before generating the site.
+This key only applies to filesystem providers.
+
+WARNING: Use this key with great care.
+For example, if you set `dir` to your computer's home directory and `clean` to true, you will delete ALL of the folders and files in your home directory.
 
 === dir
 
