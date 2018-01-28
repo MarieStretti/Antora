@@ -36,18 +36,31 @@ git remote set-url origin "git@gitlab.com:$CI_PROJECT_PATH.git"
 git config user.email "$RELEASE_GIT_EMAIL"
 git config user.name "$RELEASE_GIT_NAME"
 
-# configure npm credentials to publish packages
-for package in packages/*; do echo "//registry.npmjs.org/:_authToken=$RELEASE_NPM_TOKEN" > $package/.npmrc; done
+# configure npm settings to publish packages
+for package in packages/*; do
+  echo "access=public" > $package.npmrc
+  echo "//registry.npmjs.org/:_authToken=$RELEASE_NPM_TOKEN" >> $package/.npmrc
+  mkdir -p $package/scripts
+  for script in prepublish.js postpublish.js; do
+    cat << EOF > $package/scripts/$script
+require('child_process').execSync('node ../../scripts/$script', { cwd: require('path').resolve(__dirname, '..') })
+EOF
+  done
+done
 
 # release!
 if case $RELEASE_VERSION in major|minor|patch|pre*) ;; *) false;; esac; then
-  npm_config_access=public lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --yes
+  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --yes
 else
-  npm_config_access=public lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
+  lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
 fi
 
-# nuke npm credentials
-for package in packages/*; do unlink $package/.npmrc; done
+# nuke npm settings
+for package in packages/*; do
+  unlink $package/scripts/prepublish.js
+  unlink $package/scripts/postpublish.js
+  rmdir $package/scripts
+done
 
 # kill the ssh-agent
 eval $(ssh-agent -k) >/dev/null

@@ -29,10 +29,6 @@
   "engines": {
     "node": ">= 8.0.0"
   },
-  "scripts": {
-    "prepublishOnly": "node ../../scripts/prepublish",
-    "postpublish": "node ../../scripts/postpublish"
-  },
   "files": [
     "lib/"
   ],

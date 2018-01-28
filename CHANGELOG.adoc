@@ -5,9 +5,15 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-alpha.4 (2018-01-28)
+
+=== Changed
+
+* Fixed release process to publish README in correct format
+
 == 1.0.0-alpha.3 (2018-01-28)
 
-== Added
+=== Added
 
 * *site-publisher:* First release of component
 * *content-aggregator:* Recognize HEAD and . in playbook as placeholder for current branch
@@ -17,13 +23,13 @@ This project utilizes semantic versioning.
 * Document in README how to use serve package to preview site through local web server
 * Document the base build tools required on Linux and macOS in README
 
-== Changed
+=== Changed
 
 * *content-aggregator:* Only select git references which are branches
 * *ui-loader:* Switch from download to got
 * Replace chai-as-promised with async/await in test suite
 
-== Fixed
+=== Fixed
 
 * Make code portable to Windows
 * Compute correct URL path for self-referencing index page
