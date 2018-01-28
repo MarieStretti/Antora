@@ -200,7 +200,7 @@ Filesystem paths can be relative to the location of the playbook or absolute.
 == output
 
 The output key contains an array of destination path and protocol provider specifications.
-These keys tell Antora what protocol provider to use when publishing the site, such as SSH, and where to publish the site.
+These keys tell Antora what protocol provider to use when publishing the site, such as SSH, ZIP, Amazon S3, etc., and where to publish the site.
 
 .Output keys (excerpt)
 [source,yaml,subs=attributes+]
@@ -233,11 +233,15 @@ Its default value is [.path]_build/site_.
 The destinations key contains a list of provider protocols and paths that determine how and where the site will be published.
 You can publish a site to multiple destinations.
 
+The default destination is the filesystem (`fs`).
+When no destinations are specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified in the `dir` key.
+
 ==== provider
 
 The provider key specifies the protocol Antora should use for writing the generated site.
-The default, implicit provider is the filesystem (`fs`).
-You can use the `archive` provider to publish the site as a ZIP archive.
+The default, built-in provider is the filesystem (`fs`).
+Antora also has one other built-in provider, `archive`.
+The archive provider publishes the site as a ZIP archive.
 
 ==== path
 
