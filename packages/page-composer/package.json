@@ -3,10 +3,11 @@
   "version": "1.0.0-alpha.1",
   "description": "Wraps the embeddable HTML contents of each page file from the content catalog in a page layout to yield standalone pages in an Antora documentation pipeline.",
   "license": "MPL-2.0",
-  "author": {
-    "name": "OpenDevise Inc.",
-    "url": "https://opendevise.com"
-  },
+  "author": "OpenDevise Inc. (https://opendevise.com)",
+  "contributors": [
+    "Dan Allen <dan@opendevise.com>",
+    "Sarah White <sarah@opendevise.com>"
+  ],
   "homepage": "https://antora.org",
   "repository": "gitlab:antora/antora",
   "bugs": {
