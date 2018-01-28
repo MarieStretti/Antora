@@ -36,4 +36,5 @@ release:
   environment: releases
   script:
   - yarn --no-progress global add lerna@$(node -p 'require("./lerna.json").lerna')
+  - npm -v
   - scripts/release.sh
