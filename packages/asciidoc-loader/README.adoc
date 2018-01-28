@@ -12,3 +12,9 @@ These extensions include:
 * Inherent document attributes that reflect the Antora environment.
 
 https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from versioned content repositories and processed with Asciidoctor.
+
+== Copyright and License
+
+Copyright (C) 2017-2018 https://opendevise.com[OpenDevise Inc.] and the https://antora.org[Antora Project].
+
+Use of this software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).
