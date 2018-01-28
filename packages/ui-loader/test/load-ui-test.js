@@ -11,23 +11,18 @@ const ospath = require('path')
 const CWD = process.cwd()
 const WORK_DIR = ospath.join(__dirname, 'work')
 
-function testAll (archive, testFunction) {
-  const playbook = { ui: { startPath: '' } }
+function testAll (archive, testBlock) {
+  const makeTest = (bundle) => {
+    return testBlock({ ui: { bundle } })
+  }
 
-  it('with relative bundle path', () => {
-    playbook.ui.bundle = ospath.relative(WORK_DIR, ospath.resolve(__dirname, 'fixtures', archive))
-    return testFunction(playbook)
-  })
+  it('with relative bundle path', () =>
+    makeTest(ospath.relative(WORK_DIR, ospath.resolve(__dirname, 'fixtures', archive)))
+  )
 
-  it('with absolute bundle path', () => {
-    playbook.ui.bundle = ospath.resolve(__dirname, 'fixtures', archive)
-    return testFunction(playbook)
-  })
+  it('with absolute bundle path', () => makeTest(ospath.resolve(__dirname, 'fixtures', archive)))
 
-  it('with remote bundle URI', () => {
-    playbook.ui.bundle = 'http://localhost:1337/' + archive
-    return testFunction(playbook)
-  })
+  it('with remote bundle URI', () => makeTest('http://localhost:1337/' + archive))
 }
 
 describe('loadUi()', () => {
@@ -75,11 +70,12 @@ describe('loadUi()', () => {
       .createServer((request, response) => {
         fs.readFile(ospath.resolve(ospath.join(__dirname, 'fixtures', request.url)), (err, content) => {
           if (err) {
-            throw err
+            response.writeHead(404, { 'Content-Type': 'text/html' })
+            response.end('<!DOCTYPE html><html><body>Not Found</body></html>', 'utf8')
+          } else {
+            response.writeHead(200, { 'Content-Type': 'application/zip' })
+            response.end(content)
           }
-          const contentType = 'application/zip'
-          response.writeHead(200, { 'Content-Type': contentType })
-          response.end(content, 'utf-8')
         })
       })
       .listen(1337)
@@ -88,6 +84,25 @@ describe('loadUi()', () => {
   afterEach(() => {
     clean(true)
     server.close()
+  })
+
+  describe('should throw error if bundle cannot be found', () => {
+    testAll('no-such-bundle.zip', async (playbook) => {
+      let awaitUiCatalog
+      try {
+        const uiCatalog = await loadUi(playbook)
+        awaitUiCatalog = () => uiCatalog
+      } catch (err) {
+        awaitUiCatalog = () => {
+          throw err
+        }
+      }
+      if (playbook.ui.bundle.startsWith('http://')) {
+        expect(awaitUiCatalog).to.throw('404')
+      } else {
+        expect(awaitUiCatalog).to.throw('does not exist')
+      }
+    })
   })
 
   describe('should load all files in the UI bundle', () => {

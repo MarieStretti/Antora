@@ -1,12 +1,11 @@
 'use strict'
 
-const buffer = require('gulp-buffer')
-const collect = require('stream-to-array')
+const collectBuffer = require('bl')
 const crypto = require('crypto')
 const File = require('./file')
 const fs = require('fs-extra')
 const got = require('got')
-const map = require('through2').obj
+const { obj: map } = require('through2')
 const minimatchAll = require('minimatch-all')
 const ospath = require('path')
 const path = ospath.posix
@@ -42,23 +41,38 @@ const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
  * @returns {UiCatalog} A catalog of UI files which were read from the bundle.
  */
 async function loadUi (playbook) {
-  const { bundle, startPath, outputDir } = playbook.ui
-  let bundlePath
-  if (isUrl(bundle)) {
-    bundlePath = getCachePath(sha1(bundle) + '.zip')
-    if (!fs.pathExistsSync(bundlePath)) {
-      await got(bundle, { encoding: null }).then(({ body }) => fs.outputFile(bundlePath, body))
-    }
+  const { bundle: bundleUri, startPath, outputDir } = playbook.ui
+  let resolveBundle
+  if (isUrl(bundleUri)) {
+    // TODO add support for a forced update flag
+    const cachePath = getCachePath(sha1(bundleUri) + '.zip')
+    resolveBundle = fs.pathExists(cachePath).then((exists) =>
+      exists
+        ? cachePath
+        : got(bundleUri, { encoding: null }).then(({ body }) => fs.outputFile(cachePath, body).then(() => cachePath))
+    )
   } else {
-    bundlePath = ospath.resolve(bundle)
+    const localPath = ospath.resolve(bundleUri)
+    resolveBundle = fs.pathExists(localPath).then((exists) => {
+      if (exists) {
+        return localPath
+      } else {
+        throw new Error('Specified UI bundle does not exist: ' + bundleUri)
+      }
+    })
   }
 
-  const files = await collect(
+  const bundlePath = await resolveBundle
+
+  const files = await new Promise((resolve, reject) => {
     vzip
       .src(bundlePath)
+      .on('error', reject)
       .pipe(selectFilesStartingFrom(startPath))
-      .pipe(buffer())
-  )
+      .pipe(bufferizeContents())
+      .on('error', reject)
+      .pipe(collectFiles(resolve))
+  })
 
   const config = loadConfig(files, outputDir)
 
@@ -84,7 +98,7 @@ function getCachePath (relative) {
 
 function selectFilesStartingFrom (startPath) {
   if (!startPath || (startPath = path.join('/', startPath + '/')) === '/') {
-    return map((file, enc, next) => {
+    return map((file, _, next) => {
       if (file.isNull()) {
         next()
       } else {
@@ -97,7 +111,7 @@ function selectFilesStartingFrom (startPath) {
   } else {
     startPath = startPath.substr(1)
     const startPathOffset = startPath.length
-    return map((file, enc, next) => {
+    return map((file, _, next) => {
       if (file.isNull()) {
         next()
       } else {
@@ -110,6 +124,26 @@ function selectFilesStartingFrom (startPath) {
       }
     })
   }
+}
+
+function bufferizeContents () {
+  return map((file, _, next) => {
+    // NOTE gulp-vinyl-zip automatically converts empty files to a Buffer
+    if (file.isStream()) {
+      file.contents.pipe(collectBuffer((err, data) => {
+        if (err) return next(err)
+        file.contents = data
+        next(null, file)
+      }))
+    } else {
+      next(null, file)
+    }
+  })
+}
+
+function collectFiles (done) {
+  const accum = []
+  return map((file, _, next) => accum.push(file) && next(), () => done(accum))
 }
 
 function loadConfig (files, outputDir) {

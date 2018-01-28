@@ -15,13 +15,13 @@ const CWD = process.cwd()
 const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const WORK_DIR = ospath.join(__dirname, 'work')
 
-function testAll (testFunction, numRepoBuilders = 1) {
-  function makeTest (repoBuilderOpts) {
+function testAll (testBlock, numRepoBuilders = 1) {
+  const makeTest = (repoBuilderOpts) => {
     const repoBuilders = Array.from(
       { length: numRepoBuilders },
       () => new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, repoBuilderOpts)
     )
-    return testFunction(...repoBuilders)
+    return testBlock(...repoBuilders)
   }
 
   it('on local repo', () => makeTest())
