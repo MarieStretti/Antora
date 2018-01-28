@@ -5,6 +5,29 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-alpha.2 (2018-01-28)
+
+== Added
+
+* *site-publisher:* First release of component
+* *content-aggregator:* Recognize HEAD and . as placeholder for the current branch in playbook
+* Update installations instructions in README to cover Windows
+* Add AppVeyor CI build for testing on Windows
+* Configure CI to automate releases
+* Document in README how to use serve package to preview site through local web server
+* Document the base build tools required on Linux and macOS in README
+
+== Changed
+
+* *content-aggregator:* Only select git references which are branches
+* *ui-loader:* Switch from download to got
+* Replace chai-as-promised with async/await in test suite
+
+== Fixed
+
+* Make code portable to Windows
+* Compute correct URL path for self-referencing index page
+
 == 1.0.0-alpha.1 (2018-01-12)
 
 * Initial alpha release.
