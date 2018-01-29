@@ -192,7 +192,7 @@ Learn more:
 The path key allows you to add file paths per provider.
 The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
 
-IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the path value for any `fs` provider specified in the destinations key.
+IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the `path` value for any `fs` provider specified in the destinations key.
 
 Learn more:
 

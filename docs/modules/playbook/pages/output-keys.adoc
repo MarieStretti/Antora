@@ -16,6 +16,8 @@ On this page, you'll learn:
 The output dir key specifies the directory where the generated site will be published.
 The value should not contain a leading forward slash or trailing forward slash (`/`).
 
+IMPORTANT: The dir key overrides the path key for any `fs` provider specified in the destinations key.
+
 === Default output directory
 
 The default output directory value is [.path]_build/site_.
@@ -26,7 +28,7 @@ All of the site files will be written into this directory.
 
 In this example, the site will be published to a folder named [.path]_launch_.
 
-.Dir path
+.Relative dir path
 [source,yaml,subs=attributes+]
 ----
 output:
@@ -70,9 +72,11 @@ In this example, the archived site will be located at [.path]_build/site.zip_.
 The path key allows you to add file paths per provider.
 The value should not contain a leading forward slash or a trailing forward slash (`/`).
 
+IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the `path` value for any `fs` provider specified in the destinations key.
+
 === Default path values
 
-The default filesystem (`fs`) path is the same as the default output directory value ([.path]_build/site_).
+The default `fs` path is the same as the default output directory value ([.path]_build/site_).
 This is because `fs` is the default provider.
 
 The default archive provider path is [.path]_build/site.zip_.
@@ -82,6 +86,7 @@ The default archive provider path is [.path]_build/site.zip_.
 
 You can specify the name and path of the site archive with the path key.
 
+// Check this path output
 In this example, the archived site will be located at [.path]_build/blue.zip_.
 
 .Archive provider path
@@ -93,6 +98,7 @@ output:
    path: blue.zip
 ----
 
+////
 When a value is assigned to the output directory key, the archive path is appended to the `dir` path.
 
 .Dir and archive provider path
@@ -106,21 +112,22 @@ output:
 ----
 
 In this example, the archived site will be located at [.path]_launch/sites/blue.zip_.
+////
 
 === Specify fs and archive path
 
 In this example, the site will be published to two different locations.
 
-.fs and archive paths
+.Relative fs and archive paths
 [source,yaml,subs=attributes+]
 ----
 output:
  destinations:
  - provider: fs
-   path: red
+   path: releases/red
  - provider: archive
-   path: blue.zip
+   path: releases/blue.zip
 ----
 
-The site published via the `fs` provider will be located at [.path]_build/site/red_.
-The site published via `archive` will be located at [.path]_build/blue.zip_.
+The site published via the `fs` provider will be located at [.path]_releases/red_.
+The site published via `archive` will be located at [.path]_releases/blue.zip_.
