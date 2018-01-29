@@ -11,6 +11,7 @@ On this page, you'll learn:
 * [x] How to configure the destinations provider key.
 * [x] How to configure the destinations path key.
 
+[#output-dir]
 == Directory key
 
 The output dir key specifies the directory where the generated site will be published.
@@ -46,6 +47,7 @@ output:
  dir: home/dev/docs-site/beta
 ----
 
+[#output-provider]
 == Provider key
 
 The destinations provider key specifies the protocol Antora should use to publish the site.

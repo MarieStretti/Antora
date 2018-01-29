@@ -18,13 +18,13 @@
 // ** Publish
 ** xref:run-antora-generate-site.adoc[Run Antora]
 *** xref:run-antora-generate-site.adoc#local-site-preview[Local Preview]
-** Docs site
+//** Docs site
 * File & Component Organization
 ** xref:component-structure.adoc[Organize Your Files for Antora]
 ** xref:modules.adoc[ROOTs & Modules]
-** Pages & Partials
-** Assets
-** Examples
+//** Pages & Partials
+//** Assets
+//** Examples
 ** xref:antora_yml.adoc[antora.yml]
 ** Branches & Versions
 * xref:pages.adoc[Pages]
