@@ -21,6 +21,7 @@ The value should not contain a leading forward slash or trailing forward slash (
 The default output directory value is [.path]_build/site_.
 All of the site files will be written into this directory.
 
+[#add-dir]
 === Specify output directory
 
 In this example, the site will be published to a folder named [.path]_launch_.
@@ -49,6 +50,7 @@ You can also create custom providers for SSH, SFTP, etc.
 The default provider protocol is the filesystem (`fs`).
 When no provider is specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified by the dir key.
 
+[#add-archive]
 === Publish a site as a ZIP file
 
 The `archive` provider publishes a site as a ZIP file.
@@ -75,6 +77,7 @@ This is because `fs` is the default provider.
 
 The default archive provider path is [.path]_build/site.zip_.
 
+[#archive-path]
 === Specify an archive path
 
 You can specify the name and path of the site archive with the path key.
