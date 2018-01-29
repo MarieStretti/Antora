@@ -1,20 +1,18 @@
 'use strict'
 
 const gulp = require('gulp')
-const minimist = require('minimist')
+const opts = require('yargs-parser')(process.argv.slice(2))
 
 const lint = require('./tasks/lint-task')
 const format = require('./tasks/format-task')
 const test = require('./tasks/test-task')
 const commitlint = require('./tasks/commitlint-task')
 
-const args = minimist(process.argv.slice(2))
-
-const allFiles = args.package
-  ? [`packages/${args.package}/{lib,test}/**/*.js`]
+const allFiles = opts.package
+  ? [`packages/${opts.package}/{lib,test}/**/*.js`]
   : ['gulpfile.js', '{lib*,scripts,tasks,test}/**/*.js', 'packages/*/{lib,test}/**/*.js']
-const testFiles = args.package
-  ? [`packages/${args.package}/test/**/*-test.js`]
+const testFiles = opts.package
+  ? [`packages/${opts.package}/test/**/*-test.js`]
   : ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
 
 const isCodeCoverageEnabled = () => process.env.COVERAGE === 'true' || process.env.CI
