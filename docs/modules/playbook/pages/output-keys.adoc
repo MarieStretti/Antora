@@ -91,7 +91,7 @@ IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will
 The default `fs` path is the same as the default output directory value ([.path]_build/site_).
 This is because `fs` is the default provider.
 
-The default archive provider path is [.path]_build/site.zip_.
+The default `archive` path is [.path]_build/site.zip_.
 
 [#archive-path]
 === Specify an archive path
@@ -108,7 +108,7 @@ output:
    path: blue.zip
 ----
 
-Once generation is complete, the archived site will be published at [.path]_docs-site/build/blue.zip_.
+Once generation is complete, the archived site will be published at [.path]_docs-site/blue.zip_.
 
 In the absolute path example, we can run Antora from any location on our computer (as long as it is installed globally).
 
@@ -118,10 +118,10 @@ In the absolute path example, we can run Antora from any location on our compute
 output:
  destinations:
  - provider: archive
-   path: ~/projects/docs-site/blue.zip
+   path: ~/projects/launch/blue.zip
 ----
 
-Once generation is complete, the archived site will be published at [.path]_docs-site/blue.zip_.
+Once generation is complete, the archived site will be published at [.path]_~/projects/launch/blue.zip_.
 
 ////
 When a value is assigned to the output directory key, the archive path is appended to the `dir` path.

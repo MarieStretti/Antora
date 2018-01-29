@@ -148,6 +148,7 @@ Filesystem paths can be relative to the location of the playbook or absolute.
 The output key contains an array of destination path and protocol provider specifications.
 These keys tell Antora what protocol provider to use when publishing the site, such as SSH, ZIP, Amazon S3, etc., and where to publish the site.
 
+[#clean-key]
 === clean
 
 The clean key is a boolean function.
@@ -158,6 +159,7 @@ This key only applies to filesystem providers.
 WARNING: Use this key with great care.
 For example, if you set `dir` to your computer's home directory and `clean` to true, you will delete ALL of the folders and files in your home directory.
 
+[#dir-key]
 === dir
 
 The output dir key specifies the directory where the generated site will be published.
