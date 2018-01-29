@@ -181,14 +181,13 @@ Its default value is [.path]_build/site_.
 === destinations
 
 The destinations key contains a list of provider protocols and paths that determine how and where the site will be published.
-You can publish a site to multiple destinations.
-
-The default destination provider is the filesystem (`fs`).
 When no destinations are specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified in the `dir` key.
+
+A site can be published to multiple destinations.
 
 ==== provider
 
-The provider key specifies the protocol Antora should use for writing the generated site.
+The provider key specifies the protocol Antora should use for publishing the generated site.
 Antora has two built-in providers, `fs` (filesytem) and `archive` (ZIP archive).
 You can also set up custom providers for SSH, SFTP, etc.
 The default provider protocol is `fs`.
@@ -196,23 +195,7 @@ The default provider protocol is `fs`.
 ==== path
 
 The path key allows you to add file paths per provider.
-For example, if using the `archive` provider, you can specify the name of the ZIP file with the path key.
-
-.Provider and path keys (excerpt)
-[source,yaml,subs=attributes+]
-----
-output:
- dir: launch/sites
- destinations:
- - provider: archive
-   path: blue.zip
- - provider: fs
-   path: red
-----
-
-In the example above, the archived site will be located at [.path]_launch/sites/blue.zip_ and the non-archived site will be located at [.path]_launch/sites/red_.
-
-When no path information is specified for the `archive` provider, the site will be saved to [.path]_site.zip_.
+The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
 
 ////
 == Create a custom playbook

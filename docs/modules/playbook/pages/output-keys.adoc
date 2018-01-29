@@ -16,7 +16,7 @@ On this page, you'll learn:
 The output dir key specifies the directory where the generated site will be published.
 Its default value is [.path]_build/site_.
 
-== Destinations provider key
+== Provider key
 
 The destinations provider key specifies the protocol Antora should use to publish the site.
 
@@ -44,3 +44,62 @@ output:
 ----
 
 In the example above, the archived site will be located at [.path]_build/site.zip_.
+
+== Path key
+
+The path key allows you to add file paths per provider.
+The value should not contain a leading forward slash or a trailing forward slash (`/`).
+
+=== Default path values
+
+The default filesystem (`fs`) path is the same as the default output directory value ([.path]_build/site_).
+This is because `fs` is the default provider.
+
+The default archive provider path is [.path]_build/site.zip_.
+
+=== Specify an archive path
+
+You can specify the name and path of the site archive with the path key.
+
+In this example, the archived site will be located at [.path]_build/blue.zip_.
+
+.Archive provider path
+[source,yaml,subs=attributes+]
+----
+output:
+ destinations:
+ - provider: archive
+   path: blue.zip
+----
+
+When a value is assigned to the output directory key, the archive path is appended to the `dir` path.
+
+.Dir and archive provider path
+[source,yaml,subs=attributes+]
+----
+output:
+ dir: launch/sites
+ destinations:
+ - provider: archive
+   path: blue.zip
+----
+
+In this example, the archived site will be located at [.path]_launch/sites/blue.zip_.
+
+=== Specify fs and archive path
+
+In this example, the site will be published to two different locations.
+
+.fs and archive paths
+[source,yaml,subs=attributes+]
+----
+output:
+ destinations:
+ - provider: fs
+   path: red
+ - provider: archive
+   path: blue.zip
+----
+
+The site published via the `fs` provider will be located at [.path]_build/site/red_.
+The site published via `archive` will be located at [.path]_build/blue.zip_.
