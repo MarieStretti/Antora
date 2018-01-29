@@ -33,10 +33,9 @@ ui: # <8>
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <9>
 output: # <10>
  clean: false # <11>
- dir: _site # <12>
+ dir: releases # <12>
  destinations: # <13>
  - provider: archive # <14>
-   path: site.zip # <15>
 ----
 <1> Site key
 <2> <<site-title-key,Site title key and value>>
@@ -52,7 +51,6 @@ output: # <10>
 <12> Output directory key
 <13> Output destinations key
 <14> Output provider key
-<15> Output path key
 
 Let's explore the purpose and usage of each key and its values.
 
@@ -150,19 +148,6 @@ Filesystem paths can be relative to the location of the playbook or absolute.
 The output key contains an array of destination path and protocol provider specifications.
 These keys tell Antora what protocol provider to use when publishing the site, such as SSH, ZIP, Amazon S3, etc., and where to publish the site.
 
-.Output keys (excerpt)
-[source,yaml,subs=attributes+]
-----
-output:
- clean: true
- dir: launch/sites
- destinations:
- - provider: archive
-   path: blue.zip
- - provider: fs
-   path: red
-----
-
 === clean
 
 The clean key is a boolean function.
@@ -178,6 +163,8 @@ For example, if you set `dir` to your computer's home directory and `clean` to t
 The output dir key specifies the directory where the generated site will be published.
 Its default value is [.path]_build/site_.
 
+IMPORTANT: The dir key overrides the path key for any `fs` provider specified in the destinations key.
+
 Learn more:
 
 * xref:output-keys.adoc#add-dir[Specify an output directory]
@@ -185,7 +172,7 @@ Learn more:
 === destinations
 
 The destinations key contains a list of provider protocols and paths that determine how and where the site will be published.
-When no destinations are specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified in the `dir` key.
+When no destinations are specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified in the dir key.
 
 A site can be published to multiple destinations.
 
@@ -204,6 +191,8 @@ Learn more:
 
 The path key allows you to add file paths per provider.
 The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
+
+IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the path value for any `fs` provider specified in the destinations key.
 
 Learn more:
 
