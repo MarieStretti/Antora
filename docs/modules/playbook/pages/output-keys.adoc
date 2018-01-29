@@ -14,7 +14,23 @@ On this page, you'll learn:
 == Directory key
 
 The output dir key specifies the directory where the generated site will be published.
-Its default value is [.path]_build/site_.
+The value should not contain a leading forward slash or trailing forward slash (`/`).
+
+=== Default output directory
+
+The default output directory value is [.path]_build/site_.
+All of the site files will be written into this directory.
+
+=== Specify output directory
+
+In this example, the site will be published to a folder named [.path]_launch_.
+
+.Dir path
+[source,yaml,subs=attributes+]
+----
+output:
+ dir: launch
+----
 
 == Provider key
 
@@ -26,14 +42,16 @@ Antora has two built-in provider protocols.
 * Filesystem (`fs`)
 * Archive (`archive`)
 
-You can also set up custom providers for SSH, SFTP, etc.
+You can also create custom providers for SSH, SFTP, etc.
 
 === Default provider
 
 The default provider protocol is the filesystem (`fs`).
-When no provider is specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified in the `dir` key.
+When no provider is specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified by the dir key.
 
 === Publish a site as a ZIP file
+
+The `archive` provider publishes a site as a ZIP file.
 
 .Archive provider
 [source,yaml,subs=attributes+]
@@ -43,7 +61,7 @@ output:
  - provider: archive
 ----
 
-In the example above, the archived site will be located at [.path]_build/site.zip_.
+In this example, the archived site will be located at [.path]_build/site.zip_.
 
 == Path key
 
