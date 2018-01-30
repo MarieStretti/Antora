@@ -76,7 +76,7 @@ describe('buildPlaybook()', () => {
   const defaultSchemaSpec = ospath.join(FIXTURES_DIR, 'default-schema-spec-sample.yml')
 
   it('should throw error if no playbook spec file can be loaded', () => {
-    expect(() => buildPlaybook([], {}, schema)).to.throw()
+    expect(() => buildPlaybook([], {}, schema)).to.throw('not specified')
   })
 
   it('should set dir and file properties based on absolute path of playbook file', () => {
@@ -135,7 +135,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should throw error when loading unknown type file', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: iniSpec }, schema)).to.throw()
+    expect(() => buildPlaybook([], { PLAYBOOK: iniSpec }, schema)).to.throw('Unsupported file type')
   })
 
   it('should throw error if specified spec file does not exist', () => {
@@ -212,12 +212,12 @@ describe('buildPlaybook()', () => {
   })
 
   it('should throw error when trying to load values not declared in the schema', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: badSpec }, schema)).to.throw()
+    expect(() => buildPlaybook([], { PLAYBOOK: badSpec }, schema)).to.throw('not declared')
   })
 
   it('should throw error when spec file used values of the wrong format', () => {
     schema.two.format = String
-    expect(() => buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)).to.throw()
+    expect(() => buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)).to.throw('must be of type String')
   })
 
   it('should return an immutable playbook', () => {
@@ -245,7 +245,7 @@ describe('buildPlaybook()', () => {
   it('should be decoupled from the process environment', () => {
     const originalEnv = process.env
     process.env = { PLAYBOOK: defaultSchemaSpec }
-    expect(() => buildPlaybook()).to.throw()
+    expect(() => buildPlaybook()).to.throw('does not exist')
     process.env = originalEnv
   })
 
