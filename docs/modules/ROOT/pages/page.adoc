@@ -1,0 +1,26 @@
+= Page
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] The capabilities of a documentation page written in AsciiDoc.
+* [x] How Antora handles pages.
+// * [x] Full explanation of a page, including its purpose, types, structure, and behaviors.
+
+Antora generates site pages from AsciiDoc files.
+AsciiDoc files are text files marked up with the AsciiDoc syntax and saved with the file extension `.adoc`.
+
+How Antora processes an AsciiDoc file depends on where it is stored in a documentation component.
+There are three ways to assemble the content of an individual page: standard, quantum, and disco.
+
+NOTE: Hey, these names are arbitrary, so we decided to have a little fun.
+
+== Standard page
+
+Antora generates a site page from an AsciiDoc file.
+All of the AsciiDoc files (`.adoc`) located in the [.path]_pages_ directory of a module are converted to individual HTML pages automatically.
