@@ -79,38 +79,57 @@ describe('buildPlaybook()', () => {
     expect(() => buildPlaybook([], {}, schema)).to.throw()
   })
 
+  it('should set dir and file properties based on absolute path of playbook file', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: ospath.relative(process.cwd(), ymlSpec) }, schema)
+    expect(playbook.dir).to.equal(ospath.dirname(ymlSpec))
+    expect(playbook.file).to.equal(ymlSpec)
+    expect(playbook.playbook).to.not.exist()
+  })
+
   it('should load YML playbook spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(ymlSpec)
+    expectedPlaybook.file = ymlSpec
     expectedPlaybook.one.one = 'yml-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
 
   it('should load JSON (JSON 5) playbook spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: jsonSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(jsonSpec)
+    expectedPlaybook.file = jsonSpec
     expectedPlaybook.one.one = 'json-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
 
   it('should load CSON playbook spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: csonSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(csonSpec)
+    expectedPlaybook.file = csonSpec
     expectedPlaybook.one.one = 'cson-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
 
   it('should load YML playbook spec file first when no file extension is given', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: extensionlessSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(extensionlessSpec)
+    expectedPlaybook.file = extensionlessSpec + '.yml'
     expectedPlaybook.one.one = 'yml-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
 
   it('should discover JSON playbook when no file extension is given', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: extensionlessJsonSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(extensionlessJsonSpec)
+    expectedPlaybook.file = extensionlessJsonSpec + '.json'
     expectedPlaybook.one.one = 'json-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
 
   it('should discover CSON playbook when no file extension is given', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: extensionlessCsonSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(extensionlessCsonSpec)
+    expectedPlaybook.file = extensionlessCsonSpec + '.cson'
     expectedPlaybook.one.one = 'cson-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
@@ -185,6 +204,8 @@ describe('buildPlaybook()', () => {
 
   it('should coerce a String value to an Array', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(coerceValueSpec)
+    expectedPlaybook.file = coerceValueSpec
     expectedPlaybook.one.one = 'one'
     expectedPlaybook.four = ['John']
     expect(playbook).to.eql(expectedPlaybook)
