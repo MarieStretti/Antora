@@ -234,6 +234,86 @@ describe('aggregateContent()', () => {
         expect(aggregate[1]).to.include(componentDescB)
       }, 2)
     })
+
+    it('should resolve local repository path relative to playbook dir if set', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
+      playbookSpec.dir = WORK_DIR
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let aggregate
+      let awaitAggregateContent
+      try {
+        aggregate = await aggregateContent(playbookSpec)
+        awaitAggregateContent = () => aggregate
+      } catch (err) {
+        awaitAggregateContent = () => {
+          throw err
+        }
+      }
+      expect(awaitAggregateContent).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
+
+    it('should resolve local repository path relative to process.cwd() if playbook dir not set', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
+      let aggregate
+      let awaitAggregateContent
+      try {
+        aggregate = await aggregateContent(playbookSpec)
+        awaitAggregateContent = () => aggregate
+      } catch (err) {
+        awaitAggregateContent = () => {
+          throw err
+        }
+      }
+      expect(awaitAggregateContent).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
+
+    it('should disregard playbook dir if repository path is absolute', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      playbookSpec.dir = WORK_DIR
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let aggregate
+      let awaitAggregateContent
+      try {
+        aggregate = await aggregateContent(playbookSpec)
+        awaitAggregateContent = () => aggregate
+      } catch (err) {
+        awaitAggregateContent = () => {
+          throw err
+        }
+      }
+      expect(awaitAggregateContent).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
   })
 
   describe('filter branches', () => {

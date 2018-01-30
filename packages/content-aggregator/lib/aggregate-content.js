@@ -39,16 +39,20 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  * @returns {Object} A map of files organized by component version.
  */
 async function aggregateContent (playbook) {
-  const defaultBranchPatterns = playbook.content.branches
+  const defaultBranches = playbook.content.branches
   const componentVersions = await Promise.all(
     playbook.content.sources.map(async (source) => {
-      const { repository, isLocalRepo, isBare, remote, url } = await openOrCloneRepository(source.url, source.remote)
-      const branchPatterns = source.branches || defaultBranchPatterns
+      const { repository, localPath, url, remote, isLocal, isBare } = await openOrCloneRepository(
+        source.url,
+        source.remote,
+        playbook.dir || process.cwd()
+      )
+      const branchPatterns = source.branches || defaultBranches
       const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
         async ({ ref, localName, current }) => {
           const files =
-            isLocalRepo && !isBare && current
-              ? await readFilesFromWorktree(ospath.resolve(source.url, source.startPath || ''))
+            isLocal && !isBare && current
+              ? await readFilesFromWorktree(ospath.join(localPath, source.startPath || ''))
               : await readFilesFromGitTree(repository, ref, source.startPath)
           const componentVersion = loadComponentDescriptor(files)
           componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, source.startPath))
@@ -70,34 +74,36 @@ async function aggregateContent (playbook) {
   return buildAggregate(componentVersions)
 }
 
-async function openOrCloneRepository (repoUrl, remote) {
-  const isLocalRepo = isLocalDirectory(repoUrl)
+async function openOrCloneRepository (repoUrl, remote, startDir) {
   if (!remote) remote = 'origin'
 
+  let isBare
+  let isLocal
   let localPath
   let repository
-  let isBare
 
-  if (isLocalRepo) {
-    localPath = repoUrl
-    isBare = !isLocalDirectory(ospath.join(localPath, '.git'))
+  // QUESTION should we try to exclude git@host:path as well? maybe check for @?
+  if (!~repoUrl.indexOf('://') && directoryExists((localPath = ospath.resolve(startDir, repoUrl)))) {
+    isBare = !directoryExists(ospath.join(localPath, '.git'))
+    isLocal = true
   } else {
-    localPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
     isBare = true
+    isLocal = false
+    localPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
   }
 
   try {
     if (isBare) {
       repository = await git.Repository.openBare(localPath)
-      if (!isLocalRepo) {
-        // fetches new branches and deletes old local ones
+      if (!isLocal) {
+        // fetch new branches and delete obsolete local ones
         await repository.fetch(remote, Object.assign({ prune: 1 }, getFetchOptions()))
       }
     } else {
       repository = await git.Repository.open(localPath)
     }
   } catch (e) {
-    if (!isLocalRepo) {
+    if (!isLocal) {
       // NOTE if we clone the repository, we can assume the remote is origin
       remote = 'origin'
       fs.removeSync(localPath)
@@ -112,7 +118,7 @@ async function openOrCloneRepository (repoUrl, remote) {
     url = repoUrl
   }
 
-  return { repository, isLocalRepo, isBare, remote, url }
+  return { repository, localPath, url, remote, isLocal, isBare }
 }
 
 /**
@@ -121,7 +127,7 @@ async function openOrCloneRepository (repoUrl, remote) {
  * @param {String} url - The URL to check.
  * @return {Boolean} - A flag indicating whether the URL resolves to a directory on the local filesystem.
  */
-function isLocalDirectory (url) {
+function directoryExists (url) {
   try {
     return fs.statSync(url).isDirectory()
   } catch (e) {
@@ -295,9 +301,8 @@ async function entryToFile (entry) {
   return new File({ path: posixify ? posixify(entry.path()) : entry.path(), contents, stat })
 }
 
-function readFilesFromWorktree (relativeDir) {
+function readFilesFromWorktree (base) {
   return new Promise((resolve, reject) => {
-    const base = ospath.resolve(relativeDir)
     const opts = { base, cwd: base, removeBOM: false }
     vfs
       .src(CONTENT_GLOB, opts)
