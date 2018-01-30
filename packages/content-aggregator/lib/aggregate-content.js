@@ -17,9 +17,9 @@ const DOT_OR_NOEXT_RX = {
   '/': new RegExp('(?:^|/)(?:\\.|[^/.]+$)'),
   '\\': /(?:^|\\)(?:\.|[^\\.]+$)/,
 }
-const DRIVE_RX = /^[a-z]:\//
+const DRIVE_RX = new RegExp('^[a-z]:/(?=[^/]|$)')
 const SEPARATOR_RX = /\/|:/
-const URI_SCHEME_RX = /^[a-z]+:\/*/
+const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -156,12 +156,11 @@ function generateLocalFolderName (url) {
   url = url.toLowerCase()
   // NOTE we don't check extname since the last path segment could equal .git
   if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
-  const schemeMatch = ~url.indexOf(':') && url.match(URI_SCHEME_RX)
+  const schemeMatch = ~url.indexOf('://') && url.match(URI_SCHEME_RX)
   if (schemeMatch) url = url.substr(schemeMatch[0].length)
   if (posixify) {
-    // Q: could we make this posixify unnecessary? (test suite seems to rely on it)
     url = posixify(url)
-    const driveMatch = ~url.indexOf(':') && url.match(DRIVE_RX)
+    const driveMatch = ~url.indexOf(':/') && url.match(DRIVE_RX)
     if (driveMatch) url = driveMatch[0].charAt() + url.substr(2)
   }
   const lastIdx = url.length - 1
