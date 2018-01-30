@@ -53,7 +53,7 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
 
   config.validate({ allowed: 'strict' })
 
-  return exportPlaybookModel(config)
+  return exportModel(config)
 }
 
 function loadConvictConfig (args, env, customSchema) {
@@ -75,7 +75,7 @@ function parseSpecFile (specFilePath) {
   }
 }
 
-function exportPlaybookModel (config) {
+function exportModel (config) {
   const playbook = camelCaseKeys(config.getProperties(), { deep: true })
   playbook.dir = playbook.playbook ? ospath.dirname(playbook.file = playbook.playbook) : process.cwd()
   delete playbook.playbook
