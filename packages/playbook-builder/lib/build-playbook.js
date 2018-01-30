@@ -47,8 +47,6 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
     }
     config.load(parseSpecFile(specFileAbsPath))
     if (specFileRelPath !== specFileAbsPath) config.set('playbook', specFileAbsPath)
-  } else {
-    throw new Error('playbook spec file was not specified')
   }
 
   config.validate({ allowed: 'strict' })
@@ -77,7 +75,7 @@ function parseSpecFile (specFilePath) {
 
 function exportModel (config) {
   const playbook = camelCaseKeys(config.getProperties(), { deep: true })
-  playbook.dir = playbook.playbook ? ospath.dirname(playbook.file = playbook.playbook) : process.cwd()
+  playbook.dir = playbook.playbook ? ospath.dirname((playbook.file = playbook.playbook)) : process.cwd()
   delete playbook.playbook
   return freezeDeep(playbook)
 }

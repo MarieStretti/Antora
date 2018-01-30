@@ -4,7 +4,7 @@ module.exports = {
   playbook: {
     doc: 'Location of the playbook file.',
     format: String,
-    default: 'site.yml',
+    default: undefined,
     env: 'PLAYBOOK',
     arg: 'playbook',
   },

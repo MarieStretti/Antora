@@ -15,7 +15,7 @@ describe('buildPlaybook()', () => {
     schema = {
       playbook: {
         format: String,
-        default: null,
+        default: undefined,
         env: 'PLAYBOOK',
       },
       one: {
@@ -75,8 +75,10 @@ describe('buildPlaybook()', () => {
   const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
   const defaultSchemaSpec = ospath.join(FIXTURES_DIR, 'default-schema-spec-sample.yml')
 
-  it('should throw error if no playbook spec file can be loaded', () => {
-    expect(() => buildPlaybook([], {}, schema)).to.throw('not specified')
+  it('should set dir to process.cwd() when playbook file is not specified', () => {
+    const playbook = buildPlaybook([], {}, { playbook: { format: String, default: undefined } })
+    expect(playbook.dir).to.equal(process.cwd())
+    expect(playbook.file).to.not.exist()
   })
 
   it('should set dir and file properties based on absolute path of playbook file', () => {
@@ -244,8 +246,8 @@ describe('buildPlaybook()', () => {
 
   it('should be decoupled from the process environment', () => {
     const originalEnv = process.env
-    process.env = { PLAYBOOK: defaultSchemaSpec }
-    expect(() => buildPlaybook()).to.throw('does not exist')
+    process.env = { PLAYBOOK: 'no-such-file' }
+    expect(() => buildPlaybook(['--ui-bundle', 'ui-bundle.zip'])).to.not.throw()
     process.env = originalEnv
   })
 
