@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, heredoc } = require('../../../test/test-utils')
+const { deferExceptions, expect, heredoc } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
@@ -122,16 +122,8 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await repoBuilder.init('the-component').then(() => repoBuilder.close())
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        let awaitAggregateContent
-        try {
-          const aggregate = await aggregateContent(playbookSpec)
-          awaitAggregateContent = () => aggregate
-        } catch (err) {
-          awaitAggregateContent = () => {
-            throw err
-          }
-        }
-        expect(awaitAggregateContent).to.throw(COMPONENT_DESC_FILENAME + ' not found')
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' not found')
       })
     })
 
@@ -139,16 +131,8 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithComponentDescriptor(repoBuilder, { version: 'v1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        let awaitAggregateContent
-        try {
-          const aggregate = await aggregateContent(playbookSpec)
-          awaitAggregateContent = () => aggregate
-        } catch (err) {
-          awaitAggregateContent = () => {
-            throw err
-          }
-        }
-        expect(awaitAggregateContent).to.throw(COMPONENT_DESC_FILENAME + ' is missing a name')
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' is missing a name')
       })
     })
 
@@ -156,16 +140,8 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        let awaitAggregateContent
-        try {
-          const aggregate = await aggregateContent(playbookSpec)
-          awaitAggregateContent = () => aggregate
-        } catch (err) {
-          awaitAggregateContent = () => {
-            throw err
-          }
-        }
-        expect(awaitAggregateContent).to.throw(COMPONENT_DESC_FILENAME + ' is missing a version')
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' is missing a version')
       })
     })
 
@@ -249,16 +225,8 @@ describe('aggregateContent()', () => {
       fs.ensureDirSync(newWorkDir)
       process.chdir(newWorkDir)
       let aggregate
-      let awaitAggregateContent
-      try {
-        aggregate = await aggregateContent(playbookSpec)
-        awaitAggregateContent = () => aggregate
-      } catch (err) {
-        awaitAggregateContent = () => {
-          throw err
-        }
-      }
-      expect(awaitAggregateContent).to.not.throw()
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0]).to.deep.include(componentDesc)
     })
@@ -273,16 +241,8 @@ describe('aggregateContent()', () => {
       await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
       playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
       let aggregate
-      let awaitAggregateContent
-      try {
-        aggregate = await aggregateContent(playbookSpec)
-        awaitAggregateContent = () => aggregate
-      } catch (err) {
-        awaitAggregateContent = () => {
-          throw err
-        }
-      }
-      expect(awaitAggregateContent).to.not.throw()
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0]).to.deep.include(componentDesc)
     })
@@ -301,16 +261,8 @@ describe('aggregateContent()', () => {
       fs.ensureDirSync(newWorkDir)
       process.chdir(newWorkDir)
       let aggregate
-      let awaitAggregateContent
-      try {
-        aggregate = await aggregateContent(playbookSpec)
-        awaitAggregateContent = () => aggregate
-      } catch (err) {
-        awaitAggregateContent = () => {
-          throw err
-        }
-      }
-      expect(awaitAggregateContent).to.not.throw()
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0]).to.deep.include(componentDesc)
     })
