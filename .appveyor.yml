@@ -9,9 +9,9 @@ environment:
   - nodejs_version: 8
 install:
 - ps: Install-Product node $env:nodejs_version
-- yarn --no-progress --pure-lockfile
+- yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
 cache:
-- '%LOCALAPPDATA%/Yarn'
+- .yarn-cache
 build: off
 test_script:
 - node_modules/.bin/gulp test
