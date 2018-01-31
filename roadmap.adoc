@@ -32,7 +32,6 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 
 * [ ] Allow a page to be promoted to the site root ({uri-issues}/136[#136])
 * [ ] Set up Antora chat room ({uri-issues}/134[#134])
-* [ ] Allow a component to be promoted to the site root ({uri-issues}/132[#132])
 * [ ] Add AsciiDoc page overview and structure documentation ({uri-issues}/131[#131])
 * [ ] Document output provider and path features ({uri-issues}/127[#127])
 * [ ] Architect and implement site mapper component ({uri-issues}/108[#108], {uri-issues}/109[#109])
@@ -41,21 +40,18 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 
 ==== Waiting
 
-* [ ] Ignore duplicate component in same repository if it matches component in HEAD ({uri-issues}/120[#120])
-* [ ] Allow content to be aggregated from tags ({uri-issues}/117[#117])
+* [ ] Architect and implement page redirector / router component
+* [ ] Store cache files under user's cache directory ({uri-issues}/137[#137])
+* [ ] Allow a component to be promoted to the site root ({uri-issues}/132[#132])
 * [ ] Don't fail if start page cannot be resolved ({uri-issues}/111[#111])
 * [ ] Fetch updates to content repositories upon request ({uri-issues}/104[#104])
-* [ ] Separate content aggregator from git provider ({uri-issues}/93[#93])
 * [ ] Set the edit URL property on files in the content catalog ({uri-issues}/87[#87])
-* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories ({uri-issues}/82[#82])
 * [ ] Add page ID and xref anatomy diagrams ({uri-issues}/76[#76])
 * [ ] Document versioning policy ({uri-issues}/14[#14])
-* [ ] Architect and implement page redirector / router component
-* [ ] Architect and implement logging / tracer
+* [ ] Evaluate CHANGELOG policies
 * [ ] Automatically generate CHANGELOG for release
-* [ ] Upgrade build to Gulp 4
 * [ ] Provide overview of full feature set
-* [ ] Document logging / tracer features
+* [ ] Document logging / tracer features beta
 * [ ] Document sitemap features
 * [ ] Document redirect features
 * [ ] Provide source URL configuration examples
@@ -63,8 +59,8 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [ ] Document site key configuration features
 * [ ] Document site start page feature
 * [ ] Release initial demo playbook project and docs components A and B
-* [ ] Add GitLab pages output provider to publish docs.antora.org
 * [ ] Set up automatic deployment to GitLab pages for docs.antora.org
+
 
 ==== Released
 
@@ -90,11 +86,21 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [ ] Test against Asciidoctor.js 1.5.6-preview.5
 * [ ] Test against Node 9
 * [ ] Set up API documentation and automatically publish as CI artifact
+* [ ] Architect and implement logging / tracer
 * [ ] Create docker container for evaluating Antora
 
 === v1.0.0
 
 *Release Timeframe*: 2018 Q1
+
+=== v1.x
+
+* [ ] Ignore duplicate component in same repository if it matches component in HEAD ({uri-issues}/120[#120])
+* [ ] Allow content to be aggregated from tags ({uri-issues}/117[#117])
+* [ ] Separate content aggregator from git provider ({uri-issues}/93[#93])
+* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories ({uri-issues}/82[#82])
+* [ ] Allow custom generator to be specified
+* [ ] Upgrade build to Gulp 4
 
 === v2.0.0-alpha.x
 
@@ -118,9 +124,7 @@ For a detailed list of current and scheduled development tasks, refer to the cor
 
 ==== Waiting
 
-* [ ] Add fetch option to CLI ({uri-issues}/104[#104])
-* [ ] Add list of environment variables to usage
-* [ ] Allow custom generator to be specified
+* [ ] Add list of environment variables to usage beta
 
 ==== Released
 
@@ -146,24 +150,24 @@ For a detailed list of current and scheduled development tasks, refer to the def
 
 ==== Scheduled for next alpha release
 
-* [ ] Display nav list titles ({uri-ui-issues}/28[#28])
+* [ ] Architect UI header and footer content input
+* [ ] Display nav list titles in menu and breadcrumbs ({uri-ui-issues}/28[#28])
 * [ ] Style keyboard UI macro ({uri-ui-issues}/23[#23])
 * [ ] Refine literal, listing, and example block title styles ({uri-ui-issues}/22[#22])
+* [ ] IE 11 fixes
 
 ==== Waiting
 
 * [ ] Create task list SVGs ({uri-ui-issues}/31[#31])
 * [ ] Improve sidebar block styles ({uri-ui-issues}/27[#27])
 * [ ] Enable unordered list marker styles ({uri-ui-issues}/26[#26])
-* [ ] Enable start number attribute for ordered lusts ({uri-ui-issues}/25[#25])
+* [ ] Enable start number attribute for ordered lists ({uri-ui-issues}/25[#25])
 * [ ] Enable ordered list numeration styles ({uri-ui-issues}/24[#24])
 * [ ] Extract all colors into CSS variables ({uri-ui-issues}/18[#18])
 * [ ] Integrate search
 * [ ] Expand template model documentation
 * [ ] Improve sidebar page positioning
-* [ ] Improve breadcrumbs and navigation
 * [ ] Improve SVG options stability
-* [ ] Upgrade build to Gulp 4
 * [ ] Set up UI bundle hosting
 
 ==== Released
@@ -178,3 +182,7 @@ For a detailed list of current and scheduled development tasks, refer to the def
 === v1.0.0
 
 *Release Timeframe*: 2018 Q1
+
+=== v1.x
+
+* [ ] Upgrade build to Gulp 4
