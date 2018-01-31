@@ -17,7 +17,7 @@ endif::[]
 :uri-ui-milestones: {uri-ui-repo}/milestones
 
 This roadmap provides the current development direction and schedule for {uri-home}[Antora].
-This document is intended informational purposes only.
+It is intended for informational purposes only.
 The proposed features, their scope, and the release timeline are not firm commitments.
 
 == Site Generator Pipeline
@@ -31,12 +31,9 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 ==== Scheduled for next alpha release
 
 * [ ] Allow a page to be promoted to the site root ({uri-issues}/136[#136])
-* [ ] Set up Antora chat room ({uri-issues}/134[#134])
-* [ ] Add AsciiDoc page overview and structure documentation ({uri-issues}/131[#131])
-* [ ] Document output provider and path features ({uri-issues}/127[#127])
 * [ ] Architect and implement site mapper component ({uri-issues}/108[#108], {uri-issues}/109[#109])
 * [ ] Resolve paths in playbook relative to playbook file ({uri-issues}/105[#105])
-* [ ] Document specifying current branch as a token
+* [ ] Set up Antora chat room ({uri-issues}/134[#134])
 
 ==== Waiting
 
@@ -46,21 +43,8 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [ ] Don't fail if start page cannot be resolved ({uri-issues}/111[#111])
 * [ ] Fetch updates to content repositories upon request ({uri-issues}/104[#104])
 * [ ] Set the edit URL property on files in the content catalog ({uri-issues}/87[#87])
-* [ ] Add page ID and xref anatomy diagrams ({uri-issues}/76[#76])
-* [ ] Document versioning policy ({uri-issues}/14[#14])
 * [ ] Evaluate CHANGELOG policies
 * [ ] Automatically generate CHANGELOG for release
-* [ ] Provide overview of full feature set
-* [ ] Document logging / tracer features beta
-* [ ] Document sitemap features
-* [ ] Document redirect features
-* [ ] Provide source URL configuration examples
-* [ ] Document UI bundle configuration features
-* [ ] Document site key configuration features
-* [ ] Document site start page feature
-* [ ] Release initial demo playbook project and docs components A and B
-* [ ] Set up automatic deployment to GitLab pages for docs.antora.org
-
 
 ==== Released
 
@@ -86,6 +70,7 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [ ] Test against Asciidoctor.js 1.5.6-preview.5
 * [ ] Test against Node 9
 * [ ] Set up API documentation and automatically publish as CI artifact
+* [ ] Add list of environment variables to usage
 * [ ] Architect and implement logging / tracer
 * [ ] Create docker container for evaluating Antora
 
@@ -101,6 +86,10 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [ ] Add option to playbook to skip/bypass worktree(s) in local repositories ({uri-issues}/82[#82])
 * [ ] Allow custom generator to be specified
 * [ ] Upgrade build to Gulp 4
+* [ ] Define and publish maintenance and bug fix priority policies
+* [ ] Define and publish release schedule
+
+*Release Timeframe*: 2018 Q1 or Q2
 
 === v2.0.0-alpha.x
 
@@ -109,10 +98,46 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * Add support for a moduleless docs component ({uri-issues}/27[#27])
 * Allow AsciiDoc attributes to be defined in playbook
 * Separate site publisher from providers
-* Define and publish maintenance and bug fix priority policies
-* Define and publish release schedule
 
-*Release Timeframe*: 2018 Q2
+*Release Timeframe*: 2018 Q2 or Q3
+
+== Pipeline Demo, Documentation, and Docs Site
+
+For a detailed list of current pipeline documentation tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
+
+For current Demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
+
+For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
+
+=== v1.0.0-alpha.x
+
+==== Scheduled for alpha.5 release
+
+* [ ] Add AsciiDoc page overview and structure documentation ({uri-issues}/131[#131])
+* [ ] Document Windows installation instructions ({uri-issues}/130[#130])
+* [ ] Document output provider and path features ({uri-issues}/127[#127])
+* [ ] #Site# Set up automatic deployment to GitLab pages for docs.antora.org
+
+==== Scheduled for alpha.6 release
+
+* [ ] Document sitemap features
+* [ ] Document site start page feature
+* [ ] Document versioning policy ({uri-issues}/14[#14])
+
+==== Waiting
+
+* [ ] Add page ID and xref anatomy diagrams ({uri-issues}/76[#76])
+* [ ] Document redirect features
+* [ ] Provide source URL configuration examples
+* [ ] Document UI bundle configuration features
+* [ ] Document site key configuration features
+* [ ] Provide overview of full feature set
+* [ ] Document specifying current branch as a token
+* [ ] #Demo# Release initial demo playbook project and docs components A and B
+
+=== v1.x
+
+* [ ] Document logging / tracer features
 
 == CLI
 
@@ -121,10 +146,6 @@ For a detailed list of current and scheduled development tasks, refer to the cor
 //See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 
 === v1.0.0-alpha.x
-
-==== Waiting
-
-* [ ] Add list of environment variables to usage beta
 
 ==== Released
 
