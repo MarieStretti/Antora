@@ -1,4 +1,4 @@
-= Page
+= Pages
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -8,19 +8,57 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] The capabilities of a documentation page written in AsciiDoc.
-* [x] How Antora handles pages.
-// * [x] Full explanation of a page, including its purpose, types, structure, and behaviors.
+* [x] The difference between a standard and a partial page.
+* [x] How Antora handles an [.path]_index.adoc_ file stored in the ROOT module of a component.
 
 Antora generates site pages from AsciiDoc files.
 AsciiDoc files are text files marked up with the AsciiDoc syntax and saved with the file extension `.adoc`.
 
-How Antora processes an AsciiDoc file depends on where it is stored in a documentation component.
-There are three ways to assemble the content of an individual page: standard, quantum, and disco.
-
-NOTE: Hey, these names are arbitrary, so we decided to have a little fun.
+Whether Antora automatically processes an AsciiDoc file depends on where it is stored in a documentation component.
 
 == Standard page
 
-Antora generates a site page from an AsciiDoc file.
-All of the AsciiDoc files (`.adoc`) located in the [.path]_pages_ directory of a module are converted to individual HTML pages automatically.
+Antora generates one site page for each AsciiDoc file located in the [.path]_pages_ directory of a module.
+These files are converted to individual HTML pages automatically.
+
+Another way to think about this: one AsciiDoc file in equals one HTML page out.
+
+my-page.adoc == my-page.html
+
+Learn more:
+
+* Create a standard page
+* xref:modules.adoc#pages-dir[The _pages_ directory]
+* xref:component-structure.adoc[Documentation component overview]
+
+== Partial page
+
+Partial pages are AsciiDoc files located in [.path]_pages/_partials_.
+These files are *not* converted to HTML by Antora automatically.
+Instead, they must be referenced by an xref:page-partials.adoc[include directive] in a standard page.
+
+Partial pages are good for storing snippets of content, such as concept definitions or project introductions, that you want to reuse in one or more standard pages.
+When you change the content in a partial, those changes will be disseminated to all of the standard pages where you embedded that partial with an include directive.
+
+Learn more:
+
+* Create a partial page
+* xref:modules.adoc#partials-dir[The _{blank}_partials_ directory]
+* xref:page-partials.adoc[Include a partial page in a standard page with AsciiDoc]
+* xref:component-structure.adoc[Documentation component overview]
+
+== Component index page
+
+If a file named [.path]_index.adoc_ exists in the ROOT module of a component, Antora will automatically set this page as the start page of that component.
+
+component:ROOT:index.adoc == site.com/component/index.html
+
+Learn more:
+
+* Create a component index page
+//* html extension options
+* xref:modules.adoc#root-dir[The ROOT directory]
+
+// TIP: see the html strategies for dropping the html and index for URLs
+
+// Site index page
