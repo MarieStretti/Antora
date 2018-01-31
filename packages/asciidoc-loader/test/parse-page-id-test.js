@@ -36,24 +36,25 @@ describe('parsePageId()', () => {
     expect(result).to.eql(expected)
   })
 
-  it('should set version to master if component is specified but not version', () => {
+  it('should leave version undefined if component is specified without a version', () => {
     const input = 'the-component:the-module:the-page.adoc'
+    const inputCtx = { version: '1.0' }
     const expected = {
-      version: 'master',
+      version: undefined,
       component: 'the-component',
       module: 'the-module',
       family: 'page',
       relative: 'the-page.adoc',
     }
-    const result = parsePageId(input)
+    const result = parsePageId(input, inputCtx)
     expect(result).to.eql(expected)
   })
 
   it('should set module to ROOT if component is specified but not module', () => {
-    const input = 'the-component::the-page.adoc'
+    const input = '1.0@the-component::the-page.adoc'
     const expected = {
       component: 'the-component',
-      version: 'master',
+      version: '1.0',
       module: 'ROOT',
       family: 'page',
       relative: 'the-page.adoc',
