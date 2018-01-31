@@ -20,7 +20,7 @@ This roadmap provides the current development direction and schedule for {uri-ho
 It is intended for informational purposes only.
 The proposed features, their scope, and the release timeline are not firm commitments.
 
-== Site Generator Pipeline
+== Site Pipeline & CLI
 
 For a detailed list of current and scheduled development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
@@ -54,6 +54,7 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [x] Document release process
 
 .1.0.0-alpha.3
+* [x] Document CLI commands and site, ui, and to-dir options ({uri-issues}/126[#126])
 * [x] Document playbook start_path ({uri-issues}/112[#112])
 * [x] Document component descriptor start_page ({uri-issues}/110[#110])
 * [x] Content aggregator should only discover branches, not tags ({uri-issues}/107[#107])
@@ -85,9 +86,9 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [ ] Separate content aggregator from git provider ({uri-issues}/93[#93])
 * [ ] Add option to playbook to skip/bypass worktree(s) in local repositories ({uri-issues}/82[#82])
 * [ ] Allow custom generator to be specified
+* [ ] Define and publish maintenance and bug fix priority policies (in repo & on project site)
+* [ ] Define and publish release schedule (in repo & on project site)
 * [ ] Upgrade build to Gulp 4
-* [ ] Define and publish maintenance and bug fix priority policies
-* [ ] Define and publish release schedule
 
 *Release Timeframe*: 2018 Q1 or Q2
 
@@ -101,9 +102,9 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 
 *Release Timeframe*: 2018 Q2 or Q3
 
-== Pipeline Demo, Documentation, and Docs Site
+== Pipeline Demo, Documentation, & Docs Site
 
-For a detailed list of current pipeline documentation tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
+For current pipeline documentation tasks, see the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
 For current Demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
 
@@ -116,7 +117,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Add AsciiDoc page overview and structure documentation ({uri-issues}/131[#131])
 * [ ] Document Windows installation instructions ({uri-issues}/130[#130])
 * [ ] Document output provider and path features ({uri-issues}/127[#127])
-* [ ] #Site# Set up automatic deployment to GitLab pages for docs.antora.org
+* [ ] _Site_: Set up automatic deployment to GitLab pages for docs.antora.org
 
 ==== Scheduled for alpha.6 release
 
@@ -133,39 +134,16 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Document site key configuration features
 * [ ] Provide overview of full feature set
 * [ ] Document specifying current branch as a token
-* [ ] #Demo# Release initial demo playbook project and docs components A and B
+* [ ] _Site_: Connect Docs and project sites
 
 === v1.x
 
 * [ ] Document logging / tracer features
-
-== CLI
-
-For a detailed list of current and scheduled development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
-
-//See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
-
-=== v1.0.0-alpha.x
-
-==== Released
-
-.1.0.0-alpha.3
-* [x] Document antora and generate commands and provide examples
-* [x] Document help and version options
-* [x] Document site, ui, and to-dir options ({uri-issues}/126[#126])
-
-=== v1.0.0-beta.x
-
-* [ ] Test against Node 9
-* [ ] Test against Asciidoctor.js 1.5.6-preview.5
-
-=== v1.0.0
-
-*Release Timeframe*: 2018 Q1
+* [ ] _Demo_: Release initial demo playbook project and components A and B
 
 == UI
 
-For a detailed list of current and scheduled development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
+For a detailed list of current development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
 
 === v1.0.0-alpha.x
 
