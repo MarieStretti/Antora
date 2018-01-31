@@ -78,6 +78,7 @@ describe('generateSite()', () => {
   })
 
   it('should generate site into output directory specified in playbook file', async () => {
+    playbookSpec.site.start_page = '2.0@the-component::index'
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
     expect(ospath.join(destDir, '_'))
@@ -88,6 +89,9 @@ describe('generateSite()', () => {
     expect(ospath.join(destDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
+    expect(ospath.join(destDir, 'index.html'))
+      .to.be.a.file()
+      .with.contents.that.match(/<script>location="the-component\/2.0\/index.html"<\/script>/)
     expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head > title')).to.have.text('Index Page :: The Site')

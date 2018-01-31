@@ -1,6 +1,7 @@
 site:
   url: https://example.com
   title: Example site
+  start_page: 1.0@server::intro
   keys:
     google_analytics: 'XX-123456'
 ui:
