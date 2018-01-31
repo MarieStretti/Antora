@@ -9,6 +9,7 @@ const loadUi = require('@antora/ui-loader')
 const ospath = require('path')
 
 const CWD = process.cwd()
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const WORK_DIR = ospath.join(__dirname, 'work')
 
 function testAll (archive, testBlock) {
@@ -16,10 +17,9 @@ function testAll (archive, testBlock) {
     return testBlock({ ui: { bundle } })
   }
 
-  it('with relative bundle path', () =>
-    makeTest(ospath.relative(WORK_DIR, ospath.resolve(__dirname, 'fixtures', archive))))
+  it('with relative bundle path', () => makeTest(ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, archive))))
 
-  it('with absolute bundle path', () => makeTest(ospath.resolve(__dirname, 'fixtures', archive)))
+  it('with absolute bundle path', () => makeTest(ospath.resolve(FIXTURES_DIR, archive)))
 
   it('with remote bundle URI', () => makeTest('http://localhost:1337/' + archive))
 }
@@ -112,6 +112,29 @@ describe('loadUi()', () => {
       expect(paths).to.have.members(expectedFilePaths)
       const relativePaths = files.map((file) => file.relative)
       expect(paths).to.eql(relativePaths)
+    })
+  })
+
+  describe('should locate bundle when process.cwd() and playbook dir are different', () => {
+    testAll('the-ui-bundle.zip', async (playbook) => {
+      playbook.dir = WORK_DIR
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let awaitUiCatalog
+      let uiCatalog
+      try {
+        uiCatalog = await loadUi(playbook)
+        awaitUiCatalog = () => uiCatalog
+      } catch (err) {
+        awaitUiCatalog = () => {
+          throw err
+        }
+      }
+      expect(awaitUiCatalog).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
     })
   })
 

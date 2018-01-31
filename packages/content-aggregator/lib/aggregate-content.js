@@ -34,6 +34,7 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  * @memberof content-aggregator
  *
  * @param {Object} playbook - The configuration object for Antora.
+ * @param {Object} playbook.dir - The working directory of the playbook.
  * @param {Array} playbook.content - An array of content sources.
  *
  * @returns {Object} A map of files organized by component version.
