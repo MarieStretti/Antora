@@ -1,0 +1,39 @@
+= Standard Page Structure
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+A standard page is an AsciiDoc file in the [.path]_pages_ directory of a module.
+Standard pages have a header, which includes the page title, and a body, which includes the majority of the page's displayed content.
+
+== Requirements
+
+* The file must be saved with the extension `.adoc`.
+* The file must be marked up with valid AsciiDoc.
+* The file must have a page title.
+
+== Page Header
+
+The page header is a set of contiguous lines that start on the first line of the file.
+The header encapsulates the following elements:
+
+* page title (required)
+* author
+* revision information
+* environment settings
+* built-in document attributes, such as section numbering
+* user-defined document attributes, such as keywords and common URLs
+
+A single blank line signals the end of the page header.
+The next line with content is the start of the page body.
+
+== Page Body
+
+The page body includes the:
+
+* preamble
+* section headings
+* section content such as paragraphs, source code blocks, images, included partials
