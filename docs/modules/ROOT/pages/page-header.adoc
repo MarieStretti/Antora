@@ -21,24 +21,82 @@ On this page, you'll learn:
 ----
 = Page Title // <1>
 First Middle Last <author@email.com> // <2>
-revnumber, revdate: revremark // <3> <4> <5>
-:description: A description of the page stored in an HTML meta tag. // <6>
-:keywords: comma-separated values, stored, in an HTML, meta, tag // <7>
-:sectanchors: // <8>
-:url-repo: https://my-git-repo.com // <9>
+:description: A description of the page stored in an HTML meta tag. // <3>
+:keywords: comma-separated values, stored, in an HTML, meta, tag // <4>
+:sectanchors: // <5>
+:url-repo: https://my-git-repo.com // <6>
 ----
 <1> Title of the page
 <2> Author name and email address
-<3> Page revision number
-<4> Page revision date
-<5> Page revision remarks
-<6> Page description that is stored in the HTML `meta` tag `description`
-<7> Comma-separated list of values that are stored in the HTML `meta` tag `keywords`
-<8> Example of a built-in page attribute
-<9> Example of a user created and defined page attribute
+<3> Page description that is stored in the HTML `meta` tag `description`
+<4> Comma-separated list of values that are stored in the HTML `meta` tag `keywords`
+<5> Example of a built-in page attribute
+<6> Example of a user created and defined page attribute
 
 == Page title
 
-== Built-in page attributes
+A page title is specified by one equals sign (`=`), followed by one blank space, and then the text of the title.
++
+[source,asciidoc]
+----
+= The title of this page
+----
+
+The content of a page's title populates the navigation breadcrumb when the site is generated.
 
 == Page metadata
+
+AsciiDoc provides several built-in attributes for defining page metadata.
+
+=== Author
+
+Specifying the author of a page is optional.
+The author of a page is listed on the line beneath the page’s title.
+An optional email address or URL can follow an author’s name inside a set of angle brackets (`< >`).
+
+.Multiple authors
+[source,asciidoc]
+----
+= Page Title
+First Middle Last <author@email.com>; First Middle Last <author-url[@author]>
+----
+
+When a page has multiple authors, each author is separated by a semicolon (`;`).
+The author's name is stored in the HTML `meta` tag `author`.
+
+....
+<head>
+<meta charset="UTF-8">
+<meta name="author" content="Firstname Lastname, Firstname Lastname">
+...
+....
+
+Whether the page author information is visible on a generated page depends on the site's UI templates.
+
+=== Description
+
+=== Keywords
+
+
+
+////
+author::
+The author’s full name, which includes all of the characters or words prior to a semicolon (`;`), angle bracket (`<`) or the end of the line.
+
+firstname::
+The first word in the author attribute.
+
+lastname::
+The last word in the author attribute.
+
+middlename::
+If a firstname and lastname are present, any remaining words or characters found between these attributes are assigned to the middlename attribute.
+
+authorinitials::
+The first character of the firstname, middlename, and lastname attributes.
+
+email or contact information::
+An email address or contact information such as a social media account, delimited by angle brackets (`< >`).
+////
+
+== Built-in page attributes
