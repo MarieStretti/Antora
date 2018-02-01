@@ -1,0 +1,85 @@
+= Create a Standard Page
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+A standard page is an AsciiDoc file in the [.path]_pages_ directory of a module.
+Standard pages have a header, which includes the page title, and a body, which includes the majority of the page's displayed content.
+
+. Start a new file in a plain text editor such as Atom, Brackets, or gedit.
+
+. On the first line of file, enter a page title.
++
+A page title is specified by one equals sign (`=`), followed by one blank space, and then the text of the title.
++
+[source,asciidoc]
+----
+= The title of my new page
+----
+
+. On the second line and subsequent contiguous lines, add document metadata and attributes.
+*The page title is the only required header element.*
+
+. Separate the header block from the body block by at least one blank line.
+
+. Write your content.
++
+[source,asciidoc]
+----
+= The title of my new page
+:attribute-a: value-a
+
+Welcome to the preamble of my new page!
+
+== This is a section title
+
+This is a paragraph.
+----
+
+. Save the file.
+.. Save the file with the extension `.adoc` in a module's [.path]_pages_ directory.
+
+.. The name you use when saving the file will be used to compute the page's URL.
++
+my-new-page.adoc => my-new-page.html
+
+You've now created a standard page.
+When you run Antora, it will be converted to an HTML page and published to your site automatically.
+
+The page created in this example is simple.
+Using AsciiDoc, a page's header can encompass a wide range of capabilities and its body can handle complex content.
+
+== Page header and body structure
+
+A standard page has two general parts, a header and a body.
+
+The page header is a set of contiguous lines that start on the first line of the file.
+The header encapsulates the following elements:
+
+* page title (required)
+* author, date, and revision metadata
+* environment settings
+* built-in document attributes, such as section numbering
+* user-defined document attributes, such as keywords and common URLs
+
+A single blank line signals the end of the page header.
+The next line with content is the start of the page body.
+The page body includes the:
+
+* preamble
+* section headings
+* section content such as paragraphs, source code blocks, images, included partials, and much more
+
+To explore the full capabilities of each AsciiDoc element, check out the documentation under the AsciiDoc collection in the menu on the left.
+
+[IMPORTANT]
+.Key Points to Remember
+====
+* The file must be saved in the [.path]_pages_ directory of a module.
+* The file must be saved with the extension `.adoc`.
+* The file must be marked up with valid AsciiDoc.
+* The file must have a page title.
+====
