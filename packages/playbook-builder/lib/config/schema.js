@@ -9,12 +9,11 @@ module.exports = {
     arg: 'playbook',
   },
   site: {
-    url: {
-      doc: 'The base URL of the published site. Should not include trailing slash.',
+    start_page: {
+      doc: 'The start page for the site, redirected from the site index.',
       format: String,
       default: undefined,
-      env: 'URL',
-      arg: 'url',
+      arg: 'start-page',
     },
     title: {
       doc: 'The title of the site.',
@@ -22,21 +21,28 @@ module.exports = {
       default: undefined,
       arg: 'title',
     },
-    root: {
-      doc: 'The name of the component to use as the root of the site.',
+    url: {
+      doc: 'The base URL of the published site. Should not include trailing slash.',
       format: String,
       default: undefined,
+      env: 'URL',
+      arg: 'url',
     },
-    aspect: {
-      doc: 'The name of the aspect navigation to make available on every page in the site.',
-      format: String,
-      default: undefined,
-    },
-    nav: {
-      doc: 'The list of descriptors which define the aspect navigation domains.',
-      format: Array,
-      default: undefined,
-    },
+    //root: {
+    //  doc: 'The name of the component to use as the root of the site.',
+    //  format: String,
+    //  default: undefined,
+    //},
+    //aspect: {
+    //  doc: 'The name of the aspect navigation to make available on every page in the site.',
+    //  format: String,
+    //  default: undefined,
+    //},
+    //nav: {
+    //  doc: 'The list of descriptors which define the aspect navigation domains.',
+    //  format: Array,
+    //  default: undefined,
+    //},
     keys: {
       google_analytics: {
         doc: 'The Google Analytics account key.',

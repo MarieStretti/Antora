@@ -6,7 +6,10 @@ const { expect, spy } = require('../../../test/test-utils')
 const resolvePage = require('@antora/asciidoc-loader/lib/xref/resolve-page')
 
 describe('resolvePage', () => {
-  const mockContentCatalog = (file) => ({ getById: spy(() => file) })
+  const mockContentCatalog = (file, component) => ({
+    getById: spy(() => file),
+    getComponent: spy((name) => component),
+  })
 
   it('should throw error if page ID spec has invalid syntax', () => {
     const contentCatalog = mockContentCatalog()
@@ -82,5 +85,46 @@ describe('resolvePage', () => {
     const result = resolvePage(targetPageIdSpec, contentCatalog, context)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
     expect(result).to.equal(targetFile)
+  })
+
+  it('should use lastest version of component if component is specified without a version', () => {
+    const targetFile = {
+      src: {
+        component: 'the-component',
+        version: '1.0',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+      },
+    }
+    const contentCatalog = mockContentCatalog(targetFile, { latestVersion: { version: '1.0' } })
+    const targetPageIdSpec = 'the-component::the-page.adoc'
+    const targetPageId = {
+      component: 'the-component',
+      version: '1.0',
+      module: 'ROOT',
+      family: 'page',
+      relative: 'the-page.adoc',
+    }
+    const result = resolvePage(targetPageIdSpec, contentCatalog)
+    expect(contentCatalog.getComponent).to.have.been.called.with('the-component')
+    expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
+    expect(result).to.equal(targetFile)
+  })
+
+  it('should return undefined page if unknown component is specified without a version', () => {
+    const contentCatalog = mockContentCatalog()
+    const targetPageIdSpec = 'unknown-component::the-page.adoc'
+    const targetPageId = {
+      component: 'unknown-component',
+      version: undefined,
+      module: 'ROOT',
+      family: 'page',
+      relative: 'the-page.adoc',
+    }
+    const result = resolvePage(targetPageIdSpec, contentCatalog)
+    expect(contentCatalog.getComponent).to.have.been.called.with('unknown-component')
+    expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
+    expect(result).to.be.undefined()
   })
 })

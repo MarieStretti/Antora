@@ -78,6 +78,7 @@ describe('generateSite()', () => {
   })
 
   it('should generate site into output directory specified in playbook file', async () => {
+    playbookSpec.site.start_page = '2.0@the-component::index'
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
     expect(ospath.join(destDir, '_'))
@@ -88,6 +89,9 @@ describe('generateSite()', () => {
     expect(ospath.join(destDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
+    expect(ospath.join(destDir, 'index.html'))
+      .to.be.a.file()
+      .with.contents.that.match(/<meta http-equiv="refresh" content="0; url=the-component\/2.0\/index.html">/)
     expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head > title')).to.have.text('Index Page :: The Site')
@@ -142,6 +146,31 @@ describe('generateSite()', () => {
       .to.be.a.directory()
       .with.subDirs(['2.0'])
   }).timeout(TIMEOUT)
+
+  it('should use start page from latest version of component if version not specified', async () => {
+    playbookSpec.site.start_page = 'the-component::index'
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookSpecFile])
+    expect(ospath.join(destDir, 'index.html'))
+      .to.be.a.file()
+      .with.contents.that.match(/<meta http-equiv="refresh" content="0; url=the-component\/2.0\/index.html">/)
+  }).timeout(TIMEOUT)
+
+  it('should throw error if start page cannot be resolved', async () => {
+    playbookSpec.site.start_page = 'unknown-component::index'
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    // TODO replace with deferExceptions
+    let generateSiteDeferred
+    try {
+      await generateSite(['--playbook', playbookSpecFile])
+      generateSiteDeferred = () => {}
+    } catch (e) {
+      generateSiteDeferred = () => {
+        throw e
+      }
+    }
+    expect(generateSiteDeferred).to.throw('Start page for site could not be resolved')
+  })
 
   it('should indexify URLs to internal pages', async () => {
     playbookSpec.urls = { html_extension_style: 'indexify' }
@@ -316,6 +345,7 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   // to test:
-  // test if component start page is missing (current throws an error because its undefined)
-  // path to images from topic dir
+  // - test if component start page is missing (current throws an error because its undefined)
+  // - path to images from topic dir
+  // - html URL extension style
 })

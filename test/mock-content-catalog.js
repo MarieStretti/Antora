@@ -11,6 +11,7 @@ function mockContentCatalog (seed = []) {
     partial: 'pages/_partials',
     navigation: '',
   }
+  const components = {}
   const entries = []
   const entriesById = {}
   const entriesByPath = {}
@@ -20,6 +21,12 @@ function mockContentCatalog (seed = []) {
     if (!version) version = 'master'
     if (module == null) module = 'module-a'
     if (!contents) contents = ''
+    if (component in components) {
+      // NOTE use last registered as latest version
+      components[component].latestVersion = { version }
+    } else {
+      components[component] = { latestVersion: { version } }
+    }
     const componentVersionKey = buildComponentVersionKey(component, version)
     const componentRelativePath = path.join(module ? 'modules' : '', module, familyDirs[family], relative)
     const entry = {
@@ -69,6 +76,7 @@ function mockContentCatalog (seed = []) {
       entriesById[buildComponentVersionKey(component, version) + (module || '') + ':' + family + '$' + relative],
     getByPath: ({ path: path_, component, version }) =>
       entriesByPath[buildComponentVersionKey(component, version) + path_],
+    getComponent: (name) => components[name],
     getFiles: () => entries,
     spyOn: function (...names) {
       names.forEach((name) => (this[name] = spy(this[name])))

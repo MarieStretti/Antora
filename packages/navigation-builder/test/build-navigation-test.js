@@ -161,8 +161,8 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'page-a.adoc' },
       { module: 'module-b', family: 'page', relative: 'page-b.adoc' },
       { version: '0.9', family: 'page', relative: 'page-c.adoc' },
-      { component: 'component-b', version: 'master', module: 'ROOT', family: 'page', relative: 'page-d.adoc' },
-    ]).spyOn('getById')
+      { component: 'component-b', version: '1.1', module: 'ROOT', family: 'page', relative: 'page-d.adoc' },
+    ]).spyOn('getById', 'getComponent')
     await buildNavigation(contentCatalog)
     expectCalledWith(
       contentCatalog.getById,
@@ -203,12 +203,13 @@ describe('buildNavigation()', () => {
       ],
       2
     )
+    expectCalledWith(contentCatalog.getComponent, 'component-b')
     expectCalledWith(
       contentCatalog.getById,
       [
         {
           component: 'component-b',
-          version: 'master',
+          version: '1.1',
           module: 'ROOT',
           family: 'page',
           relative: 'page-d.adoc',

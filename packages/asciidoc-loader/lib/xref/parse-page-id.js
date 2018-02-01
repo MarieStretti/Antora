@@ -12,7 +12,7 @@ const PAGE_ID_RXG = { version: 1, component: 2, module: 3, page: 4 }
  * context src object is provided, it will be used to populate the component,
  * version, and/or module properties, if missing.
  *
- * * If a component is specified, but not a version, the version defaults to master.
+ * * If a component is specified, but not a version, the version remains undefined.
  * * If a component is specified, but not a module, the module defaults to ROOT.
  *
  * @memberof asciidoc-loader
@@ -31,21 +31,17 @@ function parsePageId (spec, ctx = {}) {
   let component = match[PAGE_ID_RXG.component]
   let module = match[PAGE_ID_RXG.module]
   let relative = match[PAGE_ID_RXG.page] + '.adoc'
+  const family = 'page'
 
   if (component) {
-    // if a component is specified, but not a version, assume version is "master"
-    if (!version) version = 'master'
-    // if a component is specified, but not a module, assume module is "ROOT"
     if (!module) module = 'ROOT'
+  } else {
+    component = ctx.component
+    if (!version) version = ctx.version
+    if (!module) module = ctx.module
   }
 
-  return {
-    component: component || ctx.component,
-    version: version || ctx.version,
-    module: module || ctx.module,
-    family: 'page',
-    relative,
-  }
+  return { component, version, module, family, relative }
 }
 
 module.exports = parsePageId
