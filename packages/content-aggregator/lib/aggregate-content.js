@@ -17,9 +17,10 @@ const DOT_OR_NOEXT_RX = {
   '/': new RegExp('(?:^|/)(?:\\.|[^/.]+$)'),
   '\\': /(?:^|\\)(?:\.|[^\\.]+$)/,
 }
-const DRIVE_RX = /^[a-z]:\//
+const DRIVE_RX = new RegExp('^[a-z]:/(?=[^/]|$)')
 const SEPARATOR_RX = /\/|:/
-const URI_SCHEME_RX = /^[a-z]+:\/*/
+const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
+const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -34,24 +35,31 @@ const URI_SCHEME_RX = /^[a-z]+:\/*/
  * @memberof content-aggregator
  *
  * @param {Object} playbook - The configuration object for Antora.
+ * @param {Object} playbook.dir - The working directory of the playbook.
  * @param {Array} playbook.content - An array of content sources.
  *
  * @returns {Object} A map of files organized by component version.
  */
 async function aggregateContent (playbook) {
-  const defaultBranchPatterns = playbook.content.branches
+  const defaultBranches = playbook.content.branches
   const componentVersions = await Promise.all(
     playbook.content.sources.map(async (source) => {
-      const { repository, isLocalRepo, isBare, remote, url } = await openOrCloneRepository(source.url, source.remote)
-      const branchPatterns = source.branches || defaultBranchPatterns
+      const { repository, localPath, url, remote, isLocal, isBare } = await openOrCloneRepository(
+        source.url,
+        source.remote,
+        playbook.dir || process.cwd()
+      )
+      const branchPatterns = source.branches || defaultBranches
       const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
         async ({ ref, localName, current }) => {
+          let startPath = source.startPath || ''
+          if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
           const files =
-            isLocalRepo && !isBare && current
-              ? await readFilesFromWorktree(ospath.resolve(source.url, source.startPath || ''))
-              : await readFilesFromGitTree(repository, ref, source.startPath)
+            isLocal && !isBare && current
+              ? await readFilesFromWorktree(startPath ? ospath.join(localPath, startPath) : localPath)
+              : await readFilesFromGitTree(repository, ref, startPath)
           const componentVersion = loadComponentDescriptor(files)
-          componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, source.startPath))
+          componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, startPath))
           return componentVersion
         }
       )
@@ -70,34 +78,36 @@ async function aggregateContent (playbook) {
   return buildAggregate(componentVersions)
 }
 
-async function openOrCloneRepository (repoUrl, remote) {
-  const isLocalRepo = isLocalDirectory(repoUrl)
+async function openOrCloneRepository (repoUrl, remote, startDir) {
   if (!remote) remote = 'origin'
 
+  let isBare
+  let isLocal
   let localPath
   let repository
-  let isBare
 
-  if (isLocalRepo) {
-    localPath = repoUrl
-    isBare = !isLocalDirectory(ospath.join(localPath, '.git'))
+  // QUESTION should we try to exclude git@host:path as well? maybe check for @?
+  if (!~repoUrl.indexOf('://') && directoryExists((localPath = ospath.resolve(startDir, repoUrl)))) {
+    isBare = !directoryExists(ospath.join(localPath, '.git'))
+    isLocal = true
   } else {
-    localPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
     isBare = true
+    isLocal = false
+    localPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
   }
 
   try {
     if (isBare) {
       repository = await git.Repository.openBare(localPath)
-      if (!isLocalRepo) {
-        // fetches new branches and deletes old local ones
+      if (!isLocal) {
+        // fetch new branches and delete obsolete local ones
         await repository.fetch(remote, Object.assign({ prune: 1 }, getFetchOptions()))
       }
     } else {
       repository = await git.Repository.open(localPath)
     }
   } catch (e) {
-    if (!isLocalRepo) {
+    if (!isLocal) {
       // NOTE if we clone the repository, we can assume the remote is origin
       remote = 'origin'
       fs.removeSync(localPath)
@@ -112,7 +122,7 @@ async function openOrCloneRepository (repoUrl, remote) {
     url = repoUrl
   }
 
-  return { repository, isLocalRepo, isBare, remote, url }
+  return { repository, localPath, url, remote, isLocal, isBare }
 }
 
 /**
@@ -121,7 +131,7 @@ async function openOrCloneRepository (repoUrl, remote) {
  * @param {String} url - The URL to check.
  * @return {Boolean} - A flag indicating whether the URL resolves to a directory on the local filesystem.
  */
-function isLocalDirectory (url) {
+function directoryExists (url) {
   try {
     return fs.statSync(url).isDirectory()
   } catch (e) {
@@ -156,12 +166,11 @@ function generateLocalFolderName (url) {
   url = url.toLowerCase()
   // NOTE we don't check extname since the last path segment could equal .git
   if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
-  const schemeMatch = ~url.indexOf(':') && url.match(URI_SCHEME_RX)
+  const schemeMatch = ~url.indexOf('://') && url.match(URI_SCHEME_RX)
   if (schemeMatch) url = url.substr(schemeMatch[0].length)
   if (posixify) {
-    // Q: could we make this posixify unnecessary? (test suite seems to rely on it)
     url = posixify(url)
-    const driveMatch = ~url.indexOf(':') && url.match(DRIVE_RX)
+    const driveMatch = ~url.indexOf(':/') && url.match(DRIVE_RX)
     if (driveMatch) url = driveMatch[0].charAt() + url.substr(2)
   }
   const lastIdx = url.length - 1
@@ -263,7 +272,7 @@ async function getGitTree (repository, branchRef, startPath) {
   const commit = await repository.getBranchCommit(branchRef)
   if (startPath) {
     const tree = await commit.getTree()
-    const subTreeEntry = await tree.entryByPath(startPath)
+    const subTreeEntry = await tree.getEntry(startPath)
     return repository.getTree(subTreeEntry.id())
   } else {
     return commit.getTree()
@@ -296,9 +305,8 @@ async function entryToFile (entry) {
   return new File({ path: posixify ? posixify(entry.path()) : entry.path(), contents, stat })
 }
 
-function readFilesFromWorktree (relativeDir) {
+function readFilesFromWorktree (base) {
   return new Promise((resolve, reject) => {
-    const base = ospath.resolve(relativeDir)
     const opts = { base, cwd: base, removeBOM: false }
     vfs
       .src(CONTENT_GLOB, opts)
@@ -339,7 +347,7 @@ function collectFiles (done) {
   return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
 }
 
-function assignFileProperties (file, url, branch, startPath = '/') {
+function assignFileProperties (file, url, branch, startPath) {
   const extname = file.extname
   file.mediaType = mimeTypes.lookup(extname)
   file.src = Object.assign(file.src || {}, {

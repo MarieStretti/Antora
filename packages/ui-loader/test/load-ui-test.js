@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect } = require('../../../test/test-utils')
+const { deferExceptions, expect } = require('../../../test/test-utils')
 
 const fs = require('fs-extra')
 const http = require('http')
@@ -9,20 +9,8 @@ const loadUi = require('@antora/ui-loader')
 const ospath = require('path')
 
 const CWD = process.cwd()
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const WORK_DIR = ospath.join(__dirname, 'work')
-
-function testAll (archive, testBlock) {
-  const makeTest = (bundle) => {
-    return testBlock({ ui: { bundle } })
-  }
-
-  it('with relative bundle path', () =>
-    makeTest(ospath.relative(WORK_DIR, ospath.resolve(__dirname, 'fixtures', archive))))
-
-  it('with absolute bundle path', () => makeTest(ospath.resolve(__dirname, 'fixtures', archive)))
-
-  it('with remote bundle URI', () => makeTest('http://localhost:1337/' + archive))
-}
 
 describe('loadUi()', () => {
   const expectedFilePaths = [
@@ -42,6 +30,14 @@ describe('loadUi()', () => {
   ]
 
   let server
+
+  const testAll = (archive, testBlock) => {
+    const makeTest = (bundle) => testBlock({ ui: { bundle } })
+
+    it('with relative bundle path', () => makeTest(ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, archive))))
+    it('with absolute bundle path', () => makeTest(ospath.resolve(FIXTURES_DIR, archive)))
+    it('with remote bundle URI', () => makeTest('http://localhost:1337/' + archive))
+  }
 
   const clean = (fin) => {
     process.chdir(CWD)
@@ -87,19 +83,11 @@ describe('loadUi()', () => {
 
   describe('should throw error if bundle cannot be found', () => {
     testAll('no-such-bundle.zip', async (playbook) => {
-      let awaitUiCatalog
-      try {
-        const uiCatalog = await loadUi(playbook)
-        awaitUiCatalog = () => uiCatalog
-      } catch (err) {
-        awaitUiCatalog = () => {
-          throw err
-        }
-      }
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
       if (playbook.ui.bundle.startsWith('http://')) {
-        expect(awaitUiCatalog).to.throw('404')
+        expect(loadUiDeferred).to.throw('404')
       } else {
-        expect(awaitUiCatalog).to.throw('does not exist')
+        expect(loadUiDeferred).to.throw('does not exist')
       }
     })
   })
@@ -112,6 +100,21 @@ describe('loadUi()', () => {
       expect(paths).to.have.members(expectedFilePaths)
       const relativePaths = files.map((file) => file.relative)
       expect(paths).to.eql(relativePaths)
+    })
+  })
+
+  describe('should locate bundle when process.cwd() and playbook dir are different', () => {
+    testAll('the-ui-bundle.zip', async (playbook) => {
+      playbook.dir = WORK_DIR
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
     })
   })
 

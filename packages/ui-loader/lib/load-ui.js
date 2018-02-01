@@ -4,7 +4,7 @@ const collectBuffer = require('bl')
 const crypto = require('crypto')
 const File = require('./file')
 const fs = require('fs-extra')
-const got = require('got')
+const get = require('got')
 const { obj: map } = require('through2')
 const minimatchAll = require('minimatch-all')
 const ospath = require('path')
@@ -15,6 +15,7 @@ const yaml = require('js-yaml')
 const vzip = require('gulp-vinyl-zip')
 
 const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
+const URI_SCHEME_RX = /^https?:\/\//
 
 /**
  * Loads the files in the specified UI bundle (zip archive) into a UiCatalog,
@@ -30,6 +31,7 @@ const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
  *
  * @memberof ui-loader
  * @param {Object} playbook - The configuration object for Antora.
+ * @param {Object} playbook.dir - The working directory of the playbook.
  * @param {Object} playbook.ui - The UI configuration object for Antora.
  * @param {String} playbook.ui.bundle - The path (relative or absolute) or URI
  * of the UI bundle to use.
@@ -50,13 +52,13 @@ async function loadUi (playbook) {
       if (exists) {
         return cachePath
       } else {
-        return got(bundleUri, { encoding: null }).then(({ body }) =>
+        return get(bundleUri, { encoding: null }).then(({ body }) =>
           fs.outputFile(cachePath, body).then(() => cachePath)
         )
       }
     })
   } else {
-    const localPath = ospath.resolve(bundleUri)
+    const localPath = ospath.resolve(playbook.dir || process.cwd(), bundleUri)
     resolveBundle = fs.pathExists(localPath).then((exists) => {
       if (exists) {
         return localPath
@@ -87,7 +89,7 @@ async function loadUi (playbook) {
 }
 
 function isUrl (string) {
-  return string.startsWith('http://') || string.startsWith('https://')
+  return ~string.indexOf('://') && URI_SCHEME_RX.test(string)
 }
 
 function sha1 (string) {

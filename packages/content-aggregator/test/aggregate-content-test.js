@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, heredoc } = require('../../../test/test-utils')
+const { deferExceptions, expect, heredoc } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
@@ -122,16 +122,8 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await repoBuilder.init('the-component').then(() => repoBuilder.close())
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        let awaitAggregateContent
-        try {
-          const aggregate = await aggregateContent(playbookSpec)
-          awaitAggregateContent = () => aggregate
-        } catch (err) {
-          awaitAggregateContent = () => {
-            throw err
-          }
-        }
-        expect(awaitAggregateContent).to.throw(COMPONENT_DESC_FILENAME + ' not found')
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' not found')
       })
     })
 
@@ -139,16 +131,8 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithComponentDescriptor(repoBuilder, { version: 'v1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        let awaitAggregateContent
-        try {
-          const aggregate = await aggregateContent(playbookSpec)
-          awaitAggregateContent = () => aggregate
-        } catch (err) {
-          awaitAggregateContent = () => {
-            throw err
-          }
-        }
-        expect(awaitAggregateContent).to.throw(COMPONENT_DESC_FILENAME + ' is missing a name')
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' is missing a name')
       })
     })
 
@@ -156,16 +140,8 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        let awaitAggregateContent
-        try {
-          const aggregate = await aggregateContent(playbookSpec)
-          awaitAggregateContent = () => aggregate
-        } catch (err) {
-          awaitAggregateContent = () => {
-            throw err
-          }
-        }
-        expect(awaitAggregateContent).to.throw(COMPONENT_DESC_FILENAME + ' is missing a version')
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' is missing a version')
       })
     })
 
@@ -233,6 +209,62 @@ describe('aggregateContent()', () => {
         expect(aggregate[0]).to.include(componentDescA)
         expect(aggregate[1]).to.include(componentDescB)
       }, 2)
+    })
+
+    it('should resolve local repository path relative to playbook dir if set', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
+      playbookSpec.dir = WORK_DIR
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let aggregate
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
+
+    it('should resolve local repository path relative to process.cwd() if playbook dir not set', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
+      let aggregate
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
+
+    it('should disregard playbook dir if repository path is absolute', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      playbookSpec.dir = WORK_DIR
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let aggregate
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
     })
   })
 
@@ -520,6 +552,49 @@ describe('aggregateContent()', () => {
         const relatives = files.map((file) => file.relative)
         expect(paths).to.have.members(fixturePaths)
         expect(relatives).to.have.members(fixturePaths)
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'docs'))
+      })
+    })
+
+    describe('should aggregate all files when component is located at a nested start path', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: 'v1.2.3', startPath: 'src/docs' }
+        const fixturePaths = [
+          'modules/ROOT/_attributes.adoc',
+          'modules/ROOT/pages/_attributes.adoc',
+          'modules/ROOT/pages/page-one.adoc',
+        ]
+        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths, async () =>
+          repoBuilder.addFilesFromFixture('should-be-ignored.adoc', '', false)
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include(componentDesc)
+        const files = componentVersion.files
+        expect(files).to.have.lengthOf(fixturePaths.length)
+        const paths = files.map((file) => file.path)
+        const relatives = files.map((file) => file.relative)
+        expect(paths).to.have.members(fixturePaths)
+        expect(relatives).to.have.members(fixturePaths)
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'src/docs'))
+      })
+    })
+
+    describe('should trim leading and trailing slashes from start path', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: 'v1.2.3', startPath: '/src/docs/' }
+        const fixturePaths = ['modules/ROOT/pages/page-one.adoc']
+        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths)
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include(componentDesc)
+        const files = componentVersion.files
+        expect(files).to.have.lengthOf(fixturePaths.length)
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'src/docs'))
       })
     })
 
@@ -551,7 +626,7 @@ describe('aggregateContent()', () => {
               // in our test the git url is the same as the repo url we provided
               url: repoBuilder.url,
               branch: 'master',
-              startPath: '/',
+              startPath: '',
             },
           },
         }

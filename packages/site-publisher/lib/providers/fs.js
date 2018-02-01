@@ -1,14 +1,14 @@
 'use strict'
 
 const fs = require('fs-extra')
+const ospath = require('path')
 const publishStream = require('./common/publish-stream')
 const { dest: vfsDest } = require('vinyl-fs')
 
 const { DEFAULT_DEST_FS } = require('../constants.js')
 
-// FIXME relative path should be resolved relative to dir of playbook file
-async function publishToFs (config, files) {
-  const destDir = config.path || DEFAULT_DEST_FS
+async function publishToFs (config, files, playbook) {
+  const destDir = ospath.resolve(playbook.dir || process.cwd(), config.path || DEFAULT_DEST_FS)
   return config.clean
     ? fs.remove(destDir).then(() => publishStream(vfsDest(destDir), files))
     : publishStream(vfsDest(destDir), files)

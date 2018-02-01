@@ -39,8 +39,19 @@ chai.use(require('chai-spies-next'))
 chai.use(require('dirty-chai'))
 
 module.exports = {
+  deferExceptions: async (fn, ...args) => {
+    let deferredFn
+    try {
+      const result = await fn(...args)
+      deferredFn = () => result
+    } catch (err) {
+      deferredFn = () => {
+        throw err
+      }
+    }
+    return deferredFn
+  },
   expect: chai.expect,
-  spy: chai.spy,
   expectCalledWith: (observed, args, i = 0) =>
     chai
       .expect(observed.__spy.calls[i])
@@ -60,4 +71,5 @@ module.exports = {
     const indentSize = Math.min(...lines.filter((l) => l.startsWith(' ')).map((l) => l.match(indentRx)[0].length))
     return (indentSize ? lines.map((l) => (l.startsWith(' ') ? l.substr(indentSize) : l)) : lines).join('')
   },
+  spy: chai.spy,
 }

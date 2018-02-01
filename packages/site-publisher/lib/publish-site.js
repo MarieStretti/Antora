@@ -51,8 +51,7 @@ async function publishSite (playbook, catalogs) {
         return require('./providers/' + provider).bind(null, options)
       default:
         try {
-          // FIXME use playbook dir instead of process.cwd()
-          return requireProvider(provider, process.cwd()).bind(null, options)
+          return requireProvider(provider, playbook.dir || process.cwd()).bind(null, options)
         } catch (e) {
           throw new Error('Unsupported destination provider: ' + provider)
         }
