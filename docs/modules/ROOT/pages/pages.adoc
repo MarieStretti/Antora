@@ -23,11 +23,11 @@ These files are converted to individual HTML pages automatically.
 
 Another way to think about this: one AsciiDoc file in equals one HTML page out.
 
-my-page.adoc == my-page.html
+my-page.adoc => my-page.html
 
 Learn more:
 
-* Create a standard page
+* xref:create-standard-page.adoc[Create a standard page]
 * xref:modules.adoc#pages-dir[The _pages_ directory]
 * xref:component-structure.adoc[Documentation component overview]
 
@@ -51,7 +51,7 @@ Learn more:
 
 If a file named [.path]_index.adoc_ exists in the ROOT module of a component, Antora will automatically set this page as the start page of that component.
 
-component:ROOT:index.adoc == site.com/component/index.html
+component:ROOT:index.adoc => site.com/component/index.html
 
 Learn more:
 

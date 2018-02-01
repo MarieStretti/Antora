@@ -176,6 +176,10 @@ image::module-page-url.svg[]
 
 The module name is the name of the module directory where that page is stored.
 
+Learn more:
+
+* xref:create-standard-page.adoc[Create a standard page]
+
 [#partials-dir]
 === Partial AsciiDoc files
 
