@@ -1,4 +1,4 @@
-= Standard Page Structure
+= Create a Standard Page
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -11,29 +11,69 @@ Standard pages have a header, which includes the page title, and a body, which i
 
 == Requirements
 
+* The file must be saved in the [.path]_pages_ directory of a module.
 * The file must be saved with the extension `.adoc`.
 * The file must be marked up with valid AsciiDoc.
 * The file must have a page title.
 
-== Page Header
+== Page structure
+
+A standard page has two general parts, a header and a body.
 
 The page header is a set of contiguous lines that start on the first line of the file.
 The header encapsulates the following elements:
 
 * page title (required)
-* author
-* revision information
+* author, date, and revision metadata
 * environment settings
 * built-in document attributes, such as section numbering
 * user-defined document attributes, such as keywords and common URLs
 
 A single blank line signals the end of the page header.
 The next line with content is the start of the page body.
-
-== Page Body
-
 The page body includes the:
 
 * preamble
 * section headings
 * section content such as paragraphs, source code blocks, images, included partials
+
+== Create a new standard page
+
+. Start a new file in a plain text editor such as Atom, Brackets, or gedit.
+
+. On the first line of file, enter a page title.
++
+A page title is specified by a single equal sign (`=`), followed by one blank space, and then the text of the title.
++
+[source,asciidoc]
+----
+= The title of my new page
+----
+
+. On the second line and subsequent contiguous lines, add document metadata and attributes.
+*The page title is the only required header element.*
+
+. Separate the header block from the body block by at least one blank line.
+
+. Write your content.
++
+[source,asciidoc]
+----
+= The title of my new page
+
+Welcome to the preamble of my new page!
+
+== This is a section title
+
+This is a paragraph.
+----
+
+. Save the file.
+.. Save the file with the extension `.adoc` in a module's [.path]_pages_ directory.
+
+.. The name you use when saving the file will be used to compute the page's URL.
++
+my-new-page.adoc -> my-new-page.html
+
+You've now created a standard page.
+When you run Antora, it will be converted to an HTML page and published to your site automatically.
