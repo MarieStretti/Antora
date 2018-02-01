@@ -19,6 +19,7 @@ const DOT_OR_NOEXT_RX = {
 }
 const DRIVE_RX = new RegExp('^[a-z]:/(?=[^/]|$)')
 const SEPARATOR_RX = /\/|:/
+const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
 const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
 
 /**
@@ -51,12 +52,14 @@ async function aggregateContent (playbook) {
       const branchPatterns = source.branches || defaultBranches
       const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
         async ({ ref, localName, current }) => {
+          let startPath = source.startPath || ''
+          if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
           const files =
             isLocal && !isBare && current
-              ? await readFilesFromWorktree(ospath.join(localPath, source.startPath || ''))
-              : await readFilesFromGitTree(repository, ref, source.startPath)
+              ? await readFilesFromWorktree(startPath ? ospath.join(localPath, startPath) : localPath)
+              : await readFilesFromGitTree(repository, ref, startPath)
           const componentVersion = loadComponentDescriptor(files)
-          componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, source.startPath))
+          componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, startPath))
           return componentVersion
         }
       )
@@ -269,7 +272,7 @@ async function getGitTree (repository, branchRef, startPath) {
   const commit = await repository.getBranchCommit(branchRef)
   if (startPath) {
     const tree = await commit.getTree()
-    const subTreeEntry = await tree.entryByPath(startPath)
+    const subTreeEntry = await tree.getEntry(startPath)
     return repository.getTree(subTreeEntry.id())
   } else {
     return commit.getTree()
@@ -344,7 +347,7 @@ function collectFiles (done) {
   return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
 }
 
-function assignFileProperties (file, url, branch, startPath = '/') {
+function assignFileProperties (file, url, branch, startPath) {
   const extname = file.extname
   file.mediaType = mimeTypes.lookup(extname)
   file.src = Object.assign(file.src || {}, {

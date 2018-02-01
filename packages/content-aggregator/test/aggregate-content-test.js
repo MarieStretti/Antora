@@ -552,6 +552,49 @@ describe('aggregateContent()', () => {
         const relatives = files.map((file) => file.relative)
         expect(paths).to.have.members(fixturePaths)
         expect(relatives).to.have.members(fixturePaths)
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'docs'))
+      })
+    })
+
+    describe('should aggregate all files when component is located at a nested start path', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: 'v1.2.3', startPath: 'src/docs' }
+        const fixturePaths = [
+          'modules/ROOT/_attributes.adoc',
+          'modules/ROOT/pages/_attributes.adoc',
+          'modules/ROOT/pages/page-one.adoc',
+        ]
+        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths, async () =>
+          repoBuilder.addFilesFromFixture('should-be-ignored.adoc', '', false)
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include(componentDesc)
+        const files = componentVersion.files
+        expect(files).to.have.lengthOf(fixturePaths.length)
+        const paths = files.map((file) => file.path)
+        const relatives = files.map((file) => file.relative)
+        expect(paths).to.have.members(fixturePaths)
+        expect(relatives).to.have.members(fixturePaths)
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'src/docs'))
+      })
+    })
+
+    describe('should trim leading and trailing slashes from start path', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: 'v1.2.3', startPath: '/src/docs/' }
+        const fixturePaths = ['modules/ROOT/pages/page-one.adoc']
+        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths)
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include(componentDesc)
+        const files = componentVersion.files
+        expect(files).to.have.lengthOf(fixturePaths.length)
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'src/docs'))
       })
     })
 
@@ -583,7 +626,7 @@ describe('aggregateContent()', () => {
               // in our test the git url is the same as the repo url we provided
               url: repoBuilder.url,
               branch: 'master',
-              startPath: '/',
+              startPath: '',
             },
           },
         }

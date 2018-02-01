@@ -72,7 +72,7 @@ module.exports = {
       default: null,
     },
     start_path: {
-      doc: 'The root relative start path inside the bundle from which to take files.',
+      doc: 'The relative path inside the bundle from which to start reading files.',
       format: String,
       default: '',
     },
