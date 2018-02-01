@@ -8,6 +8,33 @@ const SITEMAPS_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9'
 const SITEMAP_STEM = 'sitemap'
 const SITEMAP_PREFIX = 'sitemap-'
 
+/**
+ * Generates sitemap files from the pages in the site.
+ *
+ * Iterates over the files from the page family in the content catalog and
+ * generates sitemap files. If there's only one component, all the entries are
+ * added to a sitemap.xml file that gets published to the root of the site. If
+ * there's more than one component, the sitemaps are partitioned into separate
+ * files by component (e.g., sitemap-component-name.xml). The URL of those
+ * component sitemaps are listed in the sitemap.xml index file that gets
+ * published to the root of the site.
+ *
+ * The entries are listed in alphabetical order by URL. URLs with newer
+ * versions are listed before URLs of older versions according to the semantic
+ * versioning-based sorting algorithm used in Antora.
+ *
+ * The sitemaps are only generated if a url for the site has been defined to
+ * the site.url property in the playbook.
+ *
+ * @memberof site-mapper
+ *
+ * @param {Object} playbook - The configuration object for Antora.
+ * @param {Object} playbook.site - Site-related configuration data.
+ * @param {String} playbook.site.url - The base URL of the site.
+ * @param {ContentCatalog} contentCatalog - The content catalog that provides
+ *   access to the virtual content files (i.e., pages) in the site.
+ * @returns {Array<File>} An array of File objects that represent the sitemaps.
+ */
 function mapSite (playbook, contentCatalog) {
   let siteUrl = playbook.site.url
   if (!siteUrl) return []
