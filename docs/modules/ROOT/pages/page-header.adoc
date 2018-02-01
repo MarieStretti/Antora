@@ -36,7 +36,7 @@ First Middle Last <author@email.com> // <2>
 == Page title
 
 A page title is specified by one equals sign (`=`), followed by one blank space, and then the text of the title.
-+
+
 [source,asciidoc]
 ----
 = The title of this page
@@ -64,20 +64,55 @@ First Middle Last <author@email.com>; First Middle Last <author-url[@author]>
 When a page has multiple authors, each author is separated by a semicolon (`;`).
 The author's name is stored in the HTML `meta` tag `author`.
 
+.Author HTML meta tag output
+[source,xml]
 ....
 <head>
 <meta charset="UTF-8">
 <meta name="author" content="Firstname Lastname, Firstname Lastname">
-...
 ....
 
 Whether the page author information is visible on a generated page depends on the site's UI templates.
 
 === Description
 
+The page attribute `description` is assigned to the HTML `meta` tag with the same name.
+If the description is long, you can break value across several lines by ending each line with a backslash `\` that is preceded by a space.
+
+[source,asciidoc]
+----
+= Page Title
+:description: A description of the page stored in an HTML meta tag. This page is \
+about all kinds of interesting things.
+----
+
+.Description HTML meta tag output
+[source,xml]
+....
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="A description of the page stored in an HTML meta tag. This page is about all kinds of interesting things.">
+....
+
 === Keywords
 
+The `keywords` attribute contains a list of comma-separated values that are assigned to the HTML `meta` tag with the same name.
 
+[source,asciidoc]
+----
+= Page Title
+:keywords: comma-separated values, stored, in an HTML, meta, tag
+----
+
+.Keywords HTML meta tag output
+[source,xml]
+....
+<head>
+<meta charset="UTF-8">
+<meta name="keywords" content="comma-separated values, stored, in an HTML, meta, tag">
+....
+
+== Built-in page attributes
 
 ////
 author::
@@ -98,5 +133,3 @@ The first character of the firstname, middlename, and lastname attributes.
 email or contact information::
 An email address or contact information such as a social media account, delimited by angle brackets (`< >`).
 ////
-
-== Built-in page attributes
