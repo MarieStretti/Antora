@@ -9,10 +9,13 @@ const SITEMAP_STEM = 'sitemap'
 const SITEMAP_PREFIX = 'sitemap-'
 
 function mapSite (playbook, contentCatalog) {
-  const siteUrl = playbook.site.url
+  let siteUrl = playbook.site.url
   if (!siteUrl) return []
+  if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
+  const pages = contentCatalog.findBy({ family: 'page' })
+  if (!pages.length) return []
   const lastmodISO = new Date().toISOString()
-  let sitemaps = contentCatalog.findBy({ family: 'page' }).reduce((accum, file) => {
+  let sitemaps = pages.reduce((accum, file) => {
     const componentSitemap = getSitemapForComponent(accum, file.src.component, siteUrl)
     const version = file.src.version
     componentSitemap.entries.push({
@@ -39,17 +42,21 @@ function mapSite (playbook, contentCatalog) {
       return sitemap
     })
 
-  const sitemapIndexEntries = sitemaps.map(generateSitemapElement)
-
+  let sitemapIndex
+  if (sitemaps.length > 1) {
+    const sitemapIndexEntries = sitemaps.map(generateSitemapElement)
+    sitemapIndex = new File({ contents: Buffer.from(generateSitemapIndexDocument(sitemapIndexEntries)) })
+    sitemaps.unshift(sitemapIndex)
+  } else {
+    sitemapIndex = sitemaps[0]
+  }
   const basename = SITEMAP_STEM + '.xml'
-  const sitemapIndex = new File({
-    path: basename,
-    contents: Buffer.from(generateSitemapIndexDocument(sitemapIndexEntries)),
-    out: { path: basename },
-    pub: { url: '/' + basename },
-  })
-
-  return [sitemapIndex].concat(sitemaps)
+  sitemapIndex.out = { path: basename }
+  sitemapIndex.pub = {
+    absoluteUrl: siteUrl + '/' + basename,
+    url: '/' + basename,
+  }
+  return sitemaps
 }
 
 function getSitemapForComponent (sitemaps, component, siteUrl) {
@@ -58,7 +65,6 @@ function getSitemapForComponent (sitemaps, component, siteUrl) {
   } else {
     const basename = `${SITEMAP_PREFIX}${component}.xml`
     const componentSitemap = new File({
-      path: basename,
       entries: [],
       out: { path: basename },
       pub: {
@@ -74,7 +80,7 @@ function getSitemapForComponent (sitemaps, component, siteUrl) {
 
 function generateSitemapElement (sitemap) {
   return `<sitemap>
-<loc>${sitemap.pub.absoluteUrl}</loc>
+<loc>${escapeHtml(sitemap.pub.absoluteUrl)}</loc>
 </sitemap>`
 }
 
@@ -87,7 +93,7 @@ ${entries.join('\n')}
 
 function generateUrlElement (entry) {
   return `<url>
-<loc>${entry.absoluteUrl}</loc>
+<loc>${escapeHtml(entry.absoluteUrl)}</loc>
 <lastmod>${entry.lastmodISO}</lastmod>
 </url>`
 }
@@ -97,6 +103,10 @@ function generateSitemapDocument (entries) {
 <urlset xmlns="${SITEMAPS_NS}">
 ${entries.join('\n')}
 </urlset>`
+}
+
+function escapeHtml (str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
 }
 
 module.exports = mapSite
