@@ -1,0 +1,23 @@
+= AsciiDoc Page Header
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] How to structure a valid AsciiDoc page header.
+* [x] How to set a page title.
+* [x] Where the page title is used in the published site.
+* [x] How to set and use AsciiDoc's built-in page attributes.
+* [x] How to add page metadata.
+
+== Page header anatomy
+
+== Page title
+
+== Built-in page attributes
+
+== Page metadata
