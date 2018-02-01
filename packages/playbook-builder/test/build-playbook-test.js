@@ -82,7 +82,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should set dir and file properties based on absolute path of playbook file', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ospath.relative(process.cwd(), ymlSpec) }, schema)
+    const playbook = buildPlaybook([], { PLAYBOOK: ospath.relative('.', ymlSpec) }, schema)
     expect(playbook.dir).to.equal(ospath.dirname(ymlSpec))
     expect(playbook.file).to.equal(ymlSpec)
     expect(playbook.playbook).to.not.exist()
