@@ -115,6 +115,22 @@ describe('generateSite()', () => {
     expect($('.page-versions')).to.not.exist()
   }).timeout(TIMEOUT)
 
+  it('should resolve paths in playbook relative to playbook dir', async () => {
+    playbookSpec.content.sources[0].url = ospath.relative('.', playbookSpec.content.sources[0].url)
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    const altWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+    fs.ensureDirSync(altWorkDir)
+    process.chdir(altWorkDir)
+    await generateSite(['--playbook', ospath.relative('.', playbookSpecFile)])
+    process.chdir(WORK_DIR)
+    expect(ospath.join(destDir, '_'))
+      .to.be.a.directory()
+      .with.subDirs.with.members(['css', 'js', 'font', 'img'])
+    expect(ospath.join(destDir, 'the-component'))
+      .to.be.a.directory()
+      .with.subDirs(['2.0'])
+  }).timeout(TIMEOUT)
+
   it('should generate site into output directory specified in arguments', async () => {
     const destDirOverride = ospath.join(destDir, 'beta')
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
