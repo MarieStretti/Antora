@@ -5,7 +5,6 @@
 const cli = require('./commander')
 // Q: can we ask the playbook builder for the config schema?
 const configSchema = require('@antora/playbook-builder/lib/config/schema')
-const fs = require('fs')
 const ospath = require('path')
 const solitaryConvict = require('@antora/playbook-builder/lib/solitary-convict')
 
@@ -18,9 +17,13 @@ async function run () {
   return result
 }
 
-function requireSiteGenerator (name) {
-  const localPath = ospath.resolve('node_modules', name)
-  return require(fs.existsSync(ospath.join(localPath, 'package.json')) ? localPath : name)
+function requireSiteGenerator (name, playbookDir) {
+  try {
+    // QUESTION should we remove the leading ./ ? (makes it a broader search)
+    const searchPath = '.' + ospath.sep + ospath.relative('.', ospath.join(playbookDir, 'node_modules'))
+    name = require.resolve(name, { paths: [searchPath] })
+  } catch (e) {}
+  return require(name)
 }
 
 cli
@@ -38,7 +41,7 @@ cli
     let generateSite
     try {
       // TODO honor --generator option (or auto-detect)
-      generateSite = requireSiteGenerator('@antora/site-generator-default')
+      generateSite = requireSiteGenerator('@antora/site-generator-default', ospath.resolve(playbookFile, '..'))
     } catch (e) {
       console.error('error: No site generator found. Try installing @antora/site-generator-default.')
       process.exit(1)
