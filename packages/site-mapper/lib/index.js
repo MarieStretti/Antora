@@ -10,4 +10,4 @@
  *
  * @namespace site-mapper
  */
-module.exports = require('./map-site')
+module.exports = require('./generate-sitemaps')

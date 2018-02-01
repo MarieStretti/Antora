@@ -35,7 +35,7 @@ const SITEMAP_PREFIX = 'sitemap-'
  *   access to the virtual content files (i.e., pages) in the site.
  * @returns {Array<File>} An array of File objects that represent the sitemaps.
  */
-function mapSite (playbook, contentCatalog) {
+function generateSitemaps (playbook, contentCatalog) {
   let siteUrl = playbook.site.url
   if (!siteUrl) return []
   if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
@@ -136,4 +136,4 @@ function escapeHtml (str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
 }
 
-module.exports = mapSite
+module.exports = generateSitemaps
