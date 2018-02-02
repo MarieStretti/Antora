@@ -95,13 +95,13 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === v1.0.0-alpha.x
 
-==== Scheduled for alpha.5 release
-
-* [ ] Add AsciiDoc page overview and structure documentation {uri-issues}/131[#131]
-* [ ] Document Windows installation instructions {uri-issues}/130[#130]
-* [ ] Document output provider and path features {uri-issues}/127[#127]
-
 ==== Scheduled for alpha.6 release
+
+* [x] Add AsciiDoc page overview and structure documentation {uri-issues}/131[#131]
+* [ ] Document Windows installation instructions {uri-issues}/130[#130]
+* [x] Document output provider and path features {uri-issues}/127[#127]
+
+==== Scheduled for alpha.7 release
 
 * [ ] _Docs Site_: Set up automatic deployment to GitLab pages for docs.antora.org {uri-docs-site-issues}/2[#2]
 * [ ] Document sitemap features
@@ -112,6 +112,9 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 * [ ] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
 * [ ] Document redirect features
+* [ ] Add how to create a partial page
+* [ ] Document how to create user-defined page attributes
+* [ ] Expand private repository section {uri-issues}/139[#139]
 * [ ] Provide source URL configuration examples
 * [ ] Document UI bundle configuration features
 * [ ] Document site key configuration features
