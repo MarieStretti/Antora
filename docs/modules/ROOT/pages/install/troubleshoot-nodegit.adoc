@@ -11,7 +11,7 @@ endif::[]
 
 Antora interfaces with git repositories using {uri-nodegit}[nodegit].
 During installation of the site generator, Antora pulls in nodegit as a dependency and installs it automatically.
-However, if your Antora installation fails, nodegit is the most probable culprit.
+If your Antora installation fails, nodegit is the most probable culprit.
 
 == nodegit and Linux
 
@@ -28,7 +28,7 @@ See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246].
 
 If you see this error, you either need to create the missing symlink or force nodegit to be recompiled (instead of using a precompiled binary).
 
-=== Option 1: Create missing symlink
+== Option 1: Create missing symlink
 
 To create the missing symlink, run the following command:
 
@@ -42,7 +42,7 @@ Once you've made that symlink, run the `npm install` command again to install th
 
  $ npm install -g @antora/site-generator-default
 
-=== Option 2: Recompile nodegit
+== Option 2: Recompile nodegit
 
 If you aren't comfortable making a system-wide change, you can recompile nodegit on your machine instead.
 
@@ -51,6 +51,8 @@ Force nodegit to recompile by passing the `BUILD_ONLY` environment variable to t
  $ BUILD_ONLY=true npm install -g @antora/site-generator-default
 
 Be aware that recompiling nodegit will make installation take considerably longer.
+
+== What's next?
 
 Now that the default Antora site generator is installed, you are ready to:
 

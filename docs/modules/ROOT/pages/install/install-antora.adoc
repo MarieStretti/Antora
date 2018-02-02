@@ -8,7 +8,7 @@ endif::[]
 
 Assumptions:
 
-* [x] You've xref:install-prerequisites.adoc[installed the base build tools and Node 8].
+* [x] You've installed Node 8 on your xref:linux-requirements.adoc[Linux], xref:windows-requirements.adoc[Windows], or xref:macos-requirements.adoc[macOS] machine.
 
 On this page, you'll learn:
 
@@ -20,8 +20,10 @@ Once these packages are installed, you can use the `antora` command to publish a
 
 == Install the Antora CLI
 
-We'll begin by installing the Antora CLI using npm.
-You should install this package globally so the `antora` command is available on your PATH.
+We'll begin by installing the Antora CLI using the base call for Node's package manager, `npm`.
+This package manager was installed when you installed Node.
+
+You should install the Antora CLI globally (`-g`) so the `antora` command is available on your PATH.
 
 Open a terminal and type:
 
@@ -41,7 +43,7 @@ $ antora -v
 1.0.0-alpha.1
 ....
 
-== Install the Default Antora Site Generator
+== Install the default Antora site generator
 
 Next, install the default Antora site generator using npm (or Yarn).
 
@@ -49,7 +51,7 @@ To install the site generator globally, type:
 
  $ npm install -g @antora/site-generator-default
 
-If you don't want to install the site generator globally, you can opt to install it inside a single project containing a playbook file.
+If you don't want to install the site generator globally, you can opt to install it inside a single project directory containing a playbook file.
 
 Move into the playbook's directory and then type:
 
@@ -57,8 +59,10 @@ Move into the playbook's directory and then type:
 
 CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, go to xref:troubleshoot-nodegit.adoc[Troubleshooting nodegit].
 
+== What's next?
+
 Now that the Antora CLI and default Antora site generator are installed, you are ready to:
 
-* Set up a own xref:playbook:index.adoc[playbook] or use the Demo playbook.
+* Set up your own xref:playbook:index.adoc[playbook] or use the Demo playbook.
 * Organize a xref:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
 * xref:run-antora-generate-site.adoc[Run Antora] and generate a documentation site.

@@ -9,8 +9,7 @@ endif::[]
 
 Assumptions:
 
-* [x] You've xref:install-prerequisites.adoc[installed the base build tools and Node 8].
-* [x] You've xref:install-antora.adoc[installed the Antora CLI and a site generator pipeline].
+* [x] You've xref:install/install-antora.adoc[installed the Antora CLI and a site generator pipeline].
 * [x] You have your own xref:playbook:index.adoc[playbook], or you're using the Demo playbook.
 * [x] Your playbook is configured to access at least one of your own  xref:component-structure.adoc[documentation component repositories] or Antora's Demo docs components.
 * [x] Your playbook is configured to use a custom UI bundle or Antora's default UI bundle.
