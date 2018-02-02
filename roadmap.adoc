@@ -25,16 +25,11 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 == Site Generator Pipeline & CLI
 
-For a detailed list of current development tasks, refer to the core components {uri-board}[issue board] and {uri-milestones}[milestones].
+For a detailed list of current development tasks, refer to the core components {uri-board}[issue board], {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
 === v1.0.0-alpha.x
 
 ==== Scheduled for next alpha release
-
-* [ ] Allow start page to be specified for the site {uri-issues}/136[#136]
-* [ ] Architect and implement site mapper component {uri-issues}/108[#108], {uri-issues}/109[#109]
-* [ ] Resolve paths in playbook relative to playbook file {uri-issues}/105[#105]
-* [ ] Set up Antora chat room {uri-issues}/134[#134]
 
 ==== Waiting
 
@@ -170,6 +165,13 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 == Completed Releases
 
 See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
+
+=== 1.0.0-alpha.5
+
+* [x] Allow start page to be specified for the site {uri-issues}/136[#136]
+* [x] Architect and implement site mapper component {uri-issues}/108[#108], {uri-issues}/109[#109]
+* [x] Resolve paths in playbook relative to playbook file {uri-issues}/105[#105]
+* [x] Set up Antora chat room {uri-issues}/134[#134]
 
 === 1.0.0-alpha.4
 
