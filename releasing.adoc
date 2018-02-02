@@ -155,6 +155,120 @@ It's used to:
 In order to trigger another release, it's necessary to rebase the releases branch on top of master, update the [.path]_releaserc_ file if necessary, then force push the branch.
 (Unfortunately, that means the branch cannot be protected).
 
+== Testing a Release
+
+It's possible to test the release locally using a private npm registry.
+This section briefly describes how.
+
+=== Set Up a Private Npm Registry
+
+You can run a private npm registry on your own machine using http://www.verdaccio.org[Verdaccio].
+
+Verdaccio is available as an npm package.
+To install Verdaccio, run the following command:
+
+ $ npm i -g verdaccio
+
+You'll then need to create a user for publishing packages.
+First, start Verdaccio using the `verdaccio` command:
+
+ $ verdaccio
+
+Verdaccio runs at http://localhost:4873 by default.
+You can visit this URL to see what packages have been installed.
+(Of course, there's nothing there yet!)
+
+Next, create a user using the `npm adduser` command (assuming the default port):
+
+ $ npm adduser --registry http://localhost:4873
+
+You'll never need to login as this user.
+This just adds an auth token for localhost:4873 to the [.path]_~/.npmrc_ file that the npm client will use for publishing to this registry.
+
+Next, we'll need to disable the proxy for the `@antora` scope so that we can test locally without interferring with or getting interference from the released packages.
+
+First, stop Verdaccio.
+Then, open the file [.path]_~/.config/verdaccio/config.yaml_, add the entry under the `packages:` key, and save it.
+
+[source,yml]
+----
+  '@antora/*':
+    access: $all
+    publish: $authenticated
+----
+
+=== Run the Private Npm Registry
+
+You must start Verdaccio in order to use it for publishing:
+
+ $ verdaccio
+
+=== Prepare the Clones
+
+Now we need to prepare two clones so that they are configured as the release repository (test-release-from) and the upstream repository (test-release-to).
+This ensures that you can perform a full publish without affecting the real repository.
+
+Start by cloning the repository to use as the upstream target:
+
+ $ git clone git@gitlab.com:antora/antora.git test-release-to
+   cd test-release-to
+
+Next, switch to another branch so the master branch can receive commits and we have something to come back to:
+
+ $ git checkout -b current
+   cd ..
+
+Next, clone the repository from which you will perform the release:
+
+ $ git clone git@gitlab.com:antora/antora.git test-release-from
+   cd test-release-from
+
+Next, change the remote origin to point to our local (fake) target:
+
+ $ git remote set-url origin ../test-release-to
+
+Confirm this is set up correctly by doing an empty push:
+
+ $ git push origin master
+
+=== Perform a Local Release
+
+Now you are ready to perform a local release.
+Switch to the [.path]_test-release-from_ repository and run:
+
+ $ npm_config_registry=http://localhost:4873 \
+   lerna publish --cd-version=prerelease --exact --force-publish=*
+
+If you've set up everything correctly, this will not affect the official repository and won't publish anything to npmjs.com.
+
+Verify that the packages have been published to the private npm registry by visiting http://localhost:4873.
+
+=== Reverting a Release
+
+The beauty of testing locally is that you can revert a release.
+Here's how to do it.
+
+Start by purging the packages from the private npm repository:
+
+ $ for package in `find packages -mindepth 1 -maxdepth 1 -printf "%f\n"`; do
+     npm --registry http://localhost:4873 unpublish --force @antora/$package
+   done
+
+Next, move to the [.path]_test-release-to_ repository and clean stuff up:
+
+ $ git tag -d `git tag`
+   git checkout master
+   git reset --hard `git rev-parse current`
+   git checkout current
+
+Now, go back to the [.path]_test-release-from_ repository and sync with the local origin:
+
+ $ git tag -d `git tag`
+   git fetch origin
+   git reset --hard origin/master
+
+Now you should be all set to try the release again!
+
 == Future Ideas
 
 In the future, we may consider other ways to trigger a release aside from using a dedicated branch.
