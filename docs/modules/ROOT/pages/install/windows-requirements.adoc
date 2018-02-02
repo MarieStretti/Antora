@@ -98,3 +98,7 @@ If you have nvm installed but your Node version is less than 8.0.0, type the fol
 IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
 
 Now that you've upgraded Node, you're ready to xref:install-antora.adoc[install Antora].
+
+== What's next?
+
+Once you've installed Node 8, it's time to xref:install-antora.adoc[install Antora].

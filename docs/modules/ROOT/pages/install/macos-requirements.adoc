@@ -88,3 +88,7 @@ To set the latest version of Node 8 as the default for any new terminal, type:
  $ nvm alias default 8
 
 Now that you've upgraded Node, you're ready to xref:install-antora.adoc[install Antora].
+
+== What's next?
+
+Once you've installed the base build tools and Node 8, it's time to xref:install-antora.adoc[install Antora].

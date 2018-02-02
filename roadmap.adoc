@@ -98,7 +98,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 ==== Scheduled for alpha.6 release
 
 * [x] Add AsciiDoc page overview and structure documentation {uri-issues}/131[#131]
-* [ ] Document Windows installation instructions {uri-issues}/130[#130]
+* [x] Document Windows installation instructions {uri-issues}/130[#130]
 * [x] Document output provider and path features {uri-issues}/127[#127]
 
 ==== Scheduled for alpha.7 release

@@ -4,8 +4,10 @@
 ** xref:pipeline-process.adoc[How Antora Works]
 *** xref:fetch-content.adoc[Fetch Content]
 *** xref:load-ui.adoc[Load a UI]
-** xref:install-prerequisites.adoc[System Requirements]
-** xref:install-antora.adoc[Install Antora]
+** xref:install/linux-requirements.adoc[Linux Requirements]
+** xref:install/macos-requirements.adoc[macOS Requirements]
+** xref:install/windoes-requirements.adoc[Windows Requirements]
+** xref:install/install-antora.adoc[Install Antora CLI & Pipeline]
 ** Source Files
 *** Content and asset files
 *** Navigation files

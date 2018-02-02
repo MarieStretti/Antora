@@ -28,4 +28,4 @@ This strategy makes it possible for content branches to be reused, substituted, 
 This is a sharp contrast to many other site generators, which intermix all these concerns, making the documentation difficult to manage, maintain, and enhance.
 
 Let's go over how to xref:component-structure.adoc[organize your documentation] so Antora can use it.
-We'll also show you how to xref:install-prerequisites.adoc[set up Antora] and xref:run-antora-generate-site.adoc[run it].
+We'll also show you how install Node 8 on xref:install/linux-requirements.adoc[Linux], xref:install/windows-requirements.adoc[Windows], or xref:install/macos-requirements.adoc[macOS] and xref:install/install-antora.adoc[install Antora]. Finally, we'll xref:run-antora-generate-site.adoc[run Antora] and publish a documentation site using a xref:playbook:index.adoc[playbook].
