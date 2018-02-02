@@ -1,4 +1,4 @@
-= Adding a Partial AsciiDoc File to a Page
+= Insert a Partial Page into a Standard Page
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -12,9 +12,9 @@ endif::[]
 [#insert-partial]
 == Insert a partial
 
-To insert a partial AsciiDoc file into a page, use the include directive (`include::[]`).
+To insert a partial AsciiDoc file into a standard page, use the include directive (`include::[]`).
 
-.Insert a partial file using an include directive
+.Insert a partial page using an include directive
 [source,asciidoc]
 ----
 \include::{partialsdir}/log-definition.adoc[]

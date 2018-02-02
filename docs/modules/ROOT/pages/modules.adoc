@@ -48,6 +48,7 @@ image::modules-dir.svg[,260]
 
 We'll start with the ROOT module, since it's required.
 
+[#root-dir]
 == ROOT module
 
 A documentation component must contain a ROOT module directory.
@@ -174,6 +175,10 @@ Let's see what the URL for [.path]_modules/a-module/pages/user-management.adoc_ 
 image::module-page-url.svg[]
 
 The module name is the name of the module directory where that page is stored.
+
+Learn more:
+
+* xref:create-standard-page.adoc[Create a standard page]
 
 [#partials-dir]
 === Partial AsciiDoc files

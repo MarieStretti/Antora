@@ -1,0 +1,189 @@
+= Page Header
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:note-caption: Ops Hint
+// URLs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+
+On this page, you'll learn:
+
+* [x] How to structure a valid AsciiDoc page header.
+* [x] How to set a page title.
+* [x] Where the page title is used in the published site.
+* [x] How to add metadata to a page.
+* [x] How to set AsciiDoc's built-in page attributes.
+
+== Header anatomy
+
+The page header is a set of contiguous lines that starts on the first line of the file.
+The header is separated from the page body by at least one blank line.
+
+.Common elements in a page header
+[source,asciidoc]
+----
+= Page Title // <1>
+First Middle Last <author@email.com> // <2>
+:description: A description of the page stored in an HTML meta tag. // <3>
+:keywords: comma-separated values, stored, in an HTML, meta, tag // <4>
+:sectanchors: // <5>
+:url-repo: https://my-git-repo.com // <6>
+----
+<1> Title of the page
+<2> Author name and email address
+<3> Description attribute
+<4> Keywords attribute
+<5> Example of a built-in page attribute
+<6> Example of a user created and defined page attribute
+
+Each attribute entry must be entered on its own line.
+Attributes can be placed in any order in the header, including above the page title.
+However, the preferred placement is below the title.
+The header can also contain line comments.
+
+[#page-title]
+== Page title
+
+A page title is specified by one equals sign (`=`), followed by one blank space, and then the text of the title.
+
+[source,asciidoc]
+----
+= The title of this page
+----
+
+The content of a page's title populates the navigation breadcrumb when the site is generated.
+
+[#page-meta]
+== Page metadata
+
+AsciiDoc provides several optional, built-in attributes for defining page metadata.
+
+=== Author
+
+Specifying the author or authors of a page is optional.
+The author is listed on the line directly beneath the page’s title.
+An optional email address or contact URL can follow an author’s name inside a set of angle brackets (`< >`).
+
+.Multiple authors
+[source,asciidoc]
+----
+= Page Title
+First Middle Last <author@email.com>; First Last <author@email.com>
+----
+
+When a page has multiple authors, each author is separated by a semicolon (`;`).
+Author names are stored in the HTML `meta` tag `author`.
+
+.Author HTML meta tag output
+[source,xml]
+....
+<head>
+<meta charset="UTF-8">
+<meta name="author" content="First Middle Last, First Last">
+....
+
+Whether the page author information is visible on a generated page depends on the site's UI templates.
+
+There are additional author attributes and methods for specifying author information.
+Refer to the {uri-adoc-manual}/#author-and-email[Asciidoctor user manual] for the complete list of author attributes and usage examples.
+
+=== Description
+
+If set, the `description` attribute is stored to the HTML `meta` tag with the same name.
+You can break long values across several lines by ending each line with a backslash `\` that is preceded by a space.
+
+[source,asciidoc]
+----
+= Page Title
+:description: A description of the page stored in an HTML meta tag. This page is \
+about all kinds of interesting things.
+----
+
+.Description HTML meta tag output
+[source,xml]
+....
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="A description of the page stored in an HTML meta tag. This page is about all kinds of interesting things.">
+....
+
+=== Keywords
+
+The `keywords` attribute contains a list of comma-separated values that are assigned to the HTML `meta` tag with the same name.
+
+[source,asciidoc]
+----
+= Page Title
+:keywords: comma-separated values, stored, in an HTML, meta, tag
+----
+
+.Keywords HTML meta tag output
+[source,xml]
+....
+<head>
+<meta charset="UTF-8">
+<meta name="keywords" content="comma-separated values, stored, in an HTML, meta, tag">
+....
+
+[#page-attrs]
+== Built-in page attributes
+
+AsciiDoc provides a multitude of built-in attributes that can activate and control syntax output behavior and styles.
+
+TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the attributes section of the {uri-adoc-manual}/#attributes[Asciidoctor user manual].
+
+Page attributes are set in the header and are available to the whole page.
+Built-in AsciiDoc attributes are reserved attributes that have special, pre-defined behavior.
+Many built-in attributes also have a restricted set of accepted values.
+
+Built-in page attributes usually fall into one of two types; those that toggle a behavior on or off (boolean) and those that change the generated output by accepting an alternate value or replacement content (variable).
+
+=== Set and unset built-in attributes
+
+Let's look at an example of a boolean attribute, `sectanchors`.
+
+.Set a built-in page attribute
+[source,asciidoc]
+----
+= Page Title
+:sectanchors:
+----
+
+When turned "`on`", the `sectanchors` attribute adds an anchor to the left of each section title that is rendered as the symbol `§`.
+The attribute is turned "`on`", also known as "`set`", by simply entering it into the header.
+
+Built-in attributes that are on by default, such as table captions, can be unset (turned "`off`") with a leading or trailing `!` added to the attribute name.
+
+.Unset a built-in page attribute
+[source,asciidoc]
+----
+= Page Title
+:sectanchors:
+:table-caption!:
+----
+
+=== Change a built-in attribute value
+
+Let's look at an example of a built-in attribute that has a default value that we want to replace with our own value.
+
+The label on a Note admonition block is controlled by the `note-caption` attribute.
+This attribute is on by default and has an implicit (default) value of `NOTE`.
+Let's change the label to "`OPS HINT`".
+
+.Change a built-in page attribute value
+[source,asciidoc]
+----
+= Page Title
+:sectanchors:
+:table-caption!:
+:note-caption: OPS HINT
+----
+
+Now, when we create a Note admonition block, the block's label should be displayed as OPS HINT.
+
+NOTE: This is an Ops Hint.
+
+Refer to the Asciidoctor user manual for a list of all available {uri-adoc-manual}l/#builtin-attributes[built-in page attributes].
