@@ -425,12 +425,13 @@ describe('aggregateContent()', () => {
         await aggregateContent(playbookSpec)
         const contentCacheAbsDir = ospath.join(WORK_DIR, CONTENT_CACHE_PATH)
         if (repoBuilder.remote) {
-          const repoDir = repoBuilder.url
-            .toLowerCase()
-            .replace(/^file:\/+/, '')
-            .replace(/^([a-z]):(?=\/)/, '$1')
-            .replace(/\/?\.git$/, '')
-            .replace(/\//g, '%')
+          const repoDir =
+            repoBuilder.url
+              .toLowerCase()
+              .replace(/^file:\/+/, '')
+              .replace(/^([a-z]):(?=\/)/, '$1')
+              .replace(/\/?\.git$/, '')
+              .replace(/\//g, '%') + '.git'
           expect(contentCacheAbsDir).to.be.a.directory()
           expect(ospath.join(contentCacheAbsDir, repoDir))
             .to.be.a.directory()

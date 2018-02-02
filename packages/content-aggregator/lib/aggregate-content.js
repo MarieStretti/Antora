@@ -153,11 +153,12 @@ function getCacheDir () {
 /**
  * Generates a friendly folder name from a URL.
  *
- * - Remove extension (e.g., .git)
+ * - Remove ending .git path segment
  * - Remove URI scheme (e.g,. https://)
  * - Remove user from host (e.g., git@)
  * - Remove leading and trailing slashes
  * - Replace / and : with %
+ * - Append .git (as a file extension)
  *
  * @param {String} url - The repository URL to convert.
  * @return {String} - A friendly folder name.
@@ -184,7 +185,7 @@ function generateLocalFolderName (url) {
     if (~atIdx) firstSegment = firstSegment.substr(atIdx + 1)
     segments[0] = firstSegment
   }
-  return segments.join('%')
+  return segments.join('%') + '.git'
 }
 
 function getFetchOptions () {
