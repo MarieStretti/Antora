@@ -28,10 +28,10 @@
 * xref:pages.adoc[Pages]
 ** xref:create-standard-page.adoc[Create a Standard Page]
 * AsciiDoc
-** xref:page-header.adoc[Header]
+** xref:page-header.adoc[Page Header]
 *** xref:page-header.adoc#page-title[Page Title]
-*** xref:page-header.adoc#page-attrs[Page Attributes]
 *** xref:page-header.adoc#page-meta[Page Metadata]
+*** xref:page-header.adoc#page-attrs[Page Attributes]
 ** xref:page-assets.adoc[Add Assets to a Page]
 ** xref:page-partials.adoc[Insert a Partial Page into a Page]
 * Cross References

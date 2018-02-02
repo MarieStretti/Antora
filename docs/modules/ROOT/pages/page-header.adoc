@@ -44,6 +44,7 @@ Attributes can be placed in any order in the header, including above the page ti
 However, the preferred placement is below the title.
 The header can also contain line comments.
 
+[#page-title]
 == Page title
 
 A page title is specified by one equals sign (`=`), followed by one blank space, and then the text of the title.
@@ -55,6 +56,7 @@ A page title is specified by one equals sign (`=`), followed by one blank space,
 
 The content of a page's title populates the navigation breadcrumb when the site is generated.
 
+[#page-meta]
 == Page metadata
 
 AsciiDoc provides several optional, built-in attributes for defining page metadata.
@@ -126,6 +128,7 @@ The `keywords` attribute contains a list of comma-separated values that are assi
 <meta name="keywords" content="comma-separated values, stored, in an HTML, meta, tag">
 ....
 
+[#page-attrs]
 == Built-in page attributes
 
 AsciiDoc provides a multitude of built-in attributes that can activate and control syntax output behavior and styles.
