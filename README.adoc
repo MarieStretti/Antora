@@ -9,9 +9,9 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-ci-pipelines: {uri-repo}/pipelines
 :img-ci-status: {uri-repo}/badges/master/pipeline.svg
 :uri-chat-dev: https://gitter.im/antora/dev
-:img-chat-dev: https://img.shields.io/badge/chat-dev-f01260.svg
+:img-chat-dev: https://img.shields.io/badge/chat-dev-blue.svg
 :uri-chat-users: https://gitter.im/antora/users
-:img-chat-users: https://img.shields.io/badge/chat-users-f01260.svg
+:img-chat-users: https://img.shields.io/badge/chat-users-blue.svg
 :uri-twitter: https://twitter.com/antoraproject
 :uri-twitter-hash: https://twitter.com/hashtag/antora?src=hash
 // External URIs:
