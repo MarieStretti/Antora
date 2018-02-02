@@ -5,8 +5,15 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 // Project URIs:
 :uri-project: https://antora.org
 :uri-repo: https://gitlab.com/antora/antora
+:uri-issues: {uri-project}/issues
 :uri-ci-pipelines: {uri-repo}/pipelines
 :img-ci-status: {uri-repo}/badges/master/pipeline.svg
+:uri-chat-dev: https://gitter.im/antora/dev
+:img-chat-dev: https://img.shields.io/badge/chat-dev-f01260.svg
+:uri-chat-users: https://gitter.im/antora/users
+:img-chat-users: https://img.shields.io/badge/chat-users-f01260.svg
+:uri-twitter: https://twitter.com/antoraproject
+:uri-twitter-hash: https://twitter.com/hashtag/antora?src=hash
 // External URIs:
 :uri-asciidoctor: http://asciidoctor.org
 :uri-choco: https://chocolatey.org
@@ -19,6 +26,8 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 
 ifdef::badges[]
 image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
+image:{img-chat-dev}[Chat - dev (Gitter), link={uri-chat-dev}]
+image:{img-chat-users}[Chat - users (Gitter), link={uri-chat-users}]
 endif::[]
 
 {uri-project}[Antora] is a modular, multi-repository site generator designed for creating documentation sites composed in AsciiDoc and processed with {uri-asciidoctor}[Asciidoctor].
@@ -81,7 +90,7 @@ If Node 8 is provided by the package manager for your operating system, we encou
 Otherwise, we recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
 
 NOTE: Most CI environments use nvm to install the version of Node used for the build job.
-Thus, by using nvm, you closely align your setup with the environment used to generate and publish the production site.
+Thus, by using nvm, you closely align your setup with the environment used to generate and publish your production site.
 
 If you're using Linux or macOS, follow {uri-nvm-install}[the nvm installation instructions] to set up nvm on your machine.
 If you're using Windows, you can install the {uri-nvm-windows}[Windows port of nvm] via the {uri-choco}[Chocolatey package manager] using `choco install -y nvm`.
@@ -109,7 +118,7 @@ To generate a site with Antora, you need the Antora CLI and an Antora site gener
 Once these packages are installed, you use the `antora` command to generate your site.
 
 We'll begin by installing the Antora CLI using npm.
-You should install this package globally so the `antora` command is available on your PATH.
+You should install this package globally so the `antora` command is always available on your PATH.
 
 In your terminal, type:
 
@@ -261,9 +270,55 @@ To learn more about how Antora works, read the article series https://opendevise
 
 The <<roadmap.adoc#,roadmap>> provides the current development direction and schedule for Antora pipeline, CLI, and UI.
 
+== Getting Help
+
+Antora is designed to help you easily write and publish your documentation.
+However, we can't fully realize this goal without your feedback!
+We encourage you to report issues, ask questions, share ideas, or discuss other aspects of this project using the communication tools provided below.
+
+=== Issues
+
+*Activity drives progress!*
+To that end, the issue tracker is king.
+
+The preferred means of communicating problems, ideas, and other feedback is through the project issue tracker.
+
+* {uri-issues}[Issue tracker] (GitLab)
+
+Any significant change or decision about the project must be logged there.
+
+=== Chat
+
+If you need to switch to real time input, you may be interested in visiting one of the chat rooms.
+We've set up two chat rooms for discussing Antora.
+Choose the one that best suits your needs.
+
+* {uri-chat-users}[antora/users] (Gitter) -- Community support for Antora users.
+* {uri-chat-dev}[antora/dev] (Gitter) -- Discussions involving the development of Antora.
+
+Keep in mind that the discussion logs for these rooms are archived, but there is no guarantee those logs will be saved indefinitely.
+
+=== Social
+
+If you want to share your experience with Antora or help promote it, we encourage you to post about it on social media.
+When you talk about Antora on Twitter, you can mention the official account for the project:
+
+* {uri-twitter}[@antoraproject] (Twitter) -- The official Antora account on Twitter.
+
+You can also use the {uri-twitter-hash}[#antora] hashtag to help promote the project or discover other people talking about it.
+
+If you decide you want to get involved to help improve the project, then you'll be interested in the information provided in the <<Contributing>> section.
+
 == Contributing
 
-To learn how to contribute to this project, including how to <<contributing.adoc#set-up-workspace,set up a development workspace>>, <<contributing.adoc#build-project,build the project>>, and <<contributing.adoc#project-rq,submit a merge request>>, please refer to the <<contributing.adoc#,contributing guide>>.
+If you are interested in contributing to this project, please refer to the <<contributing.adoc#,contributing guide>>.
+In this guide, you'll learn how to:
+
+* <<contributing.adoc#set-up-workspace,set up your development workspace>>
+* <<contributing.adoc#build-project,build the project>>
+* <<contributing.adoc#project-rq,submit a merge request>>
+
+Thanks in advance for helping to make this project a success!
 
 == Copyright and License
 
