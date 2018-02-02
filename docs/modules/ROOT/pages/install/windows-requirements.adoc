@@ -1,0 +1,158 @@
+= Windows Installation Requirements
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:experimental:
+// URIs
+:uri-xcode: https://railsapps.github.io/xcode-command-line-tools.html
+:uri-nvm: https://github.com/creationix/nvm
+:uri-nvm-install: {uri-nvm}#installation
+:uri-choco: https://chocolatey.org
+:uri-nvm-windows: https://github.com/coreybutler/nvm-windows
+// Versions:
+:version-node: 8.9.4
+
+On this page, you'll learn:
+
+* [x] What tools you need on your computer before you can install Antora.
+* [x] How to install the base build tools on Linux.
+* [x] How to install the base build tools on macOS.
+* [x] How to install Node 8.
+
+If you've never installed Antora before, you'll need to complete the steps on this page before you can generate a documentation site.
+
+To install Antora, you need Node 8 (including npm, which is typically bundled with Node).
+If you're on Linux or macOS, you'll also need the base build tools for your OS.
+Let's start with the build tools, since you may also need them to manage Node.
+
+== Base Build Tools
+
+TIP: If you're on Windows you can skip this section and go right to <<install-node,installing Node>>.
+
+The base build tools are required for installing the nodegit package, a dependency of Antora, on Linux and macOS.
+This selection of tools provides other useful commands you'll need in your workflow, such as `git`.
+
+Once you have these tools installed, you can expect the remaining installation to go smoothly.
+
+=== Linux
+
+Install the base build tools package by executing the command associated with your Linux distribution.
+
+* Fedora: `dnf install @development-tools`
+* Debian/Ubuntu: `apt-get install build-essential`
+* Arch Linux: `pacman -S base-devel`
+* Alpine Linux: `apk add build-base`
+
+=== macOS
+
+If you're running macOS, you need the {uri-xcode}[Xcode command line tools].
+Even if you've installed these tools in the past, it's good to do it again.
+
+You can trigger installation using the following command:
+
+ $ xcode-select --install
+
+[#install-node]
+== Node 8
+
+Antora requires Node 8, the current long-term support (LTS) release of Node.
+
+To check which version of Node you have installed, if any, open a terminal and type:
+
+ $ node --version
+
+*If this command fails with an error*, you don't have Node installed.
+The best way to install Node 8 is via the package manager for your operating system.
+However, if your package manager doesn't provide Node, skip directly to <<install-nvm-unix,install nvm and Node on Linux or macOS>> or <<install-nvm-win,install nvm and Node on Windows>> for instructions.
+
+*If the command returns a version less than 8.0.0*, upgrade to the latest Node 8 version using your operating system's package manager.
+Or, if your package manager doesn't provide Node and you have nvm installed, go directly to <<upgrade-node,upgrade Node with nvm on Linux or macOS>> or <<upgrade-node-win,upgrade Node with nvm on Windows>> for instructions.
+
+*If the command returns a Node 8 version*, set Node 8 as the default by typing the following command in your terminal.
+
+ $ nvm alias default 8
+
+Now you're ready to xref:install-antora.adoc[install Antora].
+
+CAUTION: While you can use Node 9, we don't recommend it because there are no precompiled binaries for Node 9 of nodegit, a dependency of Antora.
+If you use Node 9, installation will take considerably longer.
+
+[#install-nvm-unix]
+=== Install nvm and Node on Linux or macOS
+
+If your package manager doesn't provide Node, we recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
+Follow the {uri-nvm-install}[nvm installation instructions] to set up nvm on your machine.
+
+TIP: Many CI environments use nvm to install the version of Node used for the build job.
+By using nvm, you can closely align your setup with the environment that is used to generate and publish your production site.
+
+Once you've installed nvm, open a new terminal and install Node 8.
+
+ $ nvm install 8
+
+The above command will install the latest version of Node 8 and automatically set it as your default alias.
+Now that you have Node installed, you can xref:install-antora.adoc[install Antora].
+
+[#install-nvm-win]
+=== Install nvm and Node on Windows
+
+If you're using Windows, you can install the Windows port of nvm via the Chocolatey package manager.
+
+. To install the Chocolatey package manager, open a new PowerShell and run it as an Administrator (right click the PowerShell icon and select menu:[Run as Administrator]).
+
+. Install {uir-choco}[chocolatey] using:
+
+----
+$ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+----
+
+. Next, you have two options, you can install Node using nvm or install the LTS release of Node directly.
+
+.. To install Node using {uri-nvm-windows}[nvm for Windows], enter the following command in the PowerShell:
+
+ $ choco install -y nvm
+
+.. Or, to install the LTS release of Node directly, enter the following command in the PowerShell:
+
+ $ choco install -y nodejs-lts
+
+. Close the PowerShell as Administrator.
+
+. Open an new, regular PowerShell terminal, and install Node with nvm:
+
+ $ nvm install 8.9.4
++
+IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
+
+. Now that you have Node installed, you can xref:install-antora.adoc[install Antora].
+
+[#upgrade-node]
+=== Upgrade Node with nvm on Linux or macOS
+
+If you have nvm installed but your Node version is less than 8.0.0, type the following command in your terminal.
+
+ $ nvm install 8
+
+The above command will install the latest version of Node 8.
+
+Next, set Node 8 as the default for any new terminal.
+
+ $ nvm alias default 8
+
+The above command will set the latest version of Node 8 as your default.
+
+Now that you've upgraded your Node version, you're ready to xref:install-antora.adoc[install Antora].
+
+[#upgrade-node-win]
+=== Upgrade Node with nvm on Windows
+
+If you have nvm installed but your Node version is less than 8.0.0, type the following command in your terminal, and install the latest version of Node 8 with nvm:
+
+ $ nvm install 8.9.4
+
+IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
+
+Now that you've upgraded your Node version, you're ready to xref:install-antora.adoc[install Antora].
