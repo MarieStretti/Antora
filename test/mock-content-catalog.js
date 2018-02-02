@@ -3,7 +3,7 @@
 const { posix: path } = require('path')
 const { spy } = require('./test-utils')
 
-function mockContentCatalog (seed = [], opts = {}) {
+function mockContentCatalog (seed = []) {
   if (!Array.isArray(seed)) seed = [seed]
   const familyDirs = {
     example: 'examples',
@@ -16,7 +16,6 @@ function mockContentCatalog (seed = [], opts = {}) {
   const entriesById = {}
   const entriesByPath = {}
   const entriesByFamily = {}
-  const siteUrl = opts.siteUrl
   seed.forEach(({ component, version, module, family, relative, contents, navIndex, indexify }) => {
     if (!component) component = 'component-a'
     if (!version) version = 'master'
@@ -55,13 +54,11 @@ function mockContentCatalog (seed = [], opts = {}) {
               .join('/')
             : '.',
         }
-        if (siteUrl) entry.pub.absoluteUrl = siteUrl + entry.pub.url
       } else if (family === 'navigation') {
         entry.pub = {
           url: '/' + path.join(component, pubVersion, pubModule) + '/',
           moduleRootPath: '.',
         }
-        if (siteUrl) entry.pub.absoluteUrl = siteUrl + entry.pub.url
         entry.nav = { index: navIndex }
       }
     }

@@ -43,11 +43,10 @@ function generateSitemaps (playbook, contentCatalog) {
   if (!pages.length) return []
   const lastmodISO = new Date().toISOString()
   let sitemaps = pages.reduce((accum, file) => {
-    const componentSitemap = getSitemapForComponent(accum, file.src.component, siteUrl)
+    const componentSitemap = getSitemapForComponent(siteUrl, accum, file.src.component)
     const version = file.src.version
     componentSitemap.entries.push({
       url: file.pub.url,
-      absoluteUrl: file.pub.absoluteUrl,
       version,
       lastmodISO,
     })
@@ -64,14 +63,14 @@ function generateSitemaps (playbook, contentCatalog) {
       sitemapEntries.sort((a, b) => a.url.localeCompare(b.url))
       if (sitemap.versions.size > 1) sitemapEntries.sort((a, b) => versionCompareDesc(a.version, b.version))
       delete sitemap.versions
-      sitemapEntries = sitemapEntries.map(generateUrlElement)
+      sitemapEntries = sitemapEntries.map(generateUrlElement.bind(null, siteUrl))
       sitemap.contents = Buffer.from(generateSitemapDocument(sitemapEntries))
       return sitemap
     })
 
   let sitemapIndex
   if (sitemaps.length > 1) {
-    const sitemapIndexEntries = sitemaps.map(generateSitemapElement)
+    const sitemapIndexEntries = sitemaps.map(generateSitemapElement.bind(null, siteUrl))
     sitemapIndex = new File({ contents: Buffer.from(generateSitemapIndexDocument(sitemapIndexEntries)) })
     sitemaps.unshift(sitemapIndex)
   } else {
@@ -79,14 +78,11 @@ function generateSitemaps (playbook, contentCatalog) {
   }
   const basename = SITEMAP_STEM + '.xml'
   sitemapIndex.out = { path: basename }
-  sitemapIndex.pub = {
-    absoluteUrl: siteUrl + '/' + basename,
-    url: '/' + basename,
-  }
+  sitemapIndex.pub = { url: '/' + basename }
   return sitemaps
 }
 
-function getSitemapForComponent (sitemaps, component, siteUrl) {
+function getSitemapForComponent (siteUrl, sitemaps, component) {
   if (sitemaps.has(component)) {
     return sitemaps.get(component)
   } else {
@@ -94,10 +90,7 @@ function getSitemapForComponent (sitemaps, component, siteUrl) {
     const componentSitemap = new File({
       entries: [],
       out: { path: basename },
-      pub: {
-        absoluteUrl: siteUrl + '/' + basename,
-        url: '/' + basename,
-      },
+      pub: { url: '/' + basename },
       versions: new Set(),
     })
     sitemaps.set(component, componentSitemap)
@@ -105,9 +98,9 @@ function getSitemapForComponent (sitemaps, component, siteUrl) {
   }
 }
 
-function generateSitemapElement (sitemap) {
+function generateSitemapElement (siteUrl, sitemap) {
   return `<sitemap>
-<loc>${escapeHtml(sitemap.pub.absoluteUrl)}</loc>
+<loc>${siteUrl}${escapeHtml(sitemap.pub.url)}</loc>
 </sitemap>`
 }
 
@@ -118,9 +111,9 @@ ${entries.join('\n')}
 </sitemapindex>`
 }
 
-function generateUrlElement (entry) {
+function generateUrlElement (siteUrl, entry) {
   return `<url>
-<loc>${escapeHtml(entry.absoluteUrl)}</loc>
+<loc>${siteUrl}${escapeHtml(entry.url)}</loc>
 <lastmod>${entry.lastmodISO}</lastmod>
 </url>`
 }
