@@ -46,10 +46,10 @@ To check which version of Node you have installed, if any, open a terminal and t
 
 *If this command fails with an error*, you don't have Node installed.
 The best way to install Node 8 is via the package manager.
-However, if your package manager doesn't provide Node, skip directly to <<install-nvm,install nvm and Node>> for instructions.
+However, if the package manager doesn't provide Node, skip directly to <<install-nvm,install nvm and Node>> for instructions.
 
-*If the command returns a version less than 8.0.0*, upgrade to the latest Node 8 version using your package manager.
-Or, if your package manager doesn't provide Node and you have nvm installed, go directly to <<upgrade-node,upgrade Node with nvm>> for instructions.
+*If the command returns a version less than 8.0.0*, upgrade to the latest Node 8 version using the package manager.
+Or, if the package manager doesn't provide Node and you have nvm installed, go directly to <<upgrade-node,upgrade Node with nvm>> for instructions.
 
 *If the command returns a Node 8 version*, set Node 8 as the default by typing the following command in your terminal.
 
