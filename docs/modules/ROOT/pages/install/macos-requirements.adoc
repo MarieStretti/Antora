@@ -5,7 +5,6 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
-:experimental:
 // URIs
 :uri-xcode: https://railsapps.github.io/xcode-command-line-tools.html
 :uri-nvm: https://github.com/creationix/nvm
