@@ -5,6 +5,28 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-alpha.5 (2018-02-01)
+
+=== Added
+
+* *site-mapper:* First release of component.
+* *site-generator-default:* Add support for site start page defined in playbook (redirect from index.html)
+
+=== Changed
+
+* Resolve relative paths in playbook relative to directory of playbook file (playbook.dir)
+* *content-aggregator:* Append .git to the bare repository folder in the content cache
+* *content-classifier:* Don't set pub.absoluteUrl property on virtual content files
+* *asciidoc-loader:* Default to latest version of component when resolving a page reference
+* *playbook-builder:* Set file and dir properties on playbook model
+* *playbook-builder:* Make playbook file optional (still required by CLI)
+* Switch Gulp build from minimist to yargs-parser for parsing CLI arguments
+
+=== Fixed
+
+* *content-aggregator:* Clean value of start path on content source data
+* *content-aggregator:* Make URI and drive letter regular expressions more accurate.
+
 == 1.0.0-alpha.4 (2018-01-28)
 
 === Changed
@@ -36,9 +58,8 @@ This project utilizes semantic versioning.
 
 == 1.0.0-alpha.2 (2018-01-28)
 
-* Release failed to complete.
-See 1.0.0-alpha.3.
+* Release failed to complete
 
 == 1.0.0-alpha.1 (2018-01-12)
 
-* Initial alpha release.
+* Initial alpha release
