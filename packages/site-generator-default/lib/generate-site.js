@@ -6,6 +6,7 @@ const buildPlaybook = require('@antora/playbook-builder')
 const classifyContent = require('@antora/content-classifier')
 const convertDocument = require('@antora/document-converter')
 const createPageComposer = require('@antora/page-composer')
+const generateSitemaps = require('@antora/site-mapper')
 const loadUi = require('@antora/ui-loader')
 const publishSite = require('@antora/site-publisher')
 
@@ -41,7 +42,10 @@ async function generateSite (args, env) {
   const startPage = playbook.site.startPage
   if (startPage) registerSiteStartPage(startPage, contentCatalog)
 
-  return publishSite(playbook, [contentCatalog, uiCatalog])
+  const sitemapFiles = generateSitemaps(playbook, contentCatalog)
+  const sitemapCatalog = { getFiles: () => sitemapFiles }
+
+  return publishSite(playbook, [contentCatalog, uiCatalog, sitemapCatalog])
 }
 
 // FIXME this functionality belongs in the page-router component

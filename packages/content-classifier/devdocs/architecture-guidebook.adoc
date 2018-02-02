@@ -153,7 +153,7 @@ Each virtual file object should include the following Antora-specific properties
 
 .pub property
 * `url`
-* `absoluteUrl` - the `site.url` property from the playbook + the `url`
+//* `absoluteUrl` - the `site.url` property from the playbook + the `url`
 * `moduleRootPath`
 * `rootPath`
 

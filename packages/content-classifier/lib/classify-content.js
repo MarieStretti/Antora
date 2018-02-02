@@ -19,8 +19,6 @@ const { posix: path } = require('path')
  * @returns {ContentCatalog} An organized catalog of virtual content files.
  */
 function classifyContent (playbook, aggregate) {
-  let siteUrl = playbook.site.url
-  if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
   return aggregate.reduce((catalog, { name: component, version, title, start_page: startPage, nav, files }) => {
     files.forEach((file) => {
       const family = partitionSrc(file, component, version, nav)
@@ -29,7 +27,7 @@ function classifyContent (playbook, aggregate) {
         return
       } else if (family === 'page' || family === 'image' || family === 'attachment' || family === 'navigation') {
         if (family !== 'navigation') file.out = resolveOut(file.src, playbook.urls.htmlExtensionStyle)
-        file.pub = resolvePub(file.src, file.out, playbook.urls.htmlExtensionStyle, siteUrl)
+        file.pub = resolvePub(file.src, file.out, playbook.urls.htmlExtensionStyle)
       }
 
       catalog.addFile(file)
@@ -147,7 +145,7 @@ function resolveOut (src, htmlExtensionStyle = 'default') {
   }
 }
 
-function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
+function resolvePub (src, out, htmlExtensionStyle) {
   const pub = {}
   const family = src.family
   let url
@@ -175,7 +173,6 @@ function resolvePub (src, out, htmlExtensionStyle, siteUrl) {
   }
 
   pub.url = url
-  if (siteUrl) pub.absoluteUrl = siteUrl + url
 
   if (out) {
     pub.moduleRootPath = out.moduleRootPath

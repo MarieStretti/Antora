@@ -192,6 +192,7 @@ describe('generateSite()', () => {
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
     expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(destDir, 'sitemap.xml')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head link[rel=canonical]')).to.have.attr('href', 'https://example.com/docs/the-component/2.0/index.html')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', 'https://example.com/docs')

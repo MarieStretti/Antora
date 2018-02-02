@@ -167,7 +167,6 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/page-one.html',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/page-one.html',
         moduleRootPath: '.',
         rootPath: '../..',
       })
@@ -195,7 +194,6 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/the-topic/page-one.html',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-topic/page-one.html',
         moduleRootPath: '..',
         rootPath: '../../..',
       })
@@ -497,7 +495,6 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-topic/page-one.html',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-topic/page-one.html',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -630,7 +627,6 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/the-module/_images/foo.png',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/_images/foo.png',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -651,7 +647,6 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-topic/page-one',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-topic/page-one',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -672,7 +667,6 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-topic/',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-topic/',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
@@ -693,7 +687,6 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-topic/page-one/',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-topic/page-one/',
         moduleRootPath: '../..',
         rootPath: '../../../../..',
       })
@@ -714,28 +707,9 @@ describe('classifyContent()', () => {
       })
       expect(file.pub).to.include({
         url: '/the-component/v1.2.3/the-module/the-topic/',
-        absoluteUrl: 'https://the-website.tld/the-component/v1.2.3/the-module/the-topic/',
         moduleRootPath: '..',
         rootPath: '../../../..',
       })
-    })
-
-    it('should remove the trailing slash from the value of site.url specified in the playbook', () => {
-      playbook.site.url = playbook.site.url + '/'
-      aggregate[0].files.push(createFile('modules/ROOT/pages/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
-      expect(files).to.have.lengthOf(1)
-      const file = files[0]
-      expect(file.pub.absoluteUrl).to.equal('https://the-website.tld/the-component/v1.2.3/page-one.html')
-    })
-
-    it('should not set absoluteUrl if site.url is not set in the playbook', () => {
-      delete playbook.site.url
-      aggregate[0].files.push(createFile('modules/the-module/pages/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
-      expect(files).to.have.lengthOf(1)
-      const file = files[0]
-      expect(file.pub.absoluteUrl).to.not.exist()
     })
   })
 

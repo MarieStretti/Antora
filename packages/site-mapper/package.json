@@ -1,7 +1,7 @@
 {
-  "name": "@antora/site-generator-default",
+  "name": "@antora/site-mapper",
   "version": "1.0.0-alpha.4",
-  "description": "The default site generator pipeline for producing and publishing static documentation sites with Antora.",
+  "description": "Generates sitemap files that list all publishable pages in an Antora documentation pipeline.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
   "contributors": [
@@ -15,18 +15,11 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@antora/content-aggregator": "1.0.0-alpha.4",
     "@antora/content-classifier": "1.0.0-alpha.4",
-    "@antora/document-converter": "1.0.0-alpha.4",
-    "@antora/navigation-builder": "1.0.0-alpha.4",
-    "@antora/page-composer": "1.0.0-alpha.4",
-    "@antora/playbook-builder": "1.0.0-alpha.4",
-    "@antora/site-mapper": "1.0.0-alpha.4",
-    "@antora/site-publisher": "1.0.0-alpha.4",
-    "@antora/ui-loader": "1.0.0-alpha.4"
+    "vinyl": "^2.1.0"
   },
   "devDependencies": {
-    "fs-extra": "^5.0.0"
+    "xmldom": "^0.1.27"
   },
   "engines": {
     "node": ">= 8.0.0"
@@ -37,8 +30,7 @@
   "keywords": [
     "antora",
     "antora-component",
-    "generator",
-    "pipeline",
+    "sitemap",
     "documentation",
     "static site",
     "web publishing"

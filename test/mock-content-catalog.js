@@ -71,7 +71,7 @@ function mockContentCatalog (seed = []) {
   })
 
   return {
-    findBy: ({ family }) => entriesByFamily[family],
+    findBy: ({ family }) => entriesByFamily[family] || [],
     getById: ({ component, version, module, family, relative }) =>
       entriesById[buildComponentVersionKey(component, version) + (module || '') + ':' + family + '$' + relative],
     getByPath: ({ path: path_, component, version }) =>

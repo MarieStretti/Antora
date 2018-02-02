@@ -5298,6 +5298,10 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
+xmldom@^0.1.27:
+  version "0.1.27"
+  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.27.tgz#d501f97b3bdb403af8ef9ecc20573187aadac0e9"
+
 "xtend@>=4.0.0 <4.1.0-0", xtend@~4.0.0, xtend@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
