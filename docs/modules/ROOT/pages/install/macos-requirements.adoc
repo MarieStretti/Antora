@@ -52,7 +52,7 @@ Or, if the package manager doesn't provide Node and you have nvm installed, go d
 
  $ nvm alias default 8
 
-Now you're ready to xref:install-antora.adoc[install Antora].
+Now you're ready to xref:install/install-antora.adoc[install Antora].
 
 CAUTION: While you can use Node 9, we don't recommend it because there are no precompiled binaries for Node 9 of nodegit, a dependency of Antora.
 If you use Node 9, installation will take considerably longer.
@@ -72,7 +72,7 @@ Once you've installed nvm, open a new terminal and install Node 8.
 
 The above command will install the latest version of Node 8 and automatically set it as your default alias.
 
-Now that you have Node, you're ready to xref:install-antora.adoc[install Antora].
+Now that you have Node, you're ready to xref:install/install-antora.adoc[install Antora].
 
 [#upgrade-node]
 == Upgrade Node with nvm
@@ -87,8 +87,8 @@ To set the latest version of Node 8 as the default for any new terminal, type:
 
  $ nvm alias default 8
 
-Now that you've upgraded Node, you're ready to xref:install-antora.adoc[install Antora].
+Now that you've upgraded Node, you're ready to xref:install/install-antora.adoc[install Antora].
 
 == What's next?
 
-Once you've installed the base build tools and Node 8, it's time to xref:install-antora.adoc[install Antora].
+Once you've installed the base build tools and Node 8, it's time to xref:install/install-antora.adoc[install Antora].

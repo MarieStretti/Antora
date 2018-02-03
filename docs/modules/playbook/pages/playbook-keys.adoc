@@ -155,8 +155,8 @@ The output key is not required.
 === clean
 
 The clean key is a boolean.
-By default, it's set to false (i.e., turned "`off`").
-When true (i.e., turned "`on`"), it will remove the destination path recusively before generating the site.
+By default, it's set to false (turned "`off`").
+When true (turned "`on`"), it will remove the destination path recursively before generating the site.
 This key only applies to the filesystem (fs) providers currently.
 
 WARNING: Use this key with great care.
@@ -185,7 +185,7 @@ A site can be published to multiple destinations.
 
 When no destinations are specified, Antora publishes the site to the local filesytem at the location specified by the dir key or, if the dir key is not specified, the default output directory location ([.path]_build/site_).
 
-To disable publishing entirely, including the default output, set destinations to an empty array (i.e., `[]`).
+To disable publishing entirely, including the default output, set destinations to an empty array (`[]`).
 
 ==== provider
 

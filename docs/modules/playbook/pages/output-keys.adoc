@@ -28,12 +28,12 @@ This allows the output directory to be overridden from the CLI using the `--to-d
 
 The default output directory is [.path]_build/site_.
 If no destinations are specified in the playbook, all site files will be written to this directory.
-To disable this default, either specify at least one destination under the destinations key or set the destinations key to an empty array (i.e., `[]`).
+To disable this default, either specify at least one destination under the destinations key or set the destinations key to an empty array (`[]`).
 
 [#add-dir]
 === Explicit value
 
-In the relative `dir` example below, the site will be published to a folder named [.path]_launch_ relative to the playbook file.
+In the relative `dir` example, the site will be published to a folder named [.path]_launch_ relative to the playbook file.
 
 .Relative dir value
 [source,yaml]
@@ -42,7 +42,7 @@ output:
  dir: launch
 ----
 
-In the absolute `dir` example below, the site will be published to [.path]_home/dev/docs-site/beta_ regardless of where the playbook is located.
+In the absolute `dir` example, the site will be published to [.path]_home/dev/docs-site/beta_ regardless of where the playbook is located.
 
 .Absolute dir value
 [source,yaml]
@@ -54,7 +54,7 @@ output:
 [#output-destinations]
 == Destinations
 
-When you need to publish to multiple destinations, you'll need to use the destinations key.
+When you need to publish to multiple destinations, you'll use the destinations key.
 The destinations key accepts a list of destination specifications.
 Each destination specification must include the provider key, which indicates which provider should be used to publish the site and which type of publication it will be.
 
@@ -64,8 +64,10 @@ Each destination specification must include the provider key, which indicates wh
 Antora offers two built-in providers.
 
 .Built-in providers
-* Filesystem (`fs`) -- Publishes the output files to a directory.
-* Archive (`archive`) -- Publishes the output files to a ZIP archive file.
+Filesystem (`fs`)::
+Publishes the output files to a directory.
+Archive (`archive`)::
+Publishes the output files to a ZIP archive file.
 
 You can also create custom providers for SSH, S3, etc.
 

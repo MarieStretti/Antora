@@ -37,7 +37,7 @@ If you don't have Chocolatey on your machine, go to <<install-choco,install Choc
 *If the command returns a version less than 8.0.0*, upgrade to the latest Node 8 version using nvm.
 Go directly to <<upgrade-node,upgrade Node>> for instructions.
 
-*If the command returns a Node 8 version*, you're ready to xref:install-antora.adoc[install Antora].
+*If the command returns a Node 8 version*, you're ready to xref:install/install-antora.adoc[install Antora].
 
 CAUTION: While you can use Node 9, we don't recommend it because there are no precompiled binaries for Node 9 of nodegit, a dependency of Antora.
 If you use Node 9, installation will take considerably longer.
@@ -76,7 +76,7 @@ TIP: If you just installed Chocolatey using the instructions in the proceeding s
 +
 IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
 
-Now that Node is installed, you're ready to xref:install-antora.adoc[install Antora].
+Now that Node is installed, you're ready to xref:install/install-antora.adoc[install Antora].
 
 .nvm and CI environments
 ****
@@ -97,8 +97,8 @@ If you have nvm installed but your Node version is less than 8.0.0, type the fol
 
 IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
 
-Now that you've upgraded Node, you're ready to xref:install-antora.adoc[install Antora].
+Now that you've upgraded Node, you're ready to xref:install/install-antora.adoc[install Antora].
 
 == What's next?
 
-Once you've installed Node 8, it's time to xref:install-antora.adoc[install Antora].
+Once you've installed Node 8, it's time to xref:install/install-antora.adoc[install Antora].
