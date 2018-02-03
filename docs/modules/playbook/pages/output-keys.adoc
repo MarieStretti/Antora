@@ -7,26 +7,31 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] How to configure the output directory key.
-* [x] How to configure the destinations provider key.
-* [x] How to configure the destinations path key.
+* [x] How to configure the output directory.
+* [x] How to configure multiple destinations and providers.
+* [x] How to specify a custom provider.
 
 [#output-dir]
-== Directory key
+== Directory
+
+When you only need to output the site to a single directory, you can use the output dir key.
+This key is meant to provide a shorthand to the more formal destinations key.
 
 The output dir key specifies the directory where the generated site will be published.
 The key accepts a relative or absolute filesystem path.
 When the value is a relative path, the path is resolved relative to the playbook file.
 
 IMPORTANT: The dir key overrides the path key of the first `fs` provider specified in the destinations key.
+This allows the output directory to be overridden from the CLI using the `--to-dir=<dir>` option.
 
-=== Default output directory
+=== Default value
 
 The default output directory is [.path]_build/site_.
-All of the site files will be written into this directory if no destinations are specified.
+If no destinations are specified in the playbook, all site files will be written to this directory.
+To disable this default, either specify at least one destination under the destinations key or set the destinations key to an empty array (i.e., `[]`).
 
 [#add-dir]
-=== Specify output directory
+=== Explicit value
 
 In the relative `dir` example below, the site will be published to a folder named [.path]_launch_ relative to the playbook file.
 
@@ -46,27 +51,42 @@ output:
  dir: /home/user/docs-site/beta
 ----
 
-[#output-provider]
-== Provider key
+[#output-destinations]
+== Destinations
 
-The provider key specifies the provider Antora should use to publish the site.
+When you need to publish to multiple destinations, you'll need to use the destinations key.
+The destinations key accepts a list of destination specifications.
+Each destination specification must include the provider key, which indicates which provider should be used to publish the site and which type of publication it will be.
 
-Antora has two built-in providers.
+[#output-providers]
+=== Providers
+
+Antora offers two built-in providers.
 
 .Built-in providers
-* Filesystem (`fs`)
-* Archive (`archive`)
+* Filesystem (`fs`) -- Publishes the output files to a directory.
+* Archive (`archive`) -- Publishes the output files to a ZIP archive file.
 
 You can also create custom providers for SSH, S3, etc.
 
-=== Default provider
+[#fs-provider]
+==== Filesystem provider
 
-The default output provider is `fs`.
-When no provider is explicitly assigned, Antora publishes the site to the local filesytem at the default output directory location or the location specified by the <<output-dir,dir key>>.
-// Is there a term for what it is published as other than "exploded"?
+The `fs` provider publishes the site to a directory.
+It's the formal equivalent to specifying the dir key on output.
 
-[#add-archive]
-=== Publish a site as a ZIP file
+.Filesystem provider
+[source,yaml]
+----
+output:
+ destinations:
+ - provider: fs
+----
+
+In this example, the site is published to [.path]_build/site_.
+
+[#archive-provider]
+==== Archive provider
 
 The `archive` provider publishes a site to a ZIP file.
 
@@ -80,23 +100,24 @@ output:
 
 In this example, the site is generated as a ZIP file and published to [.path]_build/site.zip_.
 
-== Path key
+[#output-path]
+=== Path
 
-The path key allows you to specify an output location per provider.
+The path key on a destination allows you to specify an output location per provider.
 The key accepts a relative or absolute filesystem path.
 When the value is a relative path, the path is resolved relative to the playbook file.
 The provider will create any interim directories as needed.
 
 IMPORTANT: If you set the dir key in a playbook or via the CLI, its value will override the `path` value of the first `fs` provider specified in the destinations key.
 
-=== Default path values
+==== Default paths
 
 The default `fs` path is [.path]_build/site_.
 
 The default `archive` path is [.path]_build/site.zip_.
 
 [#archive-path]
-=== Specify an archive path
+==== Explicit path
 
 In the relative path example, we're running Antora on a playbook located in a directory named [.path]_docs-site_.
 
@@ -140,8 +161,7 @@ output:
 In this example, the archived site will be located at [.path]_launch/sites/blue.zip_.
 ////
 
-[#abs-rel-path]
-=== Specify fs and archive providers and paths
+=== Multiple destinations
 
 In this example, we're running Antora on a playbook file in the directory named [.path]_tmp_ and publishing the site to two locations, one relative and one absolute.
 
@@ -160,3 +180,24 @@ output:
 The site published using the `fs` provider to the directory [.path]_tmp/releases/red_.
 This directory will be removed prior to publishing since we've turned the clean key on.
 The site is also published as an archive to [.path]_/home/user/projects/docs-site/blue.zip_ by the `archive` provider.
+
+=== Custom Provider
+
+If the provider key does not contain a recognized built-in provider, Antora will attempt to require it as a Node module.
+This allows you to supply a custom provider.
+
+If the value begins with a dot (`.`), Antora will require the path relative to the playbook file.
+Otherwise, Antora will require the value as a Node module installed in the playbook project.
+
+The custom provider is a JavaScript function that matches the following signature:
+
+[source,js]
+----
+async function publish (destConfig, files, playbook)
+----
+
+The destConfig argument is an object containing key/value pairs that correspond to the properties of the destination specification.
+The files argument is a ReadableStream of virtual files.
+The playbook argument is the object containing key/value pairs from the playbook as a whole.
+
+WARNING: The custom provider is an alpha API and subject to change.
