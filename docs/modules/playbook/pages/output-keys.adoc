@@ -15,64 +15,63 @@ On this page, you'll learn:
 == Directory key
 
 The output dir key specifies the directory where the generated site will be published.
-The value should not contain a leading forward slash or trailing forward slash (`/`).
-The key accepts relative and absolute filesystem paths.
-When the value is a relative path, the site will be published to that location in the directory Antora was executed from (i.e., current working directory).
+The key accepts a relative or absolute filesystem path.
+When the value is a relative path, the path is resolved relative to the playbook file.
 
-IMPORTANT: The dir key overrides the path key for any `fs` provider specified in the destinations key.
+IMPORTANT: The dir key overrides the path key of the first `fs` provider specified in the destinations key.
 
 === Default output directory
 
 The default output directory is [.path]_build/site_.
-All of the site files will be written into this directory.
+All of the site files will be written into this directory if no destinations are specified.
 
 [#add-dir]
 === Specify output directory
 
-In the relative `dir` example, the site will be published to a folder named [.path]_launch_ inside the current working directory.
+In the relative `dir` example below, the site will be published to a folder named [.path]_launch_ relative to the playbook file.
 
 .Relative dir value
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 output:
  dir: launch
 ----
 
-In the absolute `dir` example, the site will be published to [.path]_home/dev/docs-site/beta_ no matter what directory Antora is run from.
+In the absolute `dir` example below, the site will be published to [.path]_home/dev/docs-site/beta_ regardless of where the playbook is located.
 
 .Absolute dir value
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 output:
- dir: home/dev/docs-site/beta
+ dir: /home/user/docs-site/beta
 ----
 
 [#output-provider]
 == Provider key
 
-The provider key specifies the protocol Antora should use to publish the site.
+The provider key specifies the provider Antora should use to publish the site.
 
-Antora has two built-in provider protocols.
+Antora has two built-in providers.
 
 .Built-in providers
 * Filesystem (`fs`)
 * Archive (`archive`)
 
-You can also create custom providers for SSH, SFTP, etc.
+You can also create custom providers for SSH, S3, etc.
 
 === Default provider
 
-The default provider protocol is `fs`.
+The default output provider is `fs`.
 When no provider is explicitly assigned, Antora publishes the site to the local filesytem at the default output directory location or the location specified by the <<output-dir,dir key>>.
 // Is there a term for what it is published as other than "exploded"?
 
 [#add-archive]
 === Publish a site as a ZIP file
 
-The `archive` provider publishes a site as a ZIP file.
+The `archive` provider publishes a site to a ZIP file.
 
 .Archive provider
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 output:
  destinations:
@@ -84,10 +83,11 @@ In this example, the site is generated as a ZIP file and published to [.path]_bu
 == Path key
 
 The path key allows you to specify an output location per provider.
-The key accepts relative and absolute filesystem paths.
-When the value is a filesystem path, it shouldn't contain a leading or trailing forward slash (`/`).
+The key accepts a relative or absolute filesystem path.
+When the value is a relative path, the path is resolved relative to the playbook file.
+The provider will create any interim directories as needed.
 
-IMPORTANT: If you set the dir key in a playbook or via the CLI, its value will override the `path` value for any `fs` provider specified in the destinations key.
+IMPORTANT: If you set the dir key in a playbook or via the CLI, its value will override the `path` value of the first `fs` provider specified in the destinations key.
 
 === Default path values
 
@@ -98,11 +98,10 @@ The default `archive` path is [.path]_build/site.zip_.
 [#archive-path]
 === Specify an archive path
 
-// Check this path output
-In the relative path example, we're running Antora from a directory named [.path]_docs-site_.
+In the relative path example, we're running Antora on a playbook located in a directory named [.path]_docs-site_.
 
 .Relative archive provider path
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 output:
  destinations:
@@ -112,24 +111,24 @@ output:
 
 Once generation is complete, the site will be published to [.path]_docs-site/blue.zip_.
 
-In the absolute path example, we can run Antora from any location on our computer (as long as Antora is installed globally).
+In the absolute path example, we can run Antora on a playbook located anywhere on our computer.
 
 .Absolute archive provider path
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 output:
  destinations:
  - provider: archive
-   path: ~/projects/launch/blue.zip
+   path: /home/user/projects/launch/blue.zip
 ----
 
-Once generation is complete, the site will be published to [.path]_~/projects/launch/blue.zip_.
+Once generation is complete, the site will be published to [.path]_/home/user/projects/launch/blue.zip_.
 
 ////
 When a value is assigned to the output directory key, the archive path is appended to the `dir` path.
 
 .Dir and archive provider path
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 output:
  dir: launch/sites
@@ -144,18 +143,20 @@ In this example, the archived site will be located at [.path]_launch/sites/blue.
 [#abs-rel-path]
 === Specify fs and archive providers and paths
 
-In this example, we're running Antora from a directory named [.path]_tmp_ and publishing the site to two locations.
+In this example, we're running Antora on a playbook file in the directory named [.path]_tmp_ and publishing the site to two locations, one relative and one absolute.
 
 .Relative fs path and absolute archive path
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 output:
  destinations:
  - provider: fs
    path: releases/red
+   clean: true
  - provider: archive
-   path: ~/projects/docs-site/blue.zip
+   path: /home/user/projects/docs-site/blue.zip
 ----
 
-The site published via the `fs` provider will be located at [.path]_tmp/releases/red_.
-The site published via `archive` will be located at [.path]_~/projects/docs-site/blue.zip_.
+The site published using the `fs` provider to the directory [.path]_tmp/releases/red_.
+This directory will be removed prior to publishing since we've turned the clean key on.
+The site is also published as an archive to [.path]_/home/user/projects/docs-site/blue.zip_ by the `archive` provider.

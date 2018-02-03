@@ -145,16 +145,19 @@ Filesystem paths can be relative to the location of the playbook or absolute.
 
 == output
 
-The output key contains an array of destination path and protocol provider specifications.
-These keys tell Antora what protocol provider to use when publishing the site, such as SSH, ZIP, Amazon S3, etc., and where to publish the site.
+The output key contains common output settings and a list of destination specifications.
+The destination specifications tell Antora which provider(s) to use to publish the site (e.g., fs, archive, ssh, s3) and where those files should go.
+The provider, in turn, determines which transport protocol to use (local, SSH, HTTP, etc) and manages the low-level details of publication.
+
+The output key is not required.
 
 [#clean-key]
 === clean
 
-The clean key is a boolean function.
-By default, it is set to false.
-When turned "`on`", i.e., set to `true`, it will remove the destination path and all the files in that path, before generating the site.
-This key only applies to filesystem providers.
+The clean key is a boolean.
+By default, it's set to false (i.e., turned "`off`").
+When true (i.e., turned "`on`"), it will remove the destination path recusively before generating the site.
+This key only applies to the filesystem (fs) providers currently.
 
 WARNING: Use this key with great care.
 For example, if you set `dir` to your computer's home directory and `clean` to true, you will delete ALL of the folders and files in your home directory.
@@ -162,12 +165,14 @@ For example, if you set `dir` to your computer's home directory and `clean` to t
 [#dir-key]
 === dir
 
-The output dir key specifies the directory where the generated site will be published.
-The key accepts relative and absolute filesystem paths.
-When the value is a relative path, the site will be published to that location in the directory Antora was executed from (i.e., current working directory).
-Its default value is [.path]_build/site_.
+The output dir key specifies the directory to publish the generated site files.
+The key accepts a relative or absolute filesystem path.
+When the value is a relative path, the path is resolved relative to the playbook file.
 
-IMPORTANT: The dir key overrides the path key for any `fs` provider specified in the destinations key.
+If the destinations are unspecified, and the dir key is not set, the value defaults to [.path]_build/site_.
+
+IMPORTANT: The dir key overrides the path key of the first `fs` provider in the list of destinations.
+This allows the output directory to be overridden from the CLI using the `--to-dir=<dir>` option.
 
 Learn more:
 
@@ -175,17 +180,19 @@ Learn more:
 
 === destinations
 
-The destinations key contains a list of provider protocols and paths that determine how and where the site will be published.
-When no destinations are specified, Antora publishes the site to the local filesytem at the default output directory location or the location specified in the dir key.
-
+The destinations key contains a list of specifications that determine how, by which provider, and where the site will be published.
 A site can be published to multiple destinations.
+
+When no destinations are specified, Antora publishes the site to the local filesytem at the location specified by the dir key or, if the dir key is not specified, the default output directory location ([.path]_build/site_).
+
+To disable publishing entirely, including the default output, set destinations to an empty array (i.e., `[]`).
 
 ==== provider
 
-The provider key specifies the protocol Antora should use for publishing the generated site.
+The provider key specifies the transport protocol Antora should use for publishing the generated site.
 Antora has two built-in providers, `fs` (filesytem) and `archive` (ZIP archive).
-You can also set up custom providers for SSH, SFTP, etc.
-The default provider protocol is `fs`.
+This value is also an extension point that can be used to delegate to a custom provider, such as SSH, S3, etc.
+The default provider is `fs`.
 
 Learn more:
 
@@ -194,16 +201,26 @@ Learn more:
 
 ==== path
 
-The path key allows you to add file paths per provider.
-The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
-The key accepts relative and absolute filesystem paths.
+The path key designates the target location where the output file(s) are to be written.
+The value gets interpretted appropriately by each provider.
+For example, the `fs` provider treats this value as a target directory, while the `archive` provider treats it as the target file.
 
-IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the `path` value for any `fs` provider specified in the destinations key.
+If the path key is not specified, it typically gets populated with a default value.
+The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
+The key accepts a relative or absolute filesystem path.
+A relative path is resolved relative to the playbook file.
+
+IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the `path` value for the first `fs` provider specified in the destinations key.
 
 Learn more:
 
 * xref:output-keys.adoc#archive-path[Specify ZIP file name and path]
 * xref:output-keys.adoc#abs-rel-path[Specify relative and absolute provider paths]
+
+==== clean
+
+The clean key can be specified directly on any `fs` provider.
+When specified at this location (instead of directly under output), it only cleans the output location specified by this destination.
 
 ////
 == Create a custom playbook
