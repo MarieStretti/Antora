@@ -51,6 +51,9 @@ async function aggregateContent (playbook) {
         source.remote,
         playbook.dir || '.'
       )
+      if (isLocal && !repository) {
+        throw new Error('Path is not a valid git repository: ' + localPath)
+      }
       const branchPatterns = source.branches || defaultBranches
       const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
         async ({ ref, branchName, isCurrent }) => {

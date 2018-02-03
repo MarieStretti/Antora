@@ -1024,4 +1024,11 @@ describe('aggregateContent()', () => {
     const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
     expect(aggregateContentDeferred).to.throw('Path does not exist: ' + ospath.join(WORK_DIR, 'does_not_exist'))
   })
+
+  it('should throw a meaningful error if repository is not a valid git repository', async () => {
+    fs.ensureDirSync(ospath.join(WORK_DIR, 'non_git_dir'))
+    playbookSpec.content.sources.push({ url: ospath.join(WORK_DIR, 'non_git_dir') })
+    const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+    expect(aggregateContentDeferred).to.throw('Path is not a valid git repository: ' + ospath.join(WORK_DIR, 'non_git_dir'))
+  })
 })
