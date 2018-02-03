@@ -91,9 +91,13 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
   let repository
 
   // QUESTION should we try to exclude git@host:path as well? maybe check for @?
-  if (!~repoUrl.indexOf('://') && directoryExists((localPath = ospath.resolve(startDir, repoUrl)))) {
-    isBare = !directoryExists(ospath.join(localPath, '.git'))
-    isLocal = true
+  if (!~repoUrl.indexOf('://')) {
+    if (directoryExists((localPath = ospath.resolve(startDir, repoUrl)))) {
+      isBare = !directoryExists(ospath.join(localPath, '.git'))
+      isLocal = true
+    } else {
+      throw new Error('Path does not exist: ' + localPath)
+    }
   } else {
     isBare = true
     isLocal = false
