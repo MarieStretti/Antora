@@ -1018,4 +1018,10 @@ describe('aggregateContent()', () => {
     expect(aggregate).to.have.lengthOf(1)
     expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
   })
+
+  it('should throw a meaningful error if local repository does not exist', async () => {
+    playbookSpec.content.sources.push({ url: 'does_not_exist' })
+    const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+    expect(aggregateContentDeferred).to.throw('Path does not exist: ' + ospath.join(WORK_DIR, 'does_not_exist'))
+  })
 })
