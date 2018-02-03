@@ -90,4 +90,4 @@ Antora generates a site map that can be used as an internal report or published 
 
 Publish site::
 Antora writes the generated pages to a default or xref:playbook:output-keys.adoc#output-dir[user-specified location].
-The site can be published to multiple locations and in multiple formats, such as a ZIP archive, using xref:playbook:output-keys.adoc#output-provider[built-in and custom destination providers].
+The site can be published in multiple formats to multiple locations over multiple protocols using xref:playbook:output-keys.adoc#output-provider[built-in and custom destination providers].
