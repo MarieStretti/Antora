@@ -176,7 +176,7 @@ This allows the output directory to be overridden from the CLI using the `--to-d
 
 Learn more:
 
-* xref:output-keys.adoc#output-dir[Specify an output directory]
+* xref:configure-output.adoc#output-dir[Specify an output directory]
 
 === destinations
 
@@ -196,8 +196,8 @@ The default provider is `fs`.
 
 Learn more:
 
-* xref:output-keys.adoc#archive-path[Publish site as a ZIP file]
-* xref:output-keys.adoc#multiple-destinations[Specify multiple destinations]
+* xref:configure-output.adoc#archive-path[Publish site as a ZIP file]
+* xref:configure-output.adoc#multiple-destinations[Specify multiple destinations]
 
 ==== path
 
@@ -214,8 +214,8 @@ IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will
 
 Learn more:
 
-* xref:output-keys.adoc#archive-path[Specify ZIP file]
-* xref:output-keys.adoc#multiple-destinations[Specify relative and absolute provider paths]
+* xref:configure-output.adoc#archive-path[Specify ZIP file]
+* xref:configure-output.adoc#multiple-destinations[Specify relative and absolute provider paths]
 
 ==== clean
 

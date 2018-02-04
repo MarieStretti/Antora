@@ -494,21 +494,38 @@ _{r}_ Describes the playbook file purpose.
 +
 _{s}_ Accepted
 
-Assumptions (P#)::
-_{r}_ Probably a section of the Playbook page.
-Reminds the user about the requirements/steps they should have already completed.
-
-Formats (P or P#)::
+Formats (P#)::
 _{r}_ Defines the playbook file formats (YAML, JSON, CSON) and provides examples.
-
-Keys (P or P#)::
-_{r}_ Defines the site, component, branch, and ui keys and values.
 +
-* Site key configuration
-* Source key configuration
-* UI key configuration
-* Output key configuration
-* Redirect key configuration
+_{s}_ Accepted. Currently a section of the playbook page.
+
+Keys (P)::
+_{r}_ Gives and overview of the playbook structure and defines the site, content, ui, and output keys and values.
++
+_{s}_ Accepted
+
+Configure Site (P)::
+_{r}_ Describes the default site key values and presents examples of common use cases.
++
+_{s}_ Accepted
+
+Configure Content (P)::
+_{r}_ Describes the default content key values and presents examples of common use cases.
++
+_{s}_ Accepted
+
+Configure UI (P)::
+_{r}_ Describes the default UI key values and presents examples of common use cases.
++
+_{s}_ Accepted
+
+Configure Redirects (P)::
+_{r}_ Describes the default redirect key values and presents examples of common use cases.
++
+_{s}_ Accepted
+
+Output configuration (P)::
+_{r}_ Describes the default output key values and presents examples of common use cases.
 +
 _{s}_ Accepted
 
@@ -522,6 +539,8 @@ Also introduces common  playbook configurations and environment scenarios.
 Antora CLI (P)::
 _{r}_ Describes the CLI commands used to run Antora with a playbook and other optional flags.
 Provides CLI command examples.
++
+_{s}_ Accepted
 
 Run Antora (P)::
 _{r}_ Tutorial showing how to run Antora, generate a site, and view that site in a browser.

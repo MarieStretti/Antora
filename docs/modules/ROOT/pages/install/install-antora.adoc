@@ -63,6 +63,6 @@ CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`
 
 Now that the Antora CLI and default Antora site generator are installed, you are ready to:
 
-* Set up your own xref:playbook:index.adoc[playbook] or use the Demo playbook.
+* Set up your own xref:playbook:playbook.adoc[playbook] or use the Demo playbook.
 * Organize a xref:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
 * xref:run-antora-generate-site.adoc[Run Antora] and generate a documentation site.
