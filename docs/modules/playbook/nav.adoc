@@ -1,5 +1,13 @@
-* Site Assembly
-** xref:index.adoc[Playbook]
-*** xref:configure-playbook.adoc[Configure Playbook]
-** xref:set-up-existing-playbook-project.adoc[Use an Existing Playbook]
-** xref:author-mode.adoc[Configure Author Workspace Playbook]
+* Site Configuration
+** xref:playbook.adoc[Playbook]
+//*** xref:playbook-formats.adoc[File Formats]
+*** xref:playbook-keys.adoc[Keys]
+//*** xref:configure-site.adoc[Configure Site]
+*** xref:source-keys.adoc[Configure Content]
+//*** xref:configure-ui.adoc[Configure UI]
+//*** xref:configure-redirects.adoc[Configure Redirects]
+*** xref:configure-output.adoc[Configure Output]
+// ** Create a Playbook
+** xref:author-mode.adoc[Create an Author Workspace Playbook]
+//** xref:playbook-project.adoc[Playbook Projects]
+** xref:set-up-existing-playbook-project.adoc[Use an Existing Project]

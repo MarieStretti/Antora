@@ -18,10 +18,11 @@ For example, the UI is loaded as early as possible, then waits until its templat
 Read playbook::
 When you're ready to generate a site, you give Antora a playbook and tell it to run.
 The pipeline loads and reads the playbook.
-A xref:playbook:configure-playbook.adoc[playbook is a configuration] file, written in YAML, JSON, or CSON that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
++
+A xref:playbook:playbook.adoc[playbook is a configuration file], written in YAML, JSON, or CSON, that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
 Locate content repositories and branches::
-Using the content source URLs and branch names listed in the playbook, Antora searches for and locates the specified repositories and branches.
+Using the xref:playbook:source-keys.adoc[content source URLs and branch names] listed in the playbook, Antora searches for and locates the specified repositories and branches.
 
 Clone or fetch remote content repository branches::
 Antora downloads the contents of each remote repository and branch it located.
@@ -46,6 +47,7 @@ The component descriptor file makes Antora's repository-spanning, file system an
 Antora assigns the descriptor information and other source metadata to the appropriate virtual files.
 Then it sorts each file into a virtual collection based on the assigned component-version data.
 
+// add site keys xref when page is available
 Compute additional metadata::
 Using site properties from the playbook and information assigned to the files in the previous step, Antora adds module, family, family-relative path, and other metadata values to each file.
 It also computes the output path (disk) and publish path (URL) information for each publishable file.
@@ -53,11 +55,12 @@ It also computes the output path (disk) and publish path (URL) information for e
 Organize files into a content catalog::
 Antora further sorts the aggregated files into a content catalog that can be queried and transmitted.
 
+// add pages xref when page is available
 Convert AsciiDoc files to embeddable HTML::
 The AsciiDoc files in the page family of the content catalog are converted to embeddable HTML with Asciidoctor.js.
 
 Convert navigation files::
-Antora retrieves xref:navigation/linked.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
+Antora retrieves xref:navigation:linked.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
 Locate and fetch UI bundle::
 Antora finds the UI bundle using the URL listed in the playbook and fetches it.
@@ -83,9 +86,8 @@ It populates the identified UI template with the page's embeddable HTML, site me
 Relying on a page template to produce the pages gives the site owner complete control over the construction of the pages, and thus complete control over the UI.
 
 Produce sitemap::
-Antora generates a site map that can be used as an internal report or published as a site page.
+Antora generates a site map that can be used as an internal report or published with the site.
 
 Publish site::
-Antora writes the generated pages to a destination(s) specified in the playbook.
-More than one destination may be specified, and different destination types are supported.
-Destination types include local and remote filesystems, ZIP archives, and others.
+Antora writes the generated pages to a default or xref:playbook:configure-output.adoc#output-dir[user-specified location].
+The site can be published in multiple formats to multiple locations over multiple protocols using xref:playbook:configure-output.adoc#output-provider[built-in and custom destination providers].

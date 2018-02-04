@@ -1,0 +1,266 @@
+= Playbook Keys
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+:experimental:
+
+On this page, you'll learn:
+
+* [x] How to structure an Antora playbook.
+* [x] The role of each playbook key.
+* [x] The values each playbook key accepts.
+
+== Playbook file structure
+// the general layout of a playbook file
+
+Here's an example of a playbook file named [.path]_site.yml_:
+
+.Playbook file named site.yml
+[source,yaml,subs=attributes+]
+----
+site: # <1>
+  title: Demo Docs Site # <2>
+content: # <3>
+  sources: # <4>
+  - url: https://gitlab.com/antora/demo/demo-component-a # <5>
+    branches: master # <6>
+  - url: https://gitlab.com/antora/demo/demo-component-b
+    branches: v1.0
+    start_path: docs # <7>
+ui: # <8>
+  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <9>
+output: # <10>
+ clean: false # <11>
+ dir: releases # <12>
+ destinations: # <13>
+ - provider: archive # <14>
+----
+<1> Site key
+<2> <<site-title-key,Site title key and value>>
+<3> Content key
+<4> Sources key
+<5> Content repository URL key
+<6> Content repository branches key
+<7> Start path key
+<8> UI key
+<9> <<ui-bundle-key,UI bundle repository key>>
+<10> Published output key
+<11> Clean output directory key
+<12> Output directory key
+<13> Output destinations key
+<14> Output provider key
+
+Let's explore the purpose and usage of each key and its values.
+
+== site
+
+The site key is where the global site properties are defined, such as the title of the documentation site and the base URL of the published site.
+Antora applies these properties when generating and assembling the site.
+
+[#site-title-key]
+=== title
+
+The title of the documentation site.
+
+// site url: The base URL of the published site. Should not include a trailing slash. used for canonical URLs and URLs in the sitemap
+// site root/component: The name of the component to use as the root of the site.
+// site keys google_analytics: The Google Analytics account key.
+// site keys swiftype: The key to activate the Swiftype widget.
+
+== content
+
+The content key contains an array of source repository specifications.
+These source repository specifications are arranged in the sources key.
+
+=== sources
+
+The sources key contains the list of git repository locations, branch name patterns, and other repository properties that Antora uses when aggregating the site content.
+
+==== url
+
+At a minimum, you must specify the location of each content repository using the url key.
+The key accepts any URL that git supports.
+This includes:
+// Filesystem paths can be relative to the location of the playbook or absolute.
+
+* filesystem paths relative to the current directory
+* absolute filesystem paths
+* file URLs that start with pass:[file:///]
+* http and https URLs (e.g., pass:[https://github.com/org/repo.git])
+** You don't need to add the trailing _.git_ to GitLab and GitHub repository URLs.
+Whether or not the trailing _.git_ is required depends on the capabilities of the repository host.
+* SSH URIs (e.g., pass:[git@github.com:org/repo] or pass:[ssh://git@github.com:org/repo])
+* git URIs (e.g., pass:[git://gitlab.com/org/repo])
+
+// For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
+==== branches
+
+The branches key accepts a list of branch name patterns.
+The names can be specified in a comma-separated list or as single items on individual lines.
+The values can be the exact name or a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
+
+When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_.
+Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
+
+Learn more:
+
+* xref:source-keys.adoc#default-branch[Use the default branches set]
+* xref:source-keys.adoc#comma-branch[Separate branch names with commas]
+* xref:source-keys.adoc#marker-branch[Separate branch names with markers]
+* xref:source-keys.adoc#exact-branch[Specify branches by name]
+* xref:source-keys.adoc#glob-branch[Specify and exclude branches by glob patterns]
+
+==== start_path
+
+Antora automatically looks for the component descriptor file at the root of a repository.
+When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using the `start_path` key.
+
+Learn more:
+
+* xref:source-keys.adoc#add-start-path[Specify a start path for a content repository]
+
+== ui
+
+The ui key contains an array of UI bundle and page layout specifications.
+
+// ui start_path: The root relative start path inside the bundle from which to take files.
+
+// ui output_dir: The output directory path relative to the site root where the UI files should be written.
+
+// default_layout: The default layout to apply to pages that do not specify a layout.
+
+[#ui-bundle-key]
+=== bundle
+
+The URL of the UI bundle.
+The UI bundle can be loaded from a URI or a local filesystem path.
+Filesystem paths can be relative to the location of the playbook or absolute.
+
+// urls:
+// urls html_extension_style: Controls how the URL extension for HTML pages is handled.
+
+// redirects: Generate nginx config file containing URL redirects for page aliases. Boolean
+
+== output
+
+The output key contains common output settings and a list of destination specifications.
+The destination specifications tell Antora which provider(s) to use to publish the site (e.g., fs, archive, ssh, s3) and where those files should go.
+The provider, in turn, determines which transport protocol to use (local, SSH, HTTP, etc) and manages the low-level details of publication.
+
+The output key is not required.
+
+[#clean-key]
+=== clean
+
+The clean key is a boolean.
+By default, it's set to false (turned "`off`").
+When true (turned "`on`"), it will remove the destination path recursively before generating the site.
+This key only applies to the filesystem (fs) providers currently.
+
+WARNING: Use this key with great care.
+For example, if you set `dir` to your computer's home directory and `clean` to true, you will delete ALL of the folders and files in your home directory.
+
+[#dir-key]
+=== dir
+
+The output dir key specifies the directory to publish the generated site files.
+The key accepts a relative or absolute filesystem path.
+When the value is a relative path, the path is resolved relative to the playbook file.
+
+If the destinations are unspecified, and the dir key is not set, the value defaults to [.path]_build/site_.
+
+IMPORTANT: The dir key overrides the path key of the first `fs` provider in the list of destinations.
+This allows the output directory to be overridden from the CLI using the `--to-dir=<dir>` option.
+
+Learn more:
+
+* xref:configure-output.adoc#output-dir[Specify an output directory]
+
+=== destinations
+
+The destinations key contains a list of specifications that determine how, by which provider, and where the site will be published.
+A site can be published to multiple destinations.
+
+When no destinations are specified, Antora publishes the site to the local filesytem at the location specified by the dir key or, if the dir key is not specified, the default output directory location ([.path]_build/site_).
+
+To disable publishing entirely, including the default output, set destinations to an empty array (`[]`).
+
+==== provider
+
+The provider key specifies the transport protocol Antora should use for publishing the generated site.
+Antora has two built-in providers, `fs` (filesytem) and `archive` (ZIP archive).
+This value is also an extension point that can be used to delegate to a custom provider, such as SSH, S3, etc.
+The default provider is `fs`.
+
+Learn more:
+
+* xref:configure-output.adoc#archive-path[Publish site as a ZIP file]
+* xref:configure-output.adoc#multiple-destinations[Specify multiple destinations]
+
+==== path
+
+The path key designates the target location where the output file(s) are to be written.
+The value gets interpretted appropriately by each provider.
+For example, the `fs` provider treats this value as a target directory, while the `archive` provider treats it as the target file.
+
+If the path key is not specified, it typically gets populated with a default value.
+The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
+The key accepts a relative or absolute filesystem path.
+A relative path is resolved relative to the playbook file.
+
+IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the `path` value for the first `fs` provider specified in the destinations key.
+
+Learn more:
+
+* xref:configure-output.adoc#archive-path[Specify ZIP file]
+* xref:configure-output.adoc#multiple-destinations[Specify relative and absolute provider paths]
+
+==== clean
+
+The clean key can be specified directly on any `fs` provider.
+When specified at this location (instead of directly under output), it only cleans the output location specified by this destination.
+
+////
+== Create a custom playbook
+
+Instead of modifying the main playbook, you can create a custom playbook and pass it to Antora.
+
+Start by creating a new file named [.path]_custom-site.yml_.
+Populate it as follows:
+
+.custom-site.yml (excerpt)
+[source,yaml,subs=attributes+]
+----
+site:
+  title: Custom Docs Site
+content:
+  sources:
+  - url: https://github.com/my-docs/server-docs
+  - url: https://gitlab.com/antora/demo/demo-component-b
+    branches: v1.0
+----
+////
+
+== antora.yml
+
+The file system name of the repository and branch are ignored by Antora once the content is retrieved.
+Instead, metadata about the component is read from a xref:ROOT:antora_yml.adoc[component descriptor file] in the repository.
+Inside each branch is a file named [.path]_antora.yml_ at the documentation component root.
+The file defines the name and version of the component.
+
+As an example, here's the [.path]_antora.yml_ file in the v5.0 branch of the server repository:
+
+.antora.yml (excerpt)
+[source,yaml]
+----
+name: server
+title: Server
+version: '5.0'
+nav:
+- modules/start/nav.adoc
+- ...
+----
+
+This decoupling allows you to have more than one branch that provides the same version of a documentation component, which you can then toggle by configuring the branches key in the playbook.

@@ -1,0 +1,205 @@
+= Output Keys
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] How to configure the output directory.
+* [x] How to configure multiple destinations and providers.
+* [x] How to specify a custom provider.
+
+[#output-dir]
+== Directory
+
+When you only need to output the site to a single directory, you can use the output dir key.
+This key is meant to provide a shorthand to the more formal destinations key.
+
+The output dir key specifies the directory where the generated site will be published.
+The key accepts a relative or absolute filesystem path.
+When the value is a relative path, the path is resolved relative to the playbook file.
+
+IMPORTANT: The dir key overrides the path key of the first `fs` provider specified in the destinations key.
+This allows the output directory to be overridden from the CLI using the `--to-dir=<dir>` option.
+
+=== Default value
+
+The default output directory is [.path]_build/site_.
+If no destinations are specified in the playbook, all site files will be written to this directory.
+To disable this default, either specify at least one destination under the destinations key or set the destinations key to an empty array (`[]`).
+
+[#add-dir]
+=== Explicit value
+
+In the relative `dir` example, the site will be published to a folder named [.path]_launch_ relative to the playbook file.
+
+.Relative dir value
+[source,yaml]
+----
+output:
+ dir: launch
+----
+
+In the absolute `dir` example, the site will be published to [.path]_home/dev/docs-site/beta_ regardless of where the playbook is located.
+
+.Absolute dir value
+[source,yaml]
+----
+output:
+ dir: /home/user/docs-site/beta
+----
+
+[#output-destinations]
+== Destinations
+
+When you need to publish to multiple destinations, you'll use the destinations key.
+The destinations key accepts a list of destination specifications.
+Each destination specification must include the provider key, which indicates which provider should be used to publish the site and which type of publication it will be.
+
+[#output-providers]
+=== Providers
+
+Antora offers two built-in providers.
+
+.Built-in providers
+Filesystem (`fs`)::
+Publishes the output files to a directory.
+Archive (`archive`)::
+Publishes the output files to a ZIP archive file.
+
+You can also create custom providers for SSH, S3, etc.
+
+[#fs-provider]
+==== Filesystem provider
+
+The `fs` provider publishes the site to a directory.
+It's the formal equivalent to specifying the dir key on output.
+
+.Filesystem provider
+[source,yaml]
+----
+output:
+ destinations:
+ - provider: fs
+----
+
+In this example, the site is published to [.path]_build/site_.
+
+[#archive-provider]
+==== Archive provider
+
+The `archive` provider publishes a site to a ZIP file.
+
+.Archive provider
+[source,yaml]
+----
+output:
+ destinations:
+ - provider: archive
+----
+
+In this example, the site is generated as a ZIP file and published to [.path]_build/site.zip_.
+
+[#output-path]
+=== Path
+
+The path key on a destination allows you to specify an output location per provider.
+The key accepts a relative or absolute filesystem path.
+When the value is a relative path, the path is resolved relative to the playbook file.
+The provider will create any interim directories as needed.
+
+IMPORTANT: If you set the dir key in a playbook or via the CLI, its value will override the `path` value of the first `fs` provider specified in the destinations key.
+
+==== Default paths
+
+The default `fs` path is [.path]_build/site_.
+
+The default `archive` path is [.path]_build/site.zip_.
+
+[#archive-path]
+==== Explicit path
+
+In the relative path example, we're running Antora on a playbook located in a directory named [.path]_docs-site_.
+
+.Relative archive provider path
+[source,yaml]
+----
+output:
+ destinations:
+ - provider: archive
+   path: blue.zip
+----
+
+Once generation is complete, the site will be published to [.path]_docs-site/blue.zip_.
+
+In the absolute path example, we can run Antora on a playbook located anywhere on our computer.
+
+.Absolute archive provider path
+[source,yaml]
+----
+output:
+ destinations:
+ - provider: archive
+   path: /home/user/projects/launch/blue.zip
+----
+
+Once generation is complete, the site will be published to [.path]_/home/user/projects/launch/blue.zip_.
+
+////
+When a value is assigned to the output directory key, the archive path is appended to the `dir` path.
+
+.Dir and archive provider path
+[source,yaml]
+----
+output:
+ dir: launch/sites
+ destinations:
+ - provider: archive
+   path: blue.zip
+----
+
+In this example, the archived site will be located at [.path]_launch/sites/blue.zip_.
+////
+
+=== Multiple destinations
+
+In this example, we're running Antora on a playbook file in the directory named [.path]_tmp_ and publishing the site to two locations, one relative and one absolute.
+
+.Relative fs path and absolute archive path
+[source,yaml]
+----
+output:
+ destinations:
+ - provider: fs
+   path: releases/red
+   clean: true
+ - provider: archive
+   path: /home/user/projects/docs-site/blue.zip
+----
+
+The site published using the `fs` provider to the directory [.path]_tmp/releases/red_.
+This directory will be removed prior to publishing since we've turned the clean key on.
+The site is also published as an archive to [.path]_/home/user/projects/docs-site/blue.zip_ by the `archive` provider.
+
+=== Custom Provider
+
+If the provider key does not contain a recognized built-in provider, Antora will attempt to require it as a Node module.
+This allows you to supply a custom provider.
+
+If the value begins with a dot (`.`), Antora will require the path relative to the playbook file.
+Otherwise, Antora will require the value as a Node module installed in the playbook project.
+
+The custom provider is a JavaScript function that matches the following signature:
+
+[source,js]
+----
+async function publish (destConfig, files, playbook)
+----
+
+The destConfig argument is an object containing key/value pairs that correspond to the properties of the destination specification.
+The files argument is a ReadableStream of virtual files.
+The playbook argument is the object containing key/value pairs from the playbook as a whole.
+
+WARNING: The custom provider is an alpha API and subject to change.

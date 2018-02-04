@@ -8,7 +8,7 @@ endif::[]
 
 Assumptions:
 
-* [x] You've installed Node 8 on your xref:linux-requirements.adoc[Linux], xref:windows-requirements.adoc[Windows], or xref:macos-requirements.adoc[macOS] machine.
+* [x] You've installed Node 8 on your xref:install/linux-requirements.adoc[Linux], xref:install/windows-requirements.adoc[Windows], or xref:install/macos-requirements.adoc[macOS] machine.
 
 On this page, you'll learn:
 
@@ -57,12 +57,12 @@ Move into the playbook's directory and then type:
 
  $ npm install @antora/site-generator-default
 
-CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, go to xref:troubleshoot-nodegit.adoc[Troubleshooting nodegit].
+CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, go to xref:install/troubleshoot-nodegit.adoc[Troubleshooting nodegit].
 
 == What's next?
 
 Now that the Antora CLI and default Antora site generator are installed, you are ready to:
 
-* Set up your own xref:playbook:index.adoc[playbook] or use the Demo playbook.
+* Set up your own xref:playbook:playbook.adoc[playbook] or use the Demo playbook.
 * Organize a xref:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
 * xref:run-antora-generate-site.adoc[Run Antora] and generate a documentation site.
