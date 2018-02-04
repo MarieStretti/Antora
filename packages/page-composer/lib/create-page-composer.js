@@ -105,8 +105,10 @@ function buildSiteUiModel (playbook, contentCatalog) {
   // QUESTION should components be pre-sorted?
   model.components = contentCatalog.getComponents().sort((a, b) => a.title.localeCompare(b.title))
 
-  //let keys = playbook.site.keys
-  //if (keys) model.keys = keys
+  model.keys = Object.entries(playbook.site.keys || {}).reduce((accum, [key, value]) => {
+    if (value) accum[key] = value
+    return accum
+  }, {})
 
   const uiConfig = playbook.ui
   model.ui = {

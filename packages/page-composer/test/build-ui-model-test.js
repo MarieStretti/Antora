@@ -81,6 +81,21 @@ describe('build UI model', () => {
       expect(model.title).to.equal('Docs Site')
     })
 
+    it('should set keys property to an empty object if keys property is missing from the playbook', () => {
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model.keys).to.exist()
+      expect(model.keys).to.eql({})
+    })
+
+    it('should populate keys property with non-empty key values in site.keys property from playbook', () => {
+      playbook.site.keys = {
+        googleAnalytics: 'UA-XXXXXXXX-1',
+        swiftype: undefined,
+      }
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model.keys).to.eql({ googleAnalytics: 'UA-XXXXXXXX-1' })
+    })
+
     it('should set components property to array of components from content catalog sorted by title', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
       expect(contentCatalog.getComponents).to.have.been.called()
