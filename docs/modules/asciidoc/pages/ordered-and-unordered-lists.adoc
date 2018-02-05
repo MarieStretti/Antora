@@ -1,0 +1,82 @@
+= Ordered and Unordered Lists
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-unordered: {uri-adoc-manual}/#unordered-lists
+:uri-ordered: {uri-adoc-manual}/#ordered-lists
+
+On this page, you'll learn:
+
+* [x] How to mark up an ordered (numbered) list with AsciiDoc.
+* [x] How to mark up an unordered (bulleted) list with AsciiDoc.
+
+== Ordered List
+
+.Ordered list with nested levels
+[source,asciidoc]
+----
+.Optional Title
+. Step 1
+. Step 2
+.. Details
+... Mini-details
+.... Micro-details
+..... We're really down in the weeds now.
+.. More details
+. Step 3
+----
+
+.Result
+--
+.Optional Title
+. Step 1
+. Step 2
+.. Details
+... Mini-details
+.... Micro-details
+..... We're really down in the weeds now.
+.. More details
+. Step 3
+--
+
+The maximum nesting level is five (`pass:[.....]`).
+
+Learn more about {uri-ordered}[ordered lists in the Asciidoctor manual].
+
+== Unordered List
+
+.Unordered list with nested levels
+[source,asciidoc]
+----
+.Optional Title
+* Item A
+* Item B
+** Item B1
+*** Details
+**** More details
+***** Details about the details
+** Item B2
+* Item C
+----
+
+.Result
+--
+.Optional Title
+* Item A
+* Item B
+** Item B1
+*** Details
+**** More details
+***** Details about the details
+** Item B2
+* Item C
+--
+
+The maximum nesting level is five (`pass:[*****]`).
+
+Learn more about {uri-unordered}[unordered lists in the Asciidoctor manual].
