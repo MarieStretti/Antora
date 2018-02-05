@@ -121,7 +121,7 @@ Common image file formats include:
 * SVG
 * GIF (static and animated)
 
-Images are inserted into a page using the xref:page-assets.adoc#insert-image[AsciiDoc image macro] (block or inline).
+Images are inserted into a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro] (block or inline).
 
 [#videos-dir]
 === Video files
