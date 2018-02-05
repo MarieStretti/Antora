@@ -131,7 +131,7 @@ Self-hosted video files are saved in [.path]_assets/videos/_ in the same module 
 Video format support is dictated by the user's browser and system.
 For a list of the web video formats each browser supports, see the {uri-video-formats}[Mozilla Supported Media Formats documentation].
 
-Videos are inserted into a page using the xref:page-assets.adoc#insert-video[AsciiDoc video macro].
+Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
 
 === Large files and GitLab / GitHub
 

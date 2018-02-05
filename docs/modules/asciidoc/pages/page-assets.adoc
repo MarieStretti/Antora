@@ -7,12 +7,7 @@ endif::[]
 :idseparator: -
 // URLs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
-:uri-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
-:uri-hosted-video: {uri-adoc-manual}/#video
-:uri-shared-video: {uri-adoc-manual}/#youtube-and-vimeo-videos
-:uri-video-attrs: {uri-adoc-manual}/#supported-attributes
 
-[#insert-image]
 == Insert an image
 
 To insert a standalone image (i.e., figure), use the AsciiDoc block image macro (`image::[]`).
@@ -44,40 +39,3 @@ image::pipeline-workflow.png[a diagram illustrating the pipeline stages]
 ----
 
 A module's image files should be saved in its xref:modules.adoc#images-dir[images folder].
-
-[#insert-video]
-== Insert a video
-
-You can embed self-hosted videos or videos shared on YouTube and Vimeo.
-
-Video format support is dictated by the user's browser and/or system.
-For a list of the web video formats each browser supports, see the {uri-video-formats}[Mozilla Developer Supported Media Formats documentation].
-
-TIP: Insert animated GIFs with the <<insert-image,image macro>>.
-
-.Insert a self-hosted video
-----
-video::video-file.mp4[]
-----
-
-Let's break this down.
-You start with the video macro prefix, `video::`.
-Next is the target.
-Put the path of the video relative to the xref:modules.adoc#videos-dir[video catalog] in that slot (no need for an attribute prefix).
-Finally, end with a pair of square brackets (`+[]+`).
-
-=== Externally hosted videos
-
-To embed a video hosted on Youtube or Vimeo, put the video's ID in the macro target and the name of the hosting service (`youtube`, `vimeo`) between the brackets.
-
-.Embed a Youtube video
-----
-video::rPQoq7ThGAU[youtube]
-----
-
-.More AsciiDoc video help
-****
-* {uri-hosted-video}[The AsciiDoc video macro]
-* {uri-shared-video}[Embed Youtube and Vimeo videos]
-* {uri-video-attrs}[Video macro options and attributes]
-****

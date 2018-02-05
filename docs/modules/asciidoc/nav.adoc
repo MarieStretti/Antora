@@ -7,3 +7,4 @@
 ** xref:ordered-and-unordered-lists.adoc[Ordered & Unordered Lists]
 ** xref:include-partial-page.adoc[Insert a Partial Page]
 ** xref:link-to-attachment.adoc[Link to an Attachment]
+** xref:embed-video.adoc[Embed a Video]
