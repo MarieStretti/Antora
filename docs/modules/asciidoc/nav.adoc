@@ -6,6 +6,7 @@
 ** xref:section-headings.adoc[Section Headings]
 ** xref:text-styles.adoc[Basic Text Styles]
 ** xref:special-characters-and-symbols.adoc[Special Characters & Symbols]
+** xref:ui-macros.adoc[UI Macros]
 ** xref:ordered-and-unordered-lists.adoc[Ordered & Unordered Lists]
 ** xref:page-to-page-xref.adoc[Page to Page Links]
 ** xref:in-page-xref.adoc[Same Page Links]
