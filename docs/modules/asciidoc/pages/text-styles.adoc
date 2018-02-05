@@ -5,6 +5,11 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-bold-italic: {uri-adoc-manual}/#bold-and-italic
+:uri-mono: {uri-adoc-manual}/#mono
+:uri-highlight: {uri-adoc-manual}/#custom-styling-with-attributes
 
 On this page, you'll learn:
 
@@ -36,6 +41,10 @@ _italic phrase_ & __char__acter__s__
 *_bold italic phrase_* & **__char__**acter**__s__**
 --
 
+Asciidoctor resources:
+
+* {uri-bold-italic}[Bold and italic text formatting]
+
 == Monospace
 
 You can monospace entire phrases, a word, and characters in a word.
@@ -65,6 +74,10 @@ You can monospace entire phrases, a word, and characters in a word.
 ``**__char__**``acter``**__s__**``
 --
 
+Asciidoctor resources:
+
+* {uri-mono}[Monospace text formatting]
+
 == Highlight
 
 You can highlight entire phrases, a word, and characters in a word.
@@ -79,3 +92,7 @@ Let's #highlight this phrase# and part of th##is##.
 --
 Let's #highlight this phrase# and part of th##is##.
 --
+
+Asciidoctor resources:
+
+* {uri-highlight}[Highlighted text formatting]

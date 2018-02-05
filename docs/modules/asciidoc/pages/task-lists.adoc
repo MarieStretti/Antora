@@ -1,0 +1,39 @@
+= Task Lists
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-task: {uri-adoc-manual}/#checklist
+
+On this page, you'll learn:
+
+* [x] How to mark up a task list with AsciiDoc.
+
+== Checked and unchecked list items
+
+Task lists) are xref:ordered-and-unordered-lists#unordered[unordered lists] that have items marked as checked (`[*]` or `[x]`) or unchecked (`[ ]`).
+
+Here’s an example:
+
+.Task list syntax
+[source,asciidoc]
+----
+* [*] checked
+* [x] also checked
+* [ ] not checked
+----
+
+.Result
+--
+* [*] checked
+* [x] also checked
+* [ ] not checked
+--
+
+Asciidoctor resources:
+
+* {uri-task}[Checklists]

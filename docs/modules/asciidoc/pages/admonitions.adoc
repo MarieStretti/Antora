@@ -5,6 +5,9 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-admonition: {uri-adoc-manual}/#admonition
 
 On this page, you'll learn:
 
@@ -76,3 +79,7 @@ Use an example block to create an admonition that contains complex content, such
 * Source code
 * Images
 ====
+
+Asciidoctor resources:
+
+* {uri-admonition}[Admonition paragraphs and blocks]

@@ -48,6 +48,7 @@ The maximum nesting level is five (`pass:[.....]`).
 
 Learn more about {uri-ordered}[ordered lists in the Asciidoctor manual].
 
+[#unordered]
 == Unordered List
 
 .Unordered list with nested levels
