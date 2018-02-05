@@ -12,10 +12,12 @@ const path = ospath.posix
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
+const vfs = require('vinyl-fs')
 const vzip = require('gulp-vinyl-zip')
 
 const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
 const URI_SCHEME_RX = /^https?:\/\//
+const EXT_RX = /\.[a-z]{2,3}$/
 
 /**
  * Loads the files in the specified UI bundle (zip archive) into a UiCatalog,
@@ -43,10 +45,10 @@ const URI_SCHEME_RX = /^https?:\/\//
  * @returns {UiCatalog} A catalog of UI files which were read from the bundle.
  */
 async function loadUi (playbook) {
-  const { bundle: bundleUri, startPath, outputDir } = playbook.ui
+  const { bundle: bundleUri, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
+  const playbookDir = playbook.dir || process.cwd()
   let resolveBundle
   if (isUrl(bundleUri)) {
-    // TODO add support for a forced update flag
     const cachePath = getCachePath(sha1(bundleUri) + '.zip')
     resolveBundle = fs.pathExists(cachePath).then((exists) => {
       if (exists) {
@@ -58,7 +60,7 @@ async function loadUi (playbook) {
       }
     })
   } else {
-    const localPath = ospath.resolve(playbook.dir || process.cwd(), bundleUri)
+    const localPath = ospath.resolve(playbookDir, bundleUri)
     resolveBundle = fs.pathExists(localPath).then((exists) => {
       if (exists) {
         return localPath
@@ -78,7 +80,11 @@ async function loadUi (playbook) {
       .pipe(bufferizeContents())
       .on('error', reject)
       .pipe(collectFiles(resolve))
-  })
+  }).then(
+    (bundleFiles) =>
+      // Q: would it be faster to collect files in parallel, then combine?
+      supplementalFilesSpec ? srcSupplementalFiles(supplementalFilesSpec, bundleFiles, playbookDir) : bundleFiles
+  )
 
   const config = loadConfig(files, outputDir)
 
@@ -132,6 +138,19 @@ function selectFilesStartingFrom (startPath) {
   }
 }
 
+function relativizeFiles () {
+  return map((file, _, next) => {
+    if (file.isNull()) {
+      next()
+    } else {
+      next(
+        null,
+        new File({ path: posixify ? posixify(file.relative) : file.relative, contents: file.contents, stat: file.stat })
+      )
+    }
+  })
+}
+
 function bufferizeContents () {
   return map((file, _, next) => {
     // NOTE gulp-vinyl-zip automatically converts the contents of an empty file to a Buffer
@@ -149,9 +168,77 @@ function bufferizeContents () {
   })
 }
 
-function collectFiles (done) {
-  const accum = []
-  return map((file, _, next) => accum.push(file) && next(), () => done(accum))
+function collectFiles (done, files = []) {
+  if (files.length) {
+    const accum = []
+    return map((file, _, next) => accum.push(file) && next(), () => done(appendFiles(files, accum)))
+  } else {
+    return map((file, _, next) => files.push(file) && next(), () => done(files))
+  }
+}
+
+function srcSupplementalFiles (filesSpec, files, playbookDir) {
+  if (Array.isArray(filesSpec)) {
+    return Promise.all(
+      filesSpec.reduce((accum, { path: path_, contents: contents_ }) => {
+        if (!path_) {
+          return accum
+        } else if (contents_) {
+          if (~contents_.indexOf('\n') || !EXT_RX.test(contents_)) {
+            accum.push(createMemoryFile(path_, contents_))
+          } else {
+            contents_ = ospath.resolve(playbookDir, contents_)
+            accum.push(
+              fs
+                .stat(contents_)
+                .then((stat) => fs.readFile(contents_).then((contents) => new File({ path: path_, contents, stat })))
+            )
+          }
+        } else {
+          accum.push(createMemoryFile(path_))
+        }
+        return accum
+      }, [])
+    ).then((supplementalFiles) => appendFiles(files, supplementalFiles))
+  } else {
+    const base = ospath.resolve(playbookDir, filesSpec)
+    return fs
+      .stat(base)
+      .then(
+        (stat) =>
+          new Promise((resolve, reject) => {
+            vfs
+              .src('**/*', { base, cwd: base, removeBOM: false })
+              .on('error', reject)
+              .pipe(relativizeFiles())
+              .pipe(collectFiles(resolve, files))
+          })
+      )
+      .catch((err) => {
+        // Q: should we skip unreadable files?
+        throw new Error('problem encountered while reading ui.supplemental_files: ' + err.message)
+      })
+  }
+}
+
+function appendFiles (files, supplementalFiles) {
+  const pathByIndex = files.reduce((accum, file, idx) => accum.set(file.path, idx) && accum, new Map())
+  supplementalFiles.forEach((file) => {
+    const idx = pathByIndex.get(file.path)
+    if (idx === undefined) {
+      files.push(file)
+    } else {
+      files[idx] = file
+    }
+  })
+  return files
+}
+
+function createMemoryFile (path_, contents = []) {
+  const stat = new fs.Stats()
+  stat.size = contents.length
+  stat.mode = 33188
+  return new File({ path: path_, contents: Buffer.from(contents), stat })
 }
 
 function loadConfig (files, outputDir) {

@@ -92,6 +92,15 @@ module.exports = {
       format: String,
       default: undefined,
     },
+    supplemental_files: {
+      doc: 'Supplemental files or a directory of files to append to the UI bundle.',
+      format: (val) => {
+        if (!(typeof val === 'string' || Array.isArray(val))) {
+          throw new Error('expected directory string or file list')
+        }
+      },
+      default: undefined,
+    },
   },
   runtime: {
     quiet: {

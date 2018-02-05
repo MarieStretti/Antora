@@ -16,17 +16,18 @@ describe('loadUi()', () => {
   const expectedFilePaths = [
     'css/one.css',
     'css/two.css',
-    'fonts/Roboto-Medium.ttf',
+    'font/Roboto-Medium.ttf',
     'helpers/and.js',
     'helpers/or.js',
-    'images/close.svg',
-    'images/search.svg',
+    'img/close.svg',
+    'img/search.svg',
     'layouts/404.hbs',
     'layouts/default.hbs',
     'partials/footer.hbs',
+    'partials/head.hbs',
     'partials/header.hbs',
-    'scripts/01-one.js',
-    'scripts/02-two.js',
+    'js/01-one.js',
+    'js/02-two.js',
   ]
 
   let server
@@ -150,6 +151,199 @@ describe('loadUi()', () => {
     })
   })
 
+  // TODO test an image, such as a site icon
+  describe('should load supplemental files', () => {
+    let playbook
+
+    beforeEach(() => {
+      playbook = { ui: { bundle: ospath.resolve(FIXTURES_DIR, 'the-ui-bundle.zip') } }
+    })
+
+    it('throws error when directory does not exist', async () => {
+      playbook.ui.supplementalFiles = ospath.resolve(FIXTURES_DIR, 'does-not-exist')
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(loadUiDeferred).to.throw('problem encountered')
+    })
+
+    it('from absolute directory', async () => {
+      playbook.ui.supplementalFiles = ospath.resolve(FIXTURES_DIR, 'supplemental-files')
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
+      expect(paths).to.have.members(expectedFilePathsPlus)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('from relative directory', async () => {
+      playbook.ui.supplementalFiles = ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files'))
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
+      expect(paths).to.have.members(expectedFilePathsPlus)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('from relative directory when playbook dir does not match process.cwd()', async () => {
+      playbook.dir = WORK_DIR
+      playbook.ui.supplementalFiles = ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files'))
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
+      expect(paths).to.have.members(expectedFilePathsPlus)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('from files with string contents', async () => {
+      playbook.ui.supplementalFiles = [
+        {
+          path: 'partials/head.hbs',
+          contents: fs.readFileSync(ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs'), 'utf8'),
+        },
+        {
+          path: 'css/extra.css',
+          contents: fs.readFileSync(ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css'), 'utf8'),
+        },
+      ]
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
+      expect(paths).to.have.members(expectedFilePathsPlus)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('from files with string contents without endlines', async () => {
+      playbook.ui.supplementalFiles = [
+        {
+          path: 'partials/head.hbs',
+          contents: '<meta name="google-site-verification" content="abcdefghijklmnopqrstuvwxyz">',
+        },
+      ]
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('throws error when file does not exist', async () => {
+      playbook.ui.supplementalFiles = [
+        {
+          path: 'partials/head.hbs',
+          contents: ospath.resolve(FIXTURES_DIR, 'does-not-exist/head.hbs'),
+        },
+      ]
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(loadUiDeferred).to.throw('no such file')
+    })
+
+    it('from files with absolute paths', async () => {
+      playbook.ui.supplementalFiles = [
+        {
+          path: 'partials/head.hbs',
+          contents: ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs'),
+        },
+        {
+          path: 'css/extra.css',
+          contents: ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css'),
+        },
+      ]
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
+      expect(paths).to.have.members(expectedFilePathsPlus)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('from files with relative paths', async () => {
+      playbook.ui.supplementalFiles = [
+        {
+          path: 'partials/head.hbs',
+          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs')),
+        },
+        {
+          path: 'css/extra.css',
+          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css')),
+        },
+      ]
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
+      expect(paths).to.have.members(expectedFilePathsPlus)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('from files with relative paths when playbook dir does not match process.cwd()', async () => {
+      playbook.dir = WORK_DIR
+      playbook.ui.supplementalFiles = [
+        {
+          path: 'partials/head.hbs',
+          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs')),
+        },
+        {
+          path: 'css/extra.css',
+          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css')),
+        },
+      ]
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
+      expect(paths).to.have.members(expectedFilePathsPlus)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.include('google-site-verification')
+    })
+
+    it('creates empty file when contents is not specified', async () => {
+      playbook.ui.supplementalFiles = [{ path: 'partials/head.hbs' }]
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+      const head = files.find((file) => file.path === 'partials/head.hbs')
+      expect(head).to.exist()
+      expect(head.contents.toString()).to.be.empty()
+    })
+
+    it('skips entry without a path', async () => {
+      playbook.ui.supplementalFiles = [{ contents: 'this file is ignored' }]
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+    })
+  })
+
   describe('findByType()', () => {
     describe('should discover helpers', () => {
       testAll('the-ui-bundle.zip', async (playbook) => {
@@ -177,7 +371,7 @@ describe('loadUi()', () => {
         const partials = uiCatalog.findByType('partial')
         partials.forEach(({ type }) => expect(type).to.equal('partial'))
         const partialPaths = partials.map((file) => file.path)
-        expect(partialPaths).to.have.members(['partials/footer.hbs', 'partials/header.hbs'])
+        expect(partialPaths).to.have.members(['partials/footer.hbs', 'partials/head.hbs', 'partials/header.hbs'])
       })
     })
 
@@ -190,11 +384,11 @@ describe('loadUi()', () => {
         expect(uiAssetPaths).to.have.members([
           'css/one.css',
           'css/two.css',
-          'fonts/Roboto-Medium.ttf',
-          'images/close.svg',
-          'images/search.svg',
-          'scripts/01-one.js',
-          'scripts/02-two.js',
+          'font/Roboto-Medium.ttf',
+          'img/close.svg',
+          'img/search.svg',
+          'js/01-one.js',
+          'js/02-two.js',
         ])
       })
     })
@@ -272,11 +466,12 @@ describe('loadUi()', () => {
       uiAssets.forEach((file) => {
         expect(file).to.have.property('out')
       })
-      const script = uiAssets.find(({ path: p }) => p === 'scripts/01-one.js')
+      const script = uiAssets.find(({ path: p }) => p === 'js/01-one.js')
+      expect(script).to.exist()
       expect(script.out).to.eql({
-        dirname: '_/scripts',
+        dirname: '_/js',
         basename: '01-one.js',
-        path: '_/scripts/01-one.js',
+        path: '_/js/01-one.js',
       })
     })
   })
@@ -290,11 +485,12 @@ describe('loadUi()', () => {
         uiAssets.forEach((file) => {
           expect(file).to.have.property('out')
         })
-        const script = uiAssets.find(({ path }) => path === 'scripts/01-one.js')
+        const script = uiAssets.find(({ path }) => path === 'js/01-one.js')
+        expect(script).to.exist()
         expect(script.out).to.eql({
-          dirname: '_ui/scripts',
+          dirname: '_ui/js',
           basename: '01-one.js',
-          path: '_ui/scripts/01-one.js',
+          path: '_ui/js/01-one.js',
         })
       })
     })
@@ -307,11 +503,12 @@ describe('loadUi()', () => {
         uiAssets.forEach((file) => {
           expect(file).to.have.property('out')
         })
-        const script = uiAssets.find(({ path }) => path === 'scripts/01-one.js')
+        const script = uiAssets.find(({ path }) => path === 'js/01-one.js')
+        expect(script).to.exist()
         expect(script.out).to.eql({
-          dirname: '_ui/scripts',
+          dirname: '_ui/js',
           basename: '01-one.js',
-          path: '_ui/scripts/01-one.js',
+          path: '_ui/js/01-one.js',
         })
       })
     })
