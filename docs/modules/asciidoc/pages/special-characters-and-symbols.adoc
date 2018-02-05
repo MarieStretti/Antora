@@ -48,19 +48,19 @@ In turn, `\&#167;` will display as `&sect;`.
 |The vertical form apostrophe is replaced with the curved form apostrophe.
 
 |Copyright
-|\(C)
+|(C)
 |\&#169;
 |(C)
 |
 
 |Ellipses
-|\...
+|...
 |\&#8230;
 |...
 |
 
 |Em dash
-|\--
+|--
 |\&#8212;
 |{empty}--{empty}
 |Only replaced if between two word characters, between a word character and a line boundary, or flanked by spaces.
@@ -74,13 +74,13 @@ When flanked by space characters (e.g., `+a -- b+`), the normal spaces are repla
 |
 
 |Left double arrow
-|\<=
+|<=
 |\&#8656;
 |<=
 |
 
 |Left single arrow
-|\<-
+|<-
 |\&#8592;
 |<-
 |
@@ -92,25 +92,25 @@ When flanked by space characters (e.g., `+a -- b+`), the normal spaces are repla
 |
 
 |Registered
-|\(R)
+|(R)
 |\&#174;
 |(R)
 |
 
 |Right double arrow
-|\=>
+|=>
 |\&#8658;
 |=>
 |
 
 |Right single arrow
-|\->
+|->
 |\&#8594;
 |->
 |
 
 |Trademark
-|\(TM)
+|(TM)
 |\&#8482;
 |(TM)
 |
