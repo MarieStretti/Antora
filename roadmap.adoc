@@ -29,15 +29,17 @@ For a detailed list of current development tasks, refer to the core components {
 
 === v1.0.0-alpha.x
 
-==== Scheduled for next alpha release
+==== Scheduled for next alpha
 
+* [ ] Provide capability to customize/override UI templates {uri-issues}/147[#147]
 * [ ] Pass site keys to UI model {uri-issues}/146[#146]
-* [ ] Architect and implement page redirector / router component
-* [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
-* [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
+* [ ] Improve error message when local workspace path cannot be found {uri-issues}/119[#119]
 
 ==== Waiting
 
+* [ ] Architect and implement page redirector / router component
+* [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
+* [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
 * [ ] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
 * [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
@@ -47,7 +49,7 @@ For a detailed list of current development tasks, refer to the core components {
 
 === v1.0.0-beta.x
 
-* [ ] More informative error messages {uri-issues}/111[#111], {uri-issues}/119[#119]
+* [ ] More informative error messages {uri-issues}/111[#111]
 * [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
 * [ ] Test against Asciidoctor.js 1.5.6-preview.5
 * [ ] Test against Node 9
@@ -93,17 +95,19 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === v1.0.0-alpha.x
 
-==== Scheduled for alpha.6 release
+==== Scheduled for alpha.6
 
-* [ ] Document site configuration features {uri-issues}/142[#142]
-* [ ] Document how to upgrade to latest Antora version {uri-issues}/140[#140]
+* [x] Document how to upgrade to latest Antora version {uri-issues}/140[#140]
 * [x] Add AsciiDoc page overview and structure documentation {uri-issues}/131[#131]
 * [x] Document Windows installation instructions {uri-issues}/130[#130]
 * [x] Document output provider and path features {uri-issues}/127[#127]
+* [x] _Docs Site_: Set up automatic deployment to GitLab pages for docs.antora.org {uri-docs-site-issues}/2[#2]
 
-==== Scheduled for alpha.7 release
+==== Scheduled for alpha.7
 
-* [ ] _Docs Site_: Set up automatic deployment to GitLab pages for docs.antora.org {uri-docs-site-issues}/2[#2]
+* [ ] Document site configuration features {uri-issues}/142[#142]
+* [ ] _Docs Site:_ Add site and UI keys to production playbook
+* [ ] _Docs Site:_ Connect Docs and project sites
 * [ ] Document sitemap features
 * [ ] Document versioning policy {uri-issues}/14[#14]
 
@@ -118,7 +122,6 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Document UI bundle configuration features
 * [ ] Provide overview of full feature set
 * [ ] Document specifying current branch as a token
-* [ ] _Docs Site:_ Connect Docs and project sites
 
 === v1.x
 
@@ -131,13 +134,12 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 === v1.0.0-alpha.x
 
-==== Scheduled for next alpha release
+==== Scheduled for next alpha
 
 * [x] Add Google analytics tracking code when key is set in playbook {uri-ui-issues}/37[#37]
 * [x] Open menu item in navigation when menu item is clicked {uri-ui-issues}/36[#36]
 * [x] Add list-style none on inline (flex) lists {uri-ui-issues}/35[#35]
 * [x] Look for in-page links anywhere in page {uri-ui-issues}/34[#34]
-* [ ] Evaluate potential default UI header and footer content capabilities {uri-ui-issues}/32[#32]
 * [ ] Refine literal, listing, and example block title styles {uri-ui-issues}/22[#22]
 
 ==== Waiting
@@ -147,7 +149,6 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 * [ ] IE 11 fixes
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 * [ ] Integrate search
-* [ ] Expand template model documentation
 * [ ] Improve SVG options stability
 
 === v1.0.0-beta.x
