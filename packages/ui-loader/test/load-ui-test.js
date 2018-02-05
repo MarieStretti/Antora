@@ -228,7 +228,7 @@ describe('loadUi()', () => {
       expect(head.contents.toString()).to.include('google-site-verification')
     })
 
-    it('from files with string contents without endlines', async () => {
+    it('from file with string contents that does not contain any newline characters', async () => {
       playbook.ui.supplementalFiles = [
         {
           path: 'partials/head.hbs',
@@ -324,7 +324,7 @@ describe('loadUi()', () => {
       expect(head.contents.toString()).to.include('google-site-verification')
     })
 
-    it('creates empty file when contents is not specified', async () => {
+    it('creates empty file when contents of file is not specified', async () => {
       playbook.ui.supplementalFiles = [{ path: 'partials/head.hbs' }]
       const uiCatalog = await loadUi(playbook)
       const files = uiCatalog.getFiles()
@@ -335,7 +335,7 @@ describe('loadUi()', () => {
       expect(head.contents.toString()).to.be.empty()
     })
 
-    it('skips entry without a path', async () => {
+    it('skips entry when path is not specified', async () => {
       playbook.ui.supplementalFiles = [{ contents: 'this file is ignored' }]
       const uiCatalog = await loadUi(playbook)
       const files = uiCatalog.getFiles()

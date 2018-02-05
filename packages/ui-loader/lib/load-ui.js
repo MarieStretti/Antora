@@ -45,8 +45,8 @@ const EXT_RX = /\.[a-z]{2,3}$/
  * @returns {UiCatalog} A catalog of UI files which were read from the bundle.
  */
 async function loadUi (playbook) {
-  const { bundle: bundleUri, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
   const playbookDir = playbook.dir || process.cwd()
+  const { bundle: bundleUri, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
   let resolveBundle
   if (isUrl(bundleUri)) {
     const cachePath = getCachePath(sha1(bundleUri) + '.zip')
@@ -70,21 +70,22 @@ async function loadUi (playbook) {
     })
   }
 
-  const bundlePath = await resolveBundle
-
-  const files = await new Promise((resolve, reject) => {
-    vzip
-      .src(bundlePath)
-      .on('error', reject)
-      .pipe(selectFilesStartingFrom(startPath))
-      .pipe(bufferizeContents())
-      .on('error', reject)
-      .pipe(collectFiles(resolve))
-  }).then(
-    (bundleFiles) =>
-      // Q: would it be faster to collect files in parallel, then combine?
-      supplementalFilesSpec ? srcSupplementalFiles(supplementalFilesSpec, bundleFiles, playbookDir) : bundleFiles
-  )
+  // Q: should we store files as Map for easier access?
+  const files = await Promise.all([
+    resolveBundle.then(
+      (bundlePath) =>
+        new Promise((resolve, reject) => {
+          vzip
+            .src(bundlePath)
+            .on('error', reject)
+            .pipe(selectFilesStartingFrom(startPath))
+            .pipe(bufferizeContents())
+            .on('error', reject)
+            .pipe(collectFiles(resolve))
+        })
+    ),
+    srcSupplementalFiles(supplementalFilesSpec, playbookDir),
+  ]).then(([bundleFiles, supplementalFiles]) => mergeFiles(bundleFiles, supplementalFiles))
 
   const config = loadConfig(files, outputDir)
 
@@ -138,19 +139,6 @@ function selectFilesStartingFrom (startPath) {
   }
 }
 
-function relativizeFiles () {
-  return map((file, _, next) => {
-    if (file.isNull()) {
-      next()
-    } else {
-      next(
-        null,
-        new File({ path: posixify ? posixify(file.relative) : file.relative, contents: file.contents, stat: file.stat })
-      )
-    }
-  })
-}
-
 function bufferizeContents () {
   return map((file, _, next) => {
     // NOTE gulp-vinyl-zip automatically converts the contents of an empty file to a Buffer
@@ -168,17 +156,15 @@ function bufferizeContents () {
   })
 }
 
-function collectFiles (done, files = []) {
-  if (files.length) {
-    const accum = []
-    return map((file, _, next) => accum.push(file) && next(), () => done(appendFiles(files, accum)))
-  } else {
-    return map((file, _, next) => files.push(file) && next(), () => done(files))
-  }
+function collectFiles (done) {
+  const files = []
+  return map((file, _, next) => files.push(file) && next(), () => done(files))
 }
 
-function srcSupplementalFiles (filesSpec, files, playbookDir) {
-  if (Array.isArray(filesSpec)) {
+function srcSupplementalFiles (filesSpec, playbookDir) {
+  if (!filesSpec) {
+    return []
+  } else if (Array.isArray(filesSpec)) {
     return Promise.all(
       filesSpec.reduce((accum, { path: path_, contents: contents_ }) => {
         if (!path_) {
@@ -199,19 +185,19 @@ function srcSupplementalFiles (filesSpec, files, playbookDir) {
         }
         return accum
       }, [])
-    ).then((supplementalFiles) => appendFiles(files, supplementalFiles))
+    )
   } else {
     const base = ospath.resolve(playbookDir, filesSpec)
     return fs
-      .stat(base)
+      .access(base)
       .then(
-        (stat) =>
+        () =>
           new Promise((resolve, reject) => {
             vfs
               .src('**/*', { base, cwd: base, removeBOM: false })
               .on('error', reject)
               .pipe(relativizeFiles())
-              .pipe(collectFiles(resolve, files))
+              .pipe(collectFiles(resolve))
           })
       )
       .catch((err) => {
@@ -221,7 +207,28 @@ function srcSupplementalFiles (filesSpec, files, playbookDir) {
   }
 }
 
-function appendFiles (files, supplementalFiles) {
+function createMemoryFile (path_, contents = []) {
+  const stat = new fs.Stats()
+  stat.size = contents.length
+  stat.mode = 33188
+  return new File({ path: path_, contents: Buffer.from(contents), stat })
+}
+
+function relativizeFiles () {
+  return map((file, _, next) => {
+    if (file.isNull()) {
+      next()
+    } else {
+      next(
+        null,
+        new File({ path: posixify ? posixify(file.relative) : file.relative, contents: file.contents, stat: file.stat })
+      )
+    }
+  })
+}
+
+function mergeFiles (files, supplementalFiles) {
+  if (!supplementalFiles.length) return files
   const pathByIndex = files.reduce((accum, file, idx) => accum.set(file.path, idx) && accum, new Map())
   supplementalFiles.forEach((file) => {
     const idx = pathByIndex.get(file.path)
@@ -232,13 +239,6 @@ function appendFiles (files, supplementalFiles) {
     }
   })
   return files
-}
-
-function createMemoryFile (path_, contents = []) {
-  const stat = new fs.Stats()
-  stat.size = contents.length
-  stat.mode = 33188
-  return new File({ path: path_, contents: Buffer.from(contents), stat })
 }
 
 function loadConfig (files, outputDir) {
