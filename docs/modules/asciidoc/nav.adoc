@@ -9,5 +9,5 @@
 ** xref:same-page-xref.adoc[Same Page Links]
 ** xref:insert-image.adoc[Insert an Image]
 ** xref:embed-video.adoc[Embed a Video]
-** xref:link-to-attachment.adoc[Link to an Attachment]
+** xref:link-attachment.adoc[Link to an Attachment]
 ** xref:include-partial-page.adoc[Insert a Partial Page]

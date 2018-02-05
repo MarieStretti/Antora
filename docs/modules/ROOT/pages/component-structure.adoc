@@ -73,7 +73,7 @@ Directory where multimedia and supplemental files are organized by content type.
 xref:modules.adoc#attachments-dir[<module>/assets/attachments/] ::
 _Optional_; _Reserved_
 +
-Directory that contains supplemental materials, such as PDFs or ZIP files, that readers can download via a link created in a page using the xref:asciidoc:link-to-attachment.adoc[AsciiDoc link macro].
+Directory that contains supplemental materials, such as PDFs or ZIP files, that readers can download via a link created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
 xref:modules.adoc#images-dir[<module>/assets/images/] ::
 _Optional_; _Reserved_
