@@ -51,13 +51,8 @@ async function loadUi (playbook) {
   if (isUrl(bundleUri)) {
     const cachePath = getCachePath(sha1(bundleUri) + '.zip')
     resolveBundle = fs.pathExists(cachePath).then((exists) => {
-      if (exists) {
-        return cachePath
-      } else {
-        return get(bundleUri, { encoding: null }).then(({ body }) =>
-          fs.outputFile(cachePath, body).then(() => cachePath)
-        )
-      }
+      if (exists) return cachePath
+      return get(bundleUri, { encoding: null }).then(({ body }) => fs.outputFile(cachePath, body).then(() => cachePath))
     })
   } else {
     const localPath = ospath.resolve(playbookDir, bundleUri)
@@ -70,7 +65,6 @@ async function loadUi (playbook) {
     })
   }
 
-  // Q: should we store files as Map for easier access?
   const files = await Promise.all([
     resolveBundle.then(
       (bundlePath) =>
@@ -89,10 +83,9 @@ async function loadUi (playbook) {
 
   const config = loadConfig(files, outputDir)
 
-  return files.reduce((catalog, file) => {
-    catalog.addFile(classifyFile(file, config))
-    return catalog
-  }, new UiCatalog())
+  const catalog = new UiCatalog()
+  files.forEach((file) => catalog.addFile(classifyFile(file, config)))
+  return catalog
 }
 
 function isUrl (string) {
@@ -157,13 +150,13 @@ function bufferizeContents () {
 }
 
 function collectFiles (done) {
-  const files = []
-  return map((file, _, next) => files.push(file) && next(), () => done(files))
+  const files = new Map()
+  return map((file, _, next) => files.set(file.path, file) && next(), () => done(files))
 }
 
 function srcSupplementalFiles (filesSpec, playbookDir) {
   if (!filesSpec) {
-    return []
+    return new Map()
   } else if (Array.isArray(filesSpec)) {
     return Promise.all(
       filesSpec.reduce((accum, { path: path_, contents: contents_ }) => {
@@ -185,7 +178,7 @@ function srcSupplementalFiles (filesSpec, playbookDir) {
         }
         return accum
       }, [])
-    )
+    ).then((files) => files.reduce((accum, file) => accum.set(file.path, file) && accum, new Map()))
   } else {
     const base = ospath.resolve(playbookDir, filesSpec)
     return fs
@@ -228,24 +221,14 @@ function relativizeFiles () {
 }
 
 function mergeFiles (files, supplementalFiles) {
-  if (!supplementalFiles.length) return files
-  const pathByIndex = files.reduce((accum, file, idx) => accum.set(file.path, idx) && accum, new Map())
-  supplementalFiles.forEach((file) => {
-    const idx = pathByIndex.get(file.path)
-    if (idx === undefined) {
-      files.push(file)
-    } else {
-      files[idx] = file
-    }
-  })
+  if (supplementalFiles.size) supplementalFiles.forEach((file) => files.set(file.path, file))
   return files
 }
 
 function loadConfig (files, outputDir) {
-  const configFileIdx = files.findIndex((file) => file.path === UI_CONFIG_FILENAME)
-  if (~configFileIdx) {
-    const configFile = files[configFileIdx]
-    files.splice(configFileIdx, 1)
+  const configFile = files.get(UI_CONFIG_FILENAME)
+  if (configFile) {
+    files.delete(UI_CONFIG_FILENAME)
     const config = yaml.safeLoad(configFile.contents.toString())
     config.outputDir = outputDir
     const staticFiles = config.staticFiles
