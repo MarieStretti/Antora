@@ -188,4 +188,4 @@ You don't need to set the path to the [.path]_{blank}_partials/_ directory in th
 This is managed automatically by Antora.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
-A partial AsciiDoc file is inserted into a page using the xref:page-partials.adoc[AsciiDoc include directive].
+A partial AsciiDoc file is inserted into a page using the xref:asciidoc:include-partial-page.adoc[AsciiDoc include directive].

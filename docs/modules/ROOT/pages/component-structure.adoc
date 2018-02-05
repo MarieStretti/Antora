@@ -96,7 +96,7 @@ _Optional_; _Reserved_
 +
 Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages/_.
 These files are *not* converted to HTML by Antora directly.
-Instead, they must be referenced by an xref:page-partials.adoc[include directive] in a page in the [.path]_pages/_ directory.
+Instead, they must be referenced by an xref:asciidoc:include-partial-page.adoc[include directive] in a page in the [.path]_pages/_ directory.
 
 <module>/_attributes.adoc ::
 _Required_; _Reserved_

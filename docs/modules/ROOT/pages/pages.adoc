@@ -35,7 +35,7 @@ Learn more:
 
 Partial pages are AsciiDoc files located in [.path]_pages/_partials_.
 These files are *not* converted to HTML by Antora automatically.
-Instead, they must be referenced by an xref:page-partials.adoc[include directive] in a standard page.
+Instead, they must be referenced by an xref:asciidoc:include-partial-page.adoc[include directive] in a standard page.
 
 Partial pages are good for storing snippets of content, such as concept definitions or project introductions, that you want to reuse in one or more standard pages.
 When you change the content in a partial, those changes will be disseminated to all of the standard pages where you embedded that partial with an include directive.
@@ -44,7 +44,7 @@ Learn more:
 
 * Create a partial page
 * xref:modules.adoc#partials-dir[The _{blank}_partials_ directory]
-* xref:page-partials.adoc[Include a partial page in a standard page with AsciiDoc]
+* xref:asciidoc:include-partial-page.adoc[Include a partial page in a standard page with AsciiDoc]
 * xref:component-structure.adoc[Documentation component overview]
 
 == Component index page
