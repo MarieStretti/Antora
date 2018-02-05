@@ -73,12 +73,12 @@ Directory where multimedia and supplemental files are organized by content type.
 xref:modules.adoc#attachments-dir[<module>/assets/attachments/] ::
 _Optional_; _Reserved_
 +
-Directory that contains supplemental materials, such as PDFs or ZIP files, that readers can download via a link created in a page using the xref:page-assets.adoc#insert-attachment[AsciiDoc link macro].
+Directory that contains supplemental materials, such as PDFs or ZIP files, that readers can download via a link created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
 xref:modules.adoc#images-dir[<module>/assets/images/] ::
 _Optional_; _Reserved_
 +
-Directory that contains pictures, screenshots, diagrams, and other graphics files that are displayed in a page using the xref:page-assets.adoc#insert-image[AsciiDoc image macro].
+Directory that contains pictures, screenshots, diagrams, and other graphics files that are displayed in a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro].
 
 <module>/examples/ ::
 _Optional_; _Reserved_
@@ -96,7 +96,7 @@ _Optional_; _Reserved_
 +
 Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages/_.
 These files are *not* converted to HTML by Antora directly.
-Instead, they must be referenced by an xref:page-partials.adoc[include directive] in a page in the [.path]_pages/_ directory.
+Instead, they must be referenced by an xref:asciidoc:include-partial-page.adoc[include directive] in a page in the [.path]_pages/_ directory.
 
 <module>/_attributes.adoc ::
 _Required_; _Reserved_

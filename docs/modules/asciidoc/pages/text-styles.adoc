@@ -1,0 +1,98 @@
+= Basic Text Styles
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-bold-italic: {uri-adoc-manual}/#bold-and-italic
+:uri-mono: {uri-adoc-manual}/#mono
+:uri-highlight: {uri-adoc-manual}/#custom-styling-with-attributes
+
+On this page, you'll learn:
+
+* [x] How to bold text with AsciiDoc.
+* [x] How to italicize text with AsciiDoc.
+* [x] How to monospace text with AsciiDoc.
+* [x] How to highlight text with AsciiDoc.
+
+== Bold an Italic
+
+You can bold and italic entire phrases, a word, and characters in a word.
+
+.Bold and italic inline formatting
+[source,asciidoc]
+----
+*bold phrase* & **char**acter**s**
+
+_italic phrase_ & __char__acter__s__
+
+*_bold italic phrase_* & **__char__**acter**__s__**
+----
+
+.Result
+--
+*bold phrase* & **char**acter**s**
+
+_italic phrase_ & __char__acter__s__
+
+*_bold italic phrase_* & **__char__**acter**__s__**
+--
+
+Asciidoctor resources:
+
+* {uri-bold-italic}[Bold and italic text formatting]
+
+== Monospace
+
+You can monospace entire phrases, a word, and characters in a word.
+
+.Monospace inline formatting
+[source,asciidoc]
+----
+`monospace phrase` & ``char``acter``s``
+
+`*monospace bold phrase*` & ``**char**``acter``**s**``
+
+`_monospace italic phrase_` & ``__char__``acter``__s__``
+
+`*_monospace bold italic phrase_*` &
+``**__char__**``acter``**__s__**``
+----
+
+.Result
+--
+`monospace phrase` & ``char``acter``s``
+
+`*monospace bold phrase*` & ``**char**``acter``**s**``
+
+`_monospace italic phrase_` & ``__char__``acter``__s__``
+
+`*_monospace bold italic phrase_*` &
+``**__char__**``acter``**__s__**``
+--
+
+Asciidoctor resources:
+
+* {uri-mono}[Monospace text formatting]
+
+== Highlight
+
+You can highlight entire phrases, a word, and characters in a word.
+
+.Highlight inline formatting
+[source,asciidoc]
+----
+Let's #highlight this phrase# and part of th##is##.
+----
+
+.Result
+--
+Let's #highlight this phrase# and part of th##is##.
+--
+
+Asciidoctor resources:
+
+* {uri-highlight}[Highlighted text formatting]

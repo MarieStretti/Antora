@@ -30,15 +30,4 @@
 //** Branches & Versions
 * xref:pages.adoc[Pages]
 ** xref:create-standard-page.adoc[Create a Standard Page]
-* AsciiDoc
-** xref:page-header.adoc[Page Header]
-*** xref:page-header.adoc#page-title[Page Title]
-*** xref:page-header.adoc#page-meta[Page Metadata]
-*** xref:page-header.adoc#page-attrs[Page Attributes]
-** xref:page-assets.adoc[Add Assets to a Page]
-** xref:page-partials.adoc[Insert a Partial Page into a Page]
-* Cross References
-** xref:cross-reference/page-to-page-link.adoc[Link to a Page]
-*** xref:cross-reference/in-same-page-link.adoc[Link in the Same Page]
-// ** xref:cross-reference/aspect-page-link.adoc[Link to an Aspect Page]
 * xref:cli.adoc[CLI Commands & Options]

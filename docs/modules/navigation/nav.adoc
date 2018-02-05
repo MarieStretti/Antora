@@ -1,3 +1,1 @@
-* Navigation
-** xref:linked.adoc[Basic Navigation]
-// ** xref:aspect.adoc[Aspect Navigation]
+* xref:linked.adoc[Navigation]

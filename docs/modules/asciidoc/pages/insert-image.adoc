@@ -1,0 +1,41 @@
+= Insert an Image
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// URLs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+
+== Add an image to a page
+
+To insert a standalone image (i.e., figure), use the AsciiDoc block image macro (`image::[]`).
+
+.Insert a block image
+[source,asciidoc]
+----
+image::file-name.ext[optional alt text]
+----
+
+To insert an image in the flow of text, use the AsciiDoc inline image macro (`image:[]`).
+
+.Insert a block image
+[source,asciidoc]
+----
+image::file-name.ext[optional alt text]
+----
+
+Let's break this down.
+You start with the image macro prefix, `image::` or `+image:+`.
+Next is the target.
+Put the path of the image relative to the xref:ROOT:modules.adoc#images-dir[image catalog] in that slot (no need for an attribute prefix).
+Finally, end with a pair of square brackets (`+[]+`), optionally containing alt text for the image (which is otherwise generated).
+
+.Block image macro example
+[source,asciidoc]
+----
+image::pipeline-workflow.png[a diagram illustrating the pipeline stages]
+----
+
+A module's image files should be saved in its xref:ROOT:modules.adoc#images-dir[images folder].

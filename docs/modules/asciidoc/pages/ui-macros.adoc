@@ -1,0 +1,96 @@
+= User Interface Macros
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:experimental:
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-button: {uri-adoc-manual}/#ui-buttons
+:uri-keyboard: {uri-adoc-manual}/#keyboard-shortcuts
+:uri-menu: {uri-adoc-manual}/#menu-selections
+
+On this page, you'll learn:
+
+* [x] How to mark up a button (press btn:[Submit]) with AsciiDoc.
+* [x] How to mark up a keyboard shortcut (kbd:[Ctrl+Shift+N]) with AsciiDoc.
+* [x] How to mark up a menu (menu:View[Zoom > Reset]) with AsciiDoc.
+
+== Set the experimental attribute
+
+The `experimental` attribute must be set in the xref:page-header.adoc#page-attrs[document header] or globally to enable the UI macros styles in HTML.
+
+== Button
+
+Communicate that a user should press a button with the button macro.
+
+.Button UI macro
+[source,asciidoc]
+----
+Press the btn:[Submit] button when you are finished the survey.
+
+Select a file in the file navigator and click btn:[Open].
+----
+
+.Result
+--
+Press the btn:[Submit] button when you are finished the survey.
+
+Select a file in the file navigator and click btn:[Open].
+--
+
+Asciidoctor resources:
+
+* {uri-button}[UI buttons]
+
+== Keyboard
+
+Create keyboard shortcuts with the keyboard macro.
+
+.Keyboard UI macro
+[source,asciidoc]
+----
+Press kbd:[esc] to exit insert mode.
+
+Use the shortcut kbd:[Ctrl+T] to open a new tab in your browser.
+
+kbd:[Ctrl+Shift+N] will open a new incognito window.
+----
+
+.Result
+--
+Press kbd:[esc] to exit insert mode.
+
+Use the shortcut kbd:[Ctrl+T] to open a new tab in your browser.
+
+kbd:[Ctrl+Shift+N] will open a new incognito window.
+--
+
+Asciidoctor resources:
+
+* {uri-keyboard}[Keyboard shortcuts]
+
+== Menu
+
+Show readers how to select a menu item with the menu macro.
+
+.Menu UI macro
+[source,asciidoc]
+----
+To save the file, select menu:File[Save].
+
+Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
+----
+
+.Result
+--
+To save the file, select menu:File[Save].
+
+Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
+--
+
+Asciidoctor resources:
+
+* {uri-menu}[Menu selections]

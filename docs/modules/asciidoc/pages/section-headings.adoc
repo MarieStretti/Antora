@@ -1,0 +1,42 @@
+= Section Headings
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-sections: {uri-adoc-manual}/#sections
+
+On this page, you'll learn:
+
+* [x] How to mark up section headings with AsciiDoc.
+
+== Heading Levels
+
+Sections partition the page into a content hierarchy.
+In AsciiDoc, sections are defined using section titles.
+
+.Page Section Headings
+[source,asciidoc]
+----
+= Page Title (Level 0)
+
+== Level 1 Section Title
+
+=== Level 2 Section Title
+
+==== Level 3 Section Title
+
+===== Level 4 Section Title
+
+====== Level 5 Section Title (maximum level depth)
+
+== Another Level 1 Section Title
+----
+
+When the page is converted to HTML, each section title becomes a heading element where the heading level matches the number of equals signs.
+For example, a level 1 section (`==`) maps to an `<h2>` HTML tag.
+
+Learn more about {uri-sections}[sections in the Asciidoctor manual].

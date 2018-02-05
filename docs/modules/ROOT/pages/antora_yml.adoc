@@ -55,7 +55,7 @@ nav: # <5>
 
 === name
 
-The value of the name key is the component name that is used when the component is referenced in a xref:cross-reference/page-to-page-link.adoc#page-id-cname-def[page ID].
+The value of the name key is the component name that is used when the component is referenced in a xref:asciidoc:page-to-page-xref.adoc#page-id-cname-def[page ID].
 The value can contain letter, number, underscore (`_`), hyphen (`-`), and period (`.`) characters.
 
 === title
@@ -74,7 +74,7 @@ The value of the version key is both the display version and the actual version 
 It's used anywhere that the version is referenced or identified.
 This includes:
 
-* page ID (xref:cross-reference/page-to-page-link.adoc#page-id-vname-def[version@])
+* page ID (xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version@])
 * domain selector menu
 * domain selector drawer
 * page version selector

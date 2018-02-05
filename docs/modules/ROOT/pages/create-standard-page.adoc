@@ -56,13 +56,13 @@ Using AsciiDoc, a page's header can encompass a wide range of capabilities and i
 
 A standard page has two general parts, a header and a body.
 
-The xref:page-header.adoc[page header] is a set of contiguous lines that start on the first line of the file.
+The xref:asciidoc:page-header.adoc[page header] is a set of contiguous lines that start on the first line of the file.
 The header encapsulates the following elements:
 
-* xref:page-header.adoc#page-title[page title] (required)
-* xref:page-header.adoc#page-meta[metadata], such as author information, a page description, and keywords
+* xref:asciidoc:page-header.adoc#page-title[page title] (required)
+* xref:asciidoc:page-header.adoc#page-meta[metadata], such as author information, a page description, and keywords
 * environment settings
-* xref:page-header.adoc#page-attrs[built-in document attributes], such as section numbering
+* xref:asciidoc:page-header.adoc#page-attrs[built-in document attributes], such as section numbering
 * user-defined page attributes, such as common replacement text and URLs
 
 A single blank line signals the end of the page header.

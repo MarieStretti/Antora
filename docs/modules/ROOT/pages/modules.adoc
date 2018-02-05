@@ -106,7 +106,7 @@ When viewing the file in a preview tool, such as Atom or the Asciidoctor Chrome 
 An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
 Attachment files are saved in [.path]_assets/attachments/_ in the same module where the page that links to that file is located.
 
-A link to an attachment is created in a page using the xref:page-assets.adoc#insert-attachment[AsciiDoc link macro].
+A link to an attachment is created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
 [#images-dir]
 === Image files
@@ -121,7 +121,7 @@ Common image file formats include:
 * SVG
 * GIF (static and animated)
 
-Images are inserted into a page using the xref:page-assets.adoc#insert-image[AsciiDoc image macro] (block or inline).
+Images are inserted into a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro] (block or inline).
 
 [#videos-dir]
 === Video files
@@ -131,7 +131,7 @@ Self-hosted video files are saved in [.path]_assets/videos/_ in the same module 
 Video format support is dictated by the user's browser and system.
 For a list of the web video formats each browser supports, see the {uri-video-formats}[Mozilla Supported Media Formats documentation].
 
-Videos are inserted into a page using the xref:page-assets.adoc#insert-video[AsciiDoc video macro].
+Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
 
 === Large files and GitLab / GitHub
 
@@ -188,4 +188,4 @@ You don't need to set the path to the [.path]_{blank}_partials/_ directory in th
 This is managed automatically by Antora.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
-A partial AsciiDoc file is inserted into a page using the xref:page-partials.adoc[AsciiDoc include directive].
+A partial AsciiDoc file is inserted into a page using the xref:asciidoc:include-partial-page.adoc[AsciiDoc include directive].
