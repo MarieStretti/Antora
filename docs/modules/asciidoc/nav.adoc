@@ -5,6 +5,8 @@
 *** xref:page-header.adoc#page-attrs[Page Attributes]
 ** xref:section-headings.adoc[Section Headings]
 ** xref:ordered-and-unordered-lists.adoc[Ordered & Unordered Lists]
+** xref:page-to-page-xref.adoc[Page to Page Links]
+** xref:same-page-xref.adoc[Same Page Links]
 ** xref:insert-image.adoc[Insert an Image]
 ** xref:embed-video.adoc[Embed a Video]
 ** xref:link-to-attachment.adoc[Link to an Attachment]

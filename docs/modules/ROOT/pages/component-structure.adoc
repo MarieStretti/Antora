@@ -78,7 +78,7 @@ Directory that contains supplemental materials, such as PDFs or ZIP files, that 
 xref:modules.adoc#images-dir[<module>/assets/images/] ::
 _Optional_; _Reserved_
 +
-Directory that contains pictures, screenshots, diagrams, and other graphics files that are displayed in a page using the xref:asciidoc:insert-image,adoc[AsciiDoc image macro].
+Directory that contains pictures, screenshots, diagrams, and other graphics files that are displayed in a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro].
 
 <module>/examples/ ::
 _Optional_; _Reserved_
