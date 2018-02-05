@@ -3,5 +3,6 @@ title: Antora
 version: '1.0'
 nav:
 - modules/ROOT/nav.adoc
+- modules/asciidoc/nav.adoc
 - modules/navigation/nav.adoc
 - modules/playbook/nav.adoc
