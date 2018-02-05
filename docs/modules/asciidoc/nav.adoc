@@ -12,4 +12,5 @@
 ** xref:insert-image.adoc[Insert an Image]
 ** xref:embed-video.adoc[Embed a Video]
 ** xref:link-attachment.adoc[Link to an Attachment]
+** xref:admonitions.adoc[Admonitions]
 ** xref:include-partial-page.adoc[Insert a Partial Page]
