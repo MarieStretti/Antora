@@ -114,6 +114,11 @@ Page and/or each section will also include instructions on how to verify Antora 
 +
 _{s}_ Accepted
 
+Upgrade (P)::
+_{r}_ Instructions for upgrading Antora on any OS.
++
+_{s}_ Accepted
+
 Troubleshooting (P)::
 _{r}_ Tips and instructions for overcoming common installation problems.
 +

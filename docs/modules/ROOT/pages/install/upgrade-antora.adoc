@@ -1,0 +1,96 @@
+= Upgrade Antora
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:version: 1.0.0-alpha.5
+
+On this page, you'll learn:
+
+* [x] How to upgrade the Antora CLI.
+* [x] How to upgrade the default Antora site generator.
+
+IMPORTANT: The CLI version and default site generator version must be the same.
+If you follow these instructions when you upgrade, the versions will stay in sync.
+
+== Upgrade the CLI
+
+To upgrade the CLI, open a terminal and type:
+
+ $ npm i -g @antora/cli
+
+The Node package manager (npm) will automatically install the latest version of the CLI.
+
+[TIP]
+====
+If you installed the CLI and the default site generator globally, you can upgrade both of them with the same command.
+
+ $ npm i -g @antora/cli @antora/site-generator-default
+====
+
+****
+[discrete]
+=== npm tips
+
+To list the Node packages you have installed globally, type the following command in your terminal:
+
+ $ npm ls -g --depth=0
+
+If the CLI and generator are installed globally, you'll see them listed in the terminal output.
+The output will also show the CLI and generator versions, which should match.
+
+.List of globally installed Node packages
+[subs=attributes+]
+....
+/home/user/.nvm/versions/node/v8.9.3/lib
+├── @antora/cli@{version}
+├── @antora/site-generator-default@{version}
+├── npm@5.6.0
+└── ...
+....
+
+To list the Node packages you have installed in a directory, go to that directory and type:
+
+ dir $ npm ls --depth=0
+****
+
+== Upgrade the default site generator
+
+The method for upgrading the default site generator depends on whether it is installed globally or in a project directory.
+
+If it's installed globally, the command to upgrade it is:
+
+ $ npm i -g @antora/site-generator-default
+
+If you installed the generator in a project directory, update the generator's version number in the package file.
+
+. Go to your project directory and open the [.path]_package.json_ file.
+
+. Change the version number, and save the file.
++
+[source,json,subs=attributes+]
+----
+{
+  "dependencies": {
+    "@antora/site-generator-default": "^{version}"
+  }
+}
+----
+
+. Next, upgrade the site generator by running npm.
++
+----
+project-dir $ npm install
+----
+
+TIP: If you're using yarn instead of npm, run the `yarn` command after updating  [.path]_package.json_.
+It may be necessary to pass the `--force` flag to force an update.
+
+You've now upgraded to the latest version of the Antora CLI and default site generator.
+
+== What's next?
+
+* Checkout the https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc[changelog] to see what's new.
+* xref:run-antora-generate-site.adoc[Run Antora] and generate a documentation site.

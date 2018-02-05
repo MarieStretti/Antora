@@ -7,7 +7,8 @@
 ** xref:install/linux-requirements.adoc[Linux Requirements]
 ** xref:install/macos-requirements.adoc[macOS Requirements]
 ** xref:install/windows-requirements.adoc[Windows Requirements]
-** xref:install/install-antora.adoc[Install Antora CLI & Pipeline]
+** xref:install/install-antora.adoc[Install Antora]
+** xref:install/upgrade-antora.adoc[Upgrade Antora]
 //** Source Files
 //*** Content and asset files
 //*** Navigation files
