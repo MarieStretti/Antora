@@ -106,7 +106,7 @@ When viewing the file in a preview tool, such as Atom or the Asciidoctor Chrome 
 An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
 Attachment files are saved in [.path]_assets/attachments/_ in the same module where the page that links to that file is located.
 
-A link to an attachment is created in a page using the xref:page-assets.adoc#insert-attachment[AsciiDoc link macro].
+A link to an attachment is created in a page using the xref:asciidoc:link-to-attachment.adoc[AsciiDoc link macro].
 
 [#images-dir]
 === Image files
