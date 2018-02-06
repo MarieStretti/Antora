@@ -93,7 +93,7 @@ module.exports = {
       default: undefined,
     },
     supplemental_files: {
-      doc: 'Supplemental files or a directory of files to append to the UI bundle.',
+      doc: 'Supplemental file list or a directory of files to append to the UI bundle.',
       format: (val) => {
         if (!(typeof val === 'string' || Array.isArray(val))) {
           throw new Error('expected directory string or file list')
