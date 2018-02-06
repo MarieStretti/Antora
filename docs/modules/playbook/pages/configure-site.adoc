@@ -1,0 +1,63 @@
+= Site configuration
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] How to configure the title of the site.
+* [x] How to configure the base URL of the site.
+* [x] How to identify an optional site start page.
+
+== Title
+
+Use the title key to add a title to your site.
+
+[source,yaml,subs=attributes+]
+----
+site:
+  title: Demo Docs Site
+----
+
+== URL
+
+The url key is the base URL of the published site.
+This value is used as the canconical URL and the URLs in the sitemap.
+Do not include a trailing slash at the end of the `url` value.
+
+[source,yaml,subs=attributes+]
+----
+site:
+  title: Demo Docs Site
+  url: demo.antora.org
+----
+
+== Start page
+
+The start page for the site, redirected from the site index.
+
+If you want to redirect visitors from the index page of the site's base URL to a page in a documentation component, you can specify that page with the start page key.
+
+[source,yaml,subs=attributes+]
+----
+site:
+  title: Demo Docs Site
+  url: demo.antora.org
+  start_page:
+----
+
+== Google analytics
+
+Use the google_analytics key to assign a Google Analytics account key to the site.
+
+[source,yaml,subs=attributes+]
+----
+site:
+  title: Demo Docs Site
+  url: demo.antora.org
+  start_page:
+  keys:
+    google_analytics: 
+----
