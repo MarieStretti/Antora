@@ -208,6 +208,16 @@ describe('loadUi()', () => {
       verifySupplementalFiles(uiCatalog)
     })
 
+    it('skips supplemental files when scan finds no files', async () => {
+      const emptyDir = ospath.join(WORK_DIR, 'empty-directory')
+      fs.ensureDirSync(emptyDir)
+      playbook.ui.supplementalFiles = 'empty-directory'
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+    })
+
     it('from files with string contents', async () => {
       playbook.ui.supplementalFiles = [
         {
@@ -312,6 +322,14 @@ describe('loadUi()', () => {
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
       expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
       verifySupplementalFiles(uiCatalog)
+    })
+
+    it('skips supplemental files when empty', async () => {
+      playbook.ui.supplementalFiles = []
+      const uiCatalog = await loadUi(playbook)
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
     })
 
     it('creates empty file when contents of file is not specified', async () => {
