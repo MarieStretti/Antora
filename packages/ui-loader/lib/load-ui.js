@@ -12,10 +12,12 @@ const path = ospath.posix
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
+const vfs = require('vinyl-fs')
 const vzip = require('gulp-vinyl-zip')
 
-const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
+const { UI_CACHE_PATH, UI_CONFIG_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
 const URI_SCHEME_RX = /^https?:\/\//
+const EXT_RX = /\.[a-z]{2,3}$/
 
 /**
  * Loads the files in the specified UI bundle (zip archive) into a UiCatalog,
@@ -43,22 +45,17 @@ const URI_SCHEME_RX = /^https?:\/\//
  * @returns {UiCatalog} A catalog of UI files which were read from the bundle.
  */
 async function loadUi (playbook) {
-  const { bundle: bundleUri, startPath, outputDir } = playbook.ui
+  const playbookDir = playbook.dir || process.cwd()
+  const { bundle: bundleUri, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
   let resolveBundle
   if (isUrl(bundleUri)) {
-    // TODO add support for a forced update flag
     const cachePath = getCachePath(sha1(bundleUri) + '.zip')
     resolveBundle = fs.pathExists(cachePath).then((exists) => {
-      if (exists) {
-        return cachePath
-      } else {
-        return get(bundleUri, { encoding: null }).then(({ body }) =>
-          fs.outputFile(cachePath, body).then(() => cachePath)
-        )
-      }
+      if (exists) return cachePath
+      return get(bundleUri, { encoding: null }).then(({ body }) => fs.outputFile(cachePath, body).then(() => cachePath))
     })
   } else {
-    const localPath = ospath.resolve(playbook.dir || process.cwd(), bundleUri)
+    const localPath = ospath.resolve(playbookDir, bundleUri)
     resolveBundle = fs.pathExists(localPath).then((exists) => {
       if (exists) {
         return localPath
@@ -68,24 +65,27 @@ async function loadUi (playbook) {
     })
   }
 
-  const bundlePath = await resolveBundle
-
-  const files = await new Promise((resolve, reject) => {
-    vzip
-      .src(bundlePath)
-      .on('error', reject)
-      .pipe(selectFilesStartingFrom(startPath))
-      .pipe(bufferizeContents())
-      .on('error', reject)
-      .pipe(collectFiles(resolve))
-  })
+  const files = await Promise.all([
+    resolveBundle.then(
+      (bundlePath) =>
+        new Promise((resolve, reject) => {
+          vzip
+            .src(bundlePath)
+            .on('error', reject)
+            .pipe(selectFilesStartingFrom(startPath))
+            .pipe(bufferizeContents())
+            .on('error', reject)
+            .pipe(collectFiles(resolve))
+        })
+    ),
+    srcSupplementalFiles(supplementalFilesSpec, playbookDir),
+  ]).then(([bundleFiles, supplementalFiles]) => mergeFiles(bundleFiles, supplementalFiles))
 
   const config = loadConfig(files, outputDir)
 
-  return files.reduce((catalog, file) => {
-    catalog.addFile(classifyFile(file, config))
-    return catalog
-  }, new UiCatalog())
+  const catalog = new UiCatalog()
+  files.forEach((file) => catalog.addFile(classifyFile(file, config)))
+  return catalog
 }
 
 function isUrl (string) {
@@ -150,15 +150,85 @@ function bufferizeContents () {
 }
 
 function collectFiles (done) {
-  const accum = []
-  return map((file, _, next) => accum.push(file) && next(), () => done(accum))
+  const files = new Map()
+  return map((file, _, next) => files.set(file.path, file) && next(), () => done(files))
+}
+
+function srcSupplementalFiles (filesSpec, playbookDir) {
+  if (!filesSpec) {
+    return new Map()
+  } else if (Array.isArray(filesSpec)) {
+    return Promise.all(
+      filesSpec.reduce((accum, { path: path_, contents: contents_ }) => {
+        if (!path_) {
+          return accum
+        } else if (contents_) {
+          if (~contents_.indexOf('\n') || !EXT_RX.test(contents_)) {
+            accum.push(createMemoryFile(path_, contents_))
+          } else {
+            contents_ = ospath.resolve(playbookDir, contents_)
+            accum.push(
+              fs
+                .stat(contents_)
+                .then((stat) => fs.readFile(contents_).then((contents) => new File({ path: path_, contents, stat })))
+            )
+          }
+        } else {
+          accum.push(createMemoryFile(path_))
+        }
+        return accum
+      }, [])
+    ).then((files) => files.reduce((accum, file) => accum.set(file.path, file) && accum, new Map()))
+  } else {
+    const base = ospath.resolve(playbookDir, filesSpec)
+    return fs
+      .access(base)
+      .then(
+        () =>
+          new Promise((resolve, reject) => {
+            vfs
+              .src(SUPPLEMENTAL_FILES_GLOB, { base, cwd: base, removeBOM: false })
+              .on('error', reject)
+              .pipe(relativizeFiles())
+              .pipe(collectFiles(resolve))
+          })
+      )
+      .catch((err) => {
+        // Q: should we skip unreadable files?
+        throw new Error('problem encountered while reading ui.supplemental_files: ' + err.message)
+      })
+  }
+}
+
+function createMemoryFile (path_, contents = []) {
+  const stat = new fs.Stats()
+  stat.size = contents.length
+  stat.mode = 33188
+  return new File({ path: path_, contents: Buffer.from(contents), stat })
+}
+
+function relativizeFiles () {
+  return map((file, _, next) => {
+    if (file.isNull()) {
+      next()
+    } else {
+      next(
+        null,
+        new File({ path: posixify ? posixify(file.relative) : file.relative, contents: file.contents, stat: file.stat })
+      )
+    }
+  })
+}
+
+function mergeFiles (files, supplementalFiles) {
+  if (supplementalFiles.size) supplementalFiles.forEach((file) => files.set(file.path, file))
+  return files
 }
 
 function loadConfig (files, outputDir) {
-  const configFileIdx = files.findIndex((file) => file.path === UI_CONFIG_FILENAME)
-  if (~configFileIdx) {
-    const configFile = files[configFileIdx]
-    files.splice(configFileIdx, 1)
+  const configFile = files.get(UI_CONFIG_FILENAME)
+  if (configFile) {
+    files.delete(UI_CONFIG_FILENAME)
     const config = yaml.safeLoad(configFile.contents.toString())
     config.outputDir = outputDir
     const staticFiles = config.staticFiles
