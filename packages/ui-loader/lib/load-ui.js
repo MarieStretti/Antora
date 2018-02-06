@@ -15,7 +15,7 @@ const yaml = require('js-yaml')
 const vfs = require('vinyl-fs')
 const vzip = require('gulp-vinyl-zip')
 
-const { UI_CACHE_PATH, UI_CONFIG_FILENAME } = require('./constants')
+const { UI_CACHE_PATH, UI_CONFIG_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
 const URI_SCHEME_RX = /^https?:\/\//
 const EXT_RX = /\.[a-z]{2,3}$/
 
@@ -187,7 +187,7 @@ function srcSupplementalFiles (filesSpec, playbookDir) {
         () =>
           new Promise((resolve, reject) => {
             vfs
-              .src('**/*', { base, cwd: base, removeBOM: false })
+              .src(SUPPLEMENTAL_FILES_GLOB, { base, cwd: base, removeBOM: false })
               .on('error', reject)
               .pipe(relativizeFiles())
               .pipe(collectFiles(resolve))
