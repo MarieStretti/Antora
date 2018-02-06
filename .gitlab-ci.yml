@@ -10,7 +10,7 @@ yarn:
     - .yarn-cache/
   script:
   - &run_yarn
-    yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
+    yarn --cache-folder=.yarn-cache --pure-lockfile > /dev/null
 lint:
   stage: verify
   cache: &pull_cache
@@ -35,6 +35,6 @@ release:
   - releases@antora/antora
   environment: releases
   script:
-  - yarn --no-progress global add lerna@$(node -p 'require("./lerna.json").lerna')
+  - yarn global add lerna@$(node -p 'require("./lerna.json").lerna') > /dev/null
   - npm -v
   - scripts/release.sh
