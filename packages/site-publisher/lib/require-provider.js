@@ -33,10 +33,10 @@ function createRequireProvider () {
       if (ospath.isAbsolute(request)) {
         resolved = request
       } else if (request.charAt() === '.') {
-        resolved = ospath.join(requireBase, request)
+        resolved = ospath.resolve(requireBase, request)
       } else {
         resolved = require.resolve(request, {
-          paths: [ospath.join(requireBase, 'node_modules')].concat(require.resolve.paths('')),
+          paths: [ospath.resolve(requireBase, 'node_modules')].concat(require.resolve.paths('')),
         })
       }
       requestCache.set(request, resolved)

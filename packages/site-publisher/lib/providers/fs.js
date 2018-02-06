@@ -8,7 +8,7 @@ const { dest: vfsDest } = require('vinyl-fs')
 const { DEFAULT_DEST_FS } = require('../constants.js')
 
 async function publishToFs (config, files, playbook) {
-  const destDir = ospath.resolve(playbook.dir || process.cwd(), config.path || DEFAULT_DEST_FS)
+  const destDir = ospath.resolve(playbook.dir || '.', config.path || DEFAULT_DEST_FS)
   return config.clean
     ? fs.remove(destDir).then(() => publishStream(vfsDest(destDir), files))
     : publishStream(vfsDest(destDir), files)
