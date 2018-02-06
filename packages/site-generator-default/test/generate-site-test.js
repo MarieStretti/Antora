@@ -79,6 +79,7 @@ describe('generateSite()', () => {
 
   it('should generate site into output directory specified in playbook file', async () => {
     playbookSpec.site.start_page = '2.0@the-component::index'
+    playbookSpec.site.keys = { google_analytics: 'UA-XXXXXXXX-1' }
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
     expect(ospath.join(destDir, '_'))
@@ -97,7 +98,9 @@ describe('generateSite()', () => {
     expect($('head > title')).to.have.text('Index Page :: The Site')
     // assert relative UI path is correct
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../_/css/site.css')
-    expect($('script')).to.have.attr('src', '../../_/js/site.js')
+    expect($('head > script:first-of-type'))
+      .to.have.attr('src', 'https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXX-1')
+    expect($('body > script:first-of-type')).to.have.attr('src', '../../_/js/site.js')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', '../..')
     // assert current component version is correct
     expect($('.navigation-explore .current .title')).to.have.text('The Component')
