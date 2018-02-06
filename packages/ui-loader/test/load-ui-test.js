@@ -154,6 +154,27 @@ describe('loadUi()', () => {
   // TODO test an image, such as a site icon
   describe('should load supplemental files', () => {
     let playbook
+    const expectedFilePathsWithSupplemental = expectedFilePaths.concat('css/extra.css', 'img/icon.png')
+    const supplementalFileContents = ['partials/head.hbs', 'css/extra.css', 'img/icon.png'].reduce((accum, path_) => {
+      accum[path_] = fs.readFileSync(ospath.resolve(FIXTURES_DIR, 'supplemental-files', path_))
+      return accum
+    }, {})
+
+    const verifySupplementalFiles = (uiCatalog, compareBuffers = true) => {
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePathsWithSupplemental)
+      files.forEach((file) => {
+        const path_ = file.path
+        if (path_ in supplementalFileContents) {
+          if (compareBuffers) {
+            expect(file.contents).to.eql(supplementalFileContents[path_])
+          } else {
+            expect(file.contents.toString()).to.equal(supplementalFileContents[path_].toString())
+          }
+        }
+      })
+    }
 
     beforeEach(() => {
       playbook = { ui: { bundle: ospath.resolve(FIXTURES_DIR, 'the-ui-bundle.zip') } }
@@ -167,26 +188,12 @@ describe('loadUi()', () => {
 
     it('from absolute directory', async () => {
       playbook.ui.supplementalFiles = ospath.resolve(FIXTURES_DIR, 'supplemental-files')
-      const uiCatalog = await loadUi(playbook)
-      const files = uiCatalog.getFiles()
-      const paths = files.map((file) => file.path)
-      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
-      expect(paths).to.have.members(expectedFilePathsPlus)
-      const head = files.find((file) => file.path === 'partials/head.hbs')
-      expect(head).to.exist()
-      expect(head.contents.toString()).to.include('google-site-verification')
+      verifySupplementalFiles(await loadUi(playbook))
     })
 
     it('from relative directory', async () => {
       playbook.ui.supplementalFiles = ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files'))
-      const uiCatalog = await loadUi(playbook)
-      const files = uiCatalog.getFiles()
-      const paths = files.map((file) => file.path)
-      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
-      expect(paths).to.have.members(expectedFilePathsPlus)
-      const head = files.find((file) => file.path === 'partials/head.hbs')
-      expect(head).to.exist()
-      expect(head.contents.toString()).to.include('google-site-verification')
+      verifySupplementalFiles(await loadUi(playbook))
     })
 
     it('from relative directory when playbook dir does not match process.cwd()', async () => {
@@ -198,34 +205,25 @@ describe('loadUi()', () => {
       let uiCatalog
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
       expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
-      const files = uiCatalog.getFiles()
-      const paths = files.map((file) => file.path)
-      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
-      expect(paths).to.have.members(expectedFilePathsPlus)
-      const head = files.find((file) => file.path === 'partials/head.hbs')
-      expect(head).to.exist()
-      expect(head.contents.toString()).to.include('google-site-verification')
+      verifySupplementalFiles(uiCatalog)
     })
 
     it('from files with string contents', async () => {
       playbook.ui.supplementalFiles = [
         {
           path: 'partials/head.hbs',
-          contents: fs.readFileSync(ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs'), 'utf8'),
+          contents: supplementalFileContents['partials/head.hbs'].toString(),
         },
         {
           path: 'css/extra.css',
-          contents: fs.readFileSync(ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css'), 'utf8'),
+          contents: supplementalFileContents['css/extra.css'].toString(),
+        },
+        {
+          path: 'img/icon.png',
+          contents: supplementalFileContents['img/icon.png'].toString(),
         },
       ]
-      const uiCatalog = await loadUi(playbook)
-      const files = uiCatalog.getFiles()
-      const paths = files.map((file) => file.path)
-      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
-      expect(paths).to.have.members(expectedFilePathsPlus)
-      const head = files.find((file) => file.path === 'partials/head.hbs')
-      expect(head).to.exist()
-      expect(head.contents.toString()).to.include('google-site-verification')
+      verifySupplementalFiles(await loadUi(playbook), false)
     })
 
     it('from file with string contents that does not contain any newline characters', async () => {
@@ -265,15 +263,12 @@ describe('loadUi()', () => {
           path: 'css/extra.css',
           contents: ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css'),
         },
+        {
+          path: 'img/icon.png',
+          contents: ospath.resolve(FIXTURES_DIR, 'supplemental-files/img/icon.png'),
+        },
       ]
-      const uiCatalog = await loadUi(playbook)
-      const files = uiCatalog.getFiles()
-      const paths = files.map((file) => file.path)
-      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
-      expect(paths).to.have.members(expectedFilePathsPlus)
-      const head = files.find((file) => file.path === 'partials/head.hbs')
-      expect(head).to.exist()
-      expect(head.contents.toString()).to.include('google-site-verification')
+      verifySupplementalFiles(await loadUi(playbook))
     })
 
     it('from files with relative paths', async () => {
@@ -286,15 +281,12 @@ describe('loadUi()', () => {
           path: 'css/extra.css',
           contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css')),
         },
+        {
+          path: 'img/icon.png',
+          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/img/icon.png')),
+        },
       ]
-      const uiCatalog = await loadUi(playbook)
-      const files = uiCatalog.getFiles()
-      const paths = files.map((file) => file.path)
-      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
-      expect(paths).to.have.members(expectedFilePathsPlus)
-      const head = files.find((file) => file.path === 'partials/head.hbs')
-      expect(head).to.exist()
-      expect(head.contents.toString()).to.include('google-site-verification')
+      verifySupplementalFiles(await loadUi(playbook))
     })
 
     it('from files with relative paths when playbook dir does not match process.cwd()', async () => {
@@ -308,6 +300,10 @@ describe('loadUi()', () => {
           path: 'css/extra.css',
           contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css')),
         },
+        {
+          path: 'img/icon.png',
+          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/img/icon.png')),
+        },
       ]
       const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
       fs.ensureDirSync(newWorkDir)
@@ -315,13 +311,7 @@ describe('loadUi()', () => {
       let uiCatalog
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
       expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
-      const files = uiCatalog.getFiles()
-      const paths = files.map((file) => file.path)
-      const expectedFilePathsPlus = expectedFilePaths.concat('css/extra.css')
-      expect(paths).to.have.members(expectedFilePathsPlus)
-      const head = files.find((file) => file.path === 'partials/head.hbs')
-      expect(head).to.exist()
-      expect(head.contents.toString()).to.include('google-site-verification')
+      verifySupplementalFiles(uiCatalog)
     })
 
     it('creates empty file when contents of file is not specified', async () => {
