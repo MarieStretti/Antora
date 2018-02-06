@@ -51,9 +51,6 @@ async function aggregateContent (playbook) {
         source.remote,
         playbook.dir || '.'
       )
-      if (isLocal && !repository) {
-        throw new Error('Path is not a valid git repository: ' + localPath)
-      }
       const branchPatterns = source.branches || defaultBranches
       const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
         async ({ ref, branchName, isCurrent }) => {
@@ -99,7 +96,11 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
       isBare = !directoryExists(ospath.join(localPath, '.git'))
       isLocal = true
     } else {
-      throw new Error('Path does not exist: ' + localPath)
+      throw new Error(
+        'Local content source does not exist: ' +
+          localPath +
+          (repoUrl !== localPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+      )
     }
   } else {
     isBare = true
@@ -118,7 +119,13 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
       repository = await git.Repository.open(localPath)
     }
   } catch (e) {
-    if (!isLocal) {
+    if (isLocal) {
+      throw new Error(
+        'Local content source must be a git repository: ' +
+          localPath +
+          (repoUrl !== localPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+      )
+    } else {
       // NOTE if we clone the repository, we can assume the remote is origin
       remote = 'origin'
       fs.removeSync(localPath)
