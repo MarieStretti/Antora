@@ -47,7 +47,7 @@ async function aggregateContent (playbook) {
       const { repository, localPath, url, remote, isLocal, isBare } = await openOrCloneRepository(
         source.url,
         source.remote,
-        playbook.dir || process.cwd()
+        playbook.dir || '.'
       )
       const branchPatterns = source.branches || defaultBranches
       const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(

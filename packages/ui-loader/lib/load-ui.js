@@ -45,7 +45,7 @@ const EXT_RX = /\.[a-z]{2,3}$/
  * @returns {UiCatalog} A catalog of UI files which were read from the bundle.
  */
 async function loadUi (playbook) {
-  const playbookDir = playbook.dir || process.cwd()
+  const startDir = playbook.dir || '.'
   const { bundle: bundleUri, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
   let resolveBundle
   if (isUrl(bundleUri)) {
@@ -55,7 +55,7 @@ async function loadUi (playbook) {
       return get(bundleUri, { encoding: null }).then(({ body }) => fs.outputFile(cachePath, body).then(() => cachePath))
     })
   } else {
-    const localPath = ospath.resolve(playbookDir, bundleUri)
+    const localPath = ospath.resolve(startDir, bundleUri)
     resolveBundle = fs.pathExists(localPath).then((exists) => {
       if (exists) {
         return localPath
@@ -78,7 +78,7 @@ async function loadUi (playbook) {
             .pipe(collectFiles(resolve))
         })
     ),
-    srcSupplementalFiles(supplementalFilesSpec, playbookDir),
+    srcSupplementalFiles(supplementalFilesSpec, startDir),
   ]).then(([bundleFiles, supplementalFiles]) => mergeFiles(bundleFiles, supplementalFiles))
 
   const config = loadConfig(files, outputDir)
@@ -154,7 +154,7 @@ function collectFiles (done) {
   return map((file, _, next) => files.set(file.path, file) && next(), () => done(files))
 }
 
-function srcSupplementalFiles (filesSpec, playbookDir) {
+function srcSupplementalFiles (filesSpec, startDir) {
   if (!filesSpec) {
     return new Map()
   } else if (Array.isArray(filesSpec)) {
@@ -166,7 +166,7 @@ function srcSupplementalFiles (filesSpec, playbookDir) {
           if (~contents_.indexOf('\n') || !EXT_RX.test(contents_)) {
             accum.push(createMemoryFile(path_, contents_))
           } else {
-            contents_ = ospath.resolve(playbookDir, contents_)
+            contents_ = ospath.resolve(startDir, contents_)
             accum.push(
               fs
                 .stat(contents_)
@@ -180,7 +180,7 @@ function srcSupplementalFiles (filesSpec, playbookDir) {
       }, [])
     ).then((files) => files.reduce((accum, file) => accum.set(file.path, file) && accum, new Map()))
   } else {
-    const base = ospath.resolve(playbookDir, filesSpec)
+    const base = ospath.resolve(startDir, filesSpec)
     return fs
       .access(base)
       .then(
