@@ -1,0 +1,56 @@
+= Sidebars
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-sidebar: {uri-adoc-manual}/#sidebar
+
+On this page, you'll learn:
+
+* [x] How to mark up a sidebar with AsciiDoc.
+
+== Sidebar syntax
+
+A sidebar can contain any type of content such as quotes, equations, and images.
+A sidebar block is delimited by a set of four consecutive asterisks (`pass:[****]`).
+
+.Sidebar
+[source,asciidoc]
+....
+.Optional Title
+****
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+
+TIP: They can contain any type of content.
+
+.Source code block in a sidebar
+[source,js]
+----
+const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
+----
+****
+....
+
+.Result
+--
+.Optional Title
+****
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+
+TIP: They can contain any type of content.
+
+.Source code block in a sidebar
+[source,js]
+----
+const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
+----
+****
+--
+
+Asciidoctor resources:
+
+* {uri-sidebar}[Sidebar block]
