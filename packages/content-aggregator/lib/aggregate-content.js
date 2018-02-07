@@ -105,6 +105,8 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
   } else {
     isBare = true
     isLocal = false
+    // NOTE if repository is in cache, we can assume the remote is origin
+    remote = 'origin'
     localPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
   }
 
