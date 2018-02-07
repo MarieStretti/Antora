@@ -97,6 +97,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 ==== Scheduled for alpha.6
 
+* [x] Document site configuration keys {uri-issues}/142[#142]
 * [x] Document how to upgrade to latest Antora version {uri-issues}/140[#140]
 * [x] Add AsciiDoc page overview and structure documentation {uri-issues}/131[#131]
 * [x] Document Windows installation instructions {uri-issues}/130[#130]
@@ -105,7 +106,6 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 ==== Scheduled for alpha.7
 
-* [ ] Document site configuration features {uri-issues}/142[#142]
 * [ ] _Docs Site:_ Add site and UI keys to production playbook
 * [ ] _Docs Site:_ Connect Docs and project sites
 * [ ] Document sitemap features

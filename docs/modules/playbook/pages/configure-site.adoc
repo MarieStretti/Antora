@@ -1,0 +1,95 @@
+= Site configuration
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] How to add a title to the site.
+* [x] How to configure the site's base URL.
+* [x] How to assign a site start page.
+* [x] How to associate the site with a Google Analytics account.
+
+[#configure-title]
+== Add a site title
+
+Use the title key to add a title to your site.
+
+[source,yaml]
+----
+site:
+  title: Demo Docs Site
+----
+
+The title is displayed wherever the site's UI calls this key.
+Antora's default UI displays the site title in the navigation bar at the top of the site.
+
+[#configure-url]
+== Configure the base URL
+
+The url key is the base URL of the published site.
+
+The `url` value must be a valid URI scheme that is directly followed by a colon and two slashes (`://`).
+Common URI schemes include `https://`, `http://`, and `file://`.
+
+The URI should be absolute, e.g., _pass:[https://www.project.org/docs]_ or _pass:[https://docs.product.com]_
+The base URL *should not end with a trailing slash*.
+
+[source,yaml]
+----
+site:
+  url: https://demo.antora.org
+----
+
+When the site is generated, the component, version, module, and page URL segments are appended to the site URL, e.g., _pass:[https:/demo.antora.org/component/version/page.html]_.
+
+[#configure-start-page]
+== Configure a start page for the base URL
+
+You can use a page from a documentation component as the index page for your site.
+When a start page is specified, visitors are redirected from the site's base URL index page to the URL of the start page.
+
+The start_page key accepts a page ID as a value.
+
+=== Use a specific version
+
+If you want the site's start page to be a specific version of the assigned page, include the xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version name in the page ID].
+
+[source,yaml]
+----
+site:
+  url: https://demo.antora.org
+  start_page: 1.0@demo-component-b::index
+----
+
+In this example, _pass:[https://demo.antora.org/index.html]_ will redirect to _pass:[https://demo.antora.org/demo-component-b/1.0/index.html]_.
+
+=== Use the latest version
+
+Don't include the version name in the page ID when the start page should always be the latest version of that page.
+
+[source,yaml]
+----
+site:
+  url: https://demo.antora.org
+  start_page: demo-component-b::index
+----
+
+In this example, let's say that, according to demo-component-b's xref:ROOT:antora_yml.adoc[descriptor file], 2.3 is the latest version.
+Therefore, _pass:[https://demo.antora.org/index.html]_ will redirect to _pass:[https://demo.antora.org/demo-component-b/2.3/index.html]_.
+
+[#configure-ga]
+== Add a Google analytics account
+
+The google_analytics key assigns a Google Analytics account to the site.
+
+[source,yaml]
+----
+site:
+  keys:
+    google_analytics: 'XX-123456'
+----
+
+The Google Analytics account key must be enclosed in single quotation marks (`' '`).

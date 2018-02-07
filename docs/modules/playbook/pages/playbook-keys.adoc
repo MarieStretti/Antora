@@ -22,52 +22,91 @@ Here's an example of a playbook file named [.path]_site.yml_:
 ----
 site: # <1>
   title: Demo Docs Site # <2>
-content: # <3>
-  sources: # <4>
-  - url: https://gitlab.com/antora/demo/demo-component-a # <5>
-    branches: master # <6>
-  - url: https://gitlab.com/antora/demo/demo-component-b
-    branches: v1.0
-    start_path: docs # <7>
-ui: # <8>
-  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <9>
-output: # <10>
- clean: false # <11>
- dir: releases # <12>
- destinations: # <13>
- - provider: archive # <14>
+  url: https://demo.antora.org # <3>
+  start_page: demo-component-b::index # <4>
+  keys: # <5>
+    google_analytics: 'XX-123456' # <6>
+content: # <7>
+  sources: # <8>
+  - url: https://gitlab.com/antora/demo/demo-component-a # <9>
+    branches: master # <10>
+    start_path: docs # <11>
+ui: # <12>
+  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <13>
+output: # <14>
+ clean: false # <15>
+ dir: releases # <16>
+ destinations: # <17>
+ - provider: archive # <18>
 ----
-<1> Site key
-<2> <<site-title-key,Site title key and value>>
-<3> Content key
-<4> Sources key
-<5> Content repository URL key
-<6> Content repository branches key
-<7> Start path key
-<8> UI key
-<9> <<ui-bundle-key,UI bundle repository key>>
-<10> Published output key
-<11> Clean output directory key
-<12> Output directory key
-<13> Output destinations key
-<14> Output provider key
+<1> <<site-key,Site key>>
+<2> <<site-title-key,Title key>>
+<3> <<site-url-key,Base URL key>>
+<4> <<site-start-page-key,Start page key>>
+<5> <<site-service-keys,Service keys>>
+<6> <<site-ga-key,Google analytics key>>
+<7> Content key
+<8> Sources key
+<9> Content repository URL key
+<10> Content repository branches key
+<11> Start path key
+<12> UI key
+<13> <<ui-bundle-key,UI bundle repository key>>
+<14> Published output key
+<15> Clean output directory key
+<16> Output directory key
+<17> Output destinations key
+<18> Output provider key
 
 Let's explore the purpose and usage of each key and its values.
 
+[#site-key]
 == site
 
-The site key is where the global site properties are defined, such as the title of the documentation site and the base URL of the published site.
-Antora applies these properties when generating and assembling the site.
+The site's global properties are defined in the site key.
+Antora applies these properties when it generates and assembles the site.
 
 [#site-title-key]
 === title
 
 The title of the documentation site.
 
-// site url: The base URL of the published site. Should not include a trailing slash. used for canonical URLs and URLs in the sitemap
-// site root/component: The name of the component to use as the root of the site.
-// site keys google_analytics: The Google Analytics account key.
-// site keys swiftype: The key to activate the Swiftype widget.
+Learn more:
+
+* xref:configure-site.adoc#configure-title[Add a title to the site]
+
+[#site-url-key]
+=== url
+
+The url key is the base URL of the published site.
+
+Learn more:
+
+* xref:configure-site.adoc#configure-url[Configure the site's base url]
+
+[#site-start-page-key]
+=== start_page
+
+You can use a page from a documentation component as the index page for your site.
+The start_page key accepts a page ID as a value.
+
+Learn more:
+
+* xref:configure-site.adoc#configure-start-page[Configure a start page for the base url]
+
+[#site-service-keys]
+=== keys
+
+The account keys for site-wide services such document search tools and Google Analytics.
+
+[#site-ga-key]
+==== google_analytics
+
+The google_analytics key associates a Google Analytics account with the site.
+
+Learn more:
+
+* xref:configure-site.adoc#configure-ga[Add a Google Analytics account key]
 
 == content
 
@@ -115,7 +154,7 @@ Learn more:
 ==== start_path
 
 Antora automatically looks for the component descriptor file at the root of a repository.
-When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using the `start_path` key.
+When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using `start_path`.
 
 Learn more:
 
@@ -183,7 +222,7 @@ Learn more:
 The destinations key contains a list of specifications that determine how, by which provider, and where the site will be published.
 A site can be published to multiple destinations.
 
-When no destinations are specified, Antora publishes the site to the local filesytem at the location specified by the dir key or, if the dir key is not specified, the default output directory location ([.path]_build/site_).
+When no destinations are specified, Antora publishes the site to the local filesystem at the location specified by the dir key or, if the dir key is not specified, the default output directory location ([.path]_build/site_).
 
 To disable publishing entirely, including the default output, set destinations to an empty array (`[]`).
 
@@ -196,13 +235,13 @@ The default provider is `fs`.
 
 Learn more:
 
-* xref:configure-output.adoc#archive-path[Publish site as a ZIP file]
-* xref:configure-output.adoc#multiple-destinations[Specify multiple destinations]
+* xref:configure-output.adoc#archive-path[Publish the site as a ZIP file]
+* xref:configure-output.adoc#multiple-destinations[Specify multiple publishing destinations]
 
 ==== path
 
 The path key designates the target location where the output file(s) are to be written.
-The value gets interpretted appropriately by each provider.
+The value gets interpreted appropriately by each provider.
 For example, the `fs` provider treats this value as a target directory, while the `archive` provider treats it as the target file.
 
 If the path key is not specified, it typically gets populated with a default value.
@@ -214,8 +253,8 @@ IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will
 
 Learn more:
 
-* xref:configure-output.adoc#archive-path[Specify ZIP file]
-* xref:configure-output.adoc#multiple-destinations[Specify relative and absolute provider paths]
+* xref:configure-output.adoc#archive-path[Specify ZIP file name]
+* xref:configure-output.adoc#multiple-destinations[Specify relative and absolute provider publishing destinations]
 
 ==== clean
 
