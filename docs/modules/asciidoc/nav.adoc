@@ -17,3 +17,4 @@
 * xref:link-attachment.adoc[Link to an Attachment]
 * xref:admonitions.adoc[Admonitions]
 * xref:include-partial-page.adoc[Insert a Partial Page]
+* xref:comments.adoc[Comments]
