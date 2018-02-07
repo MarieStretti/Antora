@@ -153,7 +153,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     versions,
     navigation,
     breadcrumbs,
-    //editUrl: file.pub.editUrl,
+    editUrl: file.src.editUrl,
     // NOTE we won't have a home until we have a root (and/or start) component
     // FIXME should be precomputed as file.pub.home; not necessarily root index page
     home: false,
