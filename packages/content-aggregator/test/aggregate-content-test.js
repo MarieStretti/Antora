@@ -284,6 +284,20 @@ describe('aggregateContent()', () => {
         .then(() => beforeClose && beforeClose())
         .then(() => repoBuilder.close('master'))
 
+    describe('should discover all branches when filter is undefined', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder)
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(4)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[2]).to.include({ name: 'the-component', version: 'v2.0' })
+        expect(aggregate[3]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
     describe('should filter branches by exact name', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder)
