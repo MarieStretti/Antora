@@ -112,7 +112,8 @@ Each virtual file object should include the following properties:
 * `stem`
 * `extname`
 * `mediaType` - resolved from the MIME types catalog by the value of `extname`
-* `origin`
+* `origin` - an object shared by all files taken from the same branch of the same repository; includes `editUrlPattern`
+* `editUrl` - takes the reader to a page where the source can be edited (local if worktree, otherwise hosted)
 
 The `mediaType` property should also be set directly on the file object to match the value of `src.mediaType`.
 
@@ -123,7 +124,7 @@ This component enables the rest of the pipeline to work on virtual files.
 
 * No other pipeline components need to know how to get the files from their repositories.
  ** All subsequent processing is done on the virtual file objects created by the content aggregator.
- ** While subsequent components don't interface with the files' origin, they can use information stored in the file to know where the files came from.
+ ** While subsequent components don't interface with the files`' origin, they can use information stored in the file to know where the files came from.
 * Files are only coarsely sorted in the content aggregator.
  ** The content aggregator doesn't sort the files further because extensions should be allowed to easily contribute files without the component needing to recompute output and publish paths.
 * The next component in the Antora pipeline, the content classifier, is responsible for fine-grained organization of the virtual files.
