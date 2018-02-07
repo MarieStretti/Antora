@@ -133,6 +133,15 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
       repository = await fs
         .remove(localPath)
         .then(() => git.Clone.clone(repoUrl, localPath, { bare: 1, fetchOpts: getFetchOptions() }))
+        .then((repo) =>
+          repo.getCurrentBranch().then((ref) => {
+            if (ref.isBranch()) {
+              repo.detachHead()
+              ref.delete()
+            }
+            return repo
+          })
+        )
     }
   }
 

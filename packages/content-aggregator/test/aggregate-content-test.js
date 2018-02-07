@@ -962,6 +962,20 @@ describe('aggregateContent()', () => {
     })
   })
 
+  it('should not create local branch in cached repository', async () => {
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    await initRepoWithFiles(repoBuilder)
+    playbookSpec.content.sources.push({ url: repoBuilder.url })
+    await aggregateContent(playbookSpec)
+    const contentCacheAbsDir = ospath.join(WORK_DIR, CONTENT_CACHE_PATH)
+    const cachedRepos = await fs.readdir(contentCacheAbsDir)
+    expect(cachedRepos).to.have.lengthOf(1)
+    const cachedRepo = cachedRepos[0]
+    expect(cachedRepo.endsWith('.git')).to.be.true()
+    const localHeads = await fs.readdir(ospath.join(contentCacheAbsDir, cachedRepo, 'refs/heads'))
+    expect(localHeads).to.have.lengthOf(0)
+  })
+
   it('should synchronize cached repository with remote', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
