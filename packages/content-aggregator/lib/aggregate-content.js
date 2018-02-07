@@ -130,8 +130,9 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
     } else {
       // NOTE if we clone the repository, we can assume the remote is origin
       remote = 'origin'
-      fs.removeSync(localPath)
-      repository = await git.Clone.clone(repoUrl, localPath, { bare: 1, fetchOpts: getFetchOptions() })
+      repository = await fs
+        .remove(localPath)
+        .then(() => git.Clone.clone(repoUrl, localPath, { bare: 1, fetchOpts: getFetchOptions() }))
     }
   }
 
