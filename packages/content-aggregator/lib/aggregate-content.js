@@ -52,7 +52,7 @@ async function aggregateContent (playbook) {
         playbook.dir || '.'
       )
       const branchPatterns = source.branches || defaultBranches
-      const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
+      const componentVersions = (await selectBranches(repository, isBare, branchPatterns, remote)).map(
         async ({ ref, branchName, isCurrent }) => {
           let startPath = source.startPath || ''
           if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
@@ -228,7 +228,7 @@ function getFetchOptions () {
   }
 }
 
-async function selectBranches (repo, branchPatterns, remote) {
+async function selectBranches (repo, isBare, branchPatterns, remote) {
   if (branchPatterns) {
     if (branchPatterns === 'HEAD' || branchPatterns === '.') {
       branchPatterns = [(await repo.getCurrentBranch()).shorthand()]
@@ -259,7 +259,7 @@ async function selectBranches (repo, branchPatterns, remote) {
 
       // NOTE if branch is present in accum, we already know it matches the pattern
       if (branchName in accum) {
-        if (!branch.remote) accum[branchName] = branch
+        if (!branch.remote || isBare) accum[branchName] = branch
       } else if (!branchPatterns || matcher([branchName], branchPatterns).length) {
         accum[branchName] = branch
       }

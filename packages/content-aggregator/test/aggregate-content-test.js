@@ -948,38 +948,68 @@ describe('aggregateContent()', () => {
     })
   })
 
-  it('should synchronize repository in cache with remote', async () => {
+  it('should synchronize cached repository with remote', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
-    await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc')
-    playbookSpec.content.sources.push({ url: repoBuilder.url })
+    await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
+      repoBuilder.checkoutBranch('v1.2.3')
+    )
+    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
 
     const firstAggregate = await aggregateContent(playbookSpec)
 
     expect(firstAggregate).to.have.lengthOf(1)
     expect(firstAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
-    const pageOne = firstAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
-    expect(pageOne).to.exist()
+    let page1v1 = firstAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(page1v1).to.exist()
 
     await repoBuilder
       .open()
       .then(() => repoBuilder.checkoutBranch('v2.0.0'))
       .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v2.0.0' }))
       .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-two.adoc'))
-      .then(() => repoBuilder.close('master'))
+      .then(() => repoBuilder.checkoutBranch('v1.2.3'))
+      .then(() => repoBuilder.addToWorktree('modules/ROOT/pages/page-one.adoc', '= Page One\n\nUpdate received!'))
+      .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/topic-a/page-three.adoc'))
+      .then(() => repoBuilder.close())
 
     const secondAggregate = await aggregateContent(playbookSpec)
 
     expect(secondAggregate).to.have.lengthOf(2)
     expect(secondAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
-    const pageTwoInVersionOne = secondAggregate[0].files.find(
-      (file) => file.path === 'modules/ROOT/pages/page-two.adoc'
-    )
-    expect(pageTwoInVersionOne).to.not.exist()
+    page1v1 = secondAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(page1v1).to.exist()
+    expect(page1v1.contents.toString()).to.have.string('Update received!')
+    const page2v1 = secondAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
+    expect(page2v1).to.not.exist()
+    const page3v1 = secondAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/topic-a/page-three.adoc')
+    expect(page3v1).to.exist()
     expect(secondAggregate[1]).to.include({ name: 'the-component', version: 'v2.0.0' })
-    const pageTwoInVersionTwo = secondAggregate[1].files.find(
-      (file) => file.path === 'modules/ROOT/pages/page-two.adoc'
+    const page1v2 = secondAggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(page1v2).to.exist()
+    expect(page1v2.contents.toString()).to.not.have.string('Update received!')
+    const page2v2 = secondAggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
+    expect(page2v2).to.exist()
+  })
+
+  it('should favor remote branches in bare repository', async () => {
+    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    await initRepoWithFiles(remoteRepoBuilder, { repoName: 'the-component-remote' })
+
+    const localRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true })
+    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, async () =>
+      localRepoBuilder
+        .addToWorktree('modules/ROOT/pages/page-one.adoc', '= Local Modification')
+        .then(() => localRepoBuilder.commitAll('make modification'))
+        .then(() => localRepoBuilder.addRemote('origin', remoteRepoBuilder.url))
     )
-    expect(pageTwoInVersionTwo.path).to.equal('modules/ROOT/pages/page-two.adoc')
+
+    playbookSpec.content.sources.push({ url: localRepoBuilder.url })
+
+    const aggregate = await aggregateContent(playbookSpec)
+    expect(aggregate).to.have.lengthOf(1)
+    const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(pageOne).to.exist()
+    expect(pageOne.contents.toString()).to.not.have.string('= Local Modification')
   })
 
   it('should discover components in specified remote', async () => {
