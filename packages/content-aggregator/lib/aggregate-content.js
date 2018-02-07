@@ -18,6 +18,7 @@ const DOT_OR_NOEXT_RX = {
   '\\': /(?:^|\\)(?:\.|[^\\.]+$)/,
 }
 const DRIVE_RX = new RegExp('^[a-z]:/(?=[^/]|$)')
+const HOSTED_GIT_REPO_RX = new RegExp('(github\\.com|gitlab\\.com|bitbucket\\.org)[:/](.+?)(?:\\.git)?$')
 const SEPARATOR_RX = /\/|:/
 const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
 const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
@@ -51,15 +52,19 @@ async function aggregateContent (playbook) {
       )
       const branchPatterns = source.branches || defaultBranches
       const componentVersions = (await selectBranches(repository, branchPatterns, remote)).map(
-        async ({ ref, localName, current }) => {
+        async ({ ref, branchName, isCurrent }) => {
           let startPath = source.startPath || ''
           if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
+          const worktreePath = isCurrent && isLocal && !isBare
+            ? (startPath ? ospath.join(localPath, startPath) : localPath)
+            : undefined
           const files =
-            isLocal && !isBare && current
-              ? await readFilesFromWorktree(startPath ? ospath.join(localPath, startPath) : localPath)
+            worktreePath
+              ? await readFilesFromWorktree(worktreePath)
               : await readFilesFromGitTree(repository, ref, startPath)
           const componentVersion = loadComponentDescriptor(files)
-          componentVersion.files = files.map((file) => assignFileProperties(file, url, localName, startPath))
+          const origin = resolveOrigin(url, branchName, startPath, worktreePath)
+          componentVersion.files = files.map((file) => assignFileProperties(file, origin))
           return componentVersion
         }
       )
@@ -119,6 +124,7 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
   try {
     url = (await repository.getRemote(remote)).url()
   } catch (e) {
+    // FIXME use repository.path() if repository is set
     url = repoUrl
   }
 
@@ -224,22 +230,22 @@ async function selectBranches (repo, branchPatterns, remote) {
     (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
       const segments = ref.name().split('/')
       let branch
-      let localName
+      let branchName
       if (segments[1] === 'heads') {
-        localName = segments.slice(2).join('/')
-        branch = { ref, localName, current: !!ref.isHead() }
+        branchName = segments.slice(2).join('/')
+        branch = { ref, branchName, isCurrent: !!ref.isHead() }
       } else if (segments[1] === 'remotes' && segments[2] === remote) {
-        localName = segments.slice(3).join('/')
-        branch = { ref, localName, remote }
+        branchName = segments.slice(3).join('/')
+        branch = { ref, branchName, remote }
       } else {
         return accum
       }
 
       // NOTE if branch is present in accum, we already know it matches the pattern
-      if (localName in accum) {
-        if (!branch.remote) accum[localName] = branch
-      } else if (!branchPatterns || matcher([localName], branchPatterns).length) {
-        accum[localName] = branch
+      if (branchName in accum) {
+        if (!branch.remote) accum[branchName] = branch
+      } else if (!branchPatterns || matcher([branchName], branchPatterns).length) {
+        accum[branchName] = branch
       }
 
       return accum
@@ -348,18 +354,34 @@ function collectFiles (done) {
   return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
 }
 
-function assignFileProperties (file, url, branch, startPath) {
+function assignFileProperties (file, origin) {
   const extname = file.extname
   file.mediaType = mimeTypes.lookup(extname)
-  file.src = Object.assign(file.src || {}, {
+  if (!file.src) file.src = {}
+  Object.assign(file.src, {
     path: file.path,
     basename: file.basename,
     stem: file.stem,
     extname,
     mediaType: file.mediaType,
-    origin: { git: { url, branch, startPath } },
+    origin,
   })
+  if (origin.editUrlPattern) file.src.editUrl = origin.editUrlPattern.replace('%s', file.src.path)
   return file
+}
+
+function resolveOrigin (url, branch, startPath, worktreePath) {
+  let match
+  const origin = { type: 'git', url, branch, startPath }
+  if (worktreePath) {
+    origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
+    // Q: should we set worktreePath instead (or in addition?)
+    origin.worktree = true
+  } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
+    const action = match[1] === 'bitbucket.org' ? 'src' : 'edit'
+    origin.editUrlPattern = 'https://' + [match[1], match[2], action, branch, startPath, '%s'].join('/')
+  }
+  return origin
 }
 
 function buildAggregate (componentVersions) {
