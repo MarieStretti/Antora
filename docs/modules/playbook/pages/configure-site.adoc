@@ -17,7 +17,7 @@ On this page, you'll learn:
 
 Use the title key to add a title to your site.
 
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 site:
   title: Demo Docs Site
@@ -31,11 +31,13 @@ Antora's default UI displays the site title in the navigation bar at the top of 
 
 The url key is the base URL of the published site.
 
-The `url` value must be an absolute URI.
-The means the value must start with `https://`, `http://`, `ftp://`, `file://`, etc.
-Do not include a trailing slash at the end of the value.
+The `url` value must be a valid URI scheme that is directly followed by a colon and two slashes (`://`).
+Common URI schemes include `https://`, `http://`, and `file://`.
 
-[source,yaml,subs=attributes+]
+The URI should be absolute, e.g., _pass:[https://www.project.org/docs]_ or _pass:[https://docs.product.com]_
+The base URL *should not end with a trailing slash*.
+
+[source,yaml]
 ----
 site:
   url: https://demo.antora.org
@@ -55,7 +57,7 @@ The start_page key accepts a page ID as a value.
 
 If you want the site's start page to be a specific version of the assigned page, include the xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version name in the page ID].
 
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 site:
   url: https://demo.antora.org
@@ -68,7 +70,7 @@ In this example, _pass:[https://demo.antora.org/index.html]_ will redirect to _p
 
 Don't include the version name in the page ID when the start page should always be the latest version of that page.
 
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 site:
   url: https://demo.antora.org
@@ -83,10 +85,9 @@ Therefore, _pass:[https://demo.antora.org/index.html]_ will redirect to _pass:[h
 
 The google_analytics key assigns a Google Analytics account to the site.
 
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 site:
-  url: https://demo.antora.org
   keys:
     google_analytics: 'XX-123456'
 ----
