@@ -31,8 +31,9 @@ For a detailed list of current development tasks, refer to the core components {
 
 ==== Scheduled for next alpha
 
-* [ ] Provide capability to customize/override UI templates {uri-issues}/147[#147]
-* [ ] Pass site keys to UI model {uri-issues}/146[#146]
+* [ ] Fix default branch caching {uri-issues}/151[#151]
+* [x] Provide capability to customize/override UI templates {uri-issues}/147[#147]
+* [x] Pass site keys to UI model {uri-issues}/146[#146]
 * [ ] Improve error message when local workspace path cannot be found {uri-issues}/119[#119]
 
 ==== Waiting
@@ -63,6 +64,8 @@ For a detailed list of current development tasks, refer to the core components {
 
 === v1.x
 
+* [ ] Support loading the UI from a directory {uri-issues}/150[#150]
+* [ ] Add a merge mode to supplemental UI files {uri-issues}/149[#149]
 * [ ] Add a logging infrastructure {uri-issues}/145[#145]
 * [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
 * [ ] Allow content to be aggregated from tags {uri-issues}/117[#117]
@@ -97,6 +100,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 ==== Scheduled for alpha.6
 
+* [ ] Document UI bundle configuration features
 * [x] Document site configuration keys {uri-issues}/142[#142]
 * [x] Document how to upgrade to latest Antora version {uri-issues}/140[#140]
 * [x] Add AsciiDoc page overview and structure documentation {uri-issues}/131[#131]
@@ -106,20 +110,20 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 ==== Scheduled for alpha.7
 
+* [ ] Add nav category and multi-list capabilities to navigation docs
 * [ ] _Docs Site:_ Add site and UI keys to production playbook
 * [ ] _Docs Site:_ Connect Docs and project sites
+* [ ] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
+* [ ] Provide source URL configuration examples
+* [ ] Add how to create a partial page
 * [ ] Document sitemap features
 * [ ] Document versioning policy {uri-issues}/14[#14]
 
 ==== Waiting
 
-* [ ] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
 * [ ] Document redirect features
-* [ ] Add how to create a partial page
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
-* [ ] Provide source URL configuration examples
-* [ ] Document UI bundle configuration features
 * [ ] Provide overview of full feature set
 * [ ] Document specifying current branch as a token
 
@@ -136,15 +140,17 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 ==== Scheduled for next alpha
 
+* [x] Don't show edit the page link when page.editUrl is undefined {uri-ui-issues}/39[#39]
+* [ ] Don't include URL path when linking to current page {uri-ui-issues}/38[#38]
 * [x] Add Google analytics tracking code when key is set in playbook {uri-ui-issues}/37[#37]
 * [x] Open menu item in navigation when menu item is clicked {uri-ui-issues}/36[#36]
 * [x] Add list-style none on inline (flex) lists {uri-ui-issues}/35[#35]
 * [x] Look for in-page links anywhere in page {uri-ui-issues}/34[#34]
+* [x] Display nav list titles in menu and breadcrumbs {uri-ui-issues}/28[#28]
 * [ ] Refine literal, listing, and example block title styles {uri-ui-issues}/22[#22]
 
 ==== Waiting
 
-* [ ] Display nav list titles in menu and breadcrumbs {uri-ui-issues}/28[#28]
 * [ ] Style keyboard UI macro {uri-ui-issues}/23[#23]
 * [ ] IE 11 fixes
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
