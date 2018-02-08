@@ -1,0 +1,68 @@
+= Examples
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:example-caption!:
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-block: {uri-adoc-manual}/#blocks
+:uri-block-subs: {uri-adoc-manual}/#built-in-blocks-summary
+
+On this page, you'll learn:
+
+* [x] How to mark up an example with AsciiDoc.
+
+== Example syntax
+
+An example paragraph or delimited block is useful for visually delineating content that illustrates a concept or showing the result of an operation.
+
+An example can contain any type of content and AsciiDoc syntax.
+Normal substitutions are applied to example content.
+
+=== Example paragraph
+
+If the example content is contiguous, i.e., not interrupted by blank lines, the block name `example` can be placed directly on top of the text in an attribute list (`[]`).
+
+.Example paragraph
+----
+.Optional title
+[example]
+This is an #example paragraph#.
+----
+
+.Optional title
+[example]
+This is an #example paragraph#.
+
+=== Delimited example block
+
+If the example content includes elements separated by blank lines, place the content between delimiter lines consisting of four equals signs (`pass:[====]`).
+
+You don't need to set the block name when you use a delimited block.
+
+.Delimited example block
+----
+.Onomatopoeia
+====
+The book hit the floor with a *thud*.
+
+He could hear doves *cooing* in the pine trees`' branches.
+====
+----
+
+.Onomatopoeia
+====
+The book hit the floor with a *thud*.
+
+He could hear doves *cooing* in the pine trees`' branches.
+====
+
+TIP: xref:admonitions.adoc[Complex admonitions] use the delimited example block syntax.
+
+Asciidoctor resources:
+
+* {uri-block}[Example titles and attributes]
+* {uri-block-subs}[Substitutions by block type]
