@@ -4,7 +4,10 @@
 ** xref:page-header.adoc#page-meta[Page Metadata]
 ** xref:page-header.adoc#page-attrs[Page Attributes]
 * xref:section-headings.adoc[Section Headings]
-* xref:text-styles.adoc[Text Styles]
+//* Text & Punctuation Styles
+* xref:bold-and-italic.adoc[Bold & Italic]
+* xref:monospace.adoc[Monospace]
+* xref:highlight.adoc[Highlight]
 * xref:quotes-and-apostrophes.adoc[Quote Marks & Apostrophes]
 * xref:subscript-and-superscript.adoc[Subscript & Superscript]
 * xref:special-characters-and-symbols.adoc[Special Characters & Symbols]

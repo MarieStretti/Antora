@@ -1,4 +1,4 @@
-= Basic Text Styles
+= Bold and Italic
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -9,19 +9,21 @@ endif::[]
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-bold-italic: {uri-adoc-manual}/#bold-and-italic
-:uri-mono: {uri-adoc-manual}/#mono
 :uri-highlight: {uri-adoc-manual}/#custom-styling-with-attributes
 
 On this page, you'll learn:
 
 * [x] How to bold text with AsciiDoc.
 * [x] How to italicize text with AsciiDoc.
-* [x] How to monospace text with AsciiDoc.
 * [x] How to highlight text with AsciiDoc.
 
 == Bold and italic syntax
 
-You can bold and italic entire phrases, a word, and characters in a word.
+To apply bold styling to a word or phrase, place an asterisk (`*`) at the beginning and end of the text you wish to format.
+To bold one or a few characters bounded by other characters, place two asterisks (`**`) before and after the characters.
+
+Words are italicized when they're enclosed in a single set of underscores (`_`).
+Bounded characters are italicised by a set of two underscores (`__`).
 
 .Bold and italic inline formatting
 [source,asciidoc]
@@ -33,6 +35,8 @@ _italic phrase_ & __char__acter__s__
 *_bold italic phrase_* & **__char__**acter**__s__**
 ----
 
+To apply both bold and italic formatting, the bold syntax must be the outermost set and the italic syntax the innermost set.
+
 .Result
 ====
 *bold phrase* & **char**acter**s**
@@ -42,44 +46,12 @@ _italic phrase_ & __char__acter__s__
 *_bold italic phrase_* & **__char__**acter**__s__**
 ====
 
+Bold and italicized text can also be xref:monospace.adoc[monospaced].
+
 [discrete]
 ==== Asciidoctor resources
 
 * {uri-bold-italic}[Bold and italic text formatting]
-
-== Monospace syntax
-
-You can monospace entire phrases, a word, and characters in a word.
-
-.Monospace inline formatting
-[source,asciidoc]
-----
-`monospace phrase` & ``char``acter``s``
-
-`*monospace bold phrase*` & ``**char**``acter``**s**``
-
-`_monospace italic phrase_` & ``__char__``acter``__s__``
-
-`*_monospace bold italic phrase_*` &
-``**__char__**``acter``**__s__**``
-----
-
-.Result
-====
-`monospace phrase` & ``char``acter``s``
-
-`*monospace bold phrase*` & ``**char**``acter``**s**``
-
-`_monospace italic phrase_` & ``__char__``acter``__s__``
-
-`*_monospace bold italic phrase_*` &
-``**__char__**``acter``**__s__**``
-====
-
-[discrete]
-==== Asciidoctor resources
-
-* {uri-mono}[Monospace text formatting]
 
 == Highlight syntax
 
