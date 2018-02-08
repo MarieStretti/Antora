@@ -63,6 +63,8 @@ describe('aggregateContent()', () => {
       .then(() => repoBuilder.close())
   }
 
+  const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
+
   // NOTE remove can fail multiple times on Windows
   const clean = (fin) => {
     process.chdir(CWD)
@@ -553,7 +555,7 @@ describe('aggregateContent()', () => {
         const relatives = files.map((file) => file.relative)
         expect(paths).to.have.members(fixturePaths)
         expect(relatives).to.have.members(fixturePaths)
-        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'docs'))
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.startPath', 'docs'))
       })
     })
 
@@ -579,7 +581,7 @@ describe('aggregateContent()', () => {
         const relatives = files.map((file) => file.relative)
         expect(paths).to.have.members(fixturePaths)
         expect(relatives).to.have.members(fixturePaths)
-        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'src/docs'))
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.startPath', 'src/docs'))
       })
     })
 
@@ -595,7 +597,7 @@ describe('aggregateContent()', () => {
         expect(componentVersion).to.include(componentDesc)
         const files = componentVersion.files
         expect(files).to.have.lengthOf(fixturePaths.length)
-        files.forEach((file) => expect(file).to.have.nested.property('src.origin.git.startPath', 'src/docs'))
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.startPath', 'src/docs'))
       })
     })
 
@@ -623,19 +625,92 @@ describe('aggregateContent()', () => {
           extname: expectedFile.extname,
           mediaType: expectedFile.mediaType,
           origin: {
-            git: {
-              // in our test the git url is the same as the repo url we provided
-              url: repoBuilder.url,
-              branch: 'master',
-              startPath: '',
-            },
+            type: 'git',
+            // in our test the git url is the same as the repo url we provided
+            url: repoBuilder.url,
+            branch: 'master',
+            startPath: '',
           },
         }
-        if (!(repoBuilder.remote || repoBuilder.bare)) {
+        if (!(repoBuilder.bare || repoBuilder.remote)) {
           expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, expectedFileSrc.path)
+          const fileUriScheme = posixify ? 'file:///' : 'file://'
+          expectedFileSrc.origin.editUrlPattern = fileUriScheme + repoBuilder.repoPath + '/%s'
+          expectedFileSrc.origin.worktree = true
+          expectedFileSrc.editUrl = fileUriScheme + expectedFileSrc.abspath
+          if (posixify) {
+            expectedFileSrc.origin.editUrlPattern = posixify(expectedFileSrc.origin.editUrlPattern)
+            expectedFileSrc.editUrl = posixify(expectedFileSrc.editUrl)
+          }
         }
         expect(pageOne).to.include(expectedFile)
         expect(pageOne.src).to.eql(expectedFileSrc)
+      })
+    })
+
+    describe('remote origin data', () => {
+      it('should generate correct origin data for file taken from repository on GitHub', () => {
+        const urls = [
+          'https://github.com/org-name/repo-name.git',
+          'https://github.com/org-name/repo-name',
+          'git@github.com:org-name/repo-name.git',
+          'git@github.com:org-name/repo-name',
+        ]
+        const branch = 'master'
+        const expectedEditUrlPattern = 'https://github.com/org-name/repo-name/edit/' + branch + '/%s'
+        urls.forEach((url) => {
+          const origin = aggregateContent._resolveOrigin(url, branch, '')
+          expect(origin.url).to.equal(url)
+          expect(origin.branch).to.equal(branch)
+          expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+        })
+      })
+
+      it('should generate correct origin data for file taken from repository on GitLab', () => {
+        const urls = [
+          'https://gitlab.com/org-name/repo-name.git',
+          'https://gitlab.com/org-name/repo-name',
+          'git@gitlab.com:org-name/repo-name.git',
+          'git@gitlab.com:org-name/repo-name',
+        ]
+        const branch = 'master'
+        const expectedEditUrlPattern = 'https://gitlab.com/org-name/repo-name/edit/' + branch + '/%s'
+        urls.forEach((url) => {
+          const origin = aggregateContent._resolveOrigin(url, branch, '')
+          expect(origin.url).to.equal(url)
+          expect(origin.branch).to.equal(branch)
+          expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+        })
+      })
+
+      it('should generate correct origin data for file taken from repository on BitBucket', () => {
+        const urls = [
+          'https://bitbucket.org/org-name/repo-name.git',
+          'https://bitbucket.org/org-name/repo-name',
+          'git@bitbucket.org:org-name/repo-name.git',
+          'git@bitbucket.org:org-name/repo-name',
+        ]
+        const branch = 'master'
+        const expectedEditUrlPattern = 'https://bitbucket.org/org-name/repo-name/src/' + branch + '/%s'
+        urls.forEach((url) => {
+          const origin = aggregateContent._resolveOrigin(url, branch, '')
+          expect(origin.url).to.equal(url)
+          expect(origin.branch).to.equal(branch)
+          expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+        })
+      })
+
+      it('should generate correct origin data for file taken from worktree', () => {
+        const url = 'the-component'
+        const worktreePath = ospath.join(CONTENT_REPOS_DIR, url)
+        const branch = 'master'
+        const expectedEditUrlPattern = posixify
+          ? 'file:///' + posixify(worktreePath) + '/%s'
+          : 'file://' + worktreePath + '/%s'
+        const origin = aggregateContent._resolveOrigin(url, branch, '', worktreePath)
+        expect(origin.url).to.equal(url)
+        expect(origin.branch).to.equal(branch)
+        expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
       })
     })
   })
@@ -658,9 +733,9 @@ describe('aggregateContent()', () => {
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
         const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
-        expect(pageOne.src.origin.git.branch).to.equal('master')
+        expect(pageOne.src.origin.branch).to.equal('master')
         const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
-        expect(pageTwo.src.origin.git.branch).to.equal('v1.2.3-fixes')
+        expect(pageTwo.src.origin.branch).to.equal('v1.2.3-fixes')
       })
     })
 
@@ -674,9 +749,9 @@ describe('aggregateContent()', () => {
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
         const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
-        expect(pageOne.src.origin.git.url).to.equal(repoBuilderA.url)
+        expect(pageOne.src.origin.url).to.equal(repoBuilderA.url)
         const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
-        expect(pageTwo.src.origin.git.url).to.equal(repoBuilderB.url)
+        expect(pageTwo.src.origin.url).to.equal(repoBuilderB.url)
       }, 2)
     })
 
@@ -751,6 +826,52 @@ describe('aggregateContent()', () => {
         const relatives = files.map((file) => file.relative)
         expect(paths).to.have.members(expectedPaths)
         expect(relatives).to.have.members(expectedPaths)
+      })
+
+      it('should set src.abspath and src.origin.worktree properties on files taken from worktree', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithFilesAndWorktree(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const expectedPaths = [
+          'README.adoc',
+          'modules/ROOT/_attributes.adoc',
+          'modules/ROOT/pages/_attributes.adoc',
+          'modules/ROOT/pages/page-one.adoc',
+          'modules/ROOT/pages/page-two.adoc',
+        ].map((p) => ospath.join(repoBuilder.repoPath, p))
+        const files = aggregate[0].files
+        expect(files).to.have.lengthOf(expectedPaths.length)
+        expect(files[0].src).to.have.property('abspath')
+        const paths = files.map((file) => file.src.abspath)
+        expect(paths).to.have.members(expectedPaths)
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.worktree', true))
+      })
+
+      it('should set src.editUrl property on files taken from worktree', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithFilesAndWorktree(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const fileUriBase = posixify ? 'file:///' + posixify(repoBuilder.repoPath) : 'file://' + repoBuilder.repoPath
+        const expectedUrls = [
+          'README.adoc',
+          'modules/ROOT/_attributes.adoc',
+          'modules/ROOT/pages/_attributes.adoc',
+          'modules/ROOT/pages/page-one.adoc',
+          'modules/ROOT/pages/page-two.adoc',
+        ].map((p) => fileUriBase + '/' + p)
+        const files = aggregate[0].files
+        expect(files).to.have.lengthOf(expectedUrls.length)
+        expect(files[0].src).to.have.property('editUrl')
+        const editUrls = files.map((file) => file.src.editUrl)
+        expect(editUrls).to.have.members(expectedUrls)
       })
 
       it('should populate file with correct contents from worktree of clone', async () => {

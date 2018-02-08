@@ -201,6 +201,20 @@ describe('generateSite()', () => {
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', 'https://example.com/docs')
   }).timeout(TIMEOUT)
 
+  it('should add edit page link to toolbar if page.editUrl is set in UI model', async () => {
+    await repositoryBuilder.open().then(() => repositoryBuilder.checkoutBranch('v2.0'))
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookSpecFile])
+    expect(ospath.join(destDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/the-page.html')
+    const thePagePath = 'modules/ROOT/pages/the-page.adoc'
+    const editUrl =
+      ospath.sep === '\\'
+        ? 'file:///' + ospath.join(repositoryBuilder.repoPath, thePagePath).replace(/\\/g, '/')
+        : 'file://' + ospath.join(repositoryBuilder.repoPath, thePagePath)
+    expect($('.toolbar .edit-this-page a')).to.have.attr('href', editUrl)
+  }).timeout(TIMEOUT)
+
   it('should provide navigation to multiple versions of a component', async () => {
     await repositoryBuilder
       .open()

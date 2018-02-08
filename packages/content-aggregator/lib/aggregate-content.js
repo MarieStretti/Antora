@@ -8,6 +8,7 @@ const { obj: map } = require('through2')
 const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
 const ospath = require('path')
+const { posix: path } = ospath
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
@@ -55,13 +56,11 @@ async function aggregateContent (playbook) {
         async ({ ref, branchName, isCurrent }) => {
           let startPath = source.startPath || ''
           if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
-          const worktreePath = isCurrent && isLocal && !isBare
-            ? (startPath ? ospath.join(localPath, startPath) : localPath)
-            : undefined
-          const files =
-            worktreePath
-              ? await readFilesFromWorktree(worktreePath)
-              : await readFilesFromGitTree(repository, ref, startPath)
+          const worktreePath =
+            isCurrent && isLocal && !isBare ? (startPath ? ospath.join(localPath, startPath) : localPath) : undefined
+          const files = worktreePath
+            ? await readFilesFromWorktree(worktreePath)
+            : await readFilesFromGitTree(repository, ref, startPath)
           const componentVersion = loadComponentDescriptor(files)
           const origin = resolveOrigin(url, branchName, startPath, worktreePath)
           componentVersion.files = files.map((file) => assignFileProperties(file, origin))
@@ -375,11 +374,11 @@ function resolveOrigin (url, branch, startPath, worktreePath) {
   const origin = { type: 'git', url, branch, startPath }
   if (worktreePath) {
     origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
-    // Q: should we set worktreePath instead (or in addition?)
+    // Q: should we set worktreePath instead (or additionally?)
     origin.worktree = true
   } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
     const action = match[1] === 'bitbucket.org' ? 'src' : 'edit'
-    origin.editUrlPattern = 'https://' + [match[1], match[2], action, branch, startPath, '%s'].join('/')
+    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, branch, startPath, '%s')
   }
   return origin
 }
@@ -402,3 +401,4 @@ function buildAggregate (componentVersions) {
 }
 
 module.exports = aggregateContent
+module.exports._resolveOrigin = resolveOrigin
