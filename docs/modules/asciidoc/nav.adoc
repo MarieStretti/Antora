@@ -12,6 +12,7 @@
 * xref:labeled-lists.adoc[Labeled Lists]
 * xref:page-to-page-xref.adoc[Page to Page Links]
 * xref:in-page-xref.adoc[Same Page Links]
+* xref:external-urls.adoc[URLs]
 * xref:insert-image.adoc[Insert an Image]
 * xref:embed-video.adoc[Embed a Video]
 * xref:link-attachment.adoc[Link to an Attachment]
