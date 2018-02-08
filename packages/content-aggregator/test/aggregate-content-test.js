@@ -1018,4 +1018,46 @@ describe('aggregateContent()', () => {
     expect(aggregate).to.have.lengthOf(1)
     expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
   })
+
+  it('should throw meaningful error if local relative content directory does not exist', async () => {
+    const invalidDir = 'no-such-directory'
+    const invalidAbsDir = ospath.join(WORK_DIR, 'no-such-directory')
+    playbookSpec.dir = WORK_DIR
+    playbookSpec.content.sources.push({ url: invalidDir })
+    const expectedErrorMessage =
+      'Local content source does not exist: ' + invalidAbsDir + ' (resolved from url: ' + invalidDir + ')'
+    const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+    expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+  })
+
+  it('should throw meaningful error if local absolute content directory does not exist', async () => {
+    const invalidAbsDir = ospath.join(WORK_DIR, 'no-such-directory')
+    playbookSpec.content.sources.push({ url: invalidAbsDir })
+    const expectedErrorMessage = 'Local content source does not exist: ' + invalidAbsDir
+    const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+    expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+  })
+
+  it('should throw meaningful error if local relative content directory is not a git repository', async () => {
+    const regularDir = 'regular-directory'
+    const regularAbsDir = ospath.join(WORK_DIR, regularDir)
+    fs.ensureDirSync(regularAbsDir)
+    fs.writeFileSync(ospath.join(regularAbsDir, 'antora.xml'), 'name: the-component\nversion: 1.0')
+    playbookSpec.dir = WORK_DIR
+    playbookSpec.content.sources.push({ url: regularDir })
+    const expectedErrorMessage =
+      'Local content source must be a git repository: ' + regularAbsDir + ' (resolved from url: ' + regularDir + ')'
+    const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+    expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+  })
+
+  it('should throw meaningful error if local absolute content directory is not a git repository', async () => {
+    const regularAbsDir = ospath.join(WORK_DIR, 'regular-directory')
+    fs.ensureDirSync(regularAbsDir)
+    fs.writeFileSync(ospath.join(regularAbsDir, 'antora.xml'), 'name: the-component\nversion: 1.0')
+    playbookSpec.content.sources.push({ url: regularAbsDir })
+    const expectedErrorMessage = 'Local content source must be a git repository: ' + regularAbsDir
+    const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+    expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+  })
 })

@@ -91,9 +91,17 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
   let repository
 
   // QUESTION should we try to exclude git@host:path as well? maybe check for @?
-  if (!~repoUrl.indexOf('://') && directoryExists((localPath = ospath.resolve(startDir, repoUrl)))) {
-    isBare = !directoryExists(ospath.join(localPath, '.git'))
-    isLocal = true
+  if (!~repoUrl.indexOf('://')) {
+    if (directoryExists((localPath = ospath.resolve(startDir, repoUrl)))) {
+      isBare = !directoryExists(ospath.join(localPath, '.git'))
+      isLocal = true
+    } else {
+      throw new Error(
+        'Local content source does not exist: ' +
+          localPath +
+          (repoUrl !== localPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+      )
+    }
   } else {
     isBare = true
     isLocal = false
@@ -111,7 +119,13 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
       repository = await git.Repository.open(localPath)
     }
   } catch (e) {
-    if (!isLocal) {
+    if (isLocal) {
+      throw new Error(
+        'Local content source must be a git repository: ' +
+          localPath +
+          (repoUrl !== localPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+      )
+    } else {
       // NOTE if we clone the repository, we can assume the remote is origin
       remote = 'origin'
       fs.removeSync(localPath)
