@@ -46,7 +46,8 @@ What is the answer to E=mc^2^?
 What is the answer to E=mc^2^?
 ====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-sub-sup}[Subscript and superscript formatting]
 * {uri-stem}[Using Asciidoctor's stem attribute for equations and formulas]

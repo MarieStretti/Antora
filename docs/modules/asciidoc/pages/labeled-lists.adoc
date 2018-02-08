@@ -46,6 +46,7 @@ Mouse:: Used to point to and select items on your computer screen.
 
 The description of each item is displayed below the label when rendered.
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-labeled}[Basic and complex labeled lists]

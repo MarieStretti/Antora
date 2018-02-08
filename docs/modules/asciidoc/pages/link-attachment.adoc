@@ -5,15 +5,17 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
-// URLs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+
+On this page, you'll learn:
+
+* [x] How to link to a file stored in a documentation component's .path]_attachments_ directory.
 
 == Insert a link to an attachment file
 
-An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
+An attachment is a resource that you want your user to download, such as a PDF or a sample project ZIP archive.
 To insert a link to an attachment for download, use the AsciiDoc link macro (`link:[]`).
 
-.Insert a link to an attachment
+.Attachment link syntax
 [source,asciidoc]
 ----
 link:{attachmentsdir}/example.raml[Download the RAML example] and run it.
@@ -22,11 +24,11 @@ link:{attachmentsdir}/example.raml[Download the RAML example] and run it.
 Let's break this down.
 You start with the link macro prefix, `link:`.
 Next is the target.
-Start the target with the `{attachmentsdir}/` reference to tell Antora where to look for the file.
+Start the target with the `{attachmentsdir}` reference to tell Antora where to look for the file.
 Then put the relative path of the attachment file after that.
 Finally, end with the text of the link (as the reader will see it) between a pair of square brackets (`+[]+`).
 
-You don't need to set the path to the [.path]_attachments/_ directory in the header of your file.
+You don't need to set the path to the [.path]_attachments_ directory in the header of your file.
 This is managed automatically by Antora.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 

@@ -13,9 +13,9 @@ On this page, you'll learn:
 
 * [x] How to mark up a task list with AsciiDoc.
 
-== Checked and unchecked list items
+== Checked and unchecked list syntax
 
-Task lists) are xref:ordered-and-unordered-lists#unordered[unordered lists] that have items marked as checked (`[*]` or `[x]`) or unchecked (`[ ]`).
+Task lists are xref:ordered-and-unordered-lists#unordered[unordered lists] that have list items marked as checked (`[*]` or `[x]`) or unchecked (`[ ]`).
 
 Here’s an example:
 
@@ -34,6 +34,7 @@ Here’s an example:
 * [ ] not checked
 --
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-task}[Checklists]

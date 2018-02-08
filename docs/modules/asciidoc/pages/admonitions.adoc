@@ -16,9 +16,9 @@ On this page, you'll learn:
 
 == Admonition styles
 
-An admonition, also known as a notice, helps draw attention to a line or block of text with a special label or icon.
+An admonition, also known as a notice, helps draw attention to content with a special label or icon.
 
-Asciidoctor comes with five built-in styles.
+Asciidoctor comes with five built-in admonition labels.
 
 * NOTE
 * TIP
@@ -28,7 +28,10 @@ Asciidoctor comes with five built-in styles.
 
 == Basic admonition
 
-.Basic admonitions
+If the admonition content is not interrupted by blank lines, start the first line  with a style label.
+The label must be all uppercase and followed by a colon (`:`) and a single blank space.
+
+.Basic admonition syntax
 [source,asciidoc]
 ----
 CAUTION: Don't stick forks in electric sockets.
@@ -39,7 +42,7 @@ WARNING: Never go into the basement.
 
 IMPORTANT: A monster lives in the basement.
 
-NOTE: If you go into the basement, see if you can find Kenny's orange parka.
+NOTE: If you go into the basement, see if you can find Kenny's parka.
 ----
 
 CAUTION: Don't stick forks in electric sockets.
@@ -50,11 +53,15 @@ WARNING: Never go into the basement.
 
 IMPORTANT: A monster lives in the basement.
 
-NOTE: If you go into the basement, see if you can find Kenny's orange parka.
+NOTE: If you go into the basement, see if you can find Kenny's parka.
 
 == Complex admonition
 
-.Example block masquerading as an admonition
+If the admonition content includes elements separated by blank lines, place the content in a xref:examples.adoc#delimited[delimited example block] (`pass:[====]`).
+This behavior is referred to as masquerading.
+Place the appropriate label, in all uppercase, on the block in an attribute list (`[]`).
+
+.Complex admonition syntax
 [source,asciidoc]
 ----
 [IMPORTANT]
@@ -80,6 +87,7 @@ Use an example block to create an admonition that contains complex content, such
 * Images
 ====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-admonition}[Admonition paragraphs and blocks]

@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:example-caption!:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-bold-italic: {uri-adoc-manual}/#bold-and-italic
@@ -18,7 +19,7 @@ On this page, you'll learn:
 * [x] How to monospace text with AsciiDoc.
 * [x] How to highlight text with AsciiDoc.
 
-== Bold an Italic
+== Bold and italic syntax
 
 You can bold and italic entire phrases, a word, and characters in a word.
 
@@ -33,19 +34,20 @@ _italic phrase_ & __char__acter__s__
 ----
 
 .Result
---
+====
 *bold phrase* & **char**acter**s**
 
 _italic phrase_ & __char__acter__s__
 
 *_bold italic phrase_* & **__char__**acter**__s__**
---
+====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-bold-italic}[Bold and italic text formatting]
 
-== Monospace
+== Monospace syntax
 
 You can monospace entire phrases, a word, and characters in a word.
 
@@ -63,7 +65,7 @@ You can monospace entire phrases, a word, and characters in a word.
 ----
 
 .Result
---
+====
 `monospace phrase` & ``char``acter``s``
 
 `*monospace bold phrase*` & ``**char**``acter``**s**``
@@ -72,13 +74,14 @@ You can monospace entire phrases, a word, and characters in a word.
 
 `*_monospace bold italic phrase_*` &
 ``**__char__**``acter``**__s__**``
---
+====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-mono}[Monospace text formatting]
 
-== Highlight
+== Highlight syntax
 
 You can highlight entire phrases, a word, and characters in a word.
 
@@ -89,10 +92,11 @@ Let's #highlight this phrase# and part of th##is##.
 ----
 
 .Result
---
+====
 Let's #highlight this phrase# and part of th##is##.
---
+====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-highlight}[Highlighted text formatting]

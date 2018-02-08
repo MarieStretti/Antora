@@ -26,7 +26,7 @@ Normal substitutions are applied to example content.
 
 If the example content is contiguous, i.e., not interrupted by blank lines, the block name `example` can be placed directly on top of the text in an attribute list (`[]`).
 
-.Example paragraph
+.Example paragraph syntax
 ----
 .Optional title
 [example]
@@ -37,13 +37,14 @@ This is an #example paragraph#.
 [example]
 This is an #example paragraph#.
 
+[#delimited]
 === Delimited example block
 
 If the example content includes elements separated by blank lines, place the content between delimiter lines consisting of four equals signs (`pass:[====]`).
 
 You don't need to set the block name when you use a delimited block.
 
-.Delimited example block
+.Delimited example block syntax
 ----
 .Onomatopoeia
 ====
@@ -62,7 +63,8 @@ He could hear doves *cooing* in the pine trees`' branches.
 
 TIP: xref:admonitions.adoc[Complex admonitions] use the delimited example block syntax.
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
-* {uri-block}[Example titles and attributes]
+* {uri-block}[Block titles and attributes]
 * {uri-block-subs}[Substitutions by block type]

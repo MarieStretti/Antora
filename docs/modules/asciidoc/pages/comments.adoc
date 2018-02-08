@@ -19,6 +19,7 @@ You can use a comment line or comment block when you want to add text to an Asci
 
 A comment line is denoted by two consecutive forward slashes (`//`).
 
+.Comment line syntax
 [source,asciidoc]
 ----
 // This is a line that is commented out.
@@ -26,6 +27,7 @@ A comment line is denoted by two consecutive forward slashes (`//`).
 
 A comment block is delimited by a set of four consecutive forward slashes (`////`).
 
+.Comment block syntax
 [source,asciidoc]
 ----
 ////

@@ -8,6 +8,8 @@ endif::[]
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-sidebar: {uri-adoc-manual}/#sidebar
+:uri-block: {uri-adoc-manual}/#blocks
+:uri-block-subs: {uri-adoc-manual}/#built-in-blocks-summary
 
 On this page, you'll learn:
 
@@ -16,9 +18,30 @@ On this page, you'll learn:
 == Sidebar syntax
 
 A sidebar can contain any type of content such as quotes, equations, and images.
-A sidebar block is delimited by a set of four consecutive asterisks (`pass:[****]`).
+Normal substitutions are applied to sidebar content.
 
-.Sidebar
+=== Sidebar paragraph
+
+If the sidebar content is contiguous, the block name `sidebar` can be placed directly on top of the text in an attribute list (`[]`).
+
+.Sidebar paragraph syntax
+----
+[sidebar]
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+----
+
+.Result
+--
+[sidebar]
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+--
+
+=== Delimited sidebar block
+
+A sidebar block is delimited by a set of four consecutive asterisks (`pass:[****]`).
+You don't need to set the block name when you use a delimited block.
+
+.Delimited sidebar block syntax
 [source,asciidoc]
 ....
 .Optional Title
@@ -51,6 +74,9 @@ const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils'
 ****
 --
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
-* {uri-sidebar}[Sidebar block]
+* {uri-sidebar}[Sidebar blocks]
+* {uri-block}[Block titles and attributes]
+* {uri-block-subs}[Substitutions by block type]

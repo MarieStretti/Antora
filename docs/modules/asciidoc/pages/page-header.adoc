@@ -8,6 +8,9 @@ endif::[]
 :note-caption: Ops Hint
 // URLs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-author: {uri-adoc-manual}/#author-and-email
+:uri-attrs: {uri-adoc-manual}/#attributes
+:uri-builtin-attrs: {uri-adoc-manual}l/#builtin-attributes
 
 On this page, you'll learn:
 
@@ -49,25 +52,24 @@ The header can also contain line comments.
 
 A page title is specified by one equals sign (`=`), followed by one blank space, and then the text of the title.
 
+.Page title syntax
 [source,asciidoc]
 ----
 = The title of this page
 ----
-
-The content of a page's title populates the navigation breadcrumb when the site is generated.
 
 [#page-meta]
 == Page metadata
 
 AsciiDoc provides several optional, built-in attributes for defining page metadata.
 
-=== Author
+=== Author syntax
 
 Specifying the author or authors of a page is optional.
 The author is listed on the line directly beneath the page’s title.
 An optional email address or contact URL can follow an author’s name inside a set of angle brackets (`< >`).
 
-.Multiple authors
+.Multiple authors and author information syntax
 [source,asciidoc]
 ----
 = Page Title
@@ -77,7 +79,7 @@ First Middle Last <author@email.com>; First Last <author@email.com>
 When a page has multiple authors, each author is separated by a semicolon (`;`).
 Author names are stored in the HTML `meta` tag `author`.
 
-.Author HTML meta tag output
+.Author HTML output
 [source,xml]
 ....
 <head>
@@ -85,16 +87,21 @@ Author names are stored in the HTML `meta` tag `author`.
 <meta name="author" content="First Middle Last, First Last">
 ....
 
-Whether the page author information is visible on a generated page depends on the site's UI templates.
+Whether the page author information is visible on a published page depends on the site's UI templates.
 
 There are additional author attributes and methods for specifying author information.
-Refer to the {uri-adoc-manual}/#author-and-email[Asciidoctor user manual] for the complete list of author attributes and usage examples.
 
-=== Description
+[discrete]
+==== Asciidoctor resources
 
-If set, the `description` attribute is stored to the HTML `meta` tag with the same name.
+* {uri-author}[Author attributes and usage examples]
+
+=== Description syntax
+
+If set, `description` is stored to the HTML `meta` tag with the same name.
 You can break long values across several lines by ending each line with a backslash `\` that is preceded by a space.
 
+.Description attribute syntax
 [source,asciidoc]
 ----
 = Page Title
@@ -102,7 +109,7 @@ You can break long values across several lines by ending each line with a backsl
 about all kinds of interesting things.
 ----
 
-.Description HTML meta tag output
+.Description HTML output
 [source,xml]
 ....
 <head>
@@ -110,17 +117,18 @@ about all kinds of interesting things.
 <meta name="description" content="A description of the page stored in an HTML meta tag. This page is about all kinds of interesting things.">
 ....
 
-=== Keywords
+=== Keywords syntax
 
-The `keywords` attribute contains a list of comma-separated values that are assigned to the HTML `meta` tag with the same name.
+The keywords attribute contains a list of comma-separated values that are assigned to the HTML `meta` tag with the same name.
 
+.Keywords attribute syntax
 [source,asciidoc]
 ----
 = Page Title
 :keywords: comma-separated values, stored, in an HTML, meta, tag
 ----
 
-.Keywords HTML meta tag output
+.Keywords HTML output
 [source,xml]
 ....
 <head>
@@ -131,19 +139,19 @@ The `keywords` attribute contains a list of comma-separated values that are assi
 [#page-attrs]
 == Built-in page attributes
 
-AsciiDoc provides a multitude of built-in attributes that can activate and control syntax output behavior and styles.
+AsciiDoc provides numerous built-in attributes that can activate and control syntax output behavior and styles.
 
-TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the attributes section of the {uri-adoc-manual}/#attributes[Asciidoctor user manual].
+TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the {uri-attrs}[attributes section of the Asciidoctor manual].
 
 Page attributes are set in the header and are available to the whole page.
 Built-in AsciiDoc attributes are reserved attributes that have special, pre-defined behavior.
 Many built-in attributes also have a restricted set of accepted values.
 
-Built-in page attributes usually fall into one of two types; those that toggle a behavior on or off (boolean) and those that change the generated output by accepting an alternate value or replacement content (variable).
+Built-in page attributes usually do two things; they toggle a behavior on or off (boolean), and they change the generated output by accepting an alternate value or replacement content (variable).
 
 === Set and unset built-in attributes
 
-Let's look at an example of a boolean attribute, `sectanchors`.
+Let's turn on the attribute `sectanchors`.
 
 .Set a built-in page attribute
 [source,asciidoc]
@@ -152,10 +160,11 @@ Let's look at an example of a boolean attribute, `sectanchors`.
 :sectanchors:
 ----
 
-When turned "`on`", the `sectanchors` attribute adds an anchor to the left of each section title that is rendered as the symbol `§`.
-The attribute is turned "`on`", also known as "`set`", by simply entering it into the header.
+When turned _on_, `sectanchors` adds an anchor to the left of each xref:section-headings.adoc[section title].
+The anchor is rendered as the symbol `§`.
+The attribute is turned on, also known as _set_, by simply entering it into the header.
 
-Built-in attributes that are on by default, such as table captions, can be unset (turned "`off`") with a leading or trailing `!` added to the attribute name.
+Built-in attributes that are on by default, like `table-captions`, can be _unset_ (turned _off_) with a leading or trailing `!` added to its name.
 
 .Unset a built-in page attribute
 [source,asciidoc]
@@ -167,23 +176,25 @@ Built-in attributes that are on by default, such as table captions, can be unset
 
 === Change a built-in attribute value
 
-Let's look at an example of a built-in attribute that has a default value that we want to replace with our own value.
+Let's look at an example of a built-in attribute that has a default value that we want to replace with a custom value.
 
-The label on a Note admonition block is controlled by the `note-caption` attribute.
-This attribute is on by default and has an implicit (default) value of `NOTE`.
-Let's change the label to "`OPS HINT`".
+The label on a xref:admonitions.adoc[Note admonition] is controlled by the attribute `note-caption`.
+This attribute is set (on) by default and has an implicit value of `NOTE`.
+Let's change the value to "`OPS HINT`".
 
 .Change a built-in page attribute value
 [source,asciidoc]
 ----
 = Page Title
-:sectanchors:
-:table-caption!:
 :note-caption: OPS HINT
 ----
 
-Now, when we create a Note admonition block, the block's label should be displayed as OPS HINT.
+Now, when we create a Note admonition, its label is displayed as OPS HINT.
 
 NOTE: This is an Ops Hint.
 
-Refer to the Asciidoctor user manual for a list of all available {uri-adoc-manual}l/#builtin-attributes[built-in page attributes].
+[discrete]
+==== Asciidoctor resources
+
+* {uri-builtin-attrs}[Built-in page attributes]
+* {uri-attrs}[AsciiDoc attribute restrictions or operations precedence]

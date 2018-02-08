@@ -66,7 +66,7 @@ I can't find Joey's house.
 
 If you don't want an apostrophe that is bound by two characters to be curved, escape it by preceding it with a backslash (`{backslash}`).
 
-.Escaped curved apostrophe
+.Escaped curved apostrophe syntax
 [source,asciidoc]
 ----
 I can't find Joey\'s house.
