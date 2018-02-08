@@ -9,13 +9,11 @@ endif::[]
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-bold-italic: {uri-adoc-manual}/#bold-and-italic
-:uri-highlight: {uri-adoc-manual}/#custom-styling-with-attributes
 
 On this page, you'll learn:
 
 * [x] How to bold text with AsciiDoc.
 * [x] How to italicize text with AsciiDoc.
-* [x] How to highlight text with AsciiDoc.
 
 == Bold and italic syntax
 
@@ -23,7 +21,7 @@ To apply bold styling to a word or phrase, place an asterisk (`*`) at the beginn
 To bold one or a few characters bounded by other characters, place two asterisks (`**`) before and after the characters.
 
 Words are italicized when they're enclosed in a single set of underscores (`_`).
-Bounded characters are italicised by a set of two underscores (`__`).
+Bounded characters are italicized by a set of two underscores (`__`).
 
 .Bold and italic inline formatting
 [source,asciidoc]
@@ -52,23 +50,3 @@ Bold and italicized text can also be xref:monospace.adoc[monospaced].
 ==== Asciidoctor resources
 
 * {uri-bold-italic}[Bold and italic text formatting]
-
-== Highlight syntax
-
-You can highlight entire phrases, a word, and characters in a word.
-
-.Highlight inline formatting
-[source,asciidoc]
-----
-Let's #highlight this phrase# and part of th##is##.
-----
-
-.Result
-====
-Let's #highlight this phrase# and part of th##is##.
-====
-
-[discrete]
-==== Asciidoctor resources
-
-* {uri-highlight}[Highlighted text formatting]
