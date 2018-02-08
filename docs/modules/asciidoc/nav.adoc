@@ -17,6 +17,7 @@
 * xref:embed-video.adoc[Embed a Video]
 * xref:link-attachment.adoc[Link to an Attachment]
 * xref:admonitions.adoc[Admonitions]
+* xref:quote-excerpts.adoc[Quote & Prose Excerpts]
 * xref:sidebar.adoc[Sidebars]
 * xref:include-partial-page.adoc[Insert a Partial Page]
 * xref:comments.adoc[Comments]

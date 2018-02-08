@@ -1,0 +1,90 @@
+= Quote and Prose Excerpts
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:example-caption!:
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-quote: {uri-adoc-manual}/#prose-excerpts-quotes-and-verses
+
+On this page, you'll learn:
+
+* [x] How to mark up a paragraph as a quote or prose excerpt with AsciiDoc.
+* [x] How to mark up a multiple paragraphs (block) as a quote or prose excerpt with AsciiDoc.
+
+== Excerpt syntax
+
+Quote (also known as block quotes) and prose excerpts can contain attribution and citation information.
+
+=== Paragraph
+
+If the quote is a single line or paragraph, the attribute list can be placed directly on top of the text.
+
+.Anatomy of a basic quote or prose excerpt (paragraph)
+----
+.Optional lead-in text // <1>
+[quote, attribution, citation title and information] // <2> <3> <4>
+Quote or excerpt text // <5>
+----
+<1> Mark lead-in text explaining the context or setting of the quote using a period (`.`). (optional)
+<2> Set the attribute `quote` in the first position of the attribute list.
+<3> The second position contains who the excerpt is attributed to. (optional)
+<4> The third position contains the citation title and any additional citation information. (optional)
+<5> Enter the excerpt or quote text on the line immediately following the attribute list.
+
+Here's an example of a quote paragraph source and published output.
+
+.Quote paragraph
+[source,asciidoc]
+----
+.After landing the cloaked Klingon bird of prey in Golden Gate park:
+[quote, Captain James T. Kirk, Star Trek IV: The Voyage Home]
+Everybody remember where we parked.
+----
+
+.Result
+====
+.After landing the cloaked Klingon bird of prey in Golden Gate park:
+[quote, Captain James T. Kirk, Star Trek IV: The Voyage Home]
+Everybody remember where we parked.
+====
+
+=== Delimited block
+
+If the quote or excerpt is more than one paragraph, place the text between delimiter lines consisting of four underscores (pass:[____]).
+
+.Delimited quote block
+[source,asciidoc]
+....
+[quote, Monty Python and the Holy Grail]
+____
+King Arthur: I am your king.
+
+Woman: Well, I didn't vote for you.
+
+King Arthur: You don't vote for kings.
+
+Woman: Well how'd you become king then?
+____
+....
+
+.Result
+====
+[quote, Monty Python and the Holy Grail]
+____
+King Arthur: I am your king.
+
+Woman: Well, I didn't vote for you.
+
+King Arthur: You don't vote for kings.
+
+Woman: Well how'd you become king then?
+____
+====
+
+Asciidoctor resources:
+
+* {uri-quote}[Prose and quote excerpts]
