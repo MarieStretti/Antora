@@ -7,7 +7,8 @@
   "contributors": [
     "Dan Allen <dan@opendevise.com>",
     "Sarah White <sarah@opendevise.com>",
-    "Hubert SABLONNIÈRE <hubert.sablonniere@gmail.com>"
+    "Hubert SABLONNIÈRE <hubert.sablonniere@gmail.com>",
+    "Balachandran Sivakumar <balachandran@balachandran.org>"
   ],
   "homepage": "https://antora.org",
   "repository": "gitlab:antora/antora",
