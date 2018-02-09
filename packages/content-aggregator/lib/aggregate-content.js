@@ -108,6 +108,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir) {
     // NOTE if repository is in cache, we can assume the remote name is origin
     remoteName = 'origin'
     repoPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
+    url = repoUrl
   }
 
   try {
@@ -122,8 +123,6 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir) {
     }
   } catch (e) {
     if (isRemote) {
-      // NOTE if we clone the repository, we can assume the remote name is origin
-      remoteName = 'origin'
       repository = await fs
         .remove(repoPath)
         .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts: getFetchOptions() }))
@@ -145,11 +144,13 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir) {
     }
   }
 
-  try {
-    url = (await repository.getRemote(remoteName)).url()
-  } catch (e) {
-    // FIXME use repository.path() if repository is set
-    url = repoUrl
+  if (!url) {
+    try {
+      url = (await repository.getRemote(remoteName)).url()
+    } catch (e) {
+      // Q: should we make this a file URI?
+      url = repoPath
+    }
   }
 
   return { repository, repoPath, url, remoteName, isRemote, isBare }
