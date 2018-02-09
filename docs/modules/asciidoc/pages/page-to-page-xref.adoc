@@ -1,63 +1,64 @@
-= Reference another Page
+= Page Cross References
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:colon: :
 
-Antora uses an enhanced version of the AsciiDoc inline xref macro for linking between pages in a site.
-You'll also use this xref macro to add pages to xref:navigation:linked.adoc[navigation files].
+Antora uses an enhanced version of the AsciiDoc cross reference macro, commonly referred to as an xref, for linking between pages in a site.
+This xref macro is also used to add pages to xref:navigation:linked.adoc[navigation files].
 //This feature is activated if the value of the macro target ends with the AsciiDoc file extension (`.adoc`) or a fragment identifier (`#id`).
 
 The information you need to provide in the xref macro depends on the location of the current file and the location of the destination file (the document you're linking to).
 The closer the two files are, the less information you need to specify.
 
-== Page reference structure
+== Cross reference structure
 
-First, let's dissect a fully qualified page reference:
+First, let's dissect a fully qualified cross reference:
 
 [source,asciidoc]
 ----
 xref:version-name@component-name:module-name:page.adoc#fragment[link text]
 ----
 
-Here's what each part of the page reference does:
+Here's what each part of the cross reference does:
 
-xref: ::
-The prefix for an AsciiDoc inline xref macro.
+xref{colon}::
+The prefix for an AsciiDoc source file-to-file cross reference macro.
 
 [#page-id-vname-def]
-version-name@ ::
+version-name@::
 If a component has versions, the first target position is used to specify the version name of the destination component.
-This value is defined in the antora.yml file in the branch of the component repository that hosts the destination file.
+This value is defined in the xref:ROOT:antora_yml.adoc[component descriptor file] ([.path]_antora.yml_) in the branch of the component repository that hosts the destination file.
 When the version target is filled, it must be directly followed by an `@` symbol.
 
 [#page-id-cname-def]
-component-name: ::
+component-name{colon}::
 The second target position specifies the name of the destination component.
 The component name is directly followed by one colon (`:`).
-This value is defined in the name key of the antora.yml file in the branch of the component repository that hosts the destination file.
+This value is defined in the name key of the [.path]_antora.yml_ file in the branch of the component repository that hosts the destination file.
 If a component name is present in the xref, a module name must also be specified after the `:`.
 Otherwise, this position gets interpreted as the module name.
 
-module-name: ::
+module-name{colon}::
 The third target position specifies the name of the destination module.
 The module name is directly followed by one colon (`:`).
-If a component name is present, and the name of the module is "`ROOT`", the module name position can be left empty in some cases.
+If a component name is present, and the name of the module is ROOT, the module name position can be left empty in some cases.
 That's why sometimes you see a component name followed by two colons (`::`).
 
-page.adoc ::
+page.adoc::
 The fourth target position specifies the local path of the destination file relative to the module's documents directory.
 This value may include one or more optional topic folders.
 The destination file name must have the _.adoc_ file extension.
 
-#fragment ::
-An optional ID of a section or other anchor point to link to in the destination page (i.e., deep link).
+#fragment::
+An optional ID of a section or anchor point to link to in the destination page (i.e., deep link).
 This part is always optional.
 
-[link text] ::
-The text of the link that is displayed to the user.
+[link text]::
+The text of the link that is displayed to the reader.
 This text must be entered inside a set of square brackets (`[]`) at the end of the macro.
 If the text is not specified, the raw target is used.
 
@@ -74,43 +75,31 @@ When the current page and the destination page are in the same module, you only 
 
 .Link to a page in the same module
 [source,asciidoc]
-----
 xref:error-handling.adoc[Error Handling]
-----
 
 .Link to a page in a topic folder
 [source,asciidoc]
-----
 xref:concept/index.adoc[Key Concepts]
-----
 
 .Link to a page in the same module but in a different version
 [source,asciidoc]
-----
 xref:3.3@error-handling.adoc#message-list[error messages]
-----
 
-== Scenario: In the same component but different module
+== Scenario: In the same component but a different module
 
 When the current page and the destination page are in the same component but different modules, you'll need to enter the name of the destination module and destination file.
 
 .Link to a page in another module
 [source,asciidoc]
-----
-xref:getting-started:implement-and-test-api.adoc[implement an API]
-----
+xref:get-started:implement-api.adoc[implement an API]
 
-.Link to a page in the ROOT module and in a topic folder
+.Link to a page in the ROOT module and in a topic folde
 [source,asciidoc]
-----
-xref:ROOT:transports/ajax-reference.adoc[Ajax Transports]
-----
+xref:ROOT:transports/c04-reference.adoc[C04 Transports]
 
 .Link to a page in the ROOT module and in a different version
 [source,asciidoc]
-----
-The xref:3.4@ROOT:scopes/foreach.adoc[foreach scope] splits a collection.
-----
+The xref:3.4@ROOT:scopes/super-mass.adoc[super massive scope] splits atoms.
 
 == Scenario: In a different component
 
@@ -119,18 +108,12 @@ If a version is not specified in this scenario, the implicit value is `master@`.
 
 .Link to a page in the ROOT module of a versioned component
 [source,asciidoc]
-----
-How do I xref:2.0@default-ui::modify-template.adoc[modify a template] in the UI project?
-----
+How do I xref:2.0@default-ui::modify-template.adoc[modify a UI template]?
 
 .Link to a page in the ROOT module of a component that doesn't have versions
 [source,asciidoc]
-----
 xref:icons::index.adoc#intro[Introducing the Icon Project]
-----
 
 .Link to a page in a module of a component that doesn't have versions
 [source,asciidoc]
-----
-xref:icons:web:modify-svg.adoc[Getting started with the SVG assets]
-----
+xref:icons:web:modify-svg.adoc[Get started with the SVG assets]
