@@ -23,7 +23,6 @@
 * xref:ui-macros.adoc[UI Macros]
 * xref:admonitions.adoc[Admonitions]
 * xref:examples.adoc[Examples]
-* xref:quote-excerpts.adoc[Quote & Prose Excerpts]
 * xref:sidebar.adoc[Sidebars]
 * xref:include-partial-page.adoc[Insert a Partial Page]
 * xref:comments.adoc[Comments]
