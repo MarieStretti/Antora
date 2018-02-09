@@ -640,7 +640,6 @@ describe('aggregateContent()', () => {
           mediaType: expectedFile.mediaType,
           origin: {
             type: 'git',
-            // in our test the git url is the same as the repo url we provided
             url: repoBuilder.url,
             branch: 'master',
             startPath: '',
@@ -725,6 +724,22 @@ describe('aggregateContent()', () => {
         expect(origin.url).to.equal(url)
         expect(origin.branch).to.equal(branch)
         expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+      })
+    })
+
+    it('should set origin url to repository path if repository is local and not connected to remote', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithFiles(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(aggregate).to.have.lengthOf(1)
+      aggregate[0].files.forEach((file) => {
+        expect(file).to.have.nested.property('src.origin.url', repoBuilder.repoPath)
       })
     })
   })
