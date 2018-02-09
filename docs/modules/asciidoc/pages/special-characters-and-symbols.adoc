@@ -6,6 +6,7 @@ endif::[]
 :idprefix:
 :idseparator: -
 :table-caption!:
+:linkattrs:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-special-chars: {uri-adoc-manual}/#special-characters
@@ -16,7 +17,7 @@ On this page, you'll learn:
 
 * [x] How to add special characters (<, >, &) with AsciiDoc.
 * [x] How to add symbols, such as (C) and =>, with AsciiDoc.
-* [x] How to use HTML and XML entities with AsciiDoc
+* [x] How to use HTML and XML entities with AsciiDoc.
 
 Special character and symbol replacement is built into Asciidoctor.
 
@@ -30,8 +31,7 @@ For example, to produce the `&sect;` symbol you can use `\&sect;`, `\&#x00A7;`, 
 When the document is processed, the replacements substitution will replace the section symbol reference, regardless of whether it is a character entity reference or a numeric character reference, with `\&#167;`.
 In turn, `\&#167;` will display as `&sect;`.
 
-[cols="2,^1l,^1,^1,2"]
-.Special character and symbol syntax
+[cols="2,^1l,1,1,2"]
 |===
 |Name |Syntax |Replacement |Rendered |Notes
 
@@ -65,7 +65,7 @@ In turn, `\&#167;` will display as `&sect;`.
 |{empty}--{empty}
 |Only replaced if between two word characters, between a word character and a line boundary, or flanked by spaces.
 
-When flanked by space characters (e.g., `+a -- b+`), the normal spaces are replaced by thin spaces (\&#8201;).
+When flanked by space characters (e.g., `+a -- b+`), the normal spaces are replaced by thin spaces (`\&#8201;`).
 
 |Greater than
 |>
@@ -88,7 +88,7 @@ When flanked by space characters (e.g., `+a -- b+`), the normal spaces are repla
 |Less than
 |<
 |\&lt;
-|
+|<
 |
 
 |Registered
@@ -119,6 +119,6 @@ When flanked by space characters (e.g., `+a -- b+`), the normal spaces are repla
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-special-chars}[Special characters]
-* {uri-symbols}[HTML, XML, and Unicode symbols]
-* {uri-char-attrs}[Predefined attributes for character replacements]
+* {uri-special-chars}[Special characters^]
+* {uri-symbols}[HTML, XML, and Unicode symbols^]
+* {uri-char-attrs}[Predefined attributes for character replacements^]
