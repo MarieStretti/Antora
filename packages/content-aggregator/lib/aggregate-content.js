@@ -268,7 +268,7 @@ async function selectBranches (repo, isBare, branchPatterns, remote) {
 
       // NOTE if branch is present in accum, we already know it matches the pattern
       if (branchName in accum) {
-        if (!branch.remote || isBare) accum[branchName] = branch
+        if (isBare === !!branch.remote) accum[branchName] = branch
       } else if (!branchPatterns || matcher([branchName], branchPatterns).length) {
         accum[branchName] = branch
       }
