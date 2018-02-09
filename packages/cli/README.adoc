@@ -2,7 +2,8 @@
 
 The command line interface (CLI) for Antora.
 
-https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from versioned content repositories and processed with Asciidoctor.
+https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
+Its site generator pipeline aggregates documents from versioned content repositories and processes them using http://asciidoctor.org[Asciidoctor].
 
 To run Antora, you need both the CLI and a site generator pipeline.
 Once these packages are installed, you can use the `antora` command to generate your site.

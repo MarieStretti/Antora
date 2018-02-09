@@ -2,7 +2,8 @@
 
 The content classifier is a component in Antora responsible for organizing aggregated content into a virtual file catalog for use in an Antora documentation pipeline.
 
-https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from versioned content repositories and processed with Asciidoctor.
+https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
+Its site generator pipeline aggregates documents from versioned content repositories and processes them using http://asciidoctor.org[Asciidoctor].
 
 == Copyright and License
 

@@ -1,10 +1,11 @@
 = Antora Site Mapper
 
-The site mapper is the component in Antora responsible for generating the sitemap files for the site.
+The site mapper is a component in Antora responsible for generating the sitemap files for the site.
 These files, which are intended to be read by crawlers, provide a list of all published pages by URL.
 The sitemap entries are partitioned by component into sitemap index files, which are then referenced by the main sitemap file.
 
-https://antora.org[Antora] is a modular static site generator designed for making documentation sites from AsciiDoc aggregated from versioned content repositories and processed with Asciidoctor.
+https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
+Its site generator pipeline aggregates documents from versioned content repositories and processes them using http://asciidoctor.org[Asciidoctor].
 
 == Copyright and License
 
