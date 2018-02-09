@@ -31,26 +31,21 @@ For a detailed list of current development tasks, refer to the core components {
 
 ==== Scheduled for next alpha
 
-* [ ] Fix default branch caching {uri-issues}/151[#151]
-* [x] Provide capability to customize/override UI templates {uri-issues}/147[#147]
-* [x] Pass site keys to UI model {uri-issues}/146[#146]
-* [ ] Improve error message when local workspace path cannot be found {uri-issues}/119[#119]
+* [ ] Architect and implement page redirector / router component
+* [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 
 ==== Waiting
 
-* [ ] Architect and implement page redirector / router component
+* [ ] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
 * [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
 * [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
-* [ ] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
-* [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
-* [ ] Set the edit URL property on files in the content catalog {uri-issues}/87[#87]
 * [ ] Evaluate CHANGELOG policies
 * [ ] Automatically generate CHANGELOG for release
 
 === v1.0.0-beta.x
 
-* [ ] More informative error messages {uri-issues}/111[#111]
+* [ ] Add error message when repository clone fails {uri-issues}/155[#155]
 * [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
 * [ ] Test against Asciidoctor.js 1.5.6-preview.5
 * [ ] Test against Node 9
@@ -98,29 +93,21 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === v1.0.0-alpha.x
 
-==== Scheduled for alpha.6
+==== Scheduled for next alpha
 
-* [ ] Document UI bundle configuration features
-* [x] Document site configuration keys {uri-issues}/142[#142]
-* [x] Document how to upgrade to latest Antora version {uri-issues}/140[#140]
-* [x] Add AsciiDoc page overview and structure documentation {uri-issues}/131[#131]
-* [x] Document Windows installation instructions {uri-issues}/130[#130]
-* [x] Document output provider and path features {uri-issues}/127[#127]
-* [x] _Docs Site_: Set up automatic deployment to GitLab pages for docs.antora.org {uri-docs-site-issues}/2[#2]
-
-==== Scheduled for alpha.7
-
+* [ ] Improve component and module index page content {uri-issues}/156[#156]
+* [ ] Provide source URL configuration examples {uri-issues}/153[#153]
+* [ ] Document UI bundle configuration features {uri-issues}/152[#152]
 * [ ] Add nav category and multi-list capabilities to navigation docs
-* [ ] _Docs Site:_ Add site and UI keys to production playbook
+* [ ] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
 * [ ] _Docs Site:_ Connect Docs and project sites
 * [ ] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
-* [ ] Provide source URL configuration examples
 * [ ] Add how to create a partial page
-* [ ] Document sitemap features
-* [ ] Document versioning policy {uri-issues}/14[#14]
 
 ==== Waiting
 
+* [ ] Document sitemap features
+* [ ] Document versioning policy {uri-issues}/14[#14]
 * [ ] Document redirect features
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
@@ -140,18 +127,12 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 ==== Scheduled for next alpha
 
-* [x] Don't show edit the page link when page.editUrl is undefined {uri-ui-issues}/39[#39]
-* [ ] Don't include URL path when linking to current page {uri-ui-issues}/38[#38]
-* [x] Add Google analytics tracking code when key is set in playbook {uri-ui-issues}/37[#37]
-* [x] Open menu item in navigation when menu item is clicked {uri-ui-issues}/36[#36]
-* [x] Add list-style none on inline (flex) lists {uri-ui-issues}/35[#35]
-* [x] Look for in-page links anywhere in page {uri-ui-issues}/34[#34]
-* [x] Display nav list titles in menu and breadcrumbs {uri-ui-issues}/28[#28]
+* [ ] Improve sidebar block styles {uri-ui-issues}/27[#27]
 * [ ] Refine literal, listing, and example block title styles {uri-ui-issues}/22[#22]
+* [ ] Style keyboard UI macro {uri-ui-issues}/23[#23]
 
 ==== Waiting
 
-* [ ] Style keyboard UI macro {uri-ui-issues}/23[#23]
 * [ ] IE 11 fixes
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 * [ ] Integrate search
@@ -170,15 +151,40 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 * [ ] Enable ordered list numeration styles {uri-ui-issues}/24[#24]
 * [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
 * [ ] Enable unordered list marker styles {uri-ui-issues}/26[#26]
-* [ ] Improve sidebar block styles {uri-ui-issues}/27[#27]
 * [ ] Create task list SVGs {uri-ui-issues}/31[#31]
-* [ ] Improve sidebar page positioning
 * [ ] Set up UI bundle hosting
 * [ ] Upgrade build to Gulp 4
 
 == Completed Releases
 
 See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
+
+=== 1.0.0-alpha.6
+
+* [x] Deep page reference that resolves to current page should produce same input as in-page reference {uri-issues}/158[#158]
+* [x] Calculate repository URL correctly {uri-issues}/157[#157]
+* [x] Fix default branch caching {uri-issues}/151[#151]
+* [x] Provide capability to customize/override UI templates {uri-issues}/147[#147]
+* [x] Pass site keys to UI model {uri-issues}/146[#146]
+* [x] Improve error message when local workspace path cannot be found {uri-issues}/119[#119]
+* [x] Set the edit URL property on files in the content catalog {uri-issues}/87[#87]
+* [x] Style links in footer {uri-ui-issues}/40[UI #40]
+* [x] Don't show edit the page link when page.editUrl is undefined {uri-ui-issues}/39[UI #39]
+* [x] Don't include URL path when linking to current page {uri-ui-issues}/38[UI #38]
+* [x] Add Google analytics tracking code when key is set in playbook {uri-ui-issues}/37[UI #37]
+* [x] Open menu item in navigation when menu item is clicked {uri-ui-issues}/36[UI #36]
+* [x] Add list-style none on inline (flex) lists {uri-ui-issues}/35[UI #35]
+* [x] Look for in-page links anywhere in page {uri-ui-issues}/34[UI #34]
+* [x] Fix menu scroll conflict with footer in Chrome {uri-ui-issues}/33[UI #33]
+* [x] Display nav list titles in menu and breadcrumbs {uri-ui-issues}/28[UI #28]
+* [x] Document AsciiDoc syntax {uri-issues}/148[#148], {uri-issues}/154[#154]
+* [x] Document site configuration keys {uri-issues}/142[#142]
+* [x] Document how to upgrade to latest Antora version {uri-issues}/140[#140]
+* [x] Document page structure {uri-issues}/131[#131]
+* [x] Document Windows installation instructions {uri-issues}/130[#130]
+* [x] Document output provider and path features {uri-issues}/127[#127]
+* [x] _Docs Site:_ Add site and UI keys to production playbook
+* [x] _Docs Site_: Set up automatic deployment to GitLab pages for docs.antora.org {uri-docs-site-issues}/2[#2]
 
 === 1.0.0-alpha.5
 
