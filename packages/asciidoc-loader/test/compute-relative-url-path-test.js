@@ -67,4 +67,22 @@ describe('computeRelativeUrlPath()', () => {
       expect(computeRelativeUrlPath('/dir/from/', '/')).to.equal('../../')
     })
   })
+
+  describe('with hash', () => {
+    it('should compute URL to different file', () => {
+      expect(computeRelativeUrlPath('/from.html', '/to.html', '#the-fragment')).to.equal('to.html#the-fragment')
+    })
+
+    it('should compute URL to self', () => {
+      expect(computeRelativeUrlPath('/file.html', '/file.html', '#the-fragment')).to.equal('#the-fragment')
+    })
+
+    it('should compute URL to different indexified file', () => {
+      expect(computeRelativeUrlPath('/from/', '/to/', '#the-fragment')).to.equal('../to/#the-fragment')
+    })
+
+    it('should compute URL to indexified self', () => {
+      expect(computeRelativeUrlPath('/file/', '/file/', '#the-fragment')).to.equal('#the-fragment')
+    })
+  })
 })

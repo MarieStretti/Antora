@@ -34,9 +34,14 @@ function convertPageRef (refSpec, content, currentPage, catalog, relativize = tr
     return { content: refSpec, target: '#' }
   }
 
-  let target = relativize ? computeRelativeUrlPath(currentPage.pub.url, targetPage.pub.url) : targetPage.pub.url
-  if (fragment) target = target + '#' + fragment
-  if (!content) content = `${pageIdSpec}.adoc${fragment ? '#' + fragment : ''}`
+  const hash = fragment ? '#' + fragment : ''
+  let target
+  if (relativize) {
+    target = computeRelativeUrlPath(currentPage.pub.url, targetPage.pub.url, hash)
+  } else {
+    target = targetPage.pub.url + hash
+  }
+  if (!content) content = `${pageIdSpec}.adoc${hash}`
 
   return { content, target }
 }
