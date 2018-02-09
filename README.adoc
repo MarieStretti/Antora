@@ -30,7 +30,7 @@ image:{img-chat-dev}[Chat - dev (Gitter), link={uri-chat-dev}]
 image:{img-chat-users}[Chat - users (Gitter), link={uri-chat-users}]
 endif::[]
 
-{uri-project}[Antora] is a modular, multi-repository site generator designed for creating documentation sites composed in AsciiDoc and processed with {uri-asciidoctor}[Asciidoctor].
+{uri-project}[Antora] is a modular, multi-repository site generator designed for creating documentation sites from content composed in AsciiDoc and processed with {uri-asciidoctor}[Asciidoctor].
 
 Antora's toolchain and workflow help documentation and engineering teams create, manage, collaborate on, remix, and publish documentation sites sourced from multiple versioned git repositories without needing expertise in web technologies, build automation, or system administration.
 
