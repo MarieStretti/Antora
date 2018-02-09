@@ -5,23 +5,22 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-ordered: {uri-adoc-manual}/#ordered-lists
 :uri-unordered: {uri-adoc-manual}/#unordered-lists
 
-
 On this page, you'll learn:
 
-* [x] How to mark up an ordered (numbered) list with AsciiDoc.
-* [x] How to mark up an unordered (bulleted) list with AsciiDoc.
+* [x] How to mark up an ordered list with AsciiDoc.
+* [x] How to mark up an unordered list with AsciiDoc.
 
 == Ordered list syntax
 
 .Ordered list with nested levels
 [source,asciidoc]
 ----
-.Optional Title
 . Step 1
 . Step 2
 .. Details
@@ -32,9 +31,8 @@ On this page, you'll learn:
 . Step 3
 ----
 
-.Result
---
-.Optional Title
+The maximum nesting level is five (`pass:[.....]`).
+
 . Step 1
 . Step 2
 .. Details
@@ -43,14 +41,11 @@ On this page, you'll learn:
 ..... We're really down in the weeds now.
 .. More details
 . Step 3
---
-
-The maximum nesting level is five (`pass:[.....]`).
 
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-ordered}[Basic and complex ordered lists]
+* {uri-ordered}[Basic and complex ordered lists^]
 
 [#unordered]
 == Unordered list syntax
@@ -58,7 +53,6 @@ The maximum nesting level is five (`pass:[.....]`).
 .Unordered list with nested levels
 [source,asciidoc]
 ----
-.Optional Title
 * Item A
 * Item B
 ** Item B1
@@ -69,9 +63,8 @@ The maximum nesting level is five (`pass:[.....]`).
 * Item C
 ----
 
-.Result
---
-.Optional Title
+The maximum nesting level is five (`pass:[*****]`).
+
 * Item A
 * Item B
 ** Item B1
@@ -80,11 +73,8 @@ The maximum nesting level is five (`pass:[.....]`).
 ***** Details about the details
 ** Item B2
 * Item C
---
-
-The maximum nesting level is five (`pass:[*****]`).
 
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-unordered}[Basic and complex unordered lists].
+* {uri-unordered}[Basic and complex unordered lists^]
