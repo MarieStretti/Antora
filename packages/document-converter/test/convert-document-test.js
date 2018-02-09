@@ -158,6 +158,44 @@ describe('convertDocument()', () => {
     expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
   })
 
+  it('should convert page self-reference with no fragment', async () => {
+    inputFile.contents = Buffer.from('xref:page-a.adoc[Current Page]')
+    const contentCatalog = { getById: spy(() => inputFile) }
+    await convertDocument(inputFile, {}, contentCatalog)
+    expectPageLink(inputFile.contents.toString(), 'page-a.html', 'Current Page')
+  })
+
+  it('should convert page self-reference with no fragment when URLs are indexified', async () => {
+    inputFile.contents = Buffer.from('xref:page-a.adoc[Current Page]')
+    inputFile.pub = {
+      url: '/component-a/1.2.3/module-a/page-a/',
+      moduleRootPath: '../..',
+      rootPath: '../../../..',
+    }
+    const contentCatalog = { getById: spy(() => inputFile) }
+    await convertDocument(inputFile, {}, contentCatalog)
+    expectPageLink(inputFile.contents.toString(), './', 'Current Page')
+  })
+
+  it('should convert page self-reference with fragment', async () => {
+    inputFile.contents = Buffer.from('xref:page-a.adoc#the-fragment[The Fragment]')
+    const contentCatalog = { getById: spy(() => inputFile) }
+    await convertDocument(inputFile, {}, contentCatalog)
+    expect(inputFile.contents.toString()).to.include('<a href="#the-fragment">The Fragment</a>')
+  })
+
+  it('should convert page self-reference with fragment when URLs are indexified', async () => {
+    inputFile.contents = Buffer.from('xref:page-a.adoc#the-fragment[The Fragment]')
+    inputFile.pub = {
+      url: '/component-a/1.2.3/module-a/page-a/',
+      moduleRootPath: '../..',
+      rootPath: '../../../..',
+    }
+    const contentCatalog = { getById: spy(() => inputFile) }
+    await convertDocument(inputFile, {}, contentCatalog)
+    expect(inputFile.contents.toString()).to.include('<a href="#the-fragment">The Fragment</a>')
+  })
+
   it('should resolve target of include directive to file in content catalog', async () => {
     inputFile.contents = Buffer.from('include::{partialsdir}/definitions.adoc[]')
     const partialFile = {
