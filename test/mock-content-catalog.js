@@ -40,6 +40,7 @@ function mockContentCatalog (seed = []) {
         module: module === '' ? undefined : module,
         relative,
         basename: path.basename(relative),
+        stem: path.basename(relative, path.extname(relative)),
       },
     }
     if (family === 'page' || family === 'navigation') {

@@ -13,15 +13,20 @@ const { posix: path } = require('path')
  *
  * @param {String} from - The root-relative start URL.
  * @param {String} to - The root-relative target URL.
+ * @param {String} [hash=''] - The URL hash append to the to URL (not #).
  *
  * @returns {String} The shortest relative path to travel from the start URL to the target URL.
  */
-function computeRelativeUrlPath (from, to) {
-  if (to.charAt(to.length - 1) === '/') {
-    return from === to ? './' : path.relative(path.dirname(from + '.'), to) + '/'
+function computeRelativeUrlPath (from, to, hash = '') {
+  if (from === to) {
+    return hash || (isDir(to) ? './' : path.basename(to))
   } else {
-    return path.relative(path.dirname(from + '.'), to)
+    return path.relative(path.dirname(from + '.'), to) + (isDir(to) ? '/' + hash : hash)
   }
+}
+
+function isDir (str) {
+  return str.charAt(str.length - 1) === '/'
 }
 
 module.exports = computeRelativeUrlPath

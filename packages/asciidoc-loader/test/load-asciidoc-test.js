@@ -1182,7 +1182,7 @@ describe('loadAsciiDoc()', () => {
       const contentCatalog = mockContentCatalog({
         family: 'page',
         relative: 'this-page.adoc',
-        contents: 'xref:this-page.adoc[Link to Self]',
+        contents: 'xref:module-a:this-page.adoc[Link to Self]',
       }).spyOn('getById')
       inputFile = contentCatalog.getFiles()[0]
       const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
@@ -1194,6 +1194,55 @@ describe('loadAsciiDoc()', () => {
         relative: 'this-page.adoc',
       })
       expectPageLink(html, 'this-page.html', 'Link to Self')
+    })
+
+    it('should convert a page reference to self with empty fragment', () => {
+      const contentCatalog = mockContentCatalog({
+        family: 'page',
+        relative: 'this-page.adoc',
+        contents: 'xref:module-a:this-page.adoc#[Link to Self]',
+      }).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'this-page.adoc',
+      })
+      expectPageLink(html, 'this-page.html', 'Link to Self')
+    })
+
+    it('should convert a deep page reference to self', () => {
+      const contentCatalog = mockContentCatalog({
+        family: 'page',
+        relative: 'this-page.adoc',
+        contents: 'xref:module-a:this-page.adoc#the-fragment[Deep Link to Self]',
+      }).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'this-page.adoc',
+      })
+      expectLink(html, '#the-fragment', 'Deep Link to Self')
+    })
+
+    // NOTE this case currently bypasses our extension
+    it('should convert a deep page reference to self that matches docname', () => {
+      const contentCatalog = mockContentCatalog({
+        family: 'page',
+        relative: 'this-page.adoc',
+        contents: 'xref:this-page.adoc#the-fragment[Deep Link to Self]',
+      }).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
+      expect(contentCatalog.getById).to.not.have.been.called()
+      expectLink(html, '#the-fragment', 'Deep Link to Self')
     })
 
     it('should convert a page reference to a root relative path if relativizePageRefs is disabled', () => {
@@ -1303,7 +1352,7 @@ describe('loadAsciiDoc()', () => {
       const contentCatalog = mockContentCatalog({
         family: 'page',
         relative: 'this-page.adoc',
-        contents: 'xref:this-page.adoc[Link to Self]',
+        contents: 'xref:module-a:this-page.adoc[Link to Self]',
         indexify: true,
       }).spyOn('getById')
       inputFile = contentCatalog.getFiles()[0]
@@ -1316,6 +1365,63 @@ describe('loadAsciiDoc()', () => {
         relative: 'this-page.adoc',
       })
       expectPageLink(html, './', 'Link to Self')
+    })
+
+    it('should convert a page reference to self with empty fragment using indexified URLs', () => {
+      const contentCatalog = mockContentCatalog({
+        family: 'page',
+        relative: 'this-page.adoc',
+        contents: 'xref:module-a:this-page.adoc#[Link to Self]',
+        indexify: true,
+      }).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'this-page.adoc',
+      })
+      expectPageLink(html, './', 'Link to Self')
+    })
+
+    it('should convert a deep page reference to self using indexified URLs', () => {
+      const contentCatalog = mockContentCatalog({
+        family: 'page',
+        relative: 'this-page.adoc',
+        contents: 'xref:module-a:this-page.adoc#the-fragment[Deep Link to Self]',
+        indexify: true,
+      }).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'this-page.adoc',
+      })
+      expectLink(html, '#the-fragment', 'Deep Link to Self')
+    })
+
+    it('should convert a page reference to self that matches docname using indexified URLs', () => {
+      const contentCatalog = mockContentCatalog({
+        family: 'page',
+        relative: 'this-page.adoc',
+        contents: 'xref:module-a:this-page.adoc#the-fragment[Deep Link to Self]',
+        indexify: true,
+      }).spyOn('getById')
+      inputFile = contentCatalog.getFiles()[0]
+      const html = loadAsciiDoc(inputFile, {}, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'this-page.adoc',
+      })
+      expectLink(html, '#the-fragment', 'Deep Link to Self')
     })
 
     it('should use default content for page reference if content not specified', () => {
