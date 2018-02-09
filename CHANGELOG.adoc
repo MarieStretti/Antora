@@ -5,11 +5,41 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-alpha.6 (2018-02-09)
+
+=== Added
+
+* *docs:* Add Getting Help section to README
+* *content-aggregator:* Assign src.editUrl property on file if applicable
+* *page-composer:* Pass defined site.keys to UI model (as site.keys)
+* *page-composer:* Pass edit URL for page to UI model (as page.editUrl)
+* *playbook-builder:* Add ui.supplemental_files property to playbook schema
+* *ui-loader:* Append supplemental files to UI bundle
+
+=== Changed
+
+* *docs:* Prepare documentation for initial publication to docs.antora.org
+* *content-aggregator:* Report accurate messages if local directory doesn't exist or isn't a git repository (@benignbala)
+* *content-aggregator:* Move src.origin.git property to src.origin with type qualifier property
+* *content-aggregator:* Share src.origin data between files taken from the same branch
+* *content-aggregator:* Set src.origin.url to absolute repository path if remote url can't be resolved
+* *content-aggregator:* Add src.origin.worktree flag for files taken from worktree
+* *content-aggregator:* Force set remote name to 'origin' when using repository from cache
+* *content-aggregator:* Use async operation to remove cached repository directory
+* *content-aggregator:* Remove local branch created by nodegit in cached (bare) repository
+* *ui-loader:* Improve how UI bundle is loaded
+
+=== Fixed
+
+* *asciidoc-loader:* Output correct href value for self-referencing page reference (with and without fragment)
+* *content-aggregator:* Prefer remote branches over local branches in a bare repository
+* *site-generator-default:* Await function calls properly to avoid unhandled promise rejections
+
 == 1.0.0-alpha.5 (2018-02-01)
 
 === Added
 
-* *site-mapper:* First release of component.
+* *site-mapper:* First release of component
 * *site-generator-default:* Add support for site start page defined in playbook (redirect from index.html)
 
 === Changed
@@ -25,7 +55,7 @@ This project utilizes semantic versioning.
 === Fixed
 
 * *content-aggregator:* Clean value of start path on content source data
-* *content-aggregator:* Make URI and drive letter regular expressions more accurate.
+* *content-aggregator:* Make URI and drive letter regular expressions more accurate
 
 == 1.0.0-alpha.4 (2018-01-28)
 
