@@ -1,0 +1,52 @@
+= Labeled and Definition Lists
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-labeled: {uri-adoc-manual}/#labeled-list
+
+On this page, you'll learn:
+
+* [x] How to mark up a labeled or definition list with AsciiDoc.
+
+Labeled lists, also known as definition lists, provide a list of terms or phrases and their descriptions.
+
+== Labeled list syntax
+
+Each item in a labeled list consists of a term or phrase followed by:
+
+* two consecutive colons, aka a double colon (`::`) separator,
+* then at least one space or endline,
+* and finally, the description or definition of the item
+
+Here's an example of a labeled list with two terms and their descriptions.
+
+.Labeled list
+[source,asciidoc]
+----
+.Optional title
+Keyboard::
+Used to enter text or control items on the screen. // <1>
+Mouse:: Used to point to and select items on your computer screen. // <2>
+----
+<1> The term and its definition can be placed on separate lines.
+<2> The term and its definition can be placed on the same line as long as there is at least one blank space between the `::` and definition text.
+
+.Result
+--
+.Optional title
+Keyboard::
+Used to enter text or control items on the screen.
+Mouse:: Used to point to and select items on your computer screen.
+--
+
+The description of each item is displayed below the label when rendered.
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-labeled}[Basic and complex labeled lists]

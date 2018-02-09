@@ -116,7 +116,8 @@ When flanked by space characters (e.g., `+a -- b+`), the normal spaces are repla
 |
 |===
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-special-chars}[Special characters]
 * {uri-symbols}[HTML, XML, and Unicode symbols]

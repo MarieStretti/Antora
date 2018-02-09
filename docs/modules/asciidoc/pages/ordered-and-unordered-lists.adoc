@@ -7,15 +7,16 @@ endif::[]
 :idseparator: -
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
-:uri-unordered: {uri-adoc-manual}/#unordered-lists
 :uri-ordered: {uri-adoc-manual}/#ordered-lists
+:uri-unordered: {uri-adoc-manual}/#unordered-lists
+
 
 On this page, you'll learn:
 
 * [x] How to mark up an ordered (numbered) list with AsciiDoc.
 * [x] How to mark up an unordered (bulleted) list with AsciiDoc.
 
-== Ordered List
+== Ordered list syntax
 
 .Ordered list with nested levels
 [source,asciidoc]
@@ -46,10 +47,13 @@ On this page, you'll learn:
 
 The maximum nesting level is five (`pass:[.....]`).
 
-Learn more about {uri-ordered}[ordered lists in the Asciidoctor manual].
+[discrete]
+==== Asciidoctor resources
+
+* {uri-ordered}[Basic and complex ordered lists]
 
 [#unordered]
-== Unordered List
+== Unordered list syntax
 
 .Unordered list with nested levels
 [source,asciidoc]
@@ -80,4 +84,7 @@ Learn more about {uri-ordered}[ordered lists in the Asciidoctor manual].
 
 The maximum nesting level is five (`pass:[*****]`).
 
-Learn more about {uri-unordered}[unordered lists in the Asciidoctor manual].
+[discrete]
+==== Asciidoctor resources
+
+* {uri-unordered}[Basic and complex unordered lists].

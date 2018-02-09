@@ -1,0 +1,146 @@
+= URLs
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:example-caption!:
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-url: {uri-adoc-manual}/#url
+:uri-prevent-subs: {uri-adoc-manual}/#preventing-substitutions
+:uri-inline-pass: {uri-adoc-manual}/#inline-pass-macro-and-explicit-substitutions
+:url-peak: https://www.google.com/maps/place/Antora+Peak/@38.3249976,-106.2355882,14z/data=!3m1!4b1!4m5!3m4!1s0x871572433f469bd7:0xd2bdf15e615cd269!8m2!3d38.3249994!4d-106.2180786!5m1!1e4
+
+On this page, you'll learn:
+
+* [x] When you should use a URL instead of a cross reference.
+* [x] How to create links with and without link text.
+* [x] How to escape a URL.
+* [x] How to handle complex URLs.
+
+== URL or cross reference?
+
+Use AsciiDoc's URL syntax when you need to create a link to an external URL.
+External URLs are links to webpages that aren't built as part of your documentation site by your Antora pipeline.
+
+When you want to link to a page that is part of your documentation site, use the xref:page-to-page-xref.adoc[cross reference syntax] instead.
+
+== URL syntax
+
+To create a link to an external URL, all you need to do is add the URL prefixed with its scheme.
+
+.Raw URL syntax
+[source,asciidoc]
+----
+Chat with other documentation writers at https://gitter.im/antora/users.
+----
+
+Links that begin with official URI schemes, such as `https`, `ftp`, `mailto`, etc., are automatically turned into hyperlinks when they're processed.
+
+.Result
+====
+Chat with other documentation writers at https://gitter.im/antora/users.
+====
+
+To attach a URL to text, enclose the text in square brackets (`[]`) at the end of the URL.
+
+.URL with link text syntax
+[source,asciidoc]
+----
+Looking for help?
+Visit the https://gitter.im/antora/users[Antora chat room].
+----
+
+.Result
+====
+Looking for help?
+Visit the https://gitter.im/antora/users[Antora chat room].
+====
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-url}[URL syntax and attributes]
+
+== Escape a URL
+
+When you want to display a URL but you don't want it to be active, you can escape it by prepending it with a backslash (`\`).
+
+.Escape syntax
+[source,asciidoc]
+----
+This URL is displayed, \https://gitlab.com, but isn't clickable.
+----
+
+.Result
+====
+This URL is displayed, \https://gitlab.com, but isn't clickable.
+====
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-prevent-subs}[Preventing substitutions]
+
+== Troubleshooting URLs
+
+A URL may not display correctly when it contains characters such as underscores (`_`) or carets (`^`) because these characters get interpreted as text formatting markup.
+
+There are two ways to solve this situation.
+
+. Create a page attribute for the URL.
+
+. Use the inline pass macro with `macros` enabled.
+
+=== Create a page attribute
+
+Let's make an attribute for a complex URL.
+Creating an attribute for a URL is also a good strategy when the URL is long because it keeps the source text clean for writers and editors.
+
+.Page attribute syntax
+[source,asciidoc]
+----
+= Page Title
+:url-peak: https://www.google.com/maps/place/Antora+Peak/@38.3249976,-106.2355882,14z/data=!3m1!4b1!4m5!3m4!1s0x871572433f469bd7:0xd2bdf15e615cd269!8m2!3d38.3249994!4d-106.2180786!5m1!1e4 // <1>
+
+{url-peak}[This URL] was complicated, but a page attribute came to our rescue! // <2>
+----
+<1> Create an attribute, with the name of your choice, in the header of your source file.
+Assign the URL to it.
+<2> When you want to create a link to that URL in your text, use the attribute (i.e., reference that attribute), as you would have used the URL.
+
+.Result
+====
+{url-peak}[This URL] was complicated, but a page attribute came to our rescue!
+====
+
+=== Use the pass macro
+
+If you want to display a complex URL and ensure it doesn't get caught up in any text formatting, put it inside a pass macro and enable the macros substitution, which is what substitutes links.
+
+Here's how a pass macro with the macros substitution enabled is constructed:
+
+[source,asciidoc]
+----
+pass:macros[URL goes between these brackets]
+----
+
+Here's a pass macro in action:
+
+.Pass macro with macros substitution syntax
+[source,asciidoc]
+----
+Anyone want to climb this 13er with me? (pass:macros[https://www.14ers.com/13ers/peak.php?peakkey=4740])
+----
+
+.Result
+====
+Anyone want to climb this 13er with me? (pass:macros[https://www.14ers.com/13ers/peak.php?peakkey=4740])
+====
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-inline-pass}[Inline pass macro and explicit substitutions]

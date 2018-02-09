@@ -1,0 +1,88 @@
+= Quote and Prose Excerpts
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:example-caption!:
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-quote: {uri-adoc-manual}/#prose-excerpts-quotes-and-verses
+:uri-block: {uri-adoc-manual}/#blocks
+:uri-block-subs: {uri-adoc-manual}/#built-in-blocks-summary
+
+On this page, you'll learn:
+
+* [x] How to mark up a quote or prose excerpt with AsciiDoc.
+
+== Excerpt syntax
+
+Quote (also known as block quotes) and prose excerpts allow you to add attribution and citation information to content.
+
+=== Quote paragraph
+
+If the excerpt is not interrupted by blank lines, the block name `quote` can be placed directly on top of the text in an attribute list (`[]`).
+
+.Anatomy of a basic quote or prose excerpt
+----
+.Optional lead-in text // <1>
+[quote, attribution, citation title and information] // <2> <3> <4>
+Quote or excerpt text // <5>
+----
+<1> Mark lead-in text explaining the context or setting of the excerpt using a period (`.`). (optional)
+<2> Set the block name `quote` in the first position of the attribute list.
+<3> The second position contains who or what the excerpt is attributed to. (optional)
+<4> The third position contains the citation title and any additional citation information. (optional)
+<5> Enter the excerpt text on the line immediately following the attribute list.
+
+Here's an example of a quote paragraph source and published output.
+
+.Quote paragraph syntax
+[source,asciidoc]
+----
+.After landing the cloaked Klingon bird of prey in Golden Gate park:
+[quote, Captain James T. Kirk, Star Trek IV: The Voyage Home]
+Everybody remember where we parked.
+----
+
+.After landing the cloaked Klingon bird of prey in Golden Gate park:
+[quote, Captain James T. Kirk, Star Trek IV: The Voyage Home]
+Everybody remember where we parked.
+
+=== Delimited quote block
+
+If the excerpt includes content separated by blank lines, place the text between delimiter lines consisting of four underscores (pass:[____]).
+
+.Delimited quote block syntax
+[source,asciidoc]
+....
+[quote, Monty Python and the Holy Grail]
+____
+King Arthur: I am your king.
+
+Woman: Well, I didn't vote for you.
+
+King Arthur: You don't vote for kings.
+
+Woman: Well how'd you become king then?
+____
+....
+
+[quote, Monty Python and the Holy Grail]
+____
+King Arthur: I am your king.
+
+Woman: Well, I didn't vote for you.
+
+King Arthur: You don't vote for kings.
+
+Woman: Well how'd you become king then?
+____
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-quote}[Prose and quote excerpts]
+* {uri-block}[Block titles and attributes]
+* {uri-block-subs}[Substitutions by block type]

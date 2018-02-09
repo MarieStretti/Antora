@@ -7,6 +7,7 @@ endif::[]
 :idseparator: -
 // URLs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-anchor: {uri-adoc-manual}/#anchordef
 
 //WARNING: Don't use the `link` macro for referencing sections and IDs in the same page.
 
@@ -43,9 +44,9 @@ This is an [#name-me] inline ID. //<2>
 <1> An ID can be placed on a paragraph (i.e., block).
 <2> An ID can be placed inline.
 
-There are some exceptions, see {uri-adoc-manual}/#anchordef[defining an anchor] in the Asciidoctor user manual for more use cases.
+There are some exceptions, see the {uri-anchor}[defining an anchor section in the Asciidoctor manual] for more use cases.
 
-To link to that ID, use the same in-page xref markup you use for section headings.
+To link to that ID, use the same in-page xref syntax you use for section headings.
 
 .Link to an ID
 [source,asciidoc]
@@ -53,4 +54,7 @@ To link to that ID, use the same in-page xref markup you use for section heading
 We'll walk through a <<playbook,detailed example>> of a playbook in this tutorial.
 ----
 
-Reference: {uri-adoc-manual}/#anchordef[Define an anchor]
+[discrete]
+==== Asciidoctor resources
+
+* {uri-anchor}[Define an anchor]

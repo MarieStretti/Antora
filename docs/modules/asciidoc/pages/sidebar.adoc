@@ -1,0 +1,82 @@
+= Sidebars
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-sidebar: {uri-adoc-manual}/#sidebar
+:uri-block: {uri-adoc-manual}/#blocks
+:uri-block-subs: {uri-adoc-manual}/#built-in-blocks-summary
+
+On this page, you'll learn:
+
+* [x] How to mark up a sidebar with AsciiDoc.
+
+== Sidebar syntax
+
+A sidebar can contain any type of content such as quotes, equations, and images.
+Normal substitutions are applied to sidebar content.
+
+=== Sidebar paragraph
+
+If the sidebar content is contiguous, the block name `sidebar` can be placed directly on top of the text in an attribute list (`[]`).
+
+.Sidebar paragraph syntax
+----
+[sidebar]
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+----
+
+.Result
+--
+[sidebar]
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+--
+
+=== Delimited sidebar block
+
+A sidebar block is delimited by a set of four consecutive asterisks (`pass:[****]`).
+You don't need to set the block name when you use a delimited block.
+
+.Delimited sidebar block syntax
+[source,asciidoc]
+....
+.Optional Title
+****
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+
+TIP: They can contain any type of content.
+
+.Source code block in a sidebar
+[source,js]
+----
+const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
+----
+****
+....
+
+.Result
+--
+.Optional Title
+****
+Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
+
+TIP: They can contain any type of content.
+
+.Source code block in a sidebar
+[source,js]
+----
+const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
+----
+****
+--
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-sidebar}[Sidebar blocks]
+* {uri-block}[Block titles and attributes]
+* {uri-block-subs}[Substitutions by block type]

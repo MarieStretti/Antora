@@ -228,13 +228,15 @@ _{r}_ Full explanation of a documentation component, including its purpose, stru
 +
 _{s}_ Accepted
 
-Repository Structure (SC, P)::
+Repository Structure Overview (SC, P)::
 _{r}_ Full description of the directories and reserved directory and file names in a documentation component.
 +
 _{s}_ Accepted
 
 Modules & ROOT (P or P#)::
 _{r}_ Purpose and usage of the modules directory, ROOT module, and user-named modules.
++
+_{s}_ Accepted
 
 Pages & Partials (P or P#)::
 _{r}_ Purpose and usage of the pages, topic, and partials directories.
@@ -248,6 +250,8 @@ _{r}_ Purpose and usage of the examples directory.
 
 antora.yml (P)::
 _{r}_ Purpose, structure and keys (name, title, version, start_page, nav) in the component descriptor file.
++
+_{s}_ Accepted
 
 Organizing source files (SC, P)::
 _{r}_ Or: Source file organization. The considerations a user should keep in mind when choosing how to organize their source files.
@@ -325,80 +329,196 @@ Is this where a user would look for this info?
 
 === AsciiDoc
 
-AsciiDoc (C, P)::
+AsciiDoc Syntax (C, P)::
 _{r}_ Introduction to the AsciiDoc syntax and a high-level overview of its benefits and capabilities.
++
+_{s}_ Under consideration.
 
 Header (P)::
 _{r}_ Purpose of a page header and a description of the attributes it can contain, including usage examples.
 Attributes include: title, aliases, metadata, syntax options, tool conditionals, template conditionals, etc.
++
+_{s}_ Accepted
 
 Sections (P)::
 _{r}_  How to use sections and a description of their levels, titles and attributes.
++
+_{s}_ Accepted
 
 Paragraphs (P)::
 _{r}_  How to use paragraphs and a description of their attributes.
++
+_{s}_ Pending
 
-Text Emphasis (P)::
+Text & Punctuation Styles (SC)::
 _{r}_  How to use inline text formatting such as bold, italics, highlight, etc.
++
+_{s}_ Under consideration.
 
-Special Characters (P)::
-_{r}_  How to use special characters.
+Bold & Italic (P)::
+_{r}_  How to use bold and italic inline syntax.
++
+_{s}_ Accepted
 
-External Links (P)::
-_{r}_  How to link to URLs that are not part of the docs site.
+Monospace (P)::
+_{r}_  How to use the monospace inline syntax.
++
+_{s}_ Accepted
 
-In-page cross references (P)::
-_{r}_  How to link to an anchor in the same page.
+Highlight (P)::
+_{r}_  How to use the highlight inline syntax.
++
+_{s}_ Accepted
+
+Quote Marks & Apostrophes (P)::
+_{r}_  How to apply curved quotes and apostrophes.
++
+_{s}_ Accepted
+
+Subscript & Superscript (P)::
+_{r}_  How to use subscript and superscript syntax.
++
+_{s}_ Accepted
+
+Special Characters & Symbols (P)::
+_{r}_  How to use special characters and symbols.
++
+_{s}_ Accepted
+
+Symbols (P)::
+_{r}_  How to use character entities and Unicode code points.
++
+_{s}_ Under consideration.
 
 Page to page cross references (P)::
 _{r}_  How to link from one page in the docs site to another page in the docs site.
++
+_{s}_ Accepted
+
+In-page cross references (P)::
+_{r}_  How to link to an anchor in the same page.
++
+_{s}_ Accepted
+
+URLs (External Links) (P)::
+_{r}_  How to link to URLs that are not part of the docs site.
++
+_{s}_ Accepted
+
+Ordered & Unordered Lists (P)::
+_{r}_ How to create ordered and unordered lists.
++
+_{s}_ Accepted
+
+Labeled Lists (P)::
+_{r}_ How to create labeled lists.
++
+_{s}_ Accepted
+
+Task Lists (P)::
+_{r}_ How to create task lists.
++
+_{s}_ Accepted
+
+Insert an Image (P)::
+_{r}_ How to add an image to a page from the assets/images directory.
++
+_{s}_ Accepted
+
+Embed a Video (P)::
+_{r}_ How to add a video to a page either via a service (Youtube) or from assets/video.
++
+_{s}_ Accepted
+
+Link to an Attachment (P)::
+_{r}_ How to link to a downloadable resource in assets/attachments.
++
+_{s}_ Accepted
 
 UI Macros (P)::
 _{r}_  How to create UI macros.
-
-Lists (P)::
-_{r}_ How to create ordered, unordered, task, and definition lists.
-
-Blockquotes (P)::
-_{r}_ How to create quote blocks.
++
+_{s}_ Accepted
 
 Admonitions (P)::
 _{r}_ Or: Notices.
 How to create admonition blocks.
++
+_{s}_ Accepted
 
-Code (P)::
-_{r}_ How to create source code blocks, descriptions of their attributes, different ways to include source code (right in file, include from example file or other source).
-May also include information about syntax highlighting or this topic may be split out into another page.
+Examples (P)::
+_{r}_ How to create example blocks.
++
+_{s}_ Accepted
+
+Quote and Prose Excerpts (P)::
+_{r}_ How to create quote blocks.
++
+_{s}_ Accepted
+
+Sidebars (P)::
+_{r}_ How to create sidebar blocks.
++
+_{s}_ Accepted
 
 Include directive (P)::
 _{r}_ How to use the include directive and its options to insert a partial, example, or page into another page.
++
+_{s}_ Under consideration.
 
-Insert a partials file (P#)::
+Insert a partial page (P#)::
 _{r}_ How to include an AsciiDoc file from the partials directory into a page.
++
+_{s}_ Accepted
+
+Comments (P)::
+_{r}_ How to create comment lines and blocks.
++
+_{s}_ Accepted
+
+Literal Blocks (P#)::
+_{r}_ How to create literal blocks.
++
+_{s}_ Pending
+
+Listing Blocks (P#)::
+_{r}_ How to create listing blocks.
++
+_{s}_ Pending
+
+Source Code Blocks (P)::
+_{r}_ How to create source code blocks, descriptions of their attributes, different ways to include source code (right in file, include from example file or other source).
+May also include information about syntax highlighting or this topic may be split out into another page.
++
+_{s}_ Pending
+
+Callouts (P)::
+_{r}_ How to use callouts.
++
+_{s}_ Pending
 
 Insert an examples file (P#)::
 _{r}_ How to include a code snippet from the examples directory into a page.
++
+_{s}_ Pending
 
 Tables (P)::
 _{r}_ How to create tables and use table attributes.
++
+_{s}_ Pending
+
+Equations & Formulas (P)::
+_{r}_ How to use `stem`.
++
+_{s}_ Pending
 
 Page Table of Contents (P)::
 _{r}_ How to add a TOC to a page and use its attributes.
-
-Math?? (P)::
++
 _{s}_ Under consideration.
 
 Icons?? (P)::
 _{s}_ Under consideration.
-
-Images (P)::
-_{r}_ How to add an image to a page from the assets/images directory.
-
-Videos (P)::
-_{r}_ How to add a video to a page either via a service (Youtube) or from assets/video.
-
-Attachments (P)::
-_{r}_ How to link to a downloadable resource in assets/attachments.
 
 Writing Tasks (NC?, SC?)::
 _{s}_ Haven't determined the best place to add this group of common task tutorials.
@@ -624,9 +744,13 @@ _{r}_ Describes how to get a page to use a specific page template.
 
 === Upgrade
 
-Upgrade (C, P)::
+Basic Upgrade (P)::
 _{r}_ How to upgrade/update to a new Antora version.
-Sections probably include: Assumptions, Download/install/some-upgrade-command instructions, Test new pipeline in staging/safe environment; Deploy new version to production; and Troubleshooting.
++
+_{s}_ Accepted
+
+Environment/CI server Upgrade (P)::
+_{r}_ Upgrade and test new pipeline in staging/safe environment; Deploy new version to production; and Troubleshooting.
 +
 _{s}_ Under consideration.
 

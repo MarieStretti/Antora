@@ -2,7 +2,7 @@
 * xref:playbook.adoc[Playbook]
 //*** xref:playbook-formats.adoc[File Formats]
 //DA: I think we should rename "Keys" to "Schema"
-** xref:playbook-keys.adoc[Keys]
+** xref:playbook-keys.adoc[Schema]
 ** xref:configure-site.adoc[Configure Site]
 ** xref:source-keys.adoc[Configure Content]
 //*** xref:configure-ui.adoc[Configure UI]

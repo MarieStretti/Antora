@@ -1,0 +1,78 @@
+= Quotation Marks and Apostrophes
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:example-caption!:
+
+On this page, you'll learn:
+
+* [x] How to use single and double curved quotation marks.
+* [x] How to use curved apostrophes.
+
+== Curved quotation mark syntax
+
+Single and double quotation marks are *not* rendered as curved quotation marks (also known as smart, curly, typographic or book quotation marks) by default.
+When entered using the kbd:[{apos}] and kbd:[{quot}] key, Asciidoctor outputs straight (dumb, vertical, typewriter)
+quotation marks.
+
+If you want to output curved quotation marks, you need to add a set of backticks (`{backtick}`) contained within a set of single quotes (`{apos}`) or double quotes (`{quot}`).
+
+.Single and double curved quotation marks
+[source,asciidoc]
+----
+'`This should be enclosed in curved single quotes when published.`'
+
+"`This should be enclosed in curved double quotes when published.`"
+----
+
+.Result
+====
+'`This should be enclosed in curved single quotes when published.`'
+
+"`This should be enclosed in curved double quotes when published.`"
+====
+
+== Curved apostrophe syntax
+
+When entered with the kbd:[{apos}] key, an apostrophe that is directly preceded and followed by a character, such as in contractions and possessive singular forms, is automatically output as a curved apostrophe.
+
+However, an apostrophe directly followed by white space, such as the possessive plural form, is not curved by default.
+
+To output an apostrophe as curved when it is not bound by two characters, mark it as you would a single curved quote.
+
+.Curved apostrophes
+[source,asciidoc]
+----
+The `'80s.
+
+The students`' books.
+
+I can't find Joey's house.
+----
+
+.Result
+====
+The `'80s.
+
+The students`' books.
+
+I can't find Joey's house.
+====
+
+=== Escape a curved apostrophe
+
+If you don't want an apostrophe that is bound by two characters to be curved, escape it by preceding it with a backslash (`{backslash}`).
+
+.Escaped curved apostrophe syntax
+[source,asciidoc]
+----
+I can't find Joey\'s house.
+----
+
+.Result
+====
+I can't find Joey\'s house.
+====

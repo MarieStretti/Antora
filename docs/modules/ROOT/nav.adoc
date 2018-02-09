@@ -4,28 +4,27 @@
 ** xref:fetch-content.adoc[Fetch Content]
 ** xref:load-ui.adoc[Load a UI]
 //
-//.Installation
+
 * System Requirements
 ** xref:install/linux-requirements.adoc[Linux]
 ** xref:install/macos-requirements.adoc[macOS]
 ** xref:install/windows-requirements.adoc[Windows]
 * xref:install/install-antora.adoc[Install Antora]
-** xref:install/upgrade-antora.adoc[Upgrade Antora]
-//** Source Files
-//*** Content and asset files
-//*** Navigation files
-//*** UI files
-//*** Documentation component
+* xref:install/upgrade-antora.adoc[Upgrade Antora]
+//* Source Files
+//** Content and asset files
+//** Navigation files
+//** UI files
+//** Documentation component
 //.Configure
-//*** Playbook files
-//
+//* Playbook files
 //.Publishing
 * xref:run-antora-generate-site.adoc[Run Antora]
 ** xref:run-antora-generate-site.adoc#local-site-preview[Local Preview]
 * xref:cli.adoc[CLI Commands & Options]
-//** Docs site
+//
 
-.File & Component Organization
+.File Organization
 * xref:component-structure.adoc[Organize Your Files for Antora]
 * xref:modules.adoc[ROOTs & Modules]
 //** Pages & Partials

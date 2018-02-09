@@ -1,0 +1,53 @@
+= Subscript and Superscript
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:example-caption!:
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-sub-sup: {uri-adoc-manual}/#subscript-and-superscript
+:uri-stem: {uri-adoc-manual}/#activating-stem-support
+
+On this page, you'll learn:
+
+* [x] How to mark up a subscript character or word with AsciiDoc.
+* [x] How to mark up a superscript character or word with AsciiDoc.
+
+== Subscript syntax
+
+Text is subscripted when enclosed in a set of tildes (`~`).
+
+.Subscript
+[source,asciidoc]
+----
+The chemical formula for water is H~2~O.
+----
+
+.Result
+====
+The chemical formula for water is H~2~O.
+====
+
+== Superscript syntax
+
+Text is superscripted when enclosed in a set of carets (`^`).
+
+.Superscript
+[source,asciidoc]
+----
+What is the answer to E=mc^2^?
+----
+
+.Result
+====
+What is the answer to E=mc^2^?
+====
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-sub-sup}[Subscript and superscript formatting]
+* {uri-stem}[Using Asciidoctor's stem attribute for equations and formulas]

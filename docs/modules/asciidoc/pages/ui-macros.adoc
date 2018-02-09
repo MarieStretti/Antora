@@ -6,6 +6,7 @@ endif::[]
 :idprefix:
 :idseparator: -
 :experimental:
+:example-caption!:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-button: {uri-adoc-manual}/#ui-buttons
@@ -20,9 +21,9 @@ On this page, you'll learn:
 
 == Set the experimental attribute
 
-The `experimental` attribute must be set in the xref:page-header.adoc#page-attrs[document header] or globally to enable the UI macros styles in HTML.
+The attribute `experimental` must be set in the xref:page-header.adoc#page-attrs[page header] or globally to enable the UI macros styles in HTML.
 
-== Button
+== Button syntax
 
 Communicate that a user should press a button with the button macro.
 
@@ -35,17 +36,18 @@ Select a file in the file navigator and click btn:[Open].
 ----
 
 .Result
---
+====
 Press the btn:[Submit] button when you are finished the survey.
 
 Select a file in the file navigator and click btn:[Open].
---
+====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-button}[UI buttons]
 
-== Keyboard
+== Keyboard syntax
 
 Create keyboard shortcuts with the keyboard macro.
 
@@ -60,19 +62,20 @@ kbd:[Ctrl+Shift+N] will open a new incognito window.
 ----
 
 .Result
---
+====
 Press kbd:[esc] to exit insert mode.
 
 Use the shortcut kbd:[Ctrl+T] to open a new tab in your browser.
 
 kbd:[Ctrl+Shift+N] will open a new incognito window.
---
+====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-keyboard}[Keyboard shortcuts]
 
-== Menu
+== Menu syntax
 
 Show readers how to select a menu item with the menu macro.
 
@@ -85,12 +88,13 @@ Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
 ----
 
 .Result
---
+====
 To save the file, select menu:File[Save].
 
 Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
---
+====
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
 * {uri-menu}[Menu selections]

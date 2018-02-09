@@ -33,7 +33,7 @@ When viewing the file in a preview tool, the path is managed by the adjacent [.p
 
 WARNING: Antora doesn't yet support filtering includes by tag or line number.
 
-.More AsciiDoc include directive help
-****
-* {uri-include}[The AsciiDoc include directive]
-****
+[discrete]
+==== Asciidoctor resources
+
+* {uri-include}[Using the AsciiDoc include directive]

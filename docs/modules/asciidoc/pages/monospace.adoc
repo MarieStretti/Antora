@@ -1,0 +1,56 @@
+= Monospace
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:example-caption!:
+// External URIs
+:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-mono: {uri-adoc-manual}/#mono
+
+On this page, you'll learn:
+
+* [x] How to apply monospaced formatting to inline text.
+
+AsciiDoc's monospaced formatting applies a fixed-width font to phrases and characters.
+
+== Inline monospace syntax
+
+To apply the monospaced style to a phrase or word, enclose it in a single set of backticks ({backtick}).
+A character bounded by other characters must be enclosed in a double set of backticks ({backtick}{backtick}).
+
+.Monospace inline formatting
+[source,asciidoc]
+----
+`monospace phrase` & ``char``acter``s``
+
+`*monospace bold phrase*` & ``**char**``acter``**s**``
+
+`_monospace italic phrase_` & ``__char__``acter``__s__``
+
+`*_monospace bold italic phrase_*` &
+``**__char__**``acter``**__s__**``
+----
+
+Monospaced text can be xref:bold-and-italic.adoc[bold and italicized], as long as the syntax sets are entered in the right order.
+The monospace syntax must be the outermost set, then the bold set.
+The italic syntax is always the innermost set.
+
+.Result
+====
+`monospace phrase` & ``char``acter``s``
+
+`*monospace bold phrase*` & ``**char**``acter``**s**``
+
+`_monospace italic phrase_` & ``__char__``acter``__s__``
+
+`*_monospace bold italic phrase_*` &
+``**__char__**``acter``**__s__**``
+====
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-mono}[Monospace text formatting]
