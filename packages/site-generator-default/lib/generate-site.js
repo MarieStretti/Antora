@@ -20,19 +20,16 @@ process.on('unhandledRejection', (reason) => {
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)
 
-  let uiCatalogPromise
-  const contentCatalog = await (async () => {
-    const contentAggregatePromise = aggregateContent(playbook)
-    uiCatalogPromise = loadUi(playbook)
-    return classifyContent(playbook, await contentAggregatePromise)
-  })()
+  const [contentCatalog, uiCatalog] = await Promise.all([
+    aggregateContent(playbook).then((contentAggregate) => classifyContent(playbook, contentAggregate)),
+    loadUi(playbook),
+  ])
 
   const pages = contentCatalog.findBy({ family: 'page' })
 
   await Promise.all(pages.map(async (page) => convertDocument(page, {}, contentCatalog)))
 
   const navigationCatalog = buildNavigation(contentCatalog)
-  const uiCatalog = await uiCatalogPromise
 
   // TODO we could do this in same stream as convertDocument; but then we'd have an ordering problem
   ;((composePage) => {
