@@ -98,8 +98,10 @@ describe('generateSite()', () => {
     expect($('head > title')).to.have.text('Index Page :: The Site')
     // assert relative UI path is correct
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../_/css/site.css')
-    expect($('head > script:first-of-type'))
-      .to.have.attr('src', 'https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXX-1')
+    expect($('head > script:first-of-type')).to.have.attr(
+      'src',
+      'https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXX-1'
+    )
     expect($('body > script:first-of-type')).to.have.attr('src', '../../_/js/site.js')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', '../..')
     // assert current component version is correct
