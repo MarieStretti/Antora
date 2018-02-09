@@ -46,18 +46,18 @@ async function aggregateContent (playbook) {
   const defaultBranches = playbook.content.branches
   const componentVersions = await Promise.all(
     playbook.content.sources.map(async (source) => {
-      const { repository, localPath, url, remote, isLocal, isBare } = await openOrCloneRepository(
+      const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(
         source.url,
         source.remote,
         playbook.dir || '.'
       )
       const branchPatterns = source.branches || defaultBranches
-      const componentVersions = (await selectBranches(repository, isBare, branchPatterns, remote)).map(
+      const componentVersions = (await selectBranches(repository, isBare, branchPatterns, remoteName)).map(
         async ({ ref, branchName, isCurrent }) => {
           let startPath = source.startPath || ''
           if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
           const worktreePath =
-            isCurrent && isLocal && !isBare ? (startPath ? ospath.join(localPath, startPath) : localPath) : undefined
+            isCurrent && !(isRemote || isBare) ? (startPath ? ospath.join(repoPath, startPath) : repoPath) : undefined
           const files = worktreePath
             ? await readFilesFromWorktree(worktreePath)
             : await readFilesFromGitTree(repository, ref, startPath)
@@ -82,57 +82,51 @@ async function aggregateContent (playbook) {
   return buildAggregate(componentVersions)
 }
 
-async function openOrCloneRepository (repoUrl, remote, startDir) {
-  if (!remote) remote = 'origin'
-
+async function openOrCloneRepository (repoUrl, remoteName, startDir) {
   let isBare
-  let isLocal
-  let localPath
+  let isRemote
   let repository
+  let repoPath
+  let url
 
   // QUESTION should we try to exclude git@host:path as well? maybe check for @?
   if (!~repoUrl.indexOf('://')) {
-    if (directoryExists((localPath = ospath.resolve(startDir, repoUrl)))) {
-      isBare = !directoryExists(ospath.join(localPath, '.git'))
-      isLocal = true
+    if (directoryExists((repoPath = ospath.resolve(startDir, repoUrl)))) {
+      isBare = !directoryExists(ospath.join(repoPath, '.git'))
+      isRemote = false
+      if (!remoteName) remoteName = 'origin'
     } else {
       throw new Error(
         'Local content source does not exist: ' +
-          localPath +
-          (repoUrl !== localPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+          repoPath +
+          (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
       )
     }
   } else {
     isBare = true
-    isLocal = false
-    // NOTE if repository is in cache, we can assume the remote is origin
-    remote = 'origin'
-    localPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
+    isRemote = true
+    // NOTE if repository is in cache, we can assume the remote name is origin
+    remoteName = 'origin'
+    repoPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
   }
 
   try {
     if (isBare) {
-      repository = await git.Repository.openBare(localPath)
-      if (!isLocal) {
+      repository = await git.Repository.openBare(repoPath)
+      if (isRemote) {
         // fetch new branches and delete obsolete local ones
-        await repository.fetch(remote, Object.assign({ prune: 1 }, getFetchOptions()))
+        await repository.fetch(remoteName, Object.assign({ prune: 1 }, getFetchOptions()))
       }
     } else {
-      repository = await git.Repository.open(localPath)
+      repository = await git.Repository.open(repoPath)
     }
   } catch (e) {
-    if (isLocal) {
-      throw new Error(
-        'Local content source must be a git repository: ' +
-          localPath +
-          (repoUrl !== localPath ? ' (resolved from url: ' + repoUrl + ')' : '')
-      )
-    } else {
-      // NOTE if we clone the repository, we can assume the remote is origin
-      remote = 'origin'
+    if (isRemote) {
+      // NOTE if we clone the repository, we can assume the remote name is origin
+      remoteName = 'origin'
       repository = await fs
-        .remove(localPath)
-        .then(() => git.Clone.clone(repoUrl, localPath, { bare: 1, fetchOpts: getFetchOptions() }))
+        .remove(repoPath)
+        .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts: getFetchOptions() }))
         .then((repo) =>
           repo.getCurrentBranch().then((ref) => {
             if (ref.isBranch()) {
@@ -142,18 +136,23 @@ async function openOrCloneRepository (repoUrl, remote, startDir) {
             return repo
           })
         )
+    } else {
+      throw new Error(
+        'Local content source must be a git repository: ' +
+          repoPath +
+          (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+      )
     }
   }
 
-  let url
   try {
-    url = (await repository.getRemote(remote)).url()
+    url = (await repository.getRemote(remoteName)).url()
   } catch (e) {
     // FIXME use repository.path() if repository is set
     url = repoUrl
   }
 
-  return { repository, localPath, url, remote, isLocal, isBare }
+  return { repository, repoPath, url, remoteName, isRemote, isBare }
 }
 
 /**
