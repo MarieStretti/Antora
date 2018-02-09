@@ -107,13 +107,17 @@ Each virtual file object should include the following properties:
 
 .src property
 * `path` - equivalent to the `path` property on the file object
-* `abspath` - absolute path of source file (only set for local files)
+* `abspath` - absolute path of source file (only set for files taken from the worktree)
 * `basename`
 * `stem`
 * `extname`
 * `mediaType` - resolved from the MIME types catalog by the value of `extname`
-* `origin` - an object shared by all files taken from the same branch of the same repository; includes `editUrlPattern`
-* `editUrl` - takes the reader to a page where the source can be edited (local if worktree, otherwise hosted)
+* `origin` - identifies the file's origin; shared by all files taken from the same branch of the same repository
+ ** includes `type`, `url`, `branch`, `startPath`, `editUrlPattern`, and `worktree`
+ ** `type` should default to git
+ ** `url` should be remote url if it can be resolved; otherwise the absolute path to the repository
+ ** `worktree` should only be set if origin is the repository worktree
+* `editUrl` - takes the reader to a page where the source can be edited (file URI if worktree, otherwise a URL)
 
 The `mediaType` property should also be set directly on the file object to match the value of `src.mediaType`.
 
