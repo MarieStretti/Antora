@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-sidebar: {uri-adoc-manual}/#sidebar
@@ -77,6 +78,6 @@ const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils'
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-sidebar}[Sidebar blocks]
-* {uri-block}[Block titles and attributes]
-* {uri-block-subs}[Substitutions by block type]
+* {uri-sidebar}[Sidebar blocks^]
+* {uri-block}[Block titles and attributes^]
+* {uri-block-subs}[Substitutions by block type^]
