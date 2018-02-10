@@ -6,6 +6,8 @@ endif::[]
 :idprefix:
 :idseparator: -
 :example-caption!:
+:linkattrs:
+:underscore: _
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-url: {uri-adoc-manual}/#url
@@ -15,7 +17,7 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] When you should use a URL instead of a cross reference.
+* [x] When you should use a URL versus a cross reference.
 * [x] How to create links with and without link text.
 * [x] How to escape a URL.
 * [x] How to handle complex URLs.
@@ -25,7 +27,7 @@ On this page, you'll learn:
 Use AsciiDoc's URL syntax when you need to create a link to an external URL.
 External URLs are links to webpages that aren't built as part of your documentation site by your Antora pipeline.
 
-When you want to link to a page that is part of your documentation site, use the xref:page-to-page-xref.adoc[cross reference syntax] instead.
+When you want to link to a page that is part of your documentation site, use the xref:page-to-page-xref.adoc[page cross reference] instead.
 
 == URL syntax
 
@@ -33,11 +35,9 @@ To create a link to an external URL, all you need to do is add the URL prefixed 
 
 .Raw URL syntax
 [source,asciidoc]
-----
 Chat with other documentation writers at https://gitter.im/antora/users.
-----
 
-Links that begin with official URI schemes, such as `https`, `ftp`, `mailto`, etc., are automatically turned into hyperlinks when they're processed.
+Links that begin with official schemes, such as `https`, `ftp`, `mailto`, etc., are automatically turned into hyperlinks when they're processed.
 
 .Result
 ====
@@ -62,7 +62,7 @@ Visit the https://gitter.im/antora/users[Antora chat room].
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-url}[URL syntax and attributes]
+* {uri-url}[URL syntax and attributes^]
 
 == Escape a URL
 
@@ -82,22 +82,22 @@ This URL is displayed, \https://gitlab.com, but isn't clickable.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-prevent-subs}[Preventing substitutions]
+* {uri-prevent-subs}[Preventing substitutions^]
 
 == Troubleshooting URLs
 
-A URL may not display correctly when it contains characters such as underscores (`_`) or carets (`^`) because these characters get interpreted as text formatting markup.
+A URL may not display correctly when it contains characters such as underscores (`{underscore}`) or carets (`{caret}`) because these characters get interpreted as text formatting markup.
 
 There are two ways to solve this situation.
 
-. Create a page attribute for the URL.
-
-. Use the inline pass macro with `macros` enabled.
+[no-bullet]
+* Option 1: Create a page attribute for the URL.
+* Option 2: Use the inline pass macro with `macros` enabled.
 
 === Create a page attribute
 
 Let's make an attribute for a complex URL.
-Creating an attribute for a URL is also a good strategy when the URL is long because it keeps the source text clean for writers and editors.
+Creating an attribute for a URL is also a good strategy when the URL is long; it keeps the source text clean for writers and editors.
 
 .Page attribute syntax
 [source,asciidoc]
@@ -143,4 +143,4 @@ Anyone want to climb this 13er with me? (pass:macros[https://www.14ers.com/13ers
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-inline-pass}[Inline pass macro and explicit substitutions]
+* {uri-inline-pass}[Inline pass macro and explicit substitutions^]

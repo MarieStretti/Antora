@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 :example-caption!:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
@@ -53,4 +54,4 @@ The italic syntax is always the innermost set.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-mono}[Monospace text formatting]
+* {uri-mono}[Monospace text formatting^]

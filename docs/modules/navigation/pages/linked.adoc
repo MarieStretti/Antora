@@ -20,23 +20,23 @@ In Antora, this navigation file is called linked navigation.
 == nav.adoc file structure
 
 A linked navigation file is an AsciiDoc document that contains a single unordered list.
-Each top-level item (`*`) can have up to five levels of nested navigation.
+Each top-level item (`{asterisk}`) can have up to five levels of nested navigation.
 The list can have a block title.
 
 .nav list anatomy
 ----
-.xref:index.adoc[Product Home] <1>
-* xref:get-started.adoc[Start here] <2>
+.xref:index.adoc[Product Home] // <1>
+* xref:get-started.adoc[Start here] // <2>
 ** xref:account-setup.adoc[Set up a new account]
 *** xref:download-and-install.adoc[Install product]
 **** xref:server-install.adoc[Install on a server]
 ***** xref:install-troubleshoot.adoc[Installation troubleshooting]
 * xref:manage.adoc[Manage product]
 ** xref:console-overview.adoc[Control console tour]
-** xref:cloud::manage-deployed-applications.adoc[Managing Deployed Applications] <3>
-* More Resources <4>
+** xref:cloud::manage-deployed-applications.adoc[Managing Deployed Applications] // <3>
+* More Resources // <4>
 ** xref:console-commands.adoc[Console commands]
-** https://support.example.com[Contact support] <5>
+** https://support.example.com[Contact support] // <5>
 ----
 <1> List title with reference (optional)
 <2> List item with reference

@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-comments: {uri-adoc-manual}/#comments
@@ -37,6 +38,7 @@ All of the text, including any AsciiDoc syntax, won't be visible when the file i
 ////
 ----
 
-Asciidoctor resources:
+[discrete]
+==== Asciidoctor resources
 
-* {uri-comments}[Comment lines and blocks]
+* {uri-comments}[Comment lines and blocks^]

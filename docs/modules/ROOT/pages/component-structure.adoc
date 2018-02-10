@@ -26,16 +26,15 @@ All the documentation in a component should follow the same versioning scheme an
 Your site can be generated using just one documentation component, or as many as you want.
 
 When Antora receives instructions from your playbook to scan a specific repository, its first objective is to find a component descriptor file in that repository.
-The component descriptor file is named [.path]_antora.yml_.
-You can learn more about [.path]_antora.yml_ in the xref:antora_yml.adoc[antora.yml reference].
+The xref:antora_yml.adoc[component descriptor file] is named [.path]_antora.yml_.
 
 Once Antora finds this file, it assumes that that directory and all its files and subdirectories are a documentation component.
 The structure of a documentation component is laid out below.
 
-.Component directory hierarchy
+//.Component directory hierarchy
 image::component-dir-structure.svg[,240]
 
-The component illustrated in the above figure contains required and reserved directories and files as well as an example of an optional, user created module ([.path]_user-named-module/_).
+The component illustrated in the above figure contains required and reserved directories and files as well as an example of an optional, user created module ([.path]_user-named-module_).
 When Antora encounters these folders and files in a properly structured component, it automatically assigns preset behavior and metadata to them.
 
 .Component preset legend
@@ -54,49 +53,49 @@ _Required_; _Reserved_
 The component descriptor file tells Antora that the contents of the directory are a documentation component.
 This file contains crucial xref:antora_yml.adoc[metadata about the documentation component].
 
-xref:modules.adoc[modules/] ::
+xref:modules.adoc[modules] ::
 _Required_; _Reserved_
 +
 Except for [.path]_antora.yml_, all of the files in a component reside in this directory.
 
-xref:modules.adoc#root[modules/ROOT/] ::
+xref:modules.adoc#root[modules/ROOT] ::
 _Required_; _Reserved_
 +
 Directory that contains the xref:modules.adoc#root[mandatory ROOT module].
 The directory name must be written in all uppercase letters.
 
-xref:modules.adoc#assets-dir[<module>/assets/] ::
+xref:modules.adoc#assets-dir[<module>/assets] ::
 _Optional_; _Reserved_
 +
 Directory where multimedia and supplemental files are organized by content type.
 
-xref:modules.adoc#attachments-dir[<module>/assets/attachments/] ::
+xref:modules.adoc#attachments-dir[<module>/assets/attachments] ::
 _Optional_; _Reserved_
 +
 Directory that contains supplemental materials, such as PDFs or ZIP files, that readers can download via a link created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
-xref:modules.adoc#images-dir[<module>/assets/images/] ::
+xref:modules.adoc#images-dir[<module>/assets/images] ::
 _Optional_; _Reserved_
 +
 Directory that contains pictures, screenshots, diagrams, and other graphics files that are displayed in a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro].
 
-<module>/examples/ ::
+<module>/examples ::
 _Optional_; _Reserved_
 +
 Directory that contains source, literal, listing, or example block snippets that are inserted into that module's pages.
 
-xref:modules.adoc#pages-dir[<module>/pages/] ::
+xref:modules.adoc#pages-dir[<module>/pages] ::
 _Required_; _Reserved_
 +
 Directory that contains all of a module's AsciiDoc files.
 These files are automatically enlisted by Antora and converted to standalone HTML pages.
 
-xref:modules.adoc#partials-dir[<module>/pages/_partials/] ::
+xref:modules.adoc#partials-dir[<module>/pages/_partials] ::
 _Optional_; _Reserved_
 +
-Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages/_.
+Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages_.
 These files are *not* converted to HTML by Antora directly.
-Instead, they must be referenced by an xref:asciidoc:include-partial-page.adoc[include directive] in a page in the [.path]_pages/_ directory.
+Instead, they must be referenced by an xref:asciidoc:include-partial-page.adoc[include directive] in a page in the [.path]_pages_ directory.
 
 <module>/_attributes.adoc ::
 _Required_; _Reserved_
@@ -110,7 +109,7 @@ A xref:navigation:linked.adoc[linked navigation file] that contains a single, un
 Each linked navigation file must be declared in the component descriptor.
 The order in which the navigation menus are displayed in the navigation panel is controlled by the order these files are listed in the xref:antora_yml.adoc#nav-key[nav key] of the component descriptor.
 
-modules/user-named-module/ ::
+modules/user-named-module ::
 _Optional_
 +
 In addition to the ROOT module, you can create as many additional modules as your documentation component requires.

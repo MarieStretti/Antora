@@ -5,24 +5,24 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 :note-caption: Ops Hint
 // URLs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-author: {uri-adoc-manual}/#author-and-email
 :uri-attrs: {uri-adoc-manual}/#attributes
-:uri-builtin-attrs: {uri-adoc-manual}l/#builtin-attributes
+:uri-builtin-attrs: {uri-adoc-manual}/#builtin-attributes
 
 On this page, you'll learn:
 
 * [x] How to structure a valid AsciiDoc page header.
 * [x] How to set a page title.
-* [x] Where the page title is used in the published site.
 * [x] How to add metadata to a page.
 * [x] How to set AsciiDoc's built-in page attributes.
 
 == Header anatomy
 
-The page header is a set of contiguous lines that starts on the first line of the file.
+The page header is a set of contiguous lines that start on the first line of the file.
 The header is separated from the page body by at least one blank line.
 
 .Common elements in a page header
@@ -45,7 +45,7 @@ First Middle Last <author@email.com> // <2>
 Each attribute entry must be entered on its own line.
 Attributes can be placed in any order in the header, including above the page title.
 However, the preferred placement is below the title.
-The header can also contain line comments.
+The header can also contain xref:comments.adoc[comments].
 
 [#page-title]
 == Page title
@@ -68,6 +68,7 @@ AsciiDoc provides several optional, built-in attributes for defining page metada
 Specifying the author or authors of a page is optional.
 The author is listed on the line directly beneath the page’s title.
 An optional email address or contact URL can follow an author’s name inside a set of angle brackets (`< >`).
+When a page has multiple authors, each author is separated by a semicolon (`;`).
 
 .Multiple authors and author information syntax
 [source,asciidoc]
@@ -76,29 +77,28 @@ An optional email address or contact URL can follow an author’s name inside a 
 First Middle Last <author@email.com>; First Last <author@email.com>
 ----
 
-When a page has multiple authors, each author is separated by a semicolon (`;`).
-Author names are stored in the HTML `meta` tag `author`.
+Author names are output to the HTML `<meta>` tag.
 
 .Author HTML output
-[source,xml]
+[source,html]
 ....
 <head>
 <meta charset="UTF-8">
 <meta name="author" content="First Middle Last, First Last">
 ....
 
-Whether the page author information is visible on a published page depends on the site's UI templates.
-
-There are additional author attributes and methods for specifying author information.
+Whether any author information is also displayed on a published page depends on the site's UI templates.
 
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-author}[Author attributes and usage examples]
+Refer to the Asciidoctor user manual for additional author attributes and methods for specifying author information.
+
+* {uri-author}[Author attributes and usage examples^]
 
 === Description syntax
 
-If set, `description` is stored to the HTML `meta` tag with the same name.
+If set, `description` is output to an HTML `<meta>` tag with the same name.
 You can break long values across several lines by ending each line with a backslash `\` that is preceded by a space.
 
 .Description attribute syntax
@@ -110,7 +110,7 @@ about all kinds of interesting things.
 ----
 
 .Description HTML output
-[source,xml]
+[source,html]
 ....
 <head>
 <meta charset="UTF-8">
@@ -119,7 +119,7 @@ about all kinds of interesting things.
 
 === Keywords syntax
 
-The keywords attribute contains a list of comma-separated values that are assigned to the HTML `meta` tag with the same name.
+The keywords attribute contains a list of comma-separated values that are assigned to an HTML `<meta>` tag with the same name.
 
 .Keywords attribute syntax
 [source,asciidoc]
@@ -129,7 +129,7 @@ The keywords attribute contains a list of comma-separated values that are assign
 ----
 
 .Keywords HTML output
-[source,xml]
+[source,html]
 ....
 <head>
 <meta charset="UTF-8">
@@ -141,7 +141,7 @@ The keywords attribute contains a list of comma-separated values that are assign
 
 AsciiDoc provides numerous built-in attributes that can activate and control syntax output behavior and styles.
 
-TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the {uri-attrs}[attributes section of the Asciidoctor manual].
+TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the {uri-attrs}[attributes section of the Asciidoctor manual^].
 
 Page attributes are set in the header and are available to the whole page.
 Built-in AsciiDoc attributes are reserved attributes that have special, pre-defined behavior.
@@ -196,5 +196,5 @@ NOTE: This is an Ops Hint.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-builtin-attrs}[Built-in page attributes]
-* {uri-attrs}[AsciiDoc attribute restrictions or operations precedence]
+* {uri-builtin-attrs}[Built-in page attributes^]
+* {uri-attrs}[AsciiDoc attribute restrictions or operations precedence^]

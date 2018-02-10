@@ -5,7 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
-:version: 1.0.0-alpha.5
+:version: 1.0.0-alpha.6
 
 On this page, you'll learn:
 

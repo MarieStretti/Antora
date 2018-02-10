@@ -6,6 +6,8 @@ endif::[]
 :idprefix:
 :idseparator: -
 :example-caption!:
+:linkattrs:
+:hash: #
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-highlight: {uri-adoc-manual}/#custom-styling-with-attributes
@@ -16,8 +18,8 @@ On this page, you'll learn:
 
 == Highlight syntax
 
-To apply highlighting to a word or phrase, place a hash (`#`) at the beginning and end of the text you wish to format.
-To highlight one or a few characters bounded by other characters, place two hashes (`##`) before and after the characters.
+To apply highlighting to a word or phrase, place a hash (`{hash}`) at the beginning and end of the text you wish to format.
+To highlight one or more characters bounded by other characters, place two hashes (`{hash}{hash}`) before and after the characters.
 
 .Highlight inline formatting
 [source,asciidoc]
@@ -33,4 +35,4 @@ Let's #highlight this phrase# and the i and the s in th##is##.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-highlight}[Highlighted text formatting]
+* {uri-highlight}[Highlighted text formatting^]

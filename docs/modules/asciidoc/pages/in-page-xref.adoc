@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // URLs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-anchor: {uri-adoc-manual}/#anchordef
@@ -44,7 +45,7 @@ This is an [#name-me] inline ID. //<2>
 <1> An ID can be placed on a paragraph (i.e., block).
 <2> An ID can be placed inline.
 
-There are some exceptions, see the {uri-anchor}[defining an anchor section in the Asciidoctor manual] for more use cases.
+There are some exceptions, see the {uri-anchor}[defining an anchor section in the Asciidoctor manual^] for more use cases.
 
 To link to that ID, use the same in-page xref syntax you use for section headings.
 
@@ -57,4 +58,4 @@ We'll walk through a <<playbook,detailed example>> of a playbook in this tutoria
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-anchor}[Define an anchor]
+* {uri-anchor}[Define an anchor^]

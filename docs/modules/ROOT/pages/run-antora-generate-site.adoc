@@ -75,8 +75,8 @@ In the terminal, type:
 
 Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to _build/site_.
 
-The repositories are cached under the [.path]_build/site/_ directory.
-If you remove the [.path]_build/_ directory, the repositories will have to be downloaded again the next time you run `antora demo-site.yml`.
+The repositories are cached under the [.path]_build/site_ directory.
+If you remove the [.path]_build_ directory, the repositories will have to be downloaded again the next time you run `antora demo-site.yml`.
 
 [#using-private-repositories]
 === Private GitHub repositories

@@ -22,9 +22,6 @@ endif::[]
 :uri-ui-designer-guide: {uri-ui-repo}/blob/master/README.adoc
 ////
 
-WARNING: This documentation is ahead of Antora's development.
-It will not be accurate until Antora is officially released.
-
 == Playbook Repository
 
 include::{partialsdir}/playbook-project-summary.adoc[]

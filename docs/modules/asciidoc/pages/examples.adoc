@@ -6,6 +6,7 @@ endif::[]
 :idprefix:
 :idseparator: -
 :example-caption!:
+:linkattrs:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-block: {uri-adoc-manual}/#blocks
@@ -66,5 +67,5 @@ TIP: xref:admonitions.adoc[Complex admonitions] use the delimited example block 
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-block}[Block titles and attributes]
-* {uri-block-subs}[Substitutions by block type]
+* {uri-block}[Block titles and attributes^]
+* {uri-block-subs}[Substitutions by block type^]

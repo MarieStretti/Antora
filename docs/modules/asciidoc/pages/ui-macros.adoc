@@ -7,6 +7,7 @@ endif::[]
 :idseparator: -
 :experimental:
 :example-caption!:
+:linkattrs:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-button: {uri-adoc-manual}/#ui-buttons
@@ -16,7 +17,7 @@ endif::[]
 On this page, you'll learn:
 
 * [x] How to mark up a button (press btn:[Submit]) with AsciiDoc.
-* [x] How to mark up a keyboard shortcut (kbd:[Ctrl+Shift+N]) with AsciiDoc.
+* [x] How to mark up a keybindings (kbd:[Ctrl+Shift+N]) with AsciiDoc.
 * [x] How to mark up a menu (menu:View[Zoom > Reset]) with AsciiDoc.
 
 == Set the experimental attribute
@@ -45,13 +46,13 @@ Select a file in the file navigator and click btn:[Open].
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-button}[UI buttons]
+* {uri-button}[UI buttons^]
 
-== Keyboard syntax
+== Keybinding syntax
 
-Create keyboard shortcuts with the keyboard macro.
+Create keyboard shortcuts with the keybinding macro.
 
-.Keyboard UI macro
+.Keybinding UI macro
 [source,asciidoc]
 ----
 Press kbd:[esc] to exit insert mode.
@@ -73,7 +74,7 @@ kbd:[Ctrl+Shift+N] will open a new incognito window.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-keyboard}[Keyboard shortcuts]
+* {uri-keyboard}[Keyboard shortcuts^]
 
 == Menu syntax
 
@@ -97,4 +98,4 @@ Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-menu}[Menu selections]
+* {uri-menu}[Menu selections^]

@@ -34,6 +34,7 @@ You can specify the repository either as a path relative to the root of the proj
 // need clarification about where these local sources can be in relation to the playbook project
 
 .site.yml (excerpt)
+[source,yaml]
 ----
 content:
   sources:

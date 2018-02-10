@@ -17,7 +17,7 @@ On this page, you'll learn:
 
 Here's an example of a playbook file named [.path]_site.yml_:
 
-.Playbook file named site.yml
+.site.yml
 [source,yaml,subs=attributes+]
 ----
 site: # <1>
@@ -291,7 +291,7 @@ The file defines the name and version of the component.
 
 As an example, here's the [.path]_antora.yml_ file in the v5.0 branch of the server repository:
 
-.antora.yml (excerpt)
+.antora.yml
 [source,yaml]
 ----
 name: server

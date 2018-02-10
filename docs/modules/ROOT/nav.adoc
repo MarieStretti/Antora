@@ -1,8 +1,6 @@
 .Basics
 * xref:features.adoc[Features]
 * xref:pipeline-process.adoc[How Antora Works]
-** xref:fetch-content.adoc[Fetch Content]
-** xref:load-ui.adoc[Load a UI]
 //
 
 * System Requirements
@@ -26,7 +24,7 @@
 
 .File Organization
 * xref:component-structure.adoc[Organize Your Files for Antora]
-* xref:modules.adoc[ROOTs & Modules]
+* xref:modules.adoc[Modules]
 //** Pages & Partials
 //** Assets
 //** Examples

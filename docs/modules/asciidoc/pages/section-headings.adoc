@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual
 :uri-sections: {uri-adoc-manual}/#sections
@@ -15,7 +16,7 @@ On this page, you'll learn:
 
 == Heading level syntax
 
-Sections partition the page into a content hierarchy.
+Sections partition a page into a content hierarchy.
 In AsciiDoc, sections are defined using section titles.
 
 .Section title syntax
@@ -34,10 +35,10 @@ In AsciiDoc, sections are defined using section titles.
 == Another Level 1 Section Title
 ----
 
-When the page is converted to HTML, each section title becomes a heading element where the heading level matches the number of equals signs.
-For example, a level 1 section (`==`) maps to an `h2` HTML tag.
+When a page is converted to HTML, each section title becomes a heading element where the heading level matches the number of equals signs.
+For example, a level 1 section (`==`) maps to an `<h2>` HTML tag.
 
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-sections}[Section titles]
+* {uri-sections}[Section titles^]
