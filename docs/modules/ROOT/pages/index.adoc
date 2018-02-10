@@ -1,13 +1,15 @@
-= Antora Pipeline
+//= AsciiDoc + Antora = A Web Publishing Pipeline for Docs Teams
+= A Source to Web Pipeline for Docs Teams
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:important-caption: RELEASE STATUS
+:version: v1.0.0-alpha.6
 
-WARNING: This documentation is ahead of Antora's development.
-It will not be accurate until Antora is officially released.
+IMPORTANT: Antora {version} is now available!
 
 Antora is an end-to-end solution.
 It collects source content and outputs a complete site.
@@ -27,5 +29,7 @@ They can be enlisted, per branch, into the site generation process.
 This strategy makes it possible for content branches to be reused, substituted, deactivated, or archived.
 This is a sharp contrast to many other site generators, which intermix all these concerns, making the documentation difficult to manage, maintain, and enhance.
 
+////
 Let's go over how to xref:component-structure.adoc[organize your documentation] so Antora can use it.
 We'll also show you how install Node 8 on xref:install/linux-requirements.adoc[Linux], xref:install/windows-requirements.adoc[Windows], or xref:install/macos-requirements.adoc[macOS] and xref:install/install-antora.adoc[install Antora]. Finally, we'll xref:run-antora-generate-site.adoc[run Antora] and publish a documentation site using a xref:playbook:index.adoc[playbook].
+////
