@@ -6,10 +6,10 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
-:important-caption: RELEASE STATUS
+:tip-caption: RELEASE STATUS
 :version: v1.0.0-alpha.6
 
-IMPORTANT: Antora {version} is now available!
+TIP: Antora {version} is now available!
 
 Antora is an end-to-end solution.
 It collects source content and outputs a complete site.

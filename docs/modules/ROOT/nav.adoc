@@ -24,7 +24,7 @@
 
 .File Organization
 * xref:component-structure.adoc[Organize Your Files for Antora]
-* xref:modules.adoc[ROOTs & Modules]
+* xref:modules.adoc[Modules]
 //** Pages & Partials
 //** Assets
 //** Examples

@@ -50,7 +50,7 @@ The best way to install the Node Version Manager (nvm) and Node is with {uri-cho
 . Open a PowerShell terminal and run it as an Administrator by right clicking on the PowerShell icon and selecting menu:Run as Administrator[].
 
 . Type the following command in the terminal:
-
++
 ----
 $ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 ----
@@ -71,8 +71,9 @@ TIP: If you just installed Chocolatey using the instructions in the proceeding s
 . Close the terminal.
 
 . Open an new, regular PowerShell terminal, and install Node with nvm.
-
- $ nvm install {version-node}
++
+[source,subs=attributes+]
+$ nvm install {version-node}
 +
 IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
 
@@ -93,7 +94,8 @@ By using nvm, you closely align your setup with the environment that is used to 
 
 If you have nvm installed but your Node version is less than 8.0.0, type the following command in your terminal to install the latest version of Node 8:
 
- $ nvm install {version-node}
+[source,subs=attributes+]
+$ nvm install {version-node}
 
 IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
 
