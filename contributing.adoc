@@ -11,8 +11,8 @@
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
 :uri-ci-pipelines: {uri-project}/pipelines
-:uri-adrs: {uri-project}/tree/master/docs/modules/architecture/documents/adr
-:uri-adr-0001: {uri-project}/blob/master/docs/architecture/content/adr/0001-minimum-node-version.adoc
+:uri-adrs: {uri-project}/tree/master/devdocs/adr
+:uri-adr-0001: {uri-adrs}/0001-minimum-node-version.adoc
 :uri-asciidoc-loader-arch: {uri-project}/blob/master/packages/asciidoc-loader/devdocs/architecture-guidebook.adoc
 :uri-content-aggregator-arch: {uri-project}/blob/master/packages/content-aggregator/devdocs/architecture-guidebook.adoc
 :uri-content-classifier-arch: {uri-project}/blob/master/packages/content-classifier/devdocs/architecture-guidebook.adoc
