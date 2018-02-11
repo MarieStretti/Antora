@@ -10,6 +10,11 @@ endif::[]
 
 include::{partialsdir}/playbook-summary.adoc[]
 
-== Playbook Repository
+== Playbook Project
 
 include::{partialsdir}/playbook-project-summary.adoc[]
+
+== What's next?
+
+* Select a xref:playbook.adoc[playbook format and storage location].
+* Get a quick overview of all the xref:playbook-keys.adoc[controls you can use to configure your site].

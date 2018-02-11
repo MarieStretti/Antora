@@ -3,13 +3,11 @@ An Antora playbook makes it easy for writers to control a site without needing a
 
 Specifically, a playbook tells Antora:
 
-* [x] The title of the published site.
-* [x] The URL of the published site.
-* [x] What service accounts, like Google Analytics, should be integrated into the site.
+* [x] What information should be applied to the xref:configure-site.adoc[site globally], such as its title, base URL, and service account integrations.
 //* [x] The component which sits at the root of the site (i.e., home or landing page content). (pending feature)
-* [x] Which content repositories and branches to feed into the Antora site generator.
+* [x] Which xref:source-keys.adoc[content repositories and branches] to feed into the Antora site generator.
 * [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages.
-* [x] Where the site should be published and in what format.
+* [x] Where the site should be xref:configure-output.adoc[published and in what format].
 
 ////
 Alternative playbook summaries

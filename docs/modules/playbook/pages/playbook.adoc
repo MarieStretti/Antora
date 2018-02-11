@@ -8,16 +8,16 @@ endif::[]
 On this page, you'll learn:
 
 * [x] The purpose of an Antora playbook.
-* [x] How a playbook drives an Antora pipeline.
+* [x] The playbook formats Antora accepts.
+* [x] Where the playbook can be stored so Antora can access it at run time.
+//* [x] How a playbook drives an Antora pipeline.
 
-== What is a playbook?
+== Why does Antora need a playbook?
 
-An Antora playbook is a configuration file.
+A playbook is a configuration file.
 It tells an Antora pipeline what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
-// With an Antora playbook, you can control what content is included in your site.
-
-=== Playbook format and structure
+== Playbook formats
 
 Playbooks can be written in YAML, JSON, and CSON.
 
