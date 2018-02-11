@@ -1,4 +1,4 @@
-= Linked Navigation
+= Create a Navigation File
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -13,6 +13,12 @@ Better examples and example output
 Align on the names for nav in general and linked vs aspect: linked and aspect domain, linked and aspect navigation, nav tree, linked page, aspect page, etc.
 Clarify nav file name options and nav storage locations
 ////
+
+On this page, you'll learn:
+
+* [x] How to structure a navigation file.
+* [x] How to add cross references to a navigation list.
+* [x] How to add regular text and links to other sites to a navigation list.
 
 Each module contains a navigation file named [.path]_nav.adoc_.
 In Antora, this navigation file is called linked navigation.

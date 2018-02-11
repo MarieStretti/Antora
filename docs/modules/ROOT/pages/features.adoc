@@ -178,7 +178,8 @@ AsciiDoc files can also be previewed in Chrome and Firefox with the Asciidoctor 
 === Responsive maintainers
 
 // on website
-Antora’s core developers help lead the Asciidoctor organization, home of the AsciiDoc syntax and Asciidoctor, the AsciiDoc processor. Due to this direct relationship, Antora is always in sync with AsciiDoc and Asciidoctor features.
+Antora’s core developers help lead the Asciidoctor organization, home of the AsciiDoc syntax and Asciidoctor, the AsciiDoc processor.
+Due to this direct relationship, Antora is always in sync with AsciiDoc and Asciidoctor features.
 
 === No flavor lock-in
 // Single source portability / usability
