@@ -1,4 +1,4 @@
-.AsciiDoc Syntax
+.xref:index.adoc[AsciiDoc Syntax]
 * xref:page-header.adoc[Page Header]
 ** xref:page-header.adoc#page-title[Page Title]
 ** xref:page-header.adoc#page-meta[Page Metadata]

@@ -1,0 +1,40 @@
+= AsciiDoc
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings:
+:idprefix:
+:idseparator: -
+
+AsciiDoc is Antora's native content markup language.
+AsciiDoc is great for writing documentation because it's:
+
+* readable
+* concise
+* comprehensive
+* extensible
+* easy to learn
+
+== Syntax
+
+AsciiDoc is a mature, lightweight markup language that supports all the structural and semantic elements necessary for writing technical documentation.
+
+The AsciiDoc syntax is intuitive because it recognizes time-tested, plain text conventions for marking up and structuring the text.
+A person unfamiliar with AsciiDoc can figure out the purpose of many of its syntax elements just by looking at them because they were carefully chosen to look like what they mean.
+Additionally, AsciiDoc only requires a text editor to read or write.
+
+== Parser
+
+Asciidoctor is the processor that converts AsciiDoc content to HTML and other formats.
+
+=== Speed and security
+
+No coverage of Asciidoctor is complete without mention of its speed.
+It loads, parses, and converts documents extremely quickly.
+That’s good news for teams and applications that need to process thousands of documentation files in multiple environments on a daily basis.
+Asciidoctor also offers several levels of security, further justifying its suitability for server-side deployments.
+
+== The advantages of open source communities
+
+The Asciidoctor project, which is home to the AsciiDoc syntax, Asciidoctor, and its extensions, is open source and made available under the MIT license.
+The Antora developers are lead Asciidoctor maintainers which helps both ecosystems implement features that anticipate tomorrow's documentation and technology requirements.
