@@ -7,7 +7,6 @@ endif::[]
 :idseparator: -
 :release-version: 1.0.0-alpha.6
 // URIs:
-:uri-asciidoc: http://asciidoctor.org/docs/what-is-asciidoc/#what-is-asciidoc
 :uri-asciidoctor: http://asciidoctor.org
 :uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
 
@@ -15,39 +14,43 @@ endif::[]
 TIP: Antora {release-version} is now available!
 See the {uri-changelog}[CHANGELOG] for details.
 
-Antora is built to make it easy for tech writers to publish documentation to the web.
-You write content in {uri-asciidoc}[AsciiDoc] and store it in one or more repositories under a standard project structure.
-From there, Antora picks up your content and transforms it into a website.
-//By leveraging Antora's open architecture, you can incorporate just about any other type of content too.
+Antora is designed to make it easy for tech writers to publish documentation to the web.
+As a tech writer, you simply author content in xref:asciidoc:index.adoc[AsciiDoc], Antora's preferred markup language.
+You then store those files under a standard project structure in one or more content repositories.
+Antora picks up your content from there and transforms it into a website.
+That's all there is to it!
 
 == Generator pipeline
+
+Antora's generator pipeline is a complete end-to-end solution.
+While it can be extended, no additional scripts are needed.
 
 Antora's generator pipeline kicks off by aggregating files from a variety of sources.
 Currently, these sources can be branches of one or more git repositories and a UI bundle.
 
-Next, Antora organizes the files into catalogs.
-Then, it converts all content files to embeddable HTML and resolves links between pages using {uri-asciidoctor}[Asciidoctor].
+NOTE: By leveraging Antora's open architecture, you can incorporate just about any other type of content too.
 
-Once conversion is complete, Antora passes the embeddable HTML and a data model to page templates provided by the UI bundle and creates the web pages.
+Next, Antora organizes the files into catalogs.
+It then converts all content files to embeddable HTML and resolves links between pages using {uri-asciidoctor}[Asciidoctor].
+
+Once conversion is complete, Antora passes the embeddable HTML as part of a UI data model to Handlebars page templates provided by the UI bundle to create the web pages.
 
 Finally, it publishes the pages and supporting assets to one or more local or remote destinations, where they can be viewed as a website.
 
-Antora's generator pipeline is a complete end-to-end solution.
-While it can be extended, no additional scripts are needed.
-This orchestration makes Antora very CI-friendly.
+Antora's built-in orchestration makes it very CI-friendly.
 All the CI job has to do is prepare the environment and launch a single command, and out comes your site!
 
 == Content is sovereign
 
-While it's considered a best practice to split source code into discrete, well-defined modules, documentation for the code often gets lumped together into one massive book.
+While it's considered a best practice to split source code into discrete, well-defined modules, documentation for that code often gets lumped together into one massive book.
 This situation has brought many documentation projects to a grinding halt.
 
 By treating *docs as code*, the documentation process can benefit from the best practices that produce successful software.
 Antora helps you incorporate these practices into your documentation workflow.
 
-The Antora generator pipeline facilitates a modular approach to managing documentation.
-It consists of a playbook, content repositories, a UI bundle, and the generator software, all of which are discrete parts.
-The playbook controls how Antora generates and publishes your site, but it does not own any content itself.
+Antora's generator pipeline favors a modular approach to managing documentation.
+It consists of a playbook project, content repositories, a UI bundle, and the generator software, all of which are discrete parts.
+The playbook project controls how Antora generates and publishes your site, but it does not own any content itself.
 
 The separation of these parts keeps the configuration separate from the content.
 The content repositories are just content.
@@ -55,11 +58,11 @@ They can be enlisted, per branch, into the site generation process.
 This strategy makes it possible for content branches to be reused, substituted, deactivated, or archived.
 This is a sharp contrast to many other site generators, which intermix all these concerns, making the documentation difficult to manage, maintain, and enhance.
 
-== What's next?
-// Where to begin
+//== What's next?
+== Where to begin
 
 If you're ready to set up a new documentation project or migrate an existing one to use with Antora, start by xref:component-structure.adoc[organizing your documentation for Antora].
 
-If you already have a documentation component set up, and you want to build it with Antora, start by xref:install/install-antora.adoc[installing Antora], and then xref:run-antora-generate-site.adoc[generate your site with Antora].
+If you already have a documentation component set up, and you want to build it with Antora, start by xref:install/install-antora.adoc[installing Antora], then xref:run-antora-generate-site.adoc[generate your site with Antora].
 
 If you want to dive deeper into the details of the generator pipeline, check out xref:pipeline-process.adoc[how Antora works].
