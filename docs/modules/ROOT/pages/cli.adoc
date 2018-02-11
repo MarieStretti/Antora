@@ -7,35 +7,38 @@ endif::[]
 :idseparator: -
 :table-caption!:
 
-Antora provides a command line interface (CLI) so you can interact with it through your terminal.
-When installed, the CLI adds the `antora` command to your PATH.
+Antora provides a command line interface (CLI) so you can interact with Antora using your terminal.
+When installed, the CLI adds the `antora` command to your terminal's PATH.
 
 == Terminal conventions
 
 If you're new to using a terminal, these are the conventions we use when showing terminal examples.
 
 Prompt (`$`)::
-The terminal's command prompt is indicated by a dollar sign ('$').
+The terminal's command prompt is indicated by a dollar sign (`$`).
 Don't include the prompt when you type commands.
+Only type what immediately follows it.
 
-Directory::
-A directory name may be shown before the command prompt in some examples.
-If displayed, the following command should be executed from that directory.
+Working Directory::
+Every command is run from a directory, known as the working directory.
+You may be asked to change the working directory of your terminal before running a command.
+You can change your working directory using the `cd` command (e.g., `cd directory`).
 
 Command Output::
 If Antora returns information after a command is executed, the output is displayed in the terminal underneath the command.
-The command prompt (`$`) will not be displayed on output lines.
+The command prompt (`$`) is not displayed in the command output.
 
 == Command structure
 
-The `antora` command accepts user inputs in the form of arguments and environment variables.
+The `antora` command accepts user inputs in the form of options, positional arguments, and environment variables.
 
  $ antora <command> [options] <arguments>
 
 . All functions start with a base call to Antora (`antora`).
 . The command tells Antora what operation to perform.
 . Additional options can be specified after a command.
-. Arguments, such as the name of the playbook and environment variables, are specified last.
+. Positional arguments, such as the name of the playbook file, are specified last.
+. Environment variables are read from the terminal's state.
 
 == Commands and options
 
