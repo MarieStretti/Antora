@@ -1,13 +1,16 @@
-Tech writers can control what content is included in their site, what user interface (UI) is applied to it, and where the site is published with a playbook.
-An Antora playbook makes it easy for writers to control a site without needing any programming knowledge.
+As authors, you can control what content is included in your site, what user interface (UI) is applied to it, and where the site is published using a playbook file.
+The playbook file is designed to make it easy for writers to control a site without needing any programming knowledge.
+The settings in this file are used to make a playbook, the runtime configuration object that tells Antora how to operate.
 
 Specifically, a playbook tells Antora:
 
-* [x] What information should be applied to the xref:configure-site.adoc[site globally], such as its title, base URL, and service account integrations.
+* [x] What information should be applied to the xref:configure-site.adoc[site globally], such as its title, base URL, and service integrations.
 //* [x] The component which sits at the root of the site (i.e., home or landing page content). (pending feature)
 * [x] Which xref:source-keys.adoc[content repositories and branches] to feed into the Antora site generator.
 * [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages.
 * [x] Where the site should be xref:configure-output.adoc[published and in what format].
+
+Certain settings from the playbook file can be overridden using CLI options or environment variables, which allows the operation team to tailor the behavior for specific environments, such as production.
 
 ////
 Alternative playbook summaries

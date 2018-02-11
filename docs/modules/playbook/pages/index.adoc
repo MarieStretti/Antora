@@ -6,6 +6,13 @@ endif::[]
 :idprefix:
 :idseparator: -
 
+The behavior of Antora is determined by a runtime configuration object called a [.term]_playbook_.
+As the site author, you populate the playbook using a playbook configuration file, or [.term]_playbook file_ for short.
+You can override certain settings specified in the playbook file using CLI options and environment variables.
+These settings get compiled to make the playbook.
+
+Let's begin by learning what inputs, outputs, and behaviors the playbook file can control.
+
 == Playbook File
 
 include::{partialsdir}/playbook-summary.adoc[]
@@ -16,5 +23,5 @@ include::{partialsdir}/playbook-project-summary.adoc[]
 
 == What's next?
 
-* Select a xref:playbook.adoc[playbook format and storage location].
-* Get a quick overview of all the xref:playbook-keys.adoc[controls you can use to configure your site].
+* Select a xref:playbook.adoc[playbook file format and storage location].
+* Get a quick overview of all the xref:playbook-keys.adoc[properties you can use to configure your site].
