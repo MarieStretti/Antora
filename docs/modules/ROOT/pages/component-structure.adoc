@@ -102,12 +102,12 @@ _Required_; _Reserved_
 +
 Helper file that enables assets, partials, and examples to be rendered in preview tools such as Atom and the Asciidoctor Chrome extension.
 
-xref:navigation:linked.adoc[<module>/nav.adoc] ::
+xref:navigation:index.adoc[<module>/nav.adoc] ::
 _Optional_; _Reserved_
 +
-A xref:navigation:linked.adoc[linked navigation file] that contains a single, unordered, AsciiDoc list.
-Each linked navigation file must be declared in the component descriptor.
-The order in which the navigation menus are displayed in the navigation panel is controlled by the order these files are listed in the xref:antora_yml.adoc#nav-key[nav key] of the component descriptor.
+A xref:navigation:create-a-navigation-file.adoc[navigation file] contains one or more AsciiDoc lists.
+Each navigation file must be declared in the component descriptor if you want it to be displayed in the site's navigation panel.
+The order in which the navigation file contents are displayed in the panel is controlled by the order these files are listed in the xref:antora_yml.adoc#nav-key[nav key] of the component descriptor.
 
 modules/user-named-module ::
 _Optional_

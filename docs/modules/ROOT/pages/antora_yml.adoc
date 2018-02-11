@@ -113,6 +113,6 @@ IMPORTANT: A component must contain a file named [.path]_index.adoc_ or a start 
 [#nav-key]
 === nav
 
-The nav key accepts a list of xref:navigation:linked.adoc[navigation files].
+The nav key accepts a list of xref:navigation:index.adoc[navigation files].
 Each value specifies the path to a navigation file (e.g., [.path]_modules/module-name/nav.adoc_).
 The order of the values indicates the order the navigation menus will be displayed in the site's navigation panel.

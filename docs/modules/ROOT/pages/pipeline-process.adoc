@@ -59,7 +59,7 @@ Convert AsciiDoc files to embeddable HTML::
 The AsciiDoc files in the xref:pages.adoc[page family] of the content catalog are converted to embeddable HTML with Asciidoctor.js.
 
 Convert navigation files::
-Antora retrieves xref:navigation:linked.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
+Antora retrieves xref:navigation:index.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
 Locate and fetch UI bundle::
 Antora finds the UI bundle using the URL listed in the playbook and fetches it.
