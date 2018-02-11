@@ -7,7 +7,6 @@ endif::[]
 :idseparator: -
 :release-version: 1.0.0-alpha.6
 // URIs:
-:uri-asciidoctor: http://asciidoctor.org
 :uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
 
 [caption="RELEASE STATUS"]
@@ -30,9 +29,9 @@ Currently, these sources can be branches of one or more git repositories and a U
 NOTE: By leveraging Antora's open architecture, you can incorporate just about any other type of content too.
 
 Next, Antora organizes the files into catalogs.
-Using {uri-asciidoctor}[Asciidoctor], it then converts all content files to embeddable HTML and resolves links between pages.
+It then uses Asciidoctor to convert all content files to embeddable HTML and resolve links between pages.
 
-Once the conversion is complete, Antora passes the embeddable HTML as part of a UI data model to Handlebars templates provided by the UI bundle to create the web pages.
+Once conversion is complete, Antora passes the embeddable HTML as part of a UI data model to Handlebars templates provided by the UI bundle to create the web pages.
 
 Finally, it publishes the pages and supporting content and UI assets to one or more local or remote destinations, where they can be viewed as a website.
 
