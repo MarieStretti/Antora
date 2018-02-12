@@ -1,4 +1,4 @@
-.xref:index.adoc[Site Configuration]
+.xref:index.adoc[Configuration]
 * xref:playbook.adoc[Playbook]
 //*** xref:playbook-formats.adoc[File Formats]
 //DA: I think we should rename "Keys" to "Schema"
