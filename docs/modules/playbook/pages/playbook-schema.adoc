@@ -186,7 +186,7 @@ Filesystem paths can be relative to the location of the playbook or absolute.
 
 The output key contains common output settings and a list of destination specifications.
 The destination specifications tell Antora which provider(s) to use to publish the site (e.g., fs, archive, ssh, s3) and where those files should go.
-The provider, in turn, determines which transport protocol to use (local, SSH, HTTP, etc) and manages the low-level details of publication.
+The provider, in turn, determines which transport protocol to use (local, SSH, HTTP, etc.) and manages the low-level details of publication.
 
 The output key is not required.
 
@@ -194,9 +194,9 @@ The output key is not required.
 === clean
 
 The clean key is a boolean.
-By default, it's set to false (turned "`off`").
-When true (turned "`on`"), it will remove the destination path recursively before generating the site.
-This key only applies to the filesystem (fs) providers currently.
+By default, it's set to false (turned off).
+When true (turned on), it will remove the destination path recursively before generating the site.
+This key only applies to the filesystem providers currently.
 
 WARNING: Use this key with great care.
 For example, if you set `dir` to your computer's home directory and `clean` to true, you will delete ALL of the folders and files in your home directory.
@@ -261,6 +261,28 @@ Learn more:
 The clean key can be specified directly on any `fs` provider.
 When specified at this location (instead of directly under output), it only cleans the output location specified by this destination.
 
+== antora.yml
+
+The file system name of the repository and branch are ignored by Antora once the content is retrieved.
+Instead, metadata about the component is read from a xref:ROOT:component-descriptor.adoc[component descriptor file] in the repository.
+Inside each branch is a file named [.path]_antora.yml_ at the documentation component root.
+The file defines the name and version of the component.
+
+As an example, here's the [.path]_antora.yml_ file in the v5.0 branch of the server repository:
+
+.antora.yml
+[source,yaml]
+----
+name: server
+title: Server
+version: '5.0'
+nav:
+- modules/start/nav.adoc
+- ...
+----
+
+This decoupling allows you to have more than one branch that provides the same version of a documentation component, which you can then toggle by configuring the branches key in the playbook.
+
 ////
 == Create a custom playbook
 
@@ -281,25 +303,3 @@ content:
     branches: v1.0
 ----
 ////
-
-== antora.yml
-
-The file system name of the repository and branch are ignored by Antora once the content is retrieved.
-Instead, metadata about the component is read from a xref:ROOT:antora_yml.adoc[component descriptor file] in the repository.
-Inside each branch is a file named [.path]_antora.yml_ at the documentation component root.
-The file defines the name and version of the component.
-
-As an example, here's the [.path]_antora.yml_ file in the v5.0 branch of the server repository:
-
-.antora.yml
-[source,yaml]
-----
-name: server
-title: Server
-version: '5.0'
-nav:
-- modules/start/nav.adoc
-- ...
-----
-
-This decoupling allows you to have more than one branch that provides the same version of a documentation component, which you can then toggle by configuring the branches key in the playbook.

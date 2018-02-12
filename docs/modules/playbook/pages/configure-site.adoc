@@ -77,7 +77,7 @@ site:
   start_page: demo-component-b::index
 ----
 
-In this example, let's say that, according to demo-component-b's xref:ROOT:antora_yml.adoc[descriptor file], 2.3 is the latest version.
+In this example, let's say that, according to demo-component-b's xref:ROOT:component-descriptor.adoc[descriptor file], 2.3 is the latest version.
 Therefore, _pass:[https://demo.antora.org/index.html]_ will redirect to _pass:[https://demo.antora.org/demo-component-b/2.3/index.html]_.
 
 [#configure-ga]
@@ -92,4 +92,4 @@ site:
     google_analytics: 'XX-123456'
 ----
 
-The Google Analytics account key must be enclosed in single quotation marks (`' '`).
+The Google Analytics account key must be enclosed in single quotation marks (`'`).
