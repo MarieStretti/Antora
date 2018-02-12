@@ -94,4 +94,4 @@ You've now upgraded to the latest version of the Antora CLI and default site gen
 == What's next?
 
 * Checkout the https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc[changelog^] to see what's new.
-* xref:run-antora-generate-site.adoc[Run Antora] and generate a documentation site.
+* xref:run-antora-to-generate-site.adoc[Run Antora] and generate a documentation site.

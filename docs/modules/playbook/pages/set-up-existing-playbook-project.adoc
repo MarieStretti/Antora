@@ -47,7 +47,7 @@ Yarn installs these dependencies inside the project under the [.path]_node_modul
 
 NOTE: If you run into problems while installing dependencies, see xref:ROOT:troubleshoot-yarn-nodegit.adoc[Troubleshooting Yarn and NodeGit].
 
-Once you've installed Antora and its dependencies, you can xref:ROOT:run-antora-generate-site.adoc[generate your site] with your playbook.
+Once you've installed Antora and its dependencies, you can xref:ROOT:run-antora-to-generate-site.adoc[generate your site] with your playbook.
 
 === Refresh dependencies
 

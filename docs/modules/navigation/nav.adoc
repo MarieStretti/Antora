@@ -1,1 +1,3 @@
-* xref:linked.adoc[Navigation]
+.xref:index.adoc[Site Navigation]
+* xref:create-a-navigation-file.adoc[Create a Navigation File]
+//* xref:organize-navigation-files.adoc[Organize and Register Navigation Files]

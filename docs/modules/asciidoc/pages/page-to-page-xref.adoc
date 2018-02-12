@@ -8,7 +8,7 @@ endif::[]
 :colon: :
 
 Antora uses an enhanced version of the AsciiDoc cross reference macro, commonly referred to as an xref, for linking between pages in a site.
-This xref macro is also used to add pages to xref:navigation:linked.adoc[navigation files].
+This xref macro is also used to add pages to xref:navigation:create-a-navigation-file.adoc[navigation files].
 //This feature is activated if the value of the macro target ends with the AsciiDoc file extension (`.adoc`) or a fragment identifier (`#id`).
 
 The information you need to provide in the xref macro depends on the location of the current file and the location of the destination file (the document you're linking to).

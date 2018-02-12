@@ -1,4 +1,4 @@
-= Playbook Keys
+= Playbook Configuration Schema
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -145,11 +145,11 @@ Antora assumes that a repository's default branches set is the `master` branch a
 
 Learn more:
 
-* xref:source-keys.adoc#default-branch[Use the default branches set]
-* xref:source-keys.adoc#comma-branch[Separate branch names with commas]
-* xref:source-keys.adoc#marker-branch[Separate branch names with markers]
-* xref:source-keys.adoc#exact-branch[Specify branches by name]
-* xref:source-keys.adoc#glob-branch[Specify and exclude branches by glob patterns]
+* xref:configure-content-sources.adoc#default-branch[Use the default branches set]
+* xref:configure-content-sources.adoc#comma-branch[Separate branch names with commas]
+* xref:configure-content-sources.adoc#marker-branch[Separate branch names with markers]
+* xref:configure-content-sources.adoc#exact-branch[Specify branches by name]
+* xref:configure-content-sources.adoc#glob-branch[Specify and exclude branches by glob patterns]
 
 ==== start_path
 
@@ -158,7 +158,7 @@ When the documentation component isn't stored at the root, you need to specify t
 
 Learn more:
 
-* xref:source-keys.adoc#add-start-path[Specify a start path for a content repository]
+* xref:configure-content-sources.adoc#add-start-path[Specify a start path for a content repository]
 
 == ui
 

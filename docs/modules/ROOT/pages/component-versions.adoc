@@ -1,0 +1,66 @@
+////
+TODO: explain how this relates to page versions
+////
+= Component Versions & Branches
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+Versions of a documentation component are stored in branches in a version control repository such as git.
+The name of the branch itself doesn't matter.
+It's the version property in the component descriptor that determines the name of the version for the component.
+
+== Branches as versions
+
+Like with software, we use branches to store different versions of the documentation.
+Branches are ideally suited for managing multiple versions of the same content.
+
+If we didn't use branches to specify versions, but instead used folders with trailing version numbers, all stuffed in a single branch, then we'd have to explicitly duplicate all the files in a documentation component for each version.
+And we'd have no easy way to compare, manage, and merge different instances of a document.
+
+Branches handle all this for us.
+Creating a new branch is extremely cheap.
+You simply create a new branch from an existing reference in the repository, and the repository only stores what's changed since that branch point.
+
+== Setting the version for a branch
+
+To set the version of documentation stored in a particular branch, you simply specify the version in the component descriptor:
+
+[source,yaml]
+----
+name: versioned-component
+version: '2.1'
+title: Versioned Component
+----
+
+This component descriptor communicates that the files taken from this branch contribute to version 2.1 of the versioned-component component.
+The name of the branch could be v2.1 or v2.1-beta.
+It doesn't matter.
+
+This is the only file you have to update when creating a new branch.
+All the page references for that component should be relative to the version, so you shouldn't need to update any links.
+The next time you run Antora on the repository, you'll see a new version in the component explorer drawer.
+
+You may need to add the branch to your playbook file.
+Keep in mind that content sources are filtered by branch name, not by the version they contain.
+That's because a single version can be spread out across multiple branches, or even multiple repositories.
+
+== Versionless components
+
+It's possible to have a versionless component.
+You'll still use a branch, but you'll only use one.
+In this case, put all the files in the master branch.
+Then, assign a version-agnostic name in the component descriptor, such as latest or stable:
+
+[source,yaml]
+----
+name: versionless-component
+version: latest
+title: Versionless Component
+----
+
+You can also combine a versionless branch (like latest or stable) with version branches.
+They don't even have to contain the same files.

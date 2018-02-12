@@ -1,0 +1,45 @@
+= AsciiDoc
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings:
+:idprefix:
+:idseparator: -
+
+AsciiDoc is Antora's native content markup language.
+AsciiDoc is ideal for writing documentation because it's:
+
+* readable
+* concise
+* comprehensive
+* extensible
+* easy to learn
+
+== Syntax
+
+AsciiDoc is a mature, lightweight markup language that supports all the structural and semantic elements necessary for writing technical documentation.
+
+The AsciiDoc syntax is intuitive because it recognizes well-established, plain text conventions for marking up and structuring text.
+A person unfamiliar with AsciiDoc should be able to figure out the purpose of most of its syntax elements just by looking at them.
+That's because the syntax elements were carefully chosen to look like what they mean.
+
+AsciiDoc only requires a text editor to read or write, thereby offering a very low bar to get started.
+
+You can use this section of the documentation to learn more about the AsciiDoc syntax, which starts at the top of the document with the xref:page-header.adoc[page header].
+From there, you can follow the items in the site navigation to learn about most syntax elements, or jump to a specific topic such as xref:page-to-page-xref.adoc[page references].
+
+== Parser
+
+Asciidoctor is the processor that converts AsciiDoc content to HTML and other formats.
+
+=== Speed and security
+
+No coverage of Asciidoctor is complete without mention of its speed.
+It loads, parses, and converts documents extremely quickly.
+That’s good news for teams and applications that need to process thousands of documentation files in multiple environments on a daily basis.
+Asciidoctor also offers several levels of security, further justifying its suitability for server-side deployments.
+
+== The advantages of Open Source
+
+The Asciidoctor project, home to the AsciiDoc syntax, the reference processor, and its extensions, is open source and made available under the MIT license.
+The Antora developers are also the lead Asciidoctor maintainers, which helps ensures a tight integration and keeps both technologies moving forward to address ever-changing documentation requirements and needs.

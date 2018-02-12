@@ -1,4 +1,5 @@
-An Antora playbook project repository is responsible for generating a documentation site.
-It's strictly a _configuration as code_ repository--it does not contain any software or content.
-Instead, it contains instructions for how to generate the site.
-These instructions include the software to download, the content to use, and the UI to apply to each page.
+A playbook project repository is responsible for generating a documentation site.
+It's strictly a _configuration as code_ repository--it does not contain any content.
+Instead, it contains instructions for how to generate one or more sites.
+In essence, it holds the playbook file.
+It may also contain extension code and lock down the softare dependencies.

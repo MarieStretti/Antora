@@ -1,14 +1,21 @@
-Antora uses information in a playbook ([.path]_site.yml_) to fetch the content and the UI bundle used to control the visual layout, style, and behavior of those pages.
+As authors, you can control what content is included in your site, what user interface (UI) is applied to it, and where the site is published using a playbook file.
+The playbook file is designed to make it easy for writers to control a site without needing any programming knowledge.
+The settings in this file are used to make a playbook, the runtime configuration object that tells Antora how to operate.
 
-The playbook makes it possible for documentation writers to control what content is included in their site without needing any programming knowledge.
-It is a configuration file that contains an inventory of content repository addresses and branch names, a UI bundle address and tag, and global documentation site information.
-You'll use the playbook to tell Antora what content you want included in your site and where you want the site published.
+Specifically, a playbook tells Antora:
 
-More specifically, the playbook tells Antora:
-
-* [x] The title of the published site.
-* [x] The URL of the published site (used for canonical URLs and URLs in the sitemap).
+* [x] What information should be applied to the xref:configure-site.adoc[site globally], such as its title, base URL, and service integrations.
 //* [x] The component which sits at the root of the site (i.e., home or landing page content). (pending feature)
-* [x] Which content repositories and branches to feed into the Antora site generator.
-* [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages in the site.
-//* [x] A list of paths of xref:navigation:aspect.adoc[aspect navigation domains] to use (navigation which is not linked to any given component). (pending feature)
+* [x] Which xref:configure-content-sources.adoc[content repositories and branches] to feed into the Antora site generator.
+* [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages.
+* [x] Where the site should be xref:configure-output.adoc[published and in what format].
+
+Certain settings from the playbook file can be overridden using CLI options or environment variables, which allows the operation team to tailor the behavior for specific environments, such as production.
+
+////
+Alternative playbook summaries
+
+Antora uses a playbook to set up a documentation site, locate and organize the site's source content and UI bundle, and publish the site to one or multiple destinations.
+A playbook is a configuration file that contains an inventory of content repository addresses and branch names, a UI bundle address and tag, and global documentation site information.
+You'll use the playbook to tell Antora what content you want included in your site and where you want the site published.
+////

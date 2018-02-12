@@ -1,0 +1,30 @@
+= Site Navigation
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+With Antora, tech writers can create their site's navigation with AsciiDoc and store it right alongside their documentation files.
+
+== Describe your navigation using AsciiDoc lists
+
+A site’s navigation is described by one or more AsciiDoc lists.
+Page links are added using the same cross referencing syntax used in the pages themselves.
+There's no special syntax or UI template logic to learn.
+
+== No content or organization restrictions
+
+In addition to cross references, the navigation lists can contain normal text, images, icons, and links to pages not created by the generator pipeline.
+The links in the navigation can be ordered and nested in the arrangement of your choice.
+
+== What's next?
+
+* xref:create-a-navigation-file.adoc[Set up a new navigation file] and add different types of content to it.
+* Organize navigation files in a component.
+* Select the order the navigation lists should be displayed in a published site.
+
+////
+describe and control the navigation structure as a content concern; navigation stored with the content; author-controlled, yet can still be manipulated by the UI / designer
+////

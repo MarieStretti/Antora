@@ -1,0 +1,122 @@
+= Create a Navigation File
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+////
+TODO:
+
+Info about where to store a nav file and any alternatives.
+Better examples and example output
+Align on the names for nav in general and linked vs aspect: linked and aspect domain, linked and aspect navigation, nav tree, linked page, aspect page, etc.
+Clarify nav file name options and nav storage locations
+////
+
+On this page, you'll learn:
+
+* [x] How to structure a navigation file.
+* [x] How to add cross references to a navigation list.
+* [x] How to add regular text and links to other websites to a navigation list.
+
+Each module contains a navigation file named [.path]_nav.adoc_.
+In Antora, this navigation file is called linked navigation.
+
+== File format
+
+A navigation file is an AsciiDoc file (`.adoc`) that contains one or more unordered lists.
+
+== List structure
+
+In an xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[AsciiDoc unordered list], each top-level navigation item is marked by a single (`{asterisk}`).
+Each top-level item can have as many nested items as you need up to level five (`+*****+`).
+Also, a list can have an optional title, denoted by a period (`.`).
+
+.Single navigation list anatomy
+----
+.List title (optional)
+* First level (top) item
+** Second level item
+*** Third level item
+**** Fourth level item
+***** Fifth level item
+* First level item
+* First level item
+----
+
+=== Multiple lists in a single file
+
+A navigation file can contain multiple lists when each of those lists have a title.
+Each list must be separate by at least one blank line.
+
+.Multi-list anatomy
+----
+.List title
+* First level item
+** Second level item
+* First level item
+** Second level item
+
+.List title
+* First level item
+* First level item
+----
+
+== Add links to documentation pages
+
+The most common items in a navigation file are cross references to pages in the module where the navigation file will be stored.
+
+.xrefs to in-module pages
+[source,asciidoc]
+----
+.xref:index.adoc[Product Intro]
+* xref:get-started.adoc[Getting Started with Product]
+** xref:install/prerequisites.adoc[Install the Prerequisites]
+* xref:page-a.adoc[Another Important Topic]
+----
+
+However, using the xref:asciidoc:page-to-page-xref.adoc[appropriate xref pattern], you can include references to any document in the site, whether it's stored in the same module or not.
+
+.xrefs to pages in other modules and components
+[source,asciidoc]
+----
+.xref:index.adoc[In-module page]
+* xref:other-module:page.adoc[Page in same component, but a different module]
+** xref:topic/page.adoc[In-module page in a topic folder]
+* xref:component:module:page-a.adoc[Page in another component]
+----
+
+== Add unlinked text
+
+A navigation list can contain normal (i.e. unlinked) text.
+
+.Unlinked list items
+[source,asciidoc]
+----
+.The Special Project // <1>
+* xref:index.adoc[Project Intro]
+** xref:get-started.adoc[Getting Started with Project]
+* Orientation // <2>
+* xref:page-a.adoc[Project Concepts]
+----
+<1> An unlinked list block title
+<2> An unlinked list item
+
+== Add links to external websites
+
+A navigation list can contain links to external websites.
+External links are links to webpages that aren't built as part of your documentation by your site's Antora pipeline.
+
+To create a list item that links to an external URL, just use AsciiDoc's xref:asciidoc:external-urls.adoc[URL syntax].
+
+.External link list items
+[source,asciidoc]
+----
+.xref:index.adoc[The Special Project]
+* xref:get-started.adoc[Getting Started with Project]
+**xref:page-a.adoc[Project Concepts]
+* More Resources
+** https://special-project.com/support[Support Plans]
+** https://gitlab.com/project/issues
+----
