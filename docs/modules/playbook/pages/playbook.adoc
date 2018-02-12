@@ -28,7 +28,7 @@ Regardless of the format, a playbook contains structured xref:playbook-schema.ad
 
 == Where is a playbook stored?
 
-A playbook is usually located at the root of a xref:set-up-existing-playbook-project.adoc[playbook project].
+A playbook is usually located at the root of a xref:use-an-existing-playbook-project.adoc[playbook project].
 
 //== How is a playbook created?
 

@@ -11,4 +11,4 @@
 // ** Create a Playbook
 * xref:author-mode.adoc[Create an Author Workspace Playbook]
 //** xref:playbook-project.adoc[Playbook Projects]
-* xref:set-up-existing-playbook-project.adoc[Use an Existing Project]
+* xref:use-an-existing-playbook-project.adoc[Use an Existing Project]
