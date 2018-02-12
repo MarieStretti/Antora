@@ -81,7 +81,7 @@ This includes:
 * edit page URI (not visible)
 
 The key's value can contain letter, number, period (`.`), underscore (`+_+`), and hyphen (`-`) characters.
-If the value starts with a number, it must be contained within a set of single quote marks (`''`).
+If the value starts with a number, it must be contained within a set of single quote marks (`'`).
 
 .Example version key values
 * '1.0'
@@ -98,7 +98,7 @@ The value uses the page ID structure.
 and must specify the module and path to the file.
 
 .Start page value examples
-[source,yml]
+[source,yaml]
 ----
 start_page: ROOT:overview.adoc
 

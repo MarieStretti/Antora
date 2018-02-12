@@ -146,7 +146,7 @@ Features include:
 
 * Bold, italic, monospace, highlight, and custom text roles
 * Special Characters, font icons, and UI references (kbd:[Ctrl+T])
-* Ordered, unorder, definition, and interactive task lists
+* Ordered, unordered, definition, and interactive task lists
 * Videos (self-hosted, YouTube, Vimeo) and audio with display and user-control options
 * Images and icons, inline or block, with display options
 * Tables

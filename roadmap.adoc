@@ -95,11 +95,11 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 ==== Scheduled for next alpha
 
-* [ ] Improve component and module index page content {uri-issues}/156[#156]
+* [ ] Add nav category and multi-list capabilities to navigation docs {uri-issues}/159[#159]
+* [x] Improve component and module index page content {uri-issues}/156[#156]
 * [ ] Provide source URL configuration examples {uri-issues}/153[#153]
 * [ ] Document UI bundle configuration features {uri-issues}/152[#152]
-* [ ] Add nav category and multi-list capabilities to navigation docs
-* [ ] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
+* [x] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
 * [ ] _Docs Site:_ Connect Docs and project sites
 * [ ] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
 * [ ] Add how to create a partial page
@@ -128,11 +128,13 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 ==== Scheduled for next alpha
 
 * [ ] Improve sidebar block styles {uri-ui-issues}/27[#27]
-* [ ] Refine literal, listing, and example block title styles {uri-ui-issues}/22[#22]
-* [ ] Style keyboard UI macro {uri-ui-issues}/23[#23]
+* [x] Enable ordered list numeration styles {uri-ui-issues}/24[#24]
+* [x] Refine literal, listing, and example block title styles {uri-ui-issues}/22[#22]
+* [x] Style keyboard UI macro {uri-ui-issues}/23[#23]
 
 ==== Waiting
 
+* [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
 * [ ] IE 11 fixes
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 * [ ] Integrate search
@@ -148,8 +150,6 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 === v1.x
 
-* [ ] Enable ordered list numeration styles {uri-ui-issues}/24[#24]
-* [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
 * [ ] Enable unordered list marker styles {uri-ui-issues}/26[#26]
 * [ ] Create task list SVGs {uri-ui-issues}/31[#31]
 * [ ] Set up UI bundle hosting
