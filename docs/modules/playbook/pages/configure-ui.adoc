@@ -1,0 +1,50 @@
+= UI Configuration
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] How to retrieve the UI bundle via a URL or local path.
+* [x] How to specify a start path inside the bundle.
+* [x] How to set a default UI layout.
+* [x] How to configure an output directory for the UI files.
+
+The ui key contains an array of UI bundle and page layout specifications.
+
+[#remote-bundle]
+== Fetch a UI bundle from a remote repository
+
+The URL of the UI bundle.
+
+[#local-bundle]
+== Load a UI bundle from a local path
+
+The UI bundle can be loaded from a local filesystem path.
+Filesystem paths can be relative to the location of the playbook or absolute.
+
+[#start-path]
+== Start path scenario
+
+The relative path inside the bundle from which to start reading files.
+format: String
+default: ''
+
+[#default-layout]
+== Apply a default layout
+
+The default layout to apply to pages that do not specify a layout.
+format: String
+default: undefined
+
+[#output-dir]
+== Write the UI files to an output directory
+
+The output directory path relative to the site root where the UI files should be written.
+format: String,
+default: '_'
+
+
+//supplemental_files: Supplemental file list or a directory of files to append to the UI bundle.

@@ -34,8 +34,8 @@ content: # <7>
 ui: # <12>
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <13>
   start_path: theme # <14>
-  output_dir: public # <15>
-  default_layout: base # <16>
+  default_layout: base # <15>
+  output_dir: public # <16>
 output: # <17>
  clean: false # <18>
  dir: releases # <19>
@@ -56,8 +56,8 @@ output: # <17>
 <12> UI key
 <13> <<ui-bundle-key,UI bundle repository key>>
 <14> <<ui-start-path-key,Bundle start path key>>
-<15> <<ui-output-dir-key,UI output directory key>>
-<16> <<ui-default-layout-key,UI default layout key>>
+<15> <<ui-default-layout-key,UI default layout key>>
+<16> <<ui-output-dir-key,UI output directory key>>
 <17> Published output key
 <18> Clean output directory key
 <19> Output directory key
@@ -176,20 +176,37 @@ The URL of the UI bundle.
 The UI bundle can be loaded from a local filesystem path.
 Filesystem paths can be relative to the location of the playbook or absolute.
 
+Learn more:
+
+* xref:configure-ui.adoc#remote-bundle[Fetch and use a remote UI bundle]
+* xref:configure-ui.adoc#local-bundle[Load a local UI bundle]
+
 [#ui-start-path-key]
 === start_path
 
 When the UI files aren't stored at the root of the bundle, specify the bundle relative path to the UI files using `start_path`.
+
+Learn more:
+
+* xref:configure-ui.adoc#start-path[Specify a start path for the UI files]
+
+[#ui-default-layout-key]
+=== default_layout
+
+The default_layout key applies a layout template to pages that don't specify a layout.
+
+Learn more:
+
+* xref:configure-ui.adoc#default-layout[Specify a default UI layout template in the playbook]
 
 [#ui-output-dir-key]
 === output_dir
 
 The output directory path relative to the site root where the UI files should be written.
 
-[#ui-default-layout-key]
-=== default_layout
+Learn more:
 
-The default layout to apply to pages that do not specify a layout.
+* xref:configure-ui.adoc#output-dir[Specify an output directory for the UI files]
 
 == output
 
