@@ -1,8 +1,6 @@
 .Basics
 * xref:features.adoc[Features]
 * xref:pipeline-process.adoc[How Antora Works]
-//
-
 * System Requirements
 ** xref:install/linux-requirements.adoc[Linux]
 ** xref:install/macos-requirements.adoc[macOS]
@@ -14,22 +12,22 @@
 //** Navigation files
 //** UI files
 //** Documentation component
+//
 //.Configure
 //* Playbook files
+//
 //.Publishing
 * xref:run-antora-generate-site.adoc[Run Antora]
 ** xref:run-antora-generate-site.adoc#local-site-preview[Local Preview]
 * xref:cli.adoc[CLI Commands & Options]
-//
 
-.File Organization
-* xref:component-structure.adoc[Organize Your Files for Antora]
+.xref:component-structure.adoc[File Organization]
 * xref:modules.adoc[Modules]
 //** Pages & Partials
 //** Assets
 //** Examples
-* xref:antora_yml.adoc[antora.yml]
-//** Branches & Versions
+* xref:component-descriptor.adoc[Component Descriptor]
+* xref:component-versions.adoc[Versions & Branches]
 
 .xref:pages.adoc[Pages]
 * xref:create-standard-page.adoc[Create a Standard Page]
