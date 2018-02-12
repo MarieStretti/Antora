@@ -24,7 +24,7 @@ Playbooks can be written in YAML, JSON, and CSON.
 YAML is a common configuration language for defining automated tasks.
 Most of the playbook examples in this documentation use YAML since it is less verbose than JSON and CSON.
 
-Regardless of the format, a playbook contains structured xref:playbook-keys.adoc[key sets] for specifying general site properties, content and UI input sources, and published output destinations and providers.
+Regardless of the format, a playbook contains structured xref:playbook-schema.adoc[key sets] for specifying general site properties, content and UI input sources, and published output destinations and providers.
 
 == Where is a playbook stored?
 

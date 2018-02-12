@@ -1,6 +1,6 @@
 .Basics
 * xref:features.adoc[Features]
-* xref:pipeline-process.adoc[How Antora Works]
+* xref:how-antora-works.adoc[How Antora Works]
 * System Requirements
 ** xref:install/linux-requirements.adoc[Linux]
 ** xref:install/macos-requirements.adoc[macOS]
@@ -17,8 +17,8 @@
 //* Playbook files
 //
 //.Publishing
-* xref:run-antora-generate-site.adoc[Run Antora]
-** xref:run-antora-generate-site.adoc#local-site-preview[Local Preview]
+* xref:run-antora-to-generate-site.adoc[Run Antora]
+** xref:run-antora-to-generate-site.adoc#local-site-preview[Local Preview]
 * xref:cli.adoc[CLI Commands & Options]
 
 .xref:component-structure.adoc[File Organization]

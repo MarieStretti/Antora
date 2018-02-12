@@ -60,4 +60,4 @@ Here's how the branches are selected in author mode:
 Aside from its name, the current branch is effectively ignored.
 
 If you want to use multiple working trees, simply clone the repository multiple times and configure multiple entries in the playbook.
-You can use the `branches` key to xref:source-keys.adoc#branches[filter out the names of branches you don't want].
+You can use the `branches` key to xref:configure-content-sources.adoc#branches[filter out the names of branches you don't want].
