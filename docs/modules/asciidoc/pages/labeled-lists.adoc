@@ -37,11 +37,11 @@ Mouse:: Used to point to and select items on your computer screen. // <2>
 <2> The term and its definition can be placed on the same line as long as there is at least one blank space between the `::` and definition text.
 
 .Result
---
+====
 Keyboard::
 Used to enter text or control items on the screen.
 Mouse:: Used to point to and select items on your computer screen.
---
+====
 
 The description of each item is displayed below the label when rendered.
 

@@ -26,7 +26,7 @@ All the documentation in a component should follow the same versioning scheme an
 Your site can be generated using just one documentation component, or as many as you want.
 
 When Antora receives instructions from your playbook to scan a specific repository, its first objective is to find a component descriptor file in that repository.
-The xref:antora_yml.adoc[component descriptor file] is named [.path]_antora.yml_.
+The xref:component-descriptor.adoc[component descriptor file] is named [.path]_antora.yml_.
 
 Once Antora finds this file, it assumes that that directory and all its files and subdirectories are a documentation component.
 The structure of a documentation component is laid out below.
@@ -47,11 +47,11 @@ When Antora encounters these folders and files in a properly structured componen
 The contents of a directory or file using a reserved name must adhere to certain requirements.
 ****
 
-xref:antora_yml.adoc[antora.yml] ::
+xref:component-descriptor.adoc[antora.yml] ::
 _Required_; _Reserved_
 +
 The component descriptor file tells Antora that the contents of the directory are a documentation component.
-This file contains crucial xref:antora_yml.adoc[metadata about the documentation component].
+This file contains crucial xref:component-descriptor.adoc[metadata about the documentation component].
 
 xref:modules.adoc[modules] ::
 _Required_; _Reserved_
@@ -107,7 +107,7 @@ _Optional_; _Reserved_
 +
 A xref:navigation:create-a-navigation-file.adoc[navigation file] contains one or more AsciiDoc lists.
 Each navigation file must be declared in the component descriptor if you want it to be displayed in the site's navigation panel.
-The order in which the navigation file contents are displayed in the panel is controlled by the order these files are listed in the xref:antora_yml.adoc#nav-key[nav key] of the component descriptor.
+The order in which the navigation file contents are displayed in the panel is controlled by the order these files are listed in the xref:component-descriptor.adoc#nav-key[nav key] of the component descriptor.
 
 modules/user-named-module ::
 _Optional_

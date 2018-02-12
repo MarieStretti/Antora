@@ -31,12 +31,12 @@ If the example content is contiguous, i.e., not interrupted by blank lines, the 
 ----
 .Optional title
 [example]
-This is an #example paragraph#.
+This is an example paragraph.
 ----
 
 .Optional title
 [example]
-This is an #example paragraph#.
+This is an example paragraph.
 
 [#delimited]
 === Delimited example block

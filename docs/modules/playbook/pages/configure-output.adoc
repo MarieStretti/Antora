@@ -1,4 +1,4 @@
-= Output Keys
+= Output Configuration
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -63,7 +63,6 @@ Each destination specification must include the provider key, which indicates wh
 
 Antora offers two built-in providers.
 
-.Built-in providers
 Filesystem (`fs`)::
 Publishes the output files to a directory.
 Archive (`archive`)::
@@ -194,9 +193,7 @@ Otherwise, Antora will require the value as a Node module installed in the playb
 The custom provider is a JavaScript function that matches the following signature:
 
 [source,js]
-----
 async function publish (destConfig, files, playbook)
-----
 
 The destConfig argument is an object containing key/value pairs that correspond to the properties of the destination specification.
 The files argument is a ReadableStream of virtual files.

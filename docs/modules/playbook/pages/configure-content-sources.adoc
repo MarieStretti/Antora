@@ -60,23 +60,23 @@ When no branches are specified for a source URL, Antora will use the [.term]_def
 Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
 
 .Use default branches set
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
-  - url: https://gitlab.com/antora/demo/demo-component-b
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
 ----
 
 The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, like in the example below.
 
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches: master, v*
-  - url: https://gitlab.com/antora/demo/demo-component-b
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
     branches: master, v*
 ----
 
@@ -86,11 +86,11 @@ content:
 Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
 
 .Comma-separated branches
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches: master, v1.*, v2.1.0
 ----
 
@@ -100,11 +100,11 @@ content:
 Each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
 
 .Marker-separated branches
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
     - master
     - v1.*
@@ -117,11 +117,11 @@ content:
 Branches can be specified by their exact name.
 
 .Exact branch names
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
     - master
     - '1.0.0'
@@ -195,7 +195,7 @@ image::start-path-dir.svg[,260]
 In order for Antora to locate the documentation component in this repository, the start path value needs to point Antora to the directory where the [.path]_antora.yml_ file is stored.
 
 .Set start_path
-[source,yaml,subs=attributes+]
+[source,yaml]
 ----
 content:
   sources:
