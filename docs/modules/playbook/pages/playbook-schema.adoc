@@ -202,7 +202,8 @@ Learn more:
 [#ui-output-dir-key]
 === output_dir
 
-The output directory path relative to the site root where the UI files should be written.
+The output directory path where the UI files are written.
+When no UI `output_dir` is explicitly specified, the files are published to a directory designated by a single underscore ( +_+ ) that is relative to the site root.
 
 Learn more:
 
