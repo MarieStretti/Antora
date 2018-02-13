@@ -1,4 +1,4 @@
-= Page IDs
+= Page Identifiers
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -8,6 +8,8 @@ endif::[]
 
 Antora's page IDs are one of its foundational elements.
 
+== What is a page identifier?
+
 In order to reference a page, that is, create a link to it from another page, that page has a unique and stable identifier.
 That identifier doesn't change, even if page gets published to different places.
 Like a mobile phone number, when that identifier is "`called`", the page answers, no matter where it's published.
@@ -15,17 +17,19 @@ Like a mobile phone number, when that identifier is "`called`", the page answers
 We call a page's "`number`" a page identifier, or page ID for short.
 The page ID is constructed from the properties of the source document that make it unique within a documentation site.
 
+== How is a page ID structured?
+
 A page ID is based on a documentation component's xref:component-structure.adoc[standard project structure].
 Documentation components ensure that each page lives in a defined, describable location.
 From this structure, each location derives unique, reliable coordinates we can use to refer to it.
 
-These "`coordinates`" that make a source document unique, are described below:
-
-Component::
-The documentation component to which the page belongs; often mapped to a repository.
+These coordinates that make a source document unique, are described below:
 
 Version::
 The version of the component in which this page lives; often mapped to a repository branch.
+
+Component::
+The documentation component to which the page belongs; often mapped to a repository.
 
 Module::
 The content bundle in which the page is grouped; if empty, defaults to ROOT.
@@ -46,8 +50,9 @@ Here's an example of a fully-qualified page ID:
 1.0@antora:playbook:configure.adoc#filter-branches
 ----
 
-////
-We can repurpose the http://asciidoctor.org/docs/user-manual/#inter-document-cross-references[inter-document xref macro^] in AsciiDoc to convert this page ID into a link:
+== How is a page referenced with its ID?
+
+A page ID is used in an AsciiDoc cross reference, also called an xref, to link one documentation page to another documentation page.
 
 image::xref-macro-anatomy-diagram.svg[Page reference anatomy,role=grow-x]
 
@@ -56,6 +61,11 @@ Here's how that looks in practice:
 ----
 xref:1.0@antora:playbook:configure.adoc#filter-branches[filter branches]
 ----
+
+Specifying the component and version every time seems like overkill.
+Surely there must be some sort of shorthand, right?
+
+== Why are page IDs so important?
 
 *We've avoided coupling to the published URL* by using a source-to-source reference.
 (Notice the page coordinate ends with .adoc, the file extension of an AsciiDoc source file).
@@ -80,7 +90,3 @@ This human-friendly referencing system saves you from having to do computations 
 You just specify the coordinates of the page you want to reference.
 There's no need to worry about the source file physical location on disk or its published URL.
 All you need to know are the names of your components, versions, modules, and pages so you can fill in this information.
-
-Specifying the component and version every time seems like overkill.
-Surely there must be some sort of shorthand, right?
-////
