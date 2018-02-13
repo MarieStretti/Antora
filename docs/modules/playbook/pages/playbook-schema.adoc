@@ -172,8 +172,7 @@ The ui key contains an array of UI bundle and page layout specifications.
 [#ui-bundle-key]
 === bundle
 
-The URL of the UI bundle.
-The UI bundle can be loaded from a local filesystem path.
+The URL or local filesystem path of the UI bundle.
 Filesystem paths can be relative to the location of the playbook or absolute.
 
 Learn more:
@@ -184,7 +183,7 @@ Learn more:
 [#ui-start-path-key]
 === start_path
 
-When the UI files aren't stored at the root of the bundle, specify the bundle relative path to the UI files using `start_path`.
+The bundle relative path to the UI files when they aren't stored at the root of the bundle.
 
 Learn more:
 
@@ -193,7 +192,7 @@ Learn more:
 [#ui-default-layout-key]
 === default_layout
 
-The default_layout key applies a layout template to pages that don't specify a layout.
+The default layout key applies a layout template to pages that don't specify a layout.
 
 Learn more:
 
@@ -203,7 +202,7 @@ Learn more:
 === output_dir
 
 The output directory path where the UI files are written.
-When no UI `output_dir` is explicitly specified, the files are published to a directory designated by a single underscore ( +_+ ) that is relative to the site root.
+When the UI `output_dir` isn't explicitly specified, the files are published to a directory designated by a single underscore ( +_+ ) that is relative to the site root.
 
 Learn more:
 
@@ -288,6 +287,7 @@ Learn more:
 The clean key can be specified directly on any `fs` provider.
 When specified at this location (instead of directly under output), it only cleans the output location specified by this destination.
 
+////
 == antora.yml
 
 The file system name of the repository and branch are ignored by Antora once the content is retrieved.
@@ -310,14 +310,11 @@ nav:
 
 This decoupling allows you to have more than one branch that provides the same version of a documentation component, which you can then toggle by configuring the branches key in the playbook.
 
+urls:
+urls html_extension_style: Controls how the URL extension for HTML pages is handled.
 
-// urls:
-// urls html_extension_style: Controls how the URL extension for HTML pages is handled.
+redirects: Generate nginx config file containing URL redirects for page aliases. Boolean
 
-// redirects: Generate nginx config file containing URL redirects for page aliases. Boolean
-
-
-////
 == Create a custom playbook
 
 Instead of modifying the main playbook, you can create a custom playbook and pass it to Antora.

@@ -56,7 +56,7 @@ ui:
 ----
 
 [#start-path]
-=== Specify UI start directory
+=== Specify a UI start directory
 
 The `start_path` is the relative path inside the bundle from where Antora should start reading files.
 This key is useful when you have more than one UI packaged in the same archive.
@@ -74,7 +74,19 @@ In this example, Antora will ignore all of the files in the UI bundle that fall 
 [#default-layout]
 == Apply a default layout
 
-The default layout to apply to pages that do not specify a layout.
+A default layout template can be assigned to all of the pages that don't have a template explicitly assigned to them in their page header.
+The `default_layout` accepts a value that is the stem (i.e., don't include the file extension) of a layout file.
+The layout file should be stored in the UI bundle directory [.path]_src/layouts_.
+
+For example, if you want to use a layout named [.path]_article.hbs_ as the default, the `default_layout` value would be `article`.
+
+.Default layout value
+[source,yaml]
+----
+ui:
+ bundle: ../ui/build/ui-bundles.zip
+ default_layout: article
+----
 
 == Default UI output directory
 
@@ -82,7 +94,7 @@ The UI files are published to a directory labeled with a single [.path]+_+ (unde
 For instance, when the site is published to the xref:configure-output.adoc#output-dir[default destination directory] ([.path]_build/site_), and no UI `output_dir` is specified, the UI files are written to [.path]_build/site/{blank}__.
 
 [#output-dir]
-=== Write the UI files to a specified output directory
+=== Specify an output directory
 
 The output directory key (`output_dir`) allows you to specify the directory where Antora should publish the UI files.
 The path must be relative to the directory where the site is to be published
@@ -92,7 +104,6 @@ The path must be relative to the directory where the site is to be published
 ----
 ui:
  bundle: /home/user/projects/docs-beta/ui/build/ui-bundles.zip
- start_path: dark-theme
  output_dir: _ui
 ----
 
@@ -105,7 +116,6 @@ In the next example, the site's output directory (`dir`) has been specified in a
 ----
 ui:
  bundle: /home/user/projects/docs-beta/ui/build/ui-bundles.zip
- start_path: dark-theme
  output_dir: _ui
 output:
  dir: public
