@@ -7,23 +7,32 @@ endif::[]
 :idseparator: -
 :colon: :
 
-Antora uses an enhanced version of the AsciiDoc cross reference macro, commonly referred to as an xref, for linking between pages in a site.
-This xref macro is also used to add pages to xref:navigation:create-a-navigation-file.adoc[navigation files].
-//This feature is activated if the value of the macro target ends with the AsciiDoc file extension (`.adoc`) or a fragment identifier (`#id`).
+To link between documentation pages, you'll use the the AsciiDoc cross reference macro combined with a page ID.
+This syntax in also used to add pages to xref:navigation:create-a-navigation-file.adoc[navigation files].
 
-The information you need to provide in the xref macro depends on the location of the current file and the location of the destination file (the document you're linking to).
-The closer the two files are, the less information you need to specify.
+== Reference by page ID
 
-== Cross reference structure
+In Antora, a cross reference, also called an xref, needs a page ID in order to link to another documentation page.
+The number of page ID coordinates you need to enter into the xref depends on the location of the current file and the location of the destination file (the document you're linking to).
+The closer the two files are, the shorter the page ID.
 
-First, let's dissect a fully qualified cross reference:
+In the next section, will go over each part of the xref and page ID syntax.
 
+NOTE: Antora's page ID system is one of its fundamental features.
+It's integral to Antora's ability to publish a site to multiple environments and domains without you needing to modify your source content.
+If you want to learn more about the page ID, see xref:ROOT:page-id.adoc#important[Why are page IDs important?]
+
+== Xref and page ID anatomy
+
+Let's dissect a cross reference with a fully-qualified page ID.
+
+.Xref using a fully-qualified page ID
 [source,asciidoc]
 ----
 xref:version-name@component-name:module-name:page.adoc#fragment[link text]
 ----
 
-Here's what each part of the cross reference does:
+Here's what each part of the cross reference and page ID does:
 
 xref{colon}::
 The prefix for an AsciiDoc source file-to-file cross reference macro.

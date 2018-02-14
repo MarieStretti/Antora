@@ -1,4 +1,4 @@
-= Page Identifiers
+= Page Identifier
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -6,27 +6,30 @@ endif::[]
 :idprefix:
 :idseparator: -
 
-Antora's page IDs are one of its foundational elements.
+//Antora's page IDs are one of its foundational elements.
 
 == What is a page identifier?
 
-In order to reference a page, that is, create a link to it from another page, that page has a unique and stable identifier.
-That identifier doesn't change, even if page gets published to different places.
-Like a mobile phone number, when that identifier is "`called`", the page answers, no matter where it's published.
+In order for a page to be linked to, i.e., referenced, that page must have a unique and stable identifier.
+This identifier is like your mobile phone number.
+When someone calls your mobile number, they know they're calling you and that they'll reach your phone no matter where your phone is located.
+So, when an identifier is "`called`", the page that is connected to that identifier answers, no matter where it's published.
 
 We call a page's "`number`" a page identifier, or page ID for short.
-The page ID is constructed from the properties of the source document that make it unique within a documentation site.
 
+[#structure]
 == How is a page ID structured?
+
+The page ID is unique and stable because it is constructed from the properties of the source document.
 
 A page ID is based on a documentation component's xref:component-structure.adoc[standard project structure].
 Documentation components ensure that each page lives in a defined, describable location.
 From this structure, each location derives unique, reliable coordinates we can use to refer to it.
 
-These coordinates that make a source document unique, are described below:
+These source document coordinates are described below.
 
 Version::
-The version of the component in which this page lives; often mapped to a repository branch.
+The version of the component in which the page lives; often mapped to a repository branch.
 
 Component::
 The documentation component to which the page belongs; often mapped to a repository.
@@ -40,15 +43,14 @@ The path to the page's source file in the module, including any leading topic di
 Fragment::
 The identifier of an element inside a page, i.e., deep link.
 
-Using this information, a fully-qualified page ID can be constructed.
+These coordinates are organize in a standard structure to create a unique, fully-qualified page ID.
 
 image::page-id-anatomy-diagram.svg[Page ID anatomy,role=grow-x]
 
-Here's an example of a fully-qualified page ID:
+For example, this is the fully-qualified page ID for this page.
 
-----
-1.0@antora:playbook:configure.adoc#filter-branches
-----
+[source,asciidoc]
+1.0@antora:ROOT:page-id.adoc
 
 == How is a page referenced with its ID?
 
@@ -58,26 +60,43 @@ image::xref-macro-anatomy-diagram.svg[Page reference anatomy,role=grow-x]
 
 Here's how that looks in practice:
 
-----
-xref:1.0@antora:playbook:configure.adoc#filter-branches[filter branches]
-----
+[source,asciidoc]
+Learn all about xref:1.0@antora:ROOT:page-id.adoc[page IDs].
 
-Specifying the component and version every time seems like overkill.
-Surely there must be some sort of shorthand, right?
+Specifying the version, component, and even module every time seems like overkill, right?
+Don't worry, there's a shorthand.
 
-== Why are page IDs so important?
+For instance, if you're linking to a page in the same module as the page you're linking from, all you need to do is specify the `page` coordinate.
+The next example shows a cross reference from this page ([.path]_page-id.adoc_) to the [.path]_create-standard-page.adoc_ page.
+Both of these pages live in the same component and module.
+
+[source,asciidoc]
+Let's create a xref:create-standard-page.adoc[new page].
+
+A whole range of examples, from linking between different components to linking to different versions of a page, are explained in xref:asciidoc:page-to-page-xref.adoc[page cross references].
+
+[#important]
+== Why are page IDs important?
 
 *We've avoided coupling to the published URL* by using a source-to-source reference.
-(Notice the page coordinate ends with .adoc, the file extension of an AsciiDoc source file).
-Regardless of whether you're deploying your site locally, to staging, or to production, or you change URL strategies, the page ID always remains the same.
-The reference locks on to the target page and produces a URL that points to it wherever it gets published.
+Notice the page coordinate ends with [.path]_.adoc_, the file extension of an AsciiDoc source file.
+Regardless of whether you're deploying your site locally, to a staging or production environment, or you change URL strategies, the page ID always remains the same.
+The cross reference locks on to the target page and produces a URL that points to it wherever it gets published.
 
 *We've avoided coupling to the filesystem* by using a location based on the documentation component structure.
-The page ID describes the source file's project (component / version) and where in that project the source file is located (module / page).
+The page ID describes the source file's project (component-version) and where in that project the source file is located (module-page).
 
 *We've eliminated the relative path (../../) problem* by specifying the page as a module-relative path.
 The path always starts from a module's [.path]_pages_ directory, even when the referencing page is located inside a topic folder.
 If you move or rename a page within a module, you don't have to change any references to other pages.
+
+*This human-friendly referencing system saves you from having to do computations in your head while writing*.
+You just specify the coordinates of the page you want to reference.
+There's no need to worry about the source file's physical location on disk or its published URL.
+All you need to know are the names of your components, versions, modules, and pages so you can fill in this information.
+
+////
+This needs to go in a section about future development.
 
 Of course, inbound references to the page you move do have to be updated.
 To counter this, you could pin the page ID of the page you want to move, thus adding more stability.
@@ -85,8 +104,4 @@ That way, references to the page don't have to be updated even when it moves.
 Though, a little help from the text editor to "`refactor`" references could make this abstraction unnecessary.
 
 *We've made it possible to validate and update references* by using a well-defined pattern that's easy for a script to locate, parse, and rewrite.
-
-This human-friendly referencing system saves you from having to do computations in your head while writing.
-You just specify the coordinates of the page you want to reference.
-There's no need to worry about the source file physical location on disk or its published URL.
-All you need to know are the names of your components, versions, modules, and pages so you can fill in this information.
+////

@@ -30,4 +30,5 @@
 * xref:component-versions.adoc[Versions & Branches]
 
 .xref:pages.adoc[Pages]
+* xref:page-id.adoc[Page ID]
 * xref:create-standard-page.adoc[Create a Standard Page]
