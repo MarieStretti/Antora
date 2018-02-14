@@ -33,9 +33,9 @@ content: # <7>
     start_path: docs # <11>
 ui: # <12>
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <13>
-  start_path: theme # <14>
+  start_path: dark-theme # <14>
   default_layout: base # <15>
-  output_dir: public # <16>
+  output_dir: _dark # <16>
 output: # <17>
  clean: false # <18>
  dir: releases # <19>
@@ -167,23 +167,24 @@ Learn more:
 
 == ui
 
-The ui key contains an array of UI bundle and page layout specifications.
+The ui category contains keys that specify the location of the UI bundle and how it should be processed.
 
 [#ui-bundle-key]
 === bundle
 
-The URL or local filesystem path of the UI bundle.
-Filesystem paths can be relative to the location of the playbook or absolute.
+The URL or (local) filesystem path of the UI bundle.
+Filesystem paths can be absolute or relative to the location of the playbook file.
 
 Learn more:
 
-* xref:configure-ui.adoc#remote-bundle[Fetch and use a remote UI bundle]
+* xref:configure-ui.adoc#remote-bundle[Fetch and load a remote UI bundle]
 * xref:configure-ui.adoc#local-bundle[Load a local UI bundle]
 
 [#ui-start-path-key]
 === start_path
 
-The bundle relative path to the UI files when they aren't stored at the root of the bundle.
+The path inside the bundle from which UI files should be selected.
+Defaults to the root of the bundle.
 
 Learn more:
 
@@ -192,17 +193,17 @@ Learn more:
 [#ui-default-layout-key]
 === default_layout
 
-The default layout key applies a layout template to pages that don't specify a layout.
+The default layout key applies a layout template to pages that don't specify a page layout.
 
 Learn more:
 
-* xref:configure-ui.adoc#default-layout[Specify a default UI layout template in the playbook]
+* xref:configure-ui.adoc#default-layout[Specify a default page layout template in the playbook]
 
 [#ui-output-dir-key]
 === output_dir
 
-The output directory path where the UI files are written.
-When the UI `output_dir` isn't explicitly specified, the files are published to a directory designated by a single underscore ( +_+ ) that is relative to the site root.
+The output directory path where the UI files are written in the published site.
+When the UI `output_dir` isn't specified, the files are published to the [.path]_++_++_ directory relative to the root of the published site.
 
 Learn more:
 

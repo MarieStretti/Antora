@@ -7,22 +7,25 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] How to retrieve the UI bundle via a URL or local path.
-* [x] How to specify a start path inside the bundle.
-* [x] How to set a default UI layout.
-* [x] How to configure an output directory for the UI files.
+* [x] How to specify the UI bundle you want to apply to your site.
+* [x] How to set the default layout for pages.
+* [x] How to select a specific UI from a bundle containing multiple UIs.
+* [x] How to configure the output location for UI files.
 
-The ui key contains an array of UI bundle and page layout specifications.
+The keys documented on this page are organized under the `ui` category in the playbook schema.
+These keys define the location of the UI and control how it should be processed.
 
 == UI bundle
 
-The bundle key (`bundle`) provides the location where Antora should find a UI ZIP archive.
-The key accepts a URI or filesystem path.
+The bundle key (`bundle`) defines the location Antora should look to find a UI archive in ZIP format (i.e., UI bundle).
+The key accepts a URL or (local) filesystem path.
 
 [#remote-bundle]
-=== Fetch a UI bundle from a remote repository
+=== Fetch and load a remote UI bundle
 
-When the value for `bundle` is a URI, Antora downloads the ZIP archive and caches it to avoid downloading the UI bundle each time you build your site.
+When the value of the `bundle` key is a URL, Antora downloads and caches the ZIP archive on the first run.
+On subsequent runs, Antora attempts to load the bundle from the cache instead.
+This saves Antora from having to download the bundle each time you generate your site.
 
 .Remote UI bundle
 [source,yaml]
@@ -31,19 +34,27 @@ ui:
  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
 ----
 
-The value in this example is the URL to Antora's default UI.
+The value used in this example is the URL to Antora's default UI.
+
+TIP: The bundle is cached based on the signature of the URL.
+As long as the URL remains the same, Antora continues to use the cached file.
+If you want to force Antora to download the UI bundle again, simple remove the cached file.
+(You could also add or modify a query string parameter in the URL to alter its signature).
+The file is currently cached under [.path]_.antora-cache/ui_ relative to the playbook file.
+In the future, Antora will provide a CLI flag you can use to force the cached file to be updated.
 
 [#local-bundle]
-=== Load a UI bundle from a local path
+=== Load a UI bundle from the filesystem
 
 The UI bundle can be loaded from an absolute or relative filesystem path.
-When the value is a relative path, the path is resolved relative to the playbook file.
+
+When the `bundle` value is a relative path, the path is resolved relative to the playbook file.
 
 .Relative UI bundle path
 [source,yaml]
 ----
 ui:
- bundle: ../ui/build/ui-bundles.zip
+ bundle: ../docs-ui/build/ui-bundles.zip
 ----
 
 Here's the path to the same UI bundle, but using an absolute path.
@@ -52,75 +63,84 @@ Here's the path to the same UI bundle, but using an absolute path.
 [source,yaml]
 ----
 ui:
- bundle: /home/user/projects/docs-beta/ui/build/ui-bundles.zip
+ bundle: /home/user/projects/docs-ui/build/ui-bundles.zip
 ----
 
 [#start-path]
-=== Specify a UI start directory
+=== Specify a UI start path
 
 The `start_path` is the relative path inside the bundle from where Antora should start reading files.
-This key is useful when you have more than one UI packaged in the same archive.
+This key is useful when you are using a bundle that packages more than one UI, which might be the case if the UI provides multiple themes.
 
-.UI files' start_path
+.Select UI from start_path
 [source,yaml]
 ----
 ui:
- bundle: /home/user/projects/docs-beta/ui/build/ui-bundles.zip
+ bundle: /home/user/projects/docs-ui/build/ui-bundles.zip
  start_path: dark-theme
 ----
 
-In this example, Antora will ignore all of the files in the UI bundle that fall outside of the directory [.path]_dark-theme_.
+In this example, Antora will ignore all of the files in the UI bundle that fall outside the [.path]_dark-theme_ directory.
 
 [#default-layout]
-== Apply a default layout
+== Apply a default page layout
 
-A default layout template can be assigned to all of the pages that don't have a template explicitly assigned to them in their page header.
-The `default_layout` accepts a value that is the stem (i.e., don't include the file extension) of a layout file.
-The layout file should be stored in the UI bundle directory [.path]_src/layouts_.
+A default page layout can be applied to all pages that don't have a layout explicitly assigned in the page header (using the `page-layout` attribute).
+If not specified, this key defaults to the value `default`.
 
-For example, if you want to use a layout named [.path]_article.hbs_ as the default, the `default_layout` value would be `article`.
+The `default_layout` accepts a value that's the stem of a layout file (i.e., the name of the file without the file extension).
+The layout file is expected to be located under the [.path]_layouts_ directory in the UI bundle.
+
+For example, if you want to use the layout file [.path]_article.hbs_ by default, set the `default_layout` key to `article`.
 
 .Default layout value
 [source,yaml]
 ----
 ui:
- bundle: ../ui/build/ui-bundles.zip
+ bundle: ../docs-ui/build/ui-bundles.zip
  default_layout: article
 ----
 
 == Default UI output directory
 
-The UI files are published to a directory labeled with a single [.path]+_+ (underscore) that is located relative to the site's output directory.
-For instance, when the site is published to the xref:configure-output.adoc#output-dir[default destination directory] ([.path]_build/site_), and no UI `output_dir` is specified, the UI files are written to [.path]_build/site/{blank}__.
+The UI files are published to a directory labeled with a single [.path]_++_++_ (underscore) located relative to the site's output directory.
+For instance, when the site is published to the xref:configure-output.adoc#output-dir[default destination directory] ([.path]_build/site_), and no UI `output_dir` is specified, the UI files are written to [.path]_++build/site/_++_.
 
 [#output-dir]
-=== Specify an output directory
+=== Use an alternate output directory
 
-The output directory key (`output_dir`) allows you to specify the directory where Antora should publish the UI files.
-The path must be relative to the directory where the site is to be published
+The output directory key (`output_dir`) allows you to specify an alternate directory where Antora should publish the UI files.
+The path is relative to the root of the published site.
 
 .Relative UI output path
 [source,yaml]
 ----
 ui:
- bundle: /home/user/projects/docs-beta/ui/build/ui-bundles.zip
- output_dir: _ui
+ bundle: /home/user/projects/docs-ui/build/ui-bundles.zip
+ start_path: dark-theme
+ output_dir: _dark
 ----
 
-In this example, the site will be written to the default destination directory, therefore, the UI files will be published [.path]_build/site/{blank}_ui_.
+In this example, the site will be written to the default destination directory, therefore, the UI files will be published [.path]_++build/site/_dark++_.
+
+Antora will automatically reconfigure all references to UI files, regardless of what value you use.
+This is thanks in part to the use of the `+{{uiRootPath}}+` placeholder in the UI templates.
 
 In the next example, the site's output directory (`dir`) has been specified in addition to the UI output directory.
 
-.Custom site and UI directory
+.Custom site and UI output directories
 [source,yaml]
 ----
 ui:
- bundle: /home/user/projects/docs-beta/ui/build/ui-bundles.zip
- output_dir: _ui
+ bundle: /home/user/projects/docs-ui/build/ui-bundles.zip
+ start_path: dark-theme
+ output_dir: _dark
 output:
  dir: public
 ----
 
-The UI files will be published to [.path]_public/{blank}_ui_.
+The UI files will be published to [.path]_++public/_dark++_.
+
+In general, we recommend that you stick with the default output directory unless you have a good reason to change it.
 
 //supplemental_files: Supplemental file list or a directory of files to append to the UI bundle.
