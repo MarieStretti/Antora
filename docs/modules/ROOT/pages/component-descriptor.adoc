@@ -14,7 +14,7 @@ This file serves two purposes:
 This ability to "`start`" a documentation component anywhere in a directory hierarchy allows you to store a component in a repository with the software it documents, with a demo project, by itself, etc.
 
 . *Component information*: [.path]_antora.yml_ is a component descriptor file.
-It associates the files under this hierarchy with the specified component name and version (aka component version), decoupling the files from the repository and branch in which they live.
+It associates the files under this hierarchy with the specified component name and version (aka component-version), decoupling the files from the repository and branch in which they live.
 This information is used for creating links to pages in this component.
 The file also identifies files to use for site navigation.
 
@@ -47,15 +47,16 @@ nav: # <5>
 - modules/module-three/nav.adoc
 - ...
 ----
-<1> Name key and value
-<2> Title key and value
-<3> Version key and value
-<4> Start page key and value
-<5> Nav key and values
+<1> Name key
+<2> Title key
+<3> Version key
+<4> Start page key
+<5> Nav key
 
+[#name-key]
 === name
 
-The value of the name key is the component name that is used when the component is referenced in a xref:asciidoc:page-to-page-xref.adoc#page-id-cname-def[page ID].
+The value of the name key is the component name that is used when the component is referenced in a xref:asciidoc:page-to-page-xref.adoc#page-id-cname-def[cross reference].
 The value can contain letter, number, underscore (`+_+`), hyphen (`-`), and period (`.`) characters.
 
 === title
@@ -68,19 +69,19 @@ This includes:
 * domain selector drawer
 * first breadcrumb position
 
+[#version-key]
 === version
 
-The value of the version key is both the display version and the actual version of the component.
-It's used anywhere that the version is referenced or identified.
+The value of the version key is both the display name and version coordinate.
 This includes:
 
-* page ID (xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version-name@])
+* page ID and cross references (xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version@])
 * domain selector menu
 * domain selector drawer
 * page version selector
 * edit page URI (not visible)
 
-The key's value can contain letter, number, period (`.`), underscore (`+_+`), and hyphen (`-`) characters.
+The value can contain letter, number, period (`.`), underscore (`+_+`), and hyphen (`-`) characters.
 If the value starts with a number, it must be contained within a set of single quote marks (`'`).
 
 .Example version key values
@@ -93,9 +94,9 @@ If the value starts with a number, it must be contained within a set of single q
 
 By default, Antora automatically uses the file [.path]_index.adoc_ in the ROOT module of a component as the start page of that component (i.e., _pass:[https://company.com/docs/component/]_).
 
-If a component doesn't have an [.path]_index.adoc_ file, then the `start_page` key must be set in the component's [.path]_antora.yml_ file and assigned a file to use as the component's start page.
-The value uses the page ID structure.
-and must specify the module and path to the file.
+If a component doesn't have an [.path]_index.adoc_ file, then the `start_page` key must be set in the component descriptor file and assigned a page to use as the component's start page.
+The value uses the xref:page-id.adoc[page ID structure]
+and must specify the module and page coordinates of the file.
 
 .Start page value examples
 [source,yaml]

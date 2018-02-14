@@ -31,3 +31,4 @@
 
 .xref:pages.adoc[Pages]
 * xref:create-standard-page.adoc[Create a Standard Page]
+* xref:page-id.adoc[Page ID]

@@ -96,21 +96,9 @@ These items may or may not be broken down by OS, depending on whether or not the
 +
 _{s}_ Accepted
 
-Installation (SC, P)::
-_{r}_ Clear, straight-forward instructions for installing Antora on an OS.
-+
-_{s}_ Accepted
-
-Assumptions (P#)::
-_{r}_ Probably a section of the Installation page.
-Reminds the user about the requirements/steps they should have already completed.
-+
-_{s}_ Under consideration
-
-Download and Install (P)::
-_{r}_ Instructions for downloading and installing Antora on an OS.
-Page may be broken into a section for Linux, macOS, and Windows.
-Page and/or each section will also include instructions on how to verify Antora installed and link to how to test the installation using the demo.
+Install Antora (P)::
+_{r}_ Clear, straight-forward instructions for installing Antora.
+Includes Assumptions section: Reminds the user about the requirements/steps they should have already completed.
 +
 _{s}_ Accepted
 
@@ -311,6 +299,11 @@ _{s}_ Under consideration.
 Types (SC?, P)::
 _{r}_ The common types of documentation pages and their purposes.
 Types include documentation (single, assembled from partials, combo), home/start/landing and index.adoc/start_page (page the user lands on from the root of the docs site or component), search and search results page, metadata filter and filter results page, generated pages (sitemap, 404).
++
+_{s}_ Accepted
+
+Page ID (P)::
+_{r}_ The role of the page ID, its structure, and why it is important in Antora.
 +
 _{s}_ Accepted
 

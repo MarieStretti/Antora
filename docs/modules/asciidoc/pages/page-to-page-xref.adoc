@@ -7,49 +7,53 @@ endif::[]
 :idseparator: -
 :colon: :
 
-Antora uses an enhanced version of the AsciiDoc cross reference macro, commonly referred to as an xref, for linking between pages in a site.
-This xref macro is also used to add pages to xref:navigation:create-a-navigation-file.adoc[navigation files].
-//This feature is activated if the value of the macro target ends with the AsciiDoc file extension (`.adoc`) or a fragment identifier (`#id`).
+To link between documentation pages, you'll use the the AsciiDoc cross reference macro and a page ID.
+This syntax in also used to add pages to xref:navigation:create-a-navigation-file.adoc[navigation files].
 
-The information you need to provide in the xref macro depends on the location of the current file and the location of the destination file (the document you're linking to).
-The closer the two files are, the less information you need to specify.
+== Reference by page ID
 
-== Cross reference structure
+In Antora, a cross reference, also called an xref, needs a page ID in order to link to another documentation page.
+The number of page ID coordinates you need to enter into the xref depends on the location of the current file and the location of the destination file (the document you're linking to).
+The closer the two files are, the shorter the page ID.
 
-First, let's dissect a fully qualified cross reference:
+In the next section, will go over each part of the xref and page ID syntax.
 
-[source,asciidoc]
-----
-xref:version-name@component-name:module-name:page.adoc#fragment[link text]
-----
+NOTE: The page ID is integral to Antora's ability to publish a site to multiple environments and domains without you needing to modify your source content.
+If you want to learn more about the page ID, see xref:ROOT:page-id.adoc#important[Why are page IDs important?]
 
-Here's what each part of the cross reference does:
+== Xref and page ID anatomy
+
+Let's dissect a cross reference with a fully-qualified page ID.
+
+image::xref-macro-anatomy-diagram.svg[Page reference anatomy,role=grow-x]
+
+Here's what each part of the cross reference and page ID does:
 
 xref{colon}::
-The prefix for an AsciiDoc source file-to-file cross reference macro.
+The prefix of the AsciiDoc source file to source file cross reference macro.
 
 [#page-id-vname-def]
-version-name@::
-If a component has versions, the first target position is used to specify the version name of the destination component.
-This value is defined in the xref:ROOT:antora_yml.adoc[component descriptor file] ([.path]_antora.yml_) in the branch of the component repository that hosts the destination file.
-When the version target is filled, it must be directly followed by an `@` symbol.
+version@::
+The first page ID coordinate is used to specify the version name of the destination component.
+This value is defined in the xref:ROOT:component-descriptor.adoc#version-key[component descriptor file] ([.path]_antora.yml_) in the branch of the component repository that hosts the destination file.
+When the version coordinate is filled, it must be directly followed by an at sign (`@`).
 
 [#page-id-cname-def]
 component-name{colon}::
-The second target position specifies the name of the destination component.
+The second coordinate specifies the name of the destination component.
 The component name is directly followed by one colon (`:`).
-This value is defined in the name key of the [.path]_antora.yml_ file in the branch of the component repository that hosts the destination file.
-If a component name is present in the xref, a module name must also be specified after the `:`.
-Otherwise, this position gets interpreted as the module name.
+This value is defined in the xref:ROOT:component-descriptor.adoc#name-key[name key] of the component descriptor in the branch of the component repository that hosts the destination file.
+If a component name is present, a module name must be specified after the `:`.
+Otherwise, this coordinate gets interpreted as the module name.
 
 module-name{colon}::
-The third target position specifies the name of the destination module.
+The third coordinate specifies the name of the destination module.
 The module name is directly followed by one colon (`:`).
 If a component name is present, and the name of the module is ROOT, the module name position can be left empty in some cases.
-That's why sometimes you see a component name followed by two colons (`::`).
+That's why you see a component name followed by two colons (`::`) sometimes.
 
 page.adoc::
-The fourth target position specifies the local path of the destination file relative to the module's documents directory.
+The fourth coordinate specifies the local path of the destination file relative to the module's documents directory.
 This value may include one or more optional topic folders.
 The destination file name must have the _.adoc_ file extension.
 
@@ -87,13 +91,13 @@ xref:3.3@error-handling.adoc#message-list[error messages]
 
 == Scenario: In the same component but a different module
 
-When the current page and the destination page are in the same component but different modules, you'll need to enter the name of the destination module and destination file.
+When the current page and the destination page are in the same component but different modules, you'll enter the name of the destination module and destination file.
 
 .Link to a page in another module
 [source,asciidoc]
 xref:get-started:implement-api.adoc[implement an API]
 
-.Link to a page in the ROOT module and in a topic folde
+.Link to a page in the ROOT module and in a topic folder
 [source,asciidoc]
 xref:ROOT:transports/c04-reference.adoc[C04 Transports]
 
@@ -103,8 +107,8 @@ The xref:3.4@ROOT:scopes/super-mass.adoc[super massive scope] splits atoms.
 
 == Scenario: In a different component
 
-When the current page and the destination page are in different components, you'll need to enter values for all of the target positions.
-If a version is not specified in this scenario, the implicit value is `master@`.
+When the current page and the destination page are in different components, you'll enter values for all of the coordinates.
+If a version is not specified, the implicit value is `master@`.
 
 .Link to a page in the ROOT module of a versioned component
 [source,asciidoc]
