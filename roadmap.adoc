@@ -101,7 +101,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Document UI bundle configuration features {uri-issues}/152[#152]
 * [x] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
 * [ ] _Docs Site:_ Connect Docs and project sites
-* [ ] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
+* [x] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
 * [ ] Add how to create a partial page
 
 ==== Waiting
