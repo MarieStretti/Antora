@@ -2,8 +2,8 @@
 
 == Context
 
-The (publishable) files for the site, which include both files Antora generates and auxilary files, need to be published (aka deployed) somewhere so that the site can be viewed.
-The destination, which includes the location where the files should be published and the protocol over which they are transferred, may vary by circumstance.
+The publishable files for the site, which includes the files Antora generates and auxiliary files, need to be published (i.e., deployed) to a location so that the site can be viewed.
+This destination, which includes the location where the files should be published and the protocol over which they are transferred, may vary by circumstance.
 It may even be necessary to publish the files to multiple destinations.
 Therefore, the site publisher component should handle publishing the files to one or more destinations, which are specified in the playbook.
 The destination provider should be an extension point so Antora can be augmented to handle new destination types.
@@ -13,18 +13,17 @@ The destination provider should be an extension point so Antora can be augmented
 The main purpose of this component is to publish the files for the site to a location where they can be viewed.
 The site publisher component should locate all publishable files in each file catalog and publish them to one or more destinations specified in the playbook.
 
-Most site generators write files to local folder, then use a separate step to copy (i.e., deploy) those files to the final destination.
+Most site generators write files to a local folder, then use a separate step to copy (i.e., deploy) those files to the final destination.
 Since Antora maintains files in a virtual filesystem, it's possible to consolidate these steps.
 For example, if the site author wants to publish the files to S3, the files should be streamed directly from the virtual filesystem to the destination S3 bucket.
 Antora could also support publishing the virtual files to multiple destinations.
 
-The site publisher component goes at the end of the generator pipeline.
-It accepts a collection of file catalogs (content, UI, site, etc).
+The site publisher component accepts a collection of file catalogs (content, UI, site, etc.).
 From those catalogs, it queries for all publishable files (currently, files which have an `out` property).
 It then delegates to each destination provider specified in the playbook to publish the files.
 
-If no destinations are specified, the site publisher outputs the files to the build/site folder by default.
-If the `dir` property is specified directly on the `output` catagory of the playbook, that value either replaces the path of the first fs destination or is used to create an fs destination if one doesn't exist.
+If no destinations are specified, the site publisher outputs the files to the [.path]_build/site_ folder by default.
+If the `dir` property is specified directly on the `output` category of the playbook, that value either replaces the path of the first filesystem (`fs`) destination or is used to create an `fs` destination if one doesn't exist.
 
 == Software Architecture
 
@@ -32,16 +31,16 @@ The site publisher component functionality is provided by the site-publisher mod
 
 The playbook can specify one or more destination configuration entries.
 Each destination configuration consists of a provider type and an open-ended configuration map.
-The site publisher publishes the sites files for each destination configuration entry.
+The site publisher publishes the site's files for each destination configuration entry.
 The same destination provider can be used multiple times (for example, to publish to multiple directories on the filesystem).
 
 A destination provider is a function that accepts a stream of files, the destination configuration, and the playbook.
 All the work of publishing the virtual files to a concrete location or endpoint is handled by the destination provider functions.
 
 The site publisher should load the destination providers on demand.
-Some of the providers, such as fs and archive, are built-in.
+Some of the providers, such as `fs` and `archive`, are built-in.
 If the provider is built-in, the site publisher should load it directly from the site publisher module.
-If the provider is not built-in, the site publisher should load the provider from a path relative to the playbook file, an absolute path, or the Node require path, depending on whether the value begins with a dot, a filesystem root, or neither, respectively.
+If the provider is not built-in, the site publisher should load the provider from a path relative to the playbook file, an absolute path, or the Node require path, depending on whether the value begins with a dot (`.`), a filesystem root, or neither, respectively.
 
 Once the provider functions are loaded, the site publisher should query the file catalogs to create a stream of publishable files.
 It should then iterate over each destination configuration entry and pass the files, destination configuration, and playbook to the corresponding publish function.
@@ -49,7 +48,7 @@ If the provider needs to modify the virtual file, it should work on a copy of th
 
 .Inputs
 * Playbook (`output`, `dir`)
-* File catalogs (e.g., `contentCatalog`, `uiCatalog`, etc)
+* File catalogs (e.g., `contentCatalog`, `uiCatalog`, etc.)
 
 .Output
 * _none_ (the virtual files are written to the configured destination by the destination provider)
@@ -78,7 +77,7 @@ The site publisher should provide two destination providers:
 
 * _fs_ -- publishes the site files a directory on the local filesystem (specified by the `path` property)
  ** If the `clean` property is set globally or on the destination configuration, this provider should first remove the directory, if it exists.
-* _archive_ -- publishes the site files to a zip archive on the local filesystem (specified by the `path` property).
+* _archive_ -- publishes the site files to a ZIP archive on the local filesystem (specified by the `path` property).
 
 Here's the signature of the publish function for each destination provider:
 
@@ -118,7 +117,7 @@ It identifies publishable files by the presence of the `out` property on the fil
 
 == Consequences
 
-This component carries out the primary side effect of the site generator, which is to publish the files for the site.
+This component carries out the primary result of the site generator, which is to publish the files for the site.
 It does so by taking the publishable files in the virtual file catalogs and turning them into concrete files.
 It can publish to zero or more local or remote destinations, depending on the destinations specified in the playbook.
 How the files are published is determined by the provider and the destination configuration specified in the playbook.
