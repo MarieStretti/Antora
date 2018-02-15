@@ -18,30 +18,51 @@ On this page, you'll learn:
 == URL key
 
 The URL key tells Antora where to find a documentation component's repository.
+You must provide a value for each documentation component repository you want added to your site.
+The key accepts filesystem paths, file URLs, and any URI that git supports.
 
-The key accepts filesystem paths and any URL that git supports.
-Specifically:
+=== Fetch local content repositories
 
-* relative filesystem paths
-* absolute filesystem paths
-* file URLs
-* http and https URLs
-* SSH URIs
-* git URIs
+The URL key accepts a relative and absolute filesystem paths.
+When the value is a relative path, the path is resolved relative to the current directory.
 
-Let's look at an example of each of these accepted URL key values.
-
-IMPORTANT: There is no default URL key value.
-You must explicitly provide a URL for each documentation component repository you want added to your site.
-
-=== https
-
-.https URL value
+.Filesystem paths to local git repositories
 [source,yaml]
 ----
 content:
   sources:
-  - url: https://github.com/my-docs/server-docs
+  - url: /home/user/docs-site/demo-component-a # <1>
+  - url: demo-component-b # <2>
+  - url: file://localhost/tmp/demo-component-c # <3>
+----
+<1> Absolute path to git repository
+<2> Relative path to git repository
+<3> Path to a git repository using the file protocol
+
+=== Fetch remote content repositories
+
+Remote repositories can be fetched via https URLs, SSH URIs, and git URIs.
+
+.git supported URIs
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: git@gitlab.com:antora/demo/demo-component-b.git
+  - url: git://github.com/org/content-repo.git
+----
+
+=== Use local and remote content repositories
+
+You can build your documentation site using remote content repositories and local content repositories, even when the local repositories have uncommitted changes.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: demo-component-b
 ----
 
 [#branches]
@@ -192,7 +213,7 @@ Let's define the start path value for a repository with the structure shown belo
 
 image::start-path-dir.svg[,260]
 
-In order for Antora to locate the documentation component in this repository, the start path value needs to point Antora to the directory where the [.path]_antora.yml_ file is stored.
+In order for Antora to locate the documentation component in this repository, the start path value needs to point Antora to the directory where [.path]_antora.yml_ is located.
 
 .Set start_path
 [source,yaml]
