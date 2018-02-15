@@ -28,16 +28,19 @@ site: # <1>
     google_analytics: 'XX-123456' # <6>
 content: # <7>
   sources: # <8>
-  - url: https://gitlab.com/antora/demo/demo-component-a # <9>
+  - url: https://gitlab.com/antora/demo/demo-component-a.git # <9>
     branches: master # <10>
     start_path: docs # <11>
 ui: # <12>
   bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <13>
-output: # <14>
- clean: false # <15>
- dir: releases # <16>
- destinations: # <17>
- - provider: archive # <18>
+  start_path: dark-theme # <14>
+  default_layout: base # <15>
+  output_dir: _dark # <16>
+output: # <17>
+ clean: false # <18>
+ dir: releases # <19>
+ destinations: # <20>
+ - provider: archive # <21>
 ----
 <1> <<site-key,Site key>>
 <2> <<site-title-key,Title key>>
@@ -49,14 +52,17 @@ output: # <14>
 <8> Sources key
 <9> Content repository URL key
 <10> Content repository branches key
-<11> Start path key
+<11> Content repository start path key
 <12> UI key
 <13> <<ui-bundle-key,UI bundle repository key>>
-<14> Published output key
-<15> Clean output directory key
-<16> Output directory key
-<17> Output destinations key
-<18> Output provider key
+<14> <<ui-start-path-key,Bundle start path key>>
+<15> <<ui-default-layout-key,UI default layout key>>
+<16> <<ui-output-dir-key,UI output directory key>>
+<17> Published output key
+<18> Clean output directory key
+<19> Output directory key
+<20> Output destinations key
+<21> Output provider key
 
 Let's explore the purpose and usage of each key and its values.
 
@@ -122,7 +128,6 @@ The sources key contains the list of git repository locations, branch name patte
 At a minimum, you must specify the location of each content repository using the url key.
 The key accepts any URL that git supports.
 This includes:
-// Filesystem paths can be relative to the location of the playbook or absolute.
 
 * filesystem paths relative to the current directory
 * absolute filesystem paths
@@ -162,25 +167,47 @@ Learn more:
 
 == ui
 
-The ui key contains an array of UI bundle and page layout specifications.
-
-// ui start_path: The root relative start path inside the bundle from which to take files.
-
-// ui output_dir: The output directory path relative to the site root where the UI files should be written.
-
-// default_layout: The default layout to apply to pages that do not specify a layout.
+The ui category contains keys that specify the location of the UI bundle and how it should be processed.
 
 [#ui-bundle-key]
 === bundle
 
-The URL of the UI bundle.
-The UI bundle can be loaded from a URI or a local filesystem path.
-Filesystem paths can be relative to the location of the playbook or absolute.
+The URL or (local) filesystem path of the UI bundle.
+Filesystem paths can be absolute or relative to the location of the playbook file.
 
-// urls:
-// urls html_extension_style: Controls how the URL extension for HTML pages is handled.
+Learn more:
 
-// redirects: Generate nginx config file containing URL redirects for page aliases. Boolean
+* xref:configure-ui.adoc#remote-bundle[Fetch and load a remote UI bundle]
+* xref:configure-ui.adoc#local-bundle[Load a local UI bundle]
+
+[#ui-start-path-key]
+=== start_path
+
+The path inside the bundle from which UI files should be selected.
+Defaults to the root of the bundle.
+
+Learn more:
+
+* xref:configure-ui.adoc#start-path[Specify a start path for the UI files]
+
+[#ui-default-layout-key]
+=== default_layout
+
+The default layout key applies a layout template to pages that don't specify a page layout.
+
+Learn more:
+
+* xref:configure-ui.adoc#default-layout[Specify a default page layout template in the playbook]
+
+[#ui-output-dir-key]
+=== output_dir
+
+The output directory path where the UI files are written in the published site.
+When the UI `output_dir` isn't specified, the files are published to the [.path]_++_++_ directory relative to the root of the published site.
+
+Learn more:
+
+* xref:configure-ui.adoc#output-dir[Specify an output directory for the UI files]
 
 == output
 
@@ -261,6 +288,7 @@ Learn more:
 The clean key can be specified directly on any `fs` provider.
 When specified at this location (instead of directly under output), it only cleans the output location specified by this destination.
 
+////
 == antora.yml
 
 The file system name of the repository and branch are ignored by Antora once the content is retrieved.
@@ -283,7 +311,11 @@ nav:
 
 This decoupling allows you to have more than one branch that provides the same version of a documentation component, which you can then toggle by configuring the branches key in the playbook.
 
-////
+urls:
+urls html_extension_style: Controls how the URL extension for HTML pages is handled.
+
+redirects: Generate nginx config file containing URL redirects for page aliases. Boolean
+
 == Create a custom playbook
 
 Instead of modifying the main playbook, you can create a custom playbook and pass it to Antora.

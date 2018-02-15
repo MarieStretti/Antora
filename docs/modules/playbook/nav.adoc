@@ -1,11 +1,10 @@
 .xref:index.adoc[Configuration]
 * xref:playbook.adoc[Playbook]
 //*** xref:playbook-formats.adoc[File Formats]
-//DA: I think we should rename "Keys" to "Schema"
 ** xref:playbook-schema.adoc[Configuration Schema]
 ** xref:configure-site.adoc[Configure Site]
 ** xref:configure-content-sources.adoc[Define Content Sources]
-//*** xref:configure-ui.adoc[Configure UI]
+** xref:configure-ui.adoc[Configure UI]
 //*** xref:configure-redirects.adoc[Configure Redirects]
 ** xref:configure-output.adoc[Configure Output]
 // ** Create a Playbook

@@ -98,7 +98,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Add nav category and multi-list capabilities to navigation docs {uri-issues}/159[#159]
 * [x] Improve component and module index page content {uri-issues}/156[#156]
 * [ ] Provide source URL configuration examples {uri-issues}/153[#153]
-* [ ] Document UI bundle configuration features {uri-issues}/152[#152]
+* [x] Document UI bundle configuration features {uri-issues}/152[#152]
 * [x] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
 * [ ] _Docs Site:_ Connect Docs and project sites
 * [x] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]

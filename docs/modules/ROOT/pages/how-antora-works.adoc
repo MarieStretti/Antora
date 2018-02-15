@@ -62,7 +62,7 @@ Convert navigation files::
 Antora retrieves xref:navigation:index.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.
 
 Locate and fetch UI bundle::
-Antora finds the UI bundle using the URL listed in the playbook and fetches it.
+Antora finds the xref:playbook:configure-ui.adoc[UI bundle using the URL listed in the playbook] and fetches it.
 The UI bundle can be cached locally or remote.
 
 Transform UI files into virtual file objects::
