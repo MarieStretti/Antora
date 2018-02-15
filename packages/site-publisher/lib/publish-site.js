@@ -38,11 +38,12 @@ const { DEFAULT_DEST_FS } = require('./constants.js')
  */
 // QUESTION should this function return a report of virtual files that were published (by provider)
 async function publishSite (playbook, catalogs) {
-  const destinations = getDestinations(playbook.output)
+  const output = playbook.output
+  const destinations = getDestinations(output)
 
   if (!destinations.length) return
 
-  const clean = playbook.output.clean
+  const clean = output.clean
   const publishers = destinations.map((destination) => {
     const { provider, options } = resolveDestination(destination, clean)
     switch (provider) {

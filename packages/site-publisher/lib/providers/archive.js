@@ -7,7 +7,7 @@ const { dest: vzipDest } = require('gulp-vinyl-zip')
 const { DEFAULT_DEST_ARCHIVE } = require('../constants.js')
 
 // FIXME right now we're assuming the archive is a zip
-async function publishToArchive (config, files, playbook) {
+function publishToArchive (config, files, playbook) {
   const destFile = ospath.resolve(playbook.dir || '.', config.path || DEFAULT_DEST_ARCHIVE)
   return publishStream(vzipDest(destFile), files)
 }
