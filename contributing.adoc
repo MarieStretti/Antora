@@ -22,7 +22,7 @@
 :uri-page-composer-arch: {uri-project}/blob/master/packages/page-composer/devdocs/architecture-guidebook.adoc
 :uri-playbook-builder-arch: {uri-project}/blob/master/packages/playbook-builder/devdocs/architecture-guidebook.adoc
 :uri-site-generator-arch: {uri-project}/blob/master/packages/site-generator-default/devdocs/architecture-guidebook.adoc
-//:uri-site-mapper-arch: {uri-project}/blob/master/packages/site-mapper/devdocs/architecture-guidebook.adoc
+:uri-site-mapper-arch: {uri-project}/blob/master/packages/site-mapper/devdocs/architecture-guidebook.adoc
 :uri-site-publisher-arch: {uri-project}/blob/master/packages/site-publisher/devdocs/architecture-guidebook.adoc
 :uri-ui-loader-arch: {uri-project}/blob/master/packages/ui-loader/devdocs/architecture-guidebook.adoc
 // External URIs:
@@ -256,7 +256,7 @@ If you make a significant modification to a package, you should also update the 
 {uri-nav-builder-arch}[Navigation Builder]
 {uri-page-composer-arch}[Page Composer]
 {uri-site-generator-arch}[Site Generator Default]
-//{uri-site-mapper-arch}[Site Mapper]
+{uri-site-mapper-arch}[Site Mapper]
 {uri-site-publisher-arch}[Site Publisher]
 
 [#lint-rq]
