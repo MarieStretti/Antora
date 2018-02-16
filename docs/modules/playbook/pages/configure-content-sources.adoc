@@ -16,7 +16,7 @@ On this page, you'll learn:
 * [x] How to mix local and remote repositories and branches.
 * [x] When and how to configure the start path key.
 
-The keys documented on this page are organized under the `content` and `sources` categories in the playbook schema.
+The keys documented on this page are organized under the `content` and `sources` categories in the xref:playbook-schema.adoc[playbook schema].
 These keys define the location of the documentation component repositories (`url` and `start_path`) and control which branches (`branches`) should be processed.
 
 == URL key
@@ -179,7 +179,7 @@ content:
 == Mix local and remote repositories and branches
 
 You can generate your site using remote branches and a local branch of a component.
-In this example, we'll fetch the `v1.*` and `v2.*` branches from Component A's remote content repository.
+In this example, we'll fetch all of the `v1.x` and `v2.x` branches from Component A's remote content repository.
 We'll also load the branch `v3.0.0-beta` from a local repository.
 
 .Use remote and local repositories and branches
@@ -219,4 +219,4 @@ content:
     start_path: packages/docs
 ----
 
-With `start_path` specified, Antora won't collect any files outside of [.path]_https://github.com/org/repo/packages/docs_.
+With `start_path` specified, Antora won't collect any files outside of _pass:[https://github.com/org/repo/packages/docs]_.

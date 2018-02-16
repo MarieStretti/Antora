@@ -15,9 +15,8 @@ On this page, you'll learn:
 == Playbook file structure
 // the general layout of a playbook file
 
-Here's an example of a playbook file named [.path]_site.yml_:
+Here's an example of a playbook file.
 
-.site.yml
 [source,yaml,subs=attributes+]
 ----
 site: # <1>
