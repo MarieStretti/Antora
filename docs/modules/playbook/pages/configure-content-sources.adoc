@@ -13,6 +13,7 @@ On this page, you'll learn:
 * [x] How to configure the branches key.
 ** [x] By name
 ** [x] By glob pattern
+* [x] How to mix local and remote branches.
 * [x] When and how to configure the start path key.
 
 == URL key
@@ -98,7 +99,6 @@ The result of the example above is the same as if you specified the master branc
 
 [#separate-branch-names]
 === Separate branches values using commas or markers
-//Comma-separated branches values
 
 Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
 Alternatively, each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
@@ -137,10 +137,6 @@ content:
 
 A branch name that begins with a number, like `1.0.0` must be enclosed in single quotes (`+'+`), per YAML rules.
 
-////
-If you want to limit the branches Antora scans and uses, you can specify an array of branch patterns using the branches key.
-////
-
 [#glob-branch]
 === Specify branches by glob pattern
 
@@ -148,7 +144,7 @@ Branches can be specified by shell glob patterns such as as `v3.*`.
 If the pattern starts with a `!` character, then it is negated (i.e., the matches are excluded).
 This is how you can deselect branches that were matched by a previous glob.
 
-For example, let's say you want to include all 1.x versions of the Component A except for 1.7.
+For example, let's say you want to include all `1.x` versions of the Component A except for `1.7`.
 You'd enter the following branches values into the playbook:
 
 .Glob branch patterns
@@ -171,29 +167,40 @@ Here's how you'd exclude all branches that end in `-beta`.
 ----
 content:
   sources:
-  - url: https://github.com/my-docs/server-docs
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
     - v*
     - '!v*-beta'
 ----
 
-// Specify local branch
+[#mix-local-remote-branches]
+=== Mix local and remote branches
+
+You can generate your site using remote branches and a local branch of a component.
+In this example, we'll fetch the `v1.*` and `v2.*` branches from Component A's remote content repository.
+We'll also load the branch `v3.0.0-beta` from a local repository.
+
+.Use remote and local branches of the same component
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+    branches: v1.*, v2.*
+  - url: docs-site/demo-component-a
+    branches: v3.0.0-beta
+----
 
 == Start path key
 
-The start path key tells Antora where to find a documentation component in a repository.
-*You only need to use this key when the component isn't stored at the root of a content repository.*
-
-=== Default start path value
-
 Antora automatically looks for a component descriptor file ([.path]_antora.yml_) at the root of a source repository.
-When this default repository structure is used, the start path doesn't need to be set or assigned in the playbook.
+*When this default repository structure is used, the start path key doesn't need to be set or assigned in the playbook.*
+If the component isn't stored at the root of a content repository, then you need to use the start path key to tell Antora where to find the component descriptor file.
 
 [#add-start-path]
 === Specify a start path
 
 The value of the start path key is the repository relative path to the component descriptor file.
-
 Let's define the start path value for a repository with the structure shown below.
 
 image::start-path-dir.svg[,260]
@@ -209,3 +216,5 @@ content:
     branches: master, v2.6
     start_path: packages/docs
 ----
+
+With `start_path` specified, Antora won't collect any files outside of [.path]_https://github.com/org/repo/packages/docs_.
