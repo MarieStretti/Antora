@@ -4,6 +4,7 @@ include::_attributes.adoc[]
 endif::[]
 :idprefix:
 :idseparator: -
+:uri-zip-file-format: https://en.wikipedia.org/wiki/Zip_(file_format)
 
 On this page, you'll learn:
 
@@ -66,7 +67,7 @@ Antora offers two built-in providers.
 Filesystem (`fs`)::
 Publishes the output files to a directory.
 Archive (`archive`)::
-Publishes the output files to a ZIP archive file.
+Publishes the output files to a {uri-zip-file-format}[ZIP] archive file.
 
 You can also create custom providers for SSH, S3, etc.
 
@@ -89,7 +90,7 @@ In this example, the site is published to [.path]_build/site_.
 [#archive-provider]
 ==== Archive provider
 
-The `archive` provider publishes a site to a ZIP file.
+The `archive` provider publishes a site to a {uri-zip-file-format}[ZIP] file.
 
 .Archive provider
 [source,yaml]
