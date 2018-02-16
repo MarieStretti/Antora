@@ -13,8 +13,11 @@ On this page, you'll learn:
 * [x] How to configure the branches key.
 ** [x] By name
 ** [x] By glob pattern
-* [x] How to mix local and remote branches.
+* [x] How to mix local and remote repositories and branches.
 * [x] When and how to configure the start path key.
+
+The keys documented on this page are organized under the `content` and `sources` categories in the playbook schema.
+These keys define the location of the documentation component repositories (`url` and `start_path`) and control which branches (`branches`) should be processed.
 
 == URL key
 
@@ -123,7 +126,6 @@ content:
 
 Branches can be specified by their exact name.
 
-.Exact branch names
 [source,yaml]
 ----
 content:
@@ -174,13 +176,13 @@ content:
 ----
 
 [#mix-local-remote-branches]
-=== Mix local and remote branches
+== Mix local and remote repositories and branches
 
 You can generate your site using remote branches and a local branch of a component.
 In this example, we'll fetch the `v1.*` and `v2.*` branches from Component A's remote content repository.
 We'll also load the branch `v3.0.0-beta` from a local repository.
 
-.Use remote and local branches of the same component
+.Use remote and local repositories and branches
 [source,yaml]
 ----
 content:
@@ -203,7 +205,7 @@ If the component isn't stored at the root of a content repository, then you need
 The value of the start path key is the repository relative path to the component descriptor file.
 Let's define the start path value for a repository with the structure shown below.
 
-image::start-path-dir.svg[,260]
+image::start-path-dir.svg[Start path directory,200]
 
 In order for Antora to locate the documentation component in this repository, the start path value needs to point Antora to the directory where [.path]_antora.yml_ is located.
 

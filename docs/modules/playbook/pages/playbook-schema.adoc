@@ -133,15 +133,12 @@ Learn more:
 * xref:configure-content-sources.adoc#local-urls[Use local content repositories]
 * xref:configure-content-sources.adoc#remote-urls[Fetch remote content repositories]
 * xref:configure-content-sources.adoc#author-urls[Configure remote and local content repository URLs in the same playbook]
+* xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote repositories and branches]
 
 ==== branches
 
-The branches key accepts a list of branch name patterns.
-The names can be specified in a comma-separated list or as single items on individual lines.
-The values can be the exact name or a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
-
-When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_.
-Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
+The branches key accepts a list of branch name patterns, either as exact names or shell glob patterns (`v3.*`).
+When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_, i.e., the `master` branch and every branch that begins with `v`.
 
 Learn more:
 
@@ -149,7 +146,7 @@ Learn more:
 * xref:configure-content-sources.adoc#separate-branch-names[Separate branch names with commas or markers]
 * xref:configure-content-sources.adoc#exact-branch[Specify branches by name]
 * xref:configure-content-sources.adoc#glob-branch[Specify and exclude branches by glob patterns]
-* xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote branches]
+* xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote branches and repositories]
 
 ==== start_path
 
