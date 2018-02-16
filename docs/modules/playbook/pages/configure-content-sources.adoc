@@ -96,36 +96,27 @@ content:
 
 The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, `branches: master, v*`.
 
-[#comma-branch]
-=== Comma-separated branches values
+[#separate-branch-names]
+=== Separate branches values using commas or markers
+//Comma-separated branches values
 
 Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
+Alternatively, each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
 
-.Comma-separated branches
 [source,yaml]
 ----
 content:
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
-    branches: master, v1.*, v2.1.0
-----
-
-[#marker-branch]
-=== Marker-separated branches values
-
-Each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
-
-.Marker-separated branches
-[source,yaml]
-----
-content:
-  sources:
+    branches: master, v1.* # <1>
   - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
-    - master
-    - v1.*
-    - v2.1.0
+    - v1.* # <2>
+    - v2.0.0
+    - v2.1.*
 ----
+<1> Comma-separated branches values
+<2> Marker-separated branches values
 
 [#exact-branch]
 === Specify branches by name
@@ -142,10 +133,9 @@ content:
     - master
     - '1.0.0'
     - v2.0.0
-    - alpha
 ----
 
-IMPORTANT: A branch name that begins with a number must be enclosed in single quotes, per YAML rules.
+A branch name that begins with a number, like `1.0.0` must be enclosed in single quotes (`+'+`), per YAML rules.
 
 ////
 If you want to limit the branches Antora scans and uses, you can specify an array of branch patterns using the branches key.
@@ -158,7 +148,7 @@ Branches can be specified by shell glob patterns such as as `v3.*`.
 If the pattern starts with a `!` character, then it is negated (i.e., the matches are excluded).
 This is how you can deselect branches that were matched by a previous glob.
 
-For example, let's say you want to include all 3.x versions of the server component except for 3.2.
+For example, let's say you want to include all 1.x versions of the Component A except for 1.7.
 You'd enter the following branches values into the playbook:
 
 .Glob branch patterns
@@ -166,13 +156,13 @@ You'd enter the following branches values into the playbook:
 ----
 content:
   sources:
-  - url: https://github.com/my-docs/server-docs
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
-    - v3.*
-    - '!v3.2'
+    - v1.*
+    - '!v1.7'
 ----
 
-IMPORTANT: A negated value must be enclosed in single quotes, per YAML rules.
+*A negated value must be enclosed in single quotes, per YAML rules.*
 
 Here's how you'd exclude all branches that end in `-beta`.
 

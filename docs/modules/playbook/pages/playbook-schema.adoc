@@ -146,8 +146,7 @@ Antora assumes that a repository's default branches set is the `master` branch a
 Learn more:
 
 * xref:configure-content-sources.adoc#default-branch[Use the default branches set]
-* xref:configure-content-sources.adoc#comma-branch[Separate branch names with commas]
-* xref:configure-content-sources.adoc#marker-branch[Separate branch names with markers]
+* xref:configure-content-sources.adoc#separate-branch-names[Separate branch names with commas or markers]
 * xref:configure-content-sources.adoc#exact-branch[Specify branches by name]
 * xref:configure-content-sources.adoc#glob-branch[Specify and exclude branches by glob patterns]
 
