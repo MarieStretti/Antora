@@ -125,20 +125,15 @@ The sources key contains the list of git repository locations, branch name patte
 
 ==== url
 
-At a minimum, you must specify the location of each content repository using the url key.
-The key accepts any URL that git supports.
-This includes:
+The URL key tells Antora where to find a documentation component's repository.
+The key accepts filesystem paths, file URLs, and any URI that git supports.
 
-* filesystem paths relative to the current directory
-* absolute filesystem paths
-* file URLs that start with pass:[file:///]
-* http and https URLs (e.g., pass:[https://github.com/org/repo.git])
-** You don't need to add the trailing _.git_ to GitLab and GitHub repository URLs.
-Whether or not the trailing _.git_ is required depends on the capabilities of the repository host.
-* SSH URIs (e.g., pass:[git@github.com:org/repo] or pass:[ssh://git@github.com:org/repo])
-* git URIs (e.g., pass:[git://gitlab.com/org/repo])
+Learn more:
 
-// For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
+* xref:configure-content-sources.adoc#local-urls[Use local content repositories]
+* xref:configure-content-sources.adoc#remote-urls[Fetch remote content repositories]
+* xref:configure-content-sources.adoc#author-urls[Configure remote and local content repository URLs in the same playbook]
+
 ==== branches
 
 The branches key accepts a list of branch name patterns.

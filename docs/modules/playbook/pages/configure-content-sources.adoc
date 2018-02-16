@@ -21,7 +21,8 @@ The URL key tells Antora where to find a documentation component's repository.
 You must provide a value for each documentation component repository you want added to your site.
 The key accepts filesystem paths, file URLs, and any URI that git supports.
 
-=== Fetch local content repositories
+[#local-urls]
+=== Use local content repositories
 
 The URL key accepts a relative and absolute filesystem paths.
 When the value is a relative path, the path is resolved relative to the current directory.
@@ -39,6 +40,7 @@ content:
 <2> Relative path to git repository
 <3> Path to a git repository using the file protocol
 
+[#remote-urls]
 === Fetch remote content repositories
 
 Remote repositories can be fetched via https URLs, SSH URIs, and git URIs.
@@ -53,9 +55,12 @@ content:
   - url: git://github.com/org/content-repo.git
 ----
 
-=== Use local and remote content repositories
+// For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
 
-You can build your documentation site using remote content repositories and local content repositories, even when the local repositories have uncommitted changes.
+[#author-urls]
+=== Configure local and remote URLs in the same playbook
+
+You can build your documentation site using a combination of local and remote content repositories, even when the local repositories have uncommitted changes.
 
 [source,yaml]
 ----
@@ -89,17 +94,7 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-b.git
 ----
 
-The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, like in the example below.
-
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a.git
-    branches: master, v*
-  - url: https://gitlab.com/antora/demo/demo-component-b.git
-    branches: master, v*
-----
+The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, `branches: master, v*`.
 
 [#comma-branch]
 === Comma-separated branches values
