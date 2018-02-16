@@ -5,9 +5,9 @@
 == Context
 
 The site needs to include a sitemap that a search engine can use to accurately index the site.
-A sitemap is an XML file (or collection of XML files) that list all HTML pages in the site.
-Since Antora maintains a catalog of all publishable files, the site mapper component can easily generate (and organize) a sitemap from this catalog.
-The sitemap files can then be inserted back into a file catalog as additional files to be published (by the site publisher).
+A sitemap is an XML file (or collection of XML files) that lists all of the HTML pages in the site.
+Since Antora maintains a catalog of all publishable files, the site mapper component can easily generate a sitemap from this catalog.
+The sitemap files can then be inserted back into a file catalog as additional files to be published by the site publisher.
 
 == Functional Overview
 
@@ -16,7 +16,7 @@ Right before the files for the site are published, Antora has an opportunity to 
 The sitemap files can then be included in the set of files to be published.
 
 To make the sitemap easier to navigate and inspect, and to avoid size limits, the site mapper should partition the sitemap by component, thus leveraging the natural division of files in Antora.
-This entails creating a dedicated sitemap file for each component (named sitemap-<component>.xml), then making a {uri-sitemap-index}[sitemap index file] (named sitemap.xml) that lists the individual component sitemaps.
+This entails creating a dedicated sitemap file for each component (named [.path]_sitemap-<component>.xml_), then making a {uri-sitemap-index}[sitemap index file] (named [.path]_sitemap.xml_) that lists the individual component sitemaps.
 So the site mapper is actually generating multiple sitemap files which collectively make up the sitemap.
 
 The sitemap files should list the absolute URL of each page in the site.
@@ -39,13 +39,13 @@ The site mapper component should:
 
 * Accept a playbook and the content catalog
 * Return an empty array if the `site.url` property in the playbook is not set
-* Retrieve the files in the page family from the content catalog
+* Retrieve the files in the `page` family from the content catalog
 * Return an empty array if there are no pages
 * Partition the files by component
 * Sort the URLs of the pages, first alphabetically, then by version
 * Convert the URL of each page to an absolute URL by prepending the site URL (and escaping reserved XML characters)
-* Generate the sitemap for each component and wrap the contents in a virtual file with path sitemap-<component>.xml
-* Generate a sitemap index that lists the sitemap for each component (sorted by component name) and wrap the contents in a virtual file with path sitemap.xml
+* Generate the sitemap for each component and wrap the contents in a virtual file with path [.path]_sitemap-<component>.xml_
+* Generate a sitemap index that lists the sitemap for each component (sorted by component name) and wrap the contents in a virtual file with path [.path]_sitemap.xml_
 * Return the virtual sitemap files as a collection
 
 .Inputs
@@ -53,7 +53,7 @@ The site mapper component should:
 * Content catalog
 
 .Output
-* File[] -- The sitemap files as an array of virtual files
+* `File[]` -- The sitemap files as an array of virtual files
 
 == Code
 
@@ -79,8 +79,8 @@ The sitemap files should adhere to the XML structure defined at {uri-sitemap}.
 
 The following elements should be defined for each page in the individual component sitemaps:
 
-* loc -- the absolute URL of the page
-* lastmod -- the current date and time
+* `loc` -- the absolute URL of the page
+* `lastmod` -- the current date and time
 
 Example:
 
@@ -113,7 +113,7 @@ Example:
 
 The following elements should be defined for each component in the sitemap index:
 
-* loc -- the absolute URL to the component sitemap
+* `loc` -- the absolute URL to the component sitemap
 
 Example:
 
@@ -132,9 +132,9 @@ Example:
 
 Each virtual sitemap file should have the following properties:
 
-* contents -- the XML contents of the sitemap file
-* out.path -- the path in the output site where the sitemap file should be written
-* pub.url -- the root-relative URL of the sitemap file
+* `contents` -- the XML contents of the sitemap file
+* `out.path` -- the path in the output site where the sitemap file should be written
+* `pub.url` -- the root-relative URL of the sitemap file
 
 == Consequences
 
