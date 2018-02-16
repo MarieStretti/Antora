@@ -13,7 +13,6 @@ On this page, you'll learn:
 * [x] The values each playbook key accepts.
 
 == Playbook file structure
-// the general layout of a playbook file
 
 Here's an example of a playbook file.
 
@@ -66,10 +65,10 @@ output: # <17>
 Let's explore the purpose and usage of each key and its values.
 
 [#site-key]
-== site
+== Site keys
 
-The site's global properties are defined in the site key.
-Antora applies these properties when it generates and assembles the site.
+The site's global properties are defined under the `site` category in the playbook schema.
+Antora applies these properties to the whole site when it is generated.
 
 [#site-title-key]
 === title
@@ -93,7 +92,7 @@ Learn more:
 === start_page
 
 You can use a page from a documentation component as the index page for your site.
-The start_page key accepts a page ID as a value.
+The start page key accepts a xref:ROOT:page-id.adoc[page ID] as a value.
 
 Learn more:
 
@@ -113,16 +112,14 @@ Learn more:
 
 * xref:configure-site.adoc#configure-ga[Add a Google Analytics account key]
 
-== content
+== Content and sources keys
 
-The content key contains an array of source repository specifications.
-These source repository specifications are arranged in the sources key.
-
-=== sources
+The `content` category contains an array of source repository specifications.
+These source repository specifications are arranged under the `sources` category.
 
 The sources key contains the list of git repository locations, branch name patterns, and other repository properties that Antora uses when aggregating the site content.
 
-==== url
+=== url
 
 The URL key tells Antora where to find a documentation component's repository.
 The key accepts filesystem paths, file URLs, and any URI that git supports.
@@ -134,7 +131,7 @@ Learn more:
 * xref:configure-content-sources.adoc#author-urls[Configure remote and local content repository URLs in the same playbook]
 * xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote repositories and branches]
 
-==== branches
+=== branches
 
 The branches key accepts a list of branch name patterns, either as exact names or shell glob patterns (`v3.*`).
 When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_, i.e., the `master` branch and every branch that begins with `v`.
@@ -147,7 +144,7 @@ Learn more:
 * xref:configure-content-sources.adoc#glob-branch[Specify and exclude branches by glob patterns]
 * xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote branches and repositories]
 
-==== start_path
+=== start_path
 
 Antora automatically looks for the component descriptor file at the root of a repository.
 When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using `start_path`.
@@ -156,9 +153,9 @@ Learn more:
 
 * xref:configure-content-sources.adoc#add-start-path[Specify a start path for a content repository]
 
-== ui
+== UI key
 
-The ui category contains keys that specify the location of the UI bundle and how it should be processed.
+The `ui` category contains keys that specify the location of the UI bundle and how it should be processed.
 
 [#ui-bundle-key]
 === bundle
@@ -200,7 +197,7 @@ Learn more:
 
 * xref:configure-ui.adoc#output-dir[Specify an output directory for the UI files]
 
-== output
+== Output key
 
 The output key contains common output settings and a list of destination specifications.
 The destination specifications tell Antora which provider(s) to use to publish the site (e.g., fs, archive, ssh, s3) and where those files should go.
