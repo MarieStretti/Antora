@@ -14,7 +14,7 @@
  * @param {Readable<File>} files - A Readable stream of virtual files to publish.
  * @returns {Promise} A promise that resolves when the stream has ended.
  */
-async function publishStream (destAdapter, files) {
+function publishStream (destAdapter, files) {
   return new Promise((resolve, reject) =>
     files
       .pipe(destAdapter)
