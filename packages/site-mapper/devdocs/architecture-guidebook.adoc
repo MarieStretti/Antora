@@ -1,0 +1,148 @@
+= Site Mapper Guidebook
+:uri-sitemap: https://www.sitemaps.org
+:uri-sitemap-index: https://www.sitemaps.org/protocol.html#index
+
+== Context
+
+The site needs to include a sitemap that a search engine can use to accurately index the site.
+A sitemap is an XML file (or collection of XML files) that list all HTML pages in the site.
+Since Antora maintains a catalog of all publishable files, the site mapper component can easily generate (and organize) a sitemap from this catalog.
+The sitemap files can then be inserted back into a file catalog as additional files to be published (by the site publisher).
+
+== Functional Overview
+
+The main purpose of the site mapper component is to generate a {uri-sitemap}[sitemap] for the site.
+Right before the files for the site are published, Antora has an opportunity to generate a sitemap that itemizes the HTML files it intends to publish.
+The sitemap files can then be included in the set of files to be published.
+
+To make the sitemap easier to navigate and inspect, and to avoid size limits, the site mapper should partition the sitemap by component, thus leveraging the natural division of files in Antora.
+This entails creating a dedicated sitemap file for each component (named sitemap-<component>.xml), then making a {uri-sitemap-index}[sitemap index file] (named sitemap.xml) that lists the individual component sitemaps.
+So the site mapper is actually generating multiple sitemap files which collectively make up the sitemap.
+
+The sitemap files should list the absolute URL of each page in the site.
+Pages are the publishable files in the `page` family that are retrieved from the content catalog.
+These are all HTML files.
+For now, the last modification date for each entry should be the current date and time.
+The entries in the sitemap files should be sorted so the contents are stable from one run to the next.
+
+The site mapper should only generate the sitemap files if the `site.url` property is specified in the playbook, since it's a requirement that each sitemap entries point to an absolute URL.
+
+== Software Architecture
+
+The site mapper component functionality is provided by the site-mapper module.
+
+All the details of generating the sitemap files should be encapsulated in the site mapper component.
+The component should accept the playbook and content catalog and return the sitemap files as a collection of virtual file objects.
+The content catalog should not be modified by this component.
+
+The site mapper component should:
+
+* Accept a playbook and the content catalog
+* Return an empty array if the `site.url` property in the playbook is not set
+* Retrieve the files in the page family from the content catalog
+* Return an empty array if there are no pages
+* Partition the files by component
+* Sort the URLs of the pages, first alphabetically, then by version
+* Convert the URL of each page to an absolute URL by prepending the site URL (and escaping reserved XML characters)
+* Generate the sitemap for each component and wrap the contents in a virtual file with path sitemap-<component>.xml
+* Generate a sitemap index that lists the sitemap for each component (sorted by component name) and wrap the contents in a virtual file with path sitemap.xml
+* Return the virtual sitemap files as a collection
+
+.Inputs
+* Playbook (`site.url`)
+* Content catalog
+
+.Output
+* File[] -- The sitemap files as an array of virtual files
+
+== Code
+
+The site mapper component is implemented as a dedicated node package (i.e., module).
+This module exports the function `generateSitemaps`, which accepts a playbook instance and the content catalog and returns an array of virtual sitemap files.
+
+The API for the site mapper should be used as follows:
+
+[source,js]
+----
+const generateSitemaps = require('@antora/site-mapper')
+
+//...
+
+const sitemapFiles = generateSitemaps(playbook, contentCatalog)
+----
+
+The sitemap files then need to be put into one of the catalogs passed to the site publisher so that these files get published.
+
+== Data
+
+The sitemap files should adhere to the XML structure defined at {uri-sitemap}.
+
+The following elements should be defined for each page in the individual component sitemaps:
+
+* loc -- the absolute URL of the page
+* lastmod -- the current date and time
+
+Example:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>http://example.com/antora/1.0/cli.html</loc>
+<lastmod>2018-02-14T22:04:45.756Z</lastmod>
+</url>
+<url>
+<loc>http://example.com/antora/1.0/component-descriptor.html</loc>
+<lastmod>2018-02-14T22:04:45.756Z</lastmod>
+</url>
+<url>
+<loc>http://example.com/antora/1.0/component-structure.html</loc>
+<lastmod>2018-02-14T22:04:45.756Z</lastmod>
+</url>
+<url>
+<loc>http://example.com/antora/1.0/component-versions.html</loc>
+<lastmod>2018-02-14T22:04:45.756Z</lastmod>
+</url>
+<url>
+<loc>http://example.com/antora/1.0/create-standard-page.html</loc>
+<lastmod>2018-02-14T22:04:45.756Z</lastmod>
+</url>
+</urlset>
+----
+
+The following elements should be defined for each component in the sitemap index:
+
+* loc -- the absolute URL to the component sitemap
+
+Example:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemap>
+<loc>http://example.com/sitemap-antora.xml</loc>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemap-antora-ui-default.xml</loc>
+</sitemap>
+</sitemapindex>
+----
+
+Each virtual sitemap file should have the following properties:
+
+* contents -- the XML contents of the sitemap file
+* out.path -- the path in the output site where the sitemap file should be written
+* pub.url -- the root-relative URL of the sitemap file
+
+== Consequences
+
+Without a sitemap, the search engine would have to follow all the links in the site, which is both inefficient and inherently prone to leaving gaps.
+Providing a sitemap allows search engines to accurately index the site.
+
+Since Antora knows about every page being published, the site mapper component can easily create a sitemap that lists the URLs of all the pages.
+To make the sitemap more manageable and avoid size limits, the site mapper component can leverage Antora's natural content partitioning and group the entries by component into individual sitemap files and also give the entries in those files a stable order.
+The component sitemaps can then be listed in a sitemap index.
+
+These sitemap files can then be put back into a catalog so they'll be published by the site publisher along with the other publishable files.
