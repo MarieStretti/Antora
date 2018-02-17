@@ -196,11 +196,27 @@ describe('generateSite()', () => {
     playbookSpec.site.url = 'https://example.com/docs/'
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookSpecFile])
-    expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     expect(ospath.join(destDir, 'sitemap.xml')).to.be.a.file()
+    expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head link[rel=canonical]')).to.have.attr('href', 'https://example.com/docs/the-component/2.0/index.html')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', 'https://example.com/docs')
+  }).timeout(TIMEOUT)
+
+  it('should pass AsciiDoc attributes defined in playbook to AsciiDoc processor', async () => {
+    playbookSpec.asciidoc = {
+      attributes: { sectanchors: null, sectnums: '', description: 'Stuff about stuff@' },
+    }
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookSpecFile])
+    expect(ospath.join(destDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/the-page.html')
+    expect($('head meta[name=description]')).to.have.attr('content', 'Stuff about stuff')
+    expect($('h2#_section_a')).to.have.html('1. Section A')
+    expect($('h2#_section_b')).to.have.html('2. Section B')
+    expect(ospath.join(destDir, 'the-component/2.0/index.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/index.html')
+    expect($('head meta[name=description]')).to.have.attr('content', 'The almighty index page')
   }).timeout(TIMEOUT)
 
   it('should add edit page link to toolbar if page.editUrl is set in UI model', async () => {

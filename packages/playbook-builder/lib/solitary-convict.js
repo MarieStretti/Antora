@@ -37,4 +37,6 @@ function solitaryConvict (schema, opts = {}) {
   return config
 }
 
+solitaryConvict.addFormat = (name, validate, coerce) => convict.addFormat(name, validate, coerce)
+
 module.exports = solitaryConvict

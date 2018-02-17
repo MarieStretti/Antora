@@ -8,6 +8,12 @@ ui:
   bundle: ../ui/build/ui-bundles.zip
   start_path: dark-theme
   default_layout: default
+asciidoc:
+  attributes:
+    allow-uri-read: true
+    idprefix: ''
+    toc: false
+    uri-project: https://antora.org
 output:
   dir: _site
   destinations:
