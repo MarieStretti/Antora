@@ -320,6 +320,23 @@ In this guide, you'll learn how to:
 
 Thanks in advance for helping to make this project a success!
 
+== Release Policy
+
+IMPORTANT: The release versioning, scheduling, and support policies described in this section will take affect for the packages in this repository once Antora CLI v1.0.0 and Antora default site generator v1.0.0 are released.
+
+The Antora CLI and Antora default site generator packages are released together and follow the https://semver.org[semantic versioning] rules.
+Each Antora release is versioned *major.minor.maintenance*.
+
+Major::
+Major releases occur when new functionality breaks backwards compatibility.
+Releases within the same major version number will maintain API compatibility.
+
+Minor::
+Minor releases add new features, improvements and fixes and maintain backwards compatibility.
+
+Maintenance::
+Maintenance releases patch bugs.
+
 == Copyright and License
 
 Copyright (C) 2017-2018 OpenDevise Inc. and the Antora Project.
