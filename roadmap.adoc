@@ -31,27 +31,29 @@ For a detailed list of current development tasks, refer to the core components {
 
 ==== Scheduled for next alpha
 
+* [ ] Allow custom Asciidoctor extensions to be registered {uri-issues}/167[#167]
+* [ ] Add AsciiDoc attribute configuration to playbook schema {uri-issues}/160[#160]
 * [ ] Architect and implement page redirector / router component
 * [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 
 ==== Waiting
 
+* [ ] Add a require option to the CLI to preload modules {uri-issues}/166[#166]
 * [ ] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
 * [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
-* [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 * [ ] Evaluate CHANGELOG policies
 * [ ] Automatically generate CHANGELOG for release
 
 === v1.0.0-beta.x
 
+* [ ] Create docker container for evaluating Antora {uri-issues}/162[#162]
 * [ ] Add error message when repository clone fails {uri-issues}/155[#155]
 * [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
 * [ ] Test against Asciidoctor.js 1.5.6-preview.5
 * [ ] Test against Node 9
 * [ ] Set up API documentation and automatically publish as CI artifact
 * [ ] Add list of environment variables to usage
-* [ ] Create docker container for evaluating Antora
 
 === v1.0.0
 
@@ -59,9 +61,11 @@ For a detailed list of current development tasks, refer to the core components {
 
 === v1.x
 
+* [ ] Implement fallback value for component version {uri-issues}/161[#161]
 * [ ] Support loading the UI from a directory {uri-issues}/150[#150]
 * [ ] Add a merge mode to supplemental UI files {uri-issues}/149[#149]
 * [ ] Add a logging infrastructure {uri-issues}/145[#145]
+* [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
 * [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
 * [ ] Allow content to be aggregated from tags {uri-issues}/117[#117]
 * [ ] Separate content aggregator from git provider {uri-issues}/93[#93]
@@ -81,7 +85,7 @@ For a detailed list of current development tasks, refer to the core components {
 * Allow AsciiDoc attributes to be defined in playbook
 * Separate site publisher from providers
 
-*Release Timeframe*: 2018 Q2 or Q3
+*Release Timeframe*: 2018 Q3 or Q4
 
 == Documentation, Demo, & Docs Site
 
@@ -100,14 +104,16 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Provide source URL configuration examples {uri-issues}/153[#153]
 * [x] Document UI bundle configuration features {uri-issues}/152[#152]
 * [x] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
-* [ ] _Docs Site:_ Connect Docs and project sites
+* [x] _Docs Site:_ Connect Docs and project sites
 * [x] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
 * [ ] Add how to create a partial page
+* [ ] Document versioning policy {uri-issues}/14[#14]
 
 ==== Waiting
 
-* [ ] Document sitemap features
-* [ ] Document versioning policy {uri-issues}/14[#14]
+* [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
+* [ ] Document sitemap features {uri-issues}/168[#168]
+* [ ] Improve custom provider documentation {uri-issues}/164[#164]
 * [ ] Document redirect features
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
@@ -134,10 +140,10 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 ==== Waiting
 
+* [ ] Add client-side search {uri-ui-issues}/44[#44]
 * [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
 * [ ] IE 11 fixes
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
-* [ ] Integrate search
 * [ ] Improve SVG options stability
 
 === v1.0.0-beta.x
