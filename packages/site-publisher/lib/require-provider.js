@@ -30,14 +30,15 @@ function createRequireProvider () {
   return function requireProvider (request, requireBase) {
     let resolved = requestCache.get(request)
     if (!resolved) {
-      if (ospath.isAbsolute(request)) {
-        resolved = request
-      } else if (request.charAt() === '.') {
+      if (request.charAt() === '.') {
         resolved = ospath.resolve(requireBase, request)
+      } else if (ospath.isAbsolute(request)) {
+        resolved = request
       } else {
-        resolved = require.resolve(request, {
-          paths: [ospath.resolve(requireBase, 'node_modules')].concat(require.resolve.paths('')),
-        })
+        const localNodeModulesPath = ospath.resolve(requireBase, 'node_modules')
+        const paths = require.resolve.paths('').filter((requirePath) => requirePath !== localNodeModulesPath)
+        paths.unshift(localNodeModulesPath)
+        resolved = require.resolve(request, { paths })
       }
       requestCache.set(request, resolved)
     }
