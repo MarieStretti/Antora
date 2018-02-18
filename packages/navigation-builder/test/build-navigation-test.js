@@ -90,7 +90,9 @@ describe('buildNavigation()', () => {
     const contentCatalog = mockContentCatalog([
       {
         family: 'navigation',
+
         relative: 'nav.adoc',
+
         contents: navContentsA,
         navIndex: 0,
       },
@@ -383,6 +385,56 @@ describe('buildNavigation()', () => {
     })
   })
 
+  it('should be able to reference global attributes from AsciiDoc config', async () => {
+    const navContents = heredoc`
+      .xref:index.adoc[{product-name}]
+      // a comment about this preprocessor conditional
+      ifdef::go-live[]
+      * {uri-console}
+      endif::[]
+      * {uri-project}[{project-name}]
+    `
+    const attributes = {
+      'hide-uri-scheme': '',
+      'go-live': '',
+      'product-name': 'Z Product',
+      'project-name': 'Z Project',
+      'uri-console': 'https://z-product.example.com/console',
+      'uri-project': 'https://z-project.example.com',
+    }
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'navigation',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'index.adoc' },
+    ])
+    const navCatalog = await buildNavigation(contentCatalog, { attributes })
+    const menu = navCatalog.getMenu('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      content: 'Z Product',
+      url: '/component-a/module-a/index.html',
+      urlType: 'internal',
+      items: [
+        {
+          content: 'z-product.example.com/console',
+          url: 'https://z-product.example.com/console',
+          urlType: 'external',
+        },
+        {
+          content: 'Z Project',
+          url: 'https://z-project.example.com',
+          urlType: 'external',
+        },
+      ],
+    })
+  })
+
   it('should allow items to link to external URLs or fragments', async () => {
     const navContents = heredoc`
       .xref:asciidoc/index.adoc[AsciiDoc]
@@ -466,6 +518,32 @@ describe('buildNavigation()', () => {
           urlType: 'internal',
         },
       ],
+    })
+  })
+
+  it('should not set url or urlType if entry contains an anchor element without an href', async () => {
+    const navContents = heredoc`
+      .Basics
+      * [[category-a]]Category A
+      * [[category-b]]Category B
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'navigation',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'page-a.adoc' },
+    ])
+    const navCatalog = await buildNavigation(contentCatalog)
+    const menu = navCatalog.getMenu('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      content: 'Basics',
+      items: [{ content: '<a id="category-a"></a>Category A' }, { content: '<a id="category-b"></a>Category B' }],
     })
   })
 
@@ -774,7 +852,7 @@ describe('buildNavigation()', () => {
       * xref:gitlab-pages.adoc[GitLab Pages]
 
       //^
-      . This list should be throw away.
+      . This list should be thrown away.
     `
     const contentCatalog = mockContentCatalog([
       {
