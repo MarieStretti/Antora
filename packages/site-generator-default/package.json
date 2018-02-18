@@ -15,6 +15,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@antora/asciidoc-loader": "1.0.0-alpha.6",
     "@antora/content-aggregator": "1.0.0-alpha.6",
     "@antora/content-classifier": "1.0.0-alpha.6",
     "@antora/document-converter": "1.0.0-alpha.6",
