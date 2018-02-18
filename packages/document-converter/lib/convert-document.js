@@ -16,20 +16,21 @@ const loadAsciiDoc = require('@antora/asciidoc-loader')
  *
  * @memberof document-converter
  *
- * @param {File} file - The virtual file the contains AsciiDoc source contents.
- * @param {Object} [customAttrs={}] - Custom attributes to assign on the AsciiDoc document.
- * @param {ContentCatalog} [contentCatalog=undefined] - The content catalog
- *   that provides access to other virtual files in the site.
- * @returns Nothing.
+ * @param {File} file - The virtual file whose contents is an AsciiDoc source document.
+ * @param {ContentCatalog} [contentCatalog=undefined] - The catalog of all virtual content files in the site.
+ * @param {Object} [asciidocConfig={}] - AsciiDoc processor configuration options.
+ *
+ * @returns {File} The virtual file that was converted.
  */
-async function convertDocument (file, customAttrs = {}, contentCatalog = undefined) {
-  const doc = loadAsciiDoc(file, customAttrs, contentCatalog)
+async function convertDocument (file, contentCatalog = undefined, asciidocConfig = {}) {
+  const doc = loadAsciiDoc(file, contentCatalog, asciidocConfig)
   const attributes = doc.getAttributes()
   // Q: should we backup the AsciiDoc contents for all pages? what's the impact?
   if ('page-partial' in attributes) file.src.contents = file.contents
   file.asciidoc = doc.hasHeader() ? { attributes, doctitle: doc.getDocumentTitle() } : { attributes }
   file.contents = Buffer.from(doc.convert())
   file.mediaType = 'text/html'
+  return file
 }
 
 module.exports = convertDocument

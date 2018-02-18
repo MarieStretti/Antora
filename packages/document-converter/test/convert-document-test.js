@@ -122,21 +122,20 @@ describe('convertDocument()', () => {
   })
 
   it('should pass custom attributes to processor', async () => {
-    const customAttrs = {
-      'product-name': 'Hi-Speed Tonic',
-      'source-highlighter': 'html-pipeline',
-    }
     inputFile.contents = Buffer.from(heredoc`
       = Document Title
 
       Get there in a flash with {product-name}.
     `)
-    await convertDocument(inputFile, customAttrs)
-    expect(inputFile.contents.toString()).to.include(customAttrs['product-name'])
+    const attributes = {
+      'product-name': 'Hi-Speed Tonic',
+      'source-highlighter': 'html-pipeline',
+    }
+    await convertDocument(inputFile, undefined, { attributes })
+    expect(inputFile.contents.toString()).to.include(attributes['product-name'])
     expect(inputFile.asciidoc).to.exist()
-    const attrs = inputFile.asciidoc.attributes
-    expect(attrs).to.exist()
-    expect(attrs).to.include(customAttrs)
+    expect(inputFile.asciidoc.attributes).to.exist()
+    expect(inputFile.asciidoc.attributes).to.include(attributes)
   })
 
   it('should convert page reference to URL of page in content catalog', async () => {
@@ -147,7 +146,7 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getById: spy(() => targetFile) }
-    await convertDocument(inputFile, {}, contentCatalog)
+    await convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getById, {
       component: 'component-a',
       version: '1.2.3',
@@ -175,7 +174,7 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getById: spy(() => partialFile) }
-    await convertDocument(inputFile, {}, contentCatalog)
+    await convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getById, {
       component: 'component-a',
       version: '1.2.3',
@@ -224,7 +223,7 @@ describe('convertDocument()', () => {
     }
     const contentCatalog = { getByPath: spy(() => includedFile) }
     await convertDocument(includedFile)
-    await convertDocument(inputFile, {}, contentCatalog)
+    await convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getByPath, {
       component: 'component-a',
       version: '1.2.3',
