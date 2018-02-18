@@ -219,6 +219,24 @@ describe('generateSite()', () => {
     expect($('head meta[name=description]')).to.have.attr('content', 'The almighty index page')
   }).timeout(TIMEOUT)
 
+  it('should register extensions defined in playbook on AsciiDoc processor', async () => {
+    fs.outputFileSync(
+      ospath.resolve(WORK_DIR, 'ext', 'shout-tree-processor.js'),
+      fs.readFileSync(ospath.resolve(FIXTURES_DIR, 'shout-tree-processor.js'), 'utf8')
+    )
+    playbookSpec.asciidoc = {
+      attributes: { volume: '3' },
+      extensions: ['./ext/shout-tree-processor.js', ospath.resolve(FIXTURES_DIR, 'named-entity-postprocessor.js')],
+    }
+    fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookSpecFile])
+    expect(ospath.join(destDir, 'the-component/2.0/the-page.html'))
+      .to.be.a.file()
+      .with.contents.that.match(/Section A content!!!/)
+      .and.with.contents.that.match(/&#169;/)
+    global.Opal.Asciidoctor.Extensions.unregisterAll()
+  }).timeout(TIMEOUT)
+
   it('should add edit page link to toolbar if page.editUrl is set in UI model', async () => {
     await repositoryBuilder.open().then(() => repositoryBuilder.checkoutBranch('v2.0'))
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })

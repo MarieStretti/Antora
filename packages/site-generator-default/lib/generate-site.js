@@ -9,6 +9,7 @@ const createPageComposer = require('@antora/page-composer')
 const generateSitemaps = require('@antora/site-mapper')
 const loadUi = require('@antora/ui-loader')
 const publishSite = require('@antora/site-publisher')
+const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
 
 const resolvePage = require('@antora/asciidoc-loader/lib/xref/resolve-page')
 
@@ -25,13 +26,12 @@ async function generateSite (args, env) {
     loadUi(playbook),
   ])
 
+  const asciidocConfig = resolveAsciiDocConfig(playbook)
   const pages = contentCatalog.findBy({ family: 'page' })
 
-  await Promise.all(pages.map(async (page) => convertDocument(page, playbook.asciidoc.attributes, contentCatalog)))
+  await Promise.all(pages.map((page) => convertDocument(page, contentCatalog, asciidocConfig)))
 
-  const navigationCatalog = buildNavigation(contentCatalog, playbook.asciidoc.attributes)
-
-  // TODO we could do this in same stream as convertDocument; but then we'd have an ordering problem
+  const navigationCatalog = buildNavigation(contentCatalog, asciidocConfig)
   ;((composePage) => {
     pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
   })(createPageComposer(playbook, contentCatalog, uiCatalog))
