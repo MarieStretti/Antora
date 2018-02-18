@@ -1,6 +1,6 @@
 'use strict'
 
-// IMPORTANT eagerly load Opal to change the String encoding from UTF-16LE to UTF-8
+// IMPORTANT eagerly load Opal to force the String encoding from UTF-16LE to UTF-8
 const Opal = require('opal-runtime').Opal
 if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF-8') {
   String.prototype.encoding = Opal.const_get_local(Opal.const_get_qualified('::', 'Encoding'), 'UTF_8') // eslint-disable-line
@@ -19,27 +19,25 @@ const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
 /**
  * Loads the AsciiDoc source from the specified file into a Document object.
  *
- * Uses the Asciidoctor.js load API to parse the source of the specified file
- * into an Asciidoctor Document object. Sets options and attributes that
- * provide integration with the Antora environment. The options include a
- * custom converter and extension registery to handle page references and
- * include directives, respectively. It also assigns attributes that provide
- * context either for the author (e.g., env=site) or the pipeline (e.g.,
- * docfile).
+ * Uses the Asciidoctor.js load API to parse the source of the file into an Asciidoctor Document object. Sets options
+ * and attributes that provide integration with the Antora environment. Options include a custom converter and extension
+ * registry to handle page references and include directives, respectively. It also assigns attributes that provide
+ * context either for the author (e.g., env=site) or pipeline (e.g., docfile).
  *
  * @memberof asciidoc-loader
  *
- * @param {File} file - The virtual file the contains AsciiDoc source contents.
- * @param {Object} [customAttrs={}] - Custom attributes to assign on the AsciiDoc document.
- * @param {ContentCatalog} [contentCatalog=undefined] - The content catalog
- *   that provides access to the virtual files in the site.
- * @param {Object} [opts={}] - Additional processing options.
- * @param {Boolean} [opts.relativizePageRefs=true] - Configures processor to generate
- *   page references relative to the current page instead of the site root.
+ * @param {File} file - The virtual file whose contents is an AsciiDoc source document.
+ * @param {ContentCatalog} [contentCatalog=undefined] - The catalog of all virtual content files in the site.
+ * @param {Object} [config={}] - AsciiDoc processor configuration options.
+ * @param {Object} [config.attributes={}] - Shared AsciiDoc attributes to assign to the document.
+ * @param {Array<Function>} [config.extensions=[]] - Self-registering AsciiDoc processor extension functions.
+ * @param {Boolean} [config.relativizePageRefs=true] - Configures the AsciiDoc processor to generate relative page
+ *   references (relative to the current page) instead of root relative (relative to the site root).
  *
- * @returns {Document} An Asciidoctor Document object created from the specified source.
+ * @returns {Document} An Asciidoctor Document object created from the source of the specified file.
  */
-function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined, opts = {}) {
+function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
+  if (!config) config = {}
   const envAttrs = {
     env: 'site',
     'env-site': '',
@@ -53,11 +51,10 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined, opts 
     sectanchors: '',
     'source-highlighter': 'highlight.js',
   }
-  const builtinAttrs = {
+  const intrinsicAttrs = {
     docname: file.src.stem,
     docfile: file.path,
-    // NOTE docdir implicitly sets base_dir on document
-    // NOTE Opal only expands to absolute path if value begins with ./
+    // NOTE docdir implicitly sets base_dir on document; Opal only expands value to absolute path if it starts with ./
     docdir: file.dirname,
     docfilesuffix: file.src.extname,
     imagesdir: path.join(file.pub.moduleRootPath, '_images'),
@@ -65,15 +62,18 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined, opts 
     examplesdir: EXAMPLES_DIR_PROXY,
     partialsdir: PARTIALS_DIR_PROXY,
   }
-  const attributes = Object.assign(envAttrs, defaultAttrs, customAttrs || {}, builtinAttrs)
-  const relativizePageRefs = opts.relativizePageRefs !== false
+  const attributes = Object.assign({}, envAttrs, defaultAttrs, config.attributes, intrinsicAttrs)
+  const relativizePageRefs = config.relativizePageRefs !== false
   const converter = createConverter(asciidoctor, {
     onPageRef: (refSpec, content) => convertPageRef(refSpec, content, file, contentCatalog, relativizePageRefs),
   })
   const extensionRegistry = createExtensionRegistry(asciidoctor, {
     onInclude: (doc, target, cursor) => resolveIncludeFile(target, file, cursor, contentCatalog),
   })
-  const options = {
+  if (config.extensions && config.extensions.length) {
+    config.extensions.forEach((extension) => extension.register(extensionRegistry))
+  }
+  return asciidoctor.load(file.contents.toString(), {
     attributes,
     converter,
     extension_registry: extensionRegistry,
