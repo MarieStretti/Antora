@@ -266,9 +266,7 @@ Paste the provided URL into the location bar of your browser and you'll be viewi
 
 To learn more about how Antora works, read the article series https://opendevise.com/blog/tag/architecting-antora/[Architecting Antora].
 
-== Roadmap
 
-The <<roadmap.adoc#,roadmap>> provides the current development direction and schedule for Antora pipeline, CLI, and UI.
 
 == Getting Help
 
@@ -336,6 +334,22 @@ Minor releases add new features, improvements and fixes and maintain backwards c
 
 Maintenance::
 Maintenance releases patch bugs.
+
+=== Roadmap and Release Windows
+
+The <<roadmap.adoc#,roadmap>> provides the current development direction and schedule for Antora.
+
+Maintenance releases happen as needed depending on the urgency of the fix.
+Minor releases typically occur when one or more new features or improvements have been reviewed, tested and approved.
+
+Major releases require architecture iterations that are available for community review and comment.
+Major releases will include numerous pre-release versions (major.minor.maintenance-alpha.n | -beta.n | -rc.n).
+Once a release candidate (rc) has been thoroughly tested and no new bugs discovered, the stable release will be published.
+
+=== Support
+
+Each major version of the default Antora site generator is maintained for at least X years after the initial public stable release.
+Only the latest minor release for each major release will receive maintenance releases.
 
 == Copyright and License
 
