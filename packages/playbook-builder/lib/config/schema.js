@@ -105,6 +105,12 @@ module.exports = {
       default: {},
       arg: 'attribute',
     },
+    extensions: {
+      doc: 'A list of require paths for registering extensions per instance of the AsciiDoc processor.',
+      format: Array,
+      default: [],
+      //arg: 'extension',
+    },
   },
   runtime: {
     quiet: {
