@@ -94,11 +94,7 @@ module.exports = {
     },
     supplemental_files: {
       doc: 'Supplemental file list or a directory of files to append to the UI bundle.',
-      format: (val) => {
-        if (!(typeof val === 'string' || Array.isArray(val))) {
-          throw new Error('expected directory string or file list')
-        }
-      },
+      format: 'dir-or-virtual-files',
       default: undefined,
     },
   },
