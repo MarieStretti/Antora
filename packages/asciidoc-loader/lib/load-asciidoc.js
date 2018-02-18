@@ -10,7 +10,8 @@ const asciidoctor = require('asciidoctor.js')()
 const convertPageRef = require('./xref/convert-page-ref')
 const createConverter = require('./create-converter')
 const createExtensionRegistry = require('./create-extension-registry')
-const { posix: path } = require('path')
+const ospath = require('path')
+const { posix: path } = ospath
 const resolveIncludeFile = require('./include/resolve-include-file')
 
 const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
@@ -77,8 +78,67 @@ function loadAsciiDoc (file, customAttrs = {}, contentCatalog = undefined, opts 
     converter,
     extension_registry: extensionRegistry,
     safe: 'safe',
+  })
+}
+
+/**
+ * Resolves a global AsciiDoc configuration object from data in the playbook.
+ *
+ * Reads data from the asciidoc category of the playbook and resolves it into a global AsciiDoc configuration object
+ * that can be used by the loadAsciiDoc function. This configuration object is a shallow clone of the data in the
+ * playbook. The main purpose of this function is to resolve extension references in the playbook to extension
+ * functions. If the extension is scoped, the function is stored in this object. If the extension is global, it is
+ * registered with the global extension registry, then discarded.
+ *
+ * @memberof asciidoc-loader
+ *
+ * @param {Object} playbook - The configuration object for Antora.
+ * @param {Object} playbook.asciidoc - The AsciiDoc configuration data in the playbook.
+ *
+ * @returns {Object} A resolved configuration object to be used by the loadAsciiDoc function.
+ */
+function resolveConfig (playbook) {
+  if (!playbook.asciidoc) return {}
+  const config = Object.assign({}, playbook.asciidoc)
+  // TODO process !name attributes
+  if (config.extensions && config.extensions.length) {
+    const extensions = config.extensions.reduce((accum, extensionPath) => {
+      if (extensionPath.charAt() === '.') {
+        extensionPath = ospath.resolve(playbook.dir, extensionPath)
+      } else if (!ospath.isAbsolute(extensionPath)) {
+        const localNodeModulesPath = ospath.resolve(playbook.dir, 'node_modules')
+        const paths = require.resolve.paths('').filter((requirePath) => requirePath !== localNodeModulesPath)
+        paths.unshift(localNodeModulesPath)
+        extensionPath = require.resolve(extensionPath, { paths })
+      }
+      const extension = require(extensionPath)
+      if ('register' in extension) {
+        accum.push(extension)
+      } else if (!isExtensionRegistered(extension, asciidoctor.Extensions)) {
+        // QUESTION should we assign an antora-specific group name?
+        asciidoctor.Extensions.register(extension)
+      }
+      return accum
+    }, [])
+    if (extensions.length) {
+      config.extensions = extensions
+    } else {
+      delete config.extensions
+    }
+  } else {
+    delete config.extensions
   }
-  return asciidoctor.load(file.contents.toString(), options)
+  return config
+}
+
+function isExtensionRegistered (ext, registry) {
+  return (
+    registry.groups &&
+    global.Opal.hash(registry.groups)
+      .$values()
+      .includes(ext)
+  )
 }
 
 module.exports = loadAsciiDoc
+module.exports.resolveConfig = resolveConfig

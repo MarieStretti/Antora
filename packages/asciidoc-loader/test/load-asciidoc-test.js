@@ -5,6 +5,11 @@ const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils'
 
 const loadAsciiDoc = require('@antora/asciidoc-loader')
 const mockContentCatalog = require('../../../test/mock-content-catalog')
+const ospath = require('path')
+
+const Asciidoctor = global.Opal.Asciidoctor
+
+const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 
 describe('loadAsciiDoc()', () => {
   let inputFile
@@ -66,7 +71,7 @@ describe('loadAsciiDoc()', () => {
     `
     const defaultStderrWrite = process.stderr.write
     process.stderr.write = (msg) => {}
-    const html = global.Opal.Asciidoctor.convert(contents, { safe: 'safe' })
+    const html = Asciidoctor.convert(contents, { safe: 'safe' })
     expectLink(html, '#1.0@component-b::index.adoc', 'Component B')
     expect(html).to.include('Unresolved directive in &lt;stdin&gt; - include::does-not-resolve.adoc[]')
     process.stderr.write = defaultStderrWrite
@@ -1464,6 +1469,123 @@ describe('loadAsciiDoc()', () => {
       })
       // TODO eventually this will resolve to the title of the target page
       expectPageLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
+    })
+  })
+
+  describe('resolveConfig()', () => {
+    const toHash = (data) => global.Opal.hash(data)
+
+    it('should return empty config if asciidoc category is not set in playbook', () => {
+      const playbook = {}
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config).to.eql({})
+    })
+
+    it('should return a copy of the asciidoc category in the playbook', () => {
+      const playbook = {
+        asciidoc: {
+          attributes: {
+            idprefix: '',
+            idseparator: '-',
+          },
+        },
+      }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config).to.not.equal(playbook.asciidoc)
+      expect(config).to.eql(playbook.asciidoc)
+    })
+
+    it('should not load extensions if extensions are not defined', () => {
+      const playbook = { asciidoc: {} }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config).to.eql({})
+    })
+
+    it('should not load extensions if extensions are empty', () => {
+      const playbook = { asciidoc: { extensions: [] } }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config).to.eql({})
+    })
+
+    it('should load scoped extension into config but not register it globally', () => {
+      const playbook = { asciidoc: { extensions: [ospath.resolve(FIXTURES_DIR, 'ext/scoped-shout-block.js')] } }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config.extensions).to.exist()
+      expect(config.extensions).to.have.lengthOf(1)
+      expect(config.extensions[0]).to.be.instanceOf(Function)
+      const Extensions = Asciidoctor.Extensions
+      const extensionGroupNames = Extensions.groups ? toHash(Extensions.groups).$keys() : []
+      expect(extensionGroupNames).to.have.lengthOf(0)
+    })
+
+    it('should load global extension and register it globally', () => {
+      const playbook = { asciidoc: { extensions: [ospath.resolve(FIXTURES_DIR, 'ext/global-shout-block.js')] } }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config.extensions).to.not.exist()
+      const Extensions = Asciidoctor.Extensions
+      expect(Extensions.groups).to.exist()
+      const extensionGroupNames = toHash(Extensions.groups).$keys()
+      expect(extensionGroupNames).to.have.lengthOf(1)
+      Extensions.unregisterAll()
+    })
+
+    it('should only register a global extension once', () => {
+      const playbook = { asciidoc: { extensions: [ospath.resolve(FIXTURES_DIR, 'ext/global-shout-block.js')] } }
+      loadAsciiDoc.resolveConfig(playbook)
+      loadAsciiDoc.resolveConfig(playbook)
+      const Extensions = Asciidoctor.Extensions
+      const extensionGroupNames = Extensions.groups ? toHash(Extensions.groups).$keys() : []
+      expect(extensionGroupNames).to.have.lengthOf(1)
+      Extensions.unregisterAll()
+    })
+
+    it('should load extension relative to playbook dir', () => {
+      const playbook = {
+        dir: FIXTURES_DIR,
+        asciidoc: {
+          extensions: ['./ext/scoped-shout-block.js'],
+        },
+      }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config.extensions).to.exist()
+      expect(config.extensions).to.have.lengthOf(1)
+      expect(config.extensions[0]).to.be.instanceOf(Function)
+    })
+
+    it('should load extension from modules path', () => {
+      const playbook = {
+        dir: FIXTURES_DIR,
+        asciidoc: {
+          extensions: ['lorem-block-macro'],
+        },
+      }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config.extensions).to.exist()
+      expect(config.extensions).to.have.lengthOf(1)
+      expect(config.extensions[0]).to.be.instanceOf(Function)
+    })
+
+    it('should load all extensions', () => {
+      const playbook = {
+        dir: FIXTURES_DIR,
+        asciidoc: {
+          extensions: [
+            './ext/scoped-shout-block.js',
+            'lorem-block-macro',
+            ospath.resolve(FIXTURES_DIR, 'ext/global-shout-block.js'),
+          ],
+        },
+      }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config.extensions).to.exist()
+      expect(config.extensions).to.have.lengthOf(2)
+      expect(config.extensions[0]).to.be.instanceOf(Function)
+      expect(config.extensions[1]).to.be.instanceOf(Function)
+      const Extensions = Asciidoctor.Extensions
+      expect(Extensions.groups).to.exist()
+      const extensionGroupNames = toHash(Extensions.groups).$keys()
+      expect(extensionGroupNames).to.have.lengthOf(1)
+      Extensions.unregisterAll()
     })
   })
 })
