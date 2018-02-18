@@ -320,9 +320,9 @@ Thanks in advance for helping to make this project a success!
 
 == Release Policy
 
-IMPORTANT: The release versioning, scheduling, and support policies described in this section will take affect for the packages in this repository once Antora CLI v1.0.0 and Antora default site generator v1.0.0 are released.
+IMPORTANT: The version, roadmap, and support policies described in this section will take affect when the initial stable release of the Antora CLI and default site generator packages are published.
 
-The Antora CLI and Antora default site generator packages are released together and follow the https://semver.org[semantic versioning] rules.
+The Antora CLI and default site generator packages are released together and follow the https://semver.org[semantic versioning] rules.
 Each Antora release is versioned *major.minor.maintenance*.
 
 Major::
@@ -335,20 +335,20 @@ Minor releases add new features, improvements and fixes and maintain backwards c
 Maintenance::
 Maintenance releases patch bugs.
 
-=== Roadmap and Release Windows
+=== Roadmap
 
 The <<roadmap.adoc#,roadmap>> provides the current development direction and schedule for Antora.
 
 Maintenance releases happen as needed depending on the urgency of the fix.
 Minor releases typically occur when one or more new features or improvements have been reviewed, tested and approved.
 
-Major releases require architecture iterations that are available for community review and comment.
-Major releases will include numerous pre-release versions (major.minor.maintenance-alpha.n | -beta.n | -rc.n).
+Major releases require architecture, implementation, and QA iterations that are open to community discussion and review.
+Major releases will include pre-release versions (major.minor.maintenance-alpha.n | -beta.n | -rc.n).
 Once a release candidate (rc) has been thoroughly tested and no new bugs discovered, the stable release will be published.
 
 === Support
 
-Each major version of the default Antora site generator is maintained for at least X years after the initial public stable release.
+Each major version of the Antora default site generator is maintained for at least X years after the initial public stable release.
 Only the latest minor release for each major release will receive maintenance releases.
 
 == Copyright and License
