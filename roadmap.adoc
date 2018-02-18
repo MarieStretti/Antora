@@ -108,7 +108,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [x] _Docs Site:_ Connect Docs and project sites
 * [x] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
 * [ ] Add how to create a partial page
-* [ ] Document release, versioning, and support policy {uri-issues}/14[#14]
+* [x] Document release, versioning, and support policy {uri-issues}/14[#14]
 
 ==== Waiting
 
