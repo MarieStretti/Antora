@@ -32,7 +32,7 @@ For a detailed list of current development tasks, refer to the core components {
 ==== Scheduled for next alpha
 
 * [x] Allow custom Asciidoctor extensions to be registered {uri-issues}/167[#167]
-* [ ] Add a require option to the CLI to preload modules {uri-issues}/166[#166]
+* [x] Add a require option to the CLI to preload modules {uri-issues}/166[#166]
 * [x] Add AsciiDoc attribute configuration to playbook schema {uri-issues}/160[#160]
 
 ==== Waiting
@@ -119,6 +119,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
 * [ ] Document redirect features
+* [ ] Document how to use an Asciidoctor extension with Antora
 
 === v1.x
 

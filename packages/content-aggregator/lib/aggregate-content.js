@@ -15,11 +15,11 @@ const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH, CONTENT_GLOB } = require('./constants')
 const DOT_OR_NOEXT_RX = {
-  '/': new RegExp('(?:^|/)(?:\\.|[^/.]+$)'),
+  '/': /(?:^|\/)(?:\.|[^/.]+$)/,
   '\\': /(?:^|\\)(?:\.|[^\\.]+$)/,
 }
-const DRIVE_RX = new RegExp('^[a-z]:/(?=[^/]|$)')
-const HOSTED_GIT_REPO_RX = new RegExp('(github\\.com|gitlab\\.com|bitbucket\\.org)[:/](.+?)(?:\\.git)?$')
+const DRIVE_RX = /^[a-z]:\/(?=[^/]|$)/
+const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const SEPARATOR_RX = /\/|:/
 const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
 const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/

@@ -2,7 +2,7 @@
 
 const Opal = global.Opal
 
-const CIRCUMFIX_COMMENT_SUFFIX_RX = new RegExp(' (?:\\*[/)]|--%?>)$')
+const CIRCUMFIX_COMMENT_SUFFIX_RX = / (?:\*[/)]|--%?>)$/
 const NEWLINE_RX = /\r\n?|\n/
 const TAG_DELIMITER_RX = /[,;]/
 const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/

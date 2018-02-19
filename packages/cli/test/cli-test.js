@@ -107,7 +107,9 @@ describe('cli', () => {
   it('should output list of common options when invoked with "-h"', () => {
     return runAntora('-h')
       .ignoreUntil(/^Options:/)
-      .assert(/^ *-v, --version/)
+      .assert(/^ *-v, --version /)
+      .assert(/^ *-r, --require /)
+      .assert(/^ *--stacktrace /)
       .done()
   })
 
@@ -373,8 +375,29 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // FIXME assert that exit code is 1 (limitation in Kapok when using assert)
     return runAntora('generate the-site')
-      .assert(/no site generator/i)
+      .assert(/not found or failed to load/i)
       .on('exit', () => fs.removeSync(localNodeModules))
       .done()
   })
+
+  it('should preload libraries specified using the require option', () => {
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    const r1 = ospath.resolve(FIXTURES_DIR, 'warming-up')
+    const r2 = ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'global-postprocessor'))
+    // NOTE due to a bad interaction between nodegit and opal, nodegit must be required first
+    const args = ['--require', 'nodegit', '--require', r1, '-r', r2, 'generate', 'the-site']
+    const messages = []
+    // Q: how do we assert w/ kapok when there's no output; use promise as workaround
+    return new Promise((resolve) =>
+      runAntora(args)
+        .on('data', (data) => messages.push(data.message))
+        .on('exit', resolve)
+    ).then((exitCode) => {
+      expect(exitCode).to.equal(0)
+      expect(messages).to.include('warming up...')
+      expect(ospath.join(destAbsDir, 'the-component/1.0/the-page.html'))
+        .to.be.a.file()
+        .with.contents.that.match(/<p>Fin!<\/p>/)
+    })
+  }).timeout(TIMEOUT)
 })
