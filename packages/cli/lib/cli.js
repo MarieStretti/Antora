@@ -8,6 +8,7 @@ const configSchema = require('@antora/playbook-builder/lib/config/schema')
 const ospath = require('path')
 const solitaryConvict = require('@antora/playbook-builder/lib/solitary-convict')
 
+const DOT_RELATIVE_RX = ospath.sep === '\\' ? /^\.{1,2}[/\\]/ : /^\.{1,2}\//
 const VERSION = require('../package.json').version
 
 async function run () {
@@ -22,13 +23,20 @@ function exitWithError (err, showStack, message = undefined) {
   process.exit(1)
 }
 
-function requireSiteGenerator (name, playbookDir) {
-  try {
-    // QUESTION should we remove the leading ./ ? (makes it a broader search)
-    const searchPath = '.' + ospath.sep + ospath.relative('.', ospath.join(playbookDir, 'node_modules'))
-    name = require.resolve(name, { paths: [searchPath] })
-  } catch (e) {}
-  return require(name)
+function requireLibraries (requirePaths) {
+  if (requirePaths) requirePaths.forEach((requirePath) => requireLibrary(requirePath))
+}
+
+function requireLibrary (requirePath, cwd = process.cwd()) {
+  if (requirePath.charAt() === '.' && DOT_RELATIVE_RX.test(requirePath)) {
+    // NOTE require resolves a dot-relative path relative to current file; we want to resolve relative to cwd
+    requirePath = ospath.resolve(requirePath)
+  } else if (!ospath.isAbsolute(requirePath)) {
+    // NOTE we have to append node_modules so it will find the test fixtures first; otherwise, unnecessary
+    const paths = [ospath.join(cwd, 'node_modules'), ospath.dirname(__dirname)]
+    requirePath = require.resolve(requirePath, { paths })
+  }
+  return require(requirePath)
 }
 
 cli
@@ -36,6 +44,8 @@ cli
   .version(VERSION, '-v, --version')
   .description('A modular, multi-repository documentation site generator for AsciiDoc.')
   .usage('[options] [[command] [args]]')
+  .option('-r, --require <library>', 'Require library (aka node module) or script before executing command.')
+  .on('option:require', (requirePath) => (cli.requirePaths = (cli.requirePaths || []).concat(requirePath)))
   .option('--stacktrace', 'Print the stacktrace to the console if the application fails.')
 
 cli
@@ -43,13 +53,18 @@ cli
   .description('Generate a documentation site specified in <playbook>.')
   .optionsFromConvict(solitaryConvict(configSchema), { exclude: 'playbook' })
   .action(async (playbookFile, command) => {
+    try {
+      requireLibraries(cli.requirePaths)
+    } catch (err) {
+      exitWithError(err, cli.stacktrace)
+    }
     let generateSite
     try {
       // TODO honor --generator option (or auto-detect)
-      generateSite = requireSiteGenerator('@antora/site-generator-default', ospath.resolve(playbookFile, '..')
+      generateSite = requireLibrary('@antora/site-generator-default', ospath.resolve(playbookFile, '..'))
     } catch (err) {
-      exitWithError(err, cli.stacktrace, 'error: Generator not found or failed to load. ' +
-        'Try installing @antora/site-generator-default.')
+      const msg = 'error: Generator not found or failed to load. Try installing @antora/site-generator-default.'
+      exitWithError(err, cli.stacktrace, msg)
     }
     const args = cli.rawArgs.slice(cli.rawArgs.indexOf(command.name()) + 1)
     args.splice(args.indexOf(playbookFile), 0, '--playbook')
