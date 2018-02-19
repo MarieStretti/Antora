@@ -366,6 +366,14 @@ describe('cli', () => {
     })
   }).timeout(TIMEOUT)
 
+  it('should show error message if require path fails to load', () => {
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    // FIXME assert that exit code is 1 (limitation in Kapok when using assert)
+    return runAntora('-r not-a-valid-node-module-name generate the-site')
+      .assert(/error: Cannot find module/i)
+      .done()
+  })
+
   it('should show error message if site generator fails to load', () => {
     const localNodeModules = ospath.join(WORK_DIR, 'node_modules')
     const localModulePath = ospath.join(localNodeModules, '@antora/site-generator-default')
