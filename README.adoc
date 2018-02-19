@@ -174,7 +174,7 @@ Be aware that recompiling nodegit will make installation take considerably longe
 ==== Custom Site Generator Pipeline
 
 The `generate` subcommand of `antora` automatically uses the default site generator.
-However, Antora is designed with an open architecture to accomodate a myriad of use cases.
+However, Antora is designed with an open architecture to accommodate a myriad of use cases.
 That means you can assemble your own site generator pipeline, perhaps to add, substitute, and/or remove components used in the pipeline of the default site generator.
 It will be possible in the near future to configure the CLI to use your custom site generator pipeline in place of the default one.
 
@@ -266,10 +266,6 @@ Paste the provided URL into the location bar of your browser and you'll be viewi
 
 To learn more about how Antora works, read the article series https://opendevise.com/blog/tag/architecting-antora/[Architecting Antora].
 
-== Roadmap
-
-The <<roadmap.adoc#,roadmap>> provides the current development direction and schedule for Antora pipeline, CLI, and UI.
-
 == Getting Help
 
 Antora is designed to help you easily write and publish your documentation.
@@ -319,6 +315,41 @@ In this guide, you'll learn how to:
 * <<contributing.adoc#project-rq,submit a merge request>>
 
 Thanks in advance for helping to make this project a success!
+
+== Release Policy
+
+IMPORTANT: The version, roadmap, and support policies described in this section will take affect when the initial stable release of the Antora platform is published.
+
+The Antora platform includes a default site generator package, the packages the default site generator delegates to, and a CLI package.
+These packages are released together and follow the https://semver.org[semantic versioning] rules.
+Each Antora platform release is versioned *major.minor.maintenance*.
+
+Major::
+Major releases occur when new functionality breaks backwards compatibility.
+Releases within the same major version number will maintain API compatibility.
+
+Minor::
+Minor releases add new features, improvements and fixes and maintain backwards compatibility.
+
+Maintenance::
+Maintenance releases patch bugs.
+
+=== Roadmap
+
+The <<roadmap.adoc#,roadmap>> provides the current development direction and schedule for Antora.
+
+Maintenance releases happen as needed depending on the urgency of the fix.
+Minor releases typically occur when one or more new features or improvements have been reviewed, tested and approved.
+
+Major releases require architecture, implementation, and QA iterations that are open to community discussion and review.
+Major releases will include pre-release versions (major.minor.maintenance-alpha.n | -beta.n | -rc.n).
+Pre-release versions will be tagged as _next_ so that the npm client doesn't prefer a pre-release over a stable version.
+Once a release candidate (rc) has been thoroughly tested and no new bugs discovered, the stable release will be published.
+
+=== Support
+
+Each major version of the Antora platform is maintained for at least 1 year after the initial public stable release.
+Only the latest minor release for each major release will receive maintenance releases.
 
 == Copyright and License
 
