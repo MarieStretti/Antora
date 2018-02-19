@@ -373,7 +373,7 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // FIXME assert that exit code is 1 (limitation in Kapok when using assert)
     return runAntora('generate the-site')
-      .assert(/no site generator/i)
+      .assert(/not found or failed to load/i)
       .on('exit', () => fs.removeSync(localNodeModules))
       .done()
   })

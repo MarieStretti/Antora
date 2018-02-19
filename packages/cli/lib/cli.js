@@ -17,6 +17,11 @@ async function run () {
   return result
 }
 
+function exitWithError (err, showStack, message = undefined) {
+  console.error(showStack ? err.stack : `error: ${message || err.message}`)
+  process.exit(1)
+}
+
 function requireSiteGenerator (name, playbookDir) {
   try {
     // QUESTION should we remove the leading ./ ? (makes it a broader search)
@@ -41,18 +46,15 @@ cli
     let generateSite
     try {
       // TODO honor --generator option (or auto-detect)
-      generateSite = requireSiteGenerator('@antora/site-generator-default', ospath.resolve(playbookFile, '..'))
-    } catch (e) {
-      console.error('error: No site generator found. Try installing @antora/site-generator-default.')
-      process.exit(1)
+      generateSite = requireSiteGenerator('@antora/site-generator-default', ospath.resolve(playbookFile, '..')
+    } catch (err) {
+      exitWithError(err, cli.stacktrace, 'error: Generator not found or failed to load. ' +
+        'Try installing @antora/site-generator-default.')
     }
     const args = cli.rawArgs.slice(cli.rawArgs.indexOf(command.name()) + 1)
     args.splice(args.indexOf(playbookFile), 0, '--playbook')
     // TODO support passing a preloaded convict config as third option; gets new args and env
-    cli._promise = generateSite(args, process.env).catch((err) => {
-      console.error(cli.stacktrace ? err.stack : 'error: ' + err.message)
-      process.exit(1)
-    })
+    cli._promise = generateSite(args, process.env).catch((err) => exitWithError(err, cli.stacktrace))
   })
   .options.sort((a, b) => a.long.localeCompare(b.long))
 
