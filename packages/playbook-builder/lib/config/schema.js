@@ -94,11 +94,7 @@ module.exports = {
     },
     supplemental_files: {
       doc: 'Supplemental file list or a directory of files to append to the UI bundle.',
-      format: (val) => {
-        if (!(typeof val === 'string' || Array.isArray(val))) {
-          throw new Error('expected directory string or file list')
-        }
-      },
+      format: 'dir-or-virtual-files',
       default: undefined,
     },
   },
@@ -108,6 +104,12 @@ module.exports = {
       format: Object,
       default: {},
       arg: 'attribute',
+    },
+    extensions: {
+      doc: 'A list of require paths for registering extensions per instance of the AsciiDoc processor.',
+      format: Array,
+      default: [],
+      //arg: 'extension',
     },
   },
   runtime: {

@@ -9,10 +9,6 @@ const json = require('json5')
 const ospath = require('path')
 const yaml = require('js-yaml')
 
-const ARGS_SCANNER_RX = /(?:([^=,]+)|(?==))(?:,|$|=(|("|').*?\3|[^,]+)(?:,|$))/g
-
-registerCustomFormats()
-
 /**
  * Builds a playbook object according to the provided schema from the specified
  * arguments and environment variables.
@@ -87,23 +83,6 @@ function exportModel (config) {
   playbook.dir = playbook.playbook ? ospath.dirname((playbook.file = playbook.playbook)) : process.cwd()
   delete playbook.playbook
   return freezeDeep(playbook)
-}
-
-function registerCustomFormats () {
-  convict.addFormat({
-    name: 'object',
-    validate: (val) => typeof val === 'object',
-    coerce: (val) => {
-      const accum = {}
-      let match
-      ARGS_SCANNER_RX.lastIndex = 0
-      while ((match = ARGS_SCANNER_RX.exec(val))) {
-        const [, k, v] = match
-        if (k) accum[k] = v ? yaml.safeLoad(v) : ''
-      }
-      return accum
-    },
-  })
 }
 
 module.exports = buildPlaybook

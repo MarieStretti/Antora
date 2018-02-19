@@ -20,16 +20,19 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  *
  * @param {ContentCatalog} [contentCatalog=undefined] - The content catalog
  *   that provides access to the virtual files in the site.
- * @param {Object} [customAttrs={}] - Custom attributes to assign on the AsciiDoc document.
+ * @param {Object} [asciidocConfig={}] - AsciiDoc processor configuration options. Extensions are not propagated.
+ *   Sets the relativizePageRefs option to false before passing to the loadAsciiDoc function.
+ * @param {Object} [asciidocConfig.attributes={}] - Shared AsciiDoc attributes to assign to the document.
  *
- * @returns {NavigationCatalog} A navigation catalog built from the navigation
- * files in the content catalog.
+ * @returns {NavigationCatalog} A navigation catalog built from the navigation files in the content catalog.
  */
-function buildNavigation (contentCatalog, customAttrs = {}) {
-  const navFiles = contentCatalog.findBy({ family: 'navigation' }) || []
-  if (navFiles.length === 0) return new NavigationCatalog()
+function buildNavigation (contentCatalog, asciidocConfig = {}) {
+  const navFiles = contentCatalog.findBy({ family: 'navigation' })
+  if (!(navFiles && navFiles.length)) return new NavigationCatalog()
+  asciidocConfig = Object.assign({}, asciidocConfig, { relativizePageRefs: false })
+  delete asciidocConfig.extensions
   return navFiles
-    .map((navFile) => loadNavigationFile(navFile, customAttrs, contentCatalog))
+    .map((navFile) => loadNavigationFile(navFile, contentCatalog, asciidocConfig))
     .reduce((accum, treeSet) => accum.concat(treeSet), [])
     .reduce((catalog, { component, version, tree }) => {
       catalog.addTree(component, version, tree)
@@ -37,23 +40,21 @@ function buildNavigation (contentCatalog, customAttrs = {}) {
     }, new NavigationCatalog())
 }
 
-function loadNavigationFile (navFile, customAttrs, contentCatalog) {
+function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
+  const lists = loadAsciiDoc(navFile, contentCatalog, asciidocConfig).blocks.filter((b) => b.context === 'ulist')
+  if (!lists.length) return []
   const { src: { component, version }, nav: { index } } = navFile
-  const lists = loadAsciiDoc(navFile, customAttrs, contentCatalog, { relativizePageRefs: false }).blocks.filter(
-    (block) => block.context === 'ulist'
-  )
-  if (lists.length === 0) return []
   return lists.map((list, idx) => {
     const tree = buildNavigationTree(list.getTitle(), list)
     tree.root = true
-    tree.order = idx === 0 ? index : parseFloat((index + idx / lists.length).toFixed(4))
+    tree.order = idx ? parseFloat((index + idx / lists.length).toFixed(4)) : index
     return { component, version, tree }
   })
 }
 
 function getChildList (node) {
-  const block0 = node.blocks[0]
-  if (block0 && block0.context === 'ulist') return block0
+  const firstBlock = node.blocks[0]
+  if (firstBlock && firstBlock.context === 'ulist') return firstBlock
 }
 
 function buildNavigationTree (formattedContent, list) {

@@ -9,3 +9,7 @@ Section A content.
 == Section B
 
 Section B content.
+
+== Legalese
+
+&copy; now to infinity, ACME, Inc.
