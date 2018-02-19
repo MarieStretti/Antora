@@ -51,6 +51,12 @@ describe('buildPlaybook()', () => {
         format: Array,
         default: null,
       },
+      stuff: {
+        format: Object,
+        default: {},
+        arg: 'stuff',
+        env: 'STUFF',
+      },
     }
 
     expectedPlaybook = {
@@ -61,6 +67,7 @@ describe('buildPlaybook()', () => {
       two: 42,
       three: false,
       four: [{ lastname: 'Lennon', name: 'John' }, { lastname: 'McCartney', name: 'Paul' }],
+      stuff: {},
     }
   })
 
@@ -204,13 +211,75 @@ describe('buildPlaybook()', () => {
     expect(playbook.three).to.be.true()
   })
 
-  it('should coerce a String value to an Array', () => {
+  it('should coerce Object value in spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
-    expectedPlaybook.dir = ospath.dirname(coerceValueSpec)
-    expectedPlaybook.file = coerceValueSpec
-    expectedPlaybook.one.one = 'one'
-    expectedPlaybook.four = ['John']
-    expect(playbook).to.eql(expectedPlaybook)
+    expect(playbook.stuff).to.eql({ key: '', foo: 'bar', nada: null, yep: true, nope: false })
+  })
+
+  it('should coerce Object value in env', () => {
+    const val = 'key=val,keyonly,=valonly,empty=,tilde="~",tags="a,b,c",nada=~,y=true,n=false'
+    const env = { PLAYBOOK: ymlSpec, STUFF: val }
+    const playbook = buildPlaybook([], env, schema)
+    expect(playbook.stuff).to.eql({
+      key: 'val',
+      keyonly: '',
+      empty: '',
+      tilde: '~',
+      tags: 'a,b,c',
+      nada: null,
+      y: true,
+      n: false,
+    })
+  })
+
+  it('should coerce Object value in args', () => {
+    const playbook = buildPlaybook(
+      [
+        '--stuff',
+        'key=val',
+        '--stuff',
+        'keyonly',
+        '--stuff',
+        '=valonly',
+        '--stuff',
+        'empty=',
+        '--stuff',
+        'tilde="~"',
+        '--stuff',
+        'tags="a,b,c"',
+        '--stuff',
+        'nada=~',
+        '--stuff',
+        'y=true',
+        '--stuff',
+        'n=false',
+      ],
+      { PLAYBOOK: ymlSpec },
+      schema
+    )
+    expect(playbook.stuff).to.eql({
+      key: 'val',
+      keyonly: '',
+      empty: '',
+      tilde: '~',
+      tags: 'a,b,c',
+      nada: null,
+      y: true,
+      n: false,
+    })
+  })
+
+  it('should use Object value in args in place of Object value from spec file', () => {
+    const playbook = buildPlaybook(['--stuff', 'idprefix=_'], { PLAYBOOK: coerceValueSpec }, schema)
+    expect(playbook.stuff).to.eql({ idprefix: '_' })
+  })
+
+  it('should coerce String value to Array', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
+    expect(playbook.file).to.equal(coerceValueSpec)
+    expect(playbook.dir).to.equal(ospath.dirname(coerceValueSpec))
+    expect(playbook.one.one).to.equal('one')
+    expect(playbook.four).to.eql(['John'])
   })
 
   it('should throw error when trying to load values not declared in the schema', () => {
@@ -239,6 +308,12 @@ describe('buildPlaybook()', () => {
     expect(playbook.ui.startPath).to.equal('dark-theme')
     expect(playbook.ui.outputDir).to.equal('_')
     expect(playbook.ui.defaultLayout).to.equal('default')
+    expect(playbook.asciidoc.attributes).to.eql({
+      'allow-uri-read': true,
+      idprefix: '',
+      toc: false,
+      'uri-project': 'https://antora.org',
+    })
     expect(playbook.output.destinations).to.have.lengthOf(1)
     expect(playbook.output.dir).to.equal('_site')
     expect(playbook.output.destinations[0].provider).to.equal('archive')

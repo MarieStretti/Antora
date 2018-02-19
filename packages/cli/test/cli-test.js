@@ -274,6 +274,21 @@ describe('cli', () => {
     })
   }).timeout(TIMEOUT)
 
+  // NOTE the cli options replace the attributes defined in the playbook file
+  it('should pass attributes defined using options to AsciiDoc processor', () => {
+    playbookSpec.asciidoc = { attributes: { idprefix: '' } }
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    const args = ['generate', 'the-site', '--attribute', 'sectanchors=~', '--attribute', 'experimental']
+    // Q: how do we assert w/ kapok when there's no output; use promise as workaround
+    return new Promise((resolve) => runAntora(args).on('exit', resolve)).then((exitCode) => {
+      expect(exitCode).to.equal(0)
+      expect(ospath.join(destAbsDir, 'the-component/1.0/the-page.html'))
+        .to.be.a.file()
+        .with.contents.that.match(/<h2 id="_section_a">Section A<\/h2>/)
+        .and.with.contents.that.match(/<kbd>Ctrl<\/kbd>\+<kbd>T<\/kbd>/)
+    })
+  }).timeout(TIMEOUT)
+
   it('should invoke generate command if no command is specified', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround

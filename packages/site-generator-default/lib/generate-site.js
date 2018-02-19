@@ -27,9 +27,9 @@ async function generateSite (args, env) {
 
   const pages = contentCatalog.findBy({ family: 'page' })
 
-  await Promise.all(pages.map(async (page) => convertDocument(page, {}, contentCatalog)))
+  await Promise.all(pages.map(async (page) => convertDocument(page, playbook.asciidoc.attributes, contentCatalog)))
 
-  const navigationCatalog = buildNavigation(contentCatalog)
+  const navigationCatalog = buildNavigation(contentCatalog, playbook.asciidoc.attributes)
 
   // TODO we could do this in same stream as convertDocument; but then we'd have an ordering problem
   ;((composePage) => {

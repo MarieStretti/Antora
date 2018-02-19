@@ -26,9 +26,7 @@ async function convertDocument (file, customAttrs = {}, contentCatalog = undefin
   const doc = loadAsciiDoc(file, customAttrs, contentCatalog)
   const attributes = doc.getAttributes()
   // Q: should we backup the AsciiDoc contents for all pages? what's the impact?
-  if ('page-partial' in attributes) {
-    file.src.contents = file.contents
-  }
+  if ('page-partial' in attributes) file.src.contents = file.contents
   file.asciidoc = doc.hasHeader() ? { attributes, doctitle: doc.getDocumentTitle() } : { attributes }
   file.contents = Buffer.from(doc.convert())
   file.mediaType = 'text/html'

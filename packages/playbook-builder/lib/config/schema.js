@@ -102,6 +102,14 @@ module.exports = {
       default: undefined,
     },
   },
+  asciidoc: {
+    attributes: {
+      doc: 'Global document attributes to set (or unset) on each AsciiDoc document.',
+      format: Object,
+      default: {},
+      arg: 'attribute',
+    },
+  },
   runtime: {
     quiet: {
       doc: 'Do not write any messages to stdout.',

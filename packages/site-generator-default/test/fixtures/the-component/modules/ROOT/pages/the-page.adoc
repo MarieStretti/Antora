@@ -1,3 +1,11 @@
 = The Page
 
 Content.
+
+== Section A
+
+Section A content.
+
+== Section B
+
+Section B content.

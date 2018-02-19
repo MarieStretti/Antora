@@ -20,15 +20,16 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  *
  * @param {ContentCatalog} [contentCatalog=undefined] - The content catalog
  *   that provides access to the virtual files in the site.
+ * @param {Object} [customAttrs={}] - Custom attributes to assign on the AsciiDoc document.
  *
  * @returns {NavigationCatalog} A navigation catalog built from the navigation
  * files in the content catalog.
  */
-function buildNavigation (contentCatalog) {
+function buildNavigation (contentCatalog, customAttrs = {}) {
   const navFiles = contentCatalog.findBy({ family: 'navigation' }) || []
   if (navFiles.length === 0) return new NavigationCatalog()
   return navFiles
-    .map((navFile) => loadNavigationFile(navFile, {}, contentCatalog))
+    .map((navFile) => loadNavigationFile(navFile, customAttrs, contentCatalog))
     .reduce((accum, treeSet) => accum.concat(treeSet), [])
     .reduce((catalog, { component, version, tree }) => {
       catalog.addTree(component, version, tree)

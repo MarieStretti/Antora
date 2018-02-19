@@ -3,3 +3,9 @@ one:
 two: 42
 three: false
 four: John
+stuff:
+  key: ''
+  foo: bar
+  nada: ~
+  yep: true
+  nope: false
