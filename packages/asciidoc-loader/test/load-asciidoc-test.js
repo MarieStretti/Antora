@@ -221,6 +221,19 @@ describe('loadAsciiDoc()', () => {
       expect(loadAsciiDoc(inputFile).convert()).to.include('Release early. Release often.')
       process.stderr.write = defaultStderrWrite
     })
+
+    it('should give extension access to context that includes current file and content catalog', () => {
+      setInputFileContents('files::[]')
+      const contentCatalog = mockContentCatalog([
+        { family: 'page', relative: 'page-a.adoc' },
+        { family: 'page', relative: 'page-b.adoc' },
+        { family: 'page', relative: 'page-c.adoc' },
+      ])
+      const config = { extensions: [require(ospath.resolve(FIXTURES_DIR, 'ext/file-report-block-macro.js'))] }
+      const html = loadAsciiDoc(inputFile, contentCatalog, config).convert()
+      expect(html).to.include('Files in catalog: 3')
+      expect(html).to.include('URL of current page: /component-a/module-a/page-a.html')
+    })
   })
 
   describe('include directive', () => {

@@ -71,7 +71,8 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     onInclude: (doc, target, cursor) => resolveIncludeFile(target, file, cursor, contentCatalog),
   })
   if (config.extensions && config.extensions.length) {
-    config.extensions.forEach((extension) => extension.register(extensionRegistry))
+    const context = { file, contentCatalog, config }
+    config.extensions.forEach((extension) => extension.register(extensionRegistry, context))
   }
   return asciidoctor.load(file.contents.toString(), {
     attributes,
