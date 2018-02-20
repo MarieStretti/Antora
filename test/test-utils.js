@@ -8,6 +8,8 @@ if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF
   String.prototype.encoding = Opal.const_get_local(Opal.const_get_qualified('::', 'Encoding'), 'UTF_8') // eslint-disable-line
 }
 
+const fs = require('fs-extra')
+
 const interceptRequire = require('intercept-require')
 // IMPORTANT this patch prevents chai from hanging when computing a deep equals diff when Opal is loaded
 // see https://github.com/chaijs/chai/issues/1109
@@ -70,6 +72,23 @@ module.exports = {
     const indentRx = /^ +/
     const indentSize = Math.min(...lines.filter((l) => l.startsWith(' ')).map((l) => l.match(indentRx)[0].length))
     return (indentSize ? lines.map((l) => (l.startsWith(' ') ? l.substr(indentSize) : l)) : lines).join('')
+  },
+  removeSyncForce: (p, timeout = 5000) => {
+    // NOTE remove can fail multiple times on Windows, so try, try again
+    if (process.platform === 'win32') {
+      const start = Date.now()
+      let retry = true
+      while (retry) {
+        try {
+          fs.removeSync(p)
+          retry = false
+        } catch (err) {
+          if (Date.now() - start > timeout) throw err
+        }
+      }
+    } else {
+      fs.removeSync(p)
+    }
   },
   spy: chai.spy,
 }

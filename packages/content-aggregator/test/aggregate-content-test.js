@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { deferExceptions, expect, heredoc } = require('../../../test/test-utils')
+const { deferExceptions, expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
@@ -65,33 +65,11 @@ describe('aggregateContent()', () => {
 
   const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 
-  // NOTE remove can fail multiple times on Windows
   const clean = (fin) => {
     process.chdir(CWD)
-    const timeout = 5000
-    let retry
-    let start
-    retry = true
-    start = Date.now()
-    while (retry) {
-      try {
-        fs.removeSync(CONTENT_REPOS_DIR)
-        retry = false
-      } catch (e) {
-        if (Date.now() - start > timeout) throw e
-      }
-    }
-    retry = true
-    start = Date.now()
-    while (retry) {
-      try {
-        // NOTE work dir stores the cache
-        fs.removeSync(WORK_DIR)
-        retry = false
-      } catch (e) {
-        if (Date.now() - start > timeout) throw e
-      }
-    }
+    removeSyncForce(CONTENT_REPOS_DIR)
+    // NOTE work dir stores the cache
+    removeSyncForce(WORK_DIR)
     if (!fin) {
       fs.ensureDirSync(WORK_DIR)
       process.chdir(WORK_DIR)

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { deferExceptions, expect } = require('../../../test/test-utils')
+const { deferExceptions, expect, removeSyncForce } = require('../../../test/test-utils')
 
 const fs = require('fs-extra')
 const http = require('http')
@@ -42,18 +42,8 @@ describe('loadUi()', () => {
 
   const clean = (fin) => {
     process.chdir(CWD)
-    const timeout = 5000
-    let retry = true
-    let start = Date.now()
-    while (retry) {
-      try {
-        // NOTE work dir stores the cache
-        fs.removeSync(WORK_DIR)
-        retry = false
-      } catch (e) {
-        if (Date.now() - start > timeout) throw e
-      }
-    }
+    // NOTE work dir stores the cache
+    removeSyncForce(WORK_DIR)
     if (!fin) {
       fs.ensureDirSync(WORK_DIR)
       process.chdir(WORK_DIR)

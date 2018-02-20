@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect } = require('../../../test/test-utils')
+const { expect, removeSyncForce } = require('../../../test/test-utils')
 
 const cheerio = require('cheerio')
 const fs = require('fs-extra')
@@ -37,7 +37,7 @@ describe('generateSite()', () => {
   })
 
   beforeEach(async () => {
-    fs.removeSync(CONTENT_REPOS_DIR)
+    removeSyncForce(CONTENT_REPOS_DIR)
     await repositoryBuilder
       .init('the-component')
       .then(() => repositoryBuilder.checkoutBranch('v2.0'))
@@ -63,17 +63,17 @@ describe('generateSite()', () => {
     fs.ensureDirSync(WORK_DIR)
     fs.removeSync(playbookSpecFile)
     process.chdir(WORK_DIR)
-    fs.removeSync(destDir.split('/')[0])
+    removeSyncForce(destDir.split('/')[0])
   })
 
   after(() => {
     process.chdir(CWD)
-    fs.removeSync(CONTENT_REPOS_DIR)
+    removeSyncForce(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
-      fs.removeSync(destDir.split('/')[0])
+      removeSyncForce(destDir.split('/')[0])
       fs.removeSync(playbookSpecFile)
     } else {
-      fs.removeSync(WORK_DIR)
+      removeSyncForce(WORK_DIR)
     }
   })
 

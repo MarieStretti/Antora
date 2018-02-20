@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { deferExceptions, expect, heredoc } = require('../../../test/test-utils')
+const { deferExceptions, expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
 
 const buffer = require('gulp-buffer')
 const File = require('vinyl')
@@ -140,7 +140,7 @@ describe('publishSite()', () => {
 
   after(() => {
     process.chdir(CWD)
-    fs.removeSync(WORK_DIR)
+    removeSyncForce(WORK_DIR)
   })
 
   it('should publish site to fs at default path when no destinations are specified', async () => {
