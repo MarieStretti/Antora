@@ -18,6 +18,7 @@ const IncludeProcessor = require('./include/include-processor')
  */
 function createExtensionRegistry (asciidoctor, callbacks) {
   const registry = asciidoctor.Extensions.create()
+  // FIXME includeProcessor API does not accept an instance; use low-level API for now
   registry.$include_processor(IncludeProcessor.$new(callbacks.onInclude))
   return registry
 }
