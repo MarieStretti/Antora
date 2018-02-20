@@ -53,7 +53,7 @@ function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
 }
 
 function getChildList (node) {
-  const firstBlock = node.blocks[0]
+  const firstBlock = node.getBlocks()[0]
   if (firstBlock && firstBlock.context === 'ulist') return firstBlock
 }
 
@@ -61,7 +61,7 @@ function buildNavigationTree (formattedContent, list) {
   const entry = formattedContent ? partitionContent(formattedContent) : {}
 
   if (list) {
-    entry.items = list.blocks.map((item) => buildNavigationTree(item.$text(), getChildList(item)))
+    entry.items = list.getItems().map((item) => buildNavigationTree(item.getText(), getChildList(item)))
   }
 
   return entry

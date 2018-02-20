@@ -9,7 +9,7 @@ const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
 
 const IncludeProcessor = (() => {
   const $callback = Symbol('callback')
-  const superclass = Opal.module(null, 'Asciidoctor').$$const.Extensions.$$const.IncludeProcessor
+  const superclass = Opal.module(null, 'Asciidoctor').Extensions.IncludeProcessor
   const scope = Opal.klass(Opal.module(null, 'Antora'), superclass, 'IncludeProcessor', function () {})
 
   Opal.defn(scope, '$initialize', function initialize (callback) {
