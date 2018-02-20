@@ -29,27 +29,25 @@ The key accepts filesystem paths, file URLs, and any URI that git supports.
 === Use local content repositories
 
 The URL key accepts a relative and absolute filesystem paths.
-When the value is a relative path, the path is resolved relative to the current directory.
+When the value is a relative path, the path is resolved relative to the playbook file.
 
-.Filesystem paths to local git repositories
+.Local git repositories
 [source,yaml]
 ----
 content:
   sources:
   - url: /home/user/docs-site/demo-component-a # <1>
   - url: demo-component-b # <2>
-  - url: file://localhost/tmp/demo-component-c # <3>
 ----
 <1> Absolute path to git repository
 <2> Relative path to git repository
-<3> Path to a git repository using the file protocol
 
 [#remote-urls]
 === Fetch remote content repositories
 
-Remote repositories can be fetched via https URLs, SSH URIs, and git URIs.
+Remote repositories can be fetched via URLs (http, https), SSH URIs, and git URIs.
 
-.git supported URIs
+.Remote git repositories
 [source,yaml]
 ----
 content:
@@ -58,6 +56,9 @@ content:
   - url: git@gitlab.com:antora/demo/demo-component-b.git
   - url: git://github.com/org/content-repo.git
 ----
+
+Whether or not the `.git` extension is required depends on the settings of the git host.
+It's usually best to include it.
 
 // For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
 
@@ -84,12 +85,12 @@ The values can be the exact name or a branch, a shell glob pattern such as `v3.*
 Let's look at some examples of each of these name declaration methods.
 
 [#default-branch]
-=== Default branches set
+=== Default branch filter
 
 When no branches are specified for a source URL, Antora will use the [.term]_default branches set_.
 Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
 
-.Use default branches set
+.Use default branch filter
 [source,yaml]
 ----
 content:
@@ -100,11 +101,25 @@ content:
 
 The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, `branches: master, v*`.
 
+If you want to modify the default branch filter, then assign a value to the `branches` key directly under the `content` category.
+
+.Modifying the default branch filter
+[source,yaml]
+----
+content:
+  branches: v*
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+----
+
+The new default branch filter will be applied to all entries that do not themselves have a value defined for the `branches` key.
+
 [#separate-branch-names]
 === Separate branches values using commas or markers
 
 Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
-Alternatively, each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
+Alternatively, each branch name can be specified on its own line, using a hyphen (`-`) list marker (per YAML rules), and listed beneath the branches key.
 
 [source,yaml]
 ----
@@ -138,6 +153,23 @@ content:
 ----
 
 A branch name that begins with a number, like `1.0.0` must be enclosed in single quotes (`+'+`), per YAML rules.
+
+[#current-branch]
+=== Using the current branch
+
+When working with a local repository, you may find yourself switching between branches often.
+To save you from having to remember to update the playbook file to point to the current branch, you can use a special keyword, `HEAD`.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: workspace/project-a
+    branches: HEAD
+----
+
+Using the value `HEAD` is equivalent to using the name of the current branch.
+All the same rules apply.
 
 [#glob-branch]
 === Specify branches by glob pattern
@@ -219,4 +251,4 @@ content:
     start_path: packages/docs
 ----
 
-With `start_path` specified, Antora won't collect any files outside of _pass:[https://github.com/org/repo/packages/docs]_.
+With `start_path` specified, Antora won't collect any files outside of \https://github.com/org/repo/packages/docs.
