@@ -9,7 +9,7 @@ These extensions include:
 * An include processor that resolves files from the content catalog.
 * A cross reference converter that resolves references between pages based on Antora's page reference system.
 * Automatic resolution of paths to images and attachments.
-* Inherent document attributes that reflect the Antora environment.
+* Implicit document attributes that pass information from the Antora environment.
 
 https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
 Its site generator pipeline aggregates documents from versioned content repositories and processes them using http://asciidoctor.org[Asciidoctor].
