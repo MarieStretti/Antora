@@ -8,6 +8,9 @@ ui:
   bundle: ../ui/build/ui-bundles.zip
   start_path: dark-theme
   default_layout: default
+  supplemental_files:
+  - path: head-meta.hbs
+    contents: <link rel="stylesheet" href="https://example.org/shared.css">
 asciidoc:
   attributes:
     allow-uri-read: true

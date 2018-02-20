@@ -63,7 +63,7 @@ function registerCustomFormats (convict) {
     name: 'dir-or-virtual-files',
     validate: (val) => {
       if (!(typeof val === 'string' || val instanceof String || Array.isArray(val))) {
-        throw new Error('must be directory path or list of virtual files')
+        throw new Error('must be a directory path or list of virtual files')
       }
     },
   })

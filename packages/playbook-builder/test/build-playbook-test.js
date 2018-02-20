@@ -52,7 +52,7 @@ describe('buildPlaybook()', () => {
         default: null,
       },
       stuff: {
-        format: Object,
+        format: 'object',
         default: {},
         arg: 'stuff',
         env: 'STUFF',
@@ -80,6 +80,8 @@ describe('buildPlaybook()', () => {
   const iniSpec = ospath.join(FIXTURES_DIR, 'spec-sample.ini')
   const badSpec = ospath.join(FIXTURES_DIR, 'bad-spec-sample.yml')
   const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
+  const invalidObjectSpec = ospath.join(FIXTURES_DIR, 'invalid-object-spec-sample.yml')
+  const invalidDirOrFilesSpec = ospath.join(FIXTURES_DIR, 'invalid-dir-or-files-spec-sample.yml')
   const defaultSchemaSpec = ospath.join(FIXTURES_DIR, 'default-schema-spec-sample.yml')
 
   it('should set dir to process.cwd() when playbook file is not specified', () => {
@@ -213,7 +215,7 @@ describe('buildPlaybook()', () => {
 
   it('should coerce Object value in spec file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
-    expect(playbook.stuff).to.eql({ key: '', foo: 'bar', nada: null, yep: true, nope: false })
+    expect(playbook.stuff).to.eql({ key: 'val', foo: 'bar', nada: null, yep: true, nope: false })
   })
 
   it('should coerce Object value in env', () => {
@@ -274,12 +276,28 @@ describe('buildPlaybook()', () => {
     expect(playbook.stuff).to.eql({ idprefix: '_' })
   })
 
+  it('should throw error if value of object key is not an object', () => {
+    expect(() => buildPlaybook([], { PLAYBOOK: invalidObjectSpec }, schema)).to.throw('must be an object')
+  })
+
   it('should coerce String value to Array', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
     expect(playbook.file).to.equal(coerceValueSpec)
     expect(playbook.dir).to.equal(ospath.dirname(coerceValueSpec))
     expect(playbook.one.one).to.equal('one')
     expect(playbook.four).to.eql(['John'])
+  })
+
+  it('should throw error if dir-or-virtual-files key is not a string or array', () => {
+    Object.keys(schema).forEach((key) => {
+      if (key !== 'playbook') delete schema[key]
+    })
+    schema.files = {
+      format: 'dir-or-virtual-files',
+      default: undefined,
+    }
+    expect(() => buildPlaybook([], { PLAYBOOK: invalidDirOrFilesSpec }, schema))
+      .to.throw('must be a directory path or list of virtual files')
   })
 
   it('should throw error when trying to load values not declared in the schema', () => {
@@ -308,6 +326,11 @@ describe('buildPlaybook()', () => {
     expect(playbook.ui.startPath).to.equal('dark-theme')
     expect(playbook.ui.outputDir).to.equal('_')
     expect(playbook.ui.defaultLayout).to.equal('default')
+    expect(playbook.ui.supplementalFiles).to.have.lengthOf(1)
+    expect(playbook.ui.supplementalFiles[0]).to.eql({
+      path: 'head-meta.hbs',
+      contents: '<link rel="stylesheet" href="https://example.org/shared.css">',
+    })
     expect(playbook.asciidoc.attributes).to.eql({
       'allow-uri-read': true,
       idprefix: '',
