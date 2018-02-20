@@ -5,7 +5,7 @@ endif::[]
 // Settings:
 :idprefix:
 :idseparator: -
-:release-version: 1.0.0-alpha.6
+:release-version: 1.0.0-alpha.7
 // URIs:
 :uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
 
@@ -26,7 +26,7 @@ While it can be extended, no additional scripts are needed.
 Antora's generator pipeline kicks off by aggregating files from a variety of sources.
 Currently, these sources can be branches of one or more git repositories and a UI bundle.
 
-NOTE: By leveraging Antora's open architecture, you can incorporate just about any other type of content too.
+//NOTE: By leveraging Antora's open architecture, you can incorporate just about any other type of content too.
 
 Next, Antora organizes the files into catalogs.
 It then uses Asciidoctor to convert all content files to embeddable HTML and resolve links between pages.

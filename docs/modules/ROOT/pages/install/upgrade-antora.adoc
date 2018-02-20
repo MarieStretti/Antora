@@ -6,7 +6,7 @@ endif::[]
 :idprefix:
 :idseparator: -
 :linkattrs:
-:version: 1.0.0-alpha.6
+:version: 1.0.0-alpha.7
 
 On this page, you'll learn:
 
@@ -20,7 +20,8 @@ If you follow these instructions when you upgrade, the versions will stay in syn
 
 To upgrade the CLI, open a terminal and type:
 
- $ npm i -g @antora/cli
+[source]
+$ npm i -g @antora/cli
 
 The Node package manager (npm) will automatically install the latest version of the CLI.
 
@@ -28,7 +29,9 @@ The Node package manager (npm) will automatically install the latest version of 
 ====
 If you installed the CLI and the default site generator globally, you can upgrade both of them with the same command.
 
- $ npm i -g @antora/cli @antora/site-generator-default
+[source]
+$ npm i -g @antora/cli @antora/site-generator-default
+
 ====
 
 ****
@@ -37,7 +40,8 @@ If you installed the CLI and the default site generator globally, you can upgrad
 
 To list the Node packages you have installed globally, type the following command in your terminal:
 
- $ npm ls -g --depth=0
+[source]
+$ npm ls -g --depth=0
 
 If the CLI and generator are installed globally, you'll see them listed in the terminal output.
 The output will also show the CLI and generator versions, which should match.
@@ -54,7 +58,9 @@ The output will also show the CLI and generator versions, which should match.
 
 To list the Node packages you have installed in a directory, go to that directory and type:
 
- dir $ npm ls --depth=0
+[source]
+dir $ npm ls --depth=0
+
 ****
 
 == Upgrade the default site generator
@@ -63,7 +69,8 @@ The method for upgrading the default site generator depends on whether it is ins
 
 If it's installed globally, the command to upgrade it is:
 
- $ npm i -g @antora/site-generator-default
+[source]
+$ npm i -g @antora/site-generator-default
 
 If you installed the generator in a project directory, update the generator's version number in the package file.
 

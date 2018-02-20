@@ -32,15 +32,18 @@ If you see this error, you either need to create the missing symlink or force no
 
 To create the missing symlink, run the following command:
 
- $ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
+[source]
+$ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
 
 If that fails, run:
 
- $ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
+[source]
+$ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
 
 Once you've made that symlink, run the `npm install` command again to install the site generator.
 
- $ npm install -g @antora/site-generator-default
+[source]
+$ npm install -g @antora/site-generator-default
 
 == Option 2: Recompile nodegit
 
@@ -48,7 +51,8 @@ If you aren't comfortable making a system-wide change, you can recompile nodegit
 
 Force nodegit to recompile by passing the `BUILD_ONLY` environment variable to the `npm install` command.
 
- $ BUILD_ONLY=true npm install -g @antora/site-generator-default
+[source]
+$ BUILD_ONLY=true npm install -g @antora/site-generator-default
 
 Be aware that recompiling nodegit will make installation take considerably longer.
 
