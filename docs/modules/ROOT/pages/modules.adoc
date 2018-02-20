@@ -161,7 +161,7 @@ Let's say the component illustrated above is the documentation for your newest s
 What would the URL for [.path]_modules/ROOT/pages/deploy.adoc_ look like?
 
 //.URL for deploy.adoc page in ROOT module
-image::root-page-url.svg[]
+image::root-page-url.svg[ROOT module page URL,role=grow-x]
 
 The base URL of the site is set in the playbook.
 The component name, in this case _hyperlemur_, is set in the [.path]_antora.yml_ file of the documentation component.
@@ -173,7 +173,7 @@ In contrast, pages that are stored in other modules (i.e., not in [.path]_ROOT_)
 Let's see what the URL for [.path]_modules/a-module/pages/user-management.adoc_ would look like.
 
 //.URL for user-management.adoc page in a-module
-image::module-page-url.svg[]
+image::module-page-url.svg[Module page URL,role=grow-x]
 
 The module name is the name of the module directory where that page is stored.
 

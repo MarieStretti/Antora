@@ -7,14 +7,14 @@ endif::[]
 :idseparator: -
 :version: 1.0.0-alpha.7
 
+Assumptions:
+
+* [x] You've installed Node 8 on your xref:install/linux-requirements.adoc[Linux], xref:install/windows-requirements.adoc[Windows], or xref:install/macos-requirements.adoc[macOS] machine.
+
 On this page, you'll learn:
 
 * [x] How to install the Antora CLI.
 * [x] How to install the default Antora site generator.
-
-Assumptions:
-
-* [x] You've installed Node 8 on your xref:install/linux-requirements.adoc[Linux], xref:install/windows-requirements.adoc[Windows], or xref:install/macos-requirements.adoc[macOS] machine.
 
 To generate documentation sites with Antora, you need the Antora command line interface (CLI) and an Antora site generator pipeline.
 Once these packages are installed, you can use the `antora` command to publish a site.
