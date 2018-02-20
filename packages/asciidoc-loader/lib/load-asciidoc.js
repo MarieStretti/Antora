@@ -14,6 +14,7 @@ const ospath = require('path')
 const { posix: path } = ospath
 const resolveIncludeFile = require('./include/resolve-include-file')
 
+const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[${[...new Set(['/', ospath.sep])].join('').replace('\\', '\\\\')}]`)
 const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
 
 /**
@@ -104,12 +105,12 @@ function resolveConfig (playbook) {
   // TODO process !name attributes
   if (config.extensions && config.extensions.length) {
     const extensions = config.extensions.reduce((accum, extensionPath) => {
-      if (extensionPath.charAt() === '.') {
+      if (extensionPath.charAt() === '.' && DOT_RELATIVE_RX.test(extensionPath)) {
+        // NOTE require resolves a dot-relative path relative to current file; resolve relative to playbook dir instead
         extensionPath = ospath.resolve(playbook.dir, extensionPath)
       } else if (!ospath.isAbsolute(extensionPath)) {
-        const localNodeModulesPath = ospath.resolve(playbook.dir, 'node_modules')
-        const paths = require.resolve.paths('').filter((requirePath) => requirePath !== localNodeModulesPath)
-        paths.unshift(localNodeModulesPath)
+        // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
+        const paths = [playbook.dir, ospath.dirname(__dirname)].map((start) => ospath.join(start, 'node_modules'))
         extensionPath = require.resolve(extensionPath, { paths })
       }
       const extension = require(extensionPath)
