@@ -3,8 +3,8 @@ one:
 two: 42
 three: false
 four:
-  - name: John
-    lastname: Lennon
-  - name: Paul
-    lastname: McCartney
+- name: John
+  lastname: Lennon
+- name: Paul
+  lastname: McCartney
 five: Hello World!

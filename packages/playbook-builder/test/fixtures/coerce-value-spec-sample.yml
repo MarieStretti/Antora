@@ -4,7 +4,7 @@ two: 42
 three: false
 four: John
 stuff:
-  key: ''
+  key: 'val'
   foo: bar
   nada: ~
   yep: true
