@@ -53,9 +53,7 @@ The best way to install the Node Version Manager (nvm) and Node is with {uri-cho
 . Type the following command in the terminal:
 +
 [source]
-----
 $ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-----
 
 You're now ready to install nvm and Node.
 

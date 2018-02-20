@@ -29,7 +29,8 @@ This selection of tools provides other useful commands you'll need in your workf
 
 You can trigger installation using the following command:
 
- $ xcode-select --install
+[source]
+$ xcode-select --install
 
 Once you have these tools installed, you can expect the remaining installation to go smoothly.
 
@@ -39,7 +40,8 @@ Antora requires Node 8, the current long term support (LTS) release of Node.
 
 To check which version of Node you have installed, if any, open a terminal and type:
 
- $ node --version
+[source]
+$ node --version
 
 *If this command fails with an error*, you don't have Node installed.
 The best way to install Node 8 is via your package manager.
@@ -50,7 +52,8 @@ Or, if the package manager doesn't provide Node and you have nvm installed, go d
 
 *If the command returns a Node 8 version*, set Node 8 as the default by typing the following command in your terminal.
 
- $ nvm alias default 8
+[source]
+$ nvm alias default 8
 
 Now you're ready to xref:install/install-antora.adoc[install Antora].
 
@@ -68,7 +71,8 @@ By using nvm, you can closely align your setup with the environment that is used
 
 Once you've installed nvm, open a new terminal and install Node 8.
 
- $ nvm install 8
+[source]
+$ nvm install 8
 
 The above command will install the latest version of Node 8 and automatically set it as your default alias.
 
@@ -79,13 +83,15 @@ Now that you have Node, you're ready to xref:install/install-antora.adoc[install
 
 If you have nvm installed but your Node version is less than 8.0.0, type the following command in your terminal:
 
- $ nvm install 8
+[source]
+$ nvm install 8
 
 The above command will install the latest version of Node 8.
 
 To set the latest version of Node 8 as the default for any new terminal, type:
 
- $ nvm alias default 8
+[source]
+$ nvm alias default 8
 
 Now that you've upgraded Node, you're ready to xref:install/install-antora.adoc[install Antora].
 
