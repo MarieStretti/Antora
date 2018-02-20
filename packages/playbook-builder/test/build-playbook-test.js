@@ -296,8 +296,9 @@ describe('buildPlaybook()', () => {
       format: 'dir-or-virtual-files',
       default: undefined,
     }
-    expect(() => buildPlaybook([], { PLAYBOOK: invalidDirOrFilesSpec }, schema))
-      .to.throw('must be a directory path or list of virtual files')
+    expect(() => buildPlaybook([], { PLAYBOOK: invalidDirOrFilesSpec }, schema)).to.throw(
+      'must be a directory path or list of virtual files'
+    )
   })
 
   it('should throw error when trying to load values not declared in the schema', () => {

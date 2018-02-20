@@ -14,10 +14,11 @@ const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH, CONTENT_GLOB } = require('./constants')
-const DOT_OR_NOEXT_RX = {
-  '/': /(?:^|\/)(?:\.|[^/.]+$)/,
-  '\\': /(?:^|\\)(?:\.|[^\\.]+$)/,
-}
+const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)`))(
+  Array.from(new Set(['/', ospath.sep]))
+    .join('')
+    .replace('\\', '\\\\')
+)
 const DRIVE_RX = /^[a-z]:\/(?=[^/]|$)/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const SEPARATOR_RX = /\/|:/
@@ -313,13 +314,12 @@ async function getGitTree (repository, branchRef, startPath) {
 
 function srcGitTree (tree) {
   return new Promise((resolve, reject) => {
-    const excludePattern = DOT_OR_NOEXT_RX[ospath.sep]
     const files = []
     // NOTE walk only visits blobs (i.e., files)
     const walker = tree.walk()
     // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
     walker.on('entry', (entry) => {
-      if (!excludePattern.test(entry.path())) files.push(entryToFile(entry))
+      if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
     })
     walker.on('error', reject)
     walker.on('end', () => resolve(Promise.all(files)))
