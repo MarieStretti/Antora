@@ -21,14 +21,14 @@ These keys define the location of the documentation component repositories (`url
 
 == URL key
 
-The URL key tells Antora where to find a documentation component's repository.
+The url key tells Antora where to find a documentation component's repository.
 You must provide a value for each documentation component repository you want added to your site.
 The key accepts filesystem paths, file URLs, and any URI that git supports.
 
 [#local-urls]
 === Use local content repositories
 
-The URL key accepts a relative and absolute filesystem paths.
+The `url` accepts a relative or absolute filesystem path.
 When the value is a relative path, the path is resolved relative to the playbook file.
 
 .Local git repositories
@@ -80,7 +80,7 @@ content:
 
 The branches key accepts a list of branch name patterns.
 The names can be specified in a comma-separated list or as single items on individual lines.
-The values can be the exact name or a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
+The values can be the exact name of a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
 
 Let's look at some examples of each of these name declaration methods.
 
@@ -227,7 +227,7 @@ content:
 
 == Start path key
 
-Antora automatically looks for a component descriptor file ([.path]_antora.yml_) at the root of a source repository.
+Antora automatically looks for a xref:ROOT:component-descriptor.adoc[component descriptor] file ([.path]_antora.yml_) at the root of a source repository.
 *When this default repository structure is used, the start path key doesn't need to be set or assigned in the playbook.*
 If the component isn't stored at the root of a content repository, then you need to use the start path key to tell Antora where to find the component descriptor file.
 
