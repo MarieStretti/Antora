@@ -5,6 +5,47 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-alpha.7 (2018-02-20)
+
+=== Added
+
+* *playbook-builder*: Allow global AsciiDoc attributes to be defined via the playbook (`asciidoc.attributes`)
+* *playbook-builder*: Allow global and scoped AsciiDoc extensions to be defined via the playbook (`asciidoc.extensions`)
+* *cli*: Add support for defining global AsciiDoc attributes using a CLI option (`--attribute`)
+* *cli*: Add a CLI option for preloading scripts or node modules (`--require`)
+* *asciidoc-loader*: Introduce resolveConfig function to resolve AsciiDoc configuration object from playbook
+* *asciidoc-loader*: Define API on extension functions (`register(registry, context)`) to allow extensions to self-register
+* *asciidoc-loader*: Register scoped extensions defined in playbook with the extension registry (per processor instance)
+* *site-publisher*: Add architecture guidebook
+* *site-mapper*: Add architecture guidebook
+* Define and document the software versioning and maintenance policy
+
+=== Changed
+
+* *asciidoc-loader*: Modify loadAsciiDoc function to accept AsciiDoc configuration object
+* *asciidoc-loader*: Reorder parameters of convertDocument function; fold opts into AsciiDoc config
+* *asciidoc-loader*: Use public Asciidoctor.js API where possible
+* *document-converter*: Modify convertDocument function to accept AsciiDoc configuration object
+* *document-converter*: Reorder parameters of convertDocument function
+* *document-converter*: Reorder parameters of buildNavigation function
+* *navigation-builder*: Modify buildNavigation function to accept AsciiDoc configuration object
+* *navigation-builder*: Use public Asciidoctor.js API where possible
+* *site-generator-default*: Add dependency on asciidoc-loader component
+* *site-generator-default*: Use AsciiDoc loader to resolve AsciiDoc configuration object
+* *site-generator-default*: Pass AsciiDoc configuration object through pipeline instead of raw AsciiDoc attributes
+* *site-generator-default*: Remove unnecessary async keywords
+* *playbook-builder*: Move definition of custom formats in playbook schema to dedicated function
+* *cli*: Show full stacktrace if site generator fails to load and --stacktrace option is specified
+* *cli*: Delegate to function to exit with error message
+* Write all regular expressions using shorthand notation
+* Set cache directory for nyc explicitly
+* Upgrade dependencies
+
+=== Fixed
+
+* *playbook-builder*: Remove warning about coffee-script when installing the default site generator package
+* When requiring modules, only pass starting paths (with node_modules as last segment) to require.resolve
+
 == 1.0.0-alpha.6 (2018-02-09)
 
 === Added
