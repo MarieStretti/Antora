@@ -102,16 +102,16 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 ==== Scheduled for next alpha
 
 * [x] Improve component and module index page content {uri-issues}/156[#156]
-* [ ] Provide source URL configuration examples {uri-issues}/153[#153]
+* [x] Provide source URL configuration examples {uri-issues}/153[#153]
 * [x] Document UI bundle configuration features {uri-issues}/152[#152]
 * [x] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
 * [x] _Docs Site:_ Connect Docs and project sites
 * [x] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
-* [ ] Add how to create a partial page
 * [x] Document release, versioning, and support policy {uri-issues}/14[#14]
 
 ==== Waiting
 
+* [ ] Add how to create a partial page
 * [ ] Add nav category and multi-list capabilities to navigation docs {uri-issues}/159[#159]
 * [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
 * [ ] Document sitemap features {uri-issues}/168[#168]

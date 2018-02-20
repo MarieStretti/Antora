@@ -13,35 +13,66 @@ On this page, you'll learn:
 * [x] How to configure the branches key.
 ** [x] By name
 ** [x] By glob pattern
+* [x] How to mix local and remote repositories and branches.
 * [x] When and how to configure the start path key.
+
+The keys documented on this page are organized under the `content` and `sources` categories in the xref:playbook-schema.adoc[playbook schema].
+These keys define the location of the documentation component repositories (`url` and `start_path`) and control which branches (`branches`) should be processed.
 
 == URL key
 
-The URL key tells Antora where to find a documentation component's repository.
+The url key tells Antora where to find a documentation component's repository.
+You must provide a value for each documentation component repository you want added to your site.
+The key accepts filesystem paths, file URLs, and any URI that git supports.
 
-The key accepts filesystem paths and any URL that git supports.
-Specifically:
+[#local-urls]
+=== Use local content repositories
 
-* relative filesystem paths
-* absolute filesystem paths
-* file URLs
-* http and https URLs
-* SSH URIs
-* git URIs
+The `url` accepts a relative or absolute filesystem path.
+When the value is a relative path, the path is resolved relative to the playbook file.
 
-Let's look at an example of each of these accepted URL key values.
-
-IMPORTANT: There is no default URL key value.
-You must explicitly provide a URL for each documentation component repository you want added to your site.
-
-=== https
-
-.https URL value
+.Local git repositories
 [source,yaml]
 ----
 content:
   sources:
-  - url: https://github.com/my-docs/server-docs
+  - url: /home/user/docs-site/demo-component-a # <1>
+  - url: demo-component-b # <2>
+----
+<1> Absolute path to git repository
+<2> Relative path to git repository
+
+[#remote-urls]
+=== Fetch remote content repositories
+
+Remote repositories can be fetched via URLs (http, https), SSH URIs, and git URIs.
+
+.Remote git repositories
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: git@gitlab.com:antora/demo/demo-component-b.git
+  - url: git://github.com/org/content-repo.git
+----
+
+Whether or not the `.git` extension is required depends on the settings of the git host.
+It's usually best to include it.
+
+// For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
+
+[#author-urls]
+=== Configure local and remote URLs in the same playbook
+
+You can build your documentation site using a combination of local and remote content repositories, even when the local repositories have uncommitted changes.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: demo-component-b
 ----
 
 [#branches]
@@ -49,17 +80,17 @@ content:
 
 The branches key accepts a list of branch name patterns.
 The names can be specified in a comma-separated list or as single items on individual lines.
-The values can be the exact name or a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
+The values can be the exact name of a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
 
 Let's look at some examples of each of these name declaration methods.
 
 [#default-branch]
-=== Default branches set
+=== Default branch filter
 
 When no branches are specified for a source URL, Antora will use the [.term]_default branches set_.
 Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
 
-.Use default branches set
+.Use default branch filter
 [source,yaml]
 ----
 content:
@@ -68,55 +99,48 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-b.git
 ----
 
-The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, like in the example below.
+The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, `branches: master, v*`.
 
+If you want to modify the default branch filter, then assign a value to the `branches` key directly under the `content` category.
+
+.Modifying the default branch filter
 [source,yaml]
 ----
 content:
+  branches: v*
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
-    branches: master, v*
   - url: https://gitlab.com/antora/demo/demo-component-b.git
-    branches: master, v*
 ----
 
-[#comma-branch]
-=== Comma-separated branches values
+The new default branch filter will be applied to all entries that do not themselves have a value defined for the `branches` key.
+
+[#separate-branch-names]
+=== Separate branches values using commas or markers
 
 Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
+Alternatively, each branch name can be specified on its own line, using a hyphen (`-`) list marker (per YAML rules), and listed beneath the branches key.
 
-.Comma-separated branches
 [source,yaml]
 ----
 content:
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
-    branches: master, v1.*, v2.1.0
-----
-
-[#marker-branch]
-=== Marker-separated branches values
-
-Each branch name can be specified on its own line, using a hyphen (`-`) list marker, and listed beneath the branches key.
-
-.Marker-separated branches
-[source,yaml]
-----
-content:
-  sources:
+    branches: master, v1.* # <1>
   - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
-    - master
-    - v1.*
-    - v2.1.0
+    - v1.* # <2>
+    - v2.0.0
+    - v2.1.*
 ----
+<1> Comma-separated branches values
+<2> Marker-separated branches values
 
 [#exact-branch]
 === Specify branches by name
 
 Branches can be specified by their exact name.
 
-.Exact branch names
 [source,yaml]
 ----
 content:
@@ -126,14 +150,26 @@ content:
     - master
     - '1.0.0'
     - v2.0.0
-    - alpha
 ----
 
-IMPORTANT: A branch name that begins with a number must be enclosed in single quotes, per YAML rules.
+A branch name that begins with a number, like `1.0.0` must be enclosed in single quotes (`+'+`), per YAML rules.
 
-////
-If you want to limit the branches Antora scans and uses, you can specify an array of branch patterns using the branches key.
-////
+[#current-branch]
+=== Using the current branch
+
+When working with a local repository, you may find yourself switching between branches often.
+To save you from having to remember to update the playbook file to point to the current branch, you can use a special keyword, `HEAD`.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: workspace/project-a
+    branches: HEAD
+----
+
+Using the value `HEAD` is equivalent to using the name of the current branch.
+All the same rules apply.
 
 [#glob-branch]
 === Specify branches by glob pattern
@@ -142,7 +178,7 @@ Branches can be specified by shell glob patterns such as as `v3.*`.
 If the pattern starts with a `!` character, then it is negated (i.e., the matches are excluded).
 This is how you can deselect branches that were matched by a previous glob.
 
-For example, let's say you want to include all 3.x versions of the server component except for 3.2.
+For example, let's say you want to include all `1.x` versions of the Component A except for `1.7`.
 You'd enter the following branches values into the playbook:
 
 .Glob branch patterns
@@ -150,13 +186,13 @@ You'd enter the following branches values into the playbook:
 ----
 content:
   sources:
-  - url: https://github.com/my-docs/server-docs
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
-    - v3.*
-    - '!v3.2'
+    - v1.*
+    - '!v1.7'
 ----
 
-IMPORTANT: A negated value must be enclosed in single quotes, per YAML rules.
+*A negated value must be enclosed in single quotes, per YAML rules.*
 
 Here's how you'd exclude all branches that end in `-beta`.
 
@@ -165,34 +201,45 @@ Here's how you'd exclude all branches that end in `-beta`.
 ----
 content:
   sources:
-  - url: https://github.com/my-docs/server-docs
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
     - v*
     - '!v*-beta'
 ----
 
-// Specify local branch
+[#mix-local-remote-branches]
+== Mix local and remote repositories and branches
+
+You can generate your site using remote branches and a local branch of a component.
+In this example, we'll fetch all of the `v1.x` and `v2.x` branches from Component A's remote content repository.
+We'll also load the branch `v3.0.0-beta` from a local repository.
+
+.Use remote and local repositories and branches
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+    branches: v1.*, v2.*
+  - url: docs-site/demo-component-a
+    branches: v3.0.0-beta
+----
 
 == Start path key
 
-The start path key tells Antora where to find a documentation component in a repository.
-*You only need to use this key when the component isn't stored at the root of a content repository.*
-
-=== Default start path value
-
-Antora automatically looks for a component descriptor file ([.path]_antora.yml_) at the root of a source repository.
-When this default repository structure is used, the start path doesn't need to be set or assigned in the playbook.
+Antora automatically looks for a xref:ROOT:component-descriptor.adoc[component descriptor] file ([.path]_antora.yml_) at the root of a source repository.
+*When this default repository structure is used, the start path key doesn't need to be set or assigned in the playbook.*
+If the component isn't stored at the root of a content repository, then you need to use the start path key to tell Antora where to find the component descriptor file.
 
 [#add-start-path]
 === Specify a start path
 
 The value of the start path key is the repository relative path to the component descriptor file.
-
 Let's define the start path value for a repository with the structure shown below.
 
-image::start-path-dir.svg[,260]
+image::start-path-dir.svg[Start path directory,200]
 
-In order for Antora to locate the documentation component in this repository, the start path value needs to point Antora to the directory where the [.path]_antora.yml_ file is stored.
+In order for Antora to locate the documentation component in this repository, the start path value needs to point Antora to the directory where [.path]_antora.yml_ is located.
 
 .Set start_path
 [source,yaml]
@@ -203,3 +250,5 @@ content:
     branches: master, v2.6
     start_path: packages/docs
 ----
+
+With `start_path` specified, Antora won't collect any files outside of \https://github.com/org/repo/packages/docs.

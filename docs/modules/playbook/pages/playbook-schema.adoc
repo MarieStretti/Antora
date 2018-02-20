@@ -13,11 +13,9 @@ On this page, you'll learn:
 * [x] The values each playbook key accepts.
 
 == Playbook file structure
-// the general layout of a playbook file
 
-Here's an example of a playbook file named [.path]_site.yml_:
+Here's an example of a playbook file.
 
-.site.yml
 [source,yaml,subs=attributes+]
 ----
 site: # <1>
@@ -42,23 +40,23 @@ output: # <17>
  destinations: # <20>
  - provider: archive # <21>
 ----
-<1> <<site-key,Site key>>
+<1> <<site-key,Site keys>>
 <2> <<site-title-key,Title key>>
 <3> <<site-url-key,Base URL key>>
 <4> <<site-start-page-key,Start page key>>
 <5> <<site-service-keys,Service keys>>
 <6> <<site-ga-key,Google analytics key>>
-<7> Content key
-<8> Sources key
-<9> Content repository URL key
-<10> Content repository branches key
-<11> Content repository start path key
-<12> UI key
+<7> <<content-sources-keys,Content keys>>
+<8> <<content-sources-keys,Sources keys>>
+<9> <<sources-url-key,Content repository URL key>>
+<10> <<branches-key,Content repository branches key>>
+<11> <<sources-start-path-key,Content repository start path key>>
+<12> <<ui-keys,UI keys>>
 <13> <<ui-bundle-key,UI bundle repository key>>
 <14> <<ui-start-path-key,Bundle start path key>>
 <15> <<ui-default-layout-key,UI default layout key>>
 <16> <<ui-output-dir-key,UI output directory key>>
-<17> Published output key
+<17> Published output keys
 <18> Clean output directory key
 <19> Output directory key
 <20> Output destinations key
@@ -67,10 +65,10 @@ output: # <17>
 Let's explore the purpose and usage of each key and its values.
 
 [#site-key]
-== site
+== Site keys
 
-The site's global properties are defined in the site key.
-Antora applies these properties when it generates and assembles the site.
+The site's global properties are defined under the `site` category in the playbook schema.
+Antora applies these properties to the whole site when it is generated.
 
 [#site-title-key]
 === title
@@ -94,7 +92,7 @@ Learn more:
 === start_page
 
 You can use a page from a documentation component as the index page for your site.
-The start_page key accepts a page ID as a value.
+The start page key accepts a xref:ROOT:page-id.adoc[page ID] as a value.
 
 Learn more:
 
@@ -114,65 +112,61 @@ Learn more:
 
 * xref:configure-site.adoc#configure-ga[Add a Google Analytics account key]
 
-== content
+[#content-sources-keys]
+== Content and sources keys
 
-The content key contains an array of source repository specifications.
-These source repository specifications are arranged in the sources key.
-
-=== sources
+The `content` category contains an array of source repository specifications.
+These source repository specifications are arranged under the `sources` category.
 
 The sources key contains the list of git repository locations, branch name patterns, and other repository properties that Antora uses when aggregating the site content.
 
-==== url
+[#sources-url-key]
+=== url
 
-At a minimum, you must specify the location of each content repository using the url key.
-The key accepts any URL that git supports.
-This includes:
+The url key tells Antora where to find a documentation component's repository.
+The key accepts filesystem paths, file URLs, and any URI that git supports.
 
-* filesystem paths relative to the current directory
-* absolute filesystem paths
-* file URLs that start with pass:[file:///]
-* http and https URLs (e.g., pass:[https://github.com/org/repo.git])
-** You don't need to add the trailing _.git_ to GitLab and GitHub repository URLs.
-Whether or not the trailing _.git_ is required depends on the capabilities of the repository host.
-* SSH URIs (e.g., pass:[git@github.com:org/repo] or pass:[ssh://git@github.com:org/repo])
-* git URIs (e.g., pass:[git://gitlab.com/org/repo])
+Learn more:
 
-// For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
-==== branches
+* xref:configure-content-sources.adoc#local-urls[Use local content repositories]
+* xref:configure-content-sources.adoc#remote-urls[Fetch remote content repositories]
+* xref:configure-content-sources.adoc#author-urls[Configure remote and local content repository URLs in the same playbook]
+* xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote repositories and branches]
 
-The branches key accepts a list of branch name patterns.
-The names can be specified in a comma-separated list or as single items on individual lines.
-The values can be the exact name or a branch, a shell glob pattern such as `v3.*`, or a combination of exact and glob names.
+[#branches-key]
+=== branches
 
-When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_.
-Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
+The branches key accepts a list of branch name patterns, either as exact names or shell glob patterns (`v3.*`).
+When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_, i.e., the `master` branch and every branch that begins with `v`.
 
 Learn more:
 
 * xref:configure-content-sources.adoc#default-branch[Use the default branches set]
-* xref:configure-content-sources.adoc#comma-branch[Separate branch names with commas]
-* xref:configure-content-sources.adoc#marker-branch[Separate branch names with markers]
+* xref:configure-content-sources.adoc#separate-branch-names[Separate branch names with commas or markers]
 * xref:configure-content-sources.adoc#exact-branch[Specify branches by name]
 * xref:configure-content-sources.adoc#glob-branch[Specify and exclude branches by glob patterns]
+* xref:configure-content-sources.adoc#current-branch[Use the current local branch]
+* xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote branches and repositories]
 
-==== start_path
+[#sources-start-path-key]
+=== start_path
 
-Antora automatically looks for the component descriptor file at the root of a repository.
+Antora automatically looks for the xref:ROOT:component-descriptor.adoc[component descriptor] file at the root of a repository.
 When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using `start_path`.
 
 Learn more:
 
 * xref:configure-content-sources.adoc#add-start-path[Specify a start path for a content repository]
 
-== ui
+[#ui-keys]
+== UI keys
 
-The ui category contains keys that specify the location of the UI bundle and how it should be processed.
+The `ui` category contains keys that specify the location of the UI bundle and how it should be processed.
 
 [#ui-bundle-key]
 === bundle
 
-The URL or (local) filesystem path of the UI bundle.
+The URL or local filesystem path of the UI bundle.
 Filesystem paths can be absolute or relative to the location of the playbook file.
 
 Learn more:
@@ -209,9 +203,9 @@ Learn more:
 
 * xref:configure-ui.adoc#output-dir[Specify an output directory for the UI files]
 
-== output
+== Output keys
 
-The output key contains common output settings and a list of destination specifications.
+The `output` category contains common output settings and a list of destination specifications.
 The destination specifications tell Antora which provider(s) to use to publish the site (e.g., fs, archive, ssh, s3) and where those files should go.
 The provider, in turn, determines which transport protocol to use (local, SSH, HTTP, etc.) and manages the low-level details of publication.
 
