@@ -2,6 +2,8 @@
 
 const ospath = require('path')
 
+const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[${[...new Set(['/', ospath.sep])].join('').replace('\\', '\\\\')}]`)
+
 /**
  * Generates a function to resolve and require a custom provider.
  *
@@ -30,14 +32,13 @@ function createRequireProvider () {
   return function requireProvider (request, requireBase) {
     let resolved = requestCache.get(request)
     if (!resolved) {
-      if (request.charAt() === '.') {
+      if (request.charAt() === '.' && DOT_RELATIVE_RX.test(request)) {
         resolved = ospath.resolve(requireBase, request)
       } else if (ospath.isAbsolute(request)) {
         resolved = request
       } else {
-        const localNodeModulesPath = ospath.resolve(requireBase, 'node_modules')
-        const paths = require.resolve.paths('').filter((requirePath) => requirePath !== localNodeModulesPath)
-        paths.unshift(localNodeModulesPath)
+        // NOTE appending node_modules prevents require from looking elsewhere before looking in these paths
+        const paths = [requireBase, ospath.dirname(__dirname)].map((start) => ospath.join(start, 'node_modules'))
         resolved = require.resolve(request, { paths })
       }
       requestCache.set(request, resolved)
