@@ -31,7 +31,7 @@ Install the base build tools package by executing the command associated with yo
 * Fedora: `dnf install @development-tools`
 * Debian/Ubuntu: `apt-get install build-essential`
 * Arch Linux: `pacman -S base-devel`
-* Alpine Linux: `apk add build-base`
+* Alpine Linux: `apk add build-base libgit2-dev`
 
 Once you have these tools installed, you can expect the remaining installation to go smoothly.
 

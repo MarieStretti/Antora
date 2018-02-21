@@ -15,7 +15,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-twitter: https://twitter.com/antoraproject
 :uri-twitter-hash: https://twitter.com/hashtag/antora?src=hash
 // External URIs:
-:uri-asciidoctor: http://asciidoctor.org
+:uri-asciidoctor: https://asciidoctor.org
 :uri-choco: https://chocolatey.org
 :uri-nvm: https://github.com/creationix/nvm
 :uri-nvm-install: {uri-nvm}#installation
@@ -61,7 +61,7 @@ If you're running Linux, select the appropriate base build tools package for you
 * Fedora: `dnf install @development-tools`
 * Debian/Ubuntu: `apt-get install build-essential`
 * Arch Linux: `pacman -S base-devel`
-* Alpine Linux: `apk add build-base`
+* Alpine Linux: `apk add build-base libgit2-dev`
 
 If you're running macOS, you need the https://railsapps.github.io/xcode-command-line-tools.html[Xcode command line tools].
 Even if you've installed these tools in the past, it's good to do it again.
