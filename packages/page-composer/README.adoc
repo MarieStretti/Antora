@@ -4,7 +4,7 @@ The page composer is a component in Antora responsible for wrapping the embeddab
 This step yields the standalone HTML pages in the generated site produced by an Antora documentation pipeline.
 
 https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
-Its site generator pipeline aggregates documents from versioned content repositories and processes them using http://asciidoctor.org[Asciidoctor].
+Its site generator pipeline aggregates documents from versioned content repositories and processes them using https://asciidoctor.org[Asciidoctor].
 
 == Copyright and License
 

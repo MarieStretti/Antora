@@ -3,7 +3,7 @@
 The document converter is a component in Antora responsible for converting AsciiDoc documents to embeddable HTML for use in an Antora documentation pipeline.
 
 https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
-Its site generator pipeline aggregates documents from versioned content repositories and processes them using http://asciidoctor.org[Asciidoctor].
+Its site generator pipeline aggregates documents from versioned content repositories and processes them using https://asciidoctor.org[Asciidoctor].
 
 == Copyright and License
 

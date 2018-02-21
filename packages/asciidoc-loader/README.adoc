@@ -3,7 +3,7 @@
 The AsciiDoc loader is a reusable library for handling AsciiDoc content in Antora.
 It loads AsciiDoc content into an AsciiDoc Document object (AST) for use in an Antora documentation pipeline.
 
-The AsciiDoc loader wraps http://asciidoctor.org/docs/asciidoctor.js/[Asciidoctor.js], adding several extensions that enable AsciiDoc to work in an Antora environment.
+The AsciiDoc loader wraps https://asciidoctor.org/docs/asciidoctor.js/[Asciidoctor.js], adding several extensions that enable AsciiDoc to work in an Antora environment.
 These extensions include:
 
 * An include processor that resolves files from the content catalog.
@@ -12,7 +12,7 @@ These extensions include:
 * Implicit document attributes that pass information from the Antora environment.
 
 https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
-Its site generator pipeline aggregates documents from versioned content repositories and processes them using http://asciidoctor.org[Asciidoctor].
+Its site generator pipeline aggregates documents from versioned content repositories and processes them using https://asciidoctor.org[Asciidoctor].
 
 == Copyright and License
 

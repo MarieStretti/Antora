@@ -439,7 +439,7 @@ describe('buildNavigation()', () => {
     const navContents = heredoc`
       .xref:asciidoc/index.adoc[AsciiDoc]
       * xref:asciidoc/syntax-primer.adoc[Syntax Primer]
-      * http://asciidoctor.org/docs/user-manual/[Asciidoctor User Manual]
+      * https://asciidoctor.org/docs/user-manual/[Asciidoctor User Manual]
       * link:#[Back to top]
     `
     const contentCatalog = mockContentCatalog([
@@ -469,7 +469,7 @@ describe('buildNavigation()', () => {
         },
         {
           content: 'Asciidoctor User Manual',
-          url: 'http://asciidoctor.org/docs/user-manual/',
+          url: 'https://asciidoctor.org/docs/user-manual/',
           urlType: 'external',
         },
         {

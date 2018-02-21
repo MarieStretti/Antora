@@ -4,7 +4,7 @@
 
 Various components in Antora need to load AsciiDoc (parse the AsciiDoc into an AST), either for accessing the document's structure or converting it to HTML.
 The code responsible for loading AsciiDoc should be centralized in a dedicated component to ensure that AsciiDoc is loaded consistently throughout the pipeline and to avoid code duplication.
-This component should integrate the AsciiDoc processor (http://asciidoctor.org/docs/asciidoctor.js/[Asciidoctor.js]) into the Antora pipeline, bundling Antora-specific enhancements, without exposing any low-level details about how that integration is performed.
+This component should integrate the AsciiDoc processor (https://asciidoctor.org/docs/asciidoctor.js/[Asciidoctor.js]) into the Antora pipeline, bundling Antora-specific enhancements, without exposing any low-level details about how that integration is performed.
 
 == Functional Overview
 
