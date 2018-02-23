@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
 const git = require('nodegit')
@@ -92,7 +93,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir) {
 
   // QUESTION should we try to exclude git@host:path as well? maybe check for @?
   if (!~repoUrl.indexOf('://')) {
-    if (directoryExists((repoPath = ospath.resolve(startDir, repoUrl)))) {
+    if (directoryExists((repoPath = expandPath(repoUrl, '~+', startDir)))) {
       isBare = !directoryExists(ospath.join(repoPath, '.git'))
       isRemote = false
       if (!remoteName) remoteName = 'origin'

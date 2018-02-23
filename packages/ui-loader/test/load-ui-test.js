@@ -6,6 +6,7 @@ const { deferExceptions, expect, removeSyncForce } = require('../../../test/test
 const fs = require('fs-extra')
 const http = require('http')
 const loadUi = require('@antora/ui-loader')
+const os = require('os')
 const ospath = require('path')
 
 const CWD = process.cwd()
@@ -32,11 +33,15 @@ describe('loadUi()', () => {
 
   let server
 
+  const prefixPath = (prefix, path_) => [prefix, path_].join(ospath.sep)
+
   const testAll = (archive, testBlock) => {
     const makeTest = (bundle) => testBlock({ ui: { bundle } })
 
-    it('with relative bundle path', () => makeTest(ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, archive))))
-    it('with absolute bundle path', () => makeTest(ospath.resolve(FIXTURES_DIR, archive)))
+    it('with dot-relative bundle path', () =>
+      makeTest(prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, archive))))
+    )
+    it('with absolute bundle path', () => makeTest(ospath.join(FIXTURES_DIR, archive)))
     it('with remote bundle URI', () => makeTest('http://localhost:1337/' + archive))
   }
 
@@ -54,7 +59,7 @@ describe('loadUi()', () => {
     clean()
     server = http
       .createServer((request, response) => {
-        fs.readFile(ospath.resolve(ospath.join(__dirname, 'fixtures', request.url)), (err, content) => {
+        fs.readFile(ospath.join(__dirname, 'fixtures', request.url), (err, content) => {
           if (err) {
             response.writeHead(404, { 'Content-Type': 'text/html' })
             response.end('<!DOCTYPE html><html><body>Not Found</body></html>', 'utf8')
@@ -94,7 +99,69 @@ describe('loadUi()', () => {
     })
   })
 
-  describe('should locate bundle when process.cwd() and playbook dir are different', () => {
+  describe('should expand local bundle path', () => {
+    it('should append unanchored bundle path to cwd', async () => {
+      const playbookDir = ospath.join(WORK_DIR, 'some-other-folder')
+      const playbook = { dir: playbookDir }
+      fs.ensureDirSync(playbookDir)
+      const bundleFixture = ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip')
+      fs.outputFileSync('the-ui-bundle.zip', fs.readFileSync(bundleFixture))
+      playbook.ui = { bundle: 'the-ui-bundle.zip' }
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+    })
+
+    it('should expand leading . segment in bundle path to playbook dir', async () => {
+      const playbook = { dir: WORK_DIR }
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      playbook.ui = {
+        bundle: prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+      }
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+    })
+
+    it('should expand leading ~ segment in bundle path to user home', async () => {
+      const playbook = {}
+      playbook.ui = {
+        bundle: prefixPath('~', ospath.relative(os.homedir(), ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+      }
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+    })
+
+    it('should expand leading ~+ segment in bundle path to cwd', async () => {
+      const playbook = { dir: WORK_DIR }
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      playbook.ui = {
+        bundle: prefixPath('~+', ospath.relative(newWorkDir, ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+      }
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      const files = uiCatalog.getFiles()
+      const paths = files.map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+    })
+  })
+
+  describe('should locate bundle when cwd and playbook dir are different', () => {
     testAll('the-ui-bundle.zip', async (playbook) => {
       playbook.dir = WORK_DIR
       const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
@@ -141,12 +208,11 @@ describe('loadUi()', () => {
     })
   })
 
-  // TODO test an image, such as a site icon
   describe('should load supplemental files', () => {
     let playbook
     const expectedFilePathsWithSupplemental = expectedFilePaths.concat('css/extra.css', 'img/icon.png')
     const supplementalFileContents = ['partials/head.hbs', 'css/extra.css', 'img/icon.png'].reduce((accum, path_) => {
-      accum[path_] = fs.readFileSync(ospath.resolve(FIXTURES_DIR, 'supplemental-files', path_))
+      accum[path_] = fs.readFileSync(ospath.join(FIXTURES_DIR, 'supplemental-files', path_))
       return accum
     }, {})
 
@@ -167,28 +233,30 @@ describe('loadUi()', () => {
     }
 
     beforeEach(() => {
-      playbook = { ui: { bundle: ospath.resolve(FIXTURES_DIR, 'the-ui-bundle.zip') } }
+      playbook = { ui: { bundle: ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip') } }
     })
 
     it('throws error when directory does not exist', async () => {
-      playbook.ui.supplementalFiles = ospath.resolve(FIXTURES_DIR, 'does-not-exist')
+      playbook.ui.supplementalFiles = ospath.join(FIXTURES_DIR, 'does-not-exist')
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
       expect(loadUiDeferred).to.throw('problem encountered')
     })
 
     it('from absolute directory', async () => {
-      playbook.ui.supplementalFiles = ospath.resolve(FIXTURES_DIR, 'supplemental-files')
+      playbook.ui.supplementalFiles = ospath.join(FIXTURES_DIR, 'supplemental-files')
       verifySupplementalFiles(await loadUi(playbook))
     })
 
-    it('from relative directory', async () => {
-      playbook.ui.supplementalFiles = ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files'))
+    it('from dot-relative directory', async () => {
+      playbook.ui.supplementalFiles =
+        prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'supplemental-files')))
       verifySupplementalFiles(await loadUi(playbook))
     })
 
-    it('from relative directory when playbook dir does not match process.cwd()', async () => {
+    it('from dot-relative directory when playbook dir does not match cwd', async () => {
       playbook.dir = WORK_DIR
-      playbook.ui.supplementalFiles = ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files'))
+      playbook.ui.supplementalFiles =
+        prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'supplemental-files')))
       const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
       fs.ensureDirSync(newWorkDir)
       process.chdir(newWorkDir)
@@ -246,7 +314,7 @@ describe('loadUi()', () => {
       playbook.ui.supplementalFiles = [
         {
           path: 'partials/head.hbs',
-          contents: ospath.resolve(FIXTURES_DIR, 'does-not-exist/head.hbs'),
+          contents: ospath.join(FIXTURES_DIR, 'does-not-exist/head.hbs'),
         },
       ]
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
@@ -257,54 +325,62 @@ describe('loadUi()', () => {
       playbook.ui.supplementalFiles = [
         {
           path: 'partials/head.hbs',
-          contents: ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs'),
+          contents: ospath.join(FIXTURES_DIR, 'supplemental-files/partials/head.hbs'),
         },
         {
           path: 'css/extra.css',
-          contents: ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css'),
+          contents: ospath.join(FIXTURES_DIR, 'supplemental-files/css/extra.css'),
         },
         {
           path: 'img/icon.png',
-          contents: ospath.resolve(FIXTURES_DIR, 'supplemental-files/img/icon.png'),
+          contents: ospath.join(FIXTURES_DIR, 'supplemental-files/img/icon.png'),
         },
       ]
       verifySupplementalFiles(await loadUi(playbook))
     })
 
     it('from files with relative paths', async () => {
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      const supplementalFilesDir = ospath.join(FIXTURES_DIR, 'supplemental-files')
+      playbook.dir = WORK_DIR
       playbook.ui.supplementalFiles = [
         {
           path: 'partials/head.hbs',
-          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs')),
+          contents: ospath.relative(newWorkDir, ospath.join(supplementalFilesDir, 'partials/head.hbs')),
         },
         {
           path: 'css/extra.css',
-          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css')),
+          contents: ospath.relative(newWorkDir, ospath.join(supplementalFilesDir, 'css/extra.css')),
         },
         {
           path: 'img/icon.png',
-          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/img/icon.png')),
+          contents: ospath.relative(newWorkDir, ospath.join(supplementalFilesDir, 'img/icon.png')),
         },
       ]
       verifySupplementalFiles(await loadUi(playbook))
     })
 
-    it('from files with relative paths when playbook dir does not match process.cwd()', async () => {
+    it('from files relative to user home', async () => {
+      const supplementalFilesDir = ospath.join(FIXTURES_DIR, 'supplemental-files')
+      playbook.ui.supplementalFiles = ['partials/head.hbs', 'css/extra.css', 'img/icon.png'].map((path_) => ({
+        path: path_,
+        contents: prefixPath('~', ospath.relative(os.homedir(), ospath.join(supplementalFilesDir, path_))),
+      }))
+      let uiCatalog
+      const loadUiDeferred = await deferExceptions(loadUi, playbook)
+      expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
+      verifySupplementalFiles(uiCatalog)
+    })
+
+    it('from files with dot-relative paths when playbook dir does not match cwd', async () => {
+      const supplementalFilesDir = ospath.join(FIXTURES_DIR, 'supplemental-files')
       playbook.dir = WORK_DIR
-      playbook.ui.supplementalFiles = [
-        {
-          path: 'partials/head.hbs',
-          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/partials/head.hbs')),
-        },
-        {
-          path: 'css/extra.css',
-          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/css/extra.css')),
-        },
-        {
-          path: 'img/icon.png',
-          contents: ospath.relative(WORK_DIR, ospath.resolve(FIXTURES_DIR, 'supplemental-files/img/icon.png')),
-        },
-      ]
+      playbook.ui.supplementalFiles = ['partials/head.hbs', 'css/extra.css', 'img/icon.png'].map((path_) => ({
+        path: path_,
+        contents: prefixPath('.', ospath.relative(WORK_DIR, ospath.join(supplementalFilesDir, path_))),
+      }))
       const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
       fs.ensureDirSync(newWorkDir)
       process.chdir(newWorkDir)

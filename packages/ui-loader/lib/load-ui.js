@@ -2,6 +2,7 @@
 
 const collectBuffer = require('bl')
 const crypto = require('crypto')
+const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
 const get = require('got')
@@ -55,7 +56,7 @@ async function loadUi (playbook) {
       return get(bundleUri, { encoding: null }).then(({ body }) => fs.outputFile(cachePath, body).then(() => cachePath))
     })
   } else {
-    const localPath = ospath.resolve(startDir, bundleUri)
+    const localPath = expandPath(bundleUri, '~+', startDir)
     resolveBundle = fs.pathExists(localPath).then((exists) => {
       if (exists) {
         return localPath
@@ -166,7 +167,7 @@ function srcSupplementalFiles (filesSpec, startDir) {
           if (~contents_.indexOf('\n') || !EXT_RX.test(contents_)) {
             accum.push(createMemoryFile(path_, contents_))
           } else {
-            contents_ = ospath.resolve(startDir, contents_)
+            contents_ = expandPath(contents_, '~+', startDir)
             accum.push(
               fs
                 .stat(contents_)
@@ -180,7 +181,7 @@ function srcSupplementalFiles (filesSpec, startDir) {
       }, [])
     ).then((files) => files.reduce((accum, file) => accum.set(file.path, file) && accum, new Map()))
   } else {
-    const base = ospath.resolve(startDir, filesSpec)
+    const base = expandPath(filesSpec, '~+', startDir)
     return fs
       .access(base)
       .then(
