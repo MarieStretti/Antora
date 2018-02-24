@@ -567,7 +567,7 @@ _{r}_ Describes how to add metadata to the site (such as a site description).
 === Site Navigation
 
 Site Navigation (C, P)::
-_{r}_ Brief introduction to the navigation input file, file location, syntax, component menu, registration, and output behavior.
+_{r}_ Brief introduction to the navigation input file, syntax, registration, and component menu.
 An image of the relationships might enhance this description.
 +
 _{s}_ Accepted

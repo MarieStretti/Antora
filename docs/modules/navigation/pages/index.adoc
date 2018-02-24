@@ -8,16 +8,31 @@ endif::[]
 
 With Antora, tech writers can create their site's navigation with AsciiDoc and store it right alongside their documentation files.
 
-== Describe your navigation using AsciiDoc lists
+== Navigation workflow
 
-A site’s navigation is described by one or more AsciiDoc lists.
+In order to populate a navigation menu for a component on your site, you need to create at least one navigation source file and then register that file in the component's descriptor file.
+
+//image
+
+== Navigation source files
+
+A component’s navigation is described by one or more AsciiDoc lists in one or more navigation source files.
 Page links are added using the same cross referencing syntax used in the pages themselves.
+In addition to xrefs, the lists can contain normal text, images, icons, and URLs to other sites.
 There's no special syntax or UI template logic to learn.
 
-== No content or organization restrictions
+When you want these lists to be displayed in a component's published menu, you need to register them.
 
-In addition to cross references, the navigation lists can contain normal text, images, icons, and links to pages not created by the generator pipeline.
-The links in the navigation can be ordered and nested in the arrangement of your choice.
+== Registration
+
+Navigation files are registered using the nav key (`nav`) in the component descriptor file.
+The order in which the files are listed is the order in which they're displayed in the component's menu on the published site.
+
+== Component menu
+
+Antora assembles the registered navigation source files for each version of each component.
+It then publishes the output to a navigation menu for each component version.
+The behavior and styling of the menu is dictated by the UI bundle that was specified in the playbook.
 
 == What's next?
 
