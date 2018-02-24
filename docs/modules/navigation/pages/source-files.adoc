@@ -1,0 +1,22 @@
+= Navigation Source Files
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+== Navigating to published pages
+
+All of the AsciiDoc files (`.adoc`) in a [.path]_pages_ directory are automatically published by Antora.
+That means readers will be able to find a page using search tools or through cross references you create to it from other pages.
+If you want readers to be able to go to a page using a published navigation menu, then you must add a cross reference to that page in the appropriate navigation source file.
+
+== What is a navigation source file?
+
+A navigation source file is a list the page cross references, URLs and other content you want displayed in a component's menu on your published site.
+
+At its most basic, it is an unordered list that is saved as an AsciiDoc file in the same module as the pages it will help readers navigate between.
+However, Antora allows for a variety of use cases so that you can create, store, and assemble these files to suit your documentation's requirements.
+
+The pages in this section will go over the fundamentals of creating and storing navigation files in a typical documentation component and then describe some alternative scenarios.
