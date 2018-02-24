@@ -28,7 +28,7 @@ Switch to the newly created directory and clone one of the repositories:
    git clone https://github.com/my-antora-demo/server-docs
 
 Next, open your playbook file and configure it to use this clone.
-You can specify the repository either as a path relative to the root of the project or as an absolute path.
+You can specify the repository either as a path relative to the project root or as an absolute path.
 
 // also a good place to use the demo
 // need clarification about where these local sources can be in relation to the playbook project
@@ -38,7 +38,7 @@ You can specify the repository either as a path relative to the root of the proj
 ----
 content:
   sources:
-  - url: workspace/server-docs
+  - url: ./workspace/server-docs
 ----
 
 Now when you run Antora, the contents of your local repository will be incorporated into the pipeline.

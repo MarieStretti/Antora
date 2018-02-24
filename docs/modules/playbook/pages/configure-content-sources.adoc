@@ -29,7 +29,11 @@ The key accepts filesystem paths, file URLs, and any URI that git supports.
 === Use local content repositories
 
 The `url` accepts a relative or absolute filesystem path.
-When the value is a relative path, the path is resolved relative to the playbook file.
+
+A relative path will be expanded to an absolute path.
+If the first path segment is `~`, the path is resolved relative to the user's home directory.
+If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
+If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path resolved relative to the current working directory.
 
 .Local git repositories
 [source,yaml]
@@ -37,7 +41,7 @@ When the value is a relative path, the path is resolved relative to the playbook
 content:
   sources:
   - url: /home/user/docs-site/demo-component-a # <1>
-  - url: demo-component-b # <2>
+  - url: ./demo-component-b # <2>
 ----
 <1> Absolute path to git repository
 <2> Relative path to git repository
@@ -72,7 +76,7 @@ You can build your documentation site using a combination of local and remote co
 content:
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
-  - url: demo-component-b
+  - url: ./demo-component-b
 ----
 
 [#branches]
@@ -164,7 +168,7 @@ To save you from having to remember to update the playbook file to point to the 
 ----
 content:
   sources:
-  - url: workspace/project-a
+  - url: ./workspace/project-a
     branches: HEAD
 ----
 
@@ -221,7 +225,7 @@ content:
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches: v1.*, v2.*
-  - url: docs-site/demo-component-a
+  - url: ./docs-site/demo-component-a
     branches: v3.0.0-beta
 ----
 

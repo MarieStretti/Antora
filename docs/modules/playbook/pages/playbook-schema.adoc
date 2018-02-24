@@ -166,8 +166,8 @@ The `ui` category contains keys that specify the location of the UI bundle and h
 [#ui-bundle-key]
 === bundle
 
-The URL or local filesystem path of the UI bundle.
-Filesystem paths can be absolute or relative to the location of the playbook file.
+The URL or local filesystem path to a UI bundle.
+The filesystem path can be absolute or relative.
 
 Learn more:
 
@@ -227,7 +227,6 @@ For example, if you set `dir` to your computer's home directory and `clean` to t
 
 The output dir key specifies the directory to publish the generated site files.
 The key accepts a relative or absolute filesystem path.
-When the value is a relative path, the path is resolved relative to the playbook file.
 
 If the destinations are unspecified, and the dir key is not set, the value defaults to [.path]_build/site_.
 
@@ -268,7 +267,6 @@ For example, the `fs` provider treats this value as a target directory, while th
 If the path key is not specified, it typically gets populated with a default value.
 The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
 The key accepts a relative or absolute filesystem path.
-A relative path is resolved relative to the playbook file.
 
 IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the `path` value for the first `fs` provider specified in the destinations key.
 

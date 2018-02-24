@@ -20,7 +20,11 @@ This key is meant to provide a shorthand to the more formal destinations key.
 
 The output dir key specifies the directory where the generated site will be published.
 The key accepts a relative or absolute filesystem path.
-When the value is a relative path, the path is resolved relative to the playbook file.
+
+A relative path will be expanded to an absolute path.
+If the first path segment is `~`, the path is resolved relative to the user's home directory.
+If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
+If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path resolved relative to the current working directory.
 
 IMPORTANT: The dir key overrides the path key of the first `fs` provider specified in the destinations key.
 This allows the output directory to be overridden from the CLI using the `--to-dir=<dir>` option.
@@ -40,7 +44,7 @@ In the relative `dir` example, the site will be published to a folder named [.pa
 [source,yaml]
 ----
 output:
- dir: launch
+ dir: ./launch
 ----
 
 In the absolute `dir` example, the site will be published to [.path]_home/dev/docs-site/beta_ regardless of where the playbook is located.
@@ -107,8 +111,12 @@ In this example, the site is generated as a ZIP file and published to [.path]_bu
 
 The path key on a destination allows you to specify an output location per provider.
 The key accepts a relative or absolute filesystem path.
-When the value is a relative path, the path is resolved relative to the playbook file.
 The provider will create any interim directories as needed.
+
+A relative path will be expanded to an absolute path.
+If the first path segment is `~`, the path is resolved relative to the user's home directory.
+If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
+If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path resolved relative to the current working directory.
 
 IMPORTANT: If you set the dir key in a playbook or via the CLI, its value will override the `path` value of the first `fs` provider specified in the destinations key.
 
@@ -129,7 +137,7 @@ In the relative path example, we're running Antora on a playbook located in a di
 output:
  destinations:
  - provider: archive
-   path: blue.zip
+   path: ./blue.zip
 ----
 
 Once generation is complete, the site will be published to [.path]_docs-site/blue.zip_.
@@ -154,10 +162,10 @@ When a value is assigned to the output directory key, the archive path is append
 [source,yaml]
 ----
 output:
- dir: launch/sites
+ dir: ./launch/sites
  destinations:
  - provider: archive
-   path: blue.zip
+   path: ./blue.zip
 ----
 
 In this example, the archived site will be located at [.path]_launch/sites/blue.zip_.
@@ -173,7 +181,7 @@ In this example, we're running Antora on a playbook file in the directory named 
 output:
  destinations:
  - provider: fs
-   path: releases/red
+   path: ./releases/red
    clean: true
  - provider: archive
    path: /home/user/projects/docs-site/blue.zip
