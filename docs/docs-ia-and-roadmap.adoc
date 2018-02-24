@@ -572,14 +572,14 @@ An image of the relationships might enhance this description.
 +
 _{s}_ Accepted
 
-Nav source file (P)::
+Navigation source files (P)::
 _{r}_ What is a navigation source file?
 
-File names & locations (P)::
-_{r}_ What the nav file is named and where it can be saved.
-
-Syntax (P)::
+Syntax & structure (P)::
 _{r}_ An overview of the syntax (unordered list items, xrefs, text, URLs) and structure (one or multiple lists) a nav file can accept.
+
+Filenames & locations (P)::
+_{r}_ What the nav file is named and where it can be saved.
 
 Add pages to a list (P)::
 _{r}_ Describe how to add in-module and out-module pages to the nav list.
