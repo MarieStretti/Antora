@@ -35,7 +35,7 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
   if (specFileRelPath) {
     let specFileAbsPath = ospath.resolve(specFileRelPath)
     if (ospath.extname(specFileAbsPath)) {
-      if (!fs.existsSync(specFileAbsPath)) throw new Error('playbook spec file does not exist')
+      if (!fs.existsSync(specFileAbsPath)) throw new Error('playbook file does not exist')
     } else if (fs.existsSync(specFileAbsPath + '.yml')) {
       specFileAbsPath += '.yml'
     } else if (fs.existsSync(specFileAbsPath + '.json')) {
@@ -43,7 +43,7 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
     } else if (fs.existsSync(specFileAbsPath + '.cson')) {
       specFileAbsPath += '.cson'
     } else {
-      throw new Error('playbook spec file could not be resolved')
+      throw new Error('playbook file could not be resolved')
     }
     config.load(parseSpecFile(specFileAbsPath))
     if (specFileRelPath !== specFileAbsPath) config.set('playbook', specFileAbsPath)
