@@ -1,3 +1,5 @@
+runtime:
+  cache_dir: ./.antora-cache
 site:
   url: https://example.com
   title: Example site
@@ -5,7 +7,7 @@ site:
   keys:
     google_analytics: 'XX-123456'
 ui:
-  bundle: ../ui/build/ui-bundles.zip
+  bundle: ./../ui/build/ui-bundles.zip
   start_path: dark-theme
   default_layout: default
   supplemental_files:
@@ -21,7 +23,7 @@ asciidoc:
   - asciidoctor-plantuml
   - ./lib/shout-block
 output:
-  dir: _site
+  dir: ./_site
   destinations:
   - provider: archive
-    path: site.zip
+    path: ./site.zip

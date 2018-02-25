@@ -6,6 +6,7 @@ const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
 const get = require('got')
+const getCacheDir = require('cache-directory')
 const { obj: map } = require('through2')
 const minimatchAll = require('minimatch-all')
 const ospath = require('path')
@@ -16,7 +17,7 @@ const yaml = require('js-yaml')
 const vfs = require('vinyl-fs')
 const vzip = require('gulp-vinyl-zip')
 
-const { UI_CACHE_PATH, UI_CONFIG_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
+const { UI_CACHE_FOLDER, UI_CONFIG_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
 const URI_SCHEME_RX = /^https?:\/\//
 const EXT_RX = /\.[a-z]{2,3}$/
 
@@ -35,6 +36,8 @@ const EXT_RX = /\.[a-z]{2,3}$/
  * @memberof ui-loader
  * @param {Object} playbook - The configuration object for Antora.
  * @param {Object} playbook.dir - The working directory of the playbook.
+ * @param {Object} playbook.runtime - The runtime configuration object for Antora.
+ * @param {String} [playbook.runtime.cacheDir=undefined] - The base cache directory.
  * @param {Object} playbook.ui - The UI configuration object for Antora.
  * @param {String} playbook.ui.bundle - The path (relative or absolute) or URI
  * of the UI bundle to use.
@@ -50,10 +53,14 @@ async function loadUi (playbook) {
   const { bundle: bundleUri, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
   let resolveBundle
   if (isUrl(bundleUri)) {
-    const cachePath = getCachePath(sha1(bundleUri) + '.zip')
-    resolveBundle = fs.pathExists(cachePath).then((exists) => {
-      if (exists) return cachePath
-      return get(bundleUri, { encoding: null }).then(({ body }) => fs.outputFile(cachePath, body).then(() => cachePath))
+    resolveBundle = ensureCacheDir((playbook.runtime || {}).cacheDir, startDir).then((cacheDir) => {
+      const cachePath = ospath.join(cacheDir, sha1(bundleUri) + '.zip')
+      return fs.pathExists(cachePath).then((exists) => {
+        if (exists) return cachePath
+        return get(bundleUri, { encoding: null }).then(({ body }) =>
+          fs.outputFile(cachePath, body).then(() => cachePath)
+        )
+      })
     })
   } else {
     const localPath = expandPath(bundleUri, '~+', startDir)
@@ -99,8 +106,23 @@ function sha1 (string) {
   return shasum.digest('hex')
 }
 
-function getCachePath (relative) {
-  return ospath.resolve(UI_CACHE_PATH, relative)
+/**
+ * Resolves the content cache directory and ensures it exists.
+ *
+ * @param {String} customCacheDir - The custom base cache directory. If the value is undefined,
+ *   the user's cache folder is used.
+ * @param {String} startDir - The directory from which to resolve a leading '.' segment.
+ *
+ * @returns {Promise<String>} A promise that resolves to the absolute ui cache directory.
+ */
+function ensureCacheDir (customCacheDir, startDir) {
+  // QUESTION should fallback directory be relative to cwd, playbook dir, or tmpdir?
+  const baseCacheDir =
+    customCacheDir == null
+      ? getCacheDir('antora' + (process.env.NODE_ENV === 'test' ? '-test' : '')) || ospath.resolve('.antora/cache')
+      : expandPath(customCacheDir, '~+', startDir)
+  const cacheDir = ospath.join(baseCacheDir, UI_CACHE_FOLDER)
+  return fs.ensureDir(cacheDir).then(() => cacheDir)
 }
 
 function selectFilesStartingFrom (startPath) {

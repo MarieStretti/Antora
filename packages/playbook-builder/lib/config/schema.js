@@ -114,6 +114,13 @@ module.exports = {
     },
   },
   runtime: {
+    cache_dir: {
+      doc: 'The cache directory. (default: antora folder under cache dir for current user)',
+      format: String,
+      default: undefined,
+      arg: 'cache-dir',
+      env: 'ANTORA_CACHE_DIR',
+    },
     quiet: {
       doc: 'Do not write any messages to stdout.',
       format: Boolean,

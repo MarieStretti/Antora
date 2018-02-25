@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, heredoc } = require('../../../test/test-utils')
+const { expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
 
 const fs = require('fs-extra')
 const { default: Kapok } = require('kapok-js')
@@ -42,14 +42,15 @@ describe('cli', () => {
       .then((repoBuilder) => repoBuilder.importFilesFromFixture('the-component'))
       .then((repoBuilder) => repoBuilder.close('master'))
 
-  // FIXME the antora generate command should work without changing cwd
-  const runAntora = (args = undefined, env = process.env, cwd = WORK_DIR) => {
+  // NOTE run the antora command from WORK_DIR by default to simulate a typical use case
+  const runAntora = (args = undefined, env = undefined, cwd = WORK_DIR) => {
     if (!Array.isArray(args)) args = args ? args.split(' ') : []
+    env = Object.assign({}, process.env, { ANTORA_CACHE_DIR: ospath.join(WORK_DIR, '.antora/cache') }, env)
     return Kapok.start(ANTORA_CLI, args, { cwd, env })
   }
 
   before(async () => {
-    fs.removeSync(CONTENT_REPOS_DIR)
+    removeSyncForce(CONTENT_REPOS_DIR)
     await createContentRepository()
     destDir = 'build/site'
     destAbsDir = ospath.join(WORK_DIR, destDir)
@@ -60,7 +61,9 @@ describe('cli', () => {
   beforeEach(() => {
     fs.ensureDirSync(WORK_DIR)
     fs.removeSync(playbookFile)
-    fs.removeSync(ospath.join(WORK_DIR, destDir.split('/')[0]))
+    // NOTE keep the default cache folder between tests
+    removeSyncForce(ospath.join(WORK_DIR, destDir.split('/')[0]))
+    removeSyncForce(ospath.join(WORK_DIR, '.antora-cache-override'))
     playbookSpec = {
       site: { title: 'The Site' },
       content: {
@@ -71,12 +74,12 @@ describe('cli', () => {
   })
 
   after(() => {
-    fs.removeSync(CONTENT_REPOS_DIR)
+    removeSyncForce(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
-      fs.removeSync(ospath.join(WORK_DIR, destDir.split('/')[0]))
+      removeSyncForce(ospath.join(WORK_DIR, destDir.split('/')[0]))
       fs.removeSync(playbookFile)
     } else {
-      fs.removeSync(WORK_DIR)
+      removeSyncForce(WORK_DIR)
     }
   })
 
@@ -232,8 +235,8 @@ describe('cli', () => {
     const runCwd = ospath.join(WORK_DIR, 'some-other-folder')
     fs.ensureDirSync(runCwd)
     const playbookRelFile = ospath.relative(runCwd, playbookFile)
-    playbookSpec.content.sources[0].url = '.' + ospath.sep +
-      ospath.relative(WORK_DIR, playbookSpec.content.sources[0].url)
+    playbookSpec.content.sources[0].url =
+      '.' + ospath.sep + ospath.relative(WORK_DIR, playbookSpec.content.sources[0].url)
     playbookSpec.ui.bundle = '.' + ospath.sep + ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'ui-bundle.zip'))
     playbookSpec.output = { dir: '.' + ospath.sep + destDir }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -249,6 +252,56 @@ describe('cli', () => {
         .to.be.a.directory()
         .with.subDirs(['1.0'])
       expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+    })
+  }).timeout(TIMEOUT)
+
+  it('should store cache in cache directory passed to --cache-dir option', () => {
+    const repoPath = playbookSpec.content.sources[0].url
+    const repoUrl = 'file://' + (ospath.sep === '\\' ? '/' + repoPath.replace(/\\/g, '/') : repoPath)
+    playbookSpec.content.sources[0].url = repoUrl
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    const cacheAbsDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
+    expect(cacheAbsDir).to.not.be.a.path()
+    // Q: how do we assert w/ kapok when there's no output; use promise as workaround
+    return new Promise((resolve) =>
+      runAntora(['generate', 'the-site', '--cache-dir', '.antora-cache-override']).on('exit', resolve)
+    ).then((exitCode) => {
+      expect(exitCode).to.equal(0)
+      expect(cacheAbsDir)
+        .to.be.a.directory()
+        .with.subDirs(['content', 'ui'])
+      expect(ospath.join(cacheAbsDir, 'content'))
+        .to.be.a.directory()
+        .and.not.be.empty()
+      expect(ospath.join(cacheAbsDir, 'ui'))
+        .to.be.a.directory()
+        .and.not.be.empty()
+      removeSyncForce(cacheAbsDir)
+    })
+  }).timeout(TIMEOUT)
+
+  it('should store cache in cache directory defined by ANTORA_CACHE_DIR environment variable', () => {
+    const repoPath = playbookSpec.content.sources[0].url
+    const repoUrl = 'file://' + (ospath.sep === '\\' ? '/' + repoPath.replace(/\\/g, '/') : repoPath)
+    playbookSpec.content.sources[0].url = repoUrl
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    const cacheAbsDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
+    expect(cacheAbsDir).to.not.be.a.path()
+    // Q: how do we assert w/ kapok when there's no output; use promise as workaround
+    return new Promise((resolve) =>
+      runAntora('generate the-site', { ANTORA_CACHE_DIR: '.antora-cache-override' }).on('exit', resolve)
+    ).then((exitCode) => {
+      expect(exitCode).to.equal(0)
+      expect(cacheAbsDir)
+        .to.be.a.directory()
+        .with.subDirs(['content', 'ui'])
+      expect(ospath.join(cacheAbsDir, 'content'))
+        .to.be.a.directory()
+        .and.not.be.empty()
+      expect(ospath.join(cacheAbsDir, 'ui'))
+        .to.be.a.directory()
+        .and.not.be.empty()
+      removeSyncForce(cacheAbsDir)
     })
   }).timeout(TIMEOUT)
 
@@ -357,7 +410,7 @@ describe('cli', () => {
         .on('data', (data) => messages.push(data.message))
         .on('exit', resolve)
     ).then((exitCode) => {
-      fs.removeSync(localNodeModules)
+      removeSyncForce(localNodeModules)
       expect(exitCode).to.equal(0)
       expect(messages).to.include('Using custom site generator')
       expect(destAbsDir).to.be.a.directory()
@@ -385,7 +438,7 @@ describe('cli', () => {
     // FIXME assert that exit code is 1 (limitation in Kapok when using assert)
     return runAntora('generate the-site')
       .assert(/not found or failed to load/i)
-      .on('exit', () => fs.removeSync(localNodeModules))
+      .on('exit', () => removeSyncForce(localNodeModules))
       .done()
   })
 
