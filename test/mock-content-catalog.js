@@ -1,11 +1,13 @@
 'use strict'
 
 const { posix: path } = require('path')
+const resolvePage = require('@antora/content-classifier/lib/util/resolve-page')
 const { spy } = require('./test-utils')
 
 function mockContentCatalog (seed = []) {
   if (!Array.isArray(seed)) seed = [seed]
   const familyDirs = {
+    alias: 'pages',
     example: 'examples',
     image: 'images',
     navigation: '',
@@ -46,25 +48,24 @@ function mockContentCatalog (seed = []) {
       },
     }
     if (mediaType) entry.src.mediaType = entry.mediaType = mediaType
-    if (family === 'page' || family === 'navigation') {
-      const pubVersion = version === 'master' ? '' : version
-      const pubModule = module === 'ROOT' ? '' : module
-      if (family === 'page') {
-        entry.pub = {
-          url: '/' + path.join(component, pubVersion, pubModule, relative.slice(0, -5) + (indexify ? '/' : '.html')),
-          moduleRootPath: relative.includes('/')
-            ? Array(relative.split('/').length - 1)
-              .fill('..')
-              .join('/')
-            : '.',
-        }
-      } else if (family === 'navigation') {
-        entry.pub = {
-          url: '/' + path.join(component, pubVersion, pubModule) + '/',
-          moduleRootPath: '.',
-        }
-        entry.nav = { index: navIndex }
+    const pubVersion = version === 'master' ? '' : version
+    const pubModule = module === 'ROOT' ? '' : module
+    if (family === 'page' || family === 'alias') {
+      entry.out = {
+        path: path.join(component, pubVersion, pubModule, relative.slice(0, -5) + (indexify ? '/' : '.html')),
+        moduleRootPath: relative.includes('/')
+          ? Array(relative.split('/').length - 1)
+            .fill('..')
+            .join('/')
+          : '.',
       }
+      entry.pub = { url: '/' + entry.out.path, moduleRootPath: entry.out.moduleRootPath }
+    } else if (family === 'navigation') {
+      entry.pub = {
+        url: '/' + path.join(component, pubVersion, pubModule) + '/',
+        moduleRootPath: '.',
+      }
+      entry.nav = { index: navIndex }
     }
     const byIdKey = componentVersionKey + (module || '') + ':' + family + '$' + relative
     const byPathKey = componentVersionKey + componentRelativePath
@@ -82,6 +83,9 @@ function mockContentCatalog (seed = []) {
       entriesByPath[buildComponentVersionKey(component, version) + path_],
     getComponent: (name) => components[name],
     getFiles: () => entries,
+    resolvePage: function (spec, ctx) {
+      return resolvePage(spec, this, ctx)
+    },
     spyOn: function (...names) {
       names.forEach((name) => (this[name] = spy(this[name])))
       return this

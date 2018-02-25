@@ -3,7 +3,7 @@
 
 const { expect, spy } = require('../../../test/test-utils')
 
-const resolvePage = require('@antora/asciidoc-loader/lib/xref/resolve-page')
+const resolvePage = require('@antora/content-classifier/lib/util/resolve-page')
 
 describe('resolvePage', () => {
   const mockContentCatalog = (file, component) => ({
@@ -17,7 +17,7 @@ describe('resolvePage', () => {
     expect(contentCatalog.getById).to.not.have.been.called()
   })
 
-  it('should return undefined page in result if file not found in catalog', () => {
+  it('should return undefined if file not found in catalog', () => {
     const contentCatalog = mockContentCatalog()
     const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
     const targetPageId = {
@@ -56,7 +56,7 @@ describe('resolvePage', () => {
     expect(result).to.equal(targetFile)
   })
 
-  it('should use context to fill out page ID when resolving file in catalog', () => {
+  it('should use context to fill in page ID when resolving file in catalog', () => {
     const context = {
       component: 'current-component',
       version: '1.0',
@@ -112,7 +112,7 @@ describe('resolvePage', () => {
     expect(result).to.equal(targetFile)
   })
 
-  it('should return undefined page if unknown component is specified without a version', () => {
+  it('should return undefined if unknown component is specified without a version', () => {
     const contentCatalog = mockContentCatalog()
     const targetPageIdSpec = 'unknown-component::the-page.adoc'
     const targetPageId = {

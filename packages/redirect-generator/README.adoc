@@ -1,0 +1,17 @@
+= Antora Redirect Generator
+
+The redirect generator is the component in Antora responsible for generating redirects (HTTP redirections) to a page from its registered aliases.
+These redirects are produces from alias entries in the content catalog.
+
+This component can generate redirects using different strategies.
+If the deployment environment does not offer redirect capabilities, Antora can generate static HTML redirect pages (client-side redirection).
+If redirect capabilities are available, such as rewrite rules on nginx, Antora can generate a suitable server configuration file (server-side redirection).
+
+https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.
+Its site generator pipeline aggregates documents from versioned content repositories and processes them using https://asciidoctor.org[Asciidoctor].
+
+== Copyright and License
+
+Copyright (C) 2017-2018 https://opendevise.com[OpenDevise Inc.] and the https://antora.org[Antora Project].
+
+Use of this software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).

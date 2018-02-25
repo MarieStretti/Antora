@@ -1,6 +1,10 @@
 'use strict'
 
 const _ = require('lodash')
+const File = require('./file')
+const parsePageId = require('./util/parse-page-id')
+const { posix: path } = require('path')
+const resolvePage = require('./util/resolve-page')
 const versionCompare = require('./util/version-compare-desc')
 
 const $components = Symbol('components')
@@ -8,9 +12,11 @@ const $files = Symbol('files')
 const $generateId = Symbol('generateId')
 
 class ContentCatalog {
-  constructor () {
+  constructor (playbook) {
     this[$components] = {}
     this[$files] = {}
+    this.htmlUrlExtensionStyle = _.get(playbook, ['urls', 'htmlExtensionStyle'], 'default')
+    //this.urlRedirectStrategy = _.get(playbook, ['urls', 'redirectStrategy'], 'static')
   }
 
   getComponent (name) {
@@ -31,9 +37,7 @@ class ContentCatalog {
       const versions = component.versions
       const insertIdx = versions.findIndex((candidate) => {
         const verdict = versionCompare(candidate.version, version)
-        if (verdict === 0) {
-          throw new Error(`Duplicate version detected for component ${name}: ${version}`)
-        }
+        if (verdict === 0) throw new Error(`Duplicate version detected for component ${name}: ${version}`)
         return verdict > 0
       })
       const versionEntry = { title, version, url }
@@ -59,12 +63,54 @@ class ContentCatalog {
     }
   }
 
+  // QUESTION should this method return the file added?
   addFile (file) {
-    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
-    if (id in this[$files]) {
-      throw new Error('Duplicate file')
+    if (!File.isVinyl(file)) file = new File(file)
+    const family = file.src.family
+    const actingFamily = family === 'alias' ? file.rel.src.family : family
+    if (!('out' in file) && (actingFamily === 'page' || actingFamily === 'image' || actingFamily === 'attachment')) {
+      file.out = computeOut(file.src, actingFamily, this.htmlUrlExtensionStyle)
     }
+    if (
+      !('pub' in file) &&
+      (actingFamily === 'page' ||
+        actingFamily === 'image' ||
+        actingFamily === 'attachment' ||
+        actingFamily === 'navigation')
+    ) {
+      file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
+      //if (family === 'alias' && this.urlRedirectStrategy !== 'static') delete file.out
+    }
+    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
+    if (id in this[$files]) throw new Error(`Duplicate file: ${id}`)
     this[$files][id] = file
+  }
+
+  resolvePage (pageSpec, context = {}) {
+    return resolvePage(pageSpec, this, context)
+  }
+
+  registerPageAlias (aliasSpec, targetFile) {
+    const src = parsePageId(aliasSpec, targetFile.src)
+    // QUESTION should we throw an error?
+    if (!src) return
+    if (!src.version) {
+      const componentRef = src.component && this.getComponent(src.component)
+      // QUESTION should resolvePage also set version to master by default?
+      src.version = componentRef ? componentRef.latestVersion.version : 'master'
+    }
+    src.family = 'alias'
+    src.basename = path.basename(src.relative)
+    src.extname = path.extname(src.relative)
+    src.stem = path.basename(src.relative, src.extname)
+    src.mediaType = 'text/asciidoc'
+    // QUESTION should we use src.origin instead of rel with type='link'?
+    //src.origin = { type: 'link', target: targetFile }
+    // NOTE the redirect generator will populate contents when the redirect strategy is 'static'
+    // QUESTION should we set the path property on the alias file?
+    const file = new File({ path: targetFile.path, mediaType: src.mediaType, src, rel: targetFile })
+    this.addFile(file)
+    return file
   }
 
   findBy (options) {
@@ -82,8 +128,79 @@ class ContentCatalog {
   }
 
   [$generateId] ({ component, version, module, family, relative }) {
-    return `${family}/${version}@${component}:${module}:${relative}`
+    return `$${family}/${version}@${component}:${module}:${relative}`
   }
+}
+
+function computeOut (src, family, htmlUrlExtensionStyle) {
+  const component = src.component
+  const version = src.version === 'master' ? '' : src.version
+  const module = src.module === 'ROOT' ? '' : src.module
+
+  const stem = src.stem
+  let basename = src.mediaType === 'text/asciidoc' ? stem + '.html' : src.basename
+  let indexifyPathSegment = ''
+  if (family === 'page' && stem !== 'index' && htmlUrlExtensionStyle === 'indexify') {
+    basename = 'index.html'
+    indexifyPathSegment = stem
+  }
+
+  let familyPathSegment = ''
+  if (family === 'image') {
+    familyPathSegment = '_images'
+  } else if (family === 'attachment') {
+    familyPathSegment = '_attachments'
+  }
+
+  const modulePath = path.join(component, version, module)
+  const dirname = path.join(modulePath, familyPathSegment, path.dirname(src.relative), indexifyPathSegment)
+  const path_ = path.join(dirname, basename)
+  const moduleRootPath = path.relative(dirname, modulePath) || '.'
+  const rootPath = path.relative(dirname, '') || '.'
+
+  return {
+    dirname,
+    basename,
+    path: path_,
+    moduleRootPath,
+    rootPath,
+  }
+}
+
+function computePub (src, out, family, htmlUrlExtensionStyle) {
+  const pub = {}
+  let url
+  if (family === 'navigation') {
+    const urlSegments = [src.component]
+    if (src.version !== 'master') urlSegments.push(src.version)
+    if (src.module && src.module !== 'ROOT') urlSegments.push(src.module)
+    // an artificial URL used for resolving page references in navigation model
+    url = '/' + urlSegments.join('/') + '/'
+    pub.moduleRootPath = '.'
+  } else if (family === 'page') {
+    const urlSegments = out.path.split('/')
+    const lastUrlSegmentIdx = urlSegments.length - 1
+    if (htmlUrlExtensionStyle === 'drop') {
+      // drop just the .html extension or, if the filename is index.html, the whole segment
+      const lastUrlSegment = urlSegments[lastUrlSegmentIdx]
+      urlSegments[lastUrlSegmentIdx] =
+        lastUrlSegment === 'index.html' ? '' : lastUrlSegment.substr(0, lastUrlSegment.length - 5)
+    } else if (htmlUrlExtensionStyle === 'indexify') {
+      urlSegments[lastUrlSegmentIdx] = ''
+    }
+    url = '/' + urlSegments.join('/')
+  } else {
+    url = '/' + out.path
+  }
+
+  pub.url = url
+
+  if (out) {
+    pub.moduleRootPath = out.moduleRootPath
+    pub.rootPath = out.rootPath
+  }
+
+  return pub
 }
 
 module.exports = ContentCatalog

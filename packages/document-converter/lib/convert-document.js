@@ -2,6 +2,8 @@
 
 const loadAsciiDoc = require('@antora/asciidoc-loader')
 
+const CommaDelimiterRx = /\s*,\s*/
+
 /**
  * Converts the contents on the specified file from AsciiDoc to embeddable HTML.
  *
@@ -25,12 +27,20 @@ const loadAsciiDoc = require('@antora/asciidoc-loader')
 function convertDocument (file, contentCatalog = undefined, asciidocConfig = {}) {
   const doc = loadAsciiDoc(file, contentCatalog, asciidocConfig)
   const attributes = doc.getAttributes()
+  registerAliases(attributes['page-aliases'], file, contentCatalog)
   // Q: should we backup the AsciiDoc contents for all pages? what's the impact?
   if ('page-partial' in attributes) file.src.contents = file.contents
   file.asciidoc = doc.hasHeader() ? { attributes, doctitle: doc.getDocumentTitle() } : { attributes }
   file.contents = Buffer.from(doc.convert())
   file.mediaType = 'text/html'
   return file
+}
+
+function registerAliases (aliases, targetFile, contentCatalog) {
+  if (!aliases) return
+  aliases
+    .split(CommaDelimiterRx)
+    .forEach((aliasSpec) => aliasSpec && contentCatalog.registerPageAlias(aliasSpec, targetFile))
 }
 
 module.exports = convertDocument

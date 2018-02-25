@@ -13,6 +13,9 @@ ui:
   supplemental_files:
   - path: head-meta.hbs
     contents: <link rel="stylesheet" href="https://example.org/shared.css">
+urls:
+  html_extension_style: indexify
+  redirect_strategy: nginx
 asciidoc:
   attributes:
     allow-uri-read: true

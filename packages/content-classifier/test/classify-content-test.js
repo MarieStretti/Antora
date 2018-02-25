@@ -4,6 +4,8 @@
 const { expect } = require('../../../test/test-utils')
 
 const classifyContent = require('@antora/content-classifier')
+const ContentCatalog = require('@antora/content-classifier/lib/content-catalog')
+const File = require('vinyl')
 const { posix: path } = require('path')
 const mimeTypes = require('@antora/content-aggregator/lib/mime-types-with-asciidoc')
 const { COMPONENT_DESC_FILENAME } = require('@antora/content-aggregator/lib/constants')
@@ -24,7 +26,7 @@ describe('classifyContent()', () => {
   beforeEach(() => {
     playbook = {
       site: { url: 'https://the-website.tld' },
-      urls: { htmlExtensionStyle: 'default' },
+      urls: { htmlExtensionStyle: 'default', redirectStrategy: 'static' },
     }
     aggregate = [
       {
@@ -124,7 +126,7 @@ describe('classifyContent()', () => {
       expect(component.latestVersion.version).to.equal('v3.0.0')
     })
 
-    it('should not set url if start page cannot be resolved', () => {
+    it('should not set url on component if start page cannot be resolved', () => {
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
       expect(component).to.exist()
       expect(component.url).to.be.undefined()
@@ -207,13 +209,19 @@ describe('classifyContent()', () => {
       expect(component.versions[0].url).to.equal('/the-component/v1.2.3/index.html')
     })
 
-    it('should allow the start page to be specified', () => {
+    it('should allow the start page to be specified for a component version', () => {
       aggregate[0].start_page = 'ROOT:home.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/home.adoc'))
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
       expect(component).to.exist()
       expect(component.url).to.equal('/the-component/v1.2.3/home.html')
       expect(component.versions[0].url).to.equal('/the-component/v1.2.3/home.html')
+    })
+
+    it('should throw error if start page specified for component version cannot be resolved', () => {
+      aggregate[0].start_page = 'no-such-page'
+      aggregate[0].files.push(createFile('modules/ROOT/pages/home.adoc'))
+      expect(() => classifyContent(playbook, aggregate)).to.throw(/Start page .* not found/)
     })
 
     it('should update url of component to match url of greatest version', () => {
@@ -322,8 +330,10 @@ describe('classifyContent()', () => {
 
     it('should classify a navigation file in module', () => {
       aggregate[0].nav = ['modules/module-a/nav.adoc']
+      aggregate[0].files.push(createFile('modules/module-a/pages/index.adoc'))
       aggregate[0].files.push(createFile('modules/module-a/nav.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const contentCatalog = classifyContent(playbook, aggregate)
+      const files = contentCatalog.findBy({ family: 'navigation' })
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/module-a/nav.adoc')
@@ -392,6 +402,15 @@ describe('classifyContent()', () => {
       aggregate[0].files.push(createFile('modules/ROOT/nav.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files).to.have.lengthOf(0)
+    })
+
+    // QUESTION should we throw an error or warning?
+    it('should not register navigation file that points to non-existent file', () => {
+      aggregate[0].nav = ['modules/ROOT/no-such-file.adoc']
+      aggregate[0].files.push(createFile('modules/ROOT/pages/the-page.adoc'))
+      aggregate[0].files.push(createFile('modules/ROOT/nav.adoc'))
+      const contentCatalog = classifyContent(playbook, aggregate)
+      expect(contentCatalog.findBy({ family: 'navigation' })).to.have.lengthOf(0)
     })
 
     it('should assign a nav.index property to navigation file according to order listed in component descriptor', () => {
@@ -477,6 +496,45 @@ describe('classifyContent()', () => {
         },
       ]
       expect(() => classifyContent({}, aggregate)).to.throw()
+    })
+  })
+
+  describe('site start page', () => {
+    it('should not register site start page if not specified', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
+      const contentCatalog = classifyContent(playbook, aggregate)
+      const files = contentCatalog.getFiles()
+      expect(files).to.have.lengthOf(1)
+      const expected = contentCatalog.getById({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'index.adoc',
+      })
+      expect(files[0]).to.eql(expected)
+    })
+
+    it('should register site start page if specified', () => {
+      playbook.site.startPage = 'v1.2.3@the-component:ROOT:index'
+      aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
+      const contentCatalog = classifyContent(playbook, aggregate)
+      const files = contentCatalog.getFiles()
+      expect(files).to.have.lengthOf(2)
+      const expected = contentCatalog.getById({
+        component: '',
+        version: '',
+        module: '',
+        family: 'alias',
+        relative: 'index.adoc',
+      })
+      expect(expected).to.exist()
+    })
+
+    it('should throw error if site start page not found', () => {
+      playbook.site.startPage = 'no-such-page'
+      aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
+      expect(() => classifyContent(playbook, aggregate)).to.throw(/Specified start page .* not found/)
     })
   })
 
@@ -713,7 +771,24 @@ describe('classifyContent()', () => {
     })
   })
 
-  describe('findBy()', () => {
+  describe('ContentCatalog', () => {
+    it('should initialize url options on ContentCatalog to default values', () => {
+      delete playbook.urls
+      const contentCatalog = classifyContent(playbook, aggregate)
+      expect(contentCatalog.htmlUrlExtensionStyle).to.equal('default')
+      //expect(contentCatalog.urlRedirectStrategy).to.equal('static')
+    })
+
+    it('should set url options on ContentCatalog from playbook', () => {
+      playbook.urls.htmlExtensionStyle = 'indexify'
+      playbook.urls.redirectStrategy = 'nginx'
+      const contentCatalog = classifyContent(playbook, aggregate)
+      expect(contentCatalog.htmlUrlExtensionStyle).to.equal('indexify')
+      //expect(contentCatalog.urlRedirectStrategy).to.equal('nginx')
+    })
+  })
+
+  describe('ContentCatalog#findBy()', () => {
     beforeEach(() => {
       aggregate = [
         {
@@ -812,7 +887,299 @@ describe('classifyContent()', () => {
     })
   })
 
-  describe('getById()', () => {
+  describe('ContentCatalog#addFile()', () => {
+    it('should populate out and pub when called with vinyl file that has src property', () => {
+      const src = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.have.property('out')
+      expect(result.out).to.include({ path: 'the-component/1.2.3/the-page.html', rootPath: '../..' })
+      expect(result).to.have.property('pub')
+      expect(result.pub).to.include({ url: '/the-component/1.2.3/the-page.html' })
+    })
+
+    it('should respect htmlUrlExtensionStyle setting when computing pub', () => {
+      const src = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.htmlUrlExtensionStyle = 'indexify'
+      contentCatalog.addFile(new File({ src }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.have.property('out')
+      expect(result.out).to.include({ path: 'the-component/1.2.3/the-page/index.html', rootPath: '../../..' })
+      expect(result).to.have.property('pub')
+      expect(result.pub).to.include({ url: '/the-component/1.2.3/the-page/' })
+    })
+
+    it('should not set out and pub properties if defined on input', () => {
+      const src = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const out = {}
+      const pub = {}
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src, out, pub }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.have.property('out')
+      expect(result.out).to.equal(out)
+      expect(result).to.have.property('pub')
+      expect(result.pub).to.equal(pub)
+    })
+
+    it('should only set pub property on file in navigation family', () => {
+      const src = {
+        component: 'the-component',
+        version: 'master',
+        module: 'ROOT',
+        family: 'navigation',
+        relative: 'nav.adoc',
+        basename: 'nav.adoc',
+        stem: 'nav',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.not.have.property('out')
+      expect(result).to.have.property('pub')
+      expect(result.pub.url).to.equal('/the-component/')
+    })
+
+    it('should convert object to vinyl file', () => {
+      const src = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile({ path: src.relative, src })
+      const result = contentCatalog.getById(src)
+      expect(File.isVinyl(result)).to.be.true()
+      expect(result.relative).to.equal('the-page.adoc')
+      expect(result).to.have.property('out')
+      expect(result).to.have.property('pub')
+    })
+
+    it('should process file using family from rel property if set', () => {
+      const contentCatalog = new ContentCatalog()
+      const relSrc = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-other-page.adoc',
+        basename: 'the-other-page.adoc',
+        stem: 'the-other-page',
+        mediaType: 'text/asciidoc',
+      }
+      contentCatalog.addFile(new File({ src: relSrc }))
+      const rel = contentCatalog.getById(relSrc)
+      const src = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      contentCatalog.addFile(new File({ src, rel }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.have.property('out')
+      expect(result.out).to.include({ path: 'the-component/1.2.3/the-page.html', rootPath: '../..' })
+      expect(result).to.have.property('pub')
+      expect(result.pub).to.include({ url: '/the-component/1.2.3/the-page.html' })
+      expect(result).to.have.property('rel')
+      expect(result.rel).to.have.property('pub')
+      expect(result.rel.pub).to.include({ url: '/the-component/1.2.3/the-other-page.html' })
+    })
+  })
+
+  describe('ContentCatalog#registerPageAlias()', () => {
+    // QUESTION should we throw an error or warning?
+    it('should not register alias if page spec is invalid', () => {
+      expect(new ContentCatalog().registerPageAlias('invalid::', {})).to.be.undefined()
+    })
+
+    it('should register an alias for target file given a valid qualified page spec', () => {
+      const targetSrc = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src: targetSrc }))
+      const targetFile = contentCatalog.getById(targetSrc)
+      const result = contentCatalog.registerPageAlias('1.0.0@the-component:ROOT:the-topic/alias.adoc', targetFile)
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'the-component',
+        version: '1.0.0',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'the-topic/alias.adoc',
+      })
+      expect(result.path).to.equal(targetFile.path)
+      expect(result).to.have.property('rel')
+      expect(result.rel).to.equal(targetFile)
+      expect(contentCatalog.getById(result.src)).to.equal(result)
+    })
+
+    it('should register an alias for target file given a valid contextual page spec', () => {
+      const targetSrc = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src: targetSrc }))
+      const targetFile = contentCatalog.getById(targetSrc)
+      const result = contentCatalog.registerPageAlias('alias.adoc', targetFile)
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'alias.adoc',
+      })
+      expect(result.path).to.equal(targetFile.path)
+      expect(result).to.have.property('rel')
+      expect(result.rel).to.equal(targetFile)
+      expect(contentCatalog.getById(result.src)).to.equal(result)
+    })
+
+    it('should set version of alias to latest version of component if version not specified', () => {
+      const targetSrc = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.registerComponentVersion('another-component', '1.0', 'Another Component', '/the-component/1.0/')
+      contentCatalog.addFile(new File({ src: targetSrc }))
+      const targetFile = contentCatalog.getById(targetSrc)
+      const result = contentCatalog.registerPageAlias('another-component::alias.adoc', targetFile)
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'another-component',
+        version: '1.0',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'alias.adoc',
+      })
+    })
+
+    it('should not set version of alias if version not specified and component not registered', () => {
+      const targetSrc = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src: targetSrc }))
+      const targetFile = contentCatalog.getById(targetSrc)
+      const result = contentCatalog.registerPageAlias('another-component::alias.adoc', targetFile)
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src.version).to.equal('master')
+    })
+  })
+
+  describe('ContentCatalog#resolvePage()', () => {
+    beforeEach(() => {
+      aggregate = [
+        {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          files: [createFile('modules/ROOT/assets/images/foo.png'), createFile('modules/ROOT/pages/page-one.adoc')],
+        },
+      ]
+    })
+
+    it('should find file by qualified page spec', () => {
+      const pageSpec = 'v1.2.3@the-component:ROOT:page-one.adoc'
+      const page = classifyContent(playbook, aggregate).resolvePage(pageSpec)
+      expect(page.path).to.equal('modules/ROOT/pages/page-one.adoc')
+    })
+
+    it('should return undefined if file not resolved from qualified page spec', () => {
+      const pageSpec = 'v1.2.3@the-component:ROOT:no-such-page.adoc'
+      const page = classifyContent(playbook, aggregate).resolvePage(pageSpec)
+      expect(page).not.to.exist()
+    })
+
+    it('should find file by contextual page spec', () => {
+      const pageSpec = 'ROOT:page-one.adoc'
+      const context = { component: 'the-component', version: 'v1.2.3' }
+      const page = classifyContent(playbook, aggregate).resolvePage(pageSpec, context)
+      expect(page.path).to.equal('modules/ROOT/pages/page-one.adoc')
+    })
+
+    it('should return undefined if file not resolved from contextual page spec', () => {
+      const pageSpec = 'ROOT:page-one.adoc'
+      const context = {}
+      const page = classifyContent(playbook, aggregate).resolvePage(pageSpec, context)
+      expect(page).not.to.exist()
+    })
+  })
+
+  describe('ContentCatalog#getById()', () => {
     beforeEach(() => {
       aggregate = [
         {
@@ -847,7 +1214,7 @@ describe('classifyContent()', () => {
     })
   })
 
-  describe('getByPath()', () => {
+  describe('ContentCatalog#getByPath()', () => {
     beforeEach(() => {
       aggregate = [
         {

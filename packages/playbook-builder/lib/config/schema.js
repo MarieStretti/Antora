@@ -135,24 +135,24 @@ module.exports = {
     },
   },
   urls: {
-    html_extension_style: {
-      doc: 'Controls how the URL extension for HTML pages is handled.',
-      format: ['default', 'drop', 'indexify'],
-      default: 'default',
-      arg: 'html-url-extension-style',
-    },
     aspect_page_strategy: {
       doc: 'Controls how links to pages in aspect domains are generated.',
       format: ['path', 'query'],
       default: 'path',
       arg: 'aspect-page-url-strategy',
     },
-  },
-  redirects: {
-    doc: 'Generate nginx config file containing URL redirects for page aliases.',
-    format: Boolean,
-    default: false,
-    arg: 'redirects',
+    html_extension_style: {
+      doc: 'Controls how the URL extension for HTML pages is handled.',
+      format: ['default', 'drop', 'indexify'],
+      default: 'default',
+      arg: 'html-url-extension-style',
+    },
+    redirect_strategy: {
+      doc: 'Generate artifacts to map URLs for page aliases and start pages.',
+      format: ['disabled', 'static', 'nginx'],
+      default: 'static',
+      arg: 'redirect-strategy',
+    },
   },
   output: {
     clean: {

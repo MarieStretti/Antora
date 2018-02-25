@@ -145,15 +145,9 @@ describe('convertDocument()', () => {
         url: '/component-a/1.2.3/module-b/page-b.html',
       },
     }
-    const contentCatalog = { getById: spy(() => targetFile) }
+    const contentCatalog = { resolvePage: spy(() => targetFile) }
     convertDocument(inputFile, contentCatalog)
-    expectCalledWith(contentCatalog.getById, {
-      component: 'component-a',
-      version: '1.2.3',
-      module: 'module-b',
-      family: 'page',
-      relative: 'page-b.adoc',
-    })
+    expectCalledWith(contentCatalog.resolvePage, ['module-b:page-b', inputFile.src])
     expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
   })
 

@@ -340,6 +340,8 @@ describe('buildPlaybook()', () => {
       'uri-project': 'https://antora.org',
     })
     expect(playbook.asciidoc.extensions).to.eql(['asciidoctor-plantuml', './lib/shout-block'])
+    expect(playbook.urls.htmlExtensionStyle).to.equal('indexify')
+    expect(playbook.urls.redirectStrategy).to.equal('nginx')
     expect(playbook.output.destinations).to.have.lengthOf(1)
     expect(playbook.output.dir).to.equal('./_site')
     expect(playbook.output.destinations[0].provider).to.equal('archive')
