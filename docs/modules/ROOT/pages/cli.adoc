@@ -48,7 +48,7 @@ The `antora` command accepts user inputs in the form of options, positional argu
 |Command |Purpose
 
 |antora
-|The required base command.
+|Required base command.
 
 |generate [options] <playbook>
 |Generate the documentation site specified by the <playbook>.
@@ -110,7 +110,7 @@ This option overrides the xref:playbook:playbook-schema.adoc#ui-bundle-key[ui bu
 |--url <url>
 |The base URL of the published site.
 The URL should not include a trailing slash.
-This option overrides the site url value specified in the playbook.
+This option overrides the xref:playbook:playbook-schema.adoc#site-url-key[site url value] specified in the playbook.
 |String
 |not set
 

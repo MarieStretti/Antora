@@ -101,16 +101,16 @@ Learn more:
 [#site-service-keys]
 === keys
 
-The account keys for site-wide services such document search tools and Google Analytics.
+The account keys for global site services such document search tools and Google Analytics.
 
 [#site-ga-key]
 ==== google_analytics
 
-The google_analytics key associates a Google Analytics account with the site.
+This key associates a Google Analytics account with the site.
 
 Learn more:
 
-* xref:configure-site.adoc#configure-ga[Add a Google Analytics account key]
+* xref:configure-site.adoc#configure-ga[Add a Google Analytics account key to the site]
 
 [#content-sources-keys]
 == Content and sources keys
@@ -137,7 +137,7 @@ Learn more:
 === branches
 
 The branches key accepts a list of branch name patterns, either as exact names or shell glob patterns (`v3.*`).
-When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_, i.e., the `master` branch and every branch that begins with `v`.
+When no branches are specified for a sources `url`, Antora will use the [.term]_default branches set_, i.e., the `master` branch and every branch that begins with `v`.
 
 Learn more:
 
@@ -166,7 +166,7 @@ The `ui` category contains keys that specify the location of the UI bundle and h
 [#ui-bundle-key]
 === bundle
 
-The URL or local filesystem path to a UI bundle.
+The bundle key accepts a URL or local filesystem path to a UI bundle ZIP archive.
 The filesystem path can be absolute or relative.
 
 Learn more:
@@ -177,8 +177,8 @@ Learn more:
 [#ui-start-path-key]
 === start_path
 
-The path inside the bundle from which UI files should be selected.
-Defaults to the root of the bundle.
+The start path key is the path inside the bundle from which UI files should be selected.
+When no value is specified, it defaults to the root of the bundle.
 
 Learn more:
 
@@ -196,7 +196,7 @@ Learn more:
 [#ui-output-dir-key]
 === output_dir
 
-The output directory path where the UI files are written in the published site.
+This key specifies the output directory path where the UI files are written in the published site.
 When the UI `output_dir` isn't specified, the files are published to the [.path]_++_++_ directory relative to the root of the published site.
 
 Learn more:
