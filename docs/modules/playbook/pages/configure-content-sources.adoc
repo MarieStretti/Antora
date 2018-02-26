@@ -30,11 +30,6 @@ The key accepts filesystem paths, file URLs, and any URI that git supports.
 
 The `url` accepts a relative or absolute filesystem path.
 
-A relative path will be expanded to an absolute path.
-If the first path segment is `~`, the path is resolved relative to the user's home directory.
-If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
-If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path resolved relative to the current working directory.
-
 .Local git repositories
 [source,yaml]
 ----
@@ -45,6 +40,12 @@ content:
 ----
 <1> Absolute path to git repository
 <2> Relative path to git repository
+
+A relative path will be expanded to an absolute path.
+
+* If the first path segment is `~`, the path is resolved relative to the user's home directory.
+* If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
+* If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path is resolved relative to the current working directory.
 
 [#remote-urls]
 === Fetch remote content repositories
@@ -91,7 +92,7 @@ Let's look at some examples of each of these name declaration methods.
 [#default-branch]
 === Default branch filter
 
-When no branches are specified for a source URL, Antora will use the [.term]_default branches set_.
+When no branches are specified for a sources `url`, Antora will use the [.term]_default branches set_.
 Antora assumes that a repository's default branches set is the `master` branch and every branch that begins with `v`.
 
 .Use default branch filter
@@ -122,7 +123,7 @@ The new default branch filter will be applied to all entries that do not themsel
 [#separate-branch-names]
 === Separate branches values using commas or markers
 
-Branch names can be separated by commas (`,`) and listed on the same line as the branches key.
+Branch names can be separated by commas (`,`) and listed on the same line as `branches`.
 Alternatively, each branch name can be specified on its own line, using a hyphen (`-`) list marker (per YAML rules), and listed beneath the branches key.
 
 [source,yaml]
