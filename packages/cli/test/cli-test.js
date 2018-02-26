@@ -228,13 +228,14 @@ describe('cli', () => {
     })
   }).timeout(TIMEOUT)
 
-  it('should resolve relative paths in playbook relative to playbook dir', () => {
+  it('should resolve dot-relative paths in playbook relative to playbook dir', () => {
     const runCwd = ospath.join(WORK_DIR, 'some-other-folder')
     fs.ensureDirSync(runCwd)
     const playbookRelFile = ospath.relative(runCwd, playbookFile)
-    playbookSpec.content.sources[0].url = ospath.relative(WORK_DIR, playbookSpec.content.sources[0].url)
-    playbookSpec.ui.bundle = ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'ui-bundle.zip'))
-    playbookSpec.output = { dir: destDir }
+    playbookSpec.content.sources[0].url = '.' + ospath.sep +
+      ospath.relative(WORK_DIR, playbookSpec.content.sources[0].url)
+    playbookSpec.ui.bundle = '.' + ospath.sep + ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'ui-bundle.zip'))
+    playbookSpec.output = { dir: '.' + ospath.sep + destDir }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>

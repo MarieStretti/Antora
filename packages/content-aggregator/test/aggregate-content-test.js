@@ -6,6 +6,7 @@ const { deferExceptions, expect, heredoc, removeSyncForce } = require('../../../
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
 const git = require('nodegit')
+const os = require('os')
 const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
@@ -64,6 +65,8 @@ describe('aggregateContent()', () => {
   }
 
   const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
+
+  const prefixPath = (prefix, path_) => [prefix, path_].join(ospath.sep)
 
   const clean = (fin) => {
     process.chdir(CWD)
@@ -191,7 +194,7 @@ describe('aggregateContent()', () => {
       }, 2)
     })
 
-    it('should resolve local repository path relative to playbook dir if set', async () => {
+    it('should resolve relative repository path starting from cwd', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
       const componentDesc = {
         name: 'the-component',
@@ -199,7 +202,27 @@ describe('aggregateContent()', () => {
         version: 'v1.2.3',
       }
       await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
-      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      playbookSpec.dir = WORK_DIR
+      playbookSpec.content.sources.push({ url: ospath.relative(newWorkDir, repoBuilder.url) })
+      let aggregate
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
+
+    it('should resolve dot-relative repository path starting from playbook dir if set', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: prefixPath('.', ospath.relative(WORK_DIR, repoBuilder.url)) })
       playbookSpec.dir = WORK_DIR
       const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
       fs.ensureDirSync(newWorkDir)
@@ -211,7 +234,7 @@ describe('aggregateContent()', () => {
       expect(aggregate[0]).to.deep.include(componentDesc)
     })
 
-    it('should resolve local repository path relative to process.cwd() if playbook dir not set', async () => {
+    it('should resolve dot-relative repository path start from cwd if playbook dir not set', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
       const componentDesc = {
         name: 'the-component',
@@ -219,7 +242,43 @@ describe('aggregateContent()', () => {
         version: 'v1.2.3',
       }
       await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
-      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
+      playbookSpec.content.sources.push({ url: prefixPath('.', ospath.relative(WORK_DIR, repoBuilder.url)) })
+      let aggregate
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
+
+    it('should expand leading ~ segment in local repository path to user home', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      playbookSpec.content.sources.push({ url: prefixPath('~', ospath.relative(os.homedir(), repoBuilder.url)) })
+      let aggregate
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.deep.include(componentDesc)
+    })
+
+    it('should expand leading ~+ segment in repository path to cwd', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const componentDesc = {
+        name: 'the-component',
+        title: 'The Component',
+        version: 'v1.2.3',
+      }
+      await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+      const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
+      fs.ensureDirSync(newWorkDir)
+      process.chdir(newWorkDir)
+      playbookSpec.dir = WORK_DIR
+      playbookSpec.content.sources.push({ url: prefixPath('~+', ospath.relative(newWorkDir, repoBuilder.url)) })
       let aggregate
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
@@ -1071,8 +1130,8 @@ describe('aggregateContent()', () => {
   })
 
   it('should throw meaningful error if local relative content directory does not exist', async () => {
-    const invalidDir = 'no-such-directory'
-    const invalidAbsDir = ospath.join(WORK_DIR, 'no-such-directory')
+    const invalidDir = './no-such-directory'
+    const invalidAbsDir = ospath.join(WORK_DIR, invalidDir)
     playbookSpec.dir = WORK_DIR
     playbookSpec.content.sources.push({ url: invalidDir })
     const expectedErrorMessage =
@@ -1090,7 +1149,7 @@ describe('aggregateContent()', () => {
   })
 
   it('should throw meaningful error if local relative content directory is not a git repository', async () => {
-    const regularDir = 'regular-directory'
+    const regularDir = './regular-directory'
     const regularAbsDir = ospath.join(WORK_DIR, regularDir)
     fs.ensureDirSync(regularAbsDir)
     fs.writeFileSync(ospath.join(regularAbsDir, 'antora.xml'), 'name: the-component\nversion: 1.0')

@@ -34,11 +34,11 @@ For a detailed list of current development tasks, refer to the core components {
 * [ ] Architect and implement page redirector / router component
 * [ ] Clone status indicator
 * [ ] Add convertDocuments function to the document converter {uri-issues}/172[#172]
+* [x] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
 
 ==== Waiting
 
 * [ ] Add error message when repository clone fails {uri-issues}/155[#155]
-* [ ] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
 * [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
 * [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]

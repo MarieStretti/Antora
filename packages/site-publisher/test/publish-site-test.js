@@ -158,7 +158,7 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to fs at relative path resolved from playbook dir', async () => {
-    const destDir = 'path/to/_site'
+    const destDir = './path/to/_site'
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
     await publishSite(playbook, catalogs)
     expect(playbook.output.destinations[0].path).to.equal(destDir)
@@ -167,12 +167,33 @@ describe('publishSite()', () => {
 
   it('should publish site to fs at relative path resolved from cwd if playbook dir not set', async () => {
     process.chdir(WORK_DIR)
-    const destDir = 'path/to/_site'
+    const destDir = './path/to/_site'
     delete playbook.dir
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
     await publishSite(playbook, catalogs)
     expect(playbook.output.destinations[0].path).to.equal(destDir)
     verifyFsOutput(destDir)
+  })
+
+  it('should publish site to fs at relative path resolved from pwd', async () => {
+    const workingDir = ospath.join(WORK_DIR, 'some-other-folder')
+    fs.ensureDirSync(workingDir)
+    process.chdir(workingDir)
+    const destDir = 'path/to/_site'
+    playbook.output.destinations.push({ provider: 'fs', path: destDir })
+    await publishSite(playbook, catalogs)
+    expect(playbook.output.destinations[0].path).to.equal(destDir)
+    verifyFsOutput(ospath.join('some-other-folder', destDir))
+  })
+
+  it('should publish site to fs at path relative to user home', async () => {
+    const destRelDir = ospath.relative(os.homedir(), ospath.join(playbook.dir, 'path/to/site'))
+    const destAbsDir = ospath.join(os.homedir(), destRelDir)
+    const destDir = '~' + ospath.sep + destRelDir
+    playbook.output.destinations.push({ provider: 'fs', path: destDir })
+    await publishSite(playbook, catalogs)
+    expect(playbook.output.destinations[0].path).to.equal(destDir)
+    verifyFsOutput(destAbsDir)
   })
 
   it('should publish site to fs at absolute path', async () => {
@@ -185,7 +206,7 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to fs at destination path override', async () => {
-    const destDir = 'output'
+    const destDir = './output'
     playbook.output.destinations.push(Object.freeze({ provider: 'fs' }))
     Object.freeze(playbook.output.destinations)
     playbook.output.dir = destDir
@@ -196,7 +217,7 @@ describe('publishSite()', () => {
   })
 
   it('should throw an error if cannot write to destination path', async () => {
-    const destDir = '_site'
+    const destDir = './_site'
     // NOTE put a file in our way
     fs.ensureFileSync(ospath.resolve(playbook.dir, destDir))
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
@@ -229,7 +250,7 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to archive at relative path resolved from playbook dir', async () => {
-    const destFile = 'path/to/site.zip'
+    const destFile = './path/to/site.zip'
     playbook.output.destinations.push({ provider: 'archive', path: destFile })
     await publishSite(playbook, catalogs)
     expect(playbook.output.destinations[0].path).to.equal(destFile)
@@ -238,12 +259,33 @@ describe('publishSite()', () => {
 
   it('should publish site to archive at relative path resolved from cwd if playbook dir not set', async () => {
     process.chdir(WORK_DIR)
-    const destFile = 'path/to/site.zip'
+    const destFile = './path/to/site.zip'
     delete playbook.dir
     playbook.output.destinations.push({ provider: 'archive', path: destFile })
     await publishSite(playbook, catalogs)
     expect(playbook.output.destinations[0].path).to.equal(destFile)
     await verifyArchiveOutput(destFile)
+  })
+
+  it('should publish site to archive at relative path resolved from pwd', async () => {
+    const workingDir = ospath.join(WORK_DIR, 'some-other-folder')
+    fs.ensureDirSync(workingDir)
+    process.chdir(workingDir)
+    const destFile = 'path/to/site.zip'
+    playbook.output.destinations.push({ provider: 'archive', path: destFile })
+    await publishSite(playbook, catalogs)
+    expect(playbook.output.destinations[0].path).to.equal(destFile)
+    await verifyArchiveOutput(ospath.join('some-other-folder', destFile))
+  })
+
+  it('should publish site to archive relative to user home', async () => {
+    const destRelFile = ospath.relative(os.homedir(), ospath.join(playbook.dir, 'path/to/site.zip'))
+    const destAbsFile = ospath.join(os.homedir(), destRelFile)
+    const destFile = '~' + ospath.sep + destRelFile
+    playbook.output.destinations.push({ provider: 'archive', path: destFile })
+    await publishSite(playbook, catalogs)
+    expect(playbook.output.destinations[0].path).to.equal(destFile)
+    await verifyArchiveOutput(destAbsFile)
   })
 
   it('should publish site to archive at absolute path', async () => {
@@ -256,8 +298,8 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to multiple fs directories', async () => {
-    const destDir1 = 'site1'
-    const destDir2 = 'site2'
+    const destDir1 = './site1'
+    const destDir2 = './site2'
     playbook.output.destinations.push({ provider: 'fs', path: destDir1 })
     playbook.output.destinations.push({ provider: 'fs', path: destDir2 })
     await publishSite(playbook, catalogs)
@@ -266,9 +308,9 @@ describe('publishSite()', () => {
   })
 
   it('should replace path of first fs destination when destination override is specified', async () => {
-    const destDir1 = 'build/site1'
-    const destDir2 = 'build/site2'
-    const destDirOverride = 'output'
+    const destDir1 = './build/site1'
+    const destDir2 = './build/site2'
+    const destDirOverride = './output'
     playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir1 }))
     playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir2 }))
     Object.freeze(playbook.output.destinations)
@@ -281,8 +323,8 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to multiple archive files', async () => {
-    const destFile1 = 'site1.zip'
-    const destFile2 = 'site2.zip'
+    const destFile1 = './site1.zip'
+    const destFile2 = './site2.zip'
     playbook.output.destinations.push({ provider: 'archive', path: destFile1 })
     playbook.output.destinations.push({ provider: 'archive', path: destFile2 })
     await publishSite(playbook, catalogs)
@@ -306,7 +348,7 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to fs at destination path override when another destination is specified', async () => {
-    const destDir = 'output'
+    const destDir = './output'
     playbook.output.destinations.push(Object.freeze({ provider: 'archive' }))
     Object.freeze(playbook.output.destinations)
     playbook.output.dir = destDir
@@ -318,7 +360,7 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to destination override even when destinations is empty', async () => {
-    const destDir = 'output'
+    const destDir = './output'
     Object.freeze(playbook.output.destinations)
     playbook.output.dir = destDir
     await publishSite(playbook, catalogs)
@@ -328,8 +370,8 @@ describe('publishSite()', () => {
   })
 
   it('should clean all destinations if clean is set on output', async () => {
-    const destDir1 = 'site1'
-    const destDir2 = 'site2'
+    const destDir1 = './site1'
+    const destDir2 = './site2'
     const cleanMeFile1 = ospath.resolve(playbook.dir, destDir1, 'clean-me.txt')
     const cleanMeFile2 = ospath.resolve(playbook.dir, destDir2, 'clean-me.txt')
     playbook.output.destinations.push(Object.freeze({ provider: 'fs', path: destDir1 }))
@@ -347,8 +389,8 @@ describe('publishSite()', () => {
   })
 
   it('should clean destinations marked for cleaning', async () => {
-    const destDir1 = 'site1'
-    const destDir2 = 'site2'
+    const destDir1 = './site1'
+    const destDir2 = './site2'
     const leaveMeFile1 = ospath.resolve(playbook.dir, destDir1, 'leave-me.txt')
     const cleanMeFile2 = ospath.resolve(playbook.dir, destDir2, 'clean-me.txt')
     playbook.output.destinations.push({ provider: 'fs', path: destDir1 })
@@ -365,7 +407,7 @@ describe('publishSite()', () => {
   })
 
   it('should load custom provider from absolute path', async () => {
-    const destFile = 'report.txt'
+    const destFile = './report.txt'
     const providerAbsPath = ospath.resolve(playbook.dir, 'reporter-abs.js')
     fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), providerAbsPath)
     playbook.site = { title: 'The Site' }
@@ -378,7 +420,7 @@ describe('publishSite()', () => {
   })
 
   it('should load custom provider from an absolute path outside working directory', async () => {
-    const destFile = 'report.txt'
+    const destFile = './report.txt'
     const providerAbsPath = ospath.join(TMP_DIR, `reporter-${process.pid}-${Date.now()}.js`)
     try {
       fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), providerAbsPath)
@@ -395,7 +437,7 @@ describe('publishSite()', () => {
   })
 
   it('should load custom provider from relative path resolved from playbook dir', async () => {
-    const destFile = 'report.txt'
+    const destFile = './report.txt'
     fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), ospath.resolve(playbook.dir, 'reporter-rel.js'))
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: './reporter-rel', path: destFile })
@@ -408,7 +450,7 @@ describe('publishSite()', () => {
 
   it('should load custom provider from relative path resolved from cwd when playbook dir not set', async () => {
     process.chdir(WORK_DIR)
-    const destFile = 'report.txt'
+    const destFile = './report.txt'
     fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), 'reporter-rel.js')
     delete playbook.dir
     playbook.site = { title: 'The Site' }
@@ -421,7 +463,7 @@ describe('publishSite()', () => {
   })
 
   it('should load custom provider from node modules path', async () => {
-    const destFile = 'report.txt'
+    const destFile = './report.txt'
     const providerAbsPath = ospath.resolve(playbook.dir, 'node_modules/reporter-mod/index.js')
     fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), providerAbsPath)
     playbook.site = { title: 'The Site' }
@@ -434,8 +476,8 @@ describe('publishSite()', () => {
   })
 
   it('should load custom provider multiple times', async () => {
-    const destFile = 'report.txt'
-    const destFile2 = 'report.txt.1'
+    const destFile = './report.txt'
+    const destFile2 = './report.txt.1'
     fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), ospath.resolve(playbook.dir, 'reporter-multi.js'))
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: './reporter-multi', path: destFile })

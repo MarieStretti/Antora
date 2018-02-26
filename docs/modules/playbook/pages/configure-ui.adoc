@@ -19,12 +19,12 @@ These keys define the location of the UI and control how it should be processed.
 == UI bundle
 
 The bundle key (`bundle`) defines the location Antora should look to find a UI archive in {uri-zip-file-format}[ZIP] format (i.e., UI bundle).
-The key accepts a URL or (local) filesystem path.
+The key accepts a URL or filesystem path.
 
 [#remote-bundle]
 === Fetch and load a remote UI bundle
 
-When the value of the `bundle` key is a URL, Antora downloads and caches the ZIP archive on the first run.
+When the value of  `bundle` is a URL, Antora downloads and caches the ZIP archive on the first run.
 On subsequent runs, Antora attempts to load the bundle from the cache instead.
 This saves Antora from having to download the bundle each time you generate your site.
 
@@ -47,15 +47,19 @@ In the future, Antora will provide a CLI flag you can use to force the cached fi
 [#local-bundle]
 === Load a UI bundle from the filesystem
 
-The UI bundle can be loaded from an absolute or relative filesystem path.
+If the UI bundle is available locally, it can be referenced using an absolute or relative filesystem path.
 
-When the `bundle` value is a relative path, the path is resolved relative to the playbook file.
+A relative path will be expanded to an absolute path.
+
+* If the first path segment is `~`, the path is resolved relative to the user's home directory.
+* If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
+* If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path is resolved relative to the current working directory.
 
 .Relative UI bundle path
 [source,yaml]
 ----
 ui:
- bundle: ../docs-ui/build/ui-bundles.zip
+ bundle: ./../docs-ui/build/ui-bundles.zip
 ----
 
 Here's the path to the same UI bundle, but using an absolute path.
@@ -92,13 +96,13 @@ If not specified, this key defaults to the value `default`.
 The `default_layout` accepts a value that's the stem of a layout file (i.e., the name of the file without the file extension).
 The layout file is expected to be located under the [.path]_layouts_ directory in the UI bundle.
 
-For example, if you want to use the layout file [.path]_article.hbs_ by default, set the `default_layout` key to `article`.
+For example, if you want to use the layout file [.path]_article.hbs_ by default, set `default_layout` to `article`.
 
 .Default layout value
 [source,yaml]
 ----
 ui:
- bundle: ../docs-ui/build/ui-bundles.zip
+ bundle: ./../docs-ui/build/ui-bundles.zip
  default_layout: article
 ----
 
@@ -137,7 +141,7 @@ ui:
  start_path: dark-theme
  output_dir: _dark
 output:
- dir: public
+ dir: ./public
 ----
 
 The UI files will be published to [.path]_++public/_dark++_.

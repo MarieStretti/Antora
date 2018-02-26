@@ -57,7 +57,7 @@ describe('generateSite()', () => {
       },
       ui: { bundle: uiBundleUri },
       output: {
-        destinations: [{ provider: 'fs', path: destDir }],
+        destinations: [{ provider: 'fs', path: '.' + ospath.sep + destDir }],
       },
     }
     fs.ensureDirSync(WORK_DIR)
@@ -124,8 +124,8 @@ describe('generateSite()', () => {
     expect($('.page-versions')).to.not.exist()
   }).timeout(TIMEOUT)
 
-  it('should resolve paths in playbook relative to playbook dir', async () => {
-    playbookSpec.content.sources[0].url = ospath.relative('.', playbookSpec.content.sources[0].url)
+  it('should resolve dot-relative paths in playbook relative to playbook dir', async () => {
+    playbookSpec.content.sources[0].url = '.' + ospath.sep + ospath.relative('.', playbookSpec.content.sources[0].url)
     fs.writeJsonSync(playbookSpecFile, playbookSpec, { spaces: 2 })
     const altWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
     fs.ensureDirSync(altWorkDir)

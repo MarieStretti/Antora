@@ -101,16 +101,16 @@ Learn more:
 [#site-service-keys]
 === keys
 
-The account keys for site-wide services such document search tools and Google Analytics.
+The account keys for global site services such document search tools and Google Analytics.
 
 [#site-ga-key]
 ==== google_analytics
 
-The google_analytics key associates a Google Analytics account with the site.
+This key associates a Google Analytics account with the site.
 
 Learn more:
 
-* xref:configure-site.adoc#configure-ga[Add a Google Analytics account key]
+* xref:configure-site.adoc#configure-ga[Add a Google Analytics account key to the site]
 
 [#content-sources-keys]
 == Content and sources keys
@@ -137,15 +137,15 @@ Learn more:
 === branches
 
 The branches key accepts a list of branch name patterns, either as exact names or shell glob patterns (`v3.*`).
-When no branches are specified for a content repository URL, Antora will use the [.term]_default branches set_, i.e., the `master` branch and every branch that begins with `v`.
+When no branches are specified for a sources `url`, Antora will use the [.term]_default branches set_, i.e., the `master` branch and every branch that begins with `v`.
 
 Learn more:
 
-* xref:configure-content-sources.adoc#default-branch[Use the default branches set]
+* xref:configure-content-sources.adoc#default-branch[Use or modify the default branches set]
 * xref:configure-content-sources.adoc#separate-branch-names[Separate branch names with commas or markers]
 * xref:configure-content-sources.adoc#exact-branch[Specify branches by name]
 * xref:configure-content-sources.adoc#glob-branch[Specify and exclude branches by glob patterns]
-* xref:configure-content-sources.adoc#current-branch[Use the current local branch]
+* xref:configure-content-sources.adoc#current-branch[Use the current local branch (HEAD)]
 * xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote branches and repositories]
 
 [#sources-start-path-key]
@@ -166,8 +166,8 @@ The `ui` category contains keys that specify the location of the UI bundle and h
 [#ui-bundle-key]
 === bundle
 
-The URL or local filesystem path of the UI bundle.
-Filesystem paths can be absolute or relative to the location of the playbook file.
+The bundle key accepts a URL or local filesystem path to a UI bundle ZIP archive.
+The filesystem path can be absolute or relative.
 
 Learn more:
 
@@ -177,8 +177,8 @@ Learn more:
 [#ui-start-path-key]
 === start_path
 
-The path inside the bundle from which UI files should be selected.
-Defaults to the root of the bundle.
+The start path key is the path inside the bundle from which UI files should be selected.
+When no value is specified, it defaults to the root of the bundle.
 
 Learn more:
 
@@ -196,7 +196,7 @@ Learn more:
 [#ui-output-dir-key]
 === output_dir
 
-The output directory path where the UI files are written in the published site.
+This key specifies the output directory path where the UI files are written in the published site.
 When the UI `output_dir` isn't specified, the files are published to the [.path]_++_++_ directory relative to the root of the published site.
 
 Learn more:
@@ -227,7 +227,6 @@ For example, if you set `dir` to your computer's home directory and `clean` to t
 
 The output dir key specifies the directory to publish the generated site files.
 The key accepts a relative or absolute filesystem path.
-When the value is a relative path, the path is resolved relative to the playbook file.
 
 If the destinations are unspecified, and the dir key is not set, the value defaults to [.path]_build/site_.
 
@@ -268,7 +267,6 @@ For example, the `fs` provider treats this value as a target directory, while th
 If the path key is not specified, it typically gets populated with a default value.
 The default `fs` path is [.path]_build/site_, and the default `archive` path is [.path]_build/site.zip_.
 The key accepts a relative or absolute filesystem path.
-A relative path is resolved relative to the playbook file.
 
 IMPORTANT: If you set the dir key in the playbook or via the CLI, its value will override the `path` value for the first `fs` provider specified in the destinations key.
 
