@@ -280,6 +280,23 @@ Learn more:
 The clean key can be specified directly on any `fs` provider.
 When specified at this location (instead of directly under output), it only cleans the output location specified by this destination.
 
+== Runtime keys
+
+The `runtime` category contains keys that manage the cache location and message output.
+
+[#cache-dir-key]
+=== cache_dir
+
+The cache dir key specifies the directory where Antora will cache any remote git repositories and UI bundles.
+The key accepts a relative or absolute filesystem path.
+If `cache_dir` isn't set, the repositories and UI bundle are saved to the [.path]_antora_ folder under the operating system cache directory for the current user.
+
+Learn more:
+
+* xref:configure-runtime.adoc#default-cache[Locate default cache directory]
+* xref:configure-runtime.adoc#cache-dir[Override default cache location]
+
+
 ////
 == antora.yml
 

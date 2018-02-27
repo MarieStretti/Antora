@@ -58,10 +58,17 @@ This command is implicitly executed if no command is specified.
 
 When executed from the CLI, the options that are mapped to playbook keys, such as `title`, will override any assigned values in the designated playbook.
 
+[#cli-options]
 .CLI Options
 [cols="2,3,1,1"]
 |===
 |Option |Purpose |Format |Default
+
+|--cache-dir <dir>
+|Directory where the remote git repositories are cloned and the UI bundle is downloaded.
+Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] specified in the playbook.
+|String
+|[.path]_antora_ under cache directory for current user
 
 |--clean
 |Remove the xref:playbook:playbook-schema.adoc#clean-key[output directory] before publishing the site.
@@ -90,27 +97,27 @@ When executed from the CLI, the options that are mapped to playbook keys, such a
 
 |--title <title>
 |Specify the title of the site.
-This option overrides the xref:playbook:playbook-schema.adoc#site-title-key[site title value] specified in the playbook.
+Overrides the xref:playbook:playbook-schema.adoc#site-title-key[site title value] specified in the playbook.
 |String
 |not set
 
 |--to-dir <dir>
-|The directory where the site should be generated.
-This option overrides the xref:playbook:playbook-schema.adoc#dir-key[output dir value] specified in the playbook.
+|Directory where the site is generated.
+Overrides the xref:playbook:playbook-schema.adoc#dir-key[output dir value] specified in the playbook.
 |String
 |[.path]_build/site_
 
 |--ui-bundle <bundle>
-|The UI bundle URL.
+|UI bundle URL.
 The URL can be a path on the local filesystem.
-This option overrides the xref:playbook:playbook-schema.adoc#ui-bundle-key[ui bundle value] specified in the playbook.
+Overrides the xref:playbook:playbook-schema.adoc#ui-bundle-key[ui bundle value] specified in the playbook.
 |String
 |null
 
 |--url <url>
-|The base URL of the published site.
+|Base URL of the published site.
 The URL should not include a trailing slash.
-This option overrides the xref:playbook:playbook-schema.adoc#site-url-key[site url value] specified in the playbook.
+Overrides the xref:playbook:playbook-schema.adoc#site-url-key[site url value] specified in the playbook.
 |String
 |not set
 
