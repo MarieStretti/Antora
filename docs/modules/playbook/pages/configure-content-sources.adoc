@@ -23,12 +23,12 @@ These keys define the location of the documentation component repositories (`url
 
 The url key tells Antora where to find a documentation component's repository.
 You must provide a value for each documentation component repository you want added to your site.
-The key accepts filesystem paths, file URLs, and any URI that git supports.
+The key accepts any URI that git supports, including a local filesystem path.
 
 [#local-urls]
 === Use local content repositories
 
-The `url` accepts a relative or absolute filesystem path.
+Antora permits the value of `url` to be a relative or absolute filesystem path.
 
 .Local git repositories
 [source,yaml]
@@ -39,13 +39,23 @@ content:
   - url: ./demo-component-b # <2>
 ----
 <1> Absolute path to git repository
-<2> Relative path to git repository
+<2> Relative path to git repository (starting from the directory of the playbook)
 
-A relative path will be expanded to an absolute path.
+A relative path is expanded to an absolute path using the following rules:
 
-* If the first path segment is `~`, the path is resolved relative to the user's home directory.
-* If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
-* If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path is resolved relative to the current working directory.
+* If the first path segment is a tilde (`~`), the path is resolved relative to the user's home directory.
+* If the first path segment is a dot (`.`), the path is resolved relative to the location of the playbook file.
+* If the first path segment is tilde plus (`~+`), or does not begin with an aforementioned prefix, the path is resolved relative to the current working directory.
+
+Like with git, Antora differentiates between a local filesystem path and a remote URI based on certain characters in the value.
+Consider the following two rules:
+
+* The value contains a colon that's not followed by a forward slash or backslash (e.g., `host:repo`).
+* The value contains a colon that's followed by two forward slashes (i.e., `://`).
+
+If the value matches either of these rules, the value is handled as a remote URI, _not_ a local filesystem path.
+Note that a colon is permitted when it's part of a Windows drive letter (e.g., `c:/`).
+Look for these rules in the sections that follow.
 
 [#remote-urls]
 === Fetch remote content repositories

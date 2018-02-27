@@ -124,7 +124,7 @@ The sources key contains the list of git repository locations, branch name patte
 === url
 
 The url key tells Antora where to find a documentation component's repository.
-The key accepts filesystem paths, file URLs, and any URI that git supports.
+The key accepts any URI that git supports, including a local filesystem path.
 
 Learn more:
 
