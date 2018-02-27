@@ -75,8 +75,26 @@ In the terminal, type:
 
 Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to _build/site_.
 
+=== Caching
+
+Antora caches two things:
+
+* it clones the remote git repositories
+* it downloads the remote UI bundle
+
+These files are stored inside the cache directory in their respective content and UI folders.
+This location varies by operating system.
+
+* Linux: [.path]_$XDG_CACHE_HOME/antora_ (or [.path]_$HOME/.cache/antora_ if `$XDG_CACHE_HOME` is not set)
+* macOS: [.path]_$HOME/Library/Caches/antora_
+* Windows: [.path]_$APPDATA/antora/Caches_
+
+The next time you run Antora on your playbook, it will attempt to resolve and use the current user's cache folder by default.
+
+////
 The repositories are cached under the [.path]_build/site_ directory.
 If you remove the [.path]_build_ directory, the repositories will have to be downloaded again the next time you run `antora demo-site.yml`.
+////
 
 [#using-private-repositories]
 === Private GitHub repositories
