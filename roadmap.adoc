@@ -31,15 +31,15 @@ For a detailed list of current development tasks, refer to the core components {
 
 ==== Scheduled for next alpha
 
-* [ ] Architect and implement page redirector / router component
-* [ ] Clone status indicator
 * [ ] Add convertDocuments function to the document converter {uri-issues}/172[#172]
 * [x] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
+* [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
 
 ==== Waiting
 
+* [ ] Add clone status indicator to content aggregator {uri-issues}/183[#183]
+* [ ] Implement page redirect generator component {uri-issues}/182[#182]
 * [ ] Add error message when repository clone fails {uri-issues}/155[#155]
-* [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
 * [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 
@@ -76,15 +76,18 @@ The Antora platform includes all of the packages that are assembled in the defau
 
 *Release Timeframe*: 2018 Q2
 
-=== v2.x
+=== Unscheduled
+
+The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.,
+They aren't slated imminent development but are reviewed for possible scheduling after each release.
 
 * Decide whether content aggregate should be sorted {uri-issues}/121[#121]
 * Separate content aggregator from git provider {uri-issues}/93[#93]
 * Allow module paths to be configurable {uri-issues}/28[#28]
 * Add support for a moduleless docs component {uri-issues}/27[#27]
 * Separate site publisher from providers
-
-*Release Timeframe*: 2018 Q3 or Q4
+* Add support for git-lfs for assets storage such as images
+* Evaluate new strategies for interpreting equations (e.g., build-time conversion to SVG)
 
 == Documentation, Demo, & Docs Site
 
@@ -98,22 +101,27 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 ==== Scheduled for next alpha
 
-* [ ] Add how to create a partial page
-* [ ] Add nav category and multi-list capabilities to navigation docs {uri-issues}/159[#159]
-* [ ] Document sitemap features {uri-issues}/168[#168]
+* [ ] Document cache
+* [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 
 ==== Waiting
 
+* [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
+* [ ] Document the `page-` attributes {uri-issues}/177[#177]
+* [ ] Add how to create a partial page {uri-issues}/176[#176]
+* [ ] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
 * [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
+* [ ] Document sitemap features {uri-issues}/168[#168]
 * [ ] Improve custom provider documentation {uri-issues}/164[#164]
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
 * [ ] Document redirect features
-* [ ] Document how to use an Asciidoctor extension with Antora
 
 === v1.x
 
-* [ ] Document specifying current branch as a token
+* [ ] Document stem functionality with common UI integration scenarios
+* [ ] Document how to add MathJax integration to the UI
+* [ ] Document how to integrate external Javascript files with the UI
 * [ ] Document maintenance and bug fix priority policies (in repo, on project site)
 * [ ] Document release schedule on project site
 * [ ] Add list of environment variables to usage
@@ -127,7 +135,7 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 ==== Scheduled for next alpha
 
-* [ ] Improve sidebar block styles {uri-ui-issues}/27[#27]
+* [x] Improve sidebar block styles {uri-ui-issues}/27[#27]
 * [ ] Add client-side search {uri-ui-issues}/44[#44]
 
 ==== Waiting
