@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { deferExceptions, expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
+const { deferExceptions, expect, heredoc, removeSyncForce, spy } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
@@ -84,6 +84,7 @@ describe('aggregateContent()', () => {
 
   beforeEach(() => {
     playbookSpec = {
+      runtime: { quiet: true },
       content: {
         sources: [],
         branches: ['v*', 'master'],
@@ -504,7 +505,7 @@ describe('aggregateContent()', () => {
         const customCacheDir = ospath.join(WORK_DIR, '.antora-cache')
         const customContentCacheDir = ospath.join(customCacheDir, CONTENT_CACHE_FOLDER)
         await initRepoWithFiles(repoBuilder)
-        playbookSpec.runtime = { cacheDir: '.antora-cache' }
+        playbookSpec.runtime.cacheDir = '.antora-cache'
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         await aggregateContent(playbookSpec)
         expect(CONTENT_CACHE_DIR).to.not.be.a.path()
@@ -527,7 +528,7 @@ describe('aggregateContent()', () => {
         const customContentCacheDir = ospath.join(customCacheDir, CONTENT_CACHE_FOLDER)
         await initRepoWithFiles(repoBuilder)
         playbookSpec.dir = WORK_DIR
-        playbookSpec.runtime = { cacheDir: './.antora-cache' }
+        playbookSpec.runtime.cacheDir = './.antora-cache'
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         await aggregateContent(playbookSpec)
         expect(CONTENT_CACHE_DIR).to.not.be.a.path()
@@ -549,9 +550,10 @@ describe('aggregateContent()', () => {
         const customCacheDir = ospath.join(WORK_DIR, '.antora-cache')
         const customContentCacheDir = ospath.join(customCacheDir, CONTENT_CACHE_FOLDER)
         await initRepoWithFiles(repoBuilder)
-        playbookSpec.runtime = {
-          cacheDir: prefixPath('~', ospath.relative(os.homedir(), ospath.join(WORK_DIR, '.antora-cache'))),
-        }
+        playbookSpec.runtime.cacheDir = prefixPath(
+          '~',
+          ospath.relative(os.homedir(), ospath.join(WORK_DIR, '.antora-cache'))
+        )
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         await aggregateContent(playbookSpec)
         expect(CONTENT_CACHE_DIR).to.not.be.a.path()
@@ -1198,6 +1200,182 @@ describe('aggregateContent()', () => {
     const aggregate = await aggregateContent(playbookSpec)
     expect(aggregate).to.have.lengthOf(1)
     expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+  })
+
+  describe('progress bars', () => {
+    let repoBuilder
+
+    const withMockStdout = async (testBlock, columns = 120, isTTY = true) => {
+      const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
+        accum[name] = process.stdout[name]
+        return accum
+      }, {})
+      try {
+        const lines = []
+        Object.assign(process.stdout, {
+          clearLine: spy(() => {}),
+          columns,
+          cursorTo: spy(() => {}),
+          isTTY,
+          moveCursor: spy(() => {}),
+          write: (line) => /\[(?:clone|fetch)\]/.test(line) && lines.push(line),
+        })
+        await testBlock(lines)
+      } finally {
+        Object.assign(process.stdout, defaultStdout)
+      }
+    }
+
+    beforeEach(async () => {
+      playbookSpec.runtime.quiet = false
+      repoBuilder = new RepositoryBuilder(WORK_DIR, FIXTURES_DIR, { remote: true })
+      await initRepoWithFiles(repoBuilder, {
+        repoName: 'long-enough-name-to-trigger-a-progress-bar-when-used-as-width',
+      })
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+    })
+
+    it('should show progress bar when cloning a remote repository', async () => {
+      return withMockStdout(async (lines) => {
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf.at.least(2)
+        expect(lines[0]).to.include('[clone] ' + repoBuilder.url)
+        expect(lines[0]).to.match(/ \[-+\]/)
+        expect(lines[lines.length - 1]).to.match(/ \[#+\]/)
+      }, 9 + repoBuilder.url.length * 2)
+    })
+
+    it('should show progress bar when fetching a remote repository', async () => {
+      return withMockStdout(async (lines) => {
+        await aggregateContent(playbookSpec)
+        lines.length = 0
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf.at.least(2)
+        expect(lines[0]).to.include('[fetch] ' + repoBuilder.url)
+        expect(lines[0]).to.match(/ \[-+\]/)
+        expect(lines[lines.length - 1]).to.match(/ \[#+\]/)
+      }, 9 + repoBuilder.url.length * 2)
+    })
+
+    it('should show clone progress bar for each remote repository', async () => {
+      const otherRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true })
+      await initRepoWithFiles(otherRepoBuilder, {
+        name: 'the-other-component',
+        title: 'The Other Component',
+        version: 'v1.0.0',
+      })
+      playbookSpec.content.sources.push({ url: otherRepoBuilder.url })
+
+      return withMockStdout(async (lines) => {
+        let aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(lines).to.have.lengthOf.at.least(4)
+        const repoLines = lines.filter((l) => l.includes(repoBuilder.url))
+        expect(repoLines).to.have.lengthOf.at.least(2)
+        expect(repoLines[0]).to.include('[clone] ' + repoBuilder.url)
+        expect(repoLines[0]).to.match(/ \[-+\]/)
+        expect(repoLines[repoLines.length - 1]).to.match(/ \[#+\]/)
+        const otherRepoLines = lines.filter((l) => l.includes(otherRepoBuilder.url))
+        expect(otherRepoLines).to.have.lengthOf.at.least(2)
+        expect(otherRepoLines[0]).to.include('[clone] ' + otherRepoBuilder.url)
+        expect(otherRepoLines[0]).to.match(/ \[-+\]/)
+        expect(otherRepoLines[otherRepoLines.length - 1]).to.match(/ \[#+\]/)
+      }, 9 + Math.max(repoBuilder.url.length, otherRepoBuilder.url.length) * 2)
+    })
+
+    it('should show progress bars with mixed operations', async () => {
+      const otherRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true })
+      await initRepoWithFiles(otherRepoBuilder, {
+        name: 'the-other-component',
+        title: 'The Other Component',
+        version: 'v1.0.0',
+      })
+
+      return withMockStdout(async (lines) => {
+        await aggregateContent(playbookSpec)
+        lines.length = 0
+        playbookSpec.content.sources.push({ url: otherRepoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(lines).to.have.lengthOf.at.least(4)
+        const repoLines = lines.filter((l) => l.includes(repoBuilder.url))
+        expect(repoLines[0]).to.include('[fetch] ' + repoBuilder.url)
+        expect(repoLines[0]).to.match(/ \[-+\]/)
+        expect(repoLines[repoLines.length - 1]).to.match(/ \[#+\]/)
+        const otherRepoLines = lines.filter((l) => l.includes(otherRepoBuilder.url))
+        expect(otherRepoLines[0]).to.include('[clone] ' + otherRepoBuilder.url)
+        expect(otherRepoLines[0]).to.match(/ \[-+\]/)
+        expect(otherRepoLines[otherRepoLines.length - 1]).to.match(/ \[#+\]/)
+      }, 9 + repoBuilder.url.length * 2)
+    })
+
+    it('should truncate repository URL to fit within progress bar', async () => {
+      return withMockStdout(async (lines) => {
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf.at.least(2)
+        expect(lines[0]).to.include('[clone] ...' + repoBuilder.url.substr(7))
+      }, repoBuilder.url.length * 2)
+    })
+
+    it('should not show progress bar if window is too narrow', async () => {
+      return withMockStdout(async (lines) => {
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf(0)
+      }, 40)
+    })
+
+    it('should not show progress bar if stdout is not a TTY', async () => {
+      return withMockStdout(
+        async (lines) => {
+          const aggregate = await aggregateContent(playbookSpec)
+          expect(aggregate).to.have.lengthOf(1)
+          expect(lines).to.have.lengthOf(0)
+        },
+        120,
+        false
+      )
+    })
+
+    it('should not show progress bar if playbook runtime is quiet', async () => {
+      return withMockStdout(async (lines) => {
+        playbookSpec.runtime = { quiet: true }
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf(0)
+      })
+    })
+
+    it('should not show progress bar if playbook runtime is silent', async () => {
+      return withMockStdout(async (lines) => {
+        playbookSpec.runtime = { silent: true }
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf(0)
+      })
+    })
+
+    it('should not show progress bar if repository is local', async () => {
+      return withMockStdout(async (lines) => {
+        playbookSpec.content.sources[0].url = repoBuilder.repoPath
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf(0)
+      })
+    })
+
+    it('should advance cursor past progress bars when error is thrown', async () => {
+      return withMockStdout(async () => {
+        playbookSpec.content.sources.pop()
+        playbookSpec.content.sources.push({ url: 'https://gitlab.com/antora/no-such-repository-a.git' })
+        playbookSpec.content.sources.push({ url: 'https://gitlab.com/antora/no-such-repository-b.git' })
+        await deferExceptions(aggregateContent, playbookSpec)
+        expect(process.stdout.clearLine).to.have.been.called.exactly(3)
+      })
+    })
   })
 
   it('should throw meaningful error if local relative content directory does not exist', async () => {

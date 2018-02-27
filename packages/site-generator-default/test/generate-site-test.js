@@ -54,6 +54,7 @@ describe('generateSite()', () => {
       .then(() => repositoryBuilder.importFilesFromFixture('the-component'))
       .then(() => repositoryBuilder.close('master'))
     playbookSpec = {
+      runtime: { quiet: true },
       site: { title: 'The Site' },
       content: {
         sources: [{ url: ospath.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v2.0' }],

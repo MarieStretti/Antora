@@ -204,7 +204,7 @@ describe('cli', () => {
   it('should generate site to fs destination when playbook file is passed to generate command', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
-    return new Promise((resolve) => runAntora('generate the-site').on('exit', resolve)).then((exitCode) => {
+    return new Promise((resolve) => runAntora('generate the-site --quiet').on('exit', resolve)).then((exitCode) => {
       expect(exitCode).to.equal(0)
       expect(destAbsDir)
         .to.be.a.directory()
@@ -219,16 +219,18 @@ describe('cli', () => {
   it('should generate site to fs destination when absolute playbook file is passed to generate command', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
-    return new Promise((resolve) => runAntora(['generate', playbookFile]).on('exit', resolve)).then((exitCode) => {
-      expect(exitCode).to.equal(0)
-      expect(destAbsDir)
-        .to.be.a.directory()
-        .with.subDirs(['_', 'the-component'])
-      expect(ospath.join(destAbsDir, 'the-component'))
-        .to.be.a.directory()
-        .with.subDirs(['1.0'])
-      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
-    })
+    return new Promise((resolve) => runAntora(['generate', playbookFile, '--quiet']).on('exit', resolve)).then(
+      (exitCode) => {
+        expect(exitCode).to.equal(0)
+        expect(destAbsDir)
+          .to.be.a.directory()
+          .with.subDirs(['_', 'the-component'])
+        expect(ospath.join(destAbsDir, 'the-component'))
+          .to.be.a.directory()
+          .with.subDirs(['1.0'])
+        expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      }
+    )
   }).timeout(TIMEOUT)
 
   it('should resolve dot-relative paths in playbook relative to playbook dir', () => {
@@ -242,7 +244,7 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>
-      runAntora(['generate', playbookRelFile], undefined, runCwd).on('exit', resolve)
+      runAntora(['generate', playbookRelFile, '--quiet'], undefined, runCwd).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
       expect(destAbsDir)
@@ -309,7 +311,7 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>
-      runAntora(['generate', 'the-site', '--title', 'Awesome Docs']).on('exit', resolve)
+      runAntora(['generate', 'the-site', '--title', 'Awesome Docs', '--quiet']).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
       expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
@@ -322,19 +324,21 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     const env = Object.assign({ URL: 'https://docs.example.com' }, process.env)
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
-    return new Promise((resolve) => runAntora('generate the-site', env).on('exit', resolve)).then((exitCode) => {
-      expect(exitCode).to.equal(0)
-      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
-        .to.be.a.file()
-        .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
-    })
+    return new Promise((resolve) => runAntora('generate the-site --quiet', env).on('exit', resolve)).then(
+      (exitCode) => {
+        expect(exitCode).to.equal(0)
+        expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
+          .to.be.a.file()
+          .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
+      }
+    )
   }).timeout(TIMEOUT)
 
   // NOTE the cli options replace the attributes defined in the playbook file
   it('should pass attributes defined using options to AsciiDoc processor', () => {
     playbookSpec.asciidoc = { attributes: { idprefix: '' } }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const args = ['generate', 'the-site', '--attribute', 'sectanchors=~', '--attribute', 'experimental']
+    const args = ['generate', 'the-site', '--attribute', 'sectanchors=~', '--attribute', 'experimental', '--quiet']
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => runAntora(args).on('exit', resolve)).then((exitCode) => {
       expect(exitCode).to.equal(0)
@@ -349,14 +353,14 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     // TODO once we have common options, we'll need to be sure they get moved before the default command
-    return new Promise((resolve) => runAntora('the-site.json --url https://docs.example.com').on('exit', resolve)).then(
-      (exitCode) => {
-        expect(exitCode).to.equal(0)
-        expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
-          .to.be.a.file()
-          .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
-      }
-    )
+    return new Promise((resolve) =>
+      runAntora('the-site.json --url https://docs.example.com --quiet').on('exit', resolve)
+    ).then((exitCode) => {
+      expect(exitCode).to.equal(0)
+      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
+        .to.be.a.file()
+        .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
+    })
   }).timeout(TIMEOUT)
 
   it('should clean output directory before generating when --clean switch is used', () => {
@@ -365,7 +369,7 @@ describe('cli', () => {
     fs.writeFileSync(residualFile, '<!DOCTYPE html><html><body>contents</body></html>')
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
-    return new Promise((resolve) => runAntora('generate the-site.json --clean').on('exit', resolve)).then(
+    return new Promise((resolve) => runAntora('generate the-site.json --clean --quiet').on('exit', resolve)).then(
       (exitCode) => {
         expect(exitCode).to.equal(0)
         expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
@@ -381,7 +385,7 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>
-      runAntora('generate the-site.json --to-dir ' + betaDestDir).on('exit', resolve)
+      runAntora(['generate', 'the-site.json', '--to-dir', betaDestDir, '--quiet']).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
       expect(betaDestAbsDir).to.be.a.directory()
@@ -406,7 +410,7 @@ describe('cli', () => {
     const playbookRelFile = ospath.relative(runCwd, playbookFile)
     const messages = []
     return new Promise((resolve) =>
-      runAntora(['generate', playbookRelFile], undefined, runCwd)
+      runAntora(['generate', playbookRelFile, '--quiet'], undefined, runCwd)
         .on('data', (data) => messages.push(data.message))
         .on('exit', resolve)
     ).then((exitCode) => {
@@ -447,7 +451,7 @@ describe('cli', () => {
     const r1 = ospath.resolve(FIXTURES_DIR, 'warming-up')
     const r2 = ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'global-postprocessor'))
     // NOTE due to a bad interaction between nodegit and opal, nodegit must be required first
-    const args = ['--require', 'nodegit', '--require', r1, '-r', r2, 'generate', 'the-site']
+    const args = ['--require', 'nodegit', '--require', r1, '-r', r2, 'generate', 'the-site', '--quiet']
     const messages = []
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>

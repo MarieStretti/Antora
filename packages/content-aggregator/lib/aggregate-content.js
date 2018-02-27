@@ -9,6 +9,7 @@ const git = require('nodegit')
 const { obj: map } = require('through2')
 const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
+const MultiProgress = require('multi-progress')
 const ospath = require('path')
 const { posix: path } = ospath
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
@@ -22,7 +23,7 @@ const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)
     .replace('\\', '\\\\')
 )
 const DRIVE_RX = /^[a-z]:\/(?=[^/]|$)/
-const GIT_URI_DETECT_RX = /:(?:\/\/|[^/\\])/
+const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const SEPARATOR_RX = /\/|:/
 const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
@@ -50,15 +51,31 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  */
 async function aggregateContent (playbook) {
   const playbookDir = playbook.dir || '.'
-  return ensureCacheDir((playbook.runtime || {}).cacheDir, playbookDir).then((cacheDir) => {
-    const defaultBranches = playbook.content.branches
-    return Promise.all(
-      playbook.content.sources.map(async (source) => {
+  const { branches: defaultBranches, sources } = playbook.content
+  const { cacheDir, silent, quiet } = playbook.runtime
+  const progress = {}
+  const term = process.stdout
+  if (!(quiet || silent) && term.isTTY && term.columns >= 60) {
+    //term.write('Aggregating content...\n')
+    // QUESTION should we use MultiProgress directly as our progress object?
+    progress.manager = new MultiProgress(term)
+    progress.maxLabelWidth = Math.min(
+      Math.ceil((term.columns - 8) / 2),
+      sources.reduce(
+        (max, { url }) => Math.max(max, ~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url) ? url.length : 0),
+        0
+      )
+    )
+  }
+  return ensureCacheDir(cacheDir, playbookDir).then((actualCacheDir) =>
+    Promise.all(
+      sources.map(async (source) => {
         const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(
           source.url,
           source.remote,
           playbookDir,
-          cacheDir
+          actualCacheDir,
+          progress
         )
         const branchPatterns = source.branches || defaultBranches
         const componentVersions = (await selectBranches(repository, isBare, branchPatterns, remoteName)).map(
@@ -87,18 +104,23 @@ async function aggregateContent (playbook) {
             throw reason
           })
       })
-    ).then((componentVersions) => buildAggregate(componentVersions))
-  })
+    )
+      .then((componentVersions) => buildAggregate(componentVersions))
+      .catch((reason) => {
+        progress.manager && progress.manager.terminate()
+        throw reason
+      })
+  )
 }
 
-async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir) {
+async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, progress) {
   let isBare
   let isRemote
   let repository
   let repoPath
   let url
 
-  if (~repoUrl.indexOf(':') && GIT_URI_DETECT_RX.test(repoUrl)) {
+  if (~repoUrl.indexOf(':') && GIT_URI_DETECTOR_RX.test(repoUrl)) {
     isBare = true
     isRemote = true
     // NOTE if repository is in cache, we can assume the remote name is origin
@@ -121,23 +143,29 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir) {
     if (isBare) {
       repository = await git.Repository.openBare(repoPath)
       if (isRemote) {
+        const fetchOpts = getFetchOptions(progress, repoUrl, 'fetch')
         // fetch new branches and delete obsolete local ones
-        await repository.fetch(remoteName, Object.assign({ prune: 1 }, getFetchOptions()))
+        await repository.fetch(remoteName, Object.assign({ prune: 1 }, fetchOpts)).then((repo) => {
+          if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
+          return repo
+        })
       }
     } else {
       repository = await git.Repository.open(repoPath)
     }
   } catch (e) {
     if (isRemote) {
+      const fetchOpts = getFetchOptions(progress, repoUrl, 'clone')
       repository = await fs
         .remove(repoPath)
-        .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts: getFetchOptions() }))
+        .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts }))
         .then((repo) =>
           repo.getCurrentBranch().then((ref) => {
             if (ref.isBranch()) {
               repo.detachHead()
               ref.delete()
             }
+            if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
             return repo
           })
         )
@@ -233,7 +261,8 @@ function generateLocalFolderName (url) {
   return segments.join('%') + '.git'
 }
 
-function getFetchOptions () {
+// QUESTION should we create dedicate instance of progress and set progress.label?
+function getFetchOptions (progress, progressLabel, operation) {
   let sshKeyAuthAttempted
   return {
     callbacks: {
@@ -247,8 +276,47 @@ function getFetchOptions () {
           return git.Cred.sshKeyFromAgent(username)
         }
       },
+      transferProgress: progress.manager ? createTransferProgress(progress, progressLabel, operation) : undefined,
     },
   }
+}
+
+function createTransferProgress (progress, progressLabel, operation) {
+  const progressBar = progress.manager.newBar(formatProgressBar(progressLabel, progress.maxLabelWidth, operation), {
+    total: Infinity,
+    complete: '#',
+    incomplete: '-',
+  })
+  progressBar.tick(0)
+  const fn = (transferStatus) => {
+    let growth = transferStatus.receivedObjects() + transferStatus.indexedObjects()
+    if (progressBar.total === Infinity) {
+      progressBar.total = transferStatus.totalObjects() * 2
+    } else {
+      growth -= progressBar.curr
+    }
+    if (growth) progressBar.tick(growth)
+  }
+  fn.progressBar = progressBar
+  return fn
+}
+
+function formatProgressBar (label, maxLabelWidth, operation) {
+  const paddingSize = maxLabelWidth - label.length
+  let padding = ''
+  if (paddingSize < 0) {
+    label = '...' + label.substr(-paddingSize + 3)
+  } else if (paddingSize) {
+    padding = ' '.repeat(paddingSize)
+  }
+  // NOTE assume operation has a fixed length
+  return `[${operation}] ${label}${padding} [:bar]`
+}
+
+function completeProgress (progressBar) {
+  if (progressBar.total === Infinity) progressBar.total = 100
+  const remaining = progressBar.total - progressBar.curr
+  if (remaining) progressBar.tick(remaining)
 }
 
 async function selectBranches (repo, isBare, branchPatterns, remote) {
