@@ -90,11 +90,8 @@ This location varies by operating system.
 * Windows: [.path]_$APPDATA/antora/Caches_
 
 The next time you run Antora on your playbook, it will attempt to resolve and use the current user's cache folder by default.
-
-////
-The repositories are cached under the [.path]_build/site_ directory.
-If you remove the [.path]_build_ directory, the repositories will have to be downloaded again the next time you run `antora demo-site.yml`.
-////
+If you want to clone the repositories and download the UI again, during a subsequent run, you'll need to locate the Antora cache directory on your system and delete it.
+You can override the default cache location using the cache dir key in the playbook, the --cache-dir CLI option, or the $ANTORA_CACHE_DIR environment variable.
 
 [#using-private-repositories]
 === Private GitHub repositories
