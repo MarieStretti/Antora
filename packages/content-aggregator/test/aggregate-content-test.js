@@ -1170,4 +1170,16 @@ describe('aggregateContent()', () => {
     const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
     expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
   })
+
+  // NOTE on Windows, : is a reserved filename character, so we can use this test
+  if (process.platform !== 'win32') {
+    it('should treat SSH URI as a remote repository', async () => {
+      const repoBuilder = new RepositoryBuilder(WORK_DIR, FIXTURES_DIR)
+      const repoName = 'no-such-user@localhost:no-such-repository'
+      await initRepoWithFiles(repoBuilder, { repoName })
+      playbookSpec.content.sources.push({ url: repoName })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred).to.throw()
+    })
+  }
 })

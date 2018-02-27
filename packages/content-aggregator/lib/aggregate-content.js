@@ -21,6 +21,7 @@ const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)
     .replace('\\', '\\\\')
 )
 const DRIVE_RX = /^[a-z]:\/(?=[^/]|$)/
+const GIT_URI_DETECT_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const SEPARATOR_RX = /\/|:/
 const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
@@ -91,26 +92,23 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir) {
   let repoPath
   let url
 
-  // QUESTION should we try to exclude git@host:path as well? maybe check for @?
-  if (!~repoUrl.indexOf('://')) {
-    if (directoryExists((repoPath = expandPath(repoUrl, '~+', startDir)))) {
-      isBare = !directoryExists(ospath.join(repoPath, '.git'))
-      isRemote = false
-      if (!remoteName) remoteName = 'origin'
-    } else {
-      throw new Error(
-        'Local content source does not exist: ' +
-          repoPath +
-          (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
-      )
-    }
-  } else {
+  if (~repoUrl.indexOf(':') && GIT_URI_DETECT_RX.test(repoUrl)) {
     isBare = true
     isRemote = true
     // NOTE if repository is in cache, we can assume the remote name is origin
     remoteName = 'origin'
     repoPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
     url = repoUrl
+  } else if (directoryExists((repoPath = expandPath(repoUrl, '~+', startDir)))) {
+    isBare = !directoryExists(ospath.join(repoPath, '.git'))
+    isRemote = false
+    if (!remoteName) remoteName = 'origin'
+  } else {
+    throw new Error(
+      'Local content source does not exist: ' +
+        repoPath +
+        (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+    )
   }
 
   try {
