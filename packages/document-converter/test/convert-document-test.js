@@ -3,7 +3,7 @@
 
 const { expect, expectCalledWith, heredoc, spy } = require('../../../test/test-utils')
 
-const convertDocument = require('@antora/document-converter')
+const convertDocument = require('@antora/document-converter/lib/convert-document')
 
 describe('convertDocument()', () => {
   let inputFile
@@ -36,7 +36,7 @@ describe('convertDocument()', () => {
     }
   })
 
-  it('should convert AsciiDoc contents on file to HTML', async () => {
+  it('should convert AsciiDoc contents on file to embeddable HTML', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
