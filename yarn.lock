@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@antora/expand-path-helper@^1.0.0-rc.3":
-  version "1.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/@antora/expand-path-helper/-/expand-path-helper-1.0.0-rc.3.tgz#4881f4071dc9a6390717a5985d0f5752fb278ac4"
+"@antora/expand-path-helper@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@antora/expand-path-helper/-/expand-path-helper-1.0.0.tgz#3bfd6938ab86d4709af8d869cbf3bb17b8fe8912"
 
 "@commitlint/cli@^6.1.0":
   version "6.1.0"
