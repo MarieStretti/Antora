@@ -65,10 +65,10 @@ When executed from the CLI, the options that are mapped to playbook keys, such a
 |Option |Purpose |Format |Default
 
 |--cache-dir <dir>
-|Directory where the remote git repositories are cloned and the UI bundle is downloaded.
+|Directory where cached files are stored (git repositories clones and the UI bundle).
 Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] specified in the playbook.
 |String
-|[.path]_antora_ under cache directory for current user
+|[.path]_<user's cache>/antora_
 
 |--clean
 |Remove the xref:playbook:playbook-schema.adoc#clean-key[output directory] before publishing the site.
@@ -86,7 +86,7 @@ Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] 
 |false
 
 |--silent
-|Suppress all messages.
+|Suppress all messages, including warnings and errors.
 |Boolean
 |false
 
@@ -112,7 +112,7 @@ Overrides the xref:playbook:playbook-schema.adoc#dir-key[output dir value] speci
 The URL can be a path on the local filesystem.
 Overrides the xref:playbook:playbook-schema.adoc#ui-bundle-key[ui bundle value] specified in the playbook.
 |String
-|null
+|not set
 
 |--url <url>
 |Base URL of the published site.

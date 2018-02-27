@@ -37,11 +37,11 @@ site:
   ...
 ----
 
-In this case, the value resolves to the folder [.path]_.antora-cache_ relative to the location of the playbook file because of the leading `.`.
+In this case, the value resolves to the folder [.path]_.antora-cache_ relative to the location of the playbook file (because of the leading `.`).
 
 The resolution rules for `cache-dir` are the same as for any path in the playbook.
-A relative path will be expanded to an absolute path.
+A relative path is expanded to an absolute path using the following rules:
 
-* If the first path segment is `~`, the path is resolved relative to the user's home directory.
-* If the first path segment is `.`, the path is resolved relative to the location of the playbook file.
-* If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path is resolved relative to the current working directory.
+* If the first path segment is a tilde (`~`), the remaining path is resolved relative to the user's home directory.
+* If the first path segment is a dot (`.`), the remaining path is resolved relative to the location of the playbook file.
+* If the first path segment is tilde plus (`~+`), or does not begin with an aforementioned prefix, the remaining path is resolved relative to the current working directory.

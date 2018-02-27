@@ -17,7 +17,7 @@ Assumptions:
 On this page, you'll learn:
 
 * [x] How to run the default Antora pipeline.
-* [x] Where to locate the default cache directory.
+* [x] Where files are cached.
 * [x] How to preview a generated site locally.
 
 ////
@@ -79,21 +79,18 @@ Antora will clone the content repository, convert the AsciiDoc pages to embeddab
 [#cache]
 === Cache
 
-Antora caches two things:
+When Antora runs, it will cache files into a cache directory.
+Antora caches two types of files:
 
-* cloned remote git repositories
-* downloaded remote UI bundles
+* cloned git repositories
+* downloaded UI bundles
 
-These files are stored inside the cache directory in their respective content and UI folders.
-This location varies by operating system.
+These files are stored inside the cache directory, organized under the [.path]_content_ and [.path]_ui_ folders, respectively.
+The xref:playbook/configure-runtime.adoc#default-cache[default cache directory] varies by operating system.
+You can override the default cache location using the xref:playbook:configure-runtime.adoc[runtime.cache_dir key] in the playbook, the xref:cli.adoc#cli-options[--cache-dir] CLI option, or the `$ANTORA_CACHE_DIR` environment variable.
 
-* Linux: [.path]_$XDG_CACHE_HOME/antora_ (or [.path]_$HOME/.cache/antora_ if `$XDG_CACHE_HOME` is not set)
-* macOS: [.path]_$HOME/Library/Caches/antora_
-* Windows: [.path]_$APPDATA/antora/Caches_
-
-The next time Antora runs, it will attempt to resolve and use the current user's cache folder by default.
-If, during a subsequent run, you want to clone the repositories and download the UI again,  you'll need to locate the Antora cache directory on your system and delete it.
-You can override the default cache location using the xref:playbook:configure-runtime.adoc[cache dir key in the playbook], the xref:cli.adoc#cli-options[--cache-dir CLI option], or the `$ANTORA_CACHE_DIR` environment variable.
+If you want to clone repositories and/or download the UI from scratch on subsequent runs, you'll need to locate the Antora cache directory on your system and delete it.
+In the future, Antora will provide a CLI flag to perform this task for you.
 
 [#using-private-repositories]
 === Private GitHub repositories
