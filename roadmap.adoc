@@ -31,9 +31,9 @@ For a detailed list of current development tasks, refer to the core components {
 
 ==== Scheduled for next alpha
 
-* [ ] Add convertDocuments function to the document converter {uri-issues}/172[#172]
+* [x] Add convertDocuments function to the document converter {uri-issues}/172[#172]
 * [x] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
-* [ ] Store cache files under user's cache directory {uri-issues}/137[#137]
+* [x] Store cache files under user's cache directory {uri-issues}/137[#137]
 
 ==== Waiting
 
@@ -101,11 +101,11 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 ==== Scheduled for next alpha
 
-* [ ] Document cache
-* [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
+* [x] Document cache {uri-issues}/137[#137]
 
 ==== Waiting
 
+* [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 * [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
 * [ ] Document the `page-` attributes {uri-issues}/177[#177]
 * [ ] Add how to create a partial page {uri-issues}/176[#176]
@@ -136,10 +136,10 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 ==== Scheduled for next alpha
 
 * [x] Improve sidebar block styles {uri-ui-issues}/27[#27]
-* [ ] Add client-side search {uri-ui-issues}/44[#44]
 
 ==== Waiting
 
+* [ ] Add client-side search {uri-ui-issues}/44[#44]
 * [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
 * [ ] IE 11 fixes
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
