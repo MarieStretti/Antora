@@ -7,13 +7,13 @@ const buildNavigation = require('@antora/navigation-builder')
 const mockContentCatalog = require('../../../test/mock-content-catalog')
 
 describe('buildNavigation()', () => {
-  it('should run on all files in the navigation family', async () => {
+  it('should run on all files in the navigation family', () => {
     const contentCatalog = mockContentCatalog().spyOn('findBy')
-    await buildNavigation(contentCatalog)
+    buildNavigation(contentCatalog)
     expectCalledWith(contentCatalog.findBy, { family: 'navigation' })
   })
 
-  it('should build single navigation list with title', async () => {
+  it('should build single navigation list with title', () => {
     const navContents = heredoc`
       .xref:index.adoc[Module A]
       * xref:requirements.adoc[Requirements]
@@ -28,7 +28,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'index.adoc' },
       { family: 'page', relative: 'requirements.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
@@ -48,7 +48,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should build single navigation list without title', async () => {
+  it('should build single navigation list without title', () => {
     const navContents = heredoc`
       * xref:index.adoc[Module A]
     `
@@ -61,7 +61,7 @@ describe('buildNavigation()', () => {
       },
       { family: 'page', relative: 'index.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
@@ -78,7 +78,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should build navigation across multiple components', async () => {
+  it('should build navigation across multiple components', () => {
     const navContentsA = heredoc`
       .xref:index.adoc[Component A]
       * xref:the-page.adoc[The Page]
@@ -109,7 +109,7 @@ describe('buildNavigation()', () => {
       { component: 'component-b', module: 'ROOT', family: 'page', relative: 'index.adoc' },
       { component: 'component-b', module: 'ROOT', family: 'page', relative: 'the-page.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menuA = navCatalog.getMenu('component-a', 'master')
     expect(menuA).to.exist()
     expect(menuA).to.have.lengthOf(1)
@@ -146,7 +146,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should resolve page references relative to module of navigation file', async () => {
+  it('should resolve page references relative to module of navigation file', () => {
     const navContents = heredoc`
       * xref:page-a.adoc[This Module]
       * xref:module-b:page-b.adoc[Other Module]
@@ -165,7 +165,7 @@ describe('buildNavigation()', () => {
       { version: '0.9', family: 'page', relative: 'page-c.adoc' },
       { component: 'component-b', version: '1.1', module: 'ROOT', family: 'page', relative: 'page-d.adoc' },
     ]).spyOn('getById', 'getComponent')
-    await buildNavigation(contentCatalog)
+    buildNavigation(contentCatalog)
     expectCalledWith(
       contentCatalog.getById,
       [
@@ -221,7 +221,7 @@ describe('buildNavigation()', () => {
     )
   })
 
-  it('should store url for page reference as root relative path with urlType set to internal', async () => {
+  it('should store url for page reference as root relative path with urlType set to internal', () => {
     const navContents = heredoc`
       * xref:page-a.adoc[This Module]
       * xref:module-b:page-b.adoc[Other Module]
@@ -240,7 +240,7 @@ describe('buildNavigation()', () => {
       { version: '0.9', family: 'page', relative: 'page-c.adoc' },
       { component: 'component-b', version: 'master', module: 'ROOT', family: 'page', relative: 'page-d.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -271,7 +271,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should allow navigation file to be outside of module', async () => {
+  it('should allow navigation file to be outside of module', () => {
     const navContents = heredoc`
       * xref:ROOT:index.adoc[Basics]
        ** xref:basics:requirements.adoc[Requirements]
@@ -291,7 +291,7 @@ describe('buildNavigation()', () => {
       { module: 'advanced', family: 'page', relative: 'index.adoc' },
       { module: 'advanced', family: 'page', relative: 'caching.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
@@ -327,7 +327,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should allow navigation file to be in subdirectory of module', async () => {
+  it('should allow navigation file to be in subdirectory of module', () => {
     const navContents = heredoc`
       .By Level
       * xref:index.adoc[Basics]
@@ -348,7 +348,7 @@ describe('buildNavigation()', () => {
       { module: 'advanced', family: 'page', relative: 'index.adoc' },
       { module: 'advanced', family: 'page', relative: 'caching.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
@@ -385,7 +385,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should be able to reference global attributes from AsciiDoc config', async () => {
+  it('should be able to reference global attributes from AsciiDoc config', () => {
     const navContents = heredoc`
       .xref:index.adoc[{product-name}]
       // a comment about this preprocessor conditional
@@ -411,7 +411,7 @@ describe('buildNavigation()', () => {
       },
       { family: 'page', relative: 'index.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog, { attributes })
+    const navCatalog = buildNavigation(contentCatalog, { attributes })
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -435,7 +435,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should allow items to link to external URLs or fragments', async () => {
+  it('should allow items to link to external URLs or fragments', () => {
     const navContents = heredoc`
       .xref:asciidoc/index.adoc[AsciiDoc]
       * xref:asciidoc/syntax-primer.adoc[Syntax Primer]
@@ -452,7 +452,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'asciidoc/index.adoc' },
       { family: 'page', relative: 'asciidoc/syntax-primer.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -482,7 +482,7 @@ describe('buildNavigation()', () => {
   })
 
   // Q: should we allow link to be anywhere in content?
-  it('should only recognize a single link per item', async () => {
+  it('should only recognize a single link per item', () => {
     const navContents = heredoc`
       .Module A
       * xref:page-a.adoc[Page A] xref:page-b.adoc[Page B]
@@ -499,7 +499,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'page-b.adoc' },
       { family: 'page', relative: 'page-c.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -521,7 +521,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should not set url or urlType if entry contains an anchor element without an href', async () => {
+  it('should not set url or urlType if entry contains an anchor element without an href', () => {
     const navContents = heredoc`
       .Basics
       * [[category-a]]Category A
@@ -536,7 +536,7 @@ describe('buildNavigation()', () => {
       },
       { family: 'page', relative: 'page-a.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -547,7 +547,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should allow navigation items to be text-only', async () => {
+  it('should allow navigation items to be text-only', () => {
     const navContents = heredoc`
       .Module A
       * Basics
@@ -565,7 +565,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'installation.adoc' },
       { family: 'page', relative: 'tuning-performance.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -597,7 +597,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should allow navigation items to contain formatted text', async () => {
+  it('should allow navigation items to contain formatted text', () => {
     const navContents = heredoc`
       ._Module A_
       * *Commands*
@@ -614,7 +614,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'command/install.adoc' },
       { family: 'page', relative: 'command/remove.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -641,7 +641,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should allow navigation items to be nested (up to 5 levels)', async () => {
+  it('should allow navigation items to be nested (up to 5 levels)', () => {
     const navContents = heredoc`
       * xref:basics.adoc[Basics]
        ** xref:install.adoc[Install]
@@ -664,7 +664,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'install/fedora.adoc' },
       { family: 'page', relative: 'requirements.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -713,7 +713,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should process navigation file containing multiple lists', async () => {
+  it('should process navigation file containing multiple lists', () => {
     const navContents = heredoc`
       .xref:basics.adoc[Basics]
       * xref:requirements.adoc[Requirements]
@@ -733,7 +733,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'hosting.adoc' },
       { family: 'page', relative: 'gitlab-pages.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(2)
@@ -767,7 +767,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should order trees from multiple navigation files by index of navigation file', async () => {
+  it('should order trees from multiple navigation files by index of navigation file', () => {
     const contentCatalog = mockContentCatalog([
       {
         module: 'module-a',
@@ -814,7 +814,7 @@ describe('buildNavigation()', () => {
       { module: 'module-d', family: 'page', relative: 'index.adoc' },
       { module: 'module-d', family: 'page', relative: 'the-page.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(5)
@@ -835,7 +835,7 @@ describe('buildNavigation()', () => {
     expect(menu[4].content).to.equal('Module B')
   })
 
-  it('should skip blocks that are not unordered lists', async () => {
+  it('should skip blocks that are not unordered lists', () => {
     const navContents = heredoc`
       This paragraph should be skipped.
 
@@ -866,7 +866,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'hosting.adoc' },
       { family: 'page', relative: 'gitlab-pages.adoc' },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(2)
@@ -874,7 +874,7 @@ describe('buildNavigation()', () => {
     expect(menu[1].content).to.equal('Hosting')
   })
 
-  it('should skip navigation file if it contains no unordered lists', async () => {
+  it('should skip navigation file if it contains no unordered lists', () => {
     const contentCatalog = mockContentCatalog([
       {
         family: 'navigation',
@@ -889,7 +889,7 @@ describe('buildNavigation()', () => {
         navIndex: 1,
       },
     ])
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getMenu('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
@@ -899,7 +899,7 @@ describe('buildNavigation()', () => {
   // FIXME we want to support includes relative to nav.adoc, but those files aren't added to catalog
   // we could classify files in the nav directory as navigation without a nav.index property
   // another option is to move partials from pages/_partials to partials; then partials/nav makes sense
-  it('should support navigation file with includes', async () => {
+  it('should support navigation file with includes', () => {
     const navContents = heredoc`
       .xref:index.adoc[Basics]
       include::{partialsdir}/nav/basics.adoc[]
@@ -929,7 +929,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'advanced/index.adoc' },
       { family: 'page', relative: 'advanced/caching.adoc' },
     ]).spyOn('getById')
-    const navCatalog = await buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog)
     expectCalledWith(
       contentCatalog.getById,
       [

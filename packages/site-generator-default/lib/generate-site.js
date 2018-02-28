@@ -4,7 +4,7 @@ const aggregateContent = require('@antora/content-aggregator')
 const buildNavigation = require('@antora/navigation-builder')
 const buildPlaybook = require('@antora/playbook-builder')
 const classifyContent = require('@antora/content-classifier')
-const convertDocument = require('@antora/document-converter')
+const convertDocuments = require('@antora/document-converter')
 const createPageComposer = require('@antora/page-composer')
 const generateSitemaps = require('@antora/site-mapper')
 const loadUi = require('@antora/ui-loader')
@@ -27,10 +27,7 @@ async function generateSite (args, env) {
   ])
 
   const asciidocConfig = resolveAsciiDocConfig(playbook)
-  const pages = contentCatalog.findBy({ family: 'page' })
-
-  await Promise.all(pages.map((page) => convertDocument(page, contentCatalog, asciidocConfig)))
-
+  const pages = convertDocuments(contentCatalog, asciidocConfig)
   const navigationCatalog = buildNavigation(contentCatalog, asciidocConfig)
   ;((composePage) => {
     pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))

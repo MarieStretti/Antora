@@ -22,7 +22,7 @@ const loadAsciiDoc = require('@antora/asciidoc-loader')
  *
  * @returns {File} The virtual file that was converted.
  */
-async function convertDocument (file, contentCatalog = undefined, asciidocConfig = {}) {
+function convertDocument (file, contentCatalog = undefined, asciidocConfig = {}) {
   const doc = loadAsciiDoc(file, contentCatalog, asciidocConfig)
   const attributes = doc.getAttributes()
   // Q: should we backup the AsciiDoc contents for all pages? what's the impact?

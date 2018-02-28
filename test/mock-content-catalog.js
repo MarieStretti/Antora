@@ -7,19 +7,21 @@ function mockContentCatalog (seed = []) {
   if (!Array.isArray(seed)) seed = [seed]
   const familyDirs = {
     example: 'examples',
+    image: 'images',
+    navigation: '',
     page: 'pages',
     partial: 'pages/_partials',
-    navigation: '',
   }
   const components = {}
   const entries = []
   const entriesById = {}
   const entriesByPath = {}
   const entriesByFamily = {}
-  seed.forEach(({ component, version, module, family, relative, contents, navIndex, indexify }) => {
+  seed.forEach(({ component, version, module, family, relative, contents, mediaType, navIndex, indexify }) => {
     if (!component) component = 'component-a'
     if (!version) version = 'master'
     if (module == null) module = 'module-a'
+    if (!family) family = 'page'
     if (!contents) contents = ''
     if (component in components) {
       // NOTE use last registered as latest version
@@ -43,6 +45,7 @@ function mockContentCatalog (seed = []) {
         stem: path.basename(relative, path.extname(relative)),
       },
     }
+    if (mediaType) entry.src.mediaType = entry.mediaType = mediaType
     if (family === 'page' || family === 'navigation') {
       const pubVersion = version === 'master' ? '' : version
       const pubModule = module === 'ROOT' ? '' : module

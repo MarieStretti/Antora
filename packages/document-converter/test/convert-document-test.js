@@ -3,7 +3,7 @@
 
 const { expect, expectCalledWith, heredoc, spy } = require('../../../test/test-utils')
 
-const convertDocument = require('@antora/document-converter')
+const convertDocument = require('@antora/document-converter/lib/convert-document')
 
 describe('convertDocument()', () => {
   let inputFile
@@ -36,7 +36,7 @@ describe('convertDocument()', () => {
     }
   })
 
-  it('should convert AsciiDoc contents on file to HTML', async () => {
+  it('should convert AsciiDoc contents on file to embeddable HTML', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
@@ -50,7 +50,7 @@ describe('convertDocument()', () => {
 
       image::screenshot.png[]
     `)
-    await convertDocument(inputFile)
+    convertDocument(inputFile)
     expect(inputFile.mediaType).to.equal('text/html')
     expect(inputFile.contents.toString()).to.equal(heredoc`
       <div class="sect1">
@@ -82,34 +82,34 @@ describe('convertDocument()', () => {
     `)
   })
 
-  it('should set formatted document title to asciidoc.doctitle property on file object', async () => {
+  it('should set formatted document title to asciidoc.doctitle property on file object', () => {
     inputFile.contents = Buffer.from(heredoc`
       = _Awesome_ Document Title
 
       article contents
     `)
-    await convertDocument(inputFile)
+    convertDocument(inputFile)
     expect(inputFile.asciidoc).to.exist()
     expect(inputFile.asciidoc.doctitle).to.equal('<em>Awesome</em> Document Title')
   })
 
-  it('should not set asciidoc.doctitle property on file object if document has no header', async () => {
+  it('should not set asciidoc.doctitle property on file object if document has no header', () => {
     inputFile.contents = Buffer.from(heredoc`
       article contents only
     `)
-    await convertDocument(inputFile)
+    convertDocument(inputFile)
     expect(inputFile.asciidoc).to.exist()
     expect(inputFile.asciidoc.doctitle).to.not.exist()
   })
 
-  it('should save document header attributes to asciidoc.attributes property on file object', async () => {
+  it('should save document header attributes to asciidoc.attributes property on file object', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Document Title
       :keywords: CSS, flexbox, layout, box model
 
       article contents
     `)
-    await convertDocument(inputFile)
+    convertDocument(inputFile)
     expect(inputFile.asciidoc).to.exist()
     const attrs = inputFile.asciidoc.attributes
     expect(attrs).to.exist()
@@ -121,7 +121,7 @@ describe('convertDocument()', () => {
     })
   })
 
-  it('should pass custom attributes to processor', async () => {
+  it('should pass custom attributes to processor', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Document Title
 
@@ -131,14 +131,14 @@ describe('convertDocument()', () => {
       'product-name': 'Hi-Speed Tonic',
       'source-highlighter': 'html-pipeline',
     }
-    await convertDocument(inputFile, undefined, { attributes })
+    convertDocument(inputFile, undefined, { attributes })
     expect(inputFile.contents.toString()).to.include(attributes['product-name'])
     expect(inputFile.asciidoc).to.exist()
     expect(inputFile.asciidoc.attributes).to.exist()
     expect(inputFile.asciidoc.attributes).to.include(attributes)
   })
 
-  it('should convert page reference to URL of page in content catalog', async () => {
+  it('should convert page reference to URL of page in content catalog', () => {
     inputFile.contents = Buffer.from('xref:module-b:page-b.adoc[Page B]')
     const targetFile = {
       pub: {
@@ -146,7 +146,7 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getById: spy(() => targetFile) }
-    await convertDocument(inputFile, contentCatalog)
+    convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getById, {
       component: 'component-a',
       version: '1.2.3',
@@ -157,7 +157,7 @@ describe('convertDocument()', () => {
     expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
   })
 
-  it('should resolve target of include directive to file in content catalog', async () => {
+  it('should resolve target of include directive to file in content catalog', () => {
     inputFile.contents = Buffer.from('include::{partialsdir}/definitions.adoc[]')
     const partialFile = {
       path: 'modules/module-a/pages/_partials/definitions.adoc',
@@ -174,7 +174,7 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getById: spy(() => partialFile) }
-    await convertDocument(inputFile, contentCatalog)
+    convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getById, {
       component: 'component-a',
       version: '1.2.3',
@@ -185,7 +185,7 @@ describe('convertDocument()', () => {
     expect(inputFile.contents.toString()).to.include('cloud: someone else&#8217;s computer')
   })
 
-  it('should be able to include a page marked as a partial which has already been converted', async () => {
+  it('should be able to include a page marked as a partial which has already been converted', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
@@ -222,8 +222,8 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getByPath: spy(() => includedFile) }
-    await convertDocument(includedFile)
-    await convertDocument(inputFile, contentCatalog)
+    convertDocument(includedFile)
+    convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getByPath, {
       component: 'component-a',
       version: '1.2.3',
