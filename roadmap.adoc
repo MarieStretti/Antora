@@ -27,24 +27,16 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 For a detailed list of current development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
-=== v1.0.0-alpha.x
+=== v1.0.0-alpha.9
 
-==== Scheduled for next alpha
-
-* [x] Add convertDocuments function to the document converter {uri-issues}/172[#172]
-* [x] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
-* [x] Store cache files under user's cache directory {uri-issues}/137[#137]
-
-==== Waiting
-
-* [ ] Add clone status indicator to content aggregator {uri-issues}/183[#183]
+* [ ] Add clone status indicator {uri-issues}/183[#183]
 * [ ] Implement page redirect generator component {uri-issues}/182[#182]
-* [ ] Add error message when repository clone fails {uri-issues}/155[#155]
-* [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 
 === v1.0.0-beta.x
 
+* [ ] Add error message when repository clone fails {uri-issues}/155[#155]
+* [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 * [ ] Create Docker container for evaluating Antora {uri-issues}/162[#162]
 * [ ] Upgrade to Asciidoctor.js 1.5.6
 * [ ] Add Node 9 to CI matrix
@@ -97,18 +89,15 @@ For current demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
 
 For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
 
-=== v1.0.0-alpha.x
-
-==== Scheduled for next alpha
-
-* [x] Document cache {uri-issues}/137[#137]
-
-==== Waiting
+=== v1.0.0-alpha.9
 
 * [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 * [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
-* [ ] Document the `page-` attributes {uri-issues}/177[#177]
 * [ ] Add how to create a partial page {uri-issues}/176[#176]
+
+=== v1.0.0-beta.x
+
+* [ ] Document the `page-` attributes {uri-issues}/177[#177]
 * [ ] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
 * [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
 * [ ] Document sitemap features {uri-issues}/168[#168]
@@ -131,21 +120,13 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 For a detailed list of current development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
 
-=== v1.0.0-alpha.x
-
-==== Scheduled for next alpha
-
-* [x] Improve sidebar block styles {uri-ui-issues}/27[#27]
-
-==== Waiting
+=== v1.0.0-alpha.9
 
 * [ ] Add client-side search {uri-ui-issues}/44[#44]
-* [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
-* [ ] IE 11 fixes
-* [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 
 === v1.0.0-beta.x
 
+* [ ] IE 11 fixes
 * [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
 
 === v1.0.0
@@ -154,6 +135,8 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 === v1.x
 
+* [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
+* [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 * [ ] Enable unordered list marker styles {uri-ui-issues}/26[#26]
 * [ ] Create task list SVGs {uri-ui-issues}/31[#31]
 * [ ] Set up UI bundle hosting
@@ -163,6 +146,14 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 == Completed Releases
 
 See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
+
+=== 1.0.0-alpha.8
+
+* [x] Add convertDocuments function to the document converter {uri-issues}/172[#172]
+* [x] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
+* [x] Store cache files under user's cache directory {uri-issues}/137[#137]
+* [x] Improve sidebar block styles {uri-ui-issues}/27[UI #27]
+* [x] Document cache {uri-issues}/137[#137]
 
 === 1.0.0-alpha.7
 
