@@ -1,6 +1,6 @@
 {
   "name": "@antora/site-generator-default",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "description": "The default site generator pipeline for producing and publishing static documentation sites with Antora.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
@@ -15,16 +15,16 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@antora/asciidoc-loader": "1.0.0-alpha.7",
-    "@antora/content-aggregator": "1.0.0-alpha.7",
-    "@antora/content-classifier": "1.0.0-alpha.7",
-    "@antora/document-converter": "1.0.0-alpha.7",
-    "@antora/navigation-builder": "1.0.0-alpha.7",
-    "@antora/page-composer": "1.0.0-alpha.7",
-    "@antora/playbook-builder": "1.0.0-alpha.7",
-    "@antora/site-mapper": "1.0.0-alpha.7",
-    "@antora/site-publisher": "1.0.0-alpha.7",
-    "@antora/ui-loader": "1.0.0-alpha.7"
+    "@antora/asciidoc-loader": "1.0.0-alpha.8",
+    "@antora/content-aggregator": "1.0.0-alpha.8",
+    "@antora/content-classifier": "1.0.0-alpha.8",
+    "@antora/document-converter": "1.0.0-alpha.8",
+    "@antora/navigation-builder": "1.0.0-alpha.8",
+    "@antora/page-composer": "1.0.0-alpha.8",
+    "@antora/playbook-builder": "1.0.0-alpha.8",
+    "@antora/site-mapper": "1.0.0-alpha.8",
+    "@antora/site-publisher": "1.0.0-alpha.8",
+    "@antora/ui-loader": "1.0.0-alpha.8"
   },
   "devDependencies": {
     "fs-extra": "^5.0.0"
