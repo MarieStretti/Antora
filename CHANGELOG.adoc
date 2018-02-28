@@ -5,6 +5,35 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-alpha.8 (2018-02-27)
+
+=== Added
+
+* *content-aggregator*: Make cache directory configurable; default to antora folder in user cache directory
+* *ui-loader*: Make cache directory configurable; default to antora folder in user cache directory
+* *playbook-builder*: Add `runtime.cache_dir` property to playbook schema; can be set using `ANTORA_CACHE_DIR` environment variable
+* *cli*: Add `--cache-dir` CLI option for setting the cache directory
+* *document-converter*: Introduce convertDocuments function to encapsulate conversion of documents from AsciiDoc to embeddable HTML
+
+=== Changed
+
+* Allow paths in playbook to be anchored to various locations
+ ** Expand leading `.` segment to directory of playbook file
+ ** Expand leading `~` segment to user home directory
+ ** Expand leading `~+` segment to current working directory
+ ** BREAKING: Resolve unanchored path relative to current working directory
+* Delegate to new @antora/expand-path-helper module to expand relative path to absolute path
+* *content-aggregator*: Add dependency on @antora/expand-path-helper and cache-directory
+* *ui-loader*: Add dependency on @antora/expand-path-helper and cache-directory
+* *site-publisher*: Add dependency on @antora/expand-path-helper
+* Set NODE_ENV=test when running tests
+* Document extra package requirement for installing on Alpine
+
+=== Fixed
+
+* *content-aggregator*: Make URI and drive letter regular expressions more accurate so SSH URIs aren't mistaken for local directory paths
+* *cli*: Don't show default value for CLI option if value is object
+
 == 1.0.0-alpha.7 (2018-02-20)
 
 === Added
