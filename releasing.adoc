@@ -79,18 +79,19 @@ Otherwie, scoped packages are not public by default.
 
 === README Dance
 
-The npmjs registry does not currently support READMEs written in AsciiDoc.
-To complicate matters, the npm client doesn't allow the README to be specified when packaging, and it has an affinity for README.adoc.
-So we have to do some fancy footwork to stuff a Markdown version of the README into the package that's being shipped off to the registry.
-Thanks to npm lifecycle hooks, this is possible.
+The npmjs.com registry does not currently support READMEs written in AsciiDoc.
+To complicate matters, the npm client doesn't allow the README to be specified explicitly when packaging, and it has an affinity for README.adoc.
+Therefore, we have to do some fancy footwork to stuff a Markdown version of the README into the package that's being shipped off to the registry.
+Thanks to lerna lifecycle hooks, this is possible.
 
-Each package registers scripts for the following two lifecycle hooks:
+The release script places two lifecycle scripts into the scripts folder of each package folder during the release process.
+These scripts are wrappers that turn around and invoke the following two scripts:
 
-* https://gitlab.com/antora/antora/blob/master/scripts/prepublish.js[prepublishOnly]
-* https://gitlab.com/antora/antora/blob/master/scripts/postpublish.js[postpublish]
+* https://gitlab.com/antora/antora/blob/master/scripts/prepublish.js[prepublish.js]
+* https://gitlab.com/antora/antora/blob/master/scripts/postpublish.js[postpublish.js]
 
-In the *prepublishOnly* script, the [.path]_README.adoc_ file is moved out of the way, its contents are transformed to Markdown and saved as [.path]_README.md_.
-The packaging script then picks up the generated [.path]_README.md_ file and bundles it with the package (but skips the hidden README.adoc).
+In the *prepublish* script, the [.path]_README.adoc_ file is moved out of the way, its contents are transformed to Markdown and saved as [.path]_README.md_.
+The packaging script then picks up the generated [.path]_README.md_ file and bundles it with the package (ignoring the hidden README.adoc).
 
 The *postpublish* script restores the original state by removing the [.path]_README.md_ file and moving [.path]_README.adoc_ back into place.
 As a result, the npm registry displays the Markdown version of the README, but we get to maintain the content in AsciiDoc format.
