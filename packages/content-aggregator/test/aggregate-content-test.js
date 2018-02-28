@@ -5,12 +5,15 @@ const { deferExceptions, expect, heredoc, removeSyncForce } = require('../../../
 
 const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
+const getCacheDir = require('cache-directory')
 const git = require('nodegit')
 const os = require('os')
 const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
-const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH } = require('@antora/content-aggregator/lib/constants')
+const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER } = require('@antora/content-aggregator/lib/constants')
+const CACHE_DIR = getCacheDir('antora-test')
+const CONTENT_CACHE_DIR = ospath.join(CACHE_DIR, CONTENT_CACHE_FOLDER)
 const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
 const CWD = process.cwd()
 const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
@@ -70,8 +73,8 @@ describe('aggregateContent()', () => {
 
   const clean = (fin) => {
     process.chdir(CWD)
+    removeSyncForce(CACHE_DIR)
     removeSyncForce(CONTENT_REPOS_DIR)
-    // NOTE work dir stores the cache
     removeSyncForce(WORK_DIR)
     if (!fin) {
       fs.ensureDirSync(WORK_DIR)
@@ -476,7 +479,6 @@ describe('aggregateContent()', () => {
         await initRepoWithFiles(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         await aggregateContent(playbookSpec)
-        const contentCacheAbsDir = ospath.join(WORK_DIR, CONTENT_CACHE_PATH)
         if (repoBuilder.remote) {
           const repoDir =
             repoBuilder.url
@@ -485,12 +487,82 @@ describe('aggregateContent()', () => {
               .replace(/^([a-z]):(?=\/)/, '$1')
               .replace(/\/?\.git$/, '')
               .replace(/\//g, '%') + '.git'
-          expect(contentCacheAbsDir).to.be.a.directory()
-          expect(ospath.join(contentCacheAbsDir, repoDir))
+          expect(CONTENT_CACHE_DIR).to.be.a.directory()
+          expect(ospath.join(CONTENT_CACHE_DIR, repoDir))
             .to.be.a.directory()
             .and.include.files(['HEAD'])
         } else {
-          expect(contentCacheAbsDir).to.not.be.a.path()
+          expect(CONTENT_CACHE_DIR)
+            .to.be.a.directory()
+            .and.be.empty()
+        }
+      })
+    })
+
+    describe('should use custom cache dir relative to cwd', () => {
+      testAll(async (repoBuilder) => {
+        const customCacheDir = ospath.join(WORK_DIR, '.antora-cache')
+        const customContentCacheDir = ospath.join(customCacheDir, CONTENT_CACHE_FOLDER)
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.runtime = { cacheDir: '.antora-cache' }
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        await aggregateContent(playbookSpec)
+        expect(CONTENT_CACHE_DIR).to.not.be.a.path()
+        if (repoBuilder.remote) {
+          expect(customContentCacheDir)
+            .to.be.a.directory()
+            .and.not.be.empty()
+        } else {
+          expect(customContentCacheDir)
+            .to.be.a.directory()
+            .and.be.empty()
+        }
+      })
+    })
+
+    describe('should use custom cache dir relative to directory of playbook file', () => {
+      testAll(async (repoBuilder) => {
+        process.chdir(CWD)
+        const customCacheDir = ospath.join(WORK_DIR, '.antora-cache')
+        const customContentCacheDir = ospath.join(customCacheDir, CONTENT_CACHE_FOLDER)
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.dir = WORK_DIR
+        playbookSpec.runtime = { cacheDir: './.antora-cache' }
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        await aggregateContent(playbookSpec)
+        expect(CONTENT_CACHE_DIR).to.not.be.a.path()
+        if (repoBuilder.remote) {
+          expect(customContentCacheDir)
+            .to.be.a.directory()
+            .and.not.be.empty()
+        } else {
+          expect(customContentCacheDir)
+            .to.be.a.directory()
+            .and.be.empty()
+        }
+      })
+    })
+
+    describe('should use custom cache dir relative to user home', () => {
+      testAll(async (repoBuilder) => {
+        process.chdir(CWD)
+        const customCacheDir = ospath.join(WORK_DIR, '.antora-cache')
+        const customContentCacheDir = ospath.join(customCacheDir, CONTENT_CACHE_FOLDER)
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.runtime = {
+          cacheDir: prefixPath('~', ospath.relative(os.homedir(), ospath.join(WORK_DIR, '.antora-cache'))),
+        }
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        await aggregateContent(playbookSpec)
+        expect(CONTENT_CACHE_DIR).to.not.be.a.path()
+        if (repoBuilder.remote) {
+          expect(customContentCacheDir)
+            .to.be.a.directory()
+            .and.not.be.empty()
+        } else {
+          expect(customContentCacheDir)
+            .to.be.a.directory()
+            .and.be.empty()
         }
       })
     })
@@ -1019,12 +1091,11 @@ describe('aggregateContent()', () => {
     await initRepoWithFiles(repoBuilder)
     playbookSpec.content.sources.push({ url: repoBuilder.url })
     await aggregateContent(playbookSpec)
-    const contentCacheAbsDir = ospath.join(WORK_DIR, CONTENT_CACHE_PATH)
-    const cachedRepos = await fs.readdir(contentCacheAbsDir)
+    const cachedRepos = await fs.readdir(CONTENT_CACHE_DIR)
     expect(cachedRepos).to.have.lengthOf(1)
     const cachedRepo = cachedRepos[0]
     expect(cachedRepo.endsWith('.git')).to.be.true()
-    const localHeads = await fs.readdir(ospath.join(contentCacheAbsDir, cachedRepo, 'refs/heads'))
+    const localHeads = await fs.readdir(ospath.join(CONTENT_CACHE_DIR, cachedRepo, 'refs/heads'))
     expect(localHeads).to.have.lengthOf(0)
   })
 

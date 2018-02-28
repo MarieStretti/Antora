@@ -17,6 +17,7 @@ Assumptions:
 On this page, you'll learn:
 
 * [x] How to run the default Antora pipeline.
+* [x] Where files are cached.
 * [x] How to preview a generated site locally.
 
 ////
@@ -75,8 +76,21 @@ In the terminal, type:
 
 Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to _build/site_.
 
-The repositories are cached under the [.path]_build/site_ directory.
-If you remove the [.path]_build_ directory, the repositories will have to be downloaded again the next time you run `antora demo-site.yml`.
+[#cache]
+=== Cache
+
+When Antora runs, it will cache files into a cache directory.
+Antora caches two types of files:
+
+* cloned git repositories
+* downloaded UI bundles
+
+These files are stored inside the cache directory, organized under the [.path]_content_ and [.path]_ui_ folders, respectively.
+The xref:playbook/configure-runtime.adoc#default-cache[default cache directory] varies by operating system.
+You can override the default cache location using the xref:playbook:configure-runtime.adoc[runtime.cache_dir key] in the playbook, the xref:cli.adoc#cli-options[--cache-dir] CLI option, or the `$ANTORA_CACHE_DIR` environment variable.
+
+If you want to clone repositories and/or download the UI from scratch on subsequent runs, you'll need to locate the Antora cache directory on your system and delete it.
+In the future, Antora will provide a CLI flag to perform this task for you.
 
 [#using-private-repositories]
 === Private GitHub repositories

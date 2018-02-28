@@ -18,6 +18,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@antora/expand-path-helper": "^1.0.0",
+    "cache-directory": "^1.1.0",
     "fs-extra": "^5.0.0",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.5",

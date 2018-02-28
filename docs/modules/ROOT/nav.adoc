@@ -18,6 +18,7 @@
 //
 //.Publishing
 * xref:run-antora-to-generate-site.adoc[Run Antora]
+** xref:run-antora-to-generate-site.adoc#cache[Cache]
 ** xref:run-antora-to-generate-site.adoc#local-site-preview[Local Preview]
 * xref:cli.adoc[CLI Commands & Options]
 

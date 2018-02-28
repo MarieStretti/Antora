@@ -1,0 +1,47 @@
+= Runtime Configuration
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] How to configure the cache directory.
+
+[#default-cache]
+== Default cache directory
+
+The first time Antora runs, it will cache the remote git repositories and UI bundle.
+This default cache location varies by operating system.
+
+* Linux: [.path]_$XDG_CACHE_HOME/antora_ (or [.path]_$HOME/.cache/antora_ if `$XDG_CACHE_HOME` is not set)
+* macOS: [.path]_$HOME/Library/Caches/antora_
+* Windows: [.path]_$APPDATA/antora/Caches_
+
+The next time you run Antora, it will attempt to resolve and use the current user's cache folder by default.
+If, during a subsequent run, you want to clone the repositories and download the UI again,  you'll need to locate the Antora cache directory on your system and delete it.
+
+[#cache-dir]
+== Specify a cache directory
+
+The cache directory can be specified using the cache dir key (`cache_dir`) under the `runtime` category in the playbook.
+The key specifies the directory where the remote repositories should be cloned and the UI bundle should be downloaded.
+The key accepts a relative or absolute filesystem path.
+
+[source,yaml]
+----
+runtime:
+  cache_dir: ./.antora-cache
+site:
+  ...
+----
+
+In this case, the value resolves to the folder [.path]_.antora-cache_ relative to the location of the playbook file (because of the leading `.`).
+
+The resolution rules for `cache-dir` are the same as for any path in the playbook.
+A relative path is expanded to an absolute path using the following rules:
+
+* If the first path segment is a tilde (`~`), the remaining path is resolved relative to the user's home directory.
+* If the first path segment is a dot (`.`), the remaining path is resolved relative to the location of the playbook file.
+* If the first path segment is tilde plus (`~+`), or does not begin with an aforementioned prefix, the remaining path is resolved relative to the current working directory.

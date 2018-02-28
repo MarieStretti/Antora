@@ -4,11 +4,15 @@
 const { deferExceptions, expect, removeSyncForce } = require('../../../test/test-utils')
 
 const fs = require('fs-extra')
+const getCacheDir = require('cache-directory')
 const http = require('http')
 const loadUi = require('@antora/ui-loader')
 const os = require('os')
 const ospath = require('path')
 
+const { UI_CACHE_FOLDER } = require('@antora/ui-loader/lib/constants')
+const CACHE_DIR = getCacheDir('antora-test')
+const UI_CACHE_DIR = ospath.join(CACHE_DIR, UI_CACHE_FOLDER)
 const CWD = process.cwd()
 const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const WORK_DIR = ospath.join(__dirname, 'work')
@@ -37,17 +41,15 @@ describe('loadUi()', () => {
 
   const testAll = (archive, testBlock) => {
     const makeTest = (bundle) => testBlock({ ui: { bundle } })
-
     it('with dot-relative bundle path', () =>
-      makeTest(prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, archive))))
-    )
+      makeTest(prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, archive)))))
     it('with absolute bundle path', () => makeTest(ospath.join(FIXTURES_DIR, archive)))
     it('with remote bundle URI', () => makeTest('http://localhost:1337/' + archive))
   }
 
   const clean = (fin) => {
     process.chdir(CWD)
-    // NOTE work dir stores the cache
+    removeSyncForce(CACHE_DIR)
     removeSyncForce(WORK_DIR)
     if (!fin) {
       fs.ensureDirSync(WORK_DIR)
@@ -177,6 +179,15 @@ describe('loadUi()', () => {
   })
 
   describe('should load all files in the bundle from specified startPath', () => {
+    describe('when startPath is /', () => {
+      testAll('the-ui-bundle.zip', async (playbook) => {
+        playbook.ui.startPath = '/'
+        const uiCatalog = await loadUi(playbook)
+        const paths = uiCatalog.getFiles().map((file) => file.path)
+        expect(paths).to.have.members(expectedFilePaths)
+      })
+    })
+
     describe('when startPath is absolute', () => {
       testAll('the-ui-bundle-with-start-path.zip', async (playbook) => {
         playbook.ui.startPath = '/the-ui-bundle'
@@ -248,15 +259,19 @@ describe('loadUi()', () => {
     })
 
     it('from dot-relative directory', async () => {
-      playbook.ui.supplementalFiles =
-        prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'supplemental-files')))
+      playbook.ui.supplementalFiles = prefixPath(
+        '.',
+        ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'supplemental-files'))
+      )
       verifySupplementalFiles(await loadUi(playbook))
     })
 
     it('from dot-relative directory when playbook dir does not match cwd', async () => {
       playbook.dir = WORK_DIR
-      playbook.ui.supplementalFiles =
-        prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'supplemental-files')))
+      playbook.ui.supplementalFiles = prefixPath(
+        '.',
+        ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'supplemental-files'))
+      )
       const newWorkDir = ospath.join(WORK_DIR, 'some-other-folder')
       fs.ensureDirSync(newWorkDir)
       process.chdir(newWorkDir)
@@ -604,14 +619,17 @@ describe('loadUi()', () => {
     })
   })
 
-  it('should use a cache without needing remote access when url is the same', async () => {
+  it('should take bundle from cache when url is the same', async () => {
     const playbook = {
-      ui: {
-        bundle: 'http://localhost:1337/the-ui-bundle.zip',
-        startPath: '/',
-      },
+      ui: { bundle: 'http://localhost:1337/the-ui-bundle.zip' },
     }
     let uiCatalog = await loadUi(playbook)
+    expect(CACHE_DIR)
+      .to.be.a.directory()
+      .with.subDirs([UI_CACHE_FOLDER])
+    expect(UI_CACHE_DIR)
+      .to.be.a.directory()
+      .and.not.be.empty()
     let paths = uiCatalog.getFiles().map((file) => file.path)
     expect(paths).to.have.members(expectedFilePaths)
 
@@ -620,5 +638,45 @@ describe('loadUi()', () => {
     uiCatalog = await loadUi(playbook)
     paths = uiCatalog.getFiles().map((file) => file.path)
     expect(paths).to.have.members(expectedFilePaths)
+  })
+
+  describe('custom cache dir', () => {
+    const testCacheDir = async (cacheDir, dir) => {
+      const customCacheDir = ospath.join(WORK_DIR, '.antora-cache')
+      const customUiCacheDir = ospath.join(customCacheDir, UI_CACHE_FOLDER)
+      const playbook = {
+        dir,
+        runtime: { cacheDir },
+        ui: { bundle: 'http://localhost:1337/the-ui-bundle.zip' },
+      }
+      let uiCatalog = await loadUi(playbook)
+      expect(UI_CACHE_DIR).to.not.be.a.path()
+      expect(customCacheDir)
+        .to.be.a.directory()
+        .with.subDirs([UI_CACHE_FOLDER])
+      expect(customUiCacheDir)
+        .to.be.a.directory()
+        .and.not.be.empty()
+      let paths = uiCatalog.getFiles().map((file) => file.path)
+      expect(paths).to.have.members(expectedFilePaths)
+    }
+
+    it('should use custom cache dir relative to cwd (implicit)', async () => {
+      await testCacheDir('.antora-cache')
+    })
+
+    it('should use custom cache dir relative to cwd (explicit)', async () => {
+      await testCacheDir(ospath.join('~+', '.antora-cache'))
+    })
+
+    it('should use custom cache dir relative to directory of playbook file', async () => {
+      process.chdir(os.tmpdir())
+      await testCacheDir('./.antora-cache', WORK_DIR)
+    })
+
+    it('should use custom cache dir relative to user home', async () => {
+      process.chdir(os.tmpdir())
+      await testCacheDir('~' + ospath.sep + ospath.relative(os.homedir(), ospath.join(WORK_DIR, '.antora-cache')))
+    })
   })
 })

@@ -4,6 +4,7 @@ const _ = require('lodash')
 const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
+const getCacheDir = require('cache-directory')
 const git = require('nodegit')
 const { obj: map } = require('through2')
 const matcher = require('matcher')
@@ -14,7 +15,7 @@ const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
-const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_PATH, CONTENT_GLOB } = require('./constants')
+const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER, CONTENT_GLOB } = require('./constants')
 const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)`))(
   Array.from(new Set(['/', ospath.sep]))
     .join('')
@@ -41,51 +42,56 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  *
  * @param {Object} playbook - The configuration object for Antora.
  * @param {Object} playbook.dir - The working directory of the playbook.
+ * @param {Object} playbook.runtime - The runtime configuration object for Antora.
+ * @param {String} [playbook.runtime.cacheDir=undefined] - The base cache directory.
  * @param {Array} playbook.content - An array of content sources.
  *
  * @returns {Object} A map of files organized by component version.
  */
 async function aggregateContent (playbook) {
-  const defaultBranches = playbook.content.branches
-  const componentVersions = await Promise.all(
-    playbook.content.sources.map(async (source) => {
-      const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(
-        source.url,
-        source.remote,
-        playbook.dir || '.'
-      )
-      const branchPatterns = source.branches || defaultBranches
-      const componentVersions = (await selectBranches(repository, isBare, branchPatterns, remoteName)).map(
-        async ({ ref, branchName, isCurrent }) => {
-          let startPath = source.startPath || ''
-          if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
-          const worktreePath =
-            isCurrent && !(isRemote || isBare) ? (startPath ? ospath.join(repoPath, startPath) : repoPath) : undefined
-          const files = worktreePath
-            ? await readFilesFromWorktree(worktreePath)
-            : await readFilesFromGitTree(repository, ref, startPath)
-          const componentVersion = loadComponentDescriptor(files)
-          const origin = resolveOrigin(url, branchName, startPath, worktreePath)
-          componentVersion.files = files.map((file) => assignFileProperties(file, origin))
-          return componentVersion
-        }
-      )
-      // nodegit repositories must be manually closed
-      return Promise.all(componentVersions)
-        .then((resolvedValue) => {
-          repository.free()
-          return resolvedValue
-        })
-        .catch((reason) => {
-          repository.free()
-          throw reason
-        })
-    })
-  )
-  return buildAggregate(componentVersions)
+  const playbookDir = playbook.dir || '.'
+  return ensureCacheDir((playbook.runtime || {}).cacheDir, playbookDir).then((cacheDir) => {
+    const defaultBranches = playbook.content.branches
+    return Promise.all(
+      playbook.content.sources.map(async (source) => {
+        const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(
+          source.url,
+          source.remote,
+          playbookDir,
+          cacheDir
+        )
+        const branchPatterns = source.branches || defaultBranches
+        const componentVersions = (await selectBranches(repository, isBare, branchPatterns, remoteName)).map(
+          async ({ ref, branchName, isCurrent }) => {
+            let startPath = source.startPath || ''
+            if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
+            const worktreePath =
+              isCurrent && !(isRemote || isBare) ? (startPath ? ospath.join(repoPath, startPath) : repoPath) : undefined
+            const files = worktreePath
+              ? await readFilesFromWorktree(worktreePath)
+              : await readFilesFromGitTree(repository, ref, startPath)
+            const componentVersion = loadComponentDescriptor(files)
+            const origin = resolveOrigin(url, branchName, startPath, worktreePath)
+            componentVersion.files = files.map((file) => assignFileProperties(file, origin))
+            return componentVersion
+          }
+        )
+        // nodegit repositories must be manually closed
+        return Promise.all(componentVersions)
+          .then((resolvedValue) => {
+            repository.free()
+            return resolvedValue
+          })
+          .catch((reason) => {
+            repository.free()
+            throw reason
+          })
+      })
+    ).then((componentVersions) => buildAggregate(componentVersions))
+  })
 }
 
-async function openOrCloneRepository (repoUrl, remoteName, startDir) {
+async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir) {
   let isBare
   let isRemote
   let repository
@@ -97,7 +103,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir) {
     isRemote = true
     // NOTE if repository is in cache, we can assume the remote name is origin
     remoteName = 'origin'
-    repoPath = ospath.join(getCacheDir(), generateLocalFolderName(repoUrl))
+    repoPath = ospath.join(cacheDir, generateLocalFolderName(repoUrl))
     url = repoUrl
   } else if (directoryExists((repoPath = expandPath(repoUrl, '~+', startDir)))) {
     isBare = !directoryExists(ospath.join(repoPath, '.git'))
@@ -171,14 +177,22 @@ function directoryExists (url) {
 }
 
 /**
- * Resolves the location of the content cache directory.
+ * Resolves the content cache directory and ensures it exists.
  *
- * @return {String} - The absolute directory path.
+ * @param {String} customCacheDir - The custom base cache directory. If the value is undefined,
+ *   the user's cache folder is used.
+ * @param {String} startDir - The directory from which to resolve a leading '.' segment.
+ *
+ * @returns {Promise<String>} A promise that resolves to the absolute content cache directory.
  */
-function getCacheDir () {
-  const cacheAbsPath = ospath.resolve(CONTENT_CACHE_PATH)
-  fs.ensureDirSync(cacheAbsPath)
-  return cacheAbsPath
+function ensureCacheDir (customCacheDir, startDir) {
+  // QUESTION should fallback directory be relative to cwd, playbook dir, or tmpdir?
+  const baseCacheDir =
+    customCacheDir == null
+      ? getCacheDir('antora' + (process.env.NODE_ENV === 'test' ? '-test' : '')) || ospath.resolve('.antora/cache')
+      : expandPath(customCacheDir, '~+', startDir)
+  const cacheDir = ospath.join(baseCacheDir, CONTENT_CACHE_FOLDER)
+  return fs.ensureDir(cacheDir).then(() => cacheDir)
 }
 
 /**

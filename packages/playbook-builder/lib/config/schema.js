@@ -5,8 +5,8 @@ module.exports = {
     doc: 'Location of the playbook file.',
     format: String,
     default: undefined,
-    env: 'PLAYBOOK',
     arg: 'playbook',
+    env: 'PLAYBOOK',
   },
   site: {
     start_page: {
@@ -25,8 +25,8 @@ module.exports = {
       doc: 'The base URL of the published site. Should not include trailing slash.',
       format: String,
       default: undefined,
-      env: 'URL',
       arg: 'url',
+      env: 'URL',
     },
     //root: {
     //  doc: 'The name of the component to use as the root of the site.',
@@ -114,6 +114,13 @@ module.exports = {
     },
   },
   runtime: {
+    cache_dir: {
+      doc: 'The cache directory. (default: antora folder under cache dir for current user)',
+      format: String,
+      default: undefined,
+      arg: 'cache-dir',
+      env: 'ANTORA_CACHE_DIR',
+    },
     quiet: {
       doc: 'Do not write any messages to stdout.',
       format: Boolean,

@@ -319,11 +319,12 @@ describe('buildPlaybook()', () => {
 
   it('should use default schema if none is specified', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: defaultSchemaSpec })
+    expect(playbook.runtime.cacheDir).to.equal('./.antora-cache')
     expect(playbook.site.url).to.equal('https://example.com')
     expect(playbook.site.title).to.equal('Example site')
     expect(playbook.site.startPage).to.equal('1.0@server::intro')
     expect(playbook.site.keys.googleAnalytics).to.equal('XX-123456')
-    expect(playbook.ui.bundle).to.equal('../ui/build/ui-bundles.zip')
+    expect(playbook.ui.bundle).to.equal('./../ui/build/ui-bundles.zip')
     expect(playbook.ui.startPath).to.equal('dark-theme')
     expect(playbook.ui.outputDir).to.equal('_')
     expect(playbook.ui.defaultLayout).to.equal('default')
@@ -340,9 +341,9 @@ describe('buildPlaybook()', () => {
     })
     expect(playbook.asciidoc.extensions).to.eql(['asciidoctor-plantuml', './lib/shout-block'])
     expect(playbook.output.destinations).to.have.lengthOf(1)
-    expect(playbook.output.dir).to.equal('_site')
+    expect(playbook.output.dir).to.equal('./_site')
     expect(playbook.output.destinations[0].provider).to.equal('archive')
-    expect(playbook.output.destinations[0].path).to.equal('site.zip')
+    expect(playbook.output.destinations[0].path).to.equal('./site.zip')
   })
 
   it('should be decoupled from the process environment', () => {
