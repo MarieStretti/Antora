@@ -5,7 +5,7 @@ endif::[]
 // Settings:
 :idprefix:
 :idseparator: -
-:release-version: 1.0.0-alpha.7
+:release-version: 1.0.0-alpha.8
 // URIs:
 :uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
 
