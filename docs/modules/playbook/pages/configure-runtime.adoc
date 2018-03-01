@@ -13,7 +13,7 @@ On this page, you'll learn:
 == Default cache directory
 
 The first time Antora runs, it will cache the remote git repositories and UI bundle.
-This default cache location varies by operating system.
+The default location for the cache varies by operating system.
 
 * Linux: [.path]_$XDG_CACHE_HOME/antora_ (or [.path]_$HOME/.cache/antora_ if `$XDG_CACHE_HOME` is not set)
 * macOS: [.path]_$HOME/Library/Caches/antora_
