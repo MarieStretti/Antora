@@ -18,7 +18,7 @@
   "dependencies": {
     "@antora/expand-path-helper": "^1.0.0",
     "bl": "^1.2.1",
-    "cache-directory": "^1.1.0",
+    "cache-directory": "^2.0.0",
     "fs-extra": "^5.0.0",
     "got": "^8.2.0",
     "gulp-vinyl-zip": "^2.1.0",
