@@ -65,6 +65,8 @@ class ContentCatalog {
 
   // QUESTION should this method return the file added?
   addFile (file) {
+    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
+    if (id in this[$files]) throw new Error(`Duplicate ${file.src.family}: ${id.substr(id.indexOf('/') + 1)}`)
     if (!File.isVinyl(file)) file = new File(file)
     const family = file.src.family
     const actingFamily = family === 'alias' ? file.rel.src.family : family
@@ -81,8 +83,6 @@ class ContentCatalog {
       file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
       //if (family === 'alias' && this.urlRedirectStrategy !== 'static') delete file.out
     }
-    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
-    if (id in this[$files]) throw new Error(`Duplicate file: ${id}`)
     this[$files][id] = file
   }
 
@@ -90,8 +90,8 @@ class ContentCatalog {
     return resolvePage(pageSpec, this, context)
   }
 
-  registerPageAlias (aliasSpec, targetFile) {
-    const src = parsePageId(aliasSpec, targetFile.src)
+  registerPageAlias (aliasSpec, targetPage) {
+    const src = parsePageId(aliasSpec, targetPage.src)
     // QUESTION should we throw an error?
     if (!src) return
     if (!src.version) {
@@ -99,16 +99,27 @@ class ContentCatalog {
       // QUESTION should resolvePage also set version to master by default?
       src.version = componentRef ? componentRef.latestVersion.version : 'master'
     }
+    const existingPage = this.getById(src)
+    if (existingPage) {
+      // TODO we'll need some way to easily get a displayable page ID
+      let qualifiedSpec = this[$generateId](existingPage.src)
+      qualifiedSpec = qualifiedSpec.substr(qualifiedSpec.indexOf('/') + 1)
+      const message =
+        existingPage === targetPage
+          ? 'Page alias cannot reference itself'
+          : 'Page alias cannot reference an existing page'
+      throw new Error(message + ': ' + qualifiedSpec)
+    }
     src.family = 'alias'
     src.basename = path.basename(src.relative)
     src.extname = path.extname(src.relative)
     src.stem = path.basename(src.relative, src.extname)
     src.mediaType = 'text/asciidoc'
     // QUESTION should we use src.origin instead of rel with type='link'?
-    //src.origin = { type: 'link', target: targetFile }
+    //src.origin = { type: 'link', target: targetPage }
     // NOTE the redirect generator will populate contents when the redirect strategy is 'static'
     // QUESTION should we set the path property on the alias file?
-    const file = new File({ path: targetFile.path, mediaType: src.mediaType, src, rel: targetFile })
+    const file = new File({ path: targetPage.path, mediaType: src.mediaType, src, rel: targetPage })
     this.addFile(file)
     return file
   }
