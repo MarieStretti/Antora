@@ -5,6 +5,13 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-alpha.9 (2018-03-0x)
+
+=== Added
+
+* *redirect-producer:* First release of component responsible for generating HTTP redirects to a page from its registered aliases.
+It can generate redirects using client-side and server-side producer such as `static` and `ngnix`.
+
 == 1.0.0-alpha.8 (2018-02-27)
 
 === Added

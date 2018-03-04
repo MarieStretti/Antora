@@ -30,7 +30,7 @@ For a detailed list of current development tasks, refer to the core components {
 === v1.0.0-alpha.9
 
 * [ ] Add clone status indicator {uri-issues}/183[#183]
-* [ ] Implement page redirect generator component {uri-issues}/182[#182]
+* [x] Implement page redirect generator component {uri-issues}/182[#182]
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 
 === v1.0.0-beta.x
