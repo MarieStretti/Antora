@@ -13,14 +13,14 @@ const yaml = require('js-yaml')
  * Builds a playbook object according to the provided schema from the specified
  * arguments and environment variables.
  *
- * Accepts an array of command-line arguments (in the form of option flags and
+ * Accepts an array of command line arguments (in the form of option flags and
  * switches) and a map of environment variables and translates this data into a
  * playbook object according the the specified schema. If no schema is
  * specified, the default schema provided by this package is used.
  *
  * @memberof playbook-builder
  *
- * @param {Array} [args=[]] - An array of arguments in the form of command-line
+ * @param {Array} [args=[]] - An array of arguments in the form of command line
  *   option flags and switches. Should begin with the first flag or switch.
  * @param {Object} [env={}] - A map of environment variables.
  * @param {Object} [schema=undefined] - A convict configuration schema.

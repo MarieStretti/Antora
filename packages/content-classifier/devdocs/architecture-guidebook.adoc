@@ -1,4 +1,4 @@
-= Content Classifier Architecture
+= Content Classifier Guidebook
 
 == Context
 
@@ -52,7 +52,7 @@ The content classifier should:
 * Playbook (`site.startPage` and `urls.htmlExtensionStyle`)
 
 .Output
-* Content catalog (`catalog`)
+* Content catalog (`ContentCatalog`)
 
 == Code
 

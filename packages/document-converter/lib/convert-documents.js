@@ -7,7 +7,7 @@ const convertDocument = require('./convert-document')
  *
  * Finds all AsciiDoc files in the page family in the content catalog and converts the contents of
  * those files to embeddable HTML by delegating to the convertDocument function. The function then
- * returns all the files in the page family.  All the files returns from this function are expected
+ * returns all the files in the page family.  All the files returned from this function are expected
  * be composed (i.e., wrapped in an HTML layout) by the page composer.
  *
  * @memberof document-converter

@@ -136,7 +136,7 @@ If the include file cannot be resolved, then the include directive should be lef
 .Inputs
 * Virtual AsciiDoc file
 * Custom attributes from playbook (`asciidoc.attributes`)
-* Content catalog (`contentCatalog`)
+* Content catalog (`ContentCatalog`)
 
 .Output
 * AsciiDoc document object (`Document`)

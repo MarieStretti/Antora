@@ -1,6 +1,6 @@
 = Antora Site Publisher
 
-The site publisher is a component in Antora responsible for publishing (i.e., writing) the generated files to the destination(s) specified in the playbook.
+The Site Publisher is a component in Antora responsible for publishing (i.e., writing) the generated files to the destination(s) specified in the playbook.
 More than one destination may be specified, and this component supports different destination types (via providers) such as a filesystem directory or an archive file.
 Custom providers can be used to add support for additional destinations.
 
