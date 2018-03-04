@@ -11,7 +11,6 @@ const parsePageId = require('./util/parse-page-id')
  * @param {Object} playbook - The configuration object for Antora.
  * @param {Object} playbook.site - Site-related configuration data.
  * @param {String} playbook.site.startPage - The start page for the site; redirects from base URL.
- * @param {String} playbook.site.url - The base URL of the site.
  * @param {Object} playbook.urls - URL settings for the site.
  * @param {String} playbook.urls.htmlExtensionStyle - The style to use when computing page URLs.
  * @param {Object} aggregate - The raw aggregate of virtual file objects to be classified.
