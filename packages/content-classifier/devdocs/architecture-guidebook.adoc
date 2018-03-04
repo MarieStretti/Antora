@@ -49,7 +49,7 @@ The content classifier should:
 
 .Inputs
 * Content aggregate (`aggregate`)
-* Playbook (`urls.htmlExtensionStyle` and `site.url`)
+* Playbook (`site.startPage` and `urls.htmlExtensionStyle`)
 
 .Output
 * Content catalog (`catalog`)

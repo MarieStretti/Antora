@@ -14,7 +14,7 @@ const parsePageId = require('./parse-page-id')
  * @memberof content-classifier
  *
  * @param {String} spec - The contextual page ID spec (e.g.,
- *   version@component:module:topic/page followed by optional .adoc ext).
+ *   version@component:module:topic/page followed by optional .adoc extension).
  * @param {ContentCatalog} catalog - The content catalog in which to resolve the page file.
  * @param {Object} [ctx={}] - The src context.
  *

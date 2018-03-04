@@ -95,8 +95,8 @@ function apportionSrc (file, component, version, nav) {
 /**
  * Return navigation properties if this file is registered as a navigation file.
  *
- * @param {String} filepath - the path of the virtual file to match.
- * @param {Array} nav - the array of navigation entries from the component descriptor.
+ * @param {String} filepath - The path of the virtual file to match.
+ * @param {Array} nav - The array of navigation entries from the component descriptor.
  *
  * @returns {Object} An object of properties, which includes the navigation
  * index, if this file is a navigation file, or undefined if it's not.

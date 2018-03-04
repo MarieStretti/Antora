@@ -18,7 +18,7 @@ const PAGE_ID_RXG = { version: 1, component: 2, module: 3, page: 4 }
  * @memberof content-classifier
  *
  * @param {String} spec - The contextual page ID spec (e.g.,
- *   version@component:module:topic/page followed by optional .adoc ext).
+ *   version@component:module:topic/page followed by optional .adoc extension).
  * @param {Object} [ctx={}] - The src context.
  *
  * @returns {Object} A page ID object that can be used to look up the file in the content catalog.
