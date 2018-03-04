@@ -21,7 +21,7 @@ function classifyContent (playbook, aggregate) {
     (catalog, { name: component, version, title, start_page: startPage, nav, files }) => {
       files.forEach((file) => apportionSrc(file, component, version, nav) && catalog.addFile(file))
       const startPageUrl = resolveStartPageUrl(startPage, component, version, catalog)
-      catalog.registerComponentVersion(component, version, title, startPageUrl)
+      catalog.addComponentVersion(component, version, title, startPageUrl)
       return catalog
     },
     new ContentCatalog(playbook)

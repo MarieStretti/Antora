@@ -19,6 +19,38 @@ class ContentCatalog {
     //this.urlRedirectStrategy = _.get(playbook, ['urls', 'redirectStrategy'], 'static')
   }
 
+  addComponentVersion (name, version, title, url) {
+    const component = this[$components][name]
+    if (component) {
+      const versions = component.versions
+      const insertIdx = versions.findIndex((candidate) => {
+        const verdict = versionCompare(candidate.version, version)
+        if (verdict === 0) throw new Error(`Duplicate version detected for component ${name}: ${version}`)
+        return verdict > 0
+      })
+      const versionEntry = { title, version, url }
+      if (insertIdx < 0) {
+        versions.push(versionEntry)
+      } else {
+        versions.splice(insertIdx, 0, versionEntry)
+        if (insertIdx === 0) {
+          component.title = title
+          component.url = url
+        }
+      }
+    } else {
+      this[$components][name] = Object.defineProperty(
+        { name, title, url, versions: [{ title, version, url }] },
+        'latestVersion',
+        {
+          get: function () {
+            return this.versions[0]
+          },
+        }
+      )
+    }
+  }
+
   // QUESTION should this method return the file added?
   addFile (file) {
     const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
@@ -68,38 +100,7 @@ class ContentCatalog {
     return _.find(this[$files], { path: path_, src: { component, version } })
   }
 
-  registerComponentVersion (name, version, title, url) {
-    const component = this[$components][name]
-    if (component) {
-      const versions = component.versions
-      const insertIdx = versions.findIndex((candidate) => {
-        const verdict = versionCompare(candidate.version, version)
-        if (verdict === 0) throw new Error(`Duplicate version detected for component ${name}: ${version}`)
-        return verdict > 0
-      })
-      const versionEntry = { title, version, url }
-      if (insertIdx < 0) {
-        versions.push(versionEntry)
-      } else {
-        versions.splice(insertIdx, 0, versionEntry)
-        if (insertIdx === 0) {
-          component.title = title
-          component.url = url
-        }
-      }
-    } else {
-      this[$components][name] = Object.defineProperty(
-        { name, title, url, versions: [{ title, version, url }] },
-        'latestVersion',
-        {
-          get: function () {
-            return this.versions[0]
-          },
-        }
-      )
-    }
-  }
-
+  // QUESTION should this be addPageAlias?
   registerPageAlias (aliasSpec, targetPage) {
     const src = parsePageId(aliasSpec, targetPage.src)
     // QUESTION should we throw an error?

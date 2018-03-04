@@ -331,7 +331,7 @@ describe('ContentCatalog', () => {
     })
 
     it('should set version of alias to latest version of component if version not specified', () => {
-      contentCatalog.registerComponentVersion('another-component', '1.0', 'Another Component', '/the-component/1.0/')
+      contentCatalog.addComponentVersion('another-component', '1.0', 'Another Component', '/the-component/1.0/')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('another-component::alias.adoc', targetPage)
