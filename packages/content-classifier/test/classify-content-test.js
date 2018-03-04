@@ -1138,6 +1138,62 @@ describe('classifyContent()', () => {
       expect(result).to.have.property('src')
       expect(result.src.version).to.equal('master')
     })
+
+    it('should register an alias correctly when the HTML URL extension style is indexify', () => {
+      const targetSrc = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog({ urls: { htmlExtensionStyle: 'indexify' } })
+      contentCatalog.addFile(new File({ src: targetSrc }))
+      const targetFile = contentCatalog.getById(targetSrc)
+      const result = contentCatalog.registerPageAlias('alias.adoc', targetFile)
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'alias.adoc',
+      })
+      expect(result.out.path).to.equal('the-component/1.2.3/alias/index.html')
+      expect(result.pub.url).to.equal('/the-component/1.2.3/alias/')
+    })
+
+    it('should register an alias correctly when the HTML URL extension style is drop', () => {
+      const targetSrc = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the-page.adoc',
+        basename: 'the-page.adoc',
+        stem: 'the-page',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog({ urls: { htmlExtensionStyle: 'drop' } })
+      contentCatalog.addFile(new File({ src: targetSrc }))
+      const targetFile = contentCatalog.getById(targetSrc)
+      const result = contentCatalog.registerPageAlias('alias.adoc', targetFile)
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'alias.adoc',
+      })
+      expect(result.out.path).to.equal('the-component/1.2.3/alias.html')
+      expect(result.pub.url).to.equal('/the-component/1.2.3/alias')
+    })
   })
 
   describe('ContentCatalog#resolvePage()', () => {

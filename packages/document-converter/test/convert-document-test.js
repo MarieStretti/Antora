@@ -138,6 +138,34 @@ describe('convertDocument()', () => {
     expect(inputFile.asciidoc.attributes).to.include(attributes)
   })
 
+  it('should register aliases defined by page-aliases document attribute', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      = Page Title
+      :page-aliases: the-alias.adoc,topic/the-alias, 1.0.0@page-a.adoc ,another-alias.adoc
+
+      Page content.
+    `)
+    const contentCatalog = { registerPageAlias: spy(() => {}) }
+    convertDocument(inputFile, contentCatalog)
+    expect(contentCatalog.registerPageAlias).to.have.been.called.exactly(4)
+    expectCalledWith(contentCatalog.registerPageAlias, ['the-alias.adoc', inputFile], 0)
+    expectCalledWith(contentCatalog.registerPageAlias, ['topic/the-alias', inputFile], 1)
+    expectCalledWith(contentCatalog.registerPageAlias, ['1.0.0@page-a.adoc', inputFile], 2)
+    expectCalledWith(contentCatalog.registerPageAlias, ['another-alias.adoc', inputFile], 3)
+  })
+
+  it('should not register aliases if page-aliases document attribute is empty', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      = Page Title
+      :page-aliases:
+
+      Page content.
+    `)
+    const contentCatalog = { registerPageAlias: spy(() => {}) }
+    convertDocument(inputFile, contentCatalog)
+    expect(contentCatalog.registerPageAlias).to.not.have.been.called()
+  })
+
   it('should convert page reference to URL of page in content catalog', () => {
     inputFile.contents = Buffer.from('xref:module-b:page-b.adoc[Page B]')
     const targetFile = {
