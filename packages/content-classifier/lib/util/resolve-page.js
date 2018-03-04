@@ -28,7 +28,8 @@ function resolvePage (spec, catalog, ctx = {}) {
 
   if (!id.version) {
     const component = catalog.getComponent(id.component)
-    if (component) id.version = component.latestVersion.version
+    if (!component) return
+    id.version = component.latestVersion.version
   }
 
   return catalog.getById(id)

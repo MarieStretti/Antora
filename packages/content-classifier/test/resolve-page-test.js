@@ -19,13 +19,13 @@ describe('resolvePage', () => {
 
   it('should return undefined if file not found in catalog', () => {
     const contentCatalog = mockContentCatalog()
-    const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
+    const targetPageIdSpec = '1.2.3@the-component:the-module:no-such-page.adoc'
     const targetPageId = {
       component: 'the-component',
       version: '1.2.3',
       module: 'the-module',
       family: 'page',
-      relative: 'the-page.adoc',
+      relative: 'no-such-page.adoc',
     }
     const result = resolvePage(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
@@ -112,19 +112,19 @@ describe('resolvePage', () => {
     expect(result).to.equal(targetFile)
   })
 
-  it('should return undefined if unknown component is specified without a version', () => {
+  it('should return undefined if component is unknown and version not specified', () => {
     const contentCatalog = mockContentCatalog()
     const targetPageIdSpec = 'unknown-component::the-page.adoc'
     const targetPageId = {
       component: 'unknown-component',
-      version: undefined,
+      version: 'master',
       module: 'ROOT',
       family: 'page',
       relative: 'the-page.adoc',
     }
     const result = resolvePage(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getComponent).to.have.been.called.with('unknown-component')
-    expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
+    expect(contentCatalog.getById).to.not.have.been.called()
     expect(result).to.be.undefined()
   })
 })
