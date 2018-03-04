@@ -1,10 +1,12 @@
 = AsciiDoc Loader Guidebook
+:uri-adoc-js-docs: https://asciidoctor.org/docs/asciidoctor.js/
+:uri-adoc-js-api: http://asciidoctor.github.io/asciidoctor.js/master
 
 == Context
 
-Various components in Antora need to load AsciiDoc (parse the AsciiDoc into an AST), either for accessing the document's structure or converting it to HTML.
+Various components in Antora need to parse the AsciiDoc into an abstract syntax tree (AST), either for accessing the document structure or converting it to HTML.
 The code responsible for loading AsciiDoc should be centralized in a dedicated component to ensure that AsciiDoc is loaded consistently throughout the pipeline and to avoid code duplication.
-This component should integrate the AsciiDoc processor (https://asciidoctor.org/docs/asciidoctor.js/[Asciidoctor.js]) into the Antora pipeline, bundling Antora-specific enhancements, without exposing any low-level details about how that integration is performed.
+This component should integrate the AsciiDoc processor ({uri-adoc-js-docs}[Asciidoctor.js]) into the Antora pipeline and bundle Antora-specific enhancements without exposing any low-level details about how that integration is performed.
 
 == Functional Overview
 
@@ -16,10 +18,10 @@ However, to load the AsciiDoc properly, there's more to it.
 The loader should do the following when loading the AsciiDoc:
 
 * set attributes that pertain to the integration
- ** environment attributes (e.g., env=site, site-gen=antora, etc)
- ** default attributes (e.g., attribute-missing=warn, icons=font, etc)
+ ** environment attributes (e.g., env=site, site-gen=antora, etc.)
+ ** default attributes (e.g., attribute-missing=warn, icons=font, etc.)
  ** custom attributes specified in the playbook
- ** built-in attributes (e.g., docname, docfile, imagesdir, etc)
+ ** built-in attributes (e.g., docname, docfile, imagesdir, etc.)
 * resolve the target of include directives from the content catalog
 * resolve xref macros that specify page references, verifying a match can be found in the content catalog
 * set other processor options (e.g., safe=safe)
@@ -30,13 +32,12 @@ This document object can then be used by other components to examine the structu
 == Software Architecture
 
 The AsciiDoc loader component functionality is provided by the asciidoc-loader module.
-
 All the details of loading AsciiDoc documents into a document object, such as resolving include directives and xref macros, should be encapsulated in this component.
 
 The AsciiDoc source string should be retrieved from the `contents.toString()` property of the specified file.
 Asciidoctor.js should be used to load the AsciiDoc.
-The source string should be passed along with options to the http://asciidoctor.github.io/asciidoctor.js/master/#Asciidoctorload[`Asciidoctor.load`] API of Asciidoctor.js.
-That function should parse the AsciiDoc source into an abstract syntax tree (AST).
+The source string should be passed along with options to the {uri-adoc-js-api}/#Asciidoctorload[`Asciidoctor.load`] API of Asciidoctor.js.
+That function should parse the AsciiDoc source into an abstract syntax tree.
 
 === AsciiDoc processor options
 
@@ -84,7 +85,7 @@ The target is expected to have the following form:
 
  <version@><component:><module:><topic/...><page>.adoc<#fragment>[<content>]
 
-All parts except for the filepath (i.e., `<topic/...><page>.adoc`) are optional.
+All parts except for the file path (i.e., `<topic/...><page>.adoc`) are optional.
 
 If any part is missing, the value from the current context should be consumed.
 For example, if the component is not specified, the component of the referring page (the page containing the xref) should be assumed.
@@ -135,10 +136,10 @@ If the include file cannot be resolved, then the include directive should be lef
 .Inputs
 * Virtual AsciiDoc file
 * Custom attributes from playbook (`asciidoc.attributes`)
-* Content catalog (`catalog`)
+* Content catalog (`contentCatalog`)
 
 .Output
-* AsciiDoc document object
+* AsciiDoc document object (`Document`)
 
 == Code
 
@@ -150,7 +151,7 @@ The AsciiDoc loader API exports the `loadAsciiDoc` function, which accepts:
 * a map of custom AsciiDoc attributes specified in the playbook
 * the content catalog
 
-This function returns the parsed AsciiDoc as a document object (Document).
+This function returns the parsed AsciiDoc as a document object (`Document`).
 
 The API for the AsciiDoc loader should be used as follows:
 
@@ -168,16 +169,16 @@ const doc = loadAsciiDoc(file, {}, contentCatalog)
 The `loadAsciiDoc` function should read the AsciiDoc source by calling `contents.toString()` on the specified file.
 It should also use properties on that file to set certain attributes, as specified above.
 
-The `loadAsciiDoc` function should return a http://asciidoctor.github.io/asciidoctor.js/master/#document[Document] object.
+The `loadAsciiDoc` function should return a {uri-adoc-js-api}/#document[Document] object.
 
 // Q: should it also incorporate attributes from antora.yml?
 When converting each AsciiDoc document, this component incorporates global AsciiDoc attributes defined in the playbook (at the path `asciidoc.attributes`).
 
 == Consequences
 
-The AsciiDoc loader component ensures AsciiDoc source to be loaded consistently throughout the pipeline.
+The AsciiDoc loader component ensures AsciiDoc source is loaded consistently throughout the pipeline.
 It integrates Asciidoctor.js, configuring it to work properly in the Antora environment, without exposing any low-level details about how that integration is performed.
 
 The main function of this component transforms a virtual AsciiDoc file into a parsed AsciiDoc document, which can then be used by other components to examine the document structure, convert all or parts of the document to HTML, or perform other processing.
 
-This component is expected to be used by the document converter component, which converts the contents of the page to HTML, and the navigation builder, which converts navigation files written in AsciiDoc into a navigation model.
+This component is used by the document converter component, which converts the contents of the page to HTML, and the navigation builder, which converts navigation files written in AsciiDoc into a navigation model.
