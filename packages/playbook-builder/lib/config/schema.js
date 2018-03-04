@@ -50,12 +50,12 @@ module.exports = {
         default: undefined,
         arg: 'google-analytics-key',
       },
-      swiftype: {
-        doc: 'The key to activate the Swiftype widget.',
-        format: String,
-        default: undefined,
-        arg: 'swiftype-key',
-      },
+      //swiftype: {
+      //  doc: 'The key to activate the Swiftype widget.',
+      //  format: String,
+      //  default: undefined,
+      //  arg: 'swiftype-key',
+      //},
     },
   },
   content: {
@@ -135,12 +135,6 @@ module.exports = {
     },
   },
   urls: {
-    aspect_page_strategy: {
-      doc: 'Controls how links to pages in aspect domains are generated.',
-      format: ['path', 'query'],
-      default: 'path',
-      arg: 'aspect-page-url-strategy',
-    },
     html_extension_style: {
       doc: 'Controls how the URL extension for HTML pages is handled.',
       format: ['default', 'drop', 'indexify'],
