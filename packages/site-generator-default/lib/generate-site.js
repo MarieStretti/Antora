@@ -6,8 +6,8 @@ const buildPlaybook = require('@antora/playbook-builder')
 const classifyContent = require('@antora/content-classifier')
 const convertDocuments = require('@antora/document-converter')
 const createPageComposer = require('@antora/page-composer')
-const generateSitemaps = require('@antora/site-mapper')
 const loadUi = require('@antora/ui-loader')
+const mapSite = require('@antora/site-mapper')
 const produceRedirects = require('@antora/redirect-producer')
 const publishSite = require('@antora/site-publisher')
 const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
@@ -30,7 +30,7 @@ async function generateSite (args, env) {
   ;((composePage) => {
     pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
   })(createPageComposer(playbook, contentCatalog, uiCatalog))
-  const siteFiles = generateSitemaps(playbook, contentCatalog).concat(produceRedirects(playbook, contentCatalog))
+  const siteFiles = mapSite(playbook, contentCatalog).concat(produceRedirects(playbook, contentCatalog))
   const siteCatalog = { getFiles: () => siteFiles }
   return publishSite(playbook, [contentCatalog, uiCatalog, siteCatalog])
 }

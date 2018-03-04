@@ -7,7 +7,7 @@ const { DOMParser } = require('xmldom')
 const mapSite = require('@antora/site-mapper')
 const mockContentCatalog = require('../../../test/mock-content-catalog')
 
-describe('generateSitemaps()', () => {
+describe('mapSite()', () => {
   let playbook
 
   const collectUrls = (doc, tagName = 'url') =>

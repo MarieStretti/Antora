@@ -58,17 +58,17 @@ The site mapper component should:
 == Code
 
 The site mapper component is implemented as a dedicated node package (i.e., module).
-This module exports the function `generateSitemaps`, which accepts a playbook instance and the content catalog and returns an array of virtual sitemap files.
+This module exports the function `mapSite`, which accepts a playbook instance and the content catalog and returns an array of virtual sitemap files.
 
 The API for the site mapper should be used as follows:
 
 [source,js]
 ----
-const generateSitemaps = require('@antora/site-mapper')
+const mapSite = require('@antora/site-mapper')
 
 //...
 
-const sitemapFiles = generateSitemaps(playbook, contentCatalog)
+const sitemaps = mapSite(playbook, contentCatalog)
 ----
 
 The sitemap files then need to be put into one of the catalogs passed to the site publisher so that these files get published.

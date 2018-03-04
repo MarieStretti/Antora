@@ -36,7 +36,7 @@ The generator should delegate to the following functions imported from the speci
 * convertDocument (document-converter)
 * buildNavigation (navigation-builder)
 * createPageComposer (page-composer)
-* generateSitemaps (site-mapper)
+* mapSite (site-mapper)
 * produceRedirects (redirect-producer)
 * publishSite (site-publisher)
 
