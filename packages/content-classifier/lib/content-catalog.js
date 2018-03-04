@@ -19,6 +19,34 @@ class ContentCatalog {
     //this.urlRedirectStrategy = _.get(playbook, ['urls', 'redirectStrategy'], 'static')
   }
 
+  // QUESTION should this method return the file added?
+  addFile (file) {
+    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
+    if (id in this[$files]) throw new Error(`Duplicate ${file.src.family}: ${id.substr(id.indexOf('/') + 1)}`)
+    if (!File.isVinyl(file)) file = new File(file)
+    const family = file.src.family
+    const actingFamily = family === 'alias' ? file.rel.src.family : family
+    if (!('out' in file) && (actingFamily === 'page' || actingFamily === 'image' || actingFamily === 'attachment')) {
+      file.out = computeOut(file.src, actingFamily, this.htmlUrlExtensionStyle)
+    }
+    if (
+      !('pub' in file) &&
+      (actingFamily === 'page' ||
+        actingFamily === 'image' ||
+        actingFamily === 'attachment' ||
+        actingFamily === 'navigation')
+    ) {
+      file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
+      //if (family === 'alias' && this.urlRedirectStrategy !== 'static') delete file.out
+    }
+    this[$files][id] = file
+  }
+
+  findBy (options) {
+    const srcFilter = _.pick(options, 'component', 'version', 'module', 'family', 'relative', 'basename', 'extname')
+    return _.filter(this[$files], { src: srcFilter })
+  }
+
   getComponent (name) {
     return this[$components][name]
   }
@@ -29,6 +57,15 @@ class ContentCatalog {
 
   getFiles () {
     return Object.values(this[$files])
+  }
+
+  getById ({ component, version, module, family, relative }) {
+    const id = this[$generateId]({ component, version, module, family, relative })
+    return this[$files][id]
+  }
+
+  getByPath ({ component, version, path: path_ }) {
+    return _.find(this[$files], { path: path_, src: { component, version } })
   }
 
   registerComponentVersion (name, version, title, url) {
@@ -61,33 +98,6 @@ class ContentCatalog {
         }
       )
     }
-  }
-
-  // QUESTION should this method return the file added?
-  addFile (file) {
-    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
-    if (id in this[$files]) throw new Error(`Duplicate ${file.src.family}: ${id.substr(id.indexOf('/') + 1)}`)
-    if (!File.isVinyl(file)) file = new File(file)
-    const family = file.src.family
-    const actingFamily = family === 'alias' ? file.rel.src.family : family
-    if (!('out' in file) && (actingFamily === 'page' || actingFamily === 'image' || actingFamily === 'attachment')) {
-      file.out = computeOut(file.src, actingFamily, this.htmlUrlExtensionStyle)
-    }
-    if (
-      !('pub' in file) &&
-      (actingFamily === 'page' ||
-        actingFamily === 'image' ||
-        actingFamily === 'attachment' ||
-        actingFamily === 'navigation')
-    ) {
-      file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
-      //if (family === 'alias' && this.urlRedirectStrategy !== 'static') delete file.out
-    }
-    this[$files][id] = file
-  }
-
-  resolvePage (pageSpec, context = {}) {
-    return resolvePage(pageSpec, this, context)
   }
 
   registerPageAlias (aliasSpec, targetPage) {
@@ -124,18 +134,8 @@ class ContentCatalog {
     return file
   }
 
-  findBy (options) {
-    const srcFilter = _.pick(options, 'component', 'version', 'module', 'family', 'relative', 'basename', 'extname')
-    return _.filter(this[$files], { src: srcFilter })
-  }
-
-  getById ({ component, version, module, family, relative }) {
-    const id = this[$generateId]({ component, version, module, family, relative })
-    return this[$files][id]
-  }
-
-  getByPath ({ component, version, path: path_ }) {
-    return _.find(this[$files], { path: path_, src: { component, version } })
+  resolvePage (pageSpec, context = {}) {
+    return resolvePage(pageSpec, this, context)
   }
 
   [$generateId] ({ component, version, module, family, relative }) {
