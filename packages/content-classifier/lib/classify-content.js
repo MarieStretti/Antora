@@ -20,8 +20,7 @@ function classifyContent (playbook, aggregate) {
   const catalog = aggregate.reduce(
     (catalog, { name: component, version, title, start_page: startPage, nav, files }) => {
       files.forEach((file) => apportionSrc(file, component, version, nav) && catalog.addFile(file))
-      const startPageUrl = resolveStartPageUrl(startPage, component, version, catalog)
-      catalog.addComponentVersion(component, version, title, startPageUrl)
+      catalog.addComponentVersion(component, version, title, startPage)
       return catalog
     },
     new ContentCatalog(playbook)
@@ -106,25 +105,13 @@ function getNavInfo (filepath, nav) {
   if (~index) return { index }
 }
 
-function resolveStartPageUrl (pageSpec, component, version, contentCatalog) {
-  let page
-  if (pageSpec) {
-    page = contentCatalog.resolvePage(pageSpec, { component, version, module: 'ROOT' })
-    if (!page) throw new Error(`Start page specified for ${version}@${component} not found: ` + pageSpec)
-  } else {
-    page = contentCatalog.resolvePage('index.adoc', { component, version, module: 'ROOT' })
-    //if (!page) throw new Error(`Start page for ${version}@${component} not specified and no index page found.`)
-  }
-  return page && page.pub.url
-}
-
 function registerSiteStartPage (playbook, contentCatalog) {
   const pageSpec = playbook.site.startPage
   if (!pageSpec) return
   const page = contentCatalog.resolvePage(pageSpec)
   if (!page) throw new Error('Specified start page for site not found: ' + pageSpec)
   const src = parsePageId('index.adoc', { component: '', version: '', module: '' })
-  Object.assign(src, { family: 'alias', basename: src.relative, stem: 'index', mediaType: 'text/asciidoc' })
+  Object.assign(src, { family: 'alias', basename: 'index.adoc', stem: 'index', mediaType: 'text/asciidoc' })
   contentCatalog.addFile({ src, rel: page })
 }
 

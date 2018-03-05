@@ -143,13 +143,6 @@ describe('classifyContent()', () => {
       expect(component.latestVersion.version).to.equal('v3.0.0')
     })
 
-    it('should not set url on component if start page cannot be resolved', () => {
-      const component = classifyContent(playbook, aggregate).getComponent('the-component')
-      expect(component).to.exist()
-      expect(component.url).to.be.undefined()
-      expect(component.versions[0].url).to.be.undefined()
-    })
-
     it('should throw when adding a duplicate version of a component', () => {
       aggregate.push({
         name: 'the-component',
@@ -220,19 +213,31 @@ describe('classifyContent()', () => {
 
     it('should set the component url to the index page of the ROOT module by default', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
+      const expectedUrl = '/the-component/v1.2.3/index.html'
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
       expect(component).to.exist()
-      expect(component.url).to.equal('/the-component/v1.2.3/index.html')
-      expect(component.versions[0].url).to.equal('/the-component/v1.2.3/index.html')
+      expect(component.url).to.equal(expectedUrl)
+      expect(component.versions[0].url).to.equal(expectedUrl)
     })
 
     it('should allow the start page to be specified for a component version', () => {
-      aggregate[0].start_page = 'ROOT:home.adoc'
+      aggregate[0].start_page = 'home.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/home.adoc'))
+      const expectedUrl = '/the-component/v1.2.3/home.html'
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
       expect(component).to.exist()
-      expect(component.url).to.equal('/the-component/v1.2.3/home.html')
-      expect(component.versions[0].url).to.equal('/the-component/v1.2.3/home.html')
+      expect(component.url).to.equal(expectedUrl)
+      expect(component.versions[0].url).to.equal(expectedUrl)
+    })
+
+    it('should allow the start page in non-ROOT module to be specified for a component version', () => {
+      aggregate[0].start_page = 'quickstarts:start-here.adoc'
+      aggregate[0].files.push(createFile('modules/quickstarts/pages/start-here.adoc'))
+      const expectedUrl = '/the-component/v1.2.3/quickstarts/start-here.html'
+      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.url).to.equal(expectedUrl)
+      expect(component.versions[0].url).to.equal(expectedUrl)
     })
 
     it('should throw error if start page specified for component version cannot be resolved', () => {
@@ -241,13 +246,30 @@ describe('classifyContent()', () => {
       expect(() => classifyContent(playbook, aggregate)).to.throw(/Start page .* not found/)
     })
 
+    it('should set url to index page in ROOT module if found', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
+      const expectedUrl = '/the-component/v1.2.3/index.html'
+      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.url).to.equal(expectedUrl)
+      expect(component.versions[0].url).to.equal(expectedUrl)
+    })
+
+    it('should set url to synthetic index page in ROOT module if page not found', () => {
+      const expectedUrl = '/the-component/v1.2.3/index.html'
+      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.url).to.equal(expectedUrl)
+      expect(component.versions[0].url).to.equal(expectedUrl)
+    })
+
     it('should update url of component to match url of greatest version', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
       aggregate.push({
         name: 'the-component',
         title: 'The Component',
         version: 'v2.0.0',
-        start_page: 'ROOT:home.adoc',
+        start_page: 'home.adoc',
         files: [createFile('modules/ROOT/pages/home.adoc')],
       })
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
