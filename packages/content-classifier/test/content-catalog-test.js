@@ -275,6 +275,7 @@ describe('ContentCatalog', () => {
 
     beforeEach(() => {
       contentCatalog = new ContentCatalog()
+      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component', '/the-component/1.2.3/')
       targetPageSrc = {
         component: 'the-component',
         version: '1.2.3',
@@ -287,12 +288,13 @@ describe('ContentCatalog', () => {
       }
     })
 
-    // QUESTION should we throw an error or warning?
+    // QUESTION should this case throw an error or warning?
     it('should not register alias if page spec is invalid', () => {
-      expect(contentCatalog.registerPageAlias('invalid::', {})).to.be.undefined()
+      expect(contentCatalog.registerPageAlias('the-component::', {})).to.be.undefined()
     })
 
     it('should register an alias for target file given a valid qualified page spec', () => {
+      contentCatalog.addComponentVersion('the-component', '1.0.0', 'The Component', '/the-component/1.0.0/')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('1.0.0@the-component:ROOT:the-topic/alias.adoc', targetPage)
@@ -331,14 +333,14 @@ describe('ContentCatalog', () => {
     })
 
     it('should set version of alias to latest version of component if version not specified', () => {
-      contentCatalog.addComponentVersion('another-component', '1.0', 'Another Component', '/the-component/1.0/')
+      contentCatalog.addComponentVersion('other-component', '1.0', 'Other Component', '/other-component/1.0/')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
-      const result = contentCatalog.registerPageAlias('another-component::alias.adoc', targetPage)
+      const result = contentCatalog.registerPageAlias('other-component::alias.adoc', targetPage)
       expect(result).to.exist()
       expect(result).to.have.property('src')
       expect(result.src).to.include({
-        component: 'another-component',
+        component: 'other-component',
         version: '1.0',
         module: 'ROOT',
         family: 'alias',
@@ -346,17 +348,48 @@ describe('ContentCatalog', () => {
       })
     })
 
-    it('should not set version of alias if version not specified and component not registered', () => {
+    it('should not register alias if component is unknown', () => {
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
-      const result = contentCatalog.registerPageAlias('another-component::alias.adoc', targetPage)
-      expect(result).to.exist()
-      expect(result).to.have.property('src')
-      expect(result.src.version).to.equal('master')
+      const result = contentCatalog.registerPageAlias('1.0@unknown-component:ROOT:alias.adoc', targetPage)
+      expect(result).to.not.exist()
+    })
+
+    it('should not register alias if version not specified and component unknown', () => {
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const result = contentCatalog.registerPageAlias('unknown-component::alias.adoc', targetPage)
+      expect(result).to.not.exist()
+    })
+
+    it('should not allow alias to be registered that matches target page', () => {
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const expectedError = 'Page alias cannot reference itself: 1.2.3@the-component:ROOT:the-page.adoc'
+      expect(() => contentCatalog.registerPageAlias(targetPageSrc.relative, targetPage)).to.throw(expectedError)
+    })
+
+    it('should not allow alias to be registered that matches existing page', () => {
+      const otherPageSrc = Object.assign({}, targetPageSrc)
+      otherPageSrc.relative = otherPageSrc.basename = 'the-other-page.adoc'
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      contentCatalog.addFile(new File({ src: otherPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const expectedError = 'Page alias cannot reference an existing page: 1.2.3@the-component:ROOT:the-other-page.adoc'
+      expect(() => contentCatalog.registerPageAlias(otherPageSrc.relative, targetPage)).to.throw(expectedError)
+    })
+
+    it('should not allow alias to be registered multiple times', () => {
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const expectedError = 'Duplicate alias: 1.2.3@the-component:ROOT:alias.adoc'
+      expect(() => contentCatalog.registerPageAlias('alias.adoc', targetPage)).to.not.throw()
+      expect(() => contentCatalog.registerPageAlias('alias.adoc', targetPage)).to.throw(expectedError)
     })
 
     it('should register an alias correctly when the HTML URL extension style is indexify', () => {
       contentCatalog = new ContentCatalog({ urls: { htmlExtensionStyle: 'indexify' } })
+      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component', '/the-component/1.2.3/')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('alias.adoc', targetPage)
@@ -373,33 +406,9 @@ describe('ContentCatalog', () => {
       expect(result.pub.url).to.equal('/the-component/1.2.3/alias/')
     })
 
-    it('should not allow alias to be registered that matches target page', () => {
-      contentCatalog.addFile(new File({ src: targetPageSrc }))
-      const targetPage = contentCatalog.getById(targetPageSrc)
-      const expectedError = 'Page alias cannot reference itself: 1.2.3@the-component:ROOT:the-page.adoc'
-      expect(() => contentCatalog.registerPageAlias(targetPageSrc.relative, targetPage)).to.throw(expectedError)
-    })
-
-    it('should not allow alias to be registered that matches an existing page', () => {
-      const theOtherPageSrc = Object.assign({}, targetPageSrc)
-      theOtherPageSrc.relative = theOtherPageSrc.basename = 'the-other-page.adoc'
-      contentCatalog.addFile(new File({ src: targetPageSrc }))
-      contentCatalog.addFile(new File({ src: theOtherPageSrc }))
-      const targetPage = contentCatalog.getById(targetPageSrc)
-      const expectedError = 'Page alias cannot reference an existing page: 1.2.3@the-component:ROOT:the-other-page.adoc'
-      expect(() => contentCatalog.registerPageAlias(theOtherPageSrc.relative, targetPage)).to.throw(expectedError)
-    })
-
-    it('should not allow alias to be registered multiple times', () => {
-      contentCatalog.addFile(new File({ src: targetPageSrc }))
-      const targetPage = contentCatalog.getById(targetPageSrc)
-      const expectedError = 'Duplicate alias: 1.2.3@the-component:ROOT:alias.adoc'
-      expect(() => contentCatalog.registerPageAlias('alias.adoc', targetPage)).to.not.throw()
-      expect(() => contentCatalog.registerPageAlias('alias.adoc', targetPage)).to.throw(expectedError)
-    })
-
     it('should register an alias correctly when the HTML URL extension style is drop', () => {
       contentCatalog = new ContentCatalog({ urls: { htmlExtensionStyle: 'drop' } })
+      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component', '/the-component/1.2.3/')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('alias.adoc', targetPage)

@@ -87,6 +87,11 @@ class ContentCatalog {
     return Object.values(this[$components])
   }
 
+  //getComponentVersion (name, version) {
+  //  const component = this.getComponent(name)
+  //  return component && component.versions.find((candidate) => candidate.version === version)
+  //}
+
   getFiles () {
     return Object.values(this[$files])
   }
@@ -103,12 +108,15 @@ class ContentCatalog {
   // QUESTION should this be addPageAlias?
   registerPageAlias (aliasSpec, targetPage) {
     const src = parsePageId(aliasSpec, targetPage.src)
-    // QUESTION should we throw an error?
+    // QUESTION should we throw an error if alias is invalid or out of bounds?
     if (!src) return
-    if (!src.version) {
-      const componentRef = src.component && this.getComponent(src.component)
-      // QUESTION should resolvePage also set version to master by default?
-      src.version = componentRef ? componentRef.latestVersion.version : 'master'
+    const component = this.getComponent(src.component)
+    if (!component) return
+    if (src.version) {
+      const version = src.version
+      if (!component.versions.find((candidate) => candidate.version === version)) return
+    } else {
+      src.version = component.latestVersion.version
     }
     const existingPage = this.getById(src)
     if (existingPage) {
