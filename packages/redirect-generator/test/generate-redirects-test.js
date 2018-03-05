@@ -32,9 +32,9 @@ describe('generateRedirects()', () => {
     expectCalledWith(emptyContentCatalog.findBy, { family: 'alias' })
   })
 
-  describe('static strategy', () => {
+  describe('static facility', () => {
     beforeEach(() => {
-      playbook.urls.redirectStrategy = 'static'
+      playbook.urls.redirectFacility = 'static'
     })
 
     it('should populate contents of files in alias family with static redirect page', () => {
@@ -85,9 +85,9 @@ describe('generateRedirects()', () => {
     })
   })
 
-  describe('nginx strategy', () => {
+  describe('nginx facility', () => {
     beforeEach(() => {
-      playbook.urls.redirectStrategy = 'nginx'
+      playbook.urls.redirectFacility = 'nginx'
     })
 
     it('should generate and return nginx rewrite config file', () => {
@@ -151,9 +151,9 @@ describe('generateRedirects()', () => {
     })
   })
 
-  describe('none strategy', () => {
+  describe('disabled facility', () => {
     beforeEach(() => {
-      playbook.urls.redirectStrategy = 'none'
+      playbook.urls.redirectFacility = 'disabled'
     })
 
     it('should remove out property from files in alias family', () => {

@@ -115,13 +115,6 @@ describe('resolvePage', () => {
   it('should return undefined if component is unknown and version not specified', () => {
     const contentCatalog = mockContentCatalog()
     const targetPageIdSpec = 'unknown-component::the-page.adoc'
-    const targetPageId = {
-      component: 'unknown-component',
-      version: 'master',
-      module: 'ROOT',
-      family: 'page',
-      relative: 'the-page.adoc',
-    }
     const result = resolvePage(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getComponent).to.have.been.called.with('unknown-component')
     expect(contentCatalog.getById).to.not.have.been.called()

@@ -43,15 +43,15 @@ describe('classifyContent()', () => {
       delete playbook.urls
       const contentCatalog = classifyContent(playbook, aggregate)
       expect(contentCatalog.htmlUrlExtensionStyle).to.equal('default')
-      //expect(contentCatalog.urlRedirectStrategy).to.equal('static')
+      //expect(contentCatalog.urlRedirectFacility).to.equal('static')
     })
 
     it('should set url options on ContentCatalog from playbook', () => {
       playbook.urls.htmlExtensionStyle = 'indexify'
-      playbook.urls.redirectStrategy = 'nginx'
+      playbook.urls.redirectFacility = 'nginx'
       const contentCatalog = classifyContent(playbook, aggregate)
       expect(contentCatalog.htmlUrlExtensionStyle).to.equal('indexify')
-      //expect(contentCatalog.urlRedirectStrategy).to.equal('nginx')
+      //expect(contentCatalog.urlRedirectFacility).to.equal('nginx')
     })
   })
 

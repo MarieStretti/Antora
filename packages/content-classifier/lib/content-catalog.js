@@ -16,7 +16,7 @@ class ContentCatalog {
     this[$components] = {}
     this[$files] = {}
     this.htmlUrlExtensionStyle = _.get(playbook, ['urls', 'htmlExtensionStyle'], 'default')
-    //this.urlRedirectStrategy = _.get(playbook, ['urls', 'redirectStrategy'], 'static')
+    //this.urlRedirectFacility = _.get(playbook, ['urls', 'redirectFacility'], 'static')
   }
 
   addComponentVersion (name, version, title, url) {
@@ -69,7 +69,7 @@ class ContentCatalog {
         actingFamily === 'navigation')
     ) {
       file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
-      //if (family === 'alias' && this.urlRedirectStrategy !== 'static') delete file.out
+      //if (family === 'alias' && this.urlRedirectFacility !== 'static') delete file.out
     }
     this[$files][id] = file
   }
@@ -136,7 +136,7 @@ class ContentCatalog {
     src.mediaType = 'text/asciidoc'
     // QUESTION should we use src.origin instead of rel with type='link'?
     //src.origin = { type: 'link', target: targetPage }
-    // NOTE the redirect generator will populate contents when the redirect strategy is 'static'
+    // NOTE the redirect generator will populate contents when the redirect facility is 'static'
     // QUESTION should we set the path property on the alias file?
     const file = new File({ path: targetPage.path, mediaType: src.mediaType, src, rel: targetPage })
     this.addFile(file)

@@ -8,7 +8,7 @@ function generateRedirects (playbook, contentCatalog) {
   const aliases = contentCatalog.findBy({ family: 'alias' })
   if (!aliases.length) return []
   let siteUrl = playbook.site.url
-  switch (playbook.urls.redirectStrategy) {
+  switch (playbook.urls.redirectFacility) {
     case 'static':
       if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
       return populateStaticRedirectFiles(aliases, siteUrl)
@@ -47,18 +47,18 @@ function unpublish (files) {
 }
 
 function createStaticRedirectContents (file, siteUrl) {
-  const relUrl = file.rel.pub.url
-  const redirectUrl = computeRelativeUrlPath(file.pub.url, relUrl)
-  const qualifiedRedirectUrl = siteUrl ? siteUrl + relUrl : relUrl.substr(1)
-  const canonicalLink = siteUrl ? `\n<link rel="canonical" href="${qualifiedRedirectUrl}">` : ''
+  const targetUrl = file.rel.pub.url
+  const relativeUrl = computeRelativeUrlPath(file.pub.url, targetUrl)
+  const canonicalUrl = siteUrl ? siteUrl + targetUrl : undefined
+  const canonicalLink = siteUrl ? `\n<link rel="canonical" href="${canonicalUrl}">` : ''
   return Buffer.from(`<!DOCTYPE html>
 <meta charset="utf-8">${canonicalLink}
-<script>location="${redirectUrl}"</script>
-<meta http-equiv="refresh" content="0; url=${redirectUrl}">
+<script>location="${relativeUrl}"</script>
+<meta http-equiv="refresh" content="0; url=${relativeUrl}">
 <meta name="robots" content="noindex">
 <title>Redirect Notice</title>
 <h1>Redirect Notice</h1>
-<p>The page you requested has been relocated to <a href="${redirectUrl}">${qualifiedRedirectUrl}</a>.</p>`)
+<p>The page you requested has been relocated to <a href="${relativeUrl}">${canonicalUrl || relativeUrl}</a>.</p>`)
 }
 
 module.exports = generateRedirects

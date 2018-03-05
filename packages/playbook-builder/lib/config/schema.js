@@ -141,11 +141,11 @@ module.exports = {
       default: 'default',
       arg: 'html-url-extension-style',
     },
-    redirect_strategy: {
-      doc: 'Generate artifacts to map URLs for page aliases and start pages.',
-      format: ['disabled', 'static', 'nginx'],
+    redirect_facility: {
+      doc: 'The facility for handling page alias and start page redirections.',
+      format: ['disabled', 'nginx', 'static'],
       default: 'static',
-      arg: 'redirect-strategy',
+      arg: 'redirect-facility',
     },
   },
   output: {

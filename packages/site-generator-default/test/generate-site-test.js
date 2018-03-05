@@ -378,7 +378,7 @@ describe('generateSite()', () => {
     )
   }).timeout(TIMEOUT)
 
-  it('should generate static redirect files for aliases when redirect strategy is static', async () => {
+  it('should generate static redirect files for aliases by default', async () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
     expect(ospath.join(destAbsDir, 'the-component/2.0/the-alias.html')).to.be.a.file()
@@ -386,9 +386,9 @@ describe('generateSite()', () => {
     expect(contents).to.include(`<script>location="the-page.html"</script>`)
   }).timeout(TIMEOUT)
 
-  it('should generate nginx rewrite config file for aliases when redirect strategy is nginx', async () => {
+  it('should generate nginx rewrite config file for aliases when using nginx redirect facility', async () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    await generateSite(['--playbook', playbookFile, '--redirect-strategy', 'nginx'], env)
+    await generateSite(['--playbook', playbookFile, '--redirect-facility', 'nginx'], env)
     expect(ospath.join(destAbsDir, '.etc/nginx/rewrite.conf')).to.be.a.file()
     const contents = readFile('.etc/nginx/rewrite.conf', destAbsDir)
     const rules = `location = /the-component/2.0/the-alias.html { return 301 /the-component/2.0/the-page.html; }`
