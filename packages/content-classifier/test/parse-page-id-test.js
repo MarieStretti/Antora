@@ -3,27 +3,14 @@
 
 const { expect } = require('../../../test/test-utils')
 
-const parsePageId = require('@antora/asciidoc-loader/lib/xref/parse-page-id')
+const parsePageId = require('@antora/content-classifier/lib/util/parse-page-id')
 
 describe('parsePageId()', () => {
   it('should return undefined if input is not a valid page ID spec', () => {
-    expect(parsePageId('the-component::')).to.be.undefined()
+    expect(parsePageId('invalid-syntax::')).to.be.undefined()
   })
 
-  it('should parse a qualified page ID sans extension', () => {
-    const input = '1.0@the-component:the-module:the-topic/the-page'
-    const expected = {
-      version: '1.0',
-      component: 'the-component',
-      module: 'the-module',
-      family: 'page',
-      relative: 'the-topic/the-page.adoc',
-    }
-    const result = parsePageId(input)
-    expect(result).to.eql(expected)
-  })
-
-  it('should parse a qualified page ID with extension', () => {
+  it('should parse a qualified page ID with file extension', () => {
     const input = '1.0@the-component:the-module:the-topic/the-page.adoc'
     const expected = {
       version: '1.0',
@@ -36,7 +23,20 @@ describe('parsePageId()', () => {
     expect(result).to.eql(expected)
   })
 
-  it('should leave version undefined if component is specified without a version', () => {
+  it('should parse a qualified page ID sans file extension', () => {
+    const input = '1.0@the-component:the-module:the-topic/the-page'
+    const expected = {
+      version: '1.0',
+      component: 'the-component',
+      module: 'the-module',
+      family: 'page',
+      relative: 'the-topic/the-page.adoc',
+    }
+    const result = parsePageId(input)
+    expect(result).to.eql(expected)
+  })
+
+  it('should leave version undefined if component is specified but not version', () => {
     const input = 'the-component:the-module:the-page.adoc'
     const inputCtx = { version: '1.0' }
     const expected = {
@@ -126,6 +126,40 @@ describe('parsePageId()', () => {
       component: 'ctx-component',
       version: '1.1',
       module: 'ctx-module',
+    }
+    const result = parsePageId(inputSpec, inputCtx)
+    expect(result).to.include(expected)
+  })
+
+  it('should not replace specified values with values in context', () => {
+    const inputSpec = '1.0@the-component:the-module:the-page.adoc'
+    const inputCtx = {
+      component: 'ctx-component',
+      version: '1.1',
+      module: 'ctx-module',
+    }
+    const expected = {
+      component: 'the-component',
+      version: '1.0',
+      module: 'the-module',
+      relative: 'the-page.adoc',
+    }
+    const result = parsePageId(inputSpec, inputCtx)
+    expect(result).to.include(expected)
+  })
+
+  it('should not use values in context if component is specified', () => {
+    const inputSpec = 'the-component::the-page.adoc'
+    const inputCtx = {
+      component: 'ctx-component',
+      version: '1.1',
+      module: 'ctx-module',
+    }
+    const expected = {
+      component: 'the-component',
+      version: undefined,
+      module: 'ROOT',
+      relative: 'the-page.adoc',
     }
     const result = parsePageId(inputSpec, inputCtx)
     expect(result).to.include(expected)

@@ -1,4 +1,5 @@
 = The Page
+:page-aliases: the-alias.adoc
 
 Content.
 

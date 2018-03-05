@@ -12,8 +12,8 @@ const semverCompare = require('semver-compare')
  * * Promotes the string "master" to the highest version.
  * * Compares in descending order (e.g., 2.0.0 comes before 1.0.0).
  *
- * @param {String} a - the left version string
- * @param {String} b - the right version string
+ * @param {String} a - The left version string.
+ * @param {String} b - The right version string.
  * @returns 0 if the versions match, -1 if a is greater, or 1 if b is greater.
  */
 function versionCompareDesc (a, b) {

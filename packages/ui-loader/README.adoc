@@ -1,6 +1,6 @@
 = Antora UI Loader
 
-The UI loader is a component in Antora responsible for downloading and caching the UI bundle, then extracting and loading the files from that bundle into a UI catalog.
+The UI Loader is a component in Antora responsible for downloading and caching the UI bundle, then extracting and loading the files from that bundle into a UI catalog.
 The UI files are combined with the content files at the end of the Antora documentation pipeline to produce a complete site.
 
 https://antora.org[Antora] is a modular static site generator designed for creating documentation sites from AsciiDoc documents.

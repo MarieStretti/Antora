@@ -1,7 +1,6 @@
 'use strict'
 
 const computeRelativeUrlPath = require('../util/compute-relative-url-path')
-const resolvePage = require('./resolve-page')
 const splitOnce = require('../util/split-once')
 
 /**
@@ -17,15 +16,15 @@ const splitOnce = require('../util/split-once')
  * @param {String} refSpec - The target of the xref macro that specifies a page reference.
  * @param {String} content - The content (i.e., formatted text) of the link (undefined if not specified).
  * @param {File} currentPage - The virtual file for the current page.
- * @param {ContentCatalog} catalog - The content catalog that contains the virtual files in the site.
+ * @param {ContentCatalog} contentCatalog - The content catalog that contains the virtual files in the site.
  * @param {Boolean} [relativize=true] - Compute the target relative to the current page.
  * @returns {Object} A map ({ content, target }) with the resolved content and target to make an HTML link.
  */
-function convertPageRef (refSpec, content, currentPage, catalog, relativize = true) {
+function convertPageRef (refSpec, content, currentPage, contentCatalog, relativize = true) {
   let targetPage
   const [pageIdSpec, fragment] = splitOnce(refSpec, '#')
   try {
-    if (!(targetPage = resolvePage(pageIdSpec, catalog, currentPage.src))) {
+    if (!(targetPage = contentCatalog.resolvePage(pageIdSpec, currentPage.src))) {
       // TODO log "Unresolved page ID"
       return { content: `${pageIdSpec}.adoc${fragment ? '#' + fragment : ''}`, target: '#' }
     }

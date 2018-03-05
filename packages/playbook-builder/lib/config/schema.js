@@ -50,12 +50,12 @@ module.exports = {
         default: undefined,
         arg: 'google-analytics-key',
       },
-      swiftype: {
-        doc: 'The key to activate the Swiftype widget.',
-        format: String,
-        default: undefined,
-        arg: 'swiftype-key',
-      },
+      //swiftype: {
+      //  doc: 'The key to activate the Swiftype widget.',
+      //  format: String,
+      //  default: undefined,
+      //  arg: 'swiftype-key',
+      //},
     },
   },
   content: {
@@ -141,18 +141,12 @@ module.exports = {
       default: 'default',
       arg: 'html-url-extension-style',
     },
-    aspect_page_strategy: {
-      doc: 'Controls how links to pages in aspect domains are generated.',
-      format: ['path', 'query'],
-      default: 'path',
-      arg: 'aspect-page-url-strategy',
+    redirect_facility: {
+      doc: 'The facility for handling page alias and start page redirections.',
+      format: ['disabled', 'nginx', 'static'],
+      default: 'static',
+      arg: 'redirect-facility',
     },
-  },
-  redirects: {
-    doc: 'Generate nginx config file containing URL redirects for page aliases.',
-    format: Boolean,
-    default: false,
-    arg: 'redirects',
   },
   output: {
     clean: {

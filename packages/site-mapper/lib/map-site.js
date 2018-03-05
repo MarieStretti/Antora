@@ -9,10 +9,10 @@ const SITEMAP_STEM = 'sitemap'
 const SITEMAP_PREFIX = 'sitemap-'
 
 /**
- * Generates sitemap files from the pages in the site.
+ * Maps the site by creating sitemap files.
  *
  * Iterates over the files from the page family in the content catalog and
- * generates sitemap files. If there's only one component, all the entries are
+ * creates sitemap files. If there's only one component, all the entries are
  * added to a sitemap.xml file that gets published to the root of the site. If
  * there's more than one component, the sitemaps are partitioned into separate
  * files by component (e.g., sitemap-component-name.xml). The URL of those
@@ -23,7 +23,7 @@ const SITEMAP_PREFIX = 'sitemap-'
  * versions are listed before URLs of older versions according to the semantic
  * versioning-based sorting algorithm used in Antora.
  *
- * The sitemaps are only generated if a url for the site has been defined to
+ * The sitemaps are only created if a url for the site has been defined to
  * the site.url property in the playbook.
  *
  * @memberof site-mapper
@@ -35,7 +35,7 @@ const SITEMAP_PREFIX = 'sitemap-'
  *   access to the virtual content files (i.e., pages) in the site.
  * @returns {Array<File>} An array of File objects that represent the sitemaps.
  */
-function generateSitemaps (playbook, contentCatalog) {
+function mapSite (playbook, contentCatalog) {
   let siteUrl = playbook.site.url
   if (!siteUrl) return []
   if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
@@ -63,15 +63,15 @@ function generateSitemaps (playbook, contentCatalog) {
       sitemapEntries.sort((a, b) => a.url.localeCompare(b.url))
       if (sitemap.versions.size > 1) sitemapEntries.sort((a, b) => versionCompareDesc(a.version, b.version))
       delete sitemap.versions
-      sitemapEntries = sitemapEntries.map(generateUrlElement.bind(null, siteUrl))
-      sitemap.contents = Buffer.from(generateSitemapDocument(sitemapEntries))
+      sitemapEntries = sitemapEntries.map(createUrlElement.bind(null, siteUrl))
+      sitemap.contents = Buffer.from(createSitemapDocument(sitemapEntries))
       return sitemap
     })
 
   let sitemapIndex
   if (sitemaps.length > 1) {
-    const sitemapIndexEntries = sitemaps.map(generateSitemapElement.bind(null, siteUrl))
-    sitemapIndex = new File({ contents: Buffer.from(generateSitemapIndexDocument(sitemapIndexEntries)) })
+    const sitemapIndexEntries = sitemaps.map(createSitemapElement.bind(null, siteUrl))
+    sitemapIndex = new File({ contents: Buffer.from(createSitemapIndexDocument(sitemapIndexEntries)) })
     sitemaps.unshift(sitemapIndex)
   } else {
     sitemapIndex = sitemaps[0]
@@ -98,27 +98,27 @@ function getSitemapForComponent (siteUrl, sitemaps, component) {
   }
 }
 
-function generateSitemapElement (siteUrl, sitemap) {
+function createSitemapElement (siteUrl, sitemap) {
   return `<sitemap>
 <loc>${siteUrl}${escapeHtml(sitemap.pub.url)}</loc>
 </sitemap>`
 }
 
-function generateSitemapIndexDocument (entries) {
+function createSitemapIndexDocument (entries) {
   return `${XML_DECL}
 <sitemapindex xmlns="${SITEMAPS_NS}">
 ${entries.join('\n')}
 </sitemapindex>`
 }
 
-function generateUrlElement (siteUrl, entry) {
+function createUrlElement (siteUrl, entry) {
   return `<url>
 <loc>${siteUrl}${escapeHtml(entry.url)}</loc>
 <lastmod>${entry.lastmodISO}</lastmod>
 </url>`
 }
 
-function generateSitemapDocument (entries) {
+function createSitemapDocument (entries) {
   return `${XML_DECL}
 <urlset xmlns="${SITEMAPS_NS}">
 ${entries.join('\n')}
@@ -129,4 +129,4 @@ function escapeHtml (str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
 }
 
-module.exports = generateSitemaps
+module.exports = mapSite

@@ -1,13 +1,12 @@
 {
-  "name": "@antora/content-classifier",
+  "name": "@antora/redirect-producer",
   "version": "1.0.0-alpha.8",
-  "description": "Organizes aggregated content into a virtual file catalog for use in an Antora documentation pipeline.",
+  "description": "Produces redirects (HTTP redirections) for pages in an Antora site.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
   "contributors": [
     "Dan Allen <dan@opendevise.com>",
-    "Sarah White <sarah@opendevise.com>",
-    "Hubert SABLONNIÈRE <hubert.sablonniere@gmail.com>"
+    "Sarah White <sarah@opendevise.com>"
   ],
   "homepage": "https://antora.org",
   "repository": "gitlab:antora/antora",
@@ -16,12 +15,10 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "lodash": "^4.17.5",
-    "semver-compare": "^1.0.0",
+    "@antora/asciidoc-loader": "1.0.0-alpha.8",
     "vinyl": "^2.1.0"
   },
   "devDependencies": {
-    "@antora/content-aggregator": "1.0.0-alpha.8"
   },
   "engines": {
     "node": ">= 8.0.0"
@@ -32,7 +29,7 @@
   "keywords": [
     "antora",
     "antora-component",
-    "content",
+    "redirects",
     "documentation",
     "static site",
     "web publishing"

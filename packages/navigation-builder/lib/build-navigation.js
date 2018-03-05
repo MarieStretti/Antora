@@ -11,7 +11,7 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  *
  * Queries the content catalog for files in the navigation family. Then uses
  * the AsciiDoc Loader component to parse the source of each file into an
- * Asciidoctor Document object. It then looks each file for one or more nested
+ * Asciidoctor Document object. It then looks in each file for one or more nested
  * unordered lists, which are used to build the navigation trees. It then
  * combines those trees in sorted order as a navigation menu, which gets
  * stored in the navigation catalog by component/version pair.

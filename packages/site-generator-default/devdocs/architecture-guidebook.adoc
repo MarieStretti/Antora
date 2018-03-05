@@ -2,7 +2,7 @@
 
 == Context
 
-The generation of a basic documentation site depends on a default arrangement of available Antora components.
+The generation of a typical documentation site depends on a default arrangement of available Antora components.
 The components need to be assembled into an execution pipeline by connecting component inputs and outputs.
 The component that orchestrates this functionality should delegate all work to the functions it imports from other components.
 
@@ -37,6 +37,7 @@ The generator should delegate to the following functions imported from the speci
 * buildNavigation (navigation-builder)
 * createPageComposer (page-composer)
 * mapSite (site-mapper)
+* produceRedirects (redirect-producer)
 * publishSite (site-publisher)
 
 The generator should do as little work as possible.

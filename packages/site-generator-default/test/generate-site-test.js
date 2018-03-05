@@ -169,22 +169,7 @@ describe('generateSite()', () => {
     playbookSpec.site.start_page = 'unknown-component::index'
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     const generateSiteDeferred = await deferExceptions(generateSite, ['--playbook', playbookFile], env)
-    expect(generateSiteDeferred).to.throw('Start page for site could not be resolved')
-  }).timeout(TIMEOUT)
-
-  it('should indexify URLs to internal pages', async () => {
-    playbookSpec.urls = { html_extension_style: 'indexify' }
-    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html')).to.be.a.file()
-    $ = loadHtmlFile('the-component/2.0/index.html')
-    expect($('article a.page')).to.have.attr('href', 'the-page/')
-    expect($('nav.crumbs a')).to.have.attr('href', './')
-    expect($('nav.nav-menu .nav-link')).to.have.attr('href', './')
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
-    $ = loadHtmlFile('the-component/2.0/the-page/index.html')
-    expect($('nav.nav-menu .nav-link')).to.have.attr('href', '../')
-    expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../../_/css/site.css')
+    expect(generateSiteDeferred).to.throw('Specified start page for site not found: unknown-component::index')
   }).timeout(TIMEOUT)
 
   it('should qualify applicable links using site url if set in playbook', async () => {
@@ -391,6 +376,43 @@ describe('generateSite()', () => {
       'href',
       '../../the-other-component/core/index.html'
     )
+  }).timeout(TIMEOUT)
+
+  it('should generate static redirect files for aliases by default', async () => {
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(destAbsDir, 'the-component/2.0/the-alias.html')).to.be.a.file()
+    const contents = readFile('the-component/2.0/the-alias.html', destAbsDir)
+    expect(contents).to.include(`<script>location="the-page.html"</script>`)
+  }).timeout(TIMEOUT)
+
+  it('should generate nginx rewrite config file for aliases when using nginx redirect facility', async () => {
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile, '--redirect-facility', 'nginx'], env)
+    expect(ospath.join(destAbsDir, '.etc/nginx/rewrite.conf')).to.be.a.file()
+    const contents = readFile('.etc/nginx/rewrite.conf', destAbsDir)
+    const rules = `location = /the-component/2.0/the-alias.html { return 301 /the-component/2.0/the-page.html; }`
+    expect(contents).to.include(rules)
+    expect(ospath.join(destAbsDir, 'the-component/2.0/the-alias.html')).to.not.be.a.path()
+  }).timeout(TIMEOUT)
+
+  it('should indexify URLs to internal pages', async () => {
+    playbookSpec.urls = { html_extension_style: 'indexify' }
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/index.html')
+    expect($('article a.page')).to.have.attr('href', 'the-page/')
+    expect($('nav.crumbs a')).to.have.attr('href', './')
+    expect($('nav.nav-menu .nav-link')).to.have.attr('href', './')
+    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/the-page/index.html')
+    expect($('nav.nav-menu .nav-link')).to.have.attr('href', '../')
+    expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../../_/css/site.css')
+    expect(ospath.join(destAbsDir, 'the-component/2.0/the-alias/index.html')).to.be.a.file()
+    const contents = readFile('the-component/2.0/the-alias/index.html', destAbsDir)
+    expect(contents).to.include(`<script>location="../the-page/"</script>`)
   }).timeout(TIMEOUT)
 
   // to test:
