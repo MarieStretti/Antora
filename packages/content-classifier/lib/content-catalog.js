@@ -136,7 +136,7 @@ class ContentCatalog {
     src.mediaType = 'text/asciidoc'
     // QUESTION should we use src.origin instead of rel with type='link'?
     //src.origin = { type: 'link', target: targetPage }
-    // NOTE the redirect generator will populate contents when the redirect facility is 'static'
+    // NOTE the redirect producer will populate contents when the redirect facility is 'static'
     // QUESTION should we set the path property on the alias file?
     const file = new File({ path: targetPage.path, mediaType: src.mediaType, src, rel: targetPage })
     this.addFile(file)

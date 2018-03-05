@@ -1,7 +1,7 @@
 {
-  "name": "@antora/redirect-generator",
+  "name": "@antora/redirect-producer",
   "version": "1.0.0-alpha.8",
-  "description": "Generates redirect configuration for pages in an Antora site.",
+  "description": "Produces redirects (HTTP redirections) for pages in an Antora site.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
   "contributors": [

@@ -4,7 +4,7 @@ const computeRelativeUrlPath = require('@antora/asciidoc-loader/lib/util/compute
 const File = require('vinyl')
 const url = require('url')
 
-function generateRedirects (playbook, contentCatalog) {
+function produceRedirects (playbook, contentCatalog) {
   const aliases = contentCatalog.findBy({ family: 'alias' })
   if (!aliases.length) return []
   let siteUrl = playbook.site.url
@@ -15,7 +15,7 @@ function generateRedirects (playbook, contentCatalog) {
     case 'nginx':
       let urlContext
       if (siteUrl && (urlContext = url.parse(siteUrl).pathname) === '/') urlContext = undefined
-      return generateNginxRedirects(aliases, urlContext)
+      return createNginxRewriteConf(aliases, urlContext)
     default:
       return unpublish(aliases)
   }
@@ -29,7 +29,7 @@ function populateStaticRedirectFiles (files, siteUrl) {
   return []
 }
 
-function generateNginxRedirects (files, urlContext = '') {
+function createNginxRewriteConf (files, urlContext = '') {
   const rules = files.map((file) => {
     delete file.out
     return `location = ${urlContext}${file.pub.url} { return 301 ${urlContext}${file.rel.pub.url}; }`
@@ -61,4 +61,4 @@ function createStaticRedirectContents (file, siteUrl) {
 <p>The page you requested has been relocated to <a href="${relativeUrl}">${canonicalUrl || relativeUrl}</a>.</p>`)
 }
 
-module.exports = generateRedirects
+module.exports = produceRedirects

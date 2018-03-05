@@ -22,7 +22,7 @@
     "@antora/navigation-builder": "1.0.0-alpha.8",
     "@antora/page-composer": "1.0.0-alpha.8",
     "@antora/playbook-builder": "1.0.0-alpha.8",
-    "@antora/redirect-generator": "1.0.0-alpha.8",
+    "@antora/redirect-producer": "1.0.0-alpha.8",
     "@antora/site-mapper": "1.0.0-alpha.8",
     "@antora/site-publisher": "1.0.0-alpha.8",
     "@antora/ui-loader": "1.0.0-alpha.8"
