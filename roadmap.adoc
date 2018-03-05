@@ -73,6 +73,8 @@ The Antora platform includes all of the packages that are assembled in the defau
 The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.,
 They aren't slated imminent development but are reviewed for possible scheduling after each release.
 
+* Be able to make references to page aliases; would require parsing all document headers in a separate step/phase
+* Decide whether to isolate id (or ctx) from src property on content file
 * Decide whether content aggregate should be sorted {uri-issues}/121[#121]
 * Separate content aggregator from git provider {uri-issues}/93[#93]
 * Allow module paths to be configurable {uri-issues}/28[#28]
