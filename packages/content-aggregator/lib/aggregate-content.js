@@ -87,7 +87,7 @@ async function aggregateContent (playbook) {
             const files = worktreePath
               ? await readFilesFromWorktree(worktreePath)
               : await readFilesFromGitTree(repository, ref, startPath)
-            const componentVersion = loadComponentDescriptor(files)
+            const componentVersion = loadComponentDescriptor(files, source.url)
             const origin = resolveOrigin(url, branchName, startPath, worktreePath)
             componentVersion.files = files.map((file) => assignFileProperties(file, origin))
             return componentVersion
@@ -360,19 +360,19 @@ async function selectBranches (repo, isBare, branchPatterns, remote) {
   )
 }
 
-function loadComponentDescriptor (files) {
+function loadComponentDescriptor (files, repoUrl) {
   const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
   if (descriptorFileIdx < 0) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' not found')
+    throw new Error(COMPONENT_DESC_FILENAME + ' not found in ' + repoUrl)
   }
 
   const descriptorFile = files[descriptorFileIdx]
   files.splice(descriptorFileIdx, 1)
   const data = yaml.safeLoad(descriptorFile.contents.toString())
   if (data.name == null) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name')
+    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name in ' + repoUrl)
   } else if (data.version == null) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version')
+    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version in ' + repoUrl)
   }
 
   return data

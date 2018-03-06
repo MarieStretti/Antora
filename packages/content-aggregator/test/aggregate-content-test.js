@@ -109,8 +109,9 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await repoBuilder.init('the-component').then(() => repoBuilder.close())
         playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url}`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' not found')
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
     })
 
@@ -118,8 +119,9 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithComponentDescriptor(repoBuilder, { version: 'v1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a name in ${repoBuilder.url}`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' is missing a name')
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
     })
 
@@ -127,8 +129,9 @@ describe('aggregateContent()', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a version in ${repoBuilder.url}`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-        expect(aggregateContentDeferred).to.throw(COMPONENT_DESC_FILENAME + ' is missing a version')
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
     })
 
