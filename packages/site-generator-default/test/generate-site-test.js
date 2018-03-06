@@ -34,7 +34,7 @@ describe('generateSite()', () => {
     destDir = '_site'
     destAbsDir = ospath.join(WORK_DIR, destDir)
     playbookFile = ospath.join(WORK_DIR, 'the-site.json')
-    repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+    repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true, bare: true })
     uiBundleUri = UI_BUNDLE_URI
   })
 
@@ -54,9 +54,10 @@ describe('generateSite()', () => {
       .then(() => repositoryBuilder.importFilesFromFixture('the-component'))
       .then(() => repositoryBuilder.close('master'))
     playbookSpec = {
+      runtime: { quiet: true },
       site: { title: 'The Site' },
       content: {
-        sources: [{ url: ospath.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v2.0' }],
+        sources: [{ url: repositoryBuilder.repoPath, branches: 'v2.0' }],
       },
       ui: { bundle: uiBundleUri },
       output: {
@@ -75,6 +76,37 @@ describe('generateSite()', () => {
       fs.removeSync(playbookFile)
     } else {
       removeSyncForce(WORK_DIR)
+    }
+  })
+
+  // NOTE we can't test this in the cli tests since child_process.spawn does not allocate a tty
+  it('should report progress of repository clone operation if runtime.quiet is false', async () => {
+    playbookSpec.runtime.quiet = false
+    playbookSpec.content.sources[0].url = repositoryBuilder.url
+    playbookSpec.output.destinations = []
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
+      accum[name] = process.stdout[name]
+      return accum
+    }, {})
+    const columns = 9 + repositoryBuilder.url.length * 2
+    const progressLines = []
+    try {
+      Object.assign(process.stdout, {
+        clearLine: () => {},
+        columns,
+        cursorTo: () => {},
+        isTTY: true,
+        moveCursor: () => {},
+        write: (line) => /\[(?:clone|fetch)\]/.test(line) && progressLines.push(line),
+      })
+      await generateSite(['--playbook', playbookFile], env)
+      expect(progressLines).to.have.lengthOf.at.least(2)
+      expect(progressLines[0]).to.include('[clone] ' + repositoryBuilder.url)
+      expect(progressLines[0]).to.match(/ \[-+\]/)
+      expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
+    } finally {
+      Object.assign(process.stdout, defaultStdout)
     }
   })
 

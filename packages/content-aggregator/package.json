@@ -24,6 +24,7 @@
     "lodash": "^4.17.5",
     "matcher": "^1.1.0",
     "mime-types": "^2.1.18",
+    "multi-progress": "^2.0.0",
     "nodegit": "^0.20.3",
     "through2": "^2.0.3",
     "vinyl": "^2.1.0",
