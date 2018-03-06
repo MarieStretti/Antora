@@ -22,25 +22,26 @@ const WORK_DIR = ospath.join(__dirname, 'work')
 Kapok.config.shouldShowLog = false
 
 describe('cli', () => {
-  let playbookSpec
-  let playbookFile
   let destAbsDir
   let destDir
+  let playbookSpec
+  let playbookFile
+  let repositoryBuilder
   let uiBundleUri
 
   const createContentRepository = async () =>
-    new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+    (repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true, bare: true }))
       .init('the-component')
-      .then((repoBuilder) => repoBuilder.checkoutBranch('v1.0'))
-      .then((repoBuilder) =>
-        repoBuilder.addComponentDescriptorToWorktree({
+      .then((builder) => builder.checkoutBranch('v1.0'))
+      .then((builder) =>
+        builder.addComponentDescriptorToWorktree({
           name: 'the-component',
           version: '1.0',
           nav: ['modules/ROOT/nav.adoc'],
         })
       )
-      .then((repoBuilder) => repoBuilder.importFilesFromFixture('the-component'))
-      .then((repoBuilder) => repoBuilder.close('master'))
+      .then((builder) => builder.importFilesFromFixture('the-component'))
+      .then((builder) => builder.close('master'))
 
   // NOTE run the antora command from WORK_DIR by default to simulate a typical use case
   const runAntora = (args = undefined, env = undefined, cwd = WORK_DIR) => {
@@ -67,7 +68,7 @@ describe('cli', () => {
     playbookSpec = {
       site: { title: 'The Site' },
       content: {
-        sources: [{ url: ospath.join(CONTENT_REPOS_DIR, 'the-component'), branches: 'v1.0' }],
+        sources: [{ url: repositoryBuilder.repoPath, branches: 'v1.0' }],
       },
       ui: { bundle: uiBundleUri },
     }
@@ -258,9 +259,7 @@ describe('cli', () => {
   }).timeout(TIMEOUT)
 
   it('should store cache in cache directory passed to --cache-dir option', () => {
-    const repoPath = playbookSpec.content.sources[0].url
-    const repoUrl = 'file://' + (ospath.sep === '\\' ? '/' + repoPath.replace(/\\/g, '/') : repoPath)
-    playbookSpec.content.sources[0].url = repoUrl
+    playbookSpec.content.sources[0].url = repositoryBuilder.url
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     const cacheAbsDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
     expect(cacheAbsDir).to.not.be.a.path()
@@ -283,9 +282,7 @@ describe('cli', () => {
   }).timeout(TIMEOUT)
 
   it('should store cache in cache directory defined by ANTORA_CACHE_DIR environment variable', () => {
-    const repoPath = playbookSpec.content.sources[0].url
-    const repoUrl = 'file://' + (ospath.sep === '\\' ? '/' + repoPath.replace(/\\/g, '/') : repoPath)
-    playbookSpec.content.sources[0].url = repoUrl
+    playbookSpec.content.sources[0].url = repositoryBuilder.url
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     const cacheAbsDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
     expect(cacheAbsDir).to.not.be.a.path()
