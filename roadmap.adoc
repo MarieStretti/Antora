@@ -27,12 +27,6 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 For a detailed list of current development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
-=== v1.0.0-alpha.9
-
-* [ ] Add clone status indicator {uri-issues}/183[#183]
-* [x] Implement page redirect generator component {uri-issues}/182[#182]
-* [x] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
-
 === v1.0.0-beta.x
 
 * [ ] Add error message when repository clone fails {uri-issues}/155[#155]
@@ -142,6 +136,12 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 == Completed Releases
 
 See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
+
+=== 1.0.0-alpha.9
+
+* [x] Add clone status indicator {uri-issues}/183[#183]
+* [x] Implement page redirect generator component {uri-issues}/182[#182]
+* [x] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 
 === 1.0.0-alpha.8
 
