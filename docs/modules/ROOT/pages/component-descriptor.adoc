@@ -92,23 +92,25 @@ If the value starts with a number, it must be contained within a set of single q
 [#start-page-key]
 === start_page
 
-By default, Antora automatically uses the file [.path]_index.adoc_ in the ROOT module of a component as the start page of that component (i.e., _pass:[https://company.com/docs/component/]_).
+By default, Antora looks for a file named [.path]_index.adoc_ in the ROOT module of each component to use as the start page for that component and version (e.g., \https://example.org/component-name/index.html).
 
-If a component doesn't have an [.path]_index.adoc_ file, then the `start_page` key must be set in the component descriptor file and assigned a page to use as the component's start page.
-The value uses the xref:page-id.adoc[page ID structure]
-and must specify the module and page coordinates of the file.
+If the component doesn't have an [.path]_index.adoc_ page in the ROOT module, you must specify a start page explicitly in the component descriptor.
+The `start_page` key accepts the xref:page-id.adoc[page ID structure] and must point to an existing page in the same component (e.g., `ROOT:home.adoc`).
+
+If a start page isn't specified, and the component does not have a ROOT module with an [.path]_index.adoc_ page, the reader will be directed to a 404 page when navigating to that component from in the component drawer in the sidebar on any page.
 
 .Start page value examples
 [source,yaml]
 ----
-start_page: ROOT:overview.adoc
+start_page: ROOT:home.adoc
 
 # or
 
 start_page: security:protocols/ssh.adoc
 ----
 
-IMPORTANT: A component must contain a file named [.path]_index.adoc_ or a start page must be assigned to `start_page` in its component descriptor.
+IMPORTANT: A component must have a ROOT module that contains an [.path]_index.adoc_ page.
+Otherwise, a start page must be specified using the `start_page` key in the component descriptor.
 
 [#nav-key]
 === nav

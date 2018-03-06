@@ -56,6 +56,8 @@ component:ROOT:index.adoc => site.com/component/index.html
 Learn more:
 
 * Create a component index page
+* xref:component-descriptor.adoc#start-page-key[Use another page to act as a component's start page]
+
 //* html extension options
 * xref:modules.adoc#root-dir[The ROOT directory]
 

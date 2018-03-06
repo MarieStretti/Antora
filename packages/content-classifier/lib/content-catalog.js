@@ -19,7 +19,20 @@ class ContentCatalog {
     //this.urlRedirectFacility = _.get(playbook, ['urls', 'redirectFacility'], 'static')
   }
 
-  addComponentVersion (name, version, title, url) {
+  addComponentVersion (name, version, title, startPageSpec = undefined) {
+    let startPage = this.resolvePage(startPageSpec || 'index.adoc', { component: name, version, module: 'ROOT' })
+    if (!startPage) {
+      if (startPageSpec) {
+        throw new Error(`Start page specified for ${version}@${name} not found: ` + startPageSpec)
+      } else {
+        // TODO throw error or report warning
+        //throw new Error(`Start page for ${version}@${name} not specified and no index page found.`)
+        const startPageSrc = expandPageSrc({ component: name, version, module: 'ROOT', relative: 'index.adoc' })
+        const startPageOut = computeOut(startPageSrc, startPageSrc.family, this.htmlUrlExtensionStyle)
+        startPage = { pub: computePub(startPageSrc, startPageOut, startPageSrc.family, this.htmlUrlExtensionStyle) }
+      }
+    }
+    const url = startPage.pub.url
     const component = this[$components][name]
     if (component) {
       const versions = component.versions
@@ -129,11 +142,7 @@ class ContentCatalog {
           : 'Page alias cannot reference an existing page'
       throw new Error(message + ': ' + qualifiedSpec)
     }
-    src.family = 'alias'
-    src.basename = path.basename(src.relative)
-    src.extname = path.extname(src.relative)
-    src.stem = path.basename(src.relative, src.extname)
-    src.mediaType = 'text/asciidoc'
+    expandPageSrc(src, 'alias')
     // QUESTION should we use src.origin instead of rel with type='link'?
     //src.origin = { type: 'link', target: targetPage }
     // NOTE the redirect producer will populate contents when the redirect facility is 'static'
@@ -150,6 +159,15 @@ class ContentCatalog {
   [$generateId] ({ component, version, module, family, relative }) {
     return `$${family}/${version}@${component}:${module}:${relative}`
   }
+}
+
+function expandPageSrc (src, family = 'page') {
+  src.family = family
+  src.basename = path.basename(src.relative)
+  src.extname = path.extname(src.relative)
+  src.stem = path.basename(src.relative, src.extname)
+  src.mediaType = 'text/asciidoc'
+  return src
 }
 
 function computeOut (src, family, htmlUrlExtensionStyle) {

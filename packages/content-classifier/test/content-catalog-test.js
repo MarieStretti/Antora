@@ -31,6 +31,145 @@ describe('ContentCatalog', () => {
     }
   })
 
+  describe('#addComponentVersion()', () => {
+    it('should add new component to catalog if component is not present', () => {
+      const name = 'the-component'
+      const version = '1.0.0'
+      const title = 'The Component'
+      const url = '/the-component/1.0.0/index.html'
+      const contentCatalog = new ContentCatalog()
+      expect(contentCatalog.getComponents()).to.have.lengthOf(0)
+      contentCatalog.addFile({
+        src: {
+          component: name,
+          version,
+          module: 'ROOT',
+          family: 'page',
+          relative: 'index.adoc',
+          stem: 'index',
+          mediaType: 'text/asciidoc',
+        },
+      })
+      contentCatalog.addComponentVersion(name, version, title)
+      const components = contentCatalog.getComponents()
+      expect(components).to.have.lengthOf(1)
+      expect(components[0]).to.deep.include({
+        name,
+        title,
+        url,
+        versions: [{ title, version, url }],
+      })
+      expect(components[0].latestVersion).to.eql({ title, version, url })
+    })
+
+    it('should add new version to existing component if component is already present', () => {
+      const name = 'the-component'
+      const version1 = '1.0.0'
+      const title1 = 'The Component (1.0.0)'
+      const url1 = '/the-component/1.0.0/index.html'
+      const version2 = '2.0.0'
+      const title2 = 'The Component (2.0.0)'
+      const url2 = '/the-component/2.0.0/index.html'
+      const indexPageT = { family: 'page', relative: 'index.adoc', stem: 'index', mediaType: 'text/asciidoc' }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile({ src: Object.assign({ component: name, version: version1, module: 'ROOT' }, indexPageT) })
+      contentCatalog.addComponentVersion(name, version1, title1)
+      expect(contentCatalog.getComponents()).to.have.lengthOf(1)
+      const component = contentCatalog.getComponent(name)
+
+      contentCatalog.addFile({ src: Object.assign({ component: name, version: version2, module: 'ROOT' }, indexPageT) })
+      contentCatalog.addComponentVersion(name, version2, title2)
+      expect(contentCatalog.getComponents()).to.have.lengthOf(1)
+      expect(contentCatalog.getComponent(name)).to.equal(component)
+      expect(component).to.deep.include({
+        name,
+        title: title2,
+        url: url2,
+        versions: [{ title: title2, version: version2, url: url2 }, { title: title1, version: version1, url: url1 }],
+      })
+      expect(component.latestVersion).to.eql({ title: title2, version: version2, url: url2 })
+    })
+
+    it('should use url from specified start page', () => {
+      const name = 'the-component'
+      const version = '1.0.0'
+      const title = 'The Component'
+      const url = '/the-component/1.0.0/home.html'
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile({
+        src: {
+          component: name,
+          version,
+          module: 'ROOT',
+          family: 'page',
+          relative: 'home.adoc',
+          stem: 'home',
+          mediaType: 'text/asciidoc',
+        },
+      })
+      contentCatalog.addComponentVersion(name, version, title, 'home.adoc')
+      const components = contentCatalog.getComponents()
+      expect(components).to.have.lengthOf(1)
+      expect(components[0]).to.deep.include({
+        name,
+        title,
+        url,
+        versions: [{ title, version, url }],
+      })
+      expect(components[0].latestVersion).to.eql({ title, version, url })
+    })
+
+    it('should throw error if specified start page not found', () => {
+      expect(() =>
+        new ContentCatalog().addComponentVersion('the-component', '1.0.0', 'The Component', 'home.adoc')
+      ).to.throw('Start page specified for 1.0.0@the-component not found: home.adoc')
+    })
+
+    it('should use url of index page in ROOT module if found', () => {
+      const name = 'the-component'
+      const version = '1.0.0'
+      const title = 'The Component'
+      const url = '/the-component/1.0.0/index.html'
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile({
+        src: {
+          component: name,
+          version,
+          module: 'ROOT',
+          family: 'page',
+          relative: 'home.adoc',
+          stem: 'home',
+          mediaType: 'text/asciidoc',
+        },
+      })
+      contentCatalog.addFile({
+        src: {
+          component: name,
+          version,
+          module: 'ROOT',
+          family: 'page',
+          relative: 'index.adoc',
+          stem: 'index',
+          mediaType: 'text/asciidoc',
+        },
+      })
+      contentCatalog.addComponentVersion(name, version, title)
+      const component = contentCatalog.getComponent(name)
+      expect(component.url).to.equal(url)
+    })
+
+    it('should use url of synthetic index page in ROOT module if page not found', () => {
+      const name = 'the-component'
+      const version = '1.0.0'
+      const title = 'The Component'
+      const url = '/the-component/1.0.0/index.html'
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addComponentVersion(name, version, title)
+      const component = contentCatalog.getComponent(name)
+      expect(component.url).to.equal(url)
+    })
+  })
+
   describe('#findBy()', () => {
     beforeEach(() => {
       aggregate = [
@@ -275,7 +414,7 @@ describe('ContentCatalog', () => {
 
     beforeEach(() => {
       contentCatalog = new ContentCatalog()
-      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component', '/the-component/1.2.3/')
+      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component')
       targetPageSrc = {
         component: 'the-component',
         version: '1.2.3',
@@ -294,7 +433,7 @@ describe('ContentCatalog', () => {
     })
 
     it('should register an alias for target file given a valid qualified page spec', () => {
-      contentCatalog.addComponentVersion('the-component', '1.0.0', 'The Component', '/the-component/1.0.0/')
+      contentCatalog.addComponentVersion('the-component', '1.0.0', 'The Component')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('1.0.0@the-component:ROOT:the-topic/alias.adoc', targetPage)
@@ -333,7 +472,7 @@ describe('ContentCatalog', () => {
     })
 
     it('should set version of alias to latest version of component if version not specified', () => {
-      contentCatalog.addComponentVersion('other-component', '1.0', 'Other Component', '/other-component/1.0/')
+      contentCatalog.addComponentVersion('other-component', '1.0', 'Other Component')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('other-component::alias.adoc', targetPage)
@@ -389,7 +528,7 @@ describe('ContentCatalog', () => {
 
     it('should register an alias correctly when the HTML URL extension style is indexify', () => {
       contentCatalog = new ContentCatalog({ urls: { htmlExtensionStyle: 'indexify' } })
-      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component', '/the-component/1.2.3/')
+      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('alias.adoc', targetPage)
@@ -408,7 +547,7 @@ describe('ContentCatalog', () => {
 
     it('should register an alias correctly when the HTML URL extension style is drop', () => {
       contentCatalog = new ContentCatalog({ urls: { htmlExtensionStyle: 'drop' } })
-      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component', '/the-component/1.2.3/')
+      contentCatalog.addComponentVersion('the-component', '1.2.3', 'The Component')
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('alias.adoc', targetPage)
