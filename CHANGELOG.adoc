@@ -5,19 +5,40 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== 1.0.0-alpha.9 (2018-03-0x)
+== 1.0.0-alpha.9 (2018-03-06)
 
 === Added
 
-* *redirect-producer:* First release of component responsible for generating HTTP redirects to a page from its registered aliases.
-It can generate redirects using client-side and server-side producer such as `static` and `ngnix`.
-* *content-classifier*: Compute URL for component version when index page in ROOT module is missing
-* *content-classifier*: Automatically compute fallback URL for component version
+* *playbook-builder*: Add key to playbook schema to control how HTTP redirects are produced (`urls.redirect_facility`)
+* *content-aggregate*: Honor `runtime.quiet` and `runtime.silent` flags if set in playbook (don't show progress bars)
+* *content-aggregate*: Add progress bar for all git operations using multi-progress (only activate when running in a tty)
+* *content-classifier:* Add support for alias files (family=alias) in content catalog
+* *content-classifier:* Add ContentCatalog#registerPageAlias method for adding an alias for a page
+* *document-converter*: Register aliases defined in page-aliases document attribute with content catalog
+* *redirect-producer:* Add component responsible for generating HTTP redirects to a page from its registered aliases
 
 === Changed
 
+* *content-aggregator*: Require runtime property to be set in playbook in content aggregator
+* *content-classifier*: Move parsePageId function from asciidoc-loader to content-classifier
+* *content-classifier*: Move resolvePage function from asciidoc-loader to content-classifier
+* *content-classifier*: Add ContentCatalog#resolvePage method (delegates to resolvePage function)
+* *content-classifier*: Move computation of pub and out properties to ContentCatalog#addFile
+* *content-classifier*: Skip files in aggregate which cannot be classified
+* *content-classifier*: Use ContentCatalog#resolvePage to resolve start page for component version and site
+* *content-classifier*: Store select settings from playbook in ContentCatalog (htmlUrlExtensionStyle)
+* *contnet-classifier*: Rename ContentCatalog#registerComponentVersion to ContentCatalog#addComponentVersion
 * *content-classifier*: Move resolveStartPageUrl logic into ContentCatalog#addComponentVersion
-* *content-classifier*: Add expandPageSrc helper in content catalog
+* *content-classifier*: Don't call getById in ContentCatalog#resolvePage if component not found
+* *site-mapper*: Rename generateSitemaps function to mapSite function in site mapper component
+* Clean up tests and add additional coverage
+
+=== Fixed
+
+* *content-aggregate*: Report URL of repository when component descriptor is missing or invalid
+* *content-classifier*: Use fallback URL for component version if implicit start page is missing (and no start page has been set)
+* *content-classifier*: Report location of file when attempt is made to add duplicate file to catalog
+* *playbook-builder*: Remove obsolete keys
 
 == 1.0.0-alpha.8 (2018-02-27)
 
