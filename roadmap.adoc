@@ -31,12 +31,11 @@ For a detailed list of current development tasks, refer to the core components {
 
 * [ ] Add clone status indicator {uri-issues}/183[#183]
 * [x] Implement page redirect generator component {uri-issues}/182[#182]
-* [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
+* [x] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 
 === v1.0.0-beta.x
 
 * [ ] Add error message when repository clone fails {uri-issues}/155[#155]
-* [ ] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 * [ ] Create Docker container for evaluating Antora {uri-issues}/162[#162]
 * [ ] Upgrade to Asciidoctor.js 1.5.6
 * [ ] Add Node 9 to CI matrix
@@ -60,6 +59,7 @@ The Antora platform includes all of the packages that are assembled in the defau
 * [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
 * [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
 * [ ] Allow content to be aggregated from tags {uri-issues}/117[#117]
+* [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 * [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
 * [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
 * [ ] Watch mode for files in worktree
@@ -91,14 +91,11 @@ For current demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
 
 For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
 
-=== v1.0.0-alpha.9
+=== v1.0.0-beta.x
 
 * [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 * [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
 * [ ] Add how to create a partial page {uri-issues}/176[#176]
-
-=== v1.0.0-beta.x
-
 * [ ] Document the `page-` attributes {uri-issues}/177[#177]
 * [ ] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
 * [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
@@ -122,12 +119,9 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 For a detailed list of current development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
 
-=== v1.0.0-alpha.9
-
-* [ ] Add client-side search {uri-ui-issues}/44[#44]
-
 === v1.0.0-beta.x
 
+* [ ] Add client-side search {uri-ui-issues}/44[#44]
 * [ ] IE 11 fixes
 * [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
 
