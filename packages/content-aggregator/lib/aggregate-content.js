@@ -33,11 +33,11 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  * Aggregates files from the specified content sources so they can
  * be loaded into a virtual file catalog.
  *
- * Currently assumes each source points to a local or remote git repositories.
+ * Currently assumes each source points to a local or remote git repository.
  * Clones the repository, if necessary, then walks the git tree (or worktree)
- * of the specified branches. Creates a virtual file containing the source
- * location and contents for each matched file. The files are then organized by
- * component version.
+ * of the specified branches and tags. Creates a virtual file containing the
+ * source location and contents for each file matched. The files are then
+ * organized by component version.
  *
  * @memberof content-aggregator
  *
@@ -51,7 +51,7 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  */
 async function aggregateContent (playbook) {
   const playbookDir = playbook.dir || '.'
-  const { branches: defaultBranches, sources } = playbook.content
+  const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
   const { cacheDir, silent, quiet } = playbook.runtime
   const progress = {}
   const term = process.stdout
@@ -78,17 +78,18 @@ async function aggregateContent (playbook) {
           progress
         )
         const branchPatterns = source.branches || defaultBranches
-        const componentVersions = (await selectBranches(repository, isBare, branchPatterns, remoteName)).map(
-          async ({ ref, branchName, isCurrent }) => {
+        const tagPatterns = source.tags || defaultTags
+        const componentVersions = (await selectRefs(repository, branchPatterns, tagPatterns, isBare, remoteName)).map(
+          async ({ ref, name: refName, type: refType, isHead }) => {
             let startPath = source.startPath || ''
             if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
             const worktreePath =
-              isCurrent && !(isRemote || isBare) ? (startPath ? ospath.join(repoPath, startPath) : repoPath) : undefined
+              isHead && !(isRemote || isBare) ? (startPath ? ospath.join(repoPath, startPath) : repoPath) : undefined
             const files = worktreePath
               ? await readFilesFromWorktree(worktreePath)
               : await readFilesFromGitTree(repository, ref, startPath)
             const componentVersion = loadComponentDescriptor(files, source.url)
-            const origin = resolveOrigin(url, branchName, startPath, worktreePath)
+            const origin = computeOrigin(url, refName, refType, startPath, worktreePath)
             componentVersion.files = files.map((file) => assignFileProperties(file, origin))
             return componentVersion
           }
@@ -144,7 +145,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
       repository = await git.Repository.openBare(repoPath)
       if (isRemote) {
         const fetchOpts = getFetchOptions(progress, repoUrl, 'fetch')
-        // fetch new branches and delete obsolete local ones
+        // fetch new refs and delete obsolete local ones
         await repository.fetch(remoteName, Object.assign({ prune: 1 }, fetchOpts)).then((repo) => {
           if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
           return repo
@@ -161,6 +162,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
         .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts }))
         .then((repo) =>
           repo.getCurrentBranch().then((ref) => {
+            /* istanbul ignore else */
             if (ref.isBranch()) {
               repo.detachHead()
               ref.delete()
@@ -194,7 +196,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
  * Checks whether the specified URL resolves to a directory on the local filesystem.
  *
  * @param {String} url - The URL to check.
- * @return {Boolean} - A flag indicating whether the URL resolves to a directory on the local filesystem.
+ * @return {Boolean} A flag indicating whether the URL resolves to a directory on the local filesystem.
  */
 function directoryExists (url) {
   try {
@@ -234,7 +236,7 @@ function ensureCacheDir (customCacheDir, startDir) {
  * - Append .git (as a file extension)
  *
  * @param {String} url - The repository URL to convert.
- * @return {String} - A friendly folder name.
+ * @return {String} A friendly folder name.
  */
 function generateLocalFolderName (url) {
   url = url.toLowerCase()
@@ -319,44 +321,57 @@ function completeProgress (progressBar) {
   if (remaining) progressBar.tick(remaining)
 }
 
-async function selectBranches (repo, isBare, branchPatterns, remote) {
+async function selectRefs (repo, branchPatterns, tagPatterns, isBare, remote) {
   if (branchPatterns) {
     if (branchPatterns === 'HEAD' || branchPatterns === '.') {
       branchPatterns = [(await repo.getCurrentBranch()).shorthand()]
     } else if (Array.isArray(branchPatterns)) {
-      let currentBranchIdx
-      if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-        branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
+      if (branchPatterns.length) {
+        let currentBranchIdx
+        if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
+          branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
+        }
+      } else {
+        branchPatterns = undefined
       }
     } else {
       branchPatterns = [branchPatterns]
     }
   }
 
+  if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = [tagPatterns]
+
   return Object.values(
     (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
-      const segments = ref.name().split('/')
-      let branch
-      let branchName
-      if (segments[1] === 'heads') {
-        branchName = segments.slice(2).join('/')
-        branch = { ref, branchName, isCurrent: !!ref.isHead() }
+      let segments
+      let name
+      let refData
+      if (ref.isTag()) {
+        if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
+          accum.push({ ref, name, type: 'tag' })
+        }
+        return accum
+      } else if (!branchPatterns) {
+        return accum
+      } else if ((segments = ref.name().split('/'))[1] === 'heads') {
+        name = ref.shorthand()
+        refData = { ref, name, type: 'branch', isHead: !!ref.isHead() }
       } else if (segments[1] === 'remotes' && segments[2] === remote) {
-        branchName = segments.slice(3).join('/')
-        branch = { ref, branchName, remote }
+        name = segments.slice(3).join('/')
+        refData = { ref, name, type: 'branch', remote }
       } else {
         return accum
       }
 
       // NOTE if branch is present in accum, we already know it matches the pattern
-      if (branchName in accum) {
-        if (isBare === !!branch.remote) accum[branchName] = branch
-      } else if (!branchPatterns || matcher([branchName], branchPatterns).length) {
-        accum[branchName] = branch
+      if (name in accum) {
+        if (isBare === !!refData.remote) accum[name] = refData
+      } else if (branchPatterns && matcher([name], branchPatterns).length) {
+        accum[name] = refData
       }
 
       return accum
-    }, {})
+    }, [])
   )
 }
 
@@ -378,12 +393,17 @@ function loadComponentDescriptor (files, repoUrl) {
   return data
 }
 
-async function readFilesFromGitTree (repository, branchRef, startPath) {
-  return srcGitTree(await getGitTree(repository, branchRef, startPath))
+async function readFilesFromGitTree (repository, ref, startPath) {
+  return srcGitTree(await getGitTree(repository, ref, startPath))
 }
 
-async function getGitTree (repository, branchRef, startPath) {
-  const commit = await repository.getBranchCommit(branchRef)
+async function getGitTree (repository, ref, startPath) {
+  let commit
+  if (ref.isTag()) {
+    commit = await ref.peel(git.Object.TYPE.COMMIT).then((target) => repository.getCommit(target))
+  } else {
+    commit = await repository.getBranchCommit(ref)
+  }
   if (startPath) {
     const tree = await commit.getTree()
     const subTreeEntry = await tree.getEntry(startPath)
@@ -476,16 +496,17 @@ function assignFileProperties (file, origin) {
   return file
 }
 
-function resolveOrigin (url, branch, startPath, worktreePath) {
+function computeOrigin (url, refName, refType, startPath, worktreePath = undefined) {
   let match
-  const origin = { type: 'git', url, branch, startPath }
+  const origin = { type: 'git', url, startPath }
+  origin[refType] = refName
   if (worktreePath) {
     origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
     // Q: should we set worktreePath instead (or additionally?)
     origin.worktree = true
   } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
-    const action = match[1] === 'bitbucket.org' ? 'src' : 'edit'
-    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, branch, startPath, '%s')
+    const action = match[1] === 'bitbucket.org' ? 'src' : refType === 'branch' ? 'edit' : 'blob'
+    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, refName, startPath, '%s')
   }
   return origin
 }
@@ -508,4 +529,4 @@ function buildAggregate (componentVersions) {
 }
 
 module.exports = aggregateContent
-module.exports._resolveOrigin = resolveOrigin
+module.exports._computeOrigin = computeOrigin

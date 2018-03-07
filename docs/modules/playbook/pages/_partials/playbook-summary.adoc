@@ -6,7 +6,7 @@ Specifically, a playbook tells Antora:
 
 * [x] What information should be applied to the xref:configure-site.adoc[site globally], such as its title, base URL, and service integrations.
 //* [x] The component which sits at the root of the site (i.e., home or landing page content). (pending feature)
-* [x] Which xref:configure-content-sources.adoc[content repositories and branches] to feed into the Antora site generator.
+* [x] Which xref:configure-content-sources.adoc[content repositories, branches, and tags] to feed into the Antora site generator.
 * [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages.
 * [x] Where the site should be xref:configure-output.adoc[published and in what format].
 

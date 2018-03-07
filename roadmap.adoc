@@ -27,11 +27,14 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 For a detailed list of current development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
-=== v1.0.0-beta.x
+=== v1.0.0-beta.1
 
 * [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
-* [ ] Allow content to be aggregated from tags {uri-issues}/117[#117]
+* [x] Allow content to be aggregated from tags {uri-issues}/117[#117]
 * [ ] Pass site start page to UI model (will link to home icon, if set)
+
+=== v1.0.0-beta.x
+
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 * [ ] Emit graceful error message when repository clone fails {uri-issues}/155[#155]
 * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
@@ -88,6 +91,10 @@ For current pipeline documentation tasks, see the core components {uri-board}[is
 For current demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
 
 For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
+
+=== v1.0.0-beta.1
+
+* [x] Document tag key and use case examples
 
 === v1.0.0-beta.x
 

@@ -28,17 +28,18 @@ content: # <7>
   sources: # <8>
   - url: https://gitlab.com/antora/demo/demo-component-a.git # <9>
     branches: master # <10>
-    start_path: docs # <11>
-ui: # <12>
-  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <13>
-  start_path: dark-theme # <14>
-  default_layout: base # <15>
-  output_dir: _dark # <16>
-output: # <17>
- clean: false # <18>
- dir: releases # <19>
- destinations: # <20>
- - provider: archive # <21>
+    tags: v* # <11>
+    start_path: docs # <12>
+ui: # <13>
+  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <14>
+  start_path: dark-theme # <15>
+  default_layout: base # <16>
+  output_dir: _dark # <17>
+output: # <18>
+ clean: false # <19>
+ dir: releases # <20>
+ destinations: # <21>
+ - provider: archive # <22>
 ----
 <1> <<site-key,Site keys>>
 <2> <<site-title-key,Title key>>
@@ -50,17 +51,18 @@ output: # <17>
 <8> <<content-sources-keys,Sources keys>>
 <9> <<sources-url-key,Content repository URL key>>
 <10> <<branches-key,Content repository branches key>>
-<11> <<sources-start-path-key,Content repository start path key>>
-<12> <<ui-keys,UI keys>>
-<13> <<ui-bundle-key,UI bundle repository key>>
-<14> <<ui-start-path-key,Bundle start path key>>
-<15> <<ui-default-layout-key,UI default layout key>>
-<16> <<ui-output-dir-key,UI output directory key>>
-<17> Published output keys
-<18> Clean output directory key
-<19> Output directory key
-<20> Output destinations key
-<21> Output provider key
+<11> <<tags-key,Content repository tags key>>
+<12> <<sources-start-path-key,Content repository start path key>>
+<13> <<ui-keys,UI keys>>
+<14> <<ui-bundle-key,UI bundle repository key>>
+<15> <<ui-start-path-key,Bundle start path key>>
+<16> <<ui-default-layout-key,UI default layout key>>
+<17> <<ui-output-dir-key,UI output directory key>>
+<18> Published output keys
+<19> Clean output directory key
+<20> Output directory key
+<21> Output destinations key
+<22> Output provider key
 
 Let's explore the purpose and usage of each key and its values.
 
@@ -147,6 +149,16 @@ Learn more:
 * xref:configure-content-sources.adoc#glob-branch[Specify and exclude branches by glob patterns]
 * xref:configure-content-sources.adoc#current-branch[Use the current local branch (HEAD)]
 * xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote branches and repositories]
+
+[#tags-key]
+=== tags
+
+The tags key (`tags`) accepts a list of tag name patterns, either as exact names or shell glob patterns.
+
+Learn more:
+
+* xref:configure-content-sources.adoc#default-tag[Set a default sources tag]
+* xref:configure-content-sources.adoc#mix-branches-and-tags[Use tags and branches from the same content repository]
 
 [#sources-start-path-key]
 === start_path
