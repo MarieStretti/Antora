@@ -7,6 +7,8 @@ const { posix: path } = require('path')
 const resolvePage = require('./util/resolve-page')
 const versionCompare = require('./util/version-compare-desc')
 
+const { START_PAGE_ID } = require('./constants')
+
 const $components = Symbol('components')
 const $files = Symbol('files')
 const $generateId = Symbol('generateId')
@@ -92,6 +94,15 @@ class ContentCatalog {
     return _.filter(this[$files], { src: srcFilter })
   }
 
+  getById ({ component, version, module, family, relative }) {
+    const id = this[$generateId]({ component, version, module, family, relative })
+    return this[$files][id]
+  }
+
+  getByPath ({ component, version, path: path_ }) {
+    return _.find(this[$files], { path: path_, src: { component, version } })
+  }
+
   getComponent (name) {
     return this[$components][name]
   }
@@ -109,13 +120,10 @@ class ContentCatalog {
     return Object.values(this[$files])
   }
 
-  getById ({ component, version, module, family, relative }) {
-    const id = this[$generateId]({ component, version, module, family, relative })
-    return this[$files][id]
-  }
-
-  getByPath ({ component, version, path: path_ }) {
-    return _.find(this[$files], { path: path_, src: { component, version } })
+  // TODO add `follow` argument to control whether alias is followed
+  getSiteStartPage () {
+    const page = this.getById(START_PAGE_ID) || this.getById(Object.assign({}, START_PAGE_ID, { family: 'alias' }))
+    if (page) return page.src.family === 'alias' ? page.rel : page
   }
 
   // QUESTION should this be addPageAlias?

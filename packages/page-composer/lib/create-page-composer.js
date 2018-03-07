@@ -50,13 +50,13 @@ function createPageComposerInternal (site, layouts) {
    *
    * @memberof page-composer
    *
-   * @param {File} file - The virtual file the contains embeddeable HTML
+   * @param {File} file - The virtual file the contains embeddable HTML
    *   contents to wrap in a layout.
    * @param {ContentCatalog} contentCatalog - The content catalog
    *   that provides access to the virtual files in the site.
    * @param {NavigationCatalog} navigationCatalog - The navigation catalog
    *   that provides access to the navigation menu for each component version.
-   * @returns {File} The file whose contents was wrapped in the specified page layout.
+   * @returns {File} The file whose contents were wrapped in the specified page layout.
    */
   return function composePage (file, contentCatalog, navigationCatalog) {
     // QUESTION should we pass the playbook to the uiModel?
@@ -87,9 +87,6 @@ function buildUiModel (file, contentCatalog, navigationCatalog, site) {
     site,
     siteRootPath: file.pub.rootPath,
     uiRootPath: path.join(file.pub.rootPath, site.ui.url),
-    // TODO siteRootUrl should only be set if there's a start/home page for the site
-    // FIXME this really belongs on site, perhaps as site.startUrl (and needs to be relativized)
-    //siteRootUrl
   }
 }
 
@@ -101,6 +98,9 @@ function buildSiteUiModel (playbook, contentCatalog) {
     if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
     model.url = siteUrl
   }
+
+  const startPage = contentCatalog.getSiteStartPage()
+  if (startPage) model.homeUrl = startPage.pub.url
 
   // QUESTION should components be pre-sorted?
   model.components = contentCatalog.getComponents().sort((a, b) => a.title.localeCompare(b.title))
@@ -154,9 +154,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     navigation,
     breadcrumbs,
     editUrl: file.src.editUrl,
-    // NOTE we won't have a home until we have a root (and/or start) component
-    // FIXME should be precomputed as file.pub.home; not necessarily root index page
-    home: false,
+    home: url === site.homeUrl,
   }
 
   if (site.url) {

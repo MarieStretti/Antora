@@ -1,7 +1,8 @@
 'use strict'
 
 const ContentCatalog = require('./content-catalog')
-const parsePageId = require('./util/parse-page-id')
+
+const { START_PAGE_ID } = require('./constants')
 
 /**
  * Organizes the raw aggregate of virtual files into a {ContentCatalog}.
@@ -108,11 +109,15 @@ function getNavInfo (filepath, nav) {
 function registerSiteStartPage (playbook, contentCatalog) {
   const pageSpec = playbook.site.startPage
   if (!pageSpec) return
-  const page = contentCatalog.resolvePage(pageSpec)
-  if (!page) throw new Error('Specified start page for site not found: ' + pageSpec)
-  const src = parsePageId('index.adoc', { component: '', version: '', module: '' })
-  Object.assign(src, { family: 'alias', basename: 'index.adoc', stem: 'index', mediaType: 'text/asciidoc' })
-  contentCatalog.addFile({ src, rel: page })
+  const rel = contentCatalog.resolvePage(pageSpec)
+  if (!rel) throw new Error('Specified start page for site not found: ' + pageSpec)
+  const src = Object.assign({}, START_PAGE_ID, {
+    family: 'alias',
+    basename: 'index.adoc',
+    stem: 'index',
+    mediaType: 'text/asciidoc',
+  })
+  contentCatalog.addFile({ src, rel })
 }
 
 function calculateRootPath (depth) {
