@@ -5,7 +5,7 @@ const { posix: path } = require('path')
 const requireFromString = require('require-from-string')
 const versionCompare = require('@antora/content-classifier/lib/util/version-compare-desc')
 
-const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants')
+const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS, START_PAGE_ID } = require('./constants')
 
 /**
  * Generates a function to wrap the page contents in a page layout.
@@ -87,9 +87,6 @@ function buildUiModel (file, contentCatalog, navigationCatalog, site) {
     site,
     siteRootPath: file.pub.rootPath,
     uiRootPath: path.join(file.pub.rootPath, site.ui.url),
-    // TODO siteRootUrl should only be set if there's a start/home page for the site
-    // FIXME this really belongs on site, perhaps as site.startUrl (and needs to be relativized)
-    //siteRootUrl
   }
 }
 
@@ -101,6 +98,11 @@ function buildSiteUiModel (playbook, contentCatalog) {
     if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
     model.url = siteUrl
   }
+
+  const startPage =
+    contentCatalog.getById(START_PAGE_ID) ||
+    contentCatalog.getById(Object.assign({}, START_PAGE_ID, { family: 'alias' }))
+  if (startPage) model.homeUrl = startPage.src.family === 'alias' ? startPage.rel.pub.url : startPage.pub.url
 
   // QUESTION should components be pre-sorted?
   model.components = contentCatalog.getComponents().sort((a, b) => a.title.localeCompare(b.title))
@@ -154,9 +156,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     navigation,
     breadcrumbs,
     editUrl: file.src.editUrl,
-    // NOTE we won't have a home until we have a root (and/or start) component
-    // FIXME should be precomputed as file.pub.home; not necessarily root index page
-    home: false,
+    home: url === site.homeUrl,
   }
 
   if (site.url) {

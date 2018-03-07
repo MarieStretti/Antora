@@ -51,6 +51,7 @@ describe('build UI model', () => {
     contentCatalog = {
       getComponent: spy((name) => component),
       getComponents: spy(() => components),
+      getById: spy(() => undefined),
     }
 
     menu = []
@@ -121,6 +122,60 @@ describe('build UI model', () => {
       expect(model.url).to.equal('https://example.com')
     })
 
+    it('should not set homeUrl property if site start page is not defined', () => {
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model.homeUrl).to.not.exist()
+    })
+
+    it('should set homeUrl property to url of site start page', () => {
+      const startPage = {
+        src: {
+          family: 'page',
+        },
+        pub: { url: '/path/to/home.html' },
+      }
+      contentCatalog.getById = spy(() => startPage)
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expectCalledWith(contentCatalog.getById, [
+        {
+          component: '',
+          version: '',
+          module: '',
+          family: 'page',
+          relative: 'index.adoc',
+        },
+      ])
+      expect(model.homeUrl).to.equal('/path/to/home.html')
+    })
+
+    it('should set homeUrl property to url of page to which site start page alias points', () => {
+      const startPage = {
+        src: {
+          family: 'alias',
+        },
+        rel: {
+          pub: { url: '/path/to/home.html' },
+        },
+      }
+      contentCatalog.getById = spy((id) => (id.family === 'alias' ? startPage : undefined))
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(contentCatalog.getById).to.have.been.called.exactly(2)
+      expectCalledWith(
+        contentCatalog.getById,
+        [
+          {
+            component: '',
+            version: '',
+            module: '',
+            family: 'alias',
+            relative: 'index.adoc',
+          },
+        ],
+        1
+      )
+      expect(model.homeUrl).to.equal('/path/to/home.html')
+    })
+
     it('should set defaultLayout property on ui property to "default" by default', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
       expect(model.ui.defaultLayout).to.equal('default')
@@ -183,6 +238,18 @@ describe('build UI model', () => {
       site.url = 'http://example.com'
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.canonicalUrl).to.equal('http://example.com/the-component/1.0/the-page.html')
+    })
+
+    it('should set home property to false if url of page does not match site homeUrl property', () => {
+      site.homeUrl = '/path/to/home.html'
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.home).to.be.false()
+    })
+
+    it('should set home property to true if url of page matches site homeUrl property', () => {
+      site.homeUrl = file.pub.url
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.home).to.be.true()
     })
 
     it('should set title, description, and keyword based on AsciiDoc attributes', () => {
