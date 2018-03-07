@@ -8,11 +8,7 @@ endif::[]
 On this page, you'll learn:
 
 * [x] How to configure the content source URL key.
-** [x] Relative and absolute filesystem paths
-** [x] Git URIs
 * [x] How to configure the branches key.
-** [x] By name
-** [x] By glob pattern
 * [x] How to configure the tags key.
 * [x] How to mix local and remote repositories and branches.
 * [x] When and how to configure the start path key.
@@ -227,11 +223,12 @@ content:
 
 The tags key (`tags`) accepts the same value patterns as the branches key.
 
-=== Add a global sources tag filter
+[#default-tag]
+=== Add a default sources tag filter
 
 If you want to the same tag filter applied to all the `url` entries that don't have an individual value defined `branches` or `tags` for the , then assign a value to  `tags` directly under the `content` category.
 
-.Assign a tag filter to all sources
+.Assign a default tag filter to content sources
 [source,yaml]
 ----
 content:
@@ -241,9 +238,10 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-b.git
 ----
 
-Antora will find and collect all of the the tags that begin with `v` from the content repositories that don't have branches or tags keys explicitly set on them.
+Antora will find and collect all of the the tags that begin with `v` from the content repositories that don't have `branches` or `tags` keys explicitly set on them.
 
-=== Use branches and tags from the same content repository
+[#mix-branches-and-tags]
+== Use tags and branches from the same content repository
 
 In this example, we'll fetch the `master` branch from a content repository.
 From the same repository, we'll also fetch all of the `v1.x` tags but ignore any tags that start with `v` and end with `-beta`.

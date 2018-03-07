@@ -155,6 +155,11 @@ Learn more:
 
 The tags key (`tags`) accepts a list of tag name patterns, either as exact names or shell glob patterns.
 
+Learn more:
+
+* xref:configure-content-sources.adoc#default-tag[Set a default sources tag]
+* xref:configure-content-sources.adoc#mix-branches-and-tags[Use tags and branches from the same content repository]
+
 [#sources-start-path-key]
 === start_path
 
