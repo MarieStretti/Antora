@@ -50,13 +50,13 @@ function createPageComposerInternal (site, layouts) {
    *
    * @memberof page-composer
    *
-   * @param {File} file - The virtual file the contains embeddeable HTML
+   * @param {File} file - The virtual file the contains embeddable HTML
    *   contents to wrap in a layout.
    * @param {ContentCatalog} contentCatalog - The content catalog
    *   that provides access to the virtual files in the site.
    * @param {NavigationCatalog} navigationCatalog - The navigation catalog
    *   that provides access to the navigation menu for each component version.
-   * @returns {File} The file whose contents was wrapped in the specified page layout.
+   * @returns {File} The file whose contents were wrapped in the specified page layout.
    */
   return function composePage (file, contentCatalog, navigationCatalog) {
     // QUESTION should we pass the playbook to the uiModel?
