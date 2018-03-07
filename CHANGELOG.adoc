@@ -5,6 +5,21 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-beta.1 (2018-03-07)
+
+=== Added
+
+* *content-aggregate*: Allow content to be aggregated from content repository tags using the content sources key `tags`
+* *content-aggregate*: Pass tag patterns to selectRefs (from content source or default patterns)
+* *content-aggregate*: Add support for selecting tags in selectRefs and optimize logic
+* *content-aggregate*: Use blob action in edit URL for tags
+
+=== Changed
+
+* *content-aggregate*: Rename selectBranches function to selectRefs and change return value of selectRefs to include ref type
+* *content-aggregate*: Add tests for selecting tags from content source
+* *content-aggregate*: Rename resolveOrigin function to computeOrigin
+
 == 1.0.0-alpha.9 (2018-03-06)
 
 === Added

@@ -3,7 +3,7 @@
 == Context
 
 The site project does not own any content files itself.
-Instead, it relies on Antora's documentation pipeline, specifically the content aggregator component, to retrieve the content from multiple repositories and branches using information provided by the playbook.
+Instead, it relies on Antora's documentation pipeline, specifically the content aggregator component, to retrieve the content from multiple repositories, branches, and tags using information provided by the playbook.
 The component stores these files as virtual file objects in a content aggregate (i.e., virtual file system), which is then presented to the rest of the pipeline for processing, effectively abstracting away the files`' origins.
 
 == Functional Overview
@@ -12,8 +12,8 @@ The content aggregator component accesses and reads information about the conten
 It then completes the following actions using information provided by the playbook to produce a [.term]_content aggregate_.
 
 * Fetch the remote repositories
-* Identify remote and local repository branches
-* Find the [.term]_documentation component_ in each branch
+* Identify remote and local repository branches and tags
+* Find the [.term]_documentation component_ in each branch and tags
 // definition of term: documentation component
  ** The documentation component is a group of documentation files which are versioned together and share a common subject.
  ** The documentation component can be located in a subpath of the repository's branch
@@ -28,7 +28,7 @@ The content aggregate is a transmittable collection of coarsely grouped (by comp
 
 The content aggregator component functionality is provided by the content-aggregator module.
 
-All the details of locating and cloning or fetching the repositories, identifying branches, finding documentation components and the files they contain, and grouping the files by documentation component version into a content aggregate should be encapsulated in the content aggregator component.
+All the details of locating and cloning or fetching the repositories, identifying branches and tags, finding documentation components and the files they contain, and grouping the files by documentation component version into a content aggregate should be encapsulated in the content aggregator component.
 
 The content aggregator component should:
 
@@ -39,9 +39,9 @@ The content aggregator component should:
  ** Repository origins could be GitHub, GitLab, Bitbucket, etc.
 * Cache cloned repositories in the folder [.path]_.cache/content_ for use by subsequent runs
 * Use local directories as is (do not clone or copy)
-* Scan all branches per repository to find playbook matches
- ** Local branches shall take precedence over remote branches with the same name
-* Visit each matched branch and find the [.term]_component description file_ (antora.yml) at the root of each documentation component
+* Scan all branches and tags per repository to find playbook matches
+ ** Local branches and tags shall take precedence over remote branches and tags with the same name
+* Visit each matched branch and tag and find the [.term]_component description file_ (antora.yml) at the root of each documentation component
 * Walk each documentation component subtree and collect all input files (i.e., `**/*.*`)
 * Create a virtual file for each collected file (vinyl object)
 * Assign the virtual file to the files collection associated with a component version
@@ -58,7 +58,6 @@ The content aggregator component should:
 * Playbook (`content.sources`)
 
 .Output
-// File aggregate, content aggregate, aggregate??? Either way, should align with classifier's File catalog, content catalog, catalog
 * Content aggregate (`aggregate`)
 
 == Code
@@ -123,7 +122,7 @@ The `mediaType` property should also be set directly on the file object to match
 
 == Consequences
 
-The content aggregator component allows the Antora documentation pipeline to work with content from multiple repositories and their branches.
+The content aggregator component allows the Antora documentation pipeline to work with content from multiple repositories and their branches and tags.
 This component enables the rest of the pipeline to work on virtual files.
 
 * No other pipeline components need to know how to get the files from their repositories.

@@ -33,7 +33,7 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  * Aggregates files from the specified content sources so they can
  * be loaded into a virtual file catalog.
  *
- * Currently assumes each source points to a local or remote git repositories.
+ * Currently assumes each source points to a local or remote git repository.
  * Clones the repository, if necessary, then walks the git tree (or worktree)
  * of the specified branches and tags. Creates a virtual file containing the
  * source location and contents for each file matched. The files are then
@@ -196,7 +196,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
  * Checks whether the specified URL resolves to a directory on the local filesystem.
  *
  * @param {String} url - The URL to check.
- * @return {Boolean} - A flag indicating whether the URL resolves to a directory on the local filesystem.
+ * @return {Boolean} A flag indicating whether the URL resolves to a directory on the local filesystem.
  */
 function directoryExists (url) {
   try {
@@ -236,7 +236,7 @@ function ensureCacheDir (customCacheDir, startDir) {
  * - Append .git (as a file extension)
  *
  * @param {String} url - The repository URL to convert.
- * @return {String} - A friendly folder name.
+ * @return {String} A friendly folder name.
  */
 function generateLocalFolderName (url) {
   url = url.toLowerCase()
