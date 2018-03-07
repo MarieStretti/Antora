@@ -9,19 +9,17 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *content-aggregate*: Allow content to be aggregated from content repository tags using the content sources key `tags`
-* *content-aggregate*: Pass tag patterns to selectRefs (from content source or default patterns)
-* *content-aggregate*: Add support for selecting tags in selectRefs and optimize logic
-* *content-aggregate*: Use blob action in edit URL for tags
-* *page-composer*: Set `site.homeUrl` and page.home variables in UI model
-* *page-composer*: Set `site.homeUrl` to URL of the concrete site start page
-* *page-composer*: Set `page.home` to true if URL of page matches `site.homeUrl`
+* *content-aggregate*: Allow content to be aggregated from tags in a content repository
+* *content-classifier*: Add ContentCatalog#getSiteStartPage method
+* *page-composer*: Set `site.homeUrl` variable in UI model if site start page is set
+* *page-composer*: Set `page.home` variable in UI model; true if page is site start page (page URL matches `site.homeUrl`)
 
 === Changed
 
+* *content-aggregate*: Don't select all branches if branch pattern is undefined
+* *content-aggregate*: Use blob action instead of edit action in `src.editUrl` for files taken from tag
+* *content-aggregate*: Pass tag patterns to selectRefs (read from `tags` on content source or shared content key)
 * *content-aggregate*: Rename selectBranches function to selectRefs and change return value of selectRefs to include ref type
-* *content-aggregate*: Add tests for selecting tags from content source
-* *content-aggregate*: Rename resolveOrigin function to computeOrigin
 
 == 1.0.0-alpha.9 (2018-03-06)
 
