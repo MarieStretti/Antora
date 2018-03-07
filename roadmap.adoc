@@ -29,12 +29,15 @@ For a detailed list of current development tasks, refer to the core components {
 
 === v1.0.0-beta.x
 
-* [ ] Add error message when repository clone fails {uri-issues}/155[#155]
-* [ ] Create Docker container for evaluating Antora {uri-issues}/162[#162]
-* [ ] Upgrade to Asciidoctor.js 1.5.6
-* [ ] Add Node 9 to CI matrix
+* [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
+* [ ] Allow content to be aggregated from tags {uri-issues}/117[#117]
+* [ ] Pass site start page to UI model (will link to home icon, if set)
+* [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
+* [ ] Emit graceful error message when repository clone fails {uri-issues}/155[#155]
+* [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
+* [ ] Set component name and version as AsciiDoc attributes (antora-component-name, antora-component-version, antora-branch?)
 * [ ] Set up API documentation and automatically publish as CI artifact
-* [ ] Evaluate CHANGELOG policies and automatically generate CHANGELOG for release
+//* [ ] Pass algolia key in playbook
 
 === v1.0.0 Release Window
 
@@ -46,18 +49,18 @@ The Antora platform includes all of the packages that are assembled in the defau
 
 === v1.x
 
+* [ ] Allow custom generator to be specified
+* [ ] Add a logging infrastructure {uri-issues}/145[#145]
+* [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
+* [ ] Add Node 9 to CI matrix
+* [ ] Evaluate CHANGELOG policies and automatically generate CHANGELOG for release
 * [ ] Implement fallback value for component version {uri-issues}/161[#161]
 * [ ] Support loading the UI from a directory {uri-issues}/150[#150]
 * [ ] Add a merge mode to supplemental UI files {uri-issues}/149[#149]
-* [ ] Add a logging infrastructure {uri-issues}/145[#145]
 * [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
-* [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
-* [ ] Allow content to be aggregated from tags {uri-issues}/117[#117]
-* [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 * [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
-* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
 * [ ] Watch mode for files in worktree
-* [ ] Allow custom generator to be specified
+* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
 * [ ] Upgrade build to Gulp 4
 
 *Release Timeframe*: 2018 Q2
@@ -67,8 +70,9 @@ The Antora platform includes all of the packages that are assembled in the defau
 The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.,
 They aren't slated imminent development but are reviewed for possible scheduling after each release.
 
-* Be able to make references to page aliases; would require parsing all document headers in a separate step/phase
 * Decide whether to isolate id (or ctx) from src property on content file
+* Webhooks between repositories (e.g., docs.antora.org, docker-antora)
+* Be able to make references to page aliases; would require parsing all document headers in a separate step/phase
 * Decide whether content aggregate should be sorted {uri-issues}/121[#121]
 * Separate content aggregator from git provider {uri-issues}/93[#93]
 * Allow module paths to be configurable {uri-issues}/28[#28]
@@ -94,10 +98,10 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
 * [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
 * [ ] Document sitemap features {uri-issues}/168[#168]
-* [ ] Improve custom provider documentation {uri-issues}/164[#164]
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
 * [ ] Document redirect features
+* [ ] Improve custom publish provider documentation {uri-issues}/164[#164]
 
 === v1.x
 
@@ -115,9 +119,10 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 === v1.0.0-beta.x
 
-* [ ] Add client-side search {uri-ui-issues}/44[#44]
+* [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
 * [ ] IE 11 fixes
 * [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
+* [ ] Cut stable release of default UI
 
 === v1.0.0
 
@@ -129,7 +134,6 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 * [ ] Enable unordered list marker styles {uri-ui-issues}/26[#26]
 * [ ] Create task list SVGs {uri-ui-issues}/31[#31]
-* [ ] Set up UI bundle hosting
 * [ ] Upgrade build to Gulp 4
 * [ ] Improve SVG options stability
 
