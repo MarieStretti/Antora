@@ -314,7 +314,7 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('filter branches', () => {
+  describe('filter refs', () => {
     const initRepoWithBranches = async (repoBuilder, componentName = 'the-component', beforeClose) =>
       repoBuilder
         .init(componentName)
@@ -328,17 +328,13 @@ describe('aggregateContent()', () => {
         .then(() => beforeClose && beforeClose())
         .then(() => repoBuilder.close('master'))
 
-    describe('should discover all branches when filter is undefined', () => {
+    describe('should exclude all branches when filter is undefined', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder)
         playbookSpec.content.branches = undefined
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const aggregate = await aggregateContent(playbookSpec)
-        expect(aggregate).to.have.lengthOf(4)
-        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
-        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v1.0' })
-        expect(aggregate[2]).to.include({ name: 'the-component', version: 'v2.0' })
-        expect(aggregate[3]).to.include({ name: 'the-component', version: 'v3.0' })
+        expect(aggregate).to.have.lengthOf(0)
       })
     })
 
@@ -379,7 +375,21 @@ describe('aggregateContent()', () => {
       })
     })
 
-    describe('should select refs which are branches', () => {
+    describe('should apply branch exclusion filter', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder)
+        playbookSpec.content.sources.push({
+          url: repoBuilder.url,
+          branches: ['v*', '!master', '!v2*'],
+        })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
+    describe('should only use branches when only branches are specified', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder, 'the-component', async () => repoBuilder.createTag('v1.0.0', 'v1.0'))
         playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
@@ -468,6 +478,123 @@ describe('aggregateContent()', () => {
           .then(() => repoBuilder.repository.detachHead())
           .then(() => repoBuilder.close())
         playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['HEAD', 'v*'] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(3)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v2.0' })
+        expect(aggregate[2]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
+    describe('should filter tags using wildcard', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('z3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: 'v*' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v2.0' })
+      })
+    })
+
+    describe('should filter tags using exact name', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: 'v2.0.0' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v2.0' })
+      })
+    })
+
+    describe('should filter tags using multiple filters', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: ['v1.0.0', 'v3.*'] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
+    describe('should exclude all refs if filter matches no tags', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: 'z*' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(0)
+      })
+    })
+
+    describe('should filter tags using default filter as string', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = []
+        playbookSpec.content.tags = 'v2.*'
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v2.0' })
+      })
+    })
+
+    describe('should filter tags using default filter as array', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = []
+        playbookSpec.content.tags = ['v1.*', 'v3.0.0']
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
+    describe('should filter both branches and tags', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['v3.*'], tags: ['v*', '!v3.*'] })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(3)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
@@ -783,13 +910,16 @@ describe('aggregateContent()', () => {
           'git@github.com:org-name/repo-name.git',
           'git@github.com:org-name/repo-name',
         ]
-        const branch = 'master'
-        const expectedEditUrlPattern = 'https://github.com/org-name/repo-name/edit/' + branch + '/%s'
-        urls.forEach((url) => {
-          const origin = aggregateContent._resolveOrigin(url, branch, '')
-          expect(origin.url).to.equal(url)
-          expect(origin.branch).to.equal(branch)
-          expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+        const action = { branch: 'edit', tag: 'blob' }
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        refs.forEach(([name, type]) => {
+          const expectedEditUrlPattern = 'https://github.com/org-name/repo-name/' + action[type] + '/' + name + '/%s'
+          urls.forEach((url) => {
+            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            expect(origin.url).to.equal(url)
+            expect(origin[type]).to.equal(name)
+            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          })
         })
       })
 
@@ -800,13 +930,16 @@ describe('aggregateContent()', () => {
           'git@gitlab.com:org-name/repo-name.git',
           'git@gitlab.com:org-name/repo-name',
         ]
-        const branch = 'master'
-        const expectedEditUrlPattern = 'https://gitlab.com/org-name/repo-name/edit/' + branch + '/%s'
-        urls.forEach((url) => {
-          const origin = aggregateContent._resolveOrigin(url, branch, '')
-          expect(origin.url).to.equal(url)
-          expect(origin.branch).to.equal(branch)
-          expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+        const action = { branch: 'edit', tag: 'blob' }
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        refs.forEach(([name, type]) => {
+          const expectedEditUrlPattern = 'https://gitlab.com/org-name/repo-name/' + action[type] + '/' + name + '/%s'
+          urls.forEach((url) => {
+            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            expect(origin.url).to.equal(url)
+            expect(origin[type]).to.equal(name)
+            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          })
         })
       })
 
@@ -817,13 +950,15 @@ describe('aggregateContent()', () => {
           'git@bitbucket.org:org-name/repo-name.git',
           'git@bitbucket.org:org-name/repo-name',
         ]
-        const branch = 'master'
-        const expectedEditUrlPattern = 'https://bitbucket.org/org-name/repo-name/src/' + branch + '/%s'
-        urls.forEach((url) => {
-          const origin = aggregateContent._resolveOrigin(url, branch, '')
-          expect(origin.url).to.equal(url)
-          expect(origin.branch).to.equal(branch)
-          expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        refs.forEach(([name, type]) => {
+          const expectedEditUrlPattern = 'https://bitbucket.org/org-name/repo-name/src/' + name + '/%s'
+          urls.forEach((url) => {
+            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            expect(origin.url).to.equal(url)
+            expect(origin[type]).to.equal(name)
+            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          })
         })
       })
 
@@ -834,7 +969,7 @@ describe('aggregateContent()', () => {
         const expectedEditUrlPattern = posixify
           ? 'file:///' + posixify(worktreePath) + '/%s'
           : 'file://' + worktreePath + '/%s'
-        const origin = aggregateContent._resolveOrigin(url, branch, '', worktreePath)
+        const origin = aggregateContent._computeOrigin(url, branch, 'branch', '', worktreePath)
         expect(origin.url).to.equal(url)
         expect(origin.branch).to.equal(branch)
         expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
@@ -859,24 +994,25 @@ describe('aggregateContent()', () => {
   })
 
   describe('join component version', () => {
-    describe('should aggregate files with same component version found in different branches', () => {
+    describe('should aggregate files with same component version found in different refs', () => {
       testAll(async (repoBuilder) => {
         const componentDesc = { name: 'the-component', version: 'v1.2.3' }
         await repoBuilder
           .init(componentDesc.name)
           .then(() => repoBuilder.addComponentDescriptorToWorktree(componentDesc))
           .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-one.adoc'))
+          .then(() => repoBuilder.createTag('v1.2.3'))
           .then(() => repoBuilder.checkoutBranch('v1.2.3-fixes'))
           .then(() => repoBuilder.addComponentDescriptorToWorktree(componentDesc))
           .then(() => repoBuilder.removeFromWorktree('modules/ROOT/pages/page-one.adoc'))
           .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-two.adoc'))
           .then(() => repoBuilder.close('master'))
-        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v1.2.3-fixes', tags: 'v1.2.3' })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
         const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
-        expect(pageOne.src.origin.branch).to.equal('master')
+        expect(pageOne.src.origin.tag).to.equal('v1.2.3')
         const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
         expect(pageTwo.src.origin.branch).to.equal('v1.2.3-fixes')
       })
@@ -1147,7 +1283,7 @@ describe('aggregateContent()', () => {
     expect(page2v2).to.exist()
   })
 
-  it('should favor remote branches in bare repository', async () => {
+  it('should prefer remote branches in bare repository', async () => {
     const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(remoteRepoBuilder, { repoName: 'the-component-remote' })
 
@@ -1168,6 +1304,7 @@ describe('aggregateContent()', () => {
     expect(pageOne.contents.toString()).to.not.have.string('= Local Modification')
   })
 
+  // NOTE this test doesn't always trigger the condition being tested; it depends on the order the refs are returned
   it('should discover components in specified remote', async () => {
     const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     const remoteComponentDesc = {
@@ -1193,8 +1330,31 @@ describe('aggregateContent()', () => {
     expect(aggregate[1]).to.include({ name: 'the-component', version: 'v2.0' })
   })
 
+  it('should not discover branches in other remotes', async () => {
+    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const remoteComponentDesc = {
+      repoName: 'the-component-remote',
+      name: 'the-component',
+      version: 'v2.0',
+    }
+    await initRepoWithFiles(remoteRepoBuilder, remoteComponentDesc, undefined, async () =>
+      remoteRepoBuilder.checkoutBranch('v2.0')
+    )
+
+    const localRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, async () =>
+      localRepoBuilder.addRemote('upstream', remoteRepoBuilder.url)
+    )
+
+    playbookSpec.content.sources.push({ url: localRepoBuilder.url })
+
+    const aggregate = await aggregateContent(playbookSpec)
+    expect(aggregate).to.have.lengthOf(1)
+    expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+  })
+
   // technically, we don't know what it did w/ the remote we specified, but it should work regardless
-  it('should ignore remote if cloned', async () => {
+  it('should ignore remote on repository clone', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(repoBuilder)
 
