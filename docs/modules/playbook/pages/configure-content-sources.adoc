@@ -13,6 +13,7 @@ On this page, you'll learn:
 * [x] How to configure the branches key.
 ** [x] By name
 ** [x] By glob pattern
+* [x] How to configure the tags key.
 * [x] How to mix local and remote repositories and branches.
 * [x] When and how to configure the start path key.
 
@@ -219,6 +220,42 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches:
     - v*
+    - '!v*-beta'
+----
+
+== Tags key
+
+The tags key (`tags`) accepts the same value patterns as the branches key.
+
+=== Add a global sources tag filter
+
+If you want to the same tag filter applied to all the `url` entries that don't have an individual value defined `branches` or `tags` for the , then assign a value to  `tags` directly under the `content` category.
+
+.Assign a tag filter to all sources
+[source,yaml]
+----
+content:
+  tags: v*
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+----
+
+Antora will find and collect all of the the tags that begin with `v` from the content repositories that don't have branches or tags keys explicitly set on them.
+
+=== Use branches and tags from the same content repository
+
+In this example, we'll fetch the `master` branch from a content repository.
+From the same repository, we'll also fetch all of the `v1.x` tags but ignore any tags that start with `v` and end with `-beta`.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/org/project-docs.git
+    branches: master
+    tags:
+    - v1.*
     - '!v*-beta'
 ----
 
