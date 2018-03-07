@@ -31,7 +31,7 @@ For a detailed list of current development tasks, refer to the core components {
 
 * [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
 * [x] Allow content to be aggregated from tags {uri-issues}/117[#117]
-* [ ] Pass site start page to UI model (will link to home icon, if set)
+* [x] Pass site start page to UI model which will link to home icon, if set {uri-issues}/193[#193]
 
 === v1.0.0-beta.x
 

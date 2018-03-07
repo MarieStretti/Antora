@@ -13,6 +13,9 @@ This project utilizes semantic versioning.
 * *content-aggregate*: Pass tag patterns to selectRefs (from content source or default patterns)
 * *content-aggregate*: Add support for selecting tags in selectRefs and optimize logic
 * *content-aggregate*: Use blob action in edit URL for tags
+* *page-composer*: Set `site.homeUrl` and page.home variables in UI model
+* *page-composer*: Set `site.homeUrl` to URL of the concrete site start page
+* *page-composer*: Set `page.home` to true if URL of page matches `site.homeUrl`
 
 === Changed
 
