@@ -131,7 +131,7 @@ describe('createPageComposer()', () => {
 
     contentCatalog = {
       getComponents: () => [],
-      getById: () => undefined,
+      getSiteStartPage: () => undefined,
     }
 
     uiCatalog = {
@@ -201,7 +201,7 @@ describe('createPageComposer()', () => {
       contentCatalog = {
         getComponent: (name) => component,
         getComponents: () => components,
-        getById: () => undefined,
+        getSiteStartPage: () => undefined,
       }
 
       menu = []

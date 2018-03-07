@@ -5,7 +5,7 @@ const { posix: path } = require('path')
 const requireFromString = require('require-from-string')
 const versionCompare = require('@antora/content-classifier/lib/util/version-compare-desc')
 
-const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS, START_PAGE_ID } = require('./constants')
+const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants')
 
 /**
  * Generates a function to wrap the page contents in a page layout.
@@ -99,10 +99,8 @@ function buildSiteUiModel (playbook, contentCatalog) {
     model.url = siteUrl
   }
 
-  const startPage =
-    contentCatalog.getById(START_PAGE_ID) ||
-    contentCatalog.getById(Object.assign({}, START_PAGE_ID, { family: 'alias' }))
-  if (startPage) model.homeUrl = startPage.src.family === 'alias' ? startPage.rel.pub.url : startPage.pub.url
+  const startPage = contentCatalog.getSiteStartPage()
+  if (startPage) model.homeUrl = startPage.pub.url
 
   // QUESTION should components be pre-sorted?
   model.components = contentCatalog.getComponents().sort((a, b) => a.title.localeCompare(b.title))

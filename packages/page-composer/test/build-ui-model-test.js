@@ -51,7 +51,7 @@ describe('build UI model', () => {
     contentCatalog = {
       getComponent: spy((name) => component),
       getComponents: spy(() => components),
-      getById: spy(() => undefined),
+      getSiteStartPage: spy(() => undefined),
     }
 
     menu = []
@@ -124,6 +124,7 @@ describe('build UI model', () => {
 
     it('should not set homeUrl property if site start page is not defined', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(contentCatalog.getSiteStartPage).to.have.been.called()
       expect(model.homeUrl).to.not.exist()
     })
 
@@ -134,17 +135,9 @@ describe('build UI model', () => {
         },
         pub: { url: '/path/to/home.html' },
       }
-      contentCatalog.getById = spy(() => startPage)
+      contentCatalog.getSiteStartPage = spy(() => startPage)
       const model = buildSiteUiModel(playbook, contentCatalog)
-      expectCalledWith(contentCatalog.getById, [
-        {
-          component: '',
-          version: '',
-          module: '',
-          family: 'page',
-          relative: 'index.adoc',
-        },
-      ])
+      expect(contentCatalog.getSiteStartPage).to.have.been.called()
       expect(model.homeUrl).to.equal('/path/to/home.html')
     })
 
@@ -157,22 +150,9 @@ describe('build UI model', () => {
           pub: { url: '/path/to/home.html' },
         },
       }
-      contentCatalog.getById = spy((id) => (id.family === 'alias' ? startPage : undefined))
+      contentCatalog.getSiteStartPage = spy(() => startPage.rel)
       const model = buildSiteUiModel(playbook, contentCatalog)
-      expect(contentCatalog.getById).to.have.been.called.exactly(2)
-      expectCalledWith(
-        contentCatalog.getById,
-        [
-          {
-            component: '',
-            version: '',
-            module: '',
-            family: 'alias',
-            relative: 'index.adoc',
-          },
-        ],
-        1
-      )
+      expect(contentCatalog.getSiteStartPage).to.have.been.called()
       expect(model.homeUrl).to.equal('/path/to/home.html')
     })
 

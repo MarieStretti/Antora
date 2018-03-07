@@ -1,13 +1,15 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect } = require('../../../test/test-utils')
+const { expect, expectCalledWith, spy } = require('../../../test/test-utils')
 
 const classifyContent = require('@antora/content-classifier')
 const ContentCatalog = require('@antora/content-classifier/lib/content-catalog')
 const File = require('@antora/content-classifier/lib/file')
 const mimeTypes = require('@antora/content-aggregator/lib/mime-types-with-asciidoc')
 const { posix: path } = require('path')
+
+const { START_PAGE_ID } = require('@antora/content-classifier/lib/constants')
 
 // TODO change these to pure unit tests that don't rely on the classifyContent function
 describe('ContentCatalog', () => {
@@ -673,6 +675,73 @@ describe('ContentCatalog', () => {
         path: 'modules/ROOT/pages/_partials/does-not-exist.adoc',
       })
       expect(page).not.to.exist()
+    })
+  })
+
+  describe('#getSiteStartPage()', () => {
+    let contentCatalog
+
+    beforeEach(() => {
+      contentCatalog = new ContentCatalog()
+      contentCatalog.getById = spy(contentCatalog.getById)
+    })
+
+    it('should return undefined if site start page does not exist in catalog', () => {
+      expect(contentCatalog.getSiteStartPage()).to.not.exist()
+      expectCalledWith(contentCatalog.getById, [START_PAGE_ID])
+    })
+
+    it('should return site start page if stored as a concrete page', () => {
+      const startPageSrc = Object.assign({}, START_PAGE_ID, {
+        basename: 'index.adoc',
+        stem: 'index',
+        mediaType: 'text/asciidoc',
+      })
+      contentCatalog.addFile({
+        contents: Buffer.from('I am your home base!'),
+        src: startPageSrc,
+      })
+      const result = contentCatalog.getSiteStartPage()
+      expectCalledWith(contentCatalog.getById, [START_PAGE_ID])
+      expect(result).to.exist()
+      expect(result.src).to.equal(startPageSrc)
+      expect(result.contents.toString()).to.equal('I am your home base!')
+    })
+
+    it('should return reference for site start page stored as an alias', () => {
+      const thePageId = {
+        component: 'the-component',
+        version: '1.0.1',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'home.adoc',
+      }
+      const thePageSrc = Object.assign({}, thePageId, {
+        basename: 'home.adoc',
+        stem: 'home',
+        mediaType: 'text/asciidoc',
+      })
+      contentCatalog.addFile({
+        contents: Buffer.from('I am your home base!'),
+        src: thePageSrc,
+      })
+      const startPageSrc = Object.assign({}, START_PAGE_ID, {
+        family: 'alias',
+        basename: 'index.adoc',
+        stem: 'index',
+        mediaType: 'text/asciidoc',
+      })
+      contentCatalog.addFile({
+        src: startPageSrc,
+        rel: contentCatalog.getById(thePageId),
+      })
+      contentCatalog.getById.reset()
+      const result = contentCatalog.getSiteStartPage()
+      expectCalledWith(contentCatalog.getById, [START_PAGE_ID], 0)
+      expectCalledWith(contentCatalog.getById, [Object.assign({}, START_PAGE_ID, { family: 'alias' })], 1)
+      expect(result).to.exist()
+      expect(result.src).to.equal(thePageSrc)
+      expect(result.contents.toString()).to.equal('I am your home base!')
     })
   })
 })
