@@ -32,7 +32,7 @@ A xref:ROOT:modules.adoc#partials-dir[module's partial AsciiDoc files] should be
 You don't need to set the path to this directory in the header of your AsciiDoc file.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
-NOTE: Antora doesn't yet support filtering includes by tag or line number.
+NOTE: Antora doesn't yet support filtering included lines by line number, only by tags.
 
 [discrete]
 ==== Asciidoctor resources
