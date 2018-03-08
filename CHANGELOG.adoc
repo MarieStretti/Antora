@@ -15,25 +15,25 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *content-aggregate*: Allow content to be aggregated from tags in a content repository
+* *content-aggregator*: Allow content to be aggregated from tags in a content repository
 * *content-classifier*: Add ContentCatalog#getSiteStartPage method
 * *page-composer*: Set `site.homeUrl` variable in UI model if site start page is set
 * *page-composer*: Set `page.home` variable in UI model; true if page is site start page (page URL matches `site.homeUrl`)
 
 === Changed
 
-* *content-aggregate*: Don't select all branches if branch pattern is undefined
-* *content-aggregate*: Use blob action instead of edit action in `src.editUrl` for files taken from tag
-* *content-aggregate*: Pass tag patterns to selectRefs (read from `tags` on content source or shared content key)
-* *content-aggregate*: Rename selectBranches function to selectRefs and change return value of selectRefs to include ref type
+* *content-aggregator*: Don't select all branches if branch pattern is undefined
+* *content-aggregator*: Use blob action instead of edit action in `src.editUrl` for files taken from tag
+* *content-aggregator*: Pass tag patterns to selectRefs (read from `tags` on content source or shared content key)
+* *content-aggregator*: Rename selectBranches function to selectRefs and change return value of selectRefs to include ref type
 
 == 1.0.0-alpha.9 (2018-03-06)
 
 === Added
 
 * *playbook-builder*: Add key to playbook schema to control how HTTP redirects are produced (`urls.redirect_facility`)
-* *content-aggregate*: Honor `runtime.quiet` and `runtime.silent` flags if set in playbook (don't show progress bars)
-* *content-aggregate*: Add progress bar for all git operations using multi-progress (only activate when running in a tty)
+* *content-aggregator*: Honor `runtime.quiet` and `runtime.silent` flags if set in playbook (don't show progress bars)
+* *content-aggregator*: Add progress bar for all git operations using multi-progress (only activate when running in a tty)
 * *content-classifier:* Add support for alias files (family=alias) in content catalog
 * *content-classifier:* Add ContentCatalog#registerPageAlias method for adding an alias for a page
 * *document-converter*: Register aliases defined in page-aliases document attribute with content catalog
@@ -57,7 +57,7 @@ This project utilizes semantic versioning.
 
 === Fixed
 
-* *content-aggregate*: Report URL of repository when component descriptor is missing or invalid
+* *content-aggregator*: Report URL of repository when component descriptor is missing or invalid
 * *content-classifier*: Use fallback URL for component version if implicit start page is missing (and no start page has been set)
 * *content-classifier*: Report location of file when attempt is made to add duplicate file to catalog
 * *playbook-builder*: Remove obsolete keys
