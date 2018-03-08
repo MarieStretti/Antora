@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Changed
+
+* *content-aggregator*: Make transfer progress callback asynchronous so progress bar updates don't affect transfer
+
 == 1.0.0-beta.1 (2018-03-07)
 
 === Added

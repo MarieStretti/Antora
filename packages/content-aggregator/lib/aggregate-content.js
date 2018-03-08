@@ -290,7 +290,7 @@ function createTransferProgress (progress, progressLabel, operation) {
     incomplete: '-',
   })
   progressBar.tick(0)
-  const fn = (transferStatus) => {
+  const callback = async (transferStatus) => {
     let growth = transferStatus.receivedObjects() + transferStatus.indexedObjects()
     if (progressBar.total === Infinity) {
       progressBar.total = transferStatus.totalObjects() * 2
@@ -299,8 +299,7 @@ function createTransferProgress (progress, progressLabel, operation) {
     }
     if (growth) progressBar.tick(growth)
   }
-  fn.progressBar = progressBar
-  return fn
+  return { callback, progressBar, waitForResult: false }
 }
 
 function formatProgressBar (label, maxLabelWidth, operation) {
