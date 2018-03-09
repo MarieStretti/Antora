@@ -115,7 +115,7 @@ To create a list item that links to an external URL, just use AsciiDoc's xref:as
 ----
 .xref:index.adoc[The Special Project]
 * xref:get-started.adoc[Getting Started with Project]
-**xref:page-a.adoc[Project Concepts]
+** xref:page-a.adoc[Project Concepts]
 * More Resources
 ** https://special-project.com/support[Support Plans]
 ** https://gitlab.com/project/issues
