@@ -88,7 +88,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === v1.0.0-beta.x
 
-* [ ] Document supported platforms and configurations {uri-issues}/197[#197]
+* [x] Document supported platforms and configurations {uri-issues}/197[#197]
 * [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 * [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
 * [ ] Add how to create a partial page {uri-issues}/176[#176]

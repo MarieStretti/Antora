@@ -1,0 +1,91 @@
+= Supported Platforms
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+
+Antora is comprehensively tested on these platform configurations.
+
+[cols="1,2a,1a",width="60%"]
+|===
+|Supported Platform |Supported Versions |Good to Know
+
+|Alpine Linux
+|3.7
+|
+
+|Debian Linux
+|9.3
+|
+
+|Fedora Linux
+|* 26
+* 27
+|
+
+|macOS
+|High Sierra
+|
+
+|Microsoft
+|* Windows 8.1
+* Windows Server 2012 R2
+|
+
+|Chrome
+|Latest stable version
+|
+
+|Firefox
+|Latest stable version
+|
+
+|Internet Explorer
+|11
+|
+
+|Node
+|8.10
+|
+
+|===
+
+////
+OS Release schedule links
+
+Alpine: https://wiki.alpinelinux.org/wiki/Alpine_Linux:Releases
+- 3.7 ends 2019-11-01
+- 3.6.2 ends 2019-05-01, gets security fixes only
+
+Arch: https://www.archlinux.org/releng/releases/
+
+Arch Linux releases once a month, with only the 3 most recent distros being officially available
+
+Debian: https://www.debian.org/releases/stable/
+
+Fedora: https://fedoraproject.org/wiki/Releases
+
+Fedora 28 will be released May 2018
+Fedora 26 will be maintained until 1 month after the release of Fedora 28.
+
+Ubuntu Linux: https://wiki.ubuntu.com/Releases
+
+16.04.3 LTS is the most recent LTS release.
+17.10 is the most recent regular release, EOL July 2018
+18.04 LTS is due to be released in April 2018
+
+openSUSE: https://en.opensuse.org/Portal:42.3
+
+Leap 42.3 is the current release
+Checkout the Open Build Project: http://openbuildservice.org
+
+Windows: https://en.wikipedia.org/wiki/Comparison_of_Microsoft_Windows_versions
+
+Windows 8.1 is supported by MS until 2023-01-10
+Windows Server 2012 R2 until 2023-10-10
+Windows Server 2016 / Windows 10 don't have an EOL date (as of 2018-03-10)
+
+MS Edge: only has about 4.3% of the market (less than Safari) but it is supposed to replace IE 11; it is the default browser for Windows 10/Server 2016
+////
