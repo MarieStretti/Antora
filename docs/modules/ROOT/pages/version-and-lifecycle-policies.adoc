@@ -1,0 +1,67 @@
+= Antora Version and Lifecycle Policies
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:table-caption!:
+
+== Version policy
+
+Antora follows the semantic versioning rules.
+Each Antora component release is versioned *major.minor.maintenance*.
+
+Major::
+Major releases occur when there are substantial changes in functionality or when new functionality breaks backwards compatibility.
+Releases within the same major version number will maintain API compatibility.
+
+Minor::
+Minor releases add new features, improvements to existing features, and fixes that maintain backwards compatibility.
+
+Maintenance::
+Maintenance releases patch bugs.
+Only the latest minor release will receive maintenance releases.
+
+== Lifecycle policy
+
+Each major version of the Antora Core components and Core UI Model is supported for at least one year after the major version enters General Availability (GA).
+Once a major version reaches End of Life (EOL), it will not receive maintenance releases.
+
+=== Lifecycle phases
+
+General Availability (GA)::
+Software enters General Availability on the date an initial major version is released and available for download.
+
+General Support (GS)::
+General Support begins on the date a major release enters General Availability.
+
+End of General Support (EOGS)::
+General Support ends on the date a major release reaches its End of Life.
+
+End of Life (EOL)::
+The date after which the software no longer receives maintenance releases.
+
+=== Release GA and EOL matrix
+
+[cols="2,1,1,1,1"]
+|===
+|Software	|GA |GS	|EOL |EOGS
+
+|Antora Core Components 1.0
+|2018/03/26*
+|2018/03/26*
+|2019/03/26*
+|2019/03/26*
+
+|Antora Core UI 1.0
+|2018/03/26*
+|2018/03/26*
+|2019/03/26*
+|2019/03/26*
+
+|===
+
+{asterisk} Date is estimated and subject to change.
+
+The information on this page is believed to be accurate as of the date of publication, but updates and revisions may be posted periodically and without notice.
