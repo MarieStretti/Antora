@@ -27,18 +27,12 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 For a detailed list of current development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
-=== v1.0.0-beta.1
-
-* [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
-* [x] Allow content to be aggregated from tags {uri-issues}/117[#117]
-* [x] Pass site start page to UI model which will link to home icon, if set {uri-issues}/193[#193]
-
 === v1.0.0-beta.x
 
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 * [ ] Emit graceful error message when repository clone fails {uri-issues}/155[#155]
+* [ ] Pass down page ID properties to AsciiDoc document {uri-issues}/196[#196]
 * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
-* [ ] Set component name and version as AsciiDoc attributes (antora-component-name, antora-component-version, antora-branch?)
 * [ ] Set up API documentation and automatically publish as CI artifact
 //* [ ] Pass algolia key in playbook
 
@@ -52,12 +46,12 @@ The Antora platform includes all of the packages that are assembled in the defau
 
 === v1.x
 
+* [ ] Implement fallback value for component version {uri-issues}/161[#161]
 * [ ] Allow custom generator to be specified
 * [ ] Add a logging infrastructure {uri-issues}/145[#145]
 * [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
 * [ ] Add Node 9 to CI matrix
 * [ ] Evaluate CHANGELOG policies and automatically generate CHANGELOG for release
-* [ ] Implement fallback value for component version {uri-issues}/161[#161]
 * [ ] Support loading the UI from a directory {uri-issues}/150[#150]
 * [ ] Add a merge mode to supplemental UI files {uri-issues}/149[#149]
 * [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
@@ -92,12 +86,9 @@ For current demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
 
 For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
 
-=== v1.0.0-beta.1
-
-* [x] Document tag key and use case examples
-
 === v1.0.0-beta.x
 
+* [ ] Document supported platforms and configurations {uri-issues}/197[#197]
 * [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 * [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
 * [ ] Add how to create a partial page {uri-issues}/176[#176]
@@ -126,6 +117,7 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 === v1.0.0-beta.x
 
+* [ ] Residual state causing nav menu to open unexpectedly when switching components {uri-ui-issues}/45[#45]
 * [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
 * [ ] IE 11 fixes
 * [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
@@ -133,7 +125,7 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 === v1.0.0
 
-*Release Timeframe*: Mid March 2018
+*Release Timeframe*: April 2018
 
 === v1.x
 
@@ -147,6 +139,13 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 == Completed Releases
 
 See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
+
+=== v1.0.0-beta.1
+
+* [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
+* [x] Allow content to be aggregated from tags {uri-issues}/117[#117]
+* [x] Pass site start page to UI model which will link to home icon, if set {uri-issues}/193[#193]
+* [x] Document tag key and use case examples
 
 === 1.0.0-alpha.9
 
