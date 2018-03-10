@@ -108,7 +108,7 @@ describe('generateSite()', () => {
     } finally {
       Object.assign(process.stdout, defaultStdout)
     }
-  })
+  }).timeout(TIMEOUT)
 
   it('should generate site into output directory specified in playbook file', async () => {
     playbookSpec.site.start_page = '2.0@the-component::index'
