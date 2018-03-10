@@ -1241,7 +1241,7 @@ describe('aggregateContent()', () => {
     expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'refs/heads')).to.be.a.directory().and.empty()
   })
 
-  it('should synchronize cached repository with remote', async () => {
+  it('should pull updates into cached repository when pull runtime option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.checkoutBranch('v1.2.3')
@@ -1265,6 +1265,7 @@ describe('aggregateContent()', () => {
       .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/topic-a/page-three.adoc'))
       .then(() => repoBuilder.close())
 
+    playbookSpec.runtime.pull = true
     const secondAggregate = await aggregateContent(playbookSpec)
 
     expect(secondAggregate).to.have.lengthOf(2)
@@ -1282,6 +1283,36 @@ describe('aggregateContent()', () => {
     expect(page1v2.contents.toString()).to.not.have.string('Update received!')
     const page2v2 = secondAggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
     expect(page2v2).to.exist()
+  })
+
+  it('should not pull updates into cached repository when pull runtime option is not enabled', async () => {
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
+      repoBuilder.checkoutBranch('v1.2.3')
+    )
+    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
+
+    const firstAggregate = await aggregateContent(playbookSpec)
+
+    expect(firstAggregate).to.have.lengthOf(1)
+    expect(firstAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+    let page1v1 = firstAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(page1v1).to.exist()
+
+    await repoBuilder
+      .open()
+      .then(() => repoBuilder.checkoutBranch('v1.2.3'))
+      .then(() => repoBuilder.addToWorktree('modules/ROOT/pages/page-one.adoc', '= Page One\n\nUpdate received!'))
+      .then(() => repoBuilder.commitAll('content updates'))
+      .then(() => repoBuilder.close())
+
+    const secondAggregate = await aggregateContent(playbookSpec)
+
+    expect(secondAggregate).to.have.lengthOf(1)
+    expect(secondAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+    page1v1 = secondAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(page1v1).to.exist()
+    expect(page1v1.contents.toString()).to.not.have.string('Update received!')
   })
 
   it('should prefer remote branches in bare repository', async () => {
@@ -1306,6 +1337,7 @@ describe('aggregateContent()', () => {
   })
 
   // NOTE this test doesn't always trigger the condition being tested; it depends on the order the refs are returned
+  // FIXME use a spy on getReferences to make the order determinant
   it('should discover components in specified remote', async () => {
     const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     const remoteComponentDesc = {
@@ -1355,7 +1387,7 @@ describe('aggregateContent()', () => {
   })
 
   // technically, we don't know what it did w/ the remote we specified, but it should work regardless
-  it('should ignore remote on repository clone', async () => {
+  it('should ignore remote on cached repository', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(repoBuilder)
 
@@ -1414,6 +1446,7 @@ describe('aggregateContent()', () => {
       return withMockStdout(async (lines) => {
         await aggregateContent(playbookSpec)
         lines.length = 0
+        playbookSpec.runtime.pull = true
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(lines).to.have.lengthOf.at.least(2)
@@ -1461,6 +1494,7 @@ describe('aggregateContent()', () => {
         await aggregateContent(playbookSpec)
         lines.length = 0
         playbookSpec.content.sources.push({ url: otherRepoBuilder.url })
+        playbookSpec.runtime.pull = true
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(2)
         expect(lines).to.have.lengthOf.at.least(4)

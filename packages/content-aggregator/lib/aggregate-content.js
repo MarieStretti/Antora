@@ -52,7 +52,7 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
 async function aggregateContent (playbook) {
   const playbookDir = playbook.dir || '.'
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
-  const { cacheDir, silent, quiet } = playbook.runtime
+  const { cacheDir, pull, silent, quiet } = playbook.runtime
   const progress = {}
   const term = process.stdout
   if (!(quiet || silent) && term.isTTY && term.columns >= 60) {
@@ -67,16 +67,16 @@ async function aggregateContent (playbook) {
       )
     )
   }
-  return ensureCacheDir(cacheDir, playbookDir).then((actualCacheDir) =>
+  return ensureCacheDir(cacheDir, playbookDir).then((cacheAbsDir) =>
     Promise.all(
       sources.map(async (source) => {
-        const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(
-          source.url,
-          source.remote,
-          playbookDir,
-          actualCacheDir,
-          progress
-        )
+        const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(source.url, {
+          pull,
+          remoteName: source.remote,
+          startDir: playbookDir,
+          cacheDir: cacheAbsDir,
+          progress,
+        })
         const branchPatterns = source.branches || defaultBranches
         const tagPatterns = source.tags || defaultTags
         const componentVersions = (await selectRefs(repository, branchPatterns, tagPatterns, isBare, remoteName)).map(
@@ -114,11 +114,12 @@ async function aggregateContent (playbook) {
   )
 }
 
-async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, progress) {
+async function openOrCloneRepository (repoUrl, opts) {
   let isBare
   let isRemote
-  let repository
+  let remoteName
   let repoPath
+  let repository
   let url
 
   if (~repoUrl.indexOf(':') && GIT_URI_DETECTOR_RX.test(repoUrl)) {
@@ -126,12 +127,12 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
     isRemote = true
     // NOTE if repository is in cache, we can assume the remote name is origin
     remoteName = 'origin'
-    repoPath = ospath.join(cacheDir, generateLocalFolderName(repoUrl))
+    repoPath = ospath.join(opts.cacheDir, generateLocalFolderName(repoUrl))
     url = repoUrl
-  } else if (directoryExists((repoPath = expandPath(repoUrl, '~+', startDir)))) {
+  } else if (directoryExists((repoPath = expandPath(repoUrl, '~+', opts.startDir)))) {
     isBare = !directoryExists(ospath.join(repoPath, '.git'))
     isRemote = false
-    if (!remoteName) remoteName = 'origin'
+    remoteName = opts.remoteName || 'origin'
   } else {
     throw new Error(
       'Local content source does not exist: ' +
@@ -143,7 +144,8 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
   try {
     if (isBare) {
       repository = await git.Repository.openBare(repoPath)
-      if (isRemote) {
+      if (isRemote && opts.pull) {
+        const progress = opts.progress
         const fetchOpts = getFetchOptions(progress, repoUrl, 'fetch')
         // fetch new refs and delete obsolete local ones
         await repository.fetch(remoteName, Object.assign({ prune: 1 }, fetchOpts)).then((repo) => {
@@ -156,6 +158,7 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
     }
   } catch (e) {
     if (isRemote) {
+      const progress = opts.progress
       const fetchOpts = getFetchOptions(progress, repoUrl, 'clone')
       repository = await fs
         .remove(repoPath)

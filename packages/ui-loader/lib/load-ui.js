@@ -50,25 +50,23 @@ const EXT_RX = /\.[a-z]{2,3}$/
  */
 async function loadUi (playbook) {
   const startDir = playbook.dir || '.'
-  const { bundle: bundleUri, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
+  const { bundle: bundleUrl, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
   let resolveBundle
-  if (isUrl(bundleUri)) {
-    resolveBundle = ensureCacheDir((playbook.runtime || {}).cacheDir, startDir).then((cacheDir) => {
-      const cachePath = ospath.join(cacheDir, sha1(bundleUri) + '.zip')
-      return fs.pathExists(cachePath).then((exists) => {
-        if (exists) return cachePath
-        return get(bundleUri, { encoding: null }).then(({ body }) =>
-          fs.outputFile(cachePath, body).then(() => cachePath)
-        )
-      })
+  if (isUrl(bundleUrl)) {
+    const { cacheDir, pull } = playbook.runtime || {}
+    resolveBundle = ensureCacheDir(cacheDir, startDir).then((cacheAbsDir) => {
+      const cachePath = ospath.join(cacheAbsDir, `${sha1(bundleUrl)}.zip`)
+      return pull
+        ? downloadBundle(bundleUrl, cachePath)
+        : fs.pathExists(cachePath).then((cached) => (cached ? cachePath : downloadBundle(bundleUrl, cachePath)))
     })
   } else {
-    const localPath = expandPath(bundleUri, '~+', startDir)
+    const localPath = expandPath(bundleUrl, '~+', startDir)
     resolveBundle = fs.pathExists(localPath).then((exists) => {
       if (exists) {
         return localPath
       } else {
-        throw new Error('Specified UI bundle does not exist: ' + bundleUri)
+        throw new Error('Specified UI bundle does not exist: ' + bundleUrl)
       }
     })
   }
@@ -123,6 +121,10 @@ function ensureCacheDir (customCacheDir, startDir) {
       : expandPath(customCacheDir, '~+', startDir)
   const cacheDir = ospath.join(baseCacheDir, UI_CACHE_FOLDER)
   return fs.ensureDir(cacheDir).then(() => cacheDir)
+}
+
+function downloadBundle (url, to) {
+  return get(url, { encoding: null }).then(({ body }) => fs.outputFile(to, body).then(() => to))
 }
 
 function selectFilesStartingFrom (startPath) {

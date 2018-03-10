@@ -36,6 +36,7 @@ describe('loadUi()', () => {
   ]
 
   let server
+  let serverRequests
 
   const prefixPath = (prefix, path_) => [prefix, path_].join(ospath.sep)
 
@@ -59,8 +60,10 @@ describe('loadUi()', () => {
 
   beforeEach(() => {
     clean()
+    serverRequests = []
     server = http
       .createServer((request, response) => {
+        serverRequests.push(request.url)
         fs.readFile(ospath.join(__dirname, 'fixtures', request.url), (err, content) => {
           if (err) {
             response.writeHead(404, { 'Content-Type': 'text/html' })
@@ -82,11 +85,8 @@ describe('loadUi()', () => {
   describe('should throw error if bundle cannot be found', () => {
     testAll('no-such-bundle.zip', async (playbook) => {
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
-      if (playbook.ui.bundle.startsWith('http://')) {
-        expect(loadUiDeferred).to.throw('404')
-      } else {
-        expect(loadUiDeferred).to.throw('does not exist')
-      }
+      const expectedMessage = playbook.ui.bundle.startsWith('http://') ? '404' : 'does not exist'
+      expect(loadUiDeferred).to.throw(expectedMessage)
     })
   })
 
@@ -619,11 +619,13 @@ describe('loadUi()', () => {
     })
   })
 
-  it('should take bundle from cache when url is the same', async () => {
+  it('should use remote bundle from cache on subsequent run', async () => {
     const playbook = {
       ui: { bundle: 'http://localhost:1337/the-ui-bundle.zip' },
     }
     let uiCatalog = await loadUi(playbook)
+    expect(serverRequests).to.have.lengthOf(1)
+    expect(serverRequests[0]).to.equal('/the-ui-bundle.zip')
     expect(CACHE_DIR)
       .to.be.a.directory()
       .with.subDirs([UI_CACHE_FOLDER])
@@ -633,9 +635,32 @@ describe('loadUi()', () => {
     let paths = uiCatalog.getFiles().map((file) => file.path)
     expect(paths).to.have.members(expectedFilePaths)
 
-    server.close()
+    uiCatalog = await loadUi(playbook)
+    expect(serverRequests).to.have.lengthOf(1)
+    paths = uiCatalog.getFiles().map((file) => file.path)
+    expect(paths).to.have.members(expectedFilePaths)
+  })
+
+  it('should download instead of using bundle from cache if runtime pull option is enabled', async () => {
+    const playbook = {
+      runtime: { pull: true },
+      ui: { bundle: 'http://localhost:1337/the-ui-bundle.zip' },
+    }
+    let uiCatalog = await loadUi(playbook)
+    expect(serverRequests).to.have.lengthOf(1)
+    expect(serverRequests[0]).to.equal('/the-ui-bundle.zip')
+    expect(CACHE_DIR)
+      .to.be.a.directory()
+      .with.subDirs([UI_CACHE_FOLDER])
+    expect(UI_CACHE_DIR)
+      .to.be.a.directory()
+      .and.not.be.empty()
+    let paths = uiCatalog.getFiles().map((file) => file.path)
+    expect(paths).to.have.members(expectedFilePaths)
 
     uiCatalog = await loadUi(playbook)
+    expect(serverRequests).to.have.lengthOf(2)
+    expect(serverRequests[1]).to.equal('/the-ui-bundle.zip')
     paths = uiCatalog.getFiles().map((file) => file.path)
     expect(paths).to.have.members(expectedFilePaths)
   })
