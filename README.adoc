@@ -5,7 +5,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 // Project URIs:
 :uri-project: https://antora.org
 :uri-repo: https://gitlab.com/antora/antora
-:uri-issues: {uri-project}/issues
+:uri-issues: {uri-repo}/issues
 :uri-ci-pipelines: {uri-repo}/pipelines
 :img-ci-status: {uri-repo}/badges/master/pipeline.svg
 :uri-chat-dev: https://gitter.im/antora/dev

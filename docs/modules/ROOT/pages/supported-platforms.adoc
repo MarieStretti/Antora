@@ -5,52 +5,86 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+// URIs
+:uri-repo: https://gitlab.com/antora/antora
+:uri-issues: {uri-repo}/issues
+:uri-chat-dev: https://gitter.im/antora/dev
 
-Antora is comprehensively tested on these platform configurations.
+Antora operates on Linux, macOS, and Windows and should operate as designed on common VM environments and cloud platforms.
 
-[cols="1,2a,1a",width="60%"]
+== Tested platforms
+
+Antora is comprehensively tested on these platform.
+
+// When we have specific notes about a platform (tweaks and/or links to bugs) add a 3rd column to this table labeled "Good to Know"
+[cols="20,25a",width="45%"]
 |===
-|Supported Platform |Supported Versions |Good to Know
+|Supported Platform |Supported Versions
 
 |Alpine Linux
-|3.7
-|
+|* 3.6
+* 3.7
 
 |Debian Linux
 |9.3
-|
 
 |Fedora Linux
 |* 26
 * 27
-|
 
 |macOS
 |High Sierra
-|
 
 |Microsoft
 |* Windows 8.1
 * Windows Server 2012 R2
-|
 
 |Chrome
 |Latest stable version
-|
 
 |Firefox
 |Latest stable version
-|
 
 |Internet Explorer
 |11
-|
+
+|MS Edge
+|Latest stable version
 
 |Node
 |8.10
-|
-
 |===
+
+== Hardware recommendations
+
+Your hardware requirements will depend primarily on the size of the remote Git repositories your Antora pipeline fetches content from in order to generate site.
+
+The first time Antora runs, it fetches and clones all of the remote Git repositories specified in a playbook.
+The speed of this operation is dictated by the size of the remote repositories, environment input/output parameters, and network performance.
+After the initial run, Antora caches the repositories locally.
+On subsequent runs, Antora will only reconnect to the remote repositories if the `pull` key is on or if the local cache is removed.
+// Add xref to pull key when documentation is available
+
+[cols="5s,70",width="75%"]
+|===
+|RAM
+|Memory requirements depend on the size of your Git repositories.
+3GB should provide performance headroom.
+
+|I/O
+|Maximum throughput and minimum latency always make things nicer but aren't required.
+|===
+
+== Cloud platforms
+
+Antora should operate as designed on common cloud platforms.
+How you provision your cloud instance depends on your workload requirements and remote Git repository sizes.
+If you're running Antora on a cloud platform, we would love to hear about your experience (open a {uri-issues}[new issue] or join us in the {uri-chat-dev}[development channel]).
+
+== Virtual Machine (VM) environments
+
+Antora runs in VirtualBox and should operate as designed in common VM environments such as VMware.
+If you're running Antora in a VM environment, we would love to hear about your experience (open a {uri-issues}[new issue] or join us in the {uri-chat-dev}[development channel]).
 
 ////
 OS Release schedule links
@@ -87,5 +121,7 @@ Windows 8.1 is supported by MS until 2023-01-10
 Windows Server 2012 R2 until 2023-10-10
 Windows Server 2016 / Windows 10 don't have an EOL date (as of 2018-03-10)
 
-MS Edge: only has about 4.3% of the market (less than Safari) but it is supposed to replace IE 11; it is the default browser for Windows 10/Server 2016
+Antora is tested on NTFS on Windows, we may want to checkout how it works on the ReFS on Windows Server 2016 in the future
+
+MS Edge: replaces IE 11 which is not being developed further; it is the default browser for Windows 10/Server 2016
 ////
