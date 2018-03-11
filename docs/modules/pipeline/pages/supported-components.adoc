@@ -29,7 +29,7 @@ An example of an Extended component is a site publisher provider for an Amazon S
 Once an Extended component is ready for xref:ROOT:project/version-and-lifecycle-policies.adoc#lifecycle-phases[General Availability], it will be released and versioned separately from the Core components.
 
 [#component-matrix]
-== Supported Core and Extended component matrix
+== Supported Core and Extended components matrix
 
 [cols="2,4,1,1,1"]
 |===
