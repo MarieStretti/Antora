@@ -6,3 +6,4 @@ nav:
 - modules/asciidoc/nav.adoc
 - modules/navigation/nav.adoc
 - modules/playbook/nav.adoc
+- modules/ROOT/project/nav.adoc
