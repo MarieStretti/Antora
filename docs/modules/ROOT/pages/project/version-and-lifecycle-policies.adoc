@@ -7,6 +7,10 @@ endif::[]
 :idseparator: -
 :table-caption!:
 :core-version: 1.0
+:ga-date: 2018/03/26*
+:gs-date: 2018/03/26*
+:eol-date: 2018/03/26*
+:eogs-date: 2018/03/26*
 
 == Version policy
 
@@ -32,7 +36,7 @@ Once a release candidate (rc) has been thoroughly tested, the stable release wil
 
 == Lifecycle policy
 
-Each major version of the xref:pipeline:supported-components.adoc#core[Antora Core components] and Core UI Model is supported for at least one year after the major version enters General Availability (GA).
+Each major version of the Antora Core components are supported for at least one year after the major version enters General Availability (GA).
 Once a major version reaches End of Life (EOL), it will not receive maintenance releases.
 
 [#lifecycle-phases]
@@ -50,23 +54,90 @@ General Support ends on the date a major release reaches its End of Life.
 End of Life (EOL)::
 The date after which the software no longer receives maintenance releases.
 
+[#ga-and-eol]
 === Release GA and EOL matrix
 
 [cols="2,1,1,1,1"]
 |===
-|Software	|GA |GS	|EOL |EOGS
+|Antora Core Components	|GA |GS	|EOL |EOGS
 
-a|xref:pipeline:supported-components.adoc#component-matrix[Antora Core Components {core-version}]
-|2018/03/26*
-|2018/03/26*
-|2019/03/26*
-|2019/03/26*
+|AsciiDoc Loader {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
 
-|Antora Core UI 1.0
-|2018/03/26*
-|2018/03/26*
-|2019/03/26*
-|2019/03/26*
+|Antora CLI {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Content Aggregator {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Content Classifier {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Document Converter {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Navigation Builder {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Page Composer {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Playbook Builder {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Redirect Producer {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Site Generator Default {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Site Mapper {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|Site Publisher {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
+
+|UI Loader {core-version}
+|{ga-date}
+|{gs-date}
+|{eol-date}
+|{eogs-date}
 
 |===
 
