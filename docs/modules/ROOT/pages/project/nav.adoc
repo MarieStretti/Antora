@@ -1,2 +1,2 @@
 .Project Steering & Governance
-* xref:version-and-lifecycle-policies.adoc[Version & Lifecycle Policies]
+* xref:project/version-and-lifecycle-policies.adoc[Version & Lifecycle Policies]

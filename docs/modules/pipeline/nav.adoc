@@ -1,0 +1,3 @@
+.Extend & Customize
+* xref:supported-components.adoc[Antora Components]
+//* xref:supported-extensions.adoc[Asciidoctor Extensions]

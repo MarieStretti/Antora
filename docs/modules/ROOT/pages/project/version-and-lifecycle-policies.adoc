@@ -6,6 +6,7 @@ endif::[]
 :idprefix:
 :idseparator: -
 :table-caption!:
+:core-version: 1.0
 
 == Version policy
 
@@ -25,9 +26,10 @@ Only the latest minor release will receive maintenance releases.
 
 == Lifecycle policy
 
-Each major version of the Antora Core components and Core UI Model is supported for at least one year after the major version enters General Availability (GA).
+Each major version of the xref:pipeline:supported-components.adoc#core[Antora Core components] and Core UI Model is supported for at least one year after the major version enters General Availability (GA).
 Once a major version reaches End of Life (EOL), it will not receive maintenance releases.
 
+[#lifecycle-phases]
 === Lifecycle phases
 
 General Availability (GA)::
@@ -48,7 +50,7 @@ The date after which the software no longer receives maintenance releases.
 |===
 |Software	|GA |GS	|EOL |EOGS
 
-|Antora Core Components 1.0
+a|xref:pipeline:supported-components.adoc#component-matrix[Antora Core Components {core-version}]
 |2018/03/26*
 |2018/03/26*
 |2019/03/26*
