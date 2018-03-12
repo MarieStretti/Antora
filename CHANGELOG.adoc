@@ -7,8 +7,11 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Added
+
 * *playbook-builder*: Add `runtime.pull` key to playbook schema to control whether remote resources are pulled
 * *playbook-builder*: Map `runtime.pull` playbook key to `--pull` CLI flag
+* *redirect-producer*: Add Netlify redirect facility to redirect producer (activate by setting `urls.redirect_facility` to `netlify`)
 
 === Changed
 
