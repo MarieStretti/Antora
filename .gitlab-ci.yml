@@ -1,16 +1,13 @@
-image: node:8
-stages:
-- init
-- verify
-- deploy
+image: node:8-stretch
+stages: [init, verify, deploy]
 yarn:
   stage: init
   cache:
     paths: &cache_paths
-    - .yarn-cache/
+    - .cache/yarn
   script:
   - &run_yarn
-    yarn --cache-folder=.yarn-cache --pure-lockfile > /dev/null
+    yarn --cache-folder=.cache/yarn --pure-lockfile > /dev/null
 lint:
   stage: verify
   cache: &pull_cache
