@@ -1,3 +1,4 @@
+# see https://www.appveyor.com/docs/build-configuration/#appveyoryml-and-ui-coexistence about relationship to configuration in UI
 version: '{build}'
 branches:
   except:
@@ -6,15 +7,18 @@ skip_tags: true
 clone_depth: 2
 environment:
   matrix:
-  - nodejs_version: 8
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    NODEJS_VERSION: 8
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    NODEJS_VERSION: 8
 install:
-- ps: Install-Product node $env:nodejs_version
-- yarn --cache-folder=.yarn-cache --no-progress --pure-lockfile
+- ps: Install-Product node $env:NODEJS_VERSION
+- yarn --cache-folder=.cache/yarn --no-progress --pure-lockfile
 cache:
-- .yarn-cache
+- .cache/yarn
 build: off
 test_script:
-- node_modules/.bin/gulp test
+- node_modules/.bin/gulp test!
 on_success:
 - 7z a coverage.zip coverage
 - appveyor PushArtifact coverage.zip
