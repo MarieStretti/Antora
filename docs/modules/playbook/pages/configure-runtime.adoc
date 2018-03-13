@@ -8,25 +8,33 @@ endif::[]
 On this page, you'll learn:
 
 * [x] How to configure the cache directory.
+* [x] How to pull updates to content sources and UI.
+
+== Cache directory
+
+The first time Antora runs, it will cache remote git repositories and remote UI bundle.
+On subsequent runs, Antora will attempt to resolve remote resources from the cache instead.
+
+This section explains where the cache is located by default and how to configure the location of the cache.
 
 [#default-cache]
-== Default cache directory
+=== Default cache directory
 
-The first time Antora runs, it will cache the remote git repositories and UI bundle.
 The default location for the cache varies by operating system.
 
 * Linux: [.path]_$XDG_CACHE_HOME/antora_ (or [.path]_$HOME/.cache/antora_ if `$XDG_CACHE_HOME` is not set)
 * macOS: [.path]_$HOME/Library/Caches/antora_
 * Windows: [.path]_$APPDATA/antora/Caches_
 
-The next time you run Antora, it will attempt to resolve and use the current user's cache folder by default.
-If, during a subsequent run, you want to clone the repositories and download the UI again,  you'll need to locate the Antora cache directory on your system and delete it.
+Before downloading remote resources, Antora will first look for those resources in the cache folder, which maps to the user's cache folder by default.
+If you want to instruct Antora to update the cache, configure Antora to <<pull,pull updates>>.
+Another option is to locate the Antora cache directory on your system and delete it.
 
 [#cache-dir]
-== Specify a cache directory
+=== Specify a cache directory
 
 The cache directory can be specified using the cache dir key (`cache_dir`) under the `runtime` category in the playbook.
-The key specifies the directory where the remote repositories should be cloned and the UI bundle should be downloaded.
+The key specifies the directory where the remote repositories should be cloned and the remote UI bundle should be downloaded.
 The key accepts a relative or absolute filesystem path.
 
 [source,yaml]
@@ -45,3 +53,27 @@ A relative path is expanded to an absolute path using the following rules:
 * If the first path segment is a tilde (`~`), the remaining path is resolved relative to the user's home directory.
 * If the first path segment is a dot (`.`), the remaining path is resolved relative to the location of the playbook file.
 * If the first path segment is tilde plus (`~+`), or does not begin with an aforementioned prefix, the remaining path is resolved relative to the current working directory.
+
+[#pull]
+== Pull updates
+
+As previously stated, the first time Antora runs, it caches the remote git repositories and remote UI bundle.
+On subsequent runs, it uses these resources from the cache folder by default (effectively running offline).
+
+If you want Antora to refresh the cache, you must set the `pull` key under the `runtime` category to true.
+
+[source,yaml]
+----
+runtime:
+  pull: true
+----
+
+Most of the time, however, you'll just use the `--pull` CLI switch instead of modifying the playbook directly.
+This switch is mapped to the `pull` key described in this section.
+
+Setting the `pull` key to true activates two behaviors in Antora:
+
+. Run a fetch operation on all cloned repositories (content sources that are remote)
+. Download the UI bundle fresh (if the UI bundle is remote)
+
+You only need to enable the `pull` key when you want to retrieve updates to the remote content sources and/or remote UI bundle.
