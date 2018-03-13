@@ -162,11 +162,9 @@ async function openOrCloneRepository (repoUrl, remoteName, startDir, cacheDir, p
         .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts }))
         .then((repo) =>
           repo.getCurrentBranch().then((ref) => {
-            /* istanbul ignore else */
-            if (ref.isBranch()) {
-              repo.detachHead()
-              ref.delete()
-            }
+            // NOTE we have a test that will catch if nodegit changes to match behavior of native git client
+            repo.detachHead()
+            ref.delete()
             if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
             return repo
           })

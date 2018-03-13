@@ -1227,17 +1227,18 @@ describe('aggregateContent()', () => {
     })
   })
 
-  it('should not create local branch in cached repository', async () => {
+  it('should create bare repository with detached HEAD under cache directory', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(repoBuilder)
     playbookSpec.content.sources.push({ url: repoBuilder.url })
     await aggregateContent(playbookSpec)
-    const cachedRepos = await fs.readdir(CONTENT_CACHE_DIR)
-    expect(cachedRepos).to.have.lengthOf(1)
-    const cachedRepo = cachedRepos[0]
-    expect(cachedRepo.endsWith('.git')).to.be.true()
-    const localHeads = await fs.readdir(ospath.join(CONTENT_CACHE_DIR, cachedRepo, 'refs/heads'))
-    expect(localHeads).to.have.lengthOf(0)
+    expect(CONTENT_CACHE_DIR).to.be.a.directory().with.subDirs.have.lengthOf(1)
+    const cachedRepoName = (await fs.readdir(CONTENT_CACHE_DIR))[0]
+    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName)).to.have.extname('.git')
+    // NOTE the HEAD must be present, but should point to a commit SHA
+    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'HEAD')).to.be.a.file()
+      .and.not.have.contents.that.match(/^ref: refs\/heads\/master(?=\n|$)/)
+    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'refs/heads')).to.be.a.directory().and.empty()
   })
 
   it('should synchronize cached repository with remote', async () => {
