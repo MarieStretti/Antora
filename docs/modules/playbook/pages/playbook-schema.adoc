@@ -294,7 +294,7 @@ When specified at this location (instead of directly under output), it only clea
 
 == Runtime keys
 
-The `runtime` category contains keys that manage the cache location and message output.
+The `runtime` category contains keys that manage the console output, resource update behavior, and cache location.
 
 [#cache-dir-key]
 === cache_dir
@@ -308,6 +308,14 @@ Learn more:
 * xref:configure-runtime.adoc#default-cache[Locate default cache directory]
 * xref:configure-runtime.adoc#cache-dir[Override default cache location]
 
+[#pull-key]
+=== pull
+
+If you want Antora to refresh the files in the cache, you need to set the `pull` key under the `runtime` category to true.
+
+Learn more:
+
+* xref:configure-runtime.adoc#pull[Pull updates]
 
 ////
 == antora.yml

@@ -75,10 +75,10 @@ Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] 
 |Boolean
 |false
 
-|-h, --help
-|Output the command usage information.
-|Built-in
-|n/a
+|--pull
+|Download updates to remote resources (content sources and UI bundle).
+|Boolean
+|false
 
 |--quiet
 |Do not write any messages to stdout.
@@ -125,6 +125,11 @@ Overrides the xref:playbook:playbook-schema.adoc#site-url-key[site url value] sp
 |Output the Antora version information.
 |Built-in
 |n/a
+
+|-h, --help
+|Output the command usage information.
+|Built-in
+|n/a
 |===
 
 == Get help with the CLI
@@ -150,7 +155,7 @@ In Example 1, Antora generates a documentation site using the playbook [.path]_s
 .Example 2: Run the generate command (explicit)
  $ antora generate test-site
 
-In Example 2, Antora generates a documentation site using the playbook [.path]_test-site_.
+In Example 2, Antora generates a documentation site using the auto-detected playbook [.path]_test-site.yml_.
 When the playbook argument doesn't have a file extension, Antora will look for a YAML, JSON, or CSON file matching the playbook name (in that order).
 
 .Example 3: Run the generate command with --to-dir option (implicit)
@@ -160,8 +165,14 @@ In Example 3, Antora generates a documentation site using the playbook [.path]_s
 A directory named [.path]_prod_ will be created (relative to the current working directory) and the site files written to it.
 
 .Example 4: Run the generate command with --to-dir and --title options (explicit)
- $ antora generate --to-dir site --title "My Awesome Docs" beta-site.json
+ $ antora --to-dir site --title "My Awesome Docs" beta-site.json
 
 In Example 4, Antora generates a documentation site using the playbook [.path]_beta-site.json_.
 The site title will be _My Awesome Docs_.
 A directory named [.path]_site_ will be created (relative to the current working directory) and the site files written to it.
+
+.Example 5: Have the generate command downloads updates
+ $ antora --pull site.yml
+
+After running the generate command the first time, subsequent runs will use cached copies of remote resources by default (effectively running offline).
+Example 5 shows how to run the generate command so it will download (fetch) updates to remote content sources and download a remote UI bundle again.

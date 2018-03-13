@@ -121,6 +121,12 @@ module.exports = {
       arg: 'cache-dir',
       env: 'ANTORA_CACHE_DIR',
     },
+    pull: {
+      doc: 'Download updates to remote resources (content and UI).',
+      format: Boolean,
+      default: false,
+      arg: 'pull',
+    },
     quiet: {
       doc: 'Do not write any messages to stdout.',
       format: Boolean,

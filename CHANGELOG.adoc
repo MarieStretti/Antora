@@ -7,9 +7,15 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+* *playbook-builder*: Add `runtime.pull` key to playbook schema to control whether remote resources are pulled
+* *playbook-builder*: Map `runtime.pull` playbook key to `--pull` CLI flag
+
 === Changed
 
+* *content-aggregator*: Only run fetch operation on cached repository if runtime pull option is enabled
 * *content-aggregator*: Make transfer progress callback asynchronous so progress bar updates don't affect transfer
+* *content-aggregator*: Move all but first argument to openOrCloneRepository function to option hash
+* *ui-loader*: Always download UI bundle from URL if runtime pull option is enabled; bypass cache
 
 == 1.0.0-beta.1 (2018-03-07)
 

@@ -320,6 +320,9 @@ describe('buildPlaybook()', () => {
   it('should use default schema if none is specified', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: defaultSchemaSpec })
     expect(playbook.runtime.cacheDir).to.equal('./.antora-cache')
+    expect(playbook.runtime.pull).to.equal(true)
+    expect(playbook.runtime.quiet).to.equal(false)
+    expect(playbook.runtime.silent).to.equal(false)
     expect(playbook.site.url).to.equal('https://example.com')
     expect(playbook.site.title).to.equal('Example site')
     expect(playbook.site.startPage).to.equal('1.0@server::intro')

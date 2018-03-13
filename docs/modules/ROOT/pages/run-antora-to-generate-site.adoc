@@ -18,6 +18,7 @@ On this page, you'll learn:
 
 * [x] How to run the default Antora pipeline.
 * [x] Where files are cached.
+* [x] How to update the cache.
 * [x] How to preview a generated site locally.
 
 ////
@@ -79,18 +80,21 @@ Antora will clone the content repository, convert the AsciiDoc pages to embeddab
 [#cache]
 === Cache
 
-When Antora runs, it will cache files into a cache directory.
-Antora caches two types of files:
+When Antora runs, it will cache resources in a cache directory.
+Antora caches two types of resources:
 
 * cloned git repositories
 * downloaded UI bundles
 
-These files are stored inside the cache directory, organized under the [.path]_content_ and [.path]_ui_ folders, respectively.
+These resources are stored inside the cache directory, organized under the [.path]_content_ and [.path]_ui_ folders, respectively.
 The xref:playbook/configure-runtime.adoc#default-cache[default cache directory] varies by operating system.
 You can override the default cache location using the xref:playbook:configure-runtime.adoc[runtime.cache_dir key] in the playbook, the xref:cli.adoc#cli-options[--cache-dir] CLI option, or the `$ANTORA_CACHE_DIR` environment variable.
 
-If you want to clone repositories and/or download the UI from scratch on subsequent runs, you'll need to locate the Antora cache directory on your system and delete it.
-In the future, Antora will provide a CLI flag to perform this task for you.
+If you want to update the cache on subsequent runs, pass the `--pull` switch to the Antora CLI.
+This switch will force Antora to run a fetch operation on each repository it previously cloned.
+It will also force Antora to download a fresh copy of the UI bundle, if remote.
+
+If you want to clear the cache altogether, you'll need to locate the Antora cache directory on your system and delete it.
 
 [#using-private-repositories]
 === Private GitHub repositories

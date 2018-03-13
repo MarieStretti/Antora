@@ -105,10 +105,21 @@ describe('generateSite()', () => {
       expect(progressLines[0]).to.include('[clone] ' + repositoryBuilder.url)
       expect(progressLines[0]).to.match(/ \[-+\]/)
       expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
+
+      progressLines.length = 0
+      await generateSite(['--playbook', playbookFile], env)
+      expect(progressLines).to.have.lengthOf(0)
+
+      // TODO assert that the UI was downloaded again
+      await generateSite(['--playbook', playbookFile, '--pull'], env)
+      expect(progressLines).to.have.lengthOf.at.least(2)
+      expect(progressLines[0]).to.include('[fetch] ' + repositoryBuilder.url)
+      expect(progressLines[0]).to.match(/ \[-+\]/)
+      expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
     } finally {
       Object.assign(process.stdout, defaultStdout)
     }
-  }).timeout(TIMEOUT)
+  }).timeout(TIMEOUT * 2)
 
   it('should generate site into output directory specified in playbook file', async () => {
     playbookSpec.site.start_page = '2.0@the-component::index'
