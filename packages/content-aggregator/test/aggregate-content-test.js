@@ -7,6 +7,7 @@ const aggregateContent = require('@antora/content-aggregator')
 const fs = require('fs-extra')
 const getCacheDir = require('cache-directory')
 const git = require('nodegit')
+const http = require('http')
 const os = require('os')
 const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
@@ -1232,13 +1233,18 @@ describe('aggregateContent()', () => {
     await initRepoWithFiles(repoBuilder)
     playbookSpec.content.sources.push({ url: repoBuilder.url })
     await aggregateContent(playbookSpec)
-    expect(CONTENT_CACHE_DIR).to.be.a.directory().with.subDirs.have.lengthOf(1)
+    expect(CONTENT_CACHE_DIR)
+      .to.be.a.directory()
+      .with.subDirs.have.lengthOf(1)
     const cachedRepoName = (await fs.readdir(CONTENT_CACHE_DIR))[0]
     expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName)).to.have.extname('.git')
     // NOTE the HEAD must be present, but should point to a commit SHA
-    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'HEAD')).to.be.a.file()
+    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'HEAD'))
+      .to.be.a.file()
       .and.not.have.contents.that.match(/^ref: refs\/heads\/master(?=\n|$)/)
-    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'refs/heads')).to.be.a.directory().and.empty()
+    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'refs/heads'))
+      .to.be.a.directory()
+      .and.empty()
   })
 
   it('should pull updates into cached repository when pull runtime option is enabled', async () => {
@@ -1576,7 +1582,7 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('invalid repository', () => {
+  describe('invalid local repository', () => {
     it('should throw meaningful error if local relative content directory does not exist', async () => {
       const invalidDir = './no-such-directory'
       const invalidAbsDir = ospath.join(WORK_DIR, invalidDir)
@@ -1630,5 +1636,86 @@ describe('aggregateContent()', () => {
         expect(aggregateContentDeferred).to.throw()
       })
     }
+  })
+
+  describe('invalid remote repository', () => {
+    let server
+    before(() => {
+      server = http
+        .createServer((req, res) => {
+          const headers = {}
+          const statusCode = parseInt(req.url.split('/')[1])
+          if (statusCode === 401) {
+            headers['WWW-Authenticate'] = 'Basic realm="example"'
+          } else if (statusCode === 301) {
+            headers['Location'] = 'http://example.org/invalid-repository.git'
+          }
+          res.writeHead(statusCode, headers)
+          res.end('No dice!')
+        })
+        .listen(1337)
+    })
+
+    after(() => {
+      server.close()
+    })
+
+    it('should throw meaningful error if SSH repository and SSH agent is not running', async () => {
+      const SSH_AUTH_SOCK = process.env.SSH_AUTH_SOCK
+      delete process.env.SSH_AUTH_SOCK
+      const url = 'git@gitlab.com:invalid-repository.git'
+      const expectedErrorMessage = 'SSH agent must be running to access content repository via SSH: ' + url
+      playbookSpec.content.sources.push({ url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      if (SSH_AUTH_SOCK) process.env.SSH_AUTH_SOCK = SSH_AUTH_SOCK
+    })
+
+    it('should throw meaningful error if remote repository URL not found', async () => {
+      const url = 'http://localhost:1337/404/invalid-repository.git'
+      const expectedErrorMessage = 'Content repository not found: ' + url
+      playbookSpec.content.sources.push({ url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+    })
+
+    if (process.platform !== 'win32') {
+      it('should throw meaningful error if credentials are insufficient', async () => {
+        const url = 'http://localhost:1337/401/invalid-repository.git'
+        const expectedErrorMessage =
+          'Content repository not found or you have insufficient credentials to access it: ' + url
+        playbookSpec.content.sources.push({ url })
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      })
+
+      it('should throw meaningful error if server returns unexpected error', async () => {
+        const url = 'http://localhost:1337/301/invalid-repository.git'
+        const expectedErrorMessage = 'cross host redirect not allowed: ' + url
+        playbookSpec.content.sources.push({ url })
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      })
+    }
+
+    // FIXME this is too slow; we need a better way to test
+    /*
+    if (process.env.SSH_AUTH_SOCK) {
+      it('should throw meaningful error if remote repository not found', async () => {
+        const repoUrls = [
+          'git@github.com:antora/unknown-repository.git',
+          'git@gitlab.com:antora/unknown-repository.git',
+          'git@bitbucket.org:antora/unknown-repository.git',
+        ]
+        for (let i = 0, len = repoUrls.length; i < len; i++) {
+          const url = repoUrls[i]
+          const expectedErrorMessage = 'Content repository not found: ' + url
+          playbookSpec.content.sources = [{ url }]
+          const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+          expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+        }
+      }).timeout(10000)
+    }
+    */
   })
 })

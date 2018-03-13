@@ -100,16 +100,16 @@ async function aggregateContent (playbook) {
             repository.free()
             return resolvedValue
           })
-          .catch((reason) => {
+          .catch((err) => {
             repository.free()
-            throw reason
+            throw err
           })
       })
     )
       .then((componentVersions) => buildAggregate(componentVersions))
-      .catch((reason) => {
+      .catch((err) => {
         progress.manager && progress.manager.terminate()
-        throw reason
+        throw err
       })
   )
 }
@@ -163,6 +163,19 @@ async function openOrCloneRepository (repoUrl, opts) {
       repository = await fs
         .remove(repoPath)
         .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts }))
+        .catch((err) => {
+          let msg = err.message
+          if (~msg.indexOf('invalid cred type') || ~msg.indexOf('SSH credentials')) {
+            msg = 'Content repository not found or you have insufficient credentials to access it'
+          } else if (~msg.indexOf('no auth sock variable') || ~msg.indexOf('failed connecting agent')) {
+            msg = 'SSH agent must be running to access content repository via SSH'
+          } else if (/not found|not be found|not exist|404/.test(msg)) {
+            msg = 'Content repository not found'
+          } else {
+            msg = msg.replace(/\.?\s*$/, '')
+          }
+          throw new Error(msg + ': ' + repoUrl)
+        })
         .then((repo) =>
           repo.getCurrentBranch().then((ref) => {
             // NOTE we have a test that will catch if nodegit changes to match behavior of native git client
@@ -272,10 +285,10 @@ function getFetchOptions (progress, progressLabel, operation) {
       // https://github.com/nodegit/nodegit/blob/master/guides/cloning/ssh-with-agent/README.md#github-certificate-issue-in-os-x
       certificateCheck: () => 1,
       credentials: (_, username) => {
-        if (sshKeyAuthAttempted) {
-          throw new Error('Failed to authenticate git client using SSH key; SSH agent is not running')
-        } else {
+        // NOTE nodegit will continue to make attempts until undefined (or git.Cred.defaultNew()) is returned
+        if (!sshKeyAuthAttempted) {
           sshKeyAuthAttempted = true
+          // NOTE sshKeyFromAgent gracefully handles SSH agent not running
           return git.Cred.sshKeyFromAgent(username)
         }
       },
