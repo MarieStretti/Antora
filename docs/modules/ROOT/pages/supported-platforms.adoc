@@ -19,7 +19,7 @@ Antora is comprehensively tested on these platform.
 // When we have specific notes about a platform (tweaks and/or links to bugs) add a 3rd column to this table labeled "Good to Know"
 [cols="20,25a",width="45%"]
 |===
-|Supported Platform |Supported Versions
+|Supported Platform |Supported Version(s)
 
 |Alpine Linux
 |* 3.6
@@ -37,7 +37,9 @@ Antora is comprehensively tested on these platform.
 
 |Microsoft
 |* Windows 8.1
+* Windows 10
 * Windows Server 2012 R2
+* Windows Server 2016
 
 |Chrome
 |Latest stable version

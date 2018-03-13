@@ -318,9 +318,9 @@ Thanks in advance for helping to make this project a success!
 
 == Release Policy
 
-IMPORTANT: The version, roadmap, and support policies described in this section will take affect when the initial stable release of the Antora platform is published.
+IMPORTANT: The version, roadmap, and support policies described in this section will take affect when the initial stable release of the Antora Core components is published.
 
-The Antora platform includes a default site generator package, the packages the default site generator delegates to, and a CLI package.
+The Antora Core components includes a default site generator package, the packages the default site generator delegates to, and a CLI package.
 These packages are released together and follow the https://semver.org[semantic versioning] rules.
 Each Antora platform release is versioned *major.minor.patch*.
 
@@ -350,7 +350,7 @@ Major releases require architecture, implementation, and QA iterations that are 
 
 === Support
 
-Each major version of the Antora platform is maintained for at least 1 year after the initial public stable release.
+Each major version of the Antora Core components is maintained for at least 1 year after the initial public stable release.
 Only the latest minor release for a major release will receive maintenance releases.
 
 == Copyright and License

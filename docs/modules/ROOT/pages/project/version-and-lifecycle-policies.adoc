@@ -9,8 +9,8 @@ endif::[]
 :core-version: 1.0
 :ga-date: 2018/03/26*
 :gs-date: 2018/03/26*
-:eol-date: 2018/03/26*
-:eogs-date: 2018/03/26*
+:eol-date: 2019/03/26*
+:eogs-date: 2019/03/26*
 
 == Version policy
 
@@ -36,14 +36,14 @@ Once a release candidate (rc) has been thoroughly tested, the stable release wil
 
 == Lifecycle policy
 
-Each major version of the Antora Core components are supported for at least one year after the major version enters General Availability (GA).
+Each major version of the Antora Core components is supported for at least one year after the major version enters General Availability (GA).
 Once a major version reaches End of Life (EOL), it will not receive maintenance releases.
 
 [#lifecycle-phases]
 === Lifecycle phases
 
 General Availability (GA)::
-Software enters General Availability on the date an initial major version is released and available for download.
+Software enters General Availability on the date an initial major version is released and is available for download.
 
 General Support (GS)::
 General Support begins on the date a major release enters General Availability.
