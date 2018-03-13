@@ -1,0 +1,3 @@
+ui:
+  bundle: https://example.org/ui-bundle.zip
+  start_path: dark

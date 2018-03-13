@@ -41,7 +41,7 @@ describe('loadUi()', () => {
   const prefixPath = (prefix, path_) => [prefix, path_].join(ospath.sep)
 
   const testAll = (archive, testBlock) => {
-    const makeTest = (bundle) => testBlock({ ui: { bundle } })
+    const makeTest = (url) => testBlock({ ui: { bundle: { url } } })
     it('with dot-relative bundle path', () =>
       makeTest(prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, archive)))))
     it('with absolute bundle path', () => makeTest(ospath.join(FIXTURES_DIR, archive)))
@@ -85,7 +85,7 @@ describe('loadUi()', () => {
   describe('should throw error if bundle cannot be found', () => {
     testAll('no-such-bundle.zip', async (playbook) => {
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
-      const expectedMessage = playbook.ui.bundle.startsWith('http://') ? '404' : 'does not exist'
+      const expectedMessage = playbook.ui.bundle.url.startsWith('http://') ? '404' : 'does not exist'
       expect(loadUiDeferred).to.throw(expectedMessage)
     })
   })
@@ -108,7 +108,7 @@ describe('loadUi()', () => {
       fs.ensureDirSync(playbookDir)
       const bundleFixture = ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip')
       fs.outputFileSync('the-ui-bundle.zip', fs.readFileSync(bundleFixture))
-      playbook.ui = { bundle: 'the-ui-bundle.zip' }
+      playbook.ui = { bundle: { url: 'the-ui-bundle.zip' } }
       let uiCatalog
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
       expect(() => (uiCatalog = loadUiDeferred())).to.not.throw()
@@ -123,7 +123,9 @@ describe('loadUi()', () => {
       fs.ensureDirSync(newWorkDir)
       process.chdir(newWorkDir)
       playbook.ui = {
-        bundle: prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+        bundle: {
+          url: prefixPath('.', ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+        },
       }
       let uiCatalog
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
@@ -136,7 +138,9 @@ describe('loadUi()', () => {
     it('should expand leading ~ segment in bundle path to user home', async () => {
       const playbook = {}
       playbook.ui = {
-        bundle: prefixPath('~', ospath.relative(os.homedir(), ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+        bundle: {
+          url: prefixPath('~', ospath.relative(os.homedir(), ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+        },
       }
       let uiCatalog
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
@@ -152,7 +156,9 @@ describe('loadUi()', () => {
       fs.ensureDirSync(newWorkDir)
       process.chdir(newWorkDir)
       playbook.ui = {
-        bundle: prefixPath('~+', ospath.relative(newWorkDir, ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+        bundle: {
+          url: prefixPath('~+', ospath.relative(newWorkDir, ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))),
+        },
       }
       let uiCatalog
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
@@ -181,7 +187,7 @@ describe('loadUi()', () => {
   describe('should load all files in the bundle from specified startPath', () => {
     describe('when startPath is /', () => {
       testAll('the-ui-bundle.zip', async (playbook) => {
-        playbook.ui.startPath = '/'
+        playbook.ui.bundle.startPath = '/'
         const uiCatalog = await loadUi(playbook)
         const paths = uiCatalog.getFiles().map((file) => file.path)
         expect(paths).to.have.members(expectedFilePaths)
@@ -190,7 +196,7 @@ describe('loadUi()', () => {
 
     describe('when startPath is absolute', () => {
       testAll('the-ui-bundle-with-start-path.zip', async (playbook) => {
-        playbook.ui.startPath = '/the-ui-bundle'
+        playbook.ui.bundle.startPath = '/the-ui-bundle'
         const uiCatalog = await loadUi(playbook)
         const paths = uiCatalog.getFiles().map((file) => file.path)
         expect(paths).to.have.members(expectedFilePaths)
@@ -200,7 +206,7 @@ describe('loadUi()', () => {
 
     describe('when startPath is relative', () => {
       testAll('the-ui-bundle-with-start-path.zip', async (playbook) => {
-        playbook.ui.startPath = 'the-ui-bundle'
+        playbook.ui.bundle.startPath = 'the-ui-bundle'
         const uiCatalog = await loadUi(playbook)
         const paths = uiCatalog.getFiles().map((file) => file.path)
         expect(paths).to.have.members(expectedFilePaths)
@@ -210,7 +216,7 @@ describe('loadUi()', () => {
 
     describe('when startPath has trailing slash', () => {
       testAll('the-ui-bundle-with-start-path.zip', async (playbook) => {
-        playbook.ui.startPath = 'the-ui-bundle/'
+        playbook.ui.bundle.startPath = 'the-ui-bundle/'
         const uiCatalog = await loadUi(playbook)
         const paths = uiCatalog.getFiles().map((file) => file.path)
         expect(paths).to.have.members(expectedFilePaths)
@@ -244,7 +250,7 @@ describe('loadUi()', () => {
     }
 
     beforeEach(() => {
-      playbook = { ui: { bundle: ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip') } }
+      playbook = { ui: { bundle: { url: ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip') } } }
     })
 
     it('throws error when directory does not exist', async () => {
@@ -621,7 +627,7 @@ describe('loadUi()', () => {
 
   it('should use remote bundle from cache on subsequent run', async () => {
     const playbook = {
-      ui: { bundle: 'http://localhost:1337/the-ui-bundle.zip' },
+      ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
     }
     let uiCatalog = await loadUi(playbook)
     expect(serverRequests).to.have.lengthOf(1)
@@ -641,10 +647,31 @@ describe('loadUi()', () => {
     expect(paths).to.have.members(expectedFilePaths)
   })
 
-  it('should download instead of using bundle from cache if runtime pull option is enabled', async () => {
+  it('should not download if pull option is enabled and bundle is permanent', async () => {
     const playbook = {
       runtime: { pull: true },
-      ui: { bundle: 'http://localhost:1337/the-ui-bundle.zip' },
+      ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
+    }
+    let uiCatalog = await loadUi(playbook)
+    expect(serverRequests).to.have.lengthOf(1)
+    expect(serverRequests[0]).to.equal('/the-ui-bundle.zip')
+    expect(CACHE_DIR)
+      .to.be.a.directory()
+      .with.subDirs([UI_CACHE_FOLDER])
+    expect(UI_CACHE_DIR)
+      .to.be.a.directory()
+      .and.not.be.empty()
+    let paths = uiCatalog.getFiles().map((file) => file.path)
+    expect(paths).to.have.members(expectedFilePaths)
+
+    uiCatalog = await loadUi(playbook)
+    expect(serverRequests).to.have.lengthOf(1)
+  })
+
+  it('should download instead of using cache if pull option is enabled and bundle is a snapshot', async () => {
+    const playbook = {
+      runtime: { pull: true },
+      ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip', snapshot: true } },
     }
     let uiCatalog = await loadUi(playbook)
     expect(serverRequests).to.have.lengthOf(1)
@@ -672,7 +699,7 @@ describe('loadUi()', () => {
       const playbook = {
         dir,
         runtime: { cacheDir },
-        ui: { bundle: 'http://localhost:1337/the-ui-bundle.zip' },
+        ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
       }
       let uiCatalog = await loadUi(playbook)
       expect(UI_CACHE_DIR).to.not.be.a.path()

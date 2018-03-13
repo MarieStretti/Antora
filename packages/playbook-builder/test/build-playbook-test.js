@@ -327,8 +327,8 @@ describe('buildPlaybook()', () => {
     expect(playbook.site.title).to.equal('Example site')
     expect(playbook.site.startPage).to.equal('1.0@server::intro')
     expect(playbook.site.keys.googleAnalytics).to.equal('XX-123456')
-    expect(playbook.ui.bundle).to.equal('./../ui/build/ui-bundles.zip')
-    expect(playbook.ui.startPath).to.equal('dark-theme')
+    expect(playbook.ui.bundle.url).to.equal('./../ui/build/ui-bundles.zip')
+    expect(playbook.ui.bundle.startPath).to.equal('dark-theme')
     expect(playbook.ui.outputDir).to.equal('_')
     expect(playbook.ui.defaultLayout).to.equal('default')
     expect(playbook.ui.supplementalFiles).to.have.lengthOf(1)
@@ -351,10 +351,21 @@ describe('buildPlaybook()', () => {
     expect(playbook.output.destinations[0].path).to.equal('./site.zip')
   })
 
+  it('should migrate playbook data that defines ui.bundle as a String', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: ospath.join(FIXTURES_DIR, 'legacy-ui-bundle-sample.yml') })
+    expect(playbook.ui.bundle.url).to.equal('https://example.org/ui-bundle.zip')
+  })
+
+  it('should migrate playbook data that defines ui.start_path', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: ospath.join(FIXTURES_DIR, 'legacy-ui-start-path-sample.yml') })
+    expect(playbook.ui.bundle.url).to.equal('https://example.org/ui-bundle.zip')
+    expect(playbook.ui.bundle.startPath).to.equal('dark')
+  })
+
   it('should be decoupled from the process environment', () => {
     const originalEnv = process.env
     process.env = { PLAYBOOK: 'no-such-file' }
-    expect(() => buildPlaybook(['--ui-bundle', 'ui-bundle.zip'])).to.not.throw()
+    expect(() => buildPlaybook(['--ui-bundle-url', 'ui-bundle.zip'])).to.not.throw()
     process.env = originalEnv
   })
 

@@ -59,7 +59,9 @@ describe('generateSite()', () => {
       content: {
         sources: [{ url: repositoryBuilder.repoPath, branches: 'v2.0' }],
       },
-      ui: { bundle: uiBundleUri },
+      ui: {
+        bundle: { url: uiBundleUri, snapshot: true },
+      },
       output: {
         destinations: [{ provider: 'fs', path: '.' + ospath.sep + destDir }],
       },

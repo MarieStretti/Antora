@@ -14,16 +14,18 @@ On this page, you'll learn:
 
 == Playbook file structure
 
-Here's an example of a playbook file.
+Here's a factitious example of a playbook file if all the keys were defined.
 
-[source,yaml,subs=attributes+]
+WARNING: This example is merely for reference and is not intended to be copied.
+
+[source,yaml]
 ----
 site: # <1>
   title: Demo Docs Site # <2>
   url: https://demo.antora.org # <3>
-  start_page: demo-component-b::index # <4>
+  start_page: demo-component-b::home # <4>
   keys: # <5>
-    google_analytics: 'XX-123456' # <6>
+    google_analytics: XX-123456 # <6>
 content: # <7>
   sources: # <8>
   - url: https://gitlab.com/antora/demo/demo-component-a.git # <9>
@@ -31,15 +33,17 @@ content: # <7>
     tags: v* # <11>
     start_path: docs # <12>
 ui: # <13>
-  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <14>
-  start_path: dark-theme # <15>
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <14>
+    snapshot: true
+  start_path: dark # <15>
   default_layout: base # <16>
-  output_dir: _dark # <17>
+  output_dir: _/dark # <17>
 output: # <18>
- clean: false # <19>
- dir: releases # <20>
- destinations: # <21>
- - provider: archive # <22>
+  clean: true # <19>
+  dir: ./public # <20>
+  destinations: # <21>
+  - provider: archive # <22>
 ----
 <1> <<site-key,Site keys>>
 <2> <<site-title-key,Title key>>
@@ -176,9 +180,9 @@ Learn more:
 The `ui` category contains keys that specify the location of the UI bundle and how it should be processed.
 
 [#ui-bundle-key]
-=== bundle
+=== url
 
-The bundle key accepts a URL or local filesystem path to a UI bundle ZIP archive.
+The url key under the `bundle` subcategory accepts a URL or local filesystem path to a UI bundle ZIP archive.
 The filesystem path can be absolute or relative.
 
 Learn more:
@@ -186,10 +190,20 @@ Learn more:
 * xref:configure-ui.adoc#remote-bundle[Fetch and load a remote UI bundle]
 * xref:configure-ui.adoc#local-bundle[Load a local UI bundle]
 
+[#ui-snapshot-key]
+=== snapshot
+
+The snapshot key under the `bundle` subcategory indicates whether the URL points to a snapshot (i.e., it doesn't always point to the same artifact).
+By default, Antora assumes that URL is permanent.
+
+Learn more:
+
+* xref:configure-ui.adoc#snapshot[Mark a URL as a snapshot]
+
 [#ui-start-path-key]
 === start_path
 
-The start path key is the path inside the bundle from which UI files should be selected.
+The start path key under the `bundle` category is the path inside the bundle from which UI files should be selected.
 When no value is specified, it defaults to the root of the bundle.
 
 Learn more:
