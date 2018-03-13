@@ -8,8 +8,9 @@ site:
   keys:
     google_analytics: 'XX-123456'
 ui:
-  bundle: ./../ui/build/ui-bundles.zip
-  start_path: dark-theme
+  bundle:
+    url: ./../ui/build/ui-bundles.zip
+    start_path: dark-theme
   default_layout: default
   supplemental_files:
   - path: head-meta.hbs

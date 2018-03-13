@@ -25,13 +25,13 @@ const EXT_RX = /\.[a-z]{2,3}$/
  * Loads the files in the specified UI bundle (zip archive) into a UiCatalog,
  * first downloading the bundle if necessary.
  *
- * Looks for UI bundle at the path specified in the ui.bundle property of the
- * playbook. If the path is a URI, it downloads the file and caches it at
- * a unique path to avoid this step in future calls. It then reads all the
- * files from the bundle into memory, skipping any files that fall outside
- * of the start path specified in the ui.startPath property of the playbook.
- * Finally, it classifies the files and adds them to a UiCatalog, which is
- * then returned.
+ * Looks for UI bundle at the path specified in the ui.bundle.url property of
+ * the playbook. If the path is a URI, it downloads the file and caches it at a
+ * unique path to avoid this step in future calls. It then reads all the files
+ * from the bundle into memory, skipping any files that fall outside of the
+ * start path specified in the ui.startPath property of the playbook.  Finally,
+ * it classifies the files and adds them to a UiCatalog, which is then
+ * returned.
  *
  * @memberof ui-loader
  * @param {Object} playbook - The configuration object for Antora.
@@ -39,9 +39,10 @@ const EXT_RX = /\.[a-z]{2,3}$/
  * @param {Object} playbook.runtime - The runtime configuration object for Antora.
  * @param {String} [playbook.runtime.cacheDir=undefined] - The base cache directory.
  * @param {Object} playbook.ui - The UI configuration object for Antora.
- * @param {String} playbook.ui.bundle - The path (relative or absolute) or URI
+ * @param {String} playbook.ui.bundle - The UI bundle configuration.
+ * @param {String} playbook.ui.bundle.url - The path (relative or absolute) or URI
  * of the UI bundle to use.
- * @param {String} [playbook.ui.startPath=''] - The path inside the bundle from
+ * @param {String} [playbook.ui.bundle.startPath=''] - The path inside the bundle from
  * which to start reading files.
  * @param {String} [playbook.ui.outputDir='_'] - The path relative to the site root
  * where the UI files should be published.
@@ -50,13 +51,14 @@ const EXT_RX = /\.[a-z]{2,3}$/
  */
 async function loadUi (playbook) {
   const startDir = playbook.dir || '.'
-  const { bundle: bundleUrl, startPath, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
+  const { bundle, supplementalFiles: supplementalFilesSpec, outputDir } = playbook.ui
+  const bundleUrl = bundle.url
   let resolveBundle
   if (isUrl(bundleUrl)) {
     const { cacheDir, pull } = playbook.runtime || {}
     resolveBundle = ensureCacheDir(cacheDir, startDir).then((cacheAbsDir) => {
       const cachePath = ospath.join(cacheAbsDir, `${sha1(bundleUrl)}.zip`)
-      return pull
+      return pull && bundle.snapshot
         ? downloadBundle(bundleUrl, cachePath)
         : fs.pathExists(cachePath).then((cached) => (cached ? cachePath : downloadBundle(bundleUrl, cachePath)))
     })
@@ -78,7 +80,7 @@ async function loadUi (playbook) {
           vzip
             .src(bundlePath)
             .on('error', reject)
-            .pipe(selectFilesStartingFrom(startPath))
+            .pipe(selectFilesStartingFrom(bundle.startPath))
             .pipe(bufferizeContents())
             .on('error', reject)
             .pipe(collectFiles(resolve))

@@ -70,7 +70,7 @@ describe('cli', () => {
       content: {
         sources: [{ url: repositoryBuilder.repoPath, branches: 'v1.0' }],
       },
-      ui: { bundle: uiBundleUri },
+      ui: { bundle: { url: uiBundleUri, snapshot: true } },
     }
   })
 
@@ -194,10 +194,10 @@ describe('cli', () => {
   }).timeout(TIMEOUT)
 
   it('should show stack if --stacktrace option is specified and exception is thrown during generation', () => {
-    playbookSpec.ui.bundle = false
+    playbookSpec.ui.bundle.url = false
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     return runAntora('--stacktrace generate the-site')
-      .assert(/^Error: ui\.bundle: must be of type String/)
+      .assert(/^Error: ui\.bundle\.url: must be of type String/)
       .assert(/at /)
       .done()
   }).timeout(TIMEOUT)
@@ -240,7 +240,8 @@ describe('cli', () => {
     const playbookRelFile = ospath.relative(runCwd, playbookFile)
     playbookSpec.content.sources[0].url =
       '.' + ospath.sep + ospath.relative(WORK_DIR, playbookSpec.content.sources[0].url)
-    playbookSpec.ui.bundle = '.' + ospath.sep + ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'ui-bundle.zip'))
+    playbookSpec.ui.bundle.url =
+      '.' + ospath.sep + ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'ui-bundle.zip'))
     playbookSpec.output = { dir: '.' + ospath.sep + destDir }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround

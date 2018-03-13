@@ -15,10 +15,14 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* *playbook-builder*: Remap `ui.bundle` key to `ui.bundle.url`
+* *playbook-builder*: Remap `ui.start_path` key to `ui.bundle.start_path`
 * *content-aggregator*: Only run fetch operation on cached repository if runtime pull option is enabled
 * *content-aggregator*: Move all but first argument to openOrCloneRepository function to option hash
 * *content-aggregator*: Make transfer progress callback asynchronous so progress bar updates don't affect transfer
-* *ui-loader*: Always download UI bundle from URL if runtime pull option is enabled; bypass cache
+* *ui-loader*: Always download UI bundle from URL if runtime pull option is enabled and bundle is marked as a snapshot
+* *ui-loader*: Read bundle URL from `ui.bundle.url` key in playbook
+* *ui-loader*: Read bundle start path from `ui.bundle.start_path` key in playbook
 
 === Fixed
 

@@ -72,15 +72,22 @@ module.exports = {
   },
   ui: {
     bundle: {
-      doc: 'The URL of the UI bundle. Can be a path on the local filesystem.',
-      format: String,
-      arg: 'ui-bundle',
-      default: null,
-    },
-    start_path: {
-      doc: 'The relative path inside the bundle from which to start reading files.',
-      format: String,
-      default: '',
+      url: {
+        doc: 'The URL of the UI bundle. Can be a path on the local filesystem.',
+        format: String,
+        arg: 'ui-bundle-url',
+        default: null,
+      },
+      snapshot: {
+        doc: 'Whether the bundle URL points to a snapshot that changes over time.',
+        format: Boolean,
+        default: false,
+      },
+      start_path: {
+        doc: 'The relative path inside the bundle from which to start reading files.',
+        format: String,
+        default: '',
+      },
     },
     output_dir: {
       doc: 'The output directory path relative to the site root where the UI files should be written.',
