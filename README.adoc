@@ -5,7 +5,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 // Project URIs:
 :uri-project: https://antora.org
 :uri-repo: https://gitlab.com/antora/antora
-:uri-issues: {uri-project}/issues
+:uri-issues: {uri-repo}/issues
 :uri-ci-pipelines: {uri-repo}/pipelines
 :img-ci-status: {uri-repo}/badges/master/pipeline.svg
 :uri-chat-dev: https://gitter.im/antora/dev
@@ -318,11 +318,11 @@ Thanks in advance for helping to make this project a success!
 
 == Release Policy
 
-IMPORTANT: The version, roadmap, and support policies described in this section will take affect when the initial stable release of the Antora platform is published.
+IMPORTANT: The version, roadmap, and support policies described in this section will take affect when the initial stable release of the Antora Core components is published.
 
-The Antora platform includes a default site generator package, the packages the default site generator delegates to, and a CLI package.
+The Antora Core components includes a default site generator package, the packages the default site generator delegates to, and a CLI package.
 These packages are released together and follow the https://semver.org[semantic versioning] rules.
-Each Antora platform release is versioned *major.minor.maintenance*.
+Each Antora platform release is versioned *major.minor.patch*.
 
 Major::
 Major releases occur when new functionality breaks backwards compatibility.
@@ -331,25 +331,27 @@ Releases within the same major version number will maintain API compatibility.
 Minor::
 Minor releases add new features, improvements and fixes and maintain backwards compatibility.
 
-Maintenance::
-Maintenance releases patch bugs.
+Patch::
+Patch releases fix bugs and maintain backwards compatibility.
+Only the latest minor release for a major release will receive patches.
+
+Pre-release::
+Major and minor releases may require numerous pre-release versions (major.minor.patch-alpha.n | -beta.n | -rc.n).
+Pre-release versions will be tagged as _next_ so that the npm client doesn't prefer a pre-release over a stable version.
+Once a release candidate (rc) has been thoroughly tested, the stable release will be published.
 
 === Roadmap
 
 The <<roadmap.adoc#,roadmap>> provides the current development direction and schedule for Antora.
 
-Maintenance releases happen as needed depending on the urgency of the fix.
+Patch releases happen as needed depending on the urgency of the fix.
 Minor releases typically occur when one or more new features or improvements have been reviewed, tested and approved.
-
 Major releases require architecture, implementation, and QA iterations that are open to community discussion and review.
-Major releases will include pre-release versions (major.minor.maintenance-alpha.n | -beta.n | -rc.n).
-Pre-release versions will be tagged as _next_ so that the npm client doesn't prefer a pre-release over a stable version.
-Once a release candidate (rc) has been thoroughly tested and no new bugs discovered, the stable release will be published.
 
 === Support
 
-Each major version of the Antora platform is maintained for at least 1 year after the initial public stable release.
-Only the latest minor release for each major release will receive maintenance releases.
+Each major version of the Antora Core components is maintained for at least 1 year after the initial public stable release.
+Only the latest minor release for a major release will receive maintenance releases.
 
 == Copyright and License
 

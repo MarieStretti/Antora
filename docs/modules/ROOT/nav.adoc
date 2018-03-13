@@ -5,6 +5,7 @@
 ** xref:install/linux-requirements.adoc[Linux]
 ** xref:install/macos-requirements.adoc[macOS]
 ** xref:install/windows-requirements.adoc[Windows]
+** xref:supported-platforms.adoc[Supported Platforms]
 * xref:install/install-antora.adoc[Install Antora]
 * xref:install/upgrade-antora.adoc[Upgrade Antora]
 //* Source Files
