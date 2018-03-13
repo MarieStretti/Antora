@@ -32,13 +32,18 @@ function produceRedirects (playbook, contentCatalog) {
     case 'static':
       if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
       return populateStaticRedirectFiles(aliases, siteUrl)
+    case 'netlify':
+      return createNetlifyRedirects(aliases, extractUrlContext(siteUrl))
     case 'nginx':
-      let urlContext
-      if (siteUrl && (urlContext = url.parse(siteUrl).pathname) === '/') urlContext = undefined
-      return createNginxRewriteConf(aliases, urlContext)
+      return createNginxRewriteConf(aliases, extractUrlContext(siteUrl))
     default:
       return unpublish(aliases)
   }
+}
+
+function extractUrlContext (sourceUrl) {
+  let urlContext
+  return sourceUrl && (urlContext = url.parse(sourceUrl).pathname) !== '/' ? urlContext : undefined
 }
 
 function populateStaticRedirectFiles (files, siteUrl) {
@@ -47,6 +52,18 @@ function populateStaticRedirectFiles (files, siteUrl) {
     file.mediaType = 'text/html'
   })
   return []
+}
+
+function createNetlifyRedirects (files, urlContext = '') {
+  const rules = files.map((file) => {
+    delete file.out
+    return `${urlContext}${file.pub.url} ${urlContext}${file.rel.pub.url} 301`
+  })
+  const redirectsFile = new File({
+    contents: Buffer.from(rules.join('\n')),
+    out: { path: '_redirects' },
+  })
+  return [redirectsFile]
 }
 
 function createNginxRewriteConf (files, urlContext = '') {
