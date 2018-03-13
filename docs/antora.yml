@@ -7,4 +7,4 @@ nav:
 - modules/navigation/nav.adoc
 - modules/playbook/nav.adoc
 - modules/pipeline/nav.adoc
-- modules/ROOT/project/nav.adoc
+- modules/ROOT/nav-end.adoc
