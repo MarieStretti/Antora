@@ -234,7 +234,7 @@ That file will redirect you to the start page.
 Antora also supports local content, which is essential for authoring.
 If you want to make modifications to the documentation, you'll first need to clone the content repository (which in this example just happens to be the Antora repository):
 
- $ git clone https://gitlab.com/antora/antora.git
+ $ git clone https://gitlab.com/antora/antora.git workspace/antora
 
 Next, update the content source entry in the playbook to point to the local checkout instead of the remote URL:
 
@@ -242,12 +242,12 @@ Next, update the content source entry in the playbook to point to the local chec
 ----
 content:
   sources:
-  - url: antora
+  - url: ./workspace/antora
     branches: master
     start_path: docs
 ----
 
-Now, any changes you make to the content under the [.path]_antora/docs/_ folder will be visible the next time you generate the site.
+Now, any changes you make to the content under the [.path]_workspace/antora/docs/_ folder will be visible the next time you generate the site.
 
 ==== Running a Local Server (Optional)
 
