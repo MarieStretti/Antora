@@ -1679,24 +1679,27 @@ describe('aggregateContent()', () => {
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })
 
-    if (process.platform !== 'win32') {
-      it('should throw meaningful error if credentials are insufficient', async () => {
-        const url = 'http://localhost:1337/401/invalid-repository.git'
-        const expectedErrorMessage =
-          'Content repository not found or you have insufficient credentials to access it: ' + url
-        playbookSpec.content.sources.push({ url })
-        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
-      })
+    it('should throw meaningful error if credentials are insufficient', async () => {
+      const url = 'http://localhost:1337/401/invalid-repository.git'
+      const expectedErrorMessage =
+        'Content repository not found or you have insufficient credentials to access it: ' + url
+      playbookSpec.content.sources.push({ url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+    })
 
-      it('should throw meaningful error if server returns unexpected error', async () => {
-        const url = 'http://localhost:1337/301/invalid-repository.git'
-        const expectedErrorMessage = 'cross host redirect not allowed: ' + url
-        playbookSpec.content.sources.push({ url })
-        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
-      })
-    }
+    it('should throw meaningful error if server returns unexpected error', async () => {
+      const url = 'http://localhost:1337/301/invalid-repository.git'
+      let expectedErrorMessage
+      if (process.platform === 'win32') {
+        expectedErrorMessage = 'request failed with status code: 301: ' + url
+      } else {
+        expectedErrorMessage = 'cross host redirect not allowed: ' + url
+      }
+      playbookSpec.content.sources.push({ url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+    })
 
     // FIXME this is too slow; we need a better way to test
     /*

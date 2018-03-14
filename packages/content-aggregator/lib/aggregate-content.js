@@ -165,7 +165,7 @@ async function openOrCloneRepository (repoUrl, opts) {
         .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts }))
         .catch((err) => {
           let msg = err.message
-          if (~msg.indexOf('invalid cred type') || ~msg.indexOf('SSH credentials')) {
+          if (~msg.indexOf('invalid cred') || ~msg.indexOf('SSH credentials') || ~msg.indexOf('status code: 401')) {
             msg = 'Content repository not found or you have insufficient credentials to access it'
           } else if (~msg.indexOf('no auth sock variable') || ~msg.indexOf('failed connecting agent')) {
             msg = 'SSH agent must be running to access content repository via SSH'
