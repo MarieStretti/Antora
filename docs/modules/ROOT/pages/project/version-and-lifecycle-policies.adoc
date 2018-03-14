@@ -67,7 +67,7 @@ The date after which the software no longer receives maintenance releases.
 |{eol-date}
 |{eogs-date}
 
-|Antora CLI {core-version}
+|CLI {core-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
