@@ -31,13 +31,16 @@ Install the base build tools package by executing the command associated with yo
 * Fedora: `dnf install @development-tools`
 * Debian/Ubuntu: `apt-get install build-essential`
 * Arch Linux: `pacman -S base-devel`
-* Alpine Linux: `apk add build-base libgit2-dev`
+* Alpine Linux*: `apk add g++ libressl-dev make python curl-dev`
+
+{asterisk} To use Antora on Alpine Linux, you must force nodegit to be recompiled using BUILD_ONLY=true (see xref:install/troubleshoot-nodegit.adoc[Troubleshooting nodegit]).
 
 Once you have these tools installed, you can expect the remaining installation to go smoothly.
 
 == Node 8
 
 Antora requires Node 8, the current long term support (LTS) release of Node.
+While you can try Node 9, Antora is not currently tested on it.
 
 To check which version of Node you have installed, if any, open a terminal and type:
 
@@ -57,9 +60,6 @@ Or, if the package manager doesn't provide Node and you have nvm installed, go d
 $ nvm alias default 8
 
 Now you're ready to xref:install/install-antora.adoc[install Antora].
-
-CAUTION: While you can use Node 9, we don't recommend it because there are no precompiled binaries for Node 9 of nodegit, a dependency of Antora.
-If you use Node 9, installation will take considerably longer.
 
 [#install-nvm]
 == Install nvm and Node
