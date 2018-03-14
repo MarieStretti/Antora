@@ -78,10 +78,9 @@ Once you have these tools installed, you can expect the remaining installation t
 ==== Node 8
 
 Antora requires Node 8, the current long-term support (LTS) release of Node.
-While you can use Node 9, we don't recommend it because there are currently no precompiled binaries of nodegit for Node 9.
-If you choose to use Node 9, installation of Antora will take considerably longer.
+While you can try Node 9, Antora is not currently tested on it.
 
-To check which version of Node you have installed, if any, open a terminal and type:
+To consult which version of Node you have installed, if any, open a terminal and type:
 
  $ node --version
 
