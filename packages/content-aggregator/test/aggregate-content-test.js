@@ -1692,7 +1692,7 @@ describe('aggregateContent()', () => {
       const url = 'http://localhost:1337/301/invalid-repository.git'
       let expectedErrorMessage
       if (process.platform === 'win32') {
-        expectedErrorMessage = 'request failed with status code: 301: ' + url
+        expectedErrorMessage = 'too many redirects or authentication replays: ' + url
       } else {
         expectedErrorMessage = 'cross host redirect not allowed: ' + url
       }
