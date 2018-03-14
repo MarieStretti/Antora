@@ -26,7 +26,8 @@ Error: libcurl-gnutls.so.4: cannot open shared object file: No such file or dire
 This is an open issue in nodegit.
 See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246].
 
-If you see this error, you either need to create the missing symlink or force nodegit to be recompiled (instead of using a precompiled binary).
+If you see this error, you either need to create the missing symlink or force nodegit to be recompiled instead of using a precompiled binary.
+If you're using Alpine Linux, you must <<recompile-nodegit,force nodegit to recompile>>.
 
 == Option 1: Create missing symlink
 
@@ -40,14 +41,15 @@ If that fails, run:
 [source]
 $ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
 
-Once you've made that symlink, run the `npm install` command again to install the site generator.
+Once you've made that symlink, run the `npm install` command to install the site generator.
 
 [source]
 $ npm install -g @antora/site-generator-default
 
+[#recompile-nodegit]
 == Option 2: Recompile nodegit
 
-If you aren't comfortable making a system-wide change, you can recompile nodegit on your machine instead.
+If you aren't comfortable making a system-wide change, or you're on Alpine Linux, you can recompile nodegit on your machine instead.
 
 Force nodegit to recompile by passing the `BUILD_ONLY` environment variable to the `npm install` command.
 
