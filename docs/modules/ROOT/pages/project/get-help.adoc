@@ -1,0 +1,53 @@
+= Getting Help
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:linkattrs:
+// URIs
+:uri-repo: https://gitlab.com/antora/antora
+:uri-issues: {uri-repo}/issues
+:uri-chat-dev: https://gitter.im/antora/dev
+:uri-chat-users: https://gitter.im/antora/users
+:uri-twitter: https://twitter.com/antoraproject
+:uri-twitter-hash: https://twitter.com/hashtag/antora?src=hash
+:uri-contributing: https://gitlab.com/antora/antora/blob/master/contributing.adoc
+
+Antora is designed to help you write and publish your documentation.
+However, we can't fully realize this goal without your feedback!
+We encourage you to report issues, ask questions, share ideas, or discuss other aspects of this project using the communication tools provided below.
+
+== Issues
+
+*Activity drives progress!*
+To that end, the issue tracker is king.
+
+The preferred means of communicating problems, ideas, and other feedback is through the project issue tracker.
+
+* {uri-issues}[Issue tracker^] (GitLab)
+
+Any significant change or decision about the project is logged there.
+
+== Chat
+
+If you need to switch to real time input, you may be interested in visiting one of the chat rooms.
+We've set up two chat rooms for discussing Antora.
+Choose the one that best suits your needs.
+
+* {uri-chat-users}[antora/users^] (Gitter) -- Community support for Antora users.
+* {uri-chat-dev}[antora/dev^] (Gitter) -- Discussions about Antora architecture, development, and testing.
+
+The discussion logs for these rooms are archived, but there is no guarantee those logs will be saved indefinitely.
+
+== Twitter
+
+If you want to share your experience with Antora or help promote it, we encourage you to post about it on social media.
+When you talk about Antora on Twitter, you can mention the official account for the project:
+
+* {uri-twitter}[@antoraproject^] -- The official Antora account on Twitter.
+
+You can also use the {uri-twitter-hash}[#antora^] hashtag to promote the project or discover other people talking about it.
+
+If you're interested in helping the maintainers improve the project, then check out the {uri-contributing}[Antora contributing guidelines^].
