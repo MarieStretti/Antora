@@ -23,7 +23,7 @@ WARNING: This example is merely for reference and is not intended to be copied.
 site: # <1>
   title: Demo Docs Site # <2>
   url: https://demo.antora.org # <3>
-  start_page: demo-component-b::home # <4>
+  start_page: demo-component-b::index # <4>
   keys: # <5>
     google_analytics: XX-123456 # <6>
 content: # <7>
