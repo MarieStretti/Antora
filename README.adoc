@@ -22,7 +22,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-nvm-windows: https://github.com/coreybutler/nvm-windows
 :uri-opendevise: https://opendevise.com
 // Versions:
-:version-node: 8.9.4
+:version-node: 8.10.0
 
 ifdef::badges[]
 image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
@@ -354,7 +354,7 @@ Major releases require architecture, implementation, and QA iterations that are 
 
 === Support
 
-Each major version of the Antora Core components is maintained for at least 1 year after the initial public stable release.
+Major versions of the Antora Core components are maintained for at least 1 year after the initial public stable release.
 Only the latest minor release for a major release will receive maintenance releases.
 
 == Copyright and License

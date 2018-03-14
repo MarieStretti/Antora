@@ -10,7 +10,7 @@ endif::[]
 :uri-choco: https://chocolatey.org
 :uri-nvm-windows: https://github.com/coreybutler/nvm-windows
 // Versions:
-:version-node: 8.9.4
+:version-node: 8.10.0
 
 On this page, you'll learn:
 
@@ -25,6 +25,7 @@ To install Antora, you need Node 8 and Chocolatey.
 == Node 8
 
 Antora requires Node 8, the current long term support (LTS) release of Node.
+While you can try Node 9, Antora is not currently tested on it.
 
 To check which version of Node you have installed, if any, open PowerShell and type:
 
@@ -39,9 +40,6 @@ If you don't have Chocolatey on your machine, go to <<install-choco,install Choc
 Go directly to <<upgrade-node,upgrade Node>> for instructions.
 
 *If the command returns a Node 8 version*, you're ready to xref:install/install-antora.adoc[install Antora].
-
-CAUTION: While you can use Node 9, we don't recommend it because there are no precompiled binaries for Node 9 of nodegit, a dependency of Antora.
-If you use Node 9, installation will take considerably longer.
 
 [#install-choco]
 == Install Chocolatey

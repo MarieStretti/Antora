@@ -9,7 +9,6 @@ endif::[]
 :uri-home: https://antora.org
 :uri-org: https://gitlab.com/antora
 :uri-repo: {uri-org}/antora
-:uri-board: {uri-repo}/boards
 :uri-issues: {uri-repo}/issues
 :uri-milestones: {uri-repo}/milestones
 :uri-changelog: {uri-repo}/blob/master/CHANGELOG.adoc
@@ -17,7 +16,6 @@ endif::[]
 :uri-docs-site-issues: {uri-org}/docs.antora.org/issues
 :uri-ui-repo: {uri-org}/antora-ui-default
 :uri-ui-issues: {uri-ui-repo}/issues
-:uri-ui-milestones: {uri-ui-repo}/milestones
 
 This roadmap provides the current development direction and schedule for {uri-home}[Antora].
 It is intended for informational purposes only.
@@ -29,9 +27,6 @@ For a detailed list of current development tasks, refer to the core components {
 
 === v1.0.0-beta.x
 
-* [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
-* [ ] Emit graceful error message when repository clone fails {uri-issues}/155[#155]
-* [ ] Change ui.bundle to a category in the playbook schema (ui.bundle.url, ui.bundle.start_path, ui.bundle.snapshot)
 * [ ] Pass down page ID properties to AsciiDoc document {uri-issues}/196[#196]
 * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
 * [ ] Set up API documentation and automatically publish as CI artifact
@@ -81,7 +76,7 @@ They aren't slated imminent development but are reviewed for possible scheduling
 
 == Documentation, Demo, & Docs Site
 
-For current pipeline documentation tasks, see the core components {uri-board}[issue board] and {uri-milestones}[milestones].
+For current pipeline documentation tasks, see the core components {uri-board}[issue board].
 
 For current demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
 
@@ -89,7 +84,6 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === v1.0.0-beta.x
 
-* [x] Document supported platforms and configurations {uri-issues}/197[#197]
 * [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 * [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
 * [ ] Add how to create a partial page {uri-issues}/176[#176]
@@ -141,20 +135,30 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 
-=== v1.0.0-beta.1
+=== v1.0.0-beta.2 (2018-03-13)
+
+* [x] Add netlify redirect facility to redirect producer {uri-issues}/202[#202]
+* [x] Change ui.bundle to a category in the playbook schema (ui.bundle.url, ui.bundle.start_path, ui.bundle.snapshot) {uri-issues}/201[#201]
+* [x] Set up CI build for Windows Server 2016 and Windows 10 {uri-issues}/199[#199]
+* [x] Update CI image to use stretch version of Debian {uri-issues}/198[#198]
+* [x] Document supported platforms and configurations {uri-issues}/197[#197]
+* [x] Emit graceful error message when repository clone fails {uri-issues}/155[#155]
+* [x] Fetch updates to content repositories upon request {uri-issues}/104[#104]
+
+=== v1.0.0-beta.1 (2018-03-07)
 
 * [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
 * [x] Allow content to be aggregated from tags {uri-issues}/117[#117]
 * [x] Pass site start page to UI model which will link to home icon, if set {uri-issues}/193[#193]
 * [x] Document tag key and use case examples
 
-=== 1.0.0-alpha.9
+=== 1.0.0-alpha.9 (2018-03-06)
 
 * [x] Add clone status indicator {uri-issues}/183[#183]
 * [x] Implement page redirect generator component {uri-issues}/182[#182]
 * [x] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
 
-=== 1.0.0-alpha.8
+=== 1.0.0-alpha.8 (2018-02-27)
 
 * [x] Add convertDocuments function to the document converter {uri-issues}/172[#172]
 * [x] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
@@ -162,7 +166,7 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [x] Improve sidebar block styles {uri-ui-issues}/27[UI #27]
 * [x] Document cache {uri-issues}/137[#137]
 
-=== 1.0.0-alpha.7
+=== 1.0.0-alpha.7 (2018-02-20)
 
 * [x] Allow custom Asciidoctor extensions to be registered {uri-issues}/167[#167]
 * [x] Add a require option to the CLI to preload modules {uri-issues}/166[#166]
@@ -178,7 +182,7 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [x] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
 * [x] Document release, versioning, and support policy {uri-issues}/14[#14]
 
-=== 1.0.0-alpha.6
+=== 1.0.0-alpha.6 (2018-02-09)
 
 * [x] Deep page reference that resolves to current page should produce same input as in-page reference {uri-issues}/158[#158]
 * [x] Calculate repository URL correctly {uri-issues}/157[#157]
@@ -205,20 +209,20 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 * [x] _Docs Site:_ Add site and UI keys to production playbook
 * [x] _Docs Site_: Set up automatic deployment to GitLab pages for docs.antora.org {uri-docs-site-issues}/2[#2]
 
-=== 1.0.0-alpha.5
+=== 1.0.0-alpha.5 (2018-02-01)
 
 * [x] Allow start page to be specified for the site {uri-issues}/136[#136]
 * [x] Architect and implement site mapper component {uri-issues}/108[#108], {uri-issues}/109[#109]
 * [x] Resolve paths in playbook relative to playbook file {uri-issues}/105[#105]
 * [x] Set up Antora chat room {uri-issues}/134[#134]
 
-=== 1.0.0-alpha.4
+=== 1.0.0-alpha.4 (2018-01-28)
 
 * [x] Set up CI build on Windows (AppVeyor) {uri-issues}/129[#129]
 * [x] Set up automated releases {uri-issues}/7[#7]
 * [x] Document release process
 
-=== 1.0.0-alpha.3
+=== 1.0.0-alpha.3 (2018-01-28)
 
 * [x] Document CLI commands and site, ui, and to-dir options {uri-issues}/126[#126]
 * [x] Document playbook start_path {uri-issues}/112[#112]

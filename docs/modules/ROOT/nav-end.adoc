@@ -1,3 +1,2 @@
 .Project Steering & Governance
 * xref:project/version-and-lifecycle-policies.adoc[Version & Lifecycle Policies]
-** xref:project/version-and-lifecycle-policies.adoc#ga-and-eol[GA & EOL Dates]
