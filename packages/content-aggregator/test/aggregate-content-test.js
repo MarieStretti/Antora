@@ -1660,7 +1660,7 @@ describe('aggregateContent()', () => {
       server.close()
     })
 
-    it('should throw meaningful error if SSH repository and SSH agent is not running', async () => {
+    it('should throw meaningful error when using SSH repository and SSH agent is not running', async () => {
       const SSH_AUTH_SOCK = process.env.SSH_AUTH_SOCK
       delete process.env.SSH_AUTH_SOCK
       const url = 'git@gitlab.com:invalid-repository.git'
