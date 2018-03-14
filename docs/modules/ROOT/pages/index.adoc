@@ -5,13 +5,14 @@ endif::[]
 // Settings:
 :idprefix:
 :idseparator: -
+:linkattrs:
 :release-version: 1.0.0-beta.2
 // URIs:
 :uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
 
 [caption="RELEASE STATUS"]
 TIP: Antora {release-version} is now available!
-See the {uri-changelog}[CHANGELOG] for details.
+See the {uri-changelog}[CHANGELOG^] for details.
 
 Antora is designed to make it easy for tech writers to publish documentation to the web.
 As a tech writer, you simply author content in xref:asciidoc:index.adoc[AsciiDoc], Antora's preferred markup language, then save those files under a standard project structure in one or more content repositories.
