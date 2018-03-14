@@ -203,7 +203,9 @@ content:
     branches: master
     start_path: docs
 ui:
-  bundle: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
 ----
 
 Notice we're looking for a documentation component under the [.path]_docs/_ subdirectory of the master branch of the Antora git repository.
