@@ -220,10 +220,11 @@ In your terminal, type:
 
  $ antora demo-site.yml
 
-Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to _build/site_.
+Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to [.path]_build/site_.
 
 To view the site, navigate to any HTML page inside the destination folder in your browser.
-Using this example, look for the file link:build/site/antora/component-structure.html[].
+Using this example, look for the file [.path]_build/site/index.html_.
+That file will redirect you to the start page.
 
 ==== Changing Content
 
