@@ -10,7 +10,7 @@ endif::[]
 :uri-nvm: https://github.com/creationix/nvm
 :uri-nvm-install: {uri-nvm}#installation
 // Versions:
-:version-node: 8.9.4
+:version-node: 8.10.0
 
 On this page, you'll learn:
 

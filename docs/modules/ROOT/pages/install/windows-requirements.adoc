@@ -10,7 +10,7 @@ endif::[]
 :uri-choco: https://chocolatey.org
 :uri-nvm-windows: https://github.com/coreybutler/nvm-windows
 // Versions:
-:version-node: 8.9.4
+:version-node: 8.10.0
 
 On this page, you'll learn:
 
