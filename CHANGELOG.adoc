@@ -5,7 +5,7 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== Unreleased
+== 1.0.0-beta.2 (2018-03-13)
 
 === Added
 
@@ -17,12 +17,15 @@ This project utilizes semantic versioning.
 
 * *playbook-builder*: Remap `ui.bundle` key to `ui.bundle.url`
 * *playbook-builder*: Remap `ui.start_path` key to `ui.bundle.start_path`
+* *playbook-builder*: Update description of `urls.html_url_extension_style` key
+* *playbook-builder*: Update description of `asciidoc.attributes` key
 * *content-aggregator*: Only run fetch operation on cached repository if runtime pull option is enabled
 * *content-aggregator*: Move all but first argument to openOrCloneRepository function to option hash
 * *content-aggregator*: Make transfer progress callback asynchronous so progress bar updates don't affect transfer
 * *ui-loader*: Always download UI bundle from URL if runtime pull option is enabled and bundle is marked as a snapshot
 * *ui-loader*: Read bundle URL from `ui.bundle.url` key in playbook
 * *ui-loader*: Read bundle start path from `ui.bundle.start_path` key in playbook
+* *cli*: Rename `--ui-bundle` option to `--ui-bundle-url`
 
 === Fixed
 
