@@ -7,7 +7,7 @@ endif::[]
 :idseparator: -
 :linkattrs:
 // URLs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-anchor: {uri-adoc-manual}/#anchordef
 
 //WARNING: Don't use the `link` macro for referencing sections and IDs in the same page.

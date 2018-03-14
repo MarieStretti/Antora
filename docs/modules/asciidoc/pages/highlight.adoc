@@ -9,7 +9,7 @@ endif::[]
 :linkattrs:
 :hash: #
 // External URIs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-highlight: {uri-adoc-manual}/#custom-styling-with-attributes
 
 On this page, you'll learn:

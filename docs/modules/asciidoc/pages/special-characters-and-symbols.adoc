@@ -8,7 +8,7 @@ endif::[]
 :table-caption!:
 :linkattrs:
 // External URIs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-special-chars: {uri-adoc-manual}/#special-characters
 :uri-symbols: {uri-adoc-manual}/#replacements
 :uri-char-attrs: {uri-adoc-manual}/#charref-attributes-table

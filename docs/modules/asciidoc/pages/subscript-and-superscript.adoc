@@ -8,7 +8,7 @@ endif::[]
 :example-caption!:
 :linkattrs:
 // External URIs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-sub-sup: {uri-adoc-manual}/#subscript-and-superscript
 :uri-stem: {uri-adoc-manual}/#activating-stem-support
 

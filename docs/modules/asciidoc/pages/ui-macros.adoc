@@ -9,7 +9,7 @@ endif::[]
 :example-caption!:
 :linkattrs:
 // External URIs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-button: {uri-adoc-manual}/#ui-buttons
 :uri-keyboard: {uri-adoc-manual}/#keyboard-shortcuts
 :uri-menu: {uri-adoc-manual}/#menu-selections

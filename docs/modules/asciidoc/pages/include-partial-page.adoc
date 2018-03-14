@@ -7,7 +7,7 @@ endif::[]
 :idseparator: -
 :linkattrs:
 // URLs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-include: {uri-adoc-manual}/#include-directive
 
 [#insert-partial]

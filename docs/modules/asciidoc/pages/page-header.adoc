@@ -8,7 +8,7 @@ endif::[]
 :linkattrs:
 :note-caption: Ops Hint
 // URLs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-author: {uri-adoc-manual}/#author-and-email
 :uri-attrs: {uri-adoc-manual}/#attributes
 :uri-builtin-attrs: {uri-adoc-manual}/#builtin-attributes
