@@ -31,6 +31,7 @@ For a detailed list of current development tasks, refer to the core components {
 
 * [ ] Fetch updates to content repositories upon request {uri-issues}/104[#104]
 * [ ] Emit graceful error message when repository clone fails {uri-issues}/155[#155]
+* [ ] Change ui.bundle to a category in the playbook schema (ui.bundle.url, ui.bundle.start_path, ui.bundle.snapshot)
 * [ ] Pass down page ID properties to AsciiDoc document {uri-issues}/196[#196]
 * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
 * [ ] Set up API documentation and automatically publish as CI artifact
