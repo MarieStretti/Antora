@@ -149,7 +149,7 @@ module.exports = {
   },
   urls: {
     html_extension_style: {
-      doc: 'Controls how the URL extension for HTML pages is handled.',
+      doc: 'The user-facing URL extension to use for HTML pages.',
       format: ['default', 'drop', 'indexify'],
       default: 'default',
       arg: 'html-url-extension-style',
