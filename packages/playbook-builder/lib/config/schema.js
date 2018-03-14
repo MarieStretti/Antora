@@ -107,7 +107,7 @@ module.exports = {
   },
   asciidoc: {
     attributes: {
-      doc: 'Global document attributes to set (or unset) on each AsciiDoc document.',
+      doc: 'A document attribute to set on each page. May be specified multiple times.',
       // NOTE format must be 'object' rather than Object to be validated
       format: 'object',
       default: {},
