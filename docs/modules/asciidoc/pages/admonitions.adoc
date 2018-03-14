@@ -7,7 +7,7 @@ endif::[]
 :idseparator: -
 :linkattrs:
 // External URIs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-admonition: {uri-adoc-manual}/#admonition
 
 On this page, you'll learn:

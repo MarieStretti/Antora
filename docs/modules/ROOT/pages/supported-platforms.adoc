@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // URIs
 :uri-repo: https://gitlab.com/antora/antora
 :uri-issues: {uri-repo}/issues
@@ -81,12 +82,12 @@ On subsequent runs, Antora will only reconnect to the remote repositories if the
 
 Antora should operate as designed on common cloud platforms.
 How you provision your cloud instance depends on your workload requirements and remote Git repository sizes.
-If you're running Antora on a cloud platform, we would love to hear about your experience (open a {uri-issues}[new issue] or join us in the {uri-chat-dev}[development channel]).
+If you're running Antora on a cloud platform, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
 
 == Virtual Machine (VM) environments
 
 Antora runs in VirtualBox and should operate as designed in common VM environments such as VMware.
-If you're running Antora in a VM environment, we would love to hear about your experience (open a {uri-issues}[new issue] or join us in the {uri-chat-dev}[development channel]).
+If you're running Antora in a VM environment, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
 
 ////
 OS Release schedule links

@@ -8,7 +8,7 @@ endif::[]
 :linkattrs:
 :example-caption!:
 // External URIs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-mono: {uri-adoc-manual}/#mono
 
 On this page, you'll learn:

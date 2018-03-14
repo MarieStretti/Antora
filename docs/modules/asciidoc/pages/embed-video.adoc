@@ -7,7 +7,7 @@ endif::[]
 :idseparator: -
 :linkattrs:
 // External URLs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
 :uri-hosted-video: {uri-adoc-manual}/#video
 :uri-shared-video: {uri-adoc-manual}/#youtube-and-vimeo-videos

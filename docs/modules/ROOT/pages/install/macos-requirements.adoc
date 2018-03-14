@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // URIs
 :uri-xcode: https://railsapps.github.io/xcode-command-line-tools.html
 :uri-nvm: https://github.com/creationix/nvm
@@ -24,7 +25,7 @@ To install Antora, you need the base build tools for macOS and Node 8.
 
 == Base Build Tools
 
-The {uri-xcode}[Xcode command line tools] are required for installing the nodegit package, a dependency of Antora.
+The {uri-xcode}[Xcode command line tools^] are required for installing the nodegit package, a dependency of Antora.
 This selection of tools provides other useful commands you'll need in your workflow, such as `git`.
 
 You can trigger installation using the following command:
@@ -61,8 +62,8 @@ Now you're ready to xref:install/install-antora.adoc[install Antora].
 [#install-nvm]
 == Install nvm and Node
 
-If your package manager doesn't provide Node, we recommend using the {uri-nvm}[Node Version Manager (nvm)] to manage your Node installations.
-Follow these {uri-nvm-install}[installation instructions] to set up nvm on your machine.
+If your package manager doesn't provide Node, we recommend using the {uri-nvm}[Node Version Manager (nvm)^] to manage your Node installations.
+Follow these {uri-nvm-install}[installation instructions^] to set up nvm on your machine.
 
 TIP: Many CI environments use nvm to install the version of Node used for the build job.
 By using nvm, you can closely align your setup with the environment that is used to generate and publish your production site.

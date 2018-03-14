@@ -5,11 +5,12 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
 // URIs
 :uri-nodegit: http://www.nodegit.org
 :uri-nodegit-dev: http://www.nodegit.org/guides/install/from-source
 
-Antora interfaces with git repositories using {uri-nodegit}[nodegit].
+Antora interfaces with git repositories using {uri-nodegit}[nodegit^].
 During installation of the site generator, Antora pulls in nodegit as a dependency and installs it automatically.
 If your Antora installation fails, nodegit is the most probable culprit.
 
@@ -24,7 +25,7 @@ Error: libcurl-gnutls.so.4: cannot open shared object file: No such file or dire
 ....
 
 This is an open issue in nodegit.
-See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246].
+See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246^].
 
 If you see this error, you either need to create the missing symlink or force nodegit to be recompiled instead of using a precompiled binary.
 If you're using Alpine Linux, you must <<recompile-nodegit,force nodegit to recompile>>.

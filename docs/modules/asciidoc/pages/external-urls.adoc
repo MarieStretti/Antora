@@ -9,7 +9,7 @@ endif::[]
 :linkattrs:
 :underscore: _
 // External URIs
-:uri-adoc-manual: http://asciidoctor.org/docs/user-manual
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-url: {uri-adoc-manual}/#url
 :uri-prevent-subs: {uri-adoc-manual}/#preventing-substitutions
 :uri-inline-pass: {uri-adoc-manual}/#inline-pass-macro-and-explicit-substitutions
@@ -56,7 +56,7 @@ Visit the https://gitter.im/antora/users[Antora chat room].
 .Result
 ====
 Looking for help?
-Visit the https://gitter.im/antora/users[Antora chat room].
+Visit the https://gitter.im/antora/users[Antora chat room^].
 ====
 
 [discrete]
@@ -113,7 +113,7 @@ Assign the URL to it.
 
 .Result
 ====
-{url-peak}[This URL] was complicated, but a page attribute came to our rescue!
+{url-peak}[This URL^] was complicated, but a page attribute came to our rescue!
 ====
 
 === Use the pass macro

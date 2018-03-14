@@ -128,10 +128,6 @@ Images are inserted into a page using the xref:asciidoc:insert-image.adoc[AsciiD
 === Video files
 
 Self-hosted video files are saved in [.path]_assets/videos_ in the same module where the page that references that video is located.
-
-Video format support is dictated by the user's browser and system.
-For a list of the web video formats each browser supports, see the {uri-video-formats}[Mozilla Supported Media Formats documentation^].
-
 Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
 
 === Large files and GitLab / GitHub

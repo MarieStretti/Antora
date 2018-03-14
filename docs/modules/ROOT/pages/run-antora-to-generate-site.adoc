@@ -6,6 +6,7 @@ endif::[]
 :idprefix:
 :idseparator: -
 :experimental:
+:linkattrs:
 
 Assumptions:
 
@@ -105,7 +106,7 @@ If your playbook uses private repositories, you must have an SSH agent running w
 Otherwise, Antora will fail.
 
 The SSH agent allows Antora to authenticate with private repositories on your behalf.
-To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent[Generating a new SSH key and adding it to the ssh-agent].
+To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent[Generating a new SSH key and adding it to the ssh-agent^].
 
 == Local Site Preview
 
