@@ -36,7 +36,7 @@ ui: # <13>
   bundle:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <14>
     snapshot: true
-  start_path: dark # <15>
+    start_path: dark # <15>
   default_layout: base # <16>
   output_dir: _/dark # <17>
 output: # <18>

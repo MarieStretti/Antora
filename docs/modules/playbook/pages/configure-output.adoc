@@ -45,7 +45,7 @@ In the relative `dir` example, the site will be published to a folder named [.pa
 [source,yaml]
 ----
 output:
- dir: ./launch
+  dir: ./launch
 ----
 
 In the absolute `dir` example, the site will be published to [.path]_home/dev/docs-site/beta_ regardless of where the playbook is located.
@@ -54,7 +54,7 @@ In the absolute `dir` example, the site will be published to [.path]_home/dev/do
 [source,yaml]
 ----
 output:
- dir: /home/user/docs-site/beta
+  dir: /home/user/docs-site/beta
 ----
 
 [#output-destinations]
@@ -86,8 +86,8 @@ It's the formal equivalent to specifying the dir key on output.
 [source,yaml]
 ----
 output:
- destinations:
- - provider: fs
+  destinations:
+  - provider: fs
 ----
 
 In this example, the site is published to [.path]_build/site_.
@@ -101,8 +101,8 @@ The `archive` provider publishes a site to a {uri-zip-file-format}[ZIP] file.
 [source,yaml]
 ----
 output:
- destinations:
- - provider: archive
+  destinations:
+  - provider: archive
 ----
 
 In this example, the site is generated as a ZIP file and published to [.path]_build/site.zip_.
@@ -137,9 +137,9 @@ In the relative path example, we're running Antora on a playbook located in a di
 [source,yaml]
 ----
 output:
- destinations:
- - provider: archive
-   path: ./blue.zip
+  destinations:
+  - provider: archive
+    path: ./blue.zip
 ----
 
 Once generation is complete, the site will be published to [.path]_docs-site/blue.zip_.
@@ -150,9 +150,9 @@ In the absolute path example, we can run Antora on a playbook located anywhere o
 [source,yaml]
 ----
 output:
- destinations:
- - provider: archive
-   path: /home/user/projects/launch/blue.zip
+  destinations:
+  - provider: archive
+    path: /home/user/projects/launch/blue.zip
 ----
 
 Once generation is complete, the site will be published to [.path]_/home/user/projects/launch/blue.zip_.
@@ -181,12 +181,12 @@ In this example, we're running Antora on a playbook file in the directory named 
 [source,yaml]
 ----
 output:
- destinations:
- - provider: fs
-   path: ./releases/red
-   clean: true
- - provider: archive
-   path: /home/user/projects/docs-site/blue.zip
+  destinations:
+  - provider: fs
+    path: ./releases/red
+    clean: true
+  - provider: archive
+    path: /home/user/projects/docs-site/blue.zip
 ----
 
 The site published using the `fs` provider to the directory [.path]_tmp/releases/red_.

@@ -171,7 +171,7 @@ In Example 4, Antora generates a documentation site using the playbook [.path]_b
 The site title will be _My Awesome Docs_.
 A directory named [.path]_site_ will be created (relative to the current working directory) and the site files written to it.
 
-.Example 5: Have the generate command downloads updates
+.Example 5: Have the generate command download updates
  $ antora --pull site.yml
 
 After running the generate command the first time, subsequent runs will use cached copies of remote resources by default (effectively running offline).

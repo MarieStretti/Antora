@@ -18,7 +18,7 @@ These keys define the location of the UI and control how it should be processed.
 
 == UI bundle
 
-The url key (`url`) under the `bundle` category defines the location Antora should look to find a UI archive in {uri-zip-file-format}[ZIP] format (i.e., UI bundle).
+The url key (`url`) under the `bundle` subcategory defines the location Antora should look to find a UI archive in {uri-zip-file-format}[ZIP] format (i.e., UI bundle).
 The key accepts a URL or a filesystem path.
 
 [#remote-bundle]
@@ -50,7 +50,7 @@ If the URL of the UI bundle does not change, but the archive it points to does c
 This hint tells Antora to download the UI bundle again when the `--pull` option is passed to the CLI.
 Otherwise, Antora assumes the URL is permanent and does not download it again as long as it exists in the cache.
 
-.Remote UI bundle marked as a snapshot 
+.Remote UI bundle marked as a snapshot
 [source,yaml]
 ----
 ui:
@@ -93,8 +93,8 @@ ui:
 [#start-path]
 === Specify a UI start path
 
-The `start_path` under the `bundle` category is the relative path inside the bundle from where Antora should start reading files.
-This key is useful when you are using a bundle that packages multiple UIs, which might be the case if the UI provides multiple themes (e.g., light, dark, etc).
+The `start_path` under the `bundle` subcategory is the relative path inside the bundle from where Antora should start reading files.
+This key is useful when you are using a bundle that packages multiple UIs, which might be the case if the UI provides multiple themes (e.g., light, dark, etc.).
 
 .Select UI from start_path
 [source,yaml]
