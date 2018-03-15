@@ -7,6 +7,9 @@ endif::[]
 :idseparator: -
 :experimental:
 :linkattrs:
+// URIs
+:uri-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/demo-site.yml
+:uri-ssh-key: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
 Assumptions:
 
@@ -29,32 +32,35 @@ To generate a site with Antora, you need a playbook file that points to at least
 == Antora Demo
 
 You don't need to set up a docs component or create a UI to try out Antora.
-We've set up a playbook file, several content source repositories, and provide a default UI bundle.
-As soon as you've installed Antora, you can use it with the Demo materials and explore its capabilities.
+We've set up a playbook file, several content source repositories, and provided a default UI bundle.
+As soon as you've installed Antora, you can run Antora with the Demo materials and explore its capabilities.
 
 == Choose a Playbook
 
 To produce a documentation site, Antora needs a playbook.
+First, you'll need to create or choose a directory where you'll store the playbook and where the generated site files will be saved (assuming you use the default output configuration).
 
-First, create a new directory for your site and switch to it.
-For the examples on this page, we'll use the demo materials.
+For the examples on this page, we'll use the Demo materials.
 
-Open a terminal and make a new directory named [.path]_demo-site_.
-Then switch into that directory.
-
-....
+. Open a terminal and make a new directory named [.path]_demo-site_.
++
+[source]
 $ mkdir demo-site
+
+. Switch (`cd`) into the directory you just made.
++
+[source]
 $ cd demo-site
-....
 
-Next, create a new playbook file named [.path]_demo-site.yml_ and populate it with the contents of the following source block.
-You can also download this playbook from the demo-site repository.
-
+. Create a new playbook file named [.path]_demo-site.yml_ and populate it with the contents of the following source block.
+You can also download {uri-demo-playbook}[the Demo site playbook] from the Demo repository.
++
 .demo-site.yml
 [source,yaml]
 ----
 site:
   title: Antora Demo Site
+  start_page: demo-component-b::index
 content:
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
@@ -68,17 +74,50 @@ ui:
     snapshot: true
 ----
 
-Save the playbook.
+. Save the playbook.
 
 == Run Antora
 
-To generate the site with the default pipeline, point the `antora` command at your playbook file.
-
+. To generate the site with the default site generator pipeline, point the `antora` command at your playbook file.
 In the terminal, type:
++
+[source]
+demo-site $ antora demo-site.yml
++
+First, Antora will clone the content repositories.
+The cloning progress of each repository is displayed in the terminal.
++
+.Repository cloning progress
+[source]
+----
+[clone] https://gitlab.com/antora/demo/demo-component-a.git [################]
+[clone] https://gitlab.com/antora/demo/demo-component-b.git [################]
+----
++
+Once cloning is complete, Antora converts the AsciiDoc pages to embeddable HTML, wraps the HTML in the UI page templates, then assembles the pages into a site under the destination folder, which defaults to _build/site_.
 
- $ antora demo-site.yml
+. Antora has completed generation when the command prompt (`$`) reappears in the terminal.
 
-Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to _build/site_.
+. Switch into the site folder (`cd`) and list (`ls`) its contents.
++
+[source]
+----
+demo-site $ cd build/site/
+site $ ls
+_  demo-component-a  demo-component-b  index.html  sitemap-demo-component-a.xml sitemap-demo-component-b.xml  sitemap.xml
+----
++
+You should see the first page of your documentation site, in this case [.path]_index.html_.
+
+. In some operating systems, you can open the site directly from the command line by typing `open`, followed by the name of the HTML file.
++
+[source]
+----
+site $ open index.html
+----
++
+Or, you can navigate to an HTML page inside the destination folder in your browser.
+If you've been following along with the Demo materials, look for the file `/demo-site/build/site/index.html`.
 
 [#cache]
 === Cache
@@ -90,7 +129,7 @@ Antora caches two types of resources:
 * downloaded UI bundles
 
 These resources are stored inside the cache directory, organized under the [.path]_content_ and [.path]_ui_ folders, respectively.
-The xref:playbook/configure-runtime.adoc#default-cache[default cache directory] varies by operating system.
+The xref:playbook:configure-runtime.adoc#default-cache[default cache directory] varies by operating system.
 You can override the default cache location using the xref:playbook:configure-runtime.adoc[runtime.cache_dir key] in the playbook, the xref:cli.adoc#cli-options[--cache-dir] CLI option, or the `$ANTORA_CACHE_DIR` environment variable.
 
 If you want to update the cache on subsequent runs, pass the `--pull` switch to the Antora CLI.
@@ -106,14 +145,14 @@ If your playbook uses private repositories, you must have an SSH agent running w
 Otherwise, Antora will fail.
 
 The SSH agent allows Antora to authenticate with private repositories on your behalf.
-To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent[Generating a new SSH key and adding it to the ssh-agent^].
+To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article {uri-ssh-key}[Generating a new SSH key and adding it to the ssh-agent^].
 
 == Local Site Preview
 
 Since Antora generates static sites, *you do not need to publish the site to a server in order to preview it*.
 
 To view the site, navigate to any HTML page inside the destination folder in your browser.
-If your using the Demo, look for the file `/demo-site/build/site/demo-component-b/index.html`.
+If your using the Demo, look for the file `/demo-site/build/site/index.html`.
 
 === Optional: Run local server
 
@@ -123,14 +162,31 @@ You can use the serve package for this purpose.
 
 Install the serve package globally using npm:
 
- $ npm i -g serve
+[source]
+$ npm i -g serve
 
 That puts a command by the same name on your PATH.
-Now launch the web server by pointing it at the location of the generated site:
+Now launch the web server by pointing it at the location of the generated site.
+In the terminal, type `serve build/site`.
+After executing the command, a the local address should be displayed in your terminal.
 
- $ serve build/site
+[source]
+----
+demo-site $ serve build/site
 
-Paste the provided URL into the location bar of your browser and you'll be viewing your site through a local web server.
+   ┌─────────────────────────────────────────────────┐
+   │                                                 │
+   │   Serving!                                      │
+   │                                                 │
+   │   - Local:            http://localhost:5000     │
+   │   - On Your Network:  http://192.168.1.9:5000   │
+   │                                                 │
+   │   Copied local address to clipboard!            │
+   │                                                 │
+   └─────────────────────────────────────────────────┘
+----
+
+Paste the provided URL into the location bar of your browser to view your site through a local web server.
 
 ////
 When generation is complete, you'll see a URL in the terminal that is specific to your machine.
