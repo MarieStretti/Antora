@@ -2,7 +2,7 @@
 * xref:features.adoc[Features]
 * xref:how-antora-works.adoc[How Antora Works]
 * xref:supported-platforms.adoc[Supported Platforms]
-* xref:projects/get-help.adoc[Get Help]
+* xref:project/get-help.adoc[Get Help]
 * System Requirements
 ** xref:install/linux-requirements.adoc[Linux]
 ** xref:install/macos-requirements.adoc[macOS]
