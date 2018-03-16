@@ -153,7 +153,6 @@ Since the navigation file is just content, it can use the same xref system that'
 You can think of a navigation file as a page that doesn't get published.
 And since the file is stored with the content, the xrefs can be contextual, meaning you only have to specify the traits of the target that differ from the current context.
 
-
 == Interchangable UI
 
 *The UI is maintained separately from the content.*
@@ -192,7 +191,7 @@ As you might expect, a page alias is a source reference, which allows Antora to 
 Since not all hosting environments are the same, the facility for performing a redirect isn't either.
 Antora generates the appropriate configuration for the redirect facility that the hosting environment provides, falling back to good old-fashioned static bounce pages if no other mechanism is supported.
 
-== Publish site to multiple destinations (in same build)
+== Publish site to multiple destinations
 
 *Publish anywhere, whether local or remote.*
 
@@ -202,6 +201,7 @@ Antora can help with that.
 Whether the destination is local or remote, and whether the provider is built-in or custom, Antora can stream the content of the generated site there.
 Antora supports as many output streams as you want, which could be a local directory, a local archive, a directory on a remote SSH server, or a web service endpoint like S3, or some combination of these.
 You can be sure Antora gets the files where they need to go for publishing.
+All in a single build.
 
 *No need for a separate step (tool or script) in the pipeline.*
 
@@ -210,7 +210,14 @@ Most site generators write the output to a local directory, which you then have 
 Antora just sends the output directly to the destinations you specify.
 And since the references in the site are not coupled to the publishing environment, you can even preview the site offline by publishing it to a local directory.
 
-== Open architecture
+== Sensible Defaults. Open architecture
+
+*Start with the default.*
+
+Antora offers an opinionated site generator and UI out of the box to get you up and running quickly.
+You interface with the site generator using the `antora` CLI command, which you can install yourself or invoke using the Docker container.
+Just point the command at your playbook and Antora kicks out a multi-component, multi-version documentation site for you.
+Once you've had a chance to migrate your documentation for use with Antora, you can graduate from the defaults and start tailoring Antora to fit your advanced requirements.
 
 //*Tap into the pipeline to incorporate additional content, perform custom processing, or add your own behavior.*
 //*Make Antora yours.*
