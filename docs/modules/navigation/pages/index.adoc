@@ -34,6 +34,19 @@ Antora assembles the registered navigation source files for each version of each
 It then publishes the output to a navigation menu for each component version.
 The behavior and styling of the menu is dictated by the UI bundle that was specified in the playbook.
 
+== Component and component version selector
+
+Antora understands the relationships between components and component versions.
+A reader can select the component and version of that component in order to see its documentation.
+If you're using the default UI, this list is displayed in the component drawer that is accessible at the bottom of any component menu.
+Antora automatically list the components in alphabetical order and the versions in order from the greatest or latest.
+
+== Page version selector
+
+If a page is available in more than one version of a component, a dropdown selector is visible on the page.
+From this selector, the reader can navigate between additional versions of that page.
+Antora automatically populates this selector menu when multiple versions of a page are available.
+
 == What's next?
 
 * xref:create-a-navigation-file.adoc[Set up a new navigation file] and add different types of content to it.

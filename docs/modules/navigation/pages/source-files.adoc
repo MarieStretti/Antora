@@ -9,7 +9,7 @@ endif::[]
 == Navigating to published pages
 
 All of the AsciiDoc files (`.adoc`) in a [.path]_pages_ directory are automatically published by Antora.
-That means readers will be able to find a page using search tools or through cross references you create to it from other pages.
+That means readers can find a page using search tools or through cross references from other pages.
 If you want readers to be able to go to a page using a published navigation menu, then you must add a cross reference to that page in the appropriate navigation source file.
 
 == What is a navigation source file?
