@@ -23,14 +23,14 @@ WARNING: This example is merely for reference and is not intended to be copied.
 site: # <1>
   title: Demo Docs Site # <2>
   url: https://demo.antora.org # <3>
-  start_page: demo-component-b::index # <4>
+  start_page: component-b::index.adoc # <4>
   keys: # <5>
     google_analytics: XX-123456 # <6>
 content: # <7>
   sources: # <8>
-  - url: https://gitlab.com/antora/demo/demo-component-a.git # <9>
-    branches: master # <10>
-    tags: v* # <11>
+  - url: https://gitlab.com/antora/demo/demo-component-b.git # <9>
+    branches: [v1.0, v2.0] # <10>
+    tags: v3.* # <11>
     start_path: docs # <12>
 ui: # <13>
   bundle:
@@ -88,7 +88,7 @@ Learn more:
 [#site-url-key]
 === url
 
-The url key is the base URL of the published site.
+The base URL of the published site.
 
 Learn more:
 
@@ -107,7 +107,7 @@ Learn more:
 [#site-service-keys]
 === keys
 
-The account keys for global site services such document search tools and Google Analytics.
+The account keys for global site services such as document search tools and Google Analytics.
 
 [#site-ga-key]
 ==== google_analytics
@@ -122,14 +122,14 @@ Learn more:
 == Content and sources keys
 
 The `content` category contains an array of source repository specifications.
-These source repository specifications are arranged under the `sources` category.
+These specifications are arranged under the `sources` subcategory.
 
 The sources key contains the list of git repository locations, branch name patterns, and other repository properties that Antora uses when aggregating the site content.
 
 [#sources-url-key]
 === url
 
-The url key tells Antora where to find a documentation component's repository.
+The `url` key tells Antora where to find a documentation component's repository.
 The key accepts any URI that git supports, including a local filesystem path.
 
 Learn more:
@@ -157,7 +157,7 @@ Learn more:
 [#tags-key]
 === tags
 
-The tags key (`tags`) accepts a list of tag name patterns, either as exact names or shell glob patterns.
+The `tags` key (`tags`) accepts a list of tag name patterns, either as exact names or shell glob patterns.
 
 Learn more:
 
@@ -182,7 +182,7 @@ The `ui` category contains keys that specify the location of the UI bundle and h
 [#ui-bundle-key]
 === url
 
-The url key under the `bundle` subcategory accepts a URL or local filesystem path to a UI bundle ZIP archive.
+The `url` key under the `bundle` subcategory accepts a URL or local filesystem path to a UI bundle ZIP archive.
 The filesystem path can be absolute or relative.
 
 Learn more:
@@ -193,7 +193,7 @@ Learn more:
 [#ui-snapshot-key]
 === snapshot
 
-The snapshot key under the `bundle` subcategory indicates whether the URL points to a snapshot (i.e., it doesn't always point to the same artifact).
+The `snapshot` key under the `bundle` subcategory indicates whether the URL points to a snapshot (i.e., it doesn't always point to the same artifact).
 By default, Antora assumes that URL is permanent.
 
 Learn more:
@@ -203,7 +203,7 @@ Learn more:
 [#ui-start-path-key]
 === start_path
 
-The start path key under the `bundle` category is the path inside the bundle from which UI files should be selected.
+The `start_path` key under the `bundle` category is the path inside the bundle from which UI files should be selected.
 When no value is specified, it defaults to the root of the bundle.
 
 Learn more:
@@ -213,7 +213,7 @@ Learn more:
 [#ui-default-layout-key]
 === default_layout
 
-The default layout key applies a layout template to pages that don't specify a page layout.
+The `default_layout` key applies a layout template to pages that don't specify a page layout.
 
 Learn more:
 
@@ -223,7 +223,7 @@ Learn more:
 === output_dir
 
 This key specifies the output directory path where the UI files are written in the published site.
-When the UI `output_dir` isn't specified, the files are published to the [.path]_++_++_ directory relative to the root of the published site.
+When a UI `output_dir` isn't specified, the files are published to the [.path]_++_++_ directory relative to the root of the published site.
 
 Learn more:
 
@@ -251,10 +251,10 @@ For example, if you set `dir` to your computer's home directory and `clean` to t
 [#dir-key]
 === dir
 
-The output dir key specifies the directory to publish the generated site files.
+The output `dir` key specifies the directory to publish the generated site files.
 The key accepts a relative or absolute filesystem path.
 
-If the destinations are unspecified, and the dir key is not set, the value defaults to [.path]_build/site_.
+If the destinations are unspecified, and `dir` is not set, the value defaults to [.path]_build/site_.
 
 IMPORTANT: The dir key overrides the path key of the first `fs` provider in the list of destinations.
 This allows the output directory to be overridden from the CLI using the `--to-dir=<dir>` option.
@@ -313,7 +313,7 @@ The `runtime` category contains keys that manage the console output, resource up
 [#cache-dir-key]
 === cache_dir
 
-The cache dir key specifies the directory where Antora will cache any remote git repositories and UI bundles.
+The `cache_dir` key specifies the directory where Antora will cache any remote git repositories and UI bundles.
 The key accepts a relative or absolute filesystem path.
 If `cache_dir` isn't set, the repositories and UI bundle are saved to the [.path]_antora_ folder under the operating system cache directory for the current user.
 

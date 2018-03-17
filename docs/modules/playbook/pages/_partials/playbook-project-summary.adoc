@@ -2,4 +2,4 @@ A playbook project repository is responsible for generating a documentation site
 It's strictly a _configuration as code_ repository--it does not contain any content.
 Instead, it contains instructions for how to generate one or more sites.
 In essence, it holds the playbook file.
-It may also contain extension code and lock down the softare dependencies.
+It may also contain extension code and lock down the software dependencies.

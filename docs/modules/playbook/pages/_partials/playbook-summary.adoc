@@ -5,12 +5,13 @@ The settings in this file are used to make a playbook, the runtime configuration
 Specifically, a playbook tells Antora:
 
 * [x] What information should be applied to the xref:configure-site.adoc[site globally], such as its title, base URL, and service integrations.
-//* [x] The component which sits at the root of the site (i.e., home or landing page content). (pending feature)
-* [x] Which xref:configure-content-sources.adoc[content repositories, branches, and tags] to feed into the Antora site generator.
-* [x] Which UI bundle to use to control the visual layout, style, and behavior of the pages.
+* [x] The page that sits at the root of the site (i.e., xref:configure-site.adoc#configure-start-page[home or landing page content]).
+* [x] Which xref:configure-content-sources.adoc[content repositories, branches, and tags] to feed into Antora.
+* [x] Which xref:configure-ui.adoc[UI bundle] to use to control the visual layout, style, and behavior of the pages.
 * [x] Where the site should be xref:configure-output.adoc[published and in what format].
+* [x] How and when Antora should handle xref:configure-runtime.adoc[source repository updates, artifact updates, and its cache].
 
-Certain settings from the playbook file can be overridden using CLI options or environment variables, which allows the operation team to tailor the behavior for specific environments, such as production.
+Additionally, certain settings from the playbook file can be overridden using xref:ROOT:cli.adoc[CLI options] or environment variables, which allows the operation team to tailor the behavior for specific environments, such as production.
 
 ////
 Alternative playbook summaries

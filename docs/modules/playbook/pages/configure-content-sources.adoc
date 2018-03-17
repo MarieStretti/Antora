@@ -298,7 +298,7 @@ If the component isn't stored at the root of a content repository, then you need
 [#add-start-path]
 === Specify a start path
 
-The value of the start path key is the repository relative path to the component descriptor file.
+The value of the `start_path` key is the repository relative path to the component descriptor file.
 Let's define the start path value for a repository with the structure shown below.
 
 image::start-path-dir.svg[Start path directory,200]
