@@ -5,6 +5,18 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased (2018-03-xx)
+
+=== Added
+
+* Upgraded the Demo site playbook to use the latest Antora features
+* Created two versions (v1.0 and v2.0) of Demo Component B to demonstrate the component selector drawer and page version selector in the default UI
+
+=== Fixed
+
+* Corrected `site.start_page` and component descriptor `start_page` page IDs in documentation examples
+* Corrected `sources.branches` key YAML syntax; when branch names are in a comma-separated list, the list must be enclosed in square brackets (`[]`)
+
 == 1.0.0-beta.2 (2018-03-13)
 
 === Added

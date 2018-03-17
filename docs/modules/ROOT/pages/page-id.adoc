@@ -28,6 +28,7 @@ From this structure, each location derives unique, reliable coordinates we can u
 
 These source document coordinates are described below.
 
+[#id-version]
 Version::
 The version of the component in which the page lives; often mapped to a repository branch.
 
@@ -38,14 +39,11 @@ Module::
 The content bundle in which the page is grouped; if empty, defaults to ROOT.
 
 Page::
-The path to the page's source file in the module, including any leading topic directories.
-
-Fragment::
-The identifier of an element inside a page, i.e., deep link.
+The path to the page's source file in the module, including any leading topic directories and the [.path]_.adoc_ file extension.
 
 These coordinates are organize in a standard structure to create a unique, fully-qualified page ID.
 
-image::page-id-anatomy-diagram.svg[Page ID anatomy,role=grow-x]
+image::page-id-anatomy-diagram.svg[Page ID anatomy,600]
 
 For example, this is the fully-qualified page ID for this page.
 
@@ -56,7 +54,7 @@ For example, this is the fully-qualified page ID for this page.
 
 A page ID is used in an AsciiDoc cross reference, also called an xref, to link one documentation page to another documentation page.
 
-image::xref-macro-anatomy-diagram.svg[Page reference anatomy,role=grow-x]
+image::xref-macro-anatomy-diagram.svg[Page reference anatomy,780]
 
 Here's how that looks in practice:
 

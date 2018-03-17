@@ -1,7 +1,7 @@
 ////
 TODO: explain how this relates to page versions
 ////
-= Component Versions & Branches
+= Component Versions and Branches
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]

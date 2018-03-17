@@ -84,6 +84,9 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === v1.0.0-beta.x
 
+* [x] Correct branches, start page, and Demo examples in documentation {uri-issues}/205[#205]
+* [x] _Demo_: Update Demo site playbook to use latest Antora features
+* [x] _Demo_: Created two versions (v1.0 and v2.0) of Demo Component B to demonstrate the component selector drawer and page version selector in the default UI
 * [x] Add Getting Help page {uri-issues}/204[#204]
 * [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 * [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
@@ -91,21 +94,20 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Document the `page-` attributes {uri-issues}/177[#177]
 * [ ] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
 * [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
+
+=== v1.x
+
 * [ ] Document sitemap features {uri-issues}/168[#168]
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
 * [ ] Document redirect features
 * [ ] Improve custom publish provider documentation {uri-issues}/164[#164]
-
-=== v1.x
-
 * [ ] Document stem functionality with common UI integration scenarios
 * [ ] Document how to add MathJax integration to the UI
 * [ ] Document how to integrate external Javascript files with the UI
 * [ ] Document maintenance and bug fix priority policies (in repo, on project site)
 * [ ] Document release schedule on project site
 * [ ] Add list of environment variables to usage
-* [ ] _Demo:_ Release initial demo playbook project and components A and B
 
 == UI
 
@@ -113,7 +115,8 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 === v1.0.0-beta.x
 
-* [ ] Residual state causing nav menu to open unexpectedly when switching components {uri-ui-issues}/45[#45]
+* [ ] Unexpected breadcrumb behavior with multiple versions of a component {uri-ui-issues}/46[#46]
+* [x] Residual state causing nav menu to open unexpectedly when switching components {uri-ui-issues}/45[#45]
 * [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
 * [ ] IE 11 fixes
 * [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]

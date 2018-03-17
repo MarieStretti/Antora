@@ -50,4 +50,6 @@ When you talk about Antora on Twitter, you can mention the official account for 
 
 You can also use the {uri-twitter-hash}[#antora^] hashtag to promote the project or discover other people talking about it.
 
+== Code and Content Contributions
+
 If you're interested in helping the maintainers improve the project, then check out the {uri-contributing}[Antora contributing guidelines^].
