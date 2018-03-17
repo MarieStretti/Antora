@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:example-caption!:
 :linkattrs:
 // External URIs
 :uri-adoc-manual: https://asciidoctor.org/docs/user-manual
@@ -20,7 +21,7 @@ Task lists are xref:ordered-and-unordered-lists#unordered[unordered lists] that 
 
 Here’s an example:
 
-.Task list
+.Task list syntax
 [source,asciidoc]
 ----
 * [*] checked
@@ -29,11 +30,11 @@ Here’s an example:
 ----
 
 .Result
---
+====
 * [*] checked
 * [x] also checked
 * [ ] not checked
---
+====
 
 [discrete]
 ==== Asciidoctor resources

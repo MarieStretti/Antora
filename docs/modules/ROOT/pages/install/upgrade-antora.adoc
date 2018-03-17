@@ -67,7 +67,7 @@ If it's installed globally, the command to upgrade it is:
 
 If you installed the site generator in a playbook project, update the version number of the site generator in the package file.
 
-. Switch to the playbook project directory
+. Switch to the playbook project directory.
 
 . Open the [.path]_package.json_ file.
 

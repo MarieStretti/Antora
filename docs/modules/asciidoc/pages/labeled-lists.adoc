@@ -5,6 +5,7 @@ endif::[]
 // Settings
 :idprefix:
 :idseparator: -
+:example-caption!:
 :linkattrs:
 // External URIs
 :uri-adoc-manual: https://asciidoctor.org/docs/user-manual

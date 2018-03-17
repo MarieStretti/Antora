@@ -23,24 +23,27 @@ Antora is comprehensively tested on these platform.
 |Supported Platform |Supported Version(s)
 
 |Alpine Linux
-|* 3.6
-* 3.7
+|[%hardbreaks]
+3.6
+3.7
 
 |Debian Linux
 |9.3
 
 |Fedora Linux
-|* 26
-* 27
+|[%hardbreaks]
+26
+27
 
 |macOS
 |High Sierra
 
 |Microsoft
-|* Windows 8.1
-* Windows 10
-* Windows Server 2012 R2
-* Windows Server 2016
+|[%hardbreaks]
+Windows 8.1
+Windows 10
+Windows Server 2012 R2
+Windows Server 2016
 
 |Chrome
 |Latest stable version
@@ -65,7 +68,7 @@ Your hardware requirements will depend primarily on the size of the remote Git r
 The first time Antora runs, it fetches and clones all of the remote Git repositories specified in a playbook.
 The speed of this operation is dictated by the size of the remote repositories, environment input/output parameters, and network performance.
 After the initial run, Antora caches the repositories locally.
-On subsequent runs, Antora will only reconnect to the remote repositories if the `pull` key is on or if the local cache is removed.
+On subsequent runs, Antora will only reconnect to the remote repositories if the xref:cli.adoc#cli-options[`pull` key is on] or if the xref:playbook:configure-runtime.adoc[local cache is removed].
 // Add xref to pull key when documentation is available
 
 [cols="5s,70",width="75%"]
