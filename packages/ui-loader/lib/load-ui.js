@@ -1,7 +1,7 @@
 'use strict'
 
 const collectBuffer = require('bl')
-const crypto = require('crypto')
+const { createHash } = require('crypto')
 const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
@@ -101,7 +101,7 @@ function isUrl (string) {
 }
 
 function sha1 (string) {
-  const shasum = crypto.createHash('sha1')
+  const shasum = createHash('sha1')
   shasum.update(string)
   return shasum.digest('hex')
 }
