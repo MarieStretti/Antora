@@ -34,6 +34,7 @@ To generate a site with Antora, you need a playbook file that points to at least
 You don't need to set up a docs component or create a UI to try out Antora.
 We've set up a playbook file, several content source repositories, and provided a default UI bundle.
 As soon as you've installed Antora, you can run Antora with the Demo materials and explore its capabilities.
+The instructions and examples on this page will show you how to operate Antora with the Demo materials.
 
 == Choose a Playbook
 
@@ -52,7 +53,7 @@ $ mkdir demo-site
 [source]
 $ cd demo-site
 
-. Create a new playbook file named [.path]_demo-site.yml_ and populate it with the contents of the following source block.
+. Using your preferred text editor or IDE, create a new playbook file named [.path]_demo-site.yml_ and populate it with the contents of the following example.
 You can also download {uri-demo-playbook}[the Demo site playbook] from the Demo repository.
 +
 .demo-site.yml
@@ -60,13 +61,14 @@ You can also download {uri-demo-playbook}[the Demo site playbook] from the Demo 
 ----
 site:
   title: Antora Demo Site
-  start_page: demo-component-b::index
+  url: https://demo.antora.org
+  start_page: component-b::index
 content:
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches: master
   - url: https://gitlab.com/antora/demo/demo-component-b.git
-    branches: master
+    branches: [v2.0, v1.0]
     start_path: docs
 ui:
   bundle:
@@ -74,7 +76,7 @@ ui:
     snapshot: true
 ----
 
-. Save the playbook.
+. Save the playbook as [.path]_demo-site.yml_ in the [.path]_demo-site_ directory you made in Step 1.
 
 == Run Antora
 
@@ -104,7 +106,7 @@ Once cloning is complete, Antora converts the AsciiDoc pages to embeddable HTML,
 ----
 demo-site $ cd build/site/
 site $ ls
-_  demo-component-a  demo-component-b  index.html  sitemap-demo-component-a.xml sitemap-demo-component-b.xml  sitemap.xml
+_  component-a  component-b  index.html  sitemap-component-a.xml sitemap-component-b.xml  sitemap.xml
 ----
 +
 You should see the first page of your documentation site, in this case [.path]_index.html_.

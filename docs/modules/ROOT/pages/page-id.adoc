@@ -39,10 +39,7 @@ Module::
 The content bundle in which the page is grouped; if empty, defaults to ROOT.
 
 Page::
-The path to the page's source file in the module, including any leading topic directories.
-
-Fragment::
-The identifier of an element inside a page, i.e., deep link.
+The path to the page's source file in the module, including any leading topic directories and the [.path]_.adoc_ file extension.
 
 These coordinates are organize in a standard structure to create a unique, fully-qualified page ID.
 

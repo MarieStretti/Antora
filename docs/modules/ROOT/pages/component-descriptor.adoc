@@ -56,28 +56,32 @@ nav: # <5>
 [#name-key]
 === name
 
-The value of the name key is the component name that is used when the component is referenced in a xref:asciidoc:page-to-page-xref.adoc#page-id-cname-def[cross reference].
+The value of the `name` key is the component name that is used when the component is referenced in a xref:asciidoc:page-to-page-xref.adoc#page-id-cname-def[cross reference].
 The value can contain letter, number, underscore (`+_+`), hyphen (`-`), and period (`.`) characters.
+The component name *does not* have to be the same as the name of the repository it lives in.
 
 === title
 
-The value of the title key is the display name for the component.
-It's used anywhere in the UI that the component (or its super type, domain) is identified.
+The value of the `title` key is the display name for the component.
+It's used anywhere in the UI that the component is identified.
+//(or its super type, domain)
 This includes:
 
-* domain selector menu
-* domain selector drawer
+* component navigation menu
+* component selector drawer
 * first breadcrumb position
+
+The component title *does not* have to be the same as the component name.
 
 [#version-key]
 === version
 
-The value of the version key is both the display name and version coordinate.
+The value of the `version` key is both the display name and version coordinate.
 This includes:
 
 * page ID and cross references (xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version@])
-* domain selector menu
-* domain selector drawer
+* component selector menu
+* component selector drawer
 * page version selector
 * edit page URI (not visible)
 
@@ -89,15 +93,18 @@ If the value starts with a number, it must be contained within a set of single q
 * v2.0-beta
 * latest
 
+The version key value isn't related to a xref:component-versions.adoc[repository branch name] in any way.
+Instead, the value should be useable by the documentation writers and useful to the readers.
+
 [#start-page-key]
 === start_page
 
-By default, Antora looks for a file named [.path]_index.adoc_ in the ROOT module of each component to use as the start page for that component and version (e.g., \https://example.org/component-name/index.html).
+By default, Antora looks for a file named [.path]_index.adoc_ in the ROOT module of each component to use as the start page for that component and version (e.g., _\https://example.org/component-name/index.html_).
 
 If the component doesn't have an [.path]_index.adoc_ page in the ROOT module, you must specify a start page explicitly in the component descriptor.
 The `start_page` key accepts the xref:page-id.adoc[page ID structure] and must point to an existing page in the same component (e.g., `ROOT:home.adoc`).
 
-If a start page isn't specified, and the component does not have a ROOT module with an [.path]_index.adoc_ page, the reader will be directed to a 404 page when navigating to that component from in the component drawer in the sidebar on any page.
+If a start page isn't specified, and the component does not have a ROOT module with an [.path]_index.adoc_ page, the reader will be directed to a 404 page when navigating to that component from the component drawer in the sidebar on any page.
 
 .Start page value examples
 [source,yaml]
