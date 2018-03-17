@@ -43,7 +43,7 @@ The path to the page's source file in the module, including any leading topic di
 
 These coordinates are organize in a standard structure to create a unique, fully-qualified page ID.
 
-image::page-id-anatomy-diagram.svg[Page ID anatomy,role=grow-x]
+image::page-id-anatomy-diagram.svg[Page ID anatomy,600]
 
 For example, this is the fully-qualified page ID for this page.
 
@@ -54,7 +54,7 @@ For example, this is the fully-qualified page ID for this page.
 
 A page ID is used in an AsciiDoc cross reference, also called an xref, to link one documentation page to another documentation page.
 
-image::xref-macro-anatomy-diagram.svg[Page reference anatomy,role=grow-x]
+image::xref-macro-anatomy-diagram.svg[Page reference anatomy,780]
 
 Here's how that looks in practice:
 
