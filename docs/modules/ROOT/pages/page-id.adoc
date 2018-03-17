@@ -28,6 +28,7 @@ From this structure, each location derives unique, reliable coordinates we can u
 
 These source document coordinates are described below.
 
+[#id-version]
 Version::
 The version of the component in which the page lives; often mapped to a repository branch.
 
