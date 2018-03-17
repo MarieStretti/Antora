@@ -606,6 +606,55 @@ describe('aggregateContent()', () => {
   })
 
   describe('aggregate files from repository', () => {
+    describe('should aggregate all files', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const expectedPaths = [
+          'README.adoc',
+          'modules/ROOT/_attributes.adoc',
+          'modules/ROOT/pages/_attributes.adoc',
+          'modules/ROOT/pages/page-one.adoc',
+          'modules/ROOT/pages/page-two.adoc',
+          'modules/ROOT/pages/topic-a/_attributes.adoc',
+          'modules/ROOT/pages/topic-a/page-three.adoc',
+        ]
+        const files = componentVersion.files
+        expect(files).to.have.lengthOf(expectedPaths.length)
+        const paths = files.map((file) => file.path)
+        const relatives = files.map((file) => file.relative)
+        expect(paths).to.have.members(expectedPaths)
+        expect(relatives).to.have.members(expectedPaths)
+        files.forEach((file) => expect(file.stat.isFile()).to.be.true())
+      })
+    })
+
+    describe('should populate files with correct contents', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+        expect(pageOne.contents.toString()).to.equal(
+          heredoc`
+          = Page One
+          ifndef::env-site,env-github[]
+          include::_attributes.adoc[]
+          endif::[]
+          :keywords: foo, bar
+
+          Hey World!
+          ` + '\n'
+        )
+      })
+    })
+
     describe('should clone repository into cache folder', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithFiles(repoBuilder)
@@ -700,55 +749,6 @@ describe('aggregateContent()', () => {
       })
     })
 
-    describe('should aggregate all files', () => {
-      testAll(async (repoBuilder) => {
-        await initRepoWithFiles(repoBuilder)
-        playbookSpec.content.sources.push({ url: repoBuilder.url })
-        const aggregate = await aggregateContent(playbookSpec)
-        expect(aggregate).to.have.lengthOf(1)
-        const componentVersion = aggregate[0]
-        expect(componentVersion).to.include({ name: 'the-component', version: 'v1.2.3' })
-        const expectedPaths = [
-          'README.adoc',
-          'modules/ROOT/_attributes.adoc',
-          'modules/ROOT/pages/_attributes.adoc',
-          'modules/ROOT/pages/page-one.adoc',
-          'modules/ROOT/pages/page-two.adoc',
-          'modules/ROOT/pages/topic-a/_attributes.adoc',
-          'modules/ROOT/pages/topic-a/page-three.adoc',
-        ]
-        const files = componentVersion.files
-        expect(files).to.have.lengthOf(expectedPaths.length)
-        const paths = files.map((file) => file.path)
-        const relatives = files.map((file) => file.relative)
-        expect(paths).to.have.members(expectedPaths)
-        expect(relatives).to.have.members(expectedPaths)
-        files.forEach((file) => expect(file.stat.isFile()).to.be.true())
-      })
-    })
-
-    describe('should populate files with correct contents', () => {
-      testAll(async (repoBuilder) => {
-        await initRepoWithFiles(repoBuilder)
-        playbookSpec.content.sources.push({ url: repoBuilder.url })
-        const aggregate = await aggregateContent(playbookSpec)
-        expect(aggregate).to.have.lengthOf(1)
-        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
-        const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
-        expect(pageOne.contents.toString()).to.equal(
-          heredoc`
-          = Page One
-          ifndef::env-site,env-github[]
-          include::_attributes.adoc[]
-          endif::[]
-          :keywords: foo, bar
-
-          Hey World!
-          ` + '\n'
-        )
-      })
-    })
-
     describe('should skip dotfiles, extensionless files, and directories that contain a dot', () => {
       testAll(async (repoBuilder) => {
         const fixturePaths = [
@@ -778,7 +778,7 @@ describe('aggregateContent()', () => {
             // the file is allowed, just make sure the directory isn't stored
             path_ !== 'modules/ROOT/pages/ignore.me/page.adoc'
         )
-        await initRepoWithFiles(repoBuilder, {}, undefined, async () => repoBuilder.addFilesFromFixture(fixturePaths))
+        await initRepoWithFiles(repoBuilder, {}, undefined, () => repoBuilder.addFilesFromFixture(fixturePaths))
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
@@ -797,7 +797,7 @@ describe('aggregateContent()', () => {
           'modules/ROOT/pages/_attributes.adoc',
           'modules/ROOT/pages/page-one.adoc',
         ]
-        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths, async () =>
+        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths, () =>
           repoBuilder.addFilesFromFixture('should-be-ignored.adoc', '', false)
         )
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
@@ -823,7 +823,7 @@ describe('aggregateContent()', () => {
           'modules/ROOT/pages/_attributes.adoc',
           'modules/ROOT/pages/page-one.adoc',
         ]
-        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths, async () =>
+        await initRepoWithFiles(repoBuilder, componentDesc, fixturePaths, () =>
           repoBuilder.addFilesFromFixture('should-be-ignored.adoc', '', false)
         )
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
@@ -1033,6 +1033,40 @@ describe('aggregateContent()', () => {
         const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
         expect(pageTwo.src.origin.url).to.equal(repoBuilderB.url)
       }, 2)
+    })
+
+    describe('should reuse repository if url occurs multiple times in content sources', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithFiles(repoBuilder, { name: 'the-component', version: 'master' }, [], () =>
+          repoBuilder
+            .checkoutBranch('v1.0')
+            .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: '1.0' }))
+            .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-one.adoc'))
+            .then(() => repoBuilder.checkoutBranch('v2.0'))
+            .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: '2.0' }))
+            .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-two.adoc'))
+            .then(() => repoBuilder.checkoutBranch('master'))
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v1.0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v2.0' })
+        const aggregate = await aggregateContent(playbookSpec)
+        if (repoBuilder.remote) {
+          expect(CONTENT_CACHE_DIR)
+            .to.be.a.directory()
+            .and.subDirs.have.lengthOf(1)
+          expect(aggregate).to.have.lengthOf(2)
+        }
+        expect(aggregate[0]).to.include({ name: 'the-component', version: '1.0' })
+        let pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+        expect(pageOne).to.exist()
+        let pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
+        expect(pageTwo).to.not.exist()
+        expect(aggregate[1]).to.include({ name: 'the-component', version: '2.0' })
+        pageOne = aggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+        expect(pageOne).to.exist()
+        pageTwo = aggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
+        expect(pageTwo).to.exist()
+      })
     })
 
     describe('should merge component properties for same component version', () => {
@@ -1326,7 +1360,7 @@ describe('aggregateContent()', () => {
     await initRepoWithFiles(remoteRepoBuilder, { repoName: 'the-component-remote' })
 
     const localRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true })
-    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, async () =>
+    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, () =>
       localRepoBuilder
         .addToWorktree('modules/ROOT/pages/page-one.adoc', '= Local Modification')
         .then(() => localRepoBuilder.commitAll('make modification'))
@@ -1352,12 +1386,12 @@ describe('aggregateContent()', () => {
       version: 'v2.0',
     }
     // NOTE master branch in remote will get shadowed
-    await initRepoWithFiles(remoteRepoBuilder, remoteComponentDesc, undefined, async () =>
+    await initRepoWithFiles(remoteRepoBuilder, remoteComponentDesc, undefined, () =>
       remoteRepoBuilder.checkoutBranch('v2.0')
     )
 
     const localRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
-    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, async () =>
+    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, () =>
       localRepoBuilder.addRemote('upstream', remoteRepoBuilder.url)
     )
 
@@ -1376,12 +1410,12 @@ describe('aggregateContent()', () => {
       name: 'the-component',
       version: 'v2.0',
     }
-    await initRepoWithFiles(remoteRepoBuilder, remoteComponentDesc, undefined, async () =>
+    await initRepoWithFiles(remoteRepoBuilder, remoteComponentDesc, undefined, () =>
       remoteRepoBuilder.checkoutBranch('v2.0')
     )
 
     const localRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
-    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, async () =>
+    await initRepoWithFiles(localRepoBuilder, { repoName: 'the-component-local' }, undefined, () =>
       localRepoBuilder.addRemote('upstream', remoteRepoBuilder.url)
     )
 

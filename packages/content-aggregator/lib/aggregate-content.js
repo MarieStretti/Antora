@@ -50,7 +50,7 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  * @returns {Object} A map of files organized by component version.
  */
 async function aggregateContent (playbook) {
-  const playbookDir = playbook.dir || '.'
+  const startDir = playbook.dir || '.'
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
   const { cacheDir, pull, silent, quiet } = playbook.runtime
   const progress = {}
@@ -67,102 +67,74 @@ async function aggregateContent (playbook) {
       )
     )
   }
-  return ensureCacheDir(cacheDir, playbookDir).then((cacheAbsDir) =>
-    Promise.all(
-      sources.map(async (source) => {
-        const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(source.url, {
-          pull,
-          remoteName: source.remote,
-          startDir: playbookDir,
-          cacheDir: cacheAbsDir,
-          progress,
-        })
-        const branchPatterns = source.branches || defaultBranches
-        const tagPatterns = source.tags || defaultTags
-        const componentVersions = (await selectRefs(repository, branchPatterns, tagPatterns, isBare, remoteName)).map(
-          async ({ ref, name: refName, type: refType, isHead }) => {
-            let startPath = source.startPath || ''
-            if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
-            const worktreePath =
-              isHead && !(isRemote || isBare) ? (startPath ? ospath.join(repoPath, startPath) : repoPath) : undefined
-            const files = worktreePath
-              ? await readFilesFromWorktree(worktreePath)
-              : await readFilesFromGitTree(repository, ref, startPath)
-            const componentVersion = loadComponentDescriptor(files, source.url)
-            const origin = computeOrigin(url, refName, refType, startPath, worktreePath)
-            componentVersion.files = files.map((file) => assignFileProperties(file, origin))
-            return componentVersion
-          }
+  const actualCacheDir = await ensureCacheDir(cacheDir, startDir)
+  return Promise.all(
+    _.map(_.groupBy(sources, 'url'), (sources, url) =>
+      loadRepo(url, { pull, startDir, cacheDir: actualCacheDir, progress }).then(({ repo, repoPath, isRemote }) =>
+        Promise.all(
+          sources.map((source) => {
+            const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
+            // NOTE if repository is in cache, we can assume the remote name is origin
+            const remoteName = isRemote ? 'origin' : source.remote || 'origin'
+            return collectComponentVersions(source, repo, repoPath, isRemote, remoteName, refPatterns)
+          })
         )
-        // nodegit repositories must be manually closed
-        return Promise.all(componentVersions)
-          .then((resolvedValue) => {
-            repository.free()
-            return resolvedValue
+          .then((componentVersions) => {
+            repo.free()
+            return componentVersions
           })
           .catch((err) => {
-            repository.free()
+            repo.free()
             throw err
           })
-      })
+      )
     )
-      .then((componentVersions) => buildAggregate(componentVersions))
-      .catch((err) => {
-        progress.manager && progress.manager.terminate()
-        throw err
-      })
   )
+    .then((allComponentVersions) => buildAggregate(allComponentVersions))
+    .catch((err) => {
+      progress.manager && progress.manager.terminate()
+      throw err
+    })
 }
 
-async function openOrCloneRepository (repoUrl, opts) {
+async function loadRepo (url, opts) {
   let isBare
   let isRemote
-  let remoteName
+  let repo
   let repoPath
-  let repository
-  let url
 
-  if (~repoUrl.indexOf(':') && GIT_URI_DETECTOR_RX.test(repoUrl)) {
-    isBare = true
-    isRemote = true
-    // NOTE if repository is in cache, we can assume the remote name is origin
-    remoteName = 'origin'
-    repoPath = ospath.join(opts.cacheDir, generateLocalFolderName(repoUrl))
-    url = repoUrl
-  } else if (directoryExists((repoPath = expandPath(repoUrl, '~+', opts.startDir)))) {
+  if (~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url)) {
+    isBare = isRemote = true
+    repoPath = ospath.join(opts.cacheDir, generateLocalFolderName(url))
+  } else if (directoryExists((repoPath = expandPath(url, '~+', opts.startDir)))) {
     isBare = !directoryExists(ospath.join(repoPath, '.git'))
     isRemote = false
-    remoteName = opts.remoteName || 'origin'
   } else {
     throw new Error(
-      'Local content source does not exist: ' +
-        repoPath +
-        (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+      `Local content source does not exist: ${repoPath}${url !== repoPath ? ' (resolved from url: ' + url + ')' : ''}`
     )
   }
 
   try {
     if (isBare) {
-      repository = await git.Repository.openBare(repoPath)
+      repo = await git.Repository.openBare(repoPath)
       if (isRemote && opts.pull) {
         const progress = opts.progress
-        const fetchOpts = getFetchOptions(progress, repoUrl, 'fetch')
+        const fetchOpts = getFetchOptions(progress, url, 'fetch')
         // fetch new refs and delete obsolete local ones
-        await repository.fetch(remoteName, Object.assign({ prune: 1 }, fetchOpts)).then((repo) => {
-          if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
-          return repo
-        })
+        await repo.fetch('origin', Object.assign({ prune: 1 }, fetchOpts))
+        if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
       }
     } else {
-      repository = await git.Repository.open(repoPath)
+      repo = await git.Repository.open(repoPath)
     }
   } catch (e) {
     if (isRemote) {
       const progress = opts.progress
-      const fetchOpts = getFetchOptions(progress, repoUrl, 'clone')
-      repository = await fs
+      const fetchOpts = getFetchOptions(progress, url, 'clone')
+      repo = await fs
         .remove(repoPath)
-        .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts }))
+        .then(() => git.Clone.clone(url, repoPath, { bare: 1, fetchOpts }))
         .catch((err) => {
           let msg = err.message
           if (~msg.indexOf('invalid cred') || ~msg.indexOf('SSH credentials') || ~msg.indexOf('status code: 401')) {
@@ -174,7 +146,7 @@ async function openOrCloneRepository (repoUrl, opts) {
           } else {
             msg = msg.replace(/\.?\s*$/, '')
           }
-          throw new Error(msg + ': ' + repoUrl)
+          throw new Error(msg + ': ' + url)
         })
         .then((repo) =>
           repo.getCurrentBranch().then((ref) => {
@@ -187,23 +159,45 @@ async function openOrCloneRepository (repoUrl, opts) {
         )
     } else {
       throw new Error(
-        'Local content source must be a git repository: ' +
-          repoPath +
-          (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+        `Local content source must be a git repository: ${repoPath}${
+          url !== repoPath ? ' (resolved from url: ' + url + ')' : ''
+        }`
       )
     }
   }
+  // NOTE return the computed repoPath since Repository API doesn't return same value
+  return { repo, repoPath, isRemote }
+}
 
-  if (!url) {
-    try {
-      url = (await repository.getRemote(remoteName)).url()
-    } catch (e) {
-      // Q: should we make this a file URI?
-      url = repoPath
-    }
-  }
+async function collectComponentVersions (source, repo, repoPath, isRemote, remoteName, refPatterns) {
+  return selectRefs(repo, remoteName, refPatterns).then((refs) =>
+    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, repoPath, isRemote, remoteName, ref)))
+  )
+}
 
-  return { repository, repoPath, url, remoteName, isRemote, isBare }
+async function populateComponentVersion (source, repo, repoPath, isRemote, remoteName, ref) {
+  let startPath = source.startPath || ''
+  if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
+  // Q: should worktreePath be passed in?
+  const worktreePath = ref.isHead && !(isRemote || repo.isBare()) ? ospath.join(repoPath, startPath) : undefined
+  const files = worktreePath
+    ? await readFilesFromWorktree(worktreePath)
+    : await readFilesFromGitTree(repo, ref.obj, startPath)
+  const componentVersion = loadComponentDescriptor(files, source.url)
+  const url = isRemote ? source.url : await resolveRepoUrl(repo, repoPath, remoteName)
+  const origin = computeOrigin(url, ref.name, ref.type, startPath, worktreePath)
+  componentVersion.files = files.map((file) => assignFileProperties(file, origin))
+  return componentVersion
+}
+
+async function resolveRepoUrl (repo, repoPath, remoteName) {
+  return (
+    repo
+      .getRemote(remoteName)
+      .then((remote) => remote.url())
+      // Q: should we turn this into a file URI?
+      .catch(() => repoPath)
+  )
 }
 
 /**
@@ -334,7 +328,10 @@ function completeProgress (progressBar) {
   if (remaining) progressBar.tick(remaining)
 }
 
-async function selectRefs (repo, branchPatterns, tagPatterns, isBare, remote) {
+async function selectRefs (repo, remote, refPatterns) {
+  let { branches: branchPatterns, tags: tagPatterns } = refPatterns
+  // Q: should we pass isBare?
+  let isBare = !!repo.isBare()
   if (branchPatterns) {
     if (branchPatterns === 'HEAD' || branchPatterns === '.') {
       branchPatterns = [(await repo.getCurrentBranch()).shorthand()]
@@ -361,17 +358,17 @@ async function selectRefs (repo, branchPatterns, tagPatterns, isBare, remote) {
       let refData
       if (ref.isTag()) {
         if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
-          accum.push({ ref, name, type: 'tag' })
+          accum.push({ obj: ref, name, type: 'tag' })
         }
         return accum
       } else if (!branchPatterns) {
         return accum
       } else if ((segments = ref.name().split('/'))[1] === 'heads') {
         name = ref.shorthand()
-        refData = { ref, name, type: 'branch', isHead: !!ref.isHead() }
+        refData = { obj: ref, name, type: 'branch', isHead: !!ref.isHead() }
       } else if (segments[1] === 'remotes' && segments[2] === remote) {
         name = segments.slice(3).join('/')
-        refData = { ref, name, type: 'branch', remote }
+        refData = { obj: ref, name, type: 'branch', remote }
       } else {
         return accum
       }
@@ -526,7 +523,7 @@ function computeOrigin (url, refName, refType, startPath, worktreePath = undefin
 
 function buildAggregate (componentVersions) {
   return _(componentVersions)
-    .flatten()
+    .flattenDepth(2)
     .groupBy(({ name, version }) => `${version}@${name}`)
     .map((componentVersions, id) => {
       const component = _(componentVersions)
