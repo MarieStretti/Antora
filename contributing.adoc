@@ -192,11 +192,6 @@ If it fails, update your MR once you've corrected any problems.
 .. The maintainer may decide to squash review commits, or request for you to do so.
 Only original work is guaranteed to be preserved in the commit history.
 
-.Future: Commit message linting
-****
-We're experimenting with the wording and structure of our commit messages and plan to implement a set of commit message rules in the future.
-****
-
 [#code-workflow]
 == Coding Requirements and Workflow
 
