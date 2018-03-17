@@ -18,7 +18,7 @@ These keys define the location of the documentation component repositories (`url
 
 == URL key
 
-The url key tells Antora where to find a documentation component's repository.
+The sources URL key (`url`) tells Antora where to find a documentation component's repository.
 You must provide a value for each documentation component repository you want added to your site.
 The key accepts any URI that git supports, including a local filesystem path.
 
@@ -112,7 +112,7 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-b.git
 ----
 
-The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, `branches: master, v*`.
+The result of the example above is the same as if you specified the master branch and all of the version branches explicitly, `branches: [master, v*]`.
 
 If you want to modify the default branch filter, simply assign a value to the `branches` key directly on the `content` category.
 
@@ -131,23 +131,35 @@ The new default branch filter will be applied to all entries that do not themsel
 [#separate-branch-names]
 === Separate branches values using commas or markers
 
-Branch names can be separated by commas (`,`) and listed on the same line as `branches`.
+Branch names can be separated by commas (`,`) and listed on the same line as `branches` as long as the values are inside a set of square brackets (`[]`) per YAML rules.
+If there is only one branches value, it doesn't need to be enclosed in square brackets (`branches: v1.0`).
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+    branches: [v1.0, v2.0] # <1>
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+    branches: master # <2>
+
+----
+<1> Comma-separated branches values
+<2> A single branches value doesn't need to be enclosed in square brackets
+
 Alternatively, each branch name can be specified on its own line, using a hyphen (`-`) list marker (per YAML rules), and listed beneath the branches key.
 
 [source,yaml]
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a.git
-    branches: master, v1.* # <1>
-  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
     branches:
-    - v1.* # <2>
+    - v1.* # <1>
     - v2.0.0
     - v2.1.*
 ----
-<1> Comma-separated branches values
-<2> Marker-separated branches values
+<1> Marker-separated branches values
 
 [#exact-branch]
 === Specify branches by name
@@ -158,14 +170,15 @@ Branches can be specified by their exact name.
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
     branches:
+    - issue-27-sneaky-chinchilla
     - master
-    - '1.0.0'
-    - v2.0.0
+    - '1.0'
+    - v2.0
 ----
 
-A branch name that begins with a number, like `1.0.0` must be enclosed in single quotes (`+'+`), per YAML rules.
+A branch name that begins with a number, like `1.0`, must be enclosed in single quotes (`+'+`), per YAML rules.
 
 [#current-branch]
 === Using the current branch
@@ -187,11 +200,11 @@ All the same rules apply.
 [#glob-branch]
 === Specify branches by glob pattern
 
-Branches can be specified by shell glob patterns such as as `v3.*`.
+Branches can be specified by shell glob patterns such as as `v3.4.*`.
 If the pattern starts with a `!` character, then it is negated (i.e., the matches are excluded).
 This is how you can deselect branches that were matched by a previous glob.
 
-For example, let's say you want to include all `1.x` versions of the Component A except for `1.7`.
+For example, let's say you want to include all `1.x` versions of the Component B except for `1.7`.
 You'd enter the following branches values into the playbook:
 
 .Glob branch patterns
@@ -199,7 +212,7 @@ You'd enter the following branches values into the playbook:
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
     branches:
     - v1.*
     - '!v1.7'
@@ -214,7 +227,7 @@ Here's how you'd exclude all branches that end in `-beta`.
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a.git
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
     branches:
     - v*
     - '!v*-beta'
@@ -262,7 +275,7 @@ content:
 == Mix local and remote repositories and branches
 
 You can generate your site using remote branches and a local branch of a component.
-In this example, we'll fetch all of the `v1.x` and `v2.x` branches from Component A's remote content repository.
+In this example, we'll fetch all of the `v1.x` and `v2.x` branches from Component B's remote content repository.
 We'll also load the branch `v3.0.0-beta` from a local repository.
 
 .Use remote and local repositories and branches
@@ -270,9 +283,9 @@ We'll also load the branch `v3.0.0-beta` from a local repository.
 ----
 content:
   sources:
-  - url: https://gitlab.com/antora/demo/demo-component-a.git
-    branches: v1.*, v2.*
-  - url: ./docs-site/demo-component-a
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+    branches: [v1.*, v2.*]
+  - url: ./docs-site/demo-component-b
     branches: v3.0.0-beta
 ----
 
@@ -298,7 +311,7 @@ In order for Antora to locate the documentation component in this repository, th
 content:
   sources:
   - url: https://github.com/org/repo
-    branches: master, v2.6
+    branches: [master, v2.6]
     start_path: packages/docs
 ----
 
