@@ -10,7 +10,7 @@ const getCacheDir = require('cache-directory')
 const { obj: map } = require('through2')
 const minimatchAll = require('minimatch-all')
 const ospath = require('path')
-const path = ospath.posix
+const { posix: path } = ospath
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const UiCatalog = require('./ui-catalog')
 const yaml = require('js-yaml')
