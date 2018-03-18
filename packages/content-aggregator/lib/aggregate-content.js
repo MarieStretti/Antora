@@ -18,6 +18,7 @@ const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER, CONTENT_GLOB } = require('./constants')
+const CSV_RX = /\s*,\s*/
 const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)`))(
   Array.from(new Set(['/', ospath.sep]))
     .join('')
@@ -328,11 +329,11 @@ async function selectRefs (repo, remote, refPatterns) {
         branchPatterns = undefined
       }
     } else {
-      branchPatterns = [branchPatterns]
+      branchPatterns = branchPatterns.split(CSV_RX)
     }
   }
 
-  if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = [tagPatterns]
+  if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = tagPatterns.split(CSV_RX)
 
   return Object.values(
     (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {

@@ -362,12 +362,27 @@ describe('aggregateContent()', () => {
       })
     })
 
-    describe('should filter branches using multiple filters', () => {
+    describe('should filter branches using multiple filters passed as array', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder)
         playbookSpec.content.sources.push({
           url: repoBuilder.url,
           branches: ['master', 'v1*', 'v3.*'],
+        })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(3)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[2]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
+    describe('should filter branches using multiple filters passed as CSV string', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder)
+        playbookSpec.content.sources.push({
+          url: repoBuilder.url,
+          branches: 'master,v1* , v3.*',
         })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(3)
@@ -521,7 +536,7 @@ describe('aggregateContent()', () => {
       })
     })
 
-    describe('should filter tags using multiple filters', () => {
+    describe('should filter tags using multiple filters passed as array', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder, 'the-component', async () =>
           repoBuilder
@@ -531,6 +546,23 @@ describe('aggregateContent()', () => {
         )
         playbookSpec.content.branches = undefined
         playbookSpec.content.sources.push({ url: repoBuilder.url, tags: ['v1.0.0', 'v3.*'] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
+    describe('should filter tags using multiple filters passed as CSV string', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: 'v1.0.0 , v3.*' })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(2)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
