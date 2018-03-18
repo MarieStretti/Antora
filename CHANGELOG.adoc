@@ -23,6 +23,7 @@ This project utilizes semantic versioning.
 
 * *playbook-builder*: Add `runtime.pull` key to playbook schema to control whether remote resources are pulled
 * *playbook-builder*: Map `runtime.pull` playbook key to `--pull` CLI flag
+* *content-aggregator*: Interpret string branches and tags patterns for a content source as CSV
 * *redirect-producer*: Add Netlify redirect facility to redirect producer (activate by setting `urls.redirect_facility` to `netlify`)
 
 === Changed
@@ -34,6 +35,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Only run fetch operation on cached repository if runtime pull option is enabled
 * *content-aggregator*: Move all but first argument to openOrCloneRepository function to option hash
 * *content-aggregator*: Make transfer progress callback asynchronous so progress bar updates don't affect transfer
+* *content-aggregator*: Name folder of cloned repository using pattern <basename>-<sha1>.git
 * *ui-loader*: Always download UI bundle from URL if runtime pull option is enabled and bundle is marked as a snapshot
 * *ui-loader*: Read bundle URL from `ui.bundle.url` key in playbook
 * *ui-loader*: Read bundle start path from `ui.bundle.start_path` key in playbook
@@ -41,6 +43,7 @@ This project utilizes semantic versioning.
 
 === Fixed
 
+* *content-aggregator*: Only clone each remote content source once (group operations that share the same URL)
 * *content-aggregator*: Show friendly error message along with repository URL when clone fails
 
 == 1.0.0-beta.1 (2018-03-07)
