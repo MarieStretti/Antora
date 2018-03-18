@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const { createHash } = require('crypto')
 const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
@@ -22,12 +23,11 @@ const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)
     .join('')
     .replace('\\', '\\\\')
 )
-const DRIVE_RX = /^[a-z]:\/(?=[^/]|$)/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
-const SEPARATOR_RX = /\/|:/
-const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
-const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
+const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
+const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
+const ANY_SEPARATOR_RX = /[:/]/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -105,7 +105,7 @@ async function loadRepo (url, opts) {
 
   if (~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url)) {
     isBare = isRemote = true
-    repoPath = ospath.join(opts.cacheDir, generateLocalFolderName(url))
+    repoPath = ospath.join(opts.cacheDir, generateCloneFolderName(url))
   } else if (directoryExists((repoPath = expandPath(url, '~+', opts.startDir)))) {
     isBare = !directoryExists(ospath.join(repoPath, '.git'))
     isRemote = false
@@ -177,7 +177,7 @@ async function collectComponentVersions (source, repo, repoPath, isRemote, remot
 
 async function populateComponentVersion (source, repo, repoPath, isRemote, remoteName, ref) {
   let startPath = source.startPath || ''
-  if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
+  if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
   // Q: should worktreePath be passed in?
   const worktreePath = ref.isHead && !(isRemote || repo.isBare()) ? ospath.join(repoPath, startPath) : undefined
   const files = worktreePath
@@ -234,41 +234,25 @@ function ensureCacheDir (customCacheDir, startDir) {
 }
 
 /**
- * Generates a friendly folder name from a URL.
+ * Generates a safe, unique folder name for a git URL.
  *
- * - Remove ending .git path segment
- * - Remove URI scheme (e.g,. https://)
- * - Remove user from host (e.g., git@)
- * - Remove leading and trailing slashes
- * - Replace / and : with %
- * - Append .git (as a file extension)
+ * The purpose of this function is generate a safe, unique folder name to use for the cloned
+ * repository that gets stored in the cache.
+ *
+ * The generated folder name follows the pattern <basename>-<sha1>.git.
  *
  * @param {String} url - The repository URL to convert.
- * @return {String} A friendly folder name.
+ * @returns {String} A safe, unique folder name.
  */
-function generateLocalFolderName (url) {
-  url = url.toLowerCase()
-  // NOTE we don't check extname since the last path segment could equal .git
-  if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
-  const schemeMatch = ~url.indexOf('://') && url.match(URI_SCHEME_RX)
-  if (schemeMatch) url = url.substr(schemeMatch[0].length)
-  if (posixify) {
-    url = posixify(url)
-    const driveMatch = ~url.indexOf(':/') && url.match(DRIVE_RX)
-    if (driveMatch) url = driveMatch[0].charAt() + url.substr(2)
-  }
-  const lastIdx = url.length - 1
-  if (url.charAt(lastIdx) === '/') url = url.substr(0, lastIdx)
-  const segments = url.split(SEPARATOR_RX)
-  let firstSegment = segments[0]
-  if (firstSegment.length === 0) {
-    segments.shift()
-  } else {
-    const atIdx = firstSegment.indexOf('@')
-    if (~atIdx) firstSegment = firstSegment.substr(atIdx + 1)
-    segments[0] = firstSegment
-  }
-  return segments.join('%') + '.git'
+function generateCloneFolderName (url) {
+  let normalizedUrl = url.toLowerCase()
+  if (posixify) normalizedUrl = posixify(normalizedUrl)
+  normalizedUrl = normalizedUrl.replace(NON_UNIQUE_URI_SUFFIX_RX, '')
+  const basename = normalizedUrl.split(ANY_SEPARATOR_RX).pop()
+  const sha1hash = createHash('sha1')
+  sha1hash.update(normalizedUrl)
+  const sha1 = sha1hash.digest('hex')
+  return `${basename}-${sha1}.git`
 }
 
 // QUESTION should we create dedicate instance of progress and set progress.label?
@@ -330,7 +314,6 @@ function completeProgress (progressBar) {
 
 async function selectRefs (repo, remote, refPatterns) {
   let { branches: branchPatterns, tags: tagPatterns } = refPatterns
-  // Q: should we pass isBare?
   let isBare = !!repo.isBare()
   if (branchPatterns) {
     if (branchPatterns === 'HEAD' || branchPatterns === '.') {

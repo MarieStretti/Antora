@@ -4,6 +4,7 @@
 const { deferExceptions, expect, heredoc, removeSyncForce, spy } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
+const { createHash } = require('crypto')
 const fs = require('fs-extra')
 const getCacheDir = require('cache-directory')
 const git = require('nodegit')
@@ -661,13 +662,14 @@ describe('aggregateContent()', () => {
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         await aggregateContent(playbookSpec)
         if (repoBuilder.remote) {
-          const repoDir =
-            repoBuilder.url
-              .toLowerCase()
-              .replace(/^file:\/+/, '')
-              .replace(/^([a-z]):(?=\/)/, '$1')
-              .replace(/\/?\.git$/, '')
-              .replace(/\//g, '%') + '.git'
+          let normalizedUrl = repoBuilder.url
+            .toLowerCase()
+            .replace(/\\/g, '/')
+            .replace(/(?:\/?\.git|\/)$/, '')
+          let sha1 = createHash('sha1')
+          sha1.update(normalizedUrl)
+          sha1 = sha1.digest('hex')
+          const repoDir = `${ospath.basename(normalizedUrl)}-${sha1}.git`
           expect(CONTENT_CACHE_DIR).to.be.a.directory()
           expect(ospath.join(CONTENT_CACHE_DIR, repoDir))
             .to.be.a.directory()
