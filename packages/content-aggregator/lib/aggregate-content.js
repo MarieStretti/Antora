@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const { createHash } = require('crypto')
 const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
@@ -17,17 +18,17 @@ const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER, CONTENT_GLOB } = require('./constants')
+const CSV_RX = /\s*,\s*/
 const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)`))(
   Array.from(new Set(['/', ospath.sep]))
     .join('')
     .replace('\\', '\\\\')
 )
-const DRIVE_RX = /^[a-z]:\/(?=[^/]|$)/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
-const SEPARATOR_RX = /\/|:/
-const TRIM_SEPARATORS_RX = /^\/+|\/+$/g
-const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
+const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
+const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
+const ANY_SEPARATOR_RX = /[:/]/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -50,7 +51,7 @@ const URI_SCHEME_RX = /^(?:https?|file|git|ssh):\/\/+/
  * @returns {Object} A map of files organized by component version.
  */
 async function aggregateContent (playbook) {
-  const playbookDir = playbook.dir || '.'
+  const startDir = playbook.dir || '.'
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
   const { cacheDir, pull, silent, quiet } = playbook.runtime
   const progress = {}
@@ -67,102 +68,91 @@ async function aggregateContent (playbook) {
       )
     )
   }
-  return ensureCacheDir(cacheDir, playbookDir).then((cacheAbsDir) =>
-    Promise.all(
-      sources.map(async (source) => {
-        const { repository, repoPath, url, remoteName, isRemote, isBare } = await openOrCloneRepository(source.url, {
-          pull,
-          remoteName: source.remote,
-          startDir: playbookDir,
-          cacheDir: cacheAbsDir,
-          progress,
-        })
-        const branchPatterns = source.branches || defaultBranches
-        const tagPatterns = source.tags || defaultTags
-        const componentVersions = (await selectRefs(repository, branchPatterns, tagPatterns, isBare, remoteName)).map(
-          async ({ ref, name: refName, type: refType, isHead }) => {
-            let startPath = source.startPath || ''
-            if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(TRIM_SEPARATORS_RX, '')
-            const worktreePath =
-              isHead && !(isRemote || isBare) ? (startPath ? ospath.join(repoPath, startPath) : repoPath) : undefined
-            const files = worktreePath
-              ? await readFilesFromWorktree(worktreePath)
-              : await readFilesFromGitTree(repository, ref, startPath)
-            const componentVersion = loadComponentDescriptor(files, source.url)
-            const origin = computeOrigin(url, refName, refType, startPath, worktreePath)
-            componentVersion.files = files.map((file) => assignFileProperties(file, origin))
-            return componentVersion
-          }
+  const actualCacheDir = await ensureCacheDir(cacheDir, startDir)
+  return Promise.all(
+    _.map(_.groupBy(sources, 'url'), (sources, url) =>
+      loadRepo(url, { pull, startDir, cacheDir: actualCacheDir, progress }).then(({ repo, repoPath, isRemote }) =>
+        Promise.all(
+          sources.map((source) => {
+            const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
+            // NOTE if repository is in cache, we can assume the remote name is origin
+            const remoteName = isRemote ? 'origin' : source.remote || 'origin'
+            return collectComponentVersions(source, repo, repoPath, isRemote, remoteName, refPatterns)
+          })
         )
-        // nodegit repositories must be manually closed
-        return Promise.all(componentVersions)
-          .then((resolvedValue) => {
-            repository.free()
-            return resolvedValue
+          .then((componentVersions) => {
+            repo.free()
+            return componentVersions
           })
           .catch((err) => {
-            repository.free()
+            repo.free()
             throw err
           })
-      })
+      )
     )
-      .then((componentVersions) => buildAggregate(componentVersions))
-      .catch((err) => {
-        progress.manager && progress.manager.terminate()
-        throw err
-      })
   )
+    .then((allComponentVersions) => buildAggregate(allComponentVersions))
+    .catch((err) => {
+      progress.manager && progress.manager.terminate()
+      throw err
+    })
 }
 
-async function openOrCloneRepository (repoUrl, opts) {
+function buildAggregate (componentVersions) {
+  return _(componentVersions)
+    .flattenDepth(2)
+    .groupBy(({ name, version }) => `${version}@${name}`)
+    .map((componentVersions, id) => {
+      const component = _(componentVersions)
+        .map((a) => _.omit(a, 'files'))
+        .reduce((a, b) => _.assign(a, b), {})
+      component.files = _(componentVersions)
+        .map('files')
+        .reduce((a, b) => [...a, ...b], [])
+      return component
+    })
+    .sortBy(['name', 'version'])
+    .value()
+}
+
+async function loadRepo (url, opts) {
   let isBare
   let isRemote
-  let remoteName
+  let repo
   let repoPath
-  let repository
-  let url
 
-  if (~repoUrl.indexOf(':') && GIT_URI_DETECTOR_RX.test(repoUrl)) {
-    isBare = true
-    isRemote = true
-    // NOTE if repository is in cache, we can assume the remote name is origin
-    remoteName = 'origin'
-    repoPath = ospath.join(opts.cacheDir, generateLocalFolderName(repoUrl))
-    url = repoUrl
-  } else if (directoryExists((repoPath = expandPath(repoUrl, '~+', opts.startDir)))) {
-    isBare = !directoryExists(ospath.join(repoPath, '.git'))
+  if (~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url)) {
+    isBare = isRemote = true
+    repoPath = ospath.join(opts.cacheDir, generateCloneFolderName(url))
+  } else if (isLocalDirectory((repoPath = expandPath(url, '~+', opts.startDir)))) {
+    isBare = !isLocalDirectory(ospath.join(repoPath, '.git'))
     isRemote = false
-    remoteName = opts.remoteName || 'origin'
   } else {
     throw new Error(
-      'Local content source does not exist: ' +
-        repoPath +
-        (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+      `Local content source does not exist: ${repoPath}${url !== repoPath ? ' (resolved from url: ' + url + ')' : ''}`
     )
   }
 
   try {
     if (isBare) {
-      repository = await git.Repository.openBare(repoPath)
+      repo = await git.Repository.openBare(repoPath)
       if (isRemote && opts.pull) {
         const progress = opts.progress
-        const fetchOpts = getFetchOptions(progress, repoUrl, 'fetch')
+        const fetchOpts = getFetchOptions(progress, url, 'fetch')
         // fetch new refs and delete obsolete local ones
-        await repository.fetch(remoteName, Object.assign({ prune: 1 }, fetchOpts)).then((repo) => {
-          if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
-          return repo
-        })
+        await repo.fetch('origin', Object.assign({ prune: 1 }, fetchOpts))
+        if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
       }
     } else {
-      repository = await git.Repository.open(repoPath)
+      repo = await git.Repository.open(repoPath)
     }
   } catch (e) {
     if (isRemote) {
       const progress = opts.progress
-      const fetchOpts = getFetchOptions(progress, repoUrl, 'clone')
-      repository = await fs
+      const fetchOpts = getFetchOptions(progress, url, 'clone')
+      repo = await fs
         .remove(repoPath)
-        .then(() => git.Clone.clone(repoUrl, repoPath, { bare: 1, fetchOpts }))
+        .then(() => git.Clone.clone(url, repoPath, { bare: 1, fetchOpts }))
         .catch((err) => {
           let msg = err.message
           if (~msg.indexOf('invalid cred') || ~msg.indexOf('SSH credentials') || ~msg.indexOf('status code: 401')) {
@@ -174,7 +164,7 @@ async function openOrCloneRepository (repoUrl, opts) {
           } else {
             msg = msg.replace(/\.?\s*$/, '')
           }
-          throw new Error(msg + ': ' + repoUrl)
+          throw new Error(msg + ': ' + url)
         })
         .then((repo) =>
           repo.getCurrentBranch().then((ref) => {
@@ -187,94 +177,227 @@ async function openOrCloneRepository (repoUrl, opts) {
         )
     } else {
       throw new Error(
-        'Local content source must be a git repository: ' +
-          repoPath +
-          (repoUrl !== repoPath ? ' (resolved from url: ' + repoUrl + ')' : '')
+        `Local content source must be a git repository: ${repoPath}${
+          url !== repoPath ? ' (resolved from url: ' + url + ')' : ''
+        }`
       )
     }
   }
+  // NOTE return the computed repoPath since Repository API doesn't return same value
+  return { repo, repoPath, isRemote }
+}
 
-  if (!url) {
-    try {
-      url = (await repository.getRemote(remoteName)).url()
-    } catch (e) {
-      // Q: should we make this a file URI?
-      url = repoPath
+async function collectComponentVersions (source, repo, repoPath, isRemote, remoteName, refPatterns) {
+  return selectRefs(repo, remoteName, refPatterns).then((refs) =>
+    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, repoPath, isRemote, remoteName, ref)))
+  )
+}
+
+async function selectRefs (repo, remote, refPatterns) {
+  let { branches: branchPatterns, tags: tagPatterns } = refPatterns
+  let isBare = !!repo.isBare()
+  if (branchPatterns) {
+    if (branchPatterns === 'HEAD' || branchPatterns === '.') {
+      branchPatterns = [(await repo.getCurrentBranch()).shorthand()]
+    } else if (Array.isArray(branchPatterns)) {
+      if (branchPatterns.length) {
+        let currentBranchIdx
+        if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
+          branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
+        }
+      } else {
+        branchPatterns = undefined
+      }
+    } else {
+      branchPatterns = branchPatterns.split(CSV_RX)
     }
   }
 
-  return { repository, repoPath, url, remoteName, isRemote, isBare }
+  if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = tagPatterns.split(CSV_RX)
+
+  return Object.values(
+    (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
+      let segments
+      let name
+      let refData
+      if (ref.isTag()) {
+        if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
+          accum.push({ obj: ref, name, type: 'tag' })
+        }
+        return accum
+      } else if (!branchPatterns) {
+        return accum
+      } else if ((segments = ref.name().split('/'))[1] === 'heads') {
+        name = ref.shorthand()
+        refData = { obj: ref, name, type: 'branch', isHead: !!ref.isHead() }
+      } else if (segments[1] === 'remotes' && segments[2] === remote) {
+        name = segments.slice(3).join('/')
+        refData = { obj: ref, name, type: 'branch', remote }
+      } else {
+        return accum
+      }
+
+      // NOTE if branch is present in accum, we already know it matches the pattern
+      if (name in accum) {
+        if (isBare === !!refData.remote) accum[name] = refData
+      } else if (branchPatterns && matcher([name], branchPatterns).length) {
+        accum[name] = refData
+      }
+
+      return accum
+    }, [])
+  )
+}
+
+async function populateComponentVersion (source, repo, repoPath, isRemote, remoteName, ref) {
+  let startPath = source.startPath || ''
+  if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
+  // Q: should worktreePath be passed in?
+  const worktreePath = ref.isHead && !(isRemote || repo.isBare()) ? ospath.join(repoPath, startPath) : undefined
+  const files = worktreePath
+    ? await readFilesFromWorktree(worktreePath)
+    : await readFilesFromGitTree(repo, ref.obj, startPath)
+  const componentVersion = loadComponentDescriptor(files, source.url)
+  const url = isRemote ? source.url : await resolveRepoUrl(repo, repoPath, remoteName)
+  const origin = computeOrigin(url, ref.name, ref.type, startPath, worktreePath)
+  componentVersion.files = files.map((file) => assignFileProperties(file, origin))
+  return componentVersion
+}
+
+function readFilesFromWorktree (base) {
+  return new Promise((resolve, reject) => {
+    const opts = { base, cwd: base, removeBOM: false }
+    vfs
+      .src(CONTENT_GLOB, opts)
+      .on('error', reject)
+      .pipe(relativizeFiles())
+      .pipe(collectFiles(resolve))
+  })
 }
 
 /**
- * Checks whether the specified URL resolves to a directory on the local filesystem.
+ * Transforms the path of every file in the stream to a relative posix path.
  *
- * @param {String} url - The URL to check.
- * @return {Boolean} A flag indicating whether the URL resolves to a directory on the local filesystem.
+ * Applies a mapping function to all files in the stream so they end up with a
+ * posixified path relative to the file's base instead of the filesystem root.
+ * This mapper also filters out any directories (indicated by file.isNull())
+ * that got caught up in the glob.
  */
-function directoryExists (url) {
-  try {
-    return fs.statSync(url).isDirectory()
-  } catch (e) {
-    return false
-  }
+function relativizeFiles () {
+  return map((file, enc, next) => {
+    if (file.isNull()) {
+      next()
+    } else {
+      next(
+        null,
+        new File({
+          path: posixify ? posixify(file.relative) : file.relative,
+          contents: file.contents,
+          stat: file.stat,
+          src: { abspath: file.path },
+        })
+      )
+    }
+  })
 }
 
-/**
- * Resolves the content cache directory and ensures it exists.
- *
- * @param {String} customCacheDir - The custom base cache directory. If the value is undefined,
- *   the user's cache folder is used.
- * @param {String} startDir - The directory from which to resolve a leading '.' segment.
- *
- * @returns {Promise<String>} A promise that resolves to the absolute content cache directory.
- */
-function ensureCacheDir (customCacheDir, startDir) {
-  // QUESTION should fallback directory be relative to cwd, playbook dir, or tmpdir?
-  const baseCacheDir =
-    customCacheDir == null
-      ? getCacheDir('antora' + (process.env.NODE_ENV === 'test' ? '-test' : '')) || ospath.resolve('.antora/cache')
-      : expandPath(customCacheDir, '~+', startDir)
-  const cacheDir = ospath.join(baseCacheDir, CONTENT_CACHE_FOLDER)
-  return fs.ensureDir(cacheDir).then(() => cacheDir)
+function collectFiles (done) {
+  const accum = []
+  return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
 }
 
-/**
- * Generates a friendly folder name from a URL.
- *
- * - Remove ending .git path segment
- * - Remove URI scheme (e.g,. https://)
- * - Remove user from host (e.g., git@)
- * - Remove leading and trailing slashes
- * - Replace / and : with %
- * - Append .git (as a file extension)
- *
- * @param {String} url - The repository URL to convert.
- * @return {String} A friendly folder name.
- */
-function generateLocalFolderName (url) {
-  url = url.toLowerCase()
-  // NOTE we don't check extname since the last path segment could equal .git
-  if (url.endsWith('.git')) url = url.substr(0, url.length - 4)
-  const schemeMatch = ~url.indexOf('://') && url.match(URI_SCHEME_RX)
-  if (schemeMatch) url = url.substr(schemeMatch[0].length)
-  if (posixify) {
-    url = posixify(url)
-    const driveMatch = ~url.indexOf(':/') && url.match(DRIVE_RX)
-    if (driveMatch) url = driveMatch[0].charAt() + url.substr(2)
-  }
-  const lastIdx = url.length - 1
-  if (url.charAt(lastIdx) === '/') url = url.substr(0, lastIdx)
-  const segments = url.split(SEPARATOR_RX)
-  let firstSegment = segments[0]
-  if (firstSegment.length === 0) {
-    segments.shift()
+async function readFilesFromGitTree (repository, ref, startPath) {
+  return srcGitTree(await getGitTree(repository, ref, startPath))
+}
+
+async function getGitTree (repository, ref, startPath) {
+  let commit
+  if (ref.isTag()) {
+    commit = await ref.peel(git.Object.TYPE.COMMIT).then((target) => repository.getCommit(target))
   } else {
-    const atIdx = firstSegment.indexOf('@')
-    if (~atIdx) firstSegment = firstSegment.substr(atIdx + 1)
-    segments[0] = firstSegment
+    commit = await repository.getBranchCommit(ref)
   }
-  return segments.join('%') + '.git'
+  if (startPath) {
+    const tree = await commit.getTree()
+    const subTreeEntry = await tree.getEntry(startPath)
+    return repository.getTree(subTreeEntry.id())
+  } else {
+    return commit.getTree()
+  }
+}
+
+function srcGitTree (tree) {
+  return new Promise((resolve, reject) => {
+    const files = []
+    // NOTE walk only visits blobs (i.e., files)
+    const walker = tree.walk()
+    // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
+    walker.on('entry', (entry) => {
+      if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
+    })
+    walker.on('error', reject)
+    walker.on('end', () => resolve(Promise.all(files)))
+    walker.start()
+  })
+}
+
+async function entryToFile (entry) {
+  const blob = await entry.getBlob()
+  const contents = blob.content()
+  const stat = new fs.Stats()
+  stat.mode = entry.filemode()
+  stat.size = contents.length
+  // nodegit currently returns paths containing backslashes on Windows; see nodegit#1433
+  return new File({ path: posixify ? posixify(entry.path()) : entry.path(), contents, stat })
+}
+
+function loadComponentDescriptor (files, repoUrl) {
+  const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
+  if (descriptorFileIdx < 0) {
+    throw new Error(COMPONENT_DESC_FILENAME + ' not found in ' + repoUrl)
+  }
+
+  const descriptorFile = files[descriptorFileIdx]
+  files.splice(descriptorFileIdx, 1)
+  const data = yaml.safeLoad(descriptorFile.contents.toString())
+  if (data.name == null) {
+    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name in ' + repoUrl)
+  } else if (data.version == null) {
+    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version in ' + repoUrl)
+  }
+
+  return data
+}
+
+function computeOrigin (url, refName, refType, startPath, worktreePath = undefined) {
+  let match
+  const origin = { type: 'git', url, startPath }
+  origin[refType] = refName
+  if (worktreePath) {
+    origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
+    // Q: should we set worktreePath instead (or additionally?)
+    origin.worktree = true
+  } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
+    const action = match[1] === 'bitbucket.org' ? 'src' : refType === 'branch' ? 'edit' : 'blob'
+    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, refName, startPath, '%s')
+  }
+  return origin
+}
+
+function assignFileProperties (file, origin) {
+  const extname = file.extname
+  file.mediaType = mimeTypes.lookup(extname)
+  if (!file.src) file.src = {}
+  Object.assign(file.src, {
+    path: file.path,
+    basename: file.basename,
+    stem: file.stem,
+    extname,
+    mediaType: file.mediaType,
+    origin,
+  })
+  if (origin.editUrlPattern) file.src.editUrl = origin.editUrlPattern.replace('%s', file.src.path)
+  return file
 }
 
 // QUESTION should we create dedicate instance of progress and set progress.label?
@@ -334,211 +457,78 @@ function completeProgress (progressBar) {
   if (remaining) progressBar.tick(remaining)
 }
 
-async function selectRefs (repo, branchPatterns, tagPatterns, isBare, remote) {
-  if (branchPatterns) {
-    if (branchPatterns === 'HEAD' || branchPatterns === '.') {
-      branchPatterns = [(await repo.getCurrentBranch()).shorthand()]
-    } else if (Array.isArray(branchPatterns)) {
-      if (branchPatterns.length) {
-        let currentBranchIdx
-        if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-          branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
-        }
-      } else {
-        branchPatterns = undefined
-      }
-    } else {
-      branchPatterns = [branchPatterns]
-    }
-  }
-
-  if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = [tagPatterns]
-
-  return Object.values(
-    (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
-      let segments
-      let name
-      let refData
-      if (ref.isTag()) {
-        if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
-          accum.push({ ref, name, type: 'tag' })
-        }
-        return accum
-      } else if (!branchPatterns) {
-        return accum
-      } else if ((segments = ref.name().split('/'))[1] === 'heads') {
-        name = ref.shorthand()
-        refData = { ref, name, type: 'branch', isHead: !!ref.isHead() }
-      } else if (segments[1] === 'remotes' && segments[2] === remote) {
-        name = segments.slice(3).join('/')
-        refData = { ref, name, type: 'branch', remote }
-      } else {
-        return accum
-      }
-
-      // NOTE if branch is present in accum, we already know it matches the pattern
-      if (name in accum) {
-        if (isBare === !!refData.remote) accum[name] = refData
-      } else if (branchPatterns && matcher([name], branchPatterns).length) {
-        accum[name] = refData
-      }
-
-      return accum
-    }, [])
-  )
-}
-
-function loadComponentDescriptor (files, repoUrl) {
-  const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
-  if (descriptorFileIdx < 0) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' not found in ' + repoUrl)
-  }
-
-  const descriptorFile = files[descriptorFileIdx]
-  files.splice(descriptorFileIdx, 1)
-  const data = yaml.safeLoad(descriptorFile.contents.toString())
-  if (data.name == null) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name in ' + repoUrl)
-  } else if (data.version == null) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version in ' + repoUrl)
-  }
-
-  return data
-}
-
-async function readFilesFromGitTree (repository, ref, startPath) {
-  return srcGitTree(await getGitTree(repository, ref, startPath))
-}
-
-async function getGitTree (repository, ref, startPath) {
-  let commit
-  if (ref.isTag()) {
-    commit = await ref.peel(git.Object.TYPE.COMMIT).then((target) => repository.getCommit(target))
-  } else {
-    commit = await repository.getBranchCommit(ref)
-  }
-  if (startPath) {
-    const tree = await commit.getTree()
-    const subTreeEntry = await tree.getEntry(startPath)
-    return repository.getTree(subTreeEntry.id())
-  } else {
-    return commit.getTree()
-  }
-}
-
-function srcGitTree (tree) {
-  return new Promise((resolve, reject) => {
-    const files = []
-    // NOTE walk only visits blobs (i.e., files)
-    const walker = tree.walk()
-    // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
-    walker.on('entry', (entry) => {
-      if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
-    })
-    walker.on('error', reject)
-    walker.on('end', () => resolve(Promise.all(files)))
-    walker.start()
-  })
-}
-
-async function entryToFile (entry) {
-  const blob = await entry.getBlob()
-  const contents = blob.content()
-  const stat = new fs.Stats()
-  stat.mode = entry.filemode()
-  stat.size = contents.length
-  // nodegit currently returns paths containing backslashes on Windows; see nodegit#1433
-  return new File({ path: posixify ? posixify(entry.path()) : entry.path(), contents, stat })
-}
-
-function readFilesFromWorktree (base) {
-  return new Promise((resolve, reject) => {
-    const opts = { base, cwd: base, removeBOM: false }
-    vfs
-      .src(CONTENT_GLOB, opts)
-      .on('error', reject)
-      .pipe(relativizeFiles())
-      .pipe(collectFiles(resolve))
-  })
+/**
+ * Generates a safe, unique folder name for a git URL.
+ *
+ * The purpose of this function is generate a safe, unique folder name to use for the cloned
+ * repository that gets stored in the cache.
+ *
+ * The generated folder name follows the pattern <basename>-<sha1>.git.
+ *
+ * @param {String} url - The repository URL to convert.
+ * @returns {String} A safe, unique folder name.
+ */
+function generateCloneFolderName (url) {
+  let normalizedUrl = url.toLowerCase()
+  if (posixify) normalizedUrl = posixify(normalizedUrl)
+  normalizedUrl = normalizedUrl.replace(NON_UNIQUE_URI_SUFFIX_RX, '')
+  const basename = normalizedUrl.split(ANY_SEPARATOR_RX).pop()
+  const sha1hash = createHash('sha1')
+  sha1hash.update(normalizedUrl)
+  const sha1 = sha1hash.digest('hex')
+  return `${basename}-${sha1}.git`
 }
 
 /**
- * Transforms the path of every file in the stream to a relative posix path.
+ * Resolve the URL of the specified remote for the given repository.
  *
- * Applies a mapping function to all files in the stream so they end up with a
- * posixified path relative to the file's base instead of the filesystem root.
- * This mapper also filters out any directories (indicated by file.isNull())
- * that got caught up in the glob.
+ * @param {Repository} repo - The repository on which to operate.
+ * @param {String} repoPath - The local filesystem path of the repository clone.
+ * @param {String} remoteName - The name of the remote to resolve.
+ * @returns {String} The URL of the specified remote, or the repository path if the
+ * remote does not exist.
  */
-function relativizeFiles () {
-  return map((file, enc, next) => {
-    if (file.isNull()) {
-      next()
-    } else {
-      next(
-        null,
-        new File({
-          path: posixify ? posixify(file.relative) : file.relative,
-          contents: file.contents,
-          stat: file.stat,
-          src: { abspath: file.path },
-        })
-      )
-    }
-  })
+async function resolveRepoUrl (repo, repoPath, remoteName) {
+  return (
+    repo
+      .getRemote(remoteName)
+      .then((remote) => remote.url())
+      // Q: should we turn this into a file URI?
+      .catch(() => repoPath)
+  )
 }
 
-function collectFiles (done) {
-  const accum = []
-  return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
-}
-
-function assignFileProperties (file, origin) {
-  const extname = file.extname
-  file.mediaType = mimeTypes.lookup(extname)
-  if (!file.src) file.src = {}
-  Object.assign(file.src, {
-    path: file.path,
-    basename: file.basename,
-    stem: file.stem,
-    extname,
-    mediaType: file.mediaType,
-    origin,
-  })
-  if (origin.editUrlPattern) file.src.editUrl = origin.editUrlPattern.replace('%s', file.src.path)
-  return file
-}
-
-function computeOrigin (url, refName, refType, startPath, worktreePath = undefined) {
-  let match
-  const origin = { type: 'git', url, startPath }
-  origin[refType] = refName
-  if (worktreePath) {
-    origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
-    // Q: should we set worktreePath instead (or additionally?)
-    origin.worktree = true
-  } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
-    const action = match[1] === 'bitbucket.org' ? 'src' : refType === 'branch' ? 'edit' : 'blob'
-    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, refName, startPath, '%s')
+/**
+ * Checks whether the specified URL matches a directory on the local filesystem.
+ *
+ * @param {String} url - The URL to check.
+ * @return {Boolean} A flag indicating whether the URL matches a directory on the local filesystem.
+ */
+function isLocalDirectory (url) {
+  try {
+    return fs.statSync(url).isDirectory()
+  } catch (e) {
+    return false
   }
-  return origin
 }
 
-function buildAggregate (componentVersions) {
-  return _(componentVersions)
-    .flatten()
-    .groupBy(({ name, version }) => `${version}@${name}`)
-    .map((componentVersions, id) => {
-      const component = _(componentVersions)
-        .map((a) => _.omit(a, 'files'))
-        .reduce((a, b) => _.assign(a, b), {})
-      component.files = _(componentVersions)
-        .map('files')
-        .reduce((a, b) => [...a, ...b], [])
-      return component
-    })
-    .sortBy(['name', 'version'])
-    .value()
+/**
+ * Expands the content cache directory path and ensures it exists.
+ *
+ * @param {String} preferredCacheDir - The preferred cache directory. If the value is undefined,
+ *   the user's cache folder is used.
+ * @param {String} startDir - The directory to use in place of a leading '.' segment.
+ *
+ * @returns {Promise<String>} A promise that resolves to the absolute content cache directory.
+ */
+function ensureCacheDir (preferredCacheDir, startDir) {
+  // QUESTION should fallback directory be relative to cwd, playbook dir, or tmpdir?
+  const baseCacheDir =
+    preferredCacheDir == null
+      ? getCacheDir('antora' + (process.env.NODE_ENV === 'test' ? '-test' : '')) || ospath.resolve('.antora/cache')
+      : expandPath(preferredCacheDir, '~+', startDir)
+  const cacheDir = ospath.join(baseCacheDir, CONTENT_CACHE_FOLDER)
+  return fs.ensureDir(cacheDir).then(() => cacheDir)
 }
 
 module.exports = aggregateContent
