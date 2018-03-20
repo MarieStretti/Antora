@@ -111,6 +111,11 @@ describe('loadAsciiDoc()', () => {
         attachmentsdir: '_attachments',
         partialsdir: 'partial$',
         examplesdir: 'example$',
+        // page
+        'page-component-name': 'component-a',
+        'page-component-version': 'master',
+        'page-module': 'module-a',
+        'page-relative': 'page-a.adoc',
         // computed
         doctitle: 'Document Title',
         notitle: '',
@@ -131,6 +136,92 @@ describe('loadAsciiDoc()', () => {
       expect(doc.getAttributes()).to.include({
         imagesdir: '../_images',
         attachmentsdir: '../_attachments',
+      })
+    })
+
+    it('should not set page attributes if file is not in page family', () => {
+      const inputFile = mockContentCatalog({
+        version: '4.5',
+        family: 'navigation',
+        relative: 'nav.adoc',
+        contents: '* xref:module-a:index.adoc[Module A]',
+      }).getFiles()[0]
+      const doc = loadAsciiDoc(inputFile)
+      expect(doc.getAttributes()).to.not.have.any.keys(
+        ...[
+          'page-component-name',
+          'page-component-version',
+          'page-module',
+          'page-relative',
+        ]
+      )
+    })
+
+    it('should set page component title if component is found in content catalog', () => {
+      const contentCatalog = mockContentCatalog({
+        version: '4.5',
+        family: 'page',
+        relative: 'page-a.adoc',
+        contents: '= Document Title',
+      })
+      contentCatalog.getComponent('component-a').title = 'Component A'
+      const inputFile = contentCatalog.getFiles()[0]
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(doc.getAttributes()).to.include({
+        'page-component-name': 'component-a',
+        'page-component-title': 'Component A',
+      })
+    })
+
+    it('should set page origin attributes if origin information is available for file from branch', () => {
+      const contentCatalog = mockContentCatalog({
+        version: '4.5.x',
+        family: 'page',
+        relative: 'page-a.adoc',
+        contents: '= Document Title',
+      })
+      const inputFileFromBranch = contentCatalog.getFiles()[0]
+      inputFileFromBranch.src.origin = {
+        type: 'git',
+        url: 'https://example.org/component-a.git',
+        startPath: 'docs',
+        branch: 'v4.5.x',
+        worktree: true,
+      }
+      const docFromBranch = loadAsciiDoc(inputFileFromBranch, contentCatalog)
+      expect(docFromBranch.getAttributes()).to.include({
+        'page-origin-type': 'git',
+        'page-origin-url': 'https://example.org/component-a.git',
+        'page-origin-start-path': 'docs',
+        'page-origin-branch': 'v4.5.x',
+        'page-origin-refname': 'v4.5.x',
+        'page-origin-reftype': 'branch',
+        'page-origin-worktree': '',
+      })
+    })
+
+    it('should set page origin attributes if origin information is available for file from tag', () => {
+      const contentCatalog = mockContentCatalog({
+        version: '4.5.x',
+        family: 'page',
+        relative: 'page-a.adoc',
+        contents: '= Document Title',
+      })
+      const inputFileFromTag = contentCatalog.getFiles()[0]
+      inputFileFromTag.src.origin = {
+        type: 'git',
+        url: 'https://example.org/component-a.git',
+        startPath: '',
+        tag: 'v4.5.1',
+      }
+      const docFromTag = loadAsciiDoc(inputFileFromTag, contentCatalog)
+      expect(docFromTag.getAttributes()).to.include({
+        'page-origin-type': 'git',
+        'page-origin-url': 'https://example.org/component-a.git',
+        'page-origin-start-path': '',
+        'page-origin-tag': 'v4.5.1',
+        'page-origin-refname': 'v4.5.1',
+        'page-origin-reftype': 'tag',
       })
     })
 
@@ -1010,7 +1101,7 @@ describe('loadAsciiDoc()', () => {
       }).spyOn('getById', 'getComponent')
       setInputFileContents('xref:component-b::the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, contentCatalog).convert()
-      expectCalledWith(contentCatalog.getComponent, 'component-b')
+      expectCalledWith(contentCatalog.getComponent, 'component-b', 1)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: '1.1',
@@ -1031,7 +1122,7 @@ describe('loadAsciiDoc()', () => {
       }).spyOn('getById', 'getComponent')
       setInputFileContents('xref:component-b::the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, contentCatalog).convert()
-      expectCalledWith(contentCatalog.getComponent, 'component-b')
+      expectCalledWith(contentCatalog.getComponent, 'component-b', 1)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: '1.0',
@@ -1052,7 +1143,7 @@ describe('loadAsciiDoc()', () => {
       }).spyOn('getById', 'getComponent')
       setInputFileContents('xref:component-b:module-b:the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, contentCatalog).convert()
-      expectCalledWith(contentCatalog.getComponent, 'component-b')
+      expectCalledWith(contentCatalog.getComponent, 'component-b', 1)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: '2.0',
@@ -1073,7 +1164,7 @@ describe('loadAsciiDoc()', () => {
       }).spyOn('getById', 'getComponent')
       setInputFileContents('xref:component-b:module-b:the-topic/the-page.adoc[The Page Title]')
       const html = loadAsciiDoc(inputFile, contentCatalog).convert()
-      expectCalledWith(contentCatalog.getComponent, 'component-b')
+      expectCalledWith(contentCatalog.getComponent, 'component-b', 1)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-b',
         version: 'master',

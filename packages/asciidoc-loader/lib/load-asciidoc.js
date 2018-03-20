@@ -52,18 +52,20 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     sectanchors: '',
     'source-highlighter': 'highlight.js',
   }
+  const fileSrc = file.src
   const intrinsicAttrs = {
-    docname: file.src.stem,
+    docname: fileSrc.stem,
     docfile: file.path,
     // NOTE docdir implicitly sets base_dir on document; Opal only expands value to absolute path if it starts with ./
     docdir: file.dirname,
-    docfilesuffix: file.src.extname,
+    docfilesuffix: fileSrc.extname,
     imagesdir: path.join(file.pub.moduleRootPath, '_images'),
     attachmentsdir: path.join(file.pub.moduleRootPath, '_attachments'),
     examplesdir: EXAMPLES_DIR_PROXY,
     partialsdir: PARTIALS_DIR_PROXY,
   }
-  const attributes = Object.assign({}, envAttrs, defaultAttrs, config.attributes, intrinsicAttrs)
+  const pageAttrs = fileSrc.family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : {}
+  const attributes = Object.assign({}, envAttrs, defaultAttrs, config.attributes, intrinsicAttrs, pageAttrs)
   const relativizePageRefs = config.relativizePageRefs !== false
   const converter = createConverter(asciidoctor, {
     onPageRef: (refSpec, content) => convertPageRef(refSpec, content, file, contentCatalog, relativizePageRefs),
@@ -81,6 +83,32 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     extension_registry: extensionRegistry,
     safe: 'safe',
   })
+}
+
+function computePageAttrs (fileSrc, contentCatalog) {
+  const attrs = {}
+  // QUESTION should we soft set the page-id attribute?
+  attrs['page-component-name'] = fileSrc.component
+  attrs['page-component-version'] = fileSrc.version
+  const component = contentCatalog && contentCatalog.getComponent(fileSrc.component)
+  if (component) attrs['page-component-title'] = component.title
+  attrs['page-module'] = fileSrc.module
+  attrs['page-relative'] = fileSrc.relative
+  const origin = fileSrc.origin
+  if (origin) {
+    attrs['page-origin-type'] = origin.type
+    attrs['page-origin-url'] = origin.url
+    attrs['page-origin-start-path'] = origin.startPath
+    if (origin.branch) {
+      attrs['page-origin-refname'] = attrs['page-origin-branch'] = origin.branch
+      attrs['page-origin-reftype'] = 'branch'
+    } else if (origin.tag) {
+      attrs['page-origin-refname'] = attrs['page-origin-tag'] = origin.tag
+      attrs['page-origin-reftype'] = 'tag'
+    }
+    if (origin.worktree) attrs['page-origin-worktree'] = ''
+  }
+  return attrs
 }
 
 /**

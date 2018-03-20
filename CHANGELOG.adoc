@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Added
+
+* *asciidoc-loader*: Pass information from src property on page available to AsciiDoc document via document attributes
+
 === Changed
 
 * *page-composer:* Move antoraVersion property from site to top-level variable in UI model
