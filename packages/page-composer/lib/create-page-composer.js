@@ -6,6 +6,7 @@ const requireFromString = require('require-from-string')
 const versionCompare = require('@antora/content-classifier/lib/util/version-compare-desc')
 
 const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants')
+const { version: VERSION } = require('../package.json')
 
 /**
  * Generates a function to wrap the page contents in a page layout.
@@ -91,7 +92,7 @@ function buildUiModel (file, contentCatalog, navigationCatalog, site) {
 }
 
 function buildSiteUiModel (playbook, contentCatalog) {
-  const model = { title: playbook.site.title }
+  const model = { antoraVersion: VERSION, title: playbook.site.title }
 
   let siteUrl = playbook.site.url
   if (siteUrl) {
