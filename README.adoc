@@ -172,12 +172,14 @@ If you aren't comfortable making a system-wide change, you can instead force nod
 Be aware that recompiling nodegit will make installation take considerably longer.
 ====
 
+////
 ==== Custom Site Generator Pipeline
 
 The `generate` subcommand of `antora` automatically uses the default site generator.
 However, Antora is designed with an open architecture to accommodate a myriad of use cases.
 That means you can assemble your own site generator pipeline, perhaps to add, substitute, and/or remove components used in the pipeline of the default site generator.
 It will be possible in the near future to configure the CLI to use your custom site generator pipeline in place of the default one.
+////
 
 Now that the Antora CLI and default site generator are installed, you are ready to set up a playbook and generate a documentation site.
 
