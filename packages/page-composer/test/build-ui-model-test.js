@@ -3,6 +3,7 @@
 
 const { expect, expectCalledWith, spy } = require('../../../test/test-utils')
 const { buildUiModel, buildSiteUiModel, buildPageUiModel } = require('@antora/page-composer')
+const { version: VERSION } = require('@antora/page-composer/package.json')
 
 describe('build UI model', () => {
   let playbook
@@ -77,6 +78,11 @@ describe('build UI model', () => {
   })
 
   describe('buildSiteUiModel()', () => {
+    it('should set antoraVersion property to version of this package', () => {
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model.antoraVersion).to.equal(VERSION)
+    })
+
     it('should set title property to value of site.title property from playbook', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
       expect(model.title).to.equal('Docs Site')

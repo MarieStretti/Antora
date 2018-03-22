@@ -9,7 +9,7 @@ const ospath = require('path')
 const solitaryConvict = require('@antora/playbook-builder/lib/solitary-convict')
 
 const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[${[...new Set(['/', ospath.sep])].join('').replace('\\', '\\\\')}]`)
-const VERSION = require('../package.json').version
+const { version: VERSION } = require('../package.json')
 
 async function run () {
   const result = cli.parse(process.argv, { defaultCommand: 'generate' })
