@@ -19,6 +19,7 @@ const ConverterExtension = (() => {
           const { content, target } = callback(refSpec, node.getText())
           // TODO pass attributes (e.g., id, role) once core parses them
           const attributes = target.charAt() === '#' ? undefined : Opal.hash({ role: 'page' })
+          // FIXME switch to node.getParent() after upgrading to Asciidoctor.js 1.5.6
           node = Inline.$new(node.parent, 'anchor', content, Opal.hash({ type: 'link', target, attributes }))
         }
       }

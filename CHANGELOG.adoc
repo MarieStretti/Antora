@@ -16,6 +16,7 @@ This project utilizes semantic versioning.
 === Changed
 
 * *content-aggregator*: Name folder of cloned repository using pattern <basename>-<sha1>.git
+* *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6-rc.1 and switch to public API where possible
 
 === Fixed
 

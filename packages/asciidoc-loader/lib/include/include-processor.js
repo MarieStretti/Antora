@@ -18,7 +18,7 @@ const IncludeProcessor = (() => {
   })
 
   Opal.defn(scope, '$process', function (doc, reader, target, attrs) {
-    const resolvedFile = this[$callback](doc, target, doc.reader.getCursor())
+    const resolvedFile = this[$callback](doc, target, doc.getReader().getCursor())
     if (resolvedFile) {
       let contents = resolvedFile.contents
       let startLineNum = 1

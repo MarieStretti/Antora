@@ -41,7 +41,7 @@ function buildNavigation (contentCatalog, asciidocConfig = {}) {
 }
 
 function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
-  const lists = loadAsciiDoc(navFile, contentCatalog, asciidocConfig).blocks.filter((b) => b.context === 'ulist')
+  const lists = loadAsciiDoc(navFile, contentCatalog, asciidocConfig).blocks.filter((b) => b.getContext() === 'ulist')
   if (!lists.length) return []
   const { src: { component, version }, nav: { index } } = navFile
   return lists.map((list, idx) => {
@@ -54,7 +54,7 @@ function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
 
 function getChildList (node) {
   const firstBlock = node.getBlocks()[0]
-  if (firstBlock && firstBlock.context === 'ulist') return firstBlock
+  if (firstBlock && firstBlock.getContext() === 'ulist') return firstBlock
 }
 
 function buildNavigationTree (formattedContent, list) {

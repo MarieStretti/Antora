@@ -251,8 +251,8 @@ describe('loadAsciiDoc()', () => {
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('paragraph')
-      expect(firstBlock.$lines()).to.eql(['+' + inputContents + '+'])
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql(['+' + inputContents + '+'])
     })
 
     it('should resolve include target prefixed with {partialsdir}', () => {
@@ -273,8 +273,8 @@ describe('loadAsciiDoc()', () => {
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('paragraph')
-      expect(firstBlock.$lines()).to.eql([includeContents])
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([includeContents])
     })
 
     it('should resolve include target prefixed with {examplesdir}', () => {
@@ -300,9 +300,9 @@ describe('loadAsciiDoc()', () => {
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.style).to.equal('source')
-      expect(firstBlock.$lines()).to.eql([includeContents])
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getStyle()).to.equal('source')
+      expect(firstBlock.getSourceLines()).to.eql([includeContents])
     })
 
     it('should not apply tag filtering to include contents if tag attribute is empty', () => {
@@ -325,8 +325,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n'))
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
     })
 
     it('should not apply tag filtering to include contents if tags attribute is empty', () => {
@@ -349,8 +349,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n'))
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
     })
 
     it('should not apply tag filtering to include contents if tags attribute has empty values', () => {
@@ -373,8 +373,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n'))
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
     })
 
     it('should apply tag filtering to include contents if tag is specified', () => {
@@ -398,8 +398,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
     })
 
     it('should match tag directives enclosed in circumfix comments', () => {
@@ -422,8 +422,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n').filter((l) => !l.startsWith('/*')))
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => !l.startsWith('/*')))
     })
 
     it('should apply tag filtering to include contents if negated tag is specified', () => {
@@ -446,8 +446,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.be.empty()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.be.empty()
     })
 
     it('should apply tag filtering to include contents if tags are specified', () => {
@@ -473,8 +473,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
     })
 
     it('should apply tag filtering to include contents if negated tags are specified', () => {
@@ -500,8 +500,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(['puts "Hello, World!"'])
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"'])
     })
 
     it('should include nested tags when applying tag filtering to include contents', () => {
@@ -532,8 +532,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql([
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql([
         'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
         'puts msgs[:goodbye]',
       ])
@@ -562,8 +562,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(['puts "Hello, World!"'])
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"'])
     })
 
     it('should not select nested tag if outer tag is unselected', () => {
@@ -589,8 +589,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql([])
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql([])
     })
 
     // TODO test for warning once logged
@@ -618,8 +618,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(['puts "Hello, World!"', 'puts "Goodbye, World!"'])
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"', 'puts "Goodbye, World!"'])
     })
 
     // TODO test for warning once logged
@@ -645,8 +645,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql(['puts "Hello, World!"'])
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"'])
     })
 
     it('should include all lines except for tag directives when tag wildcard is specified', () => {
@@ -673,8 +673,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql([
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql([
         'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
         'puts msgs[:hello]',
         'puts msgs[:goodbye]',
@@ -705,8 +705,8 @@ describe('loadAsciiDoc()', () => {
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('listing')
-      expect(firstBlock.$lines()).to.eql([
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql([
         'msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }',
         'puts msgs[:goodbye]',
       ])
@@ -729,8 +729,8 @@ describe('loadAsciiDoc()', () => {
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('paragraph')
-      expect(firstBlock.$lines()).to.eql([includeContents])
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([includeContents])
     })
 
     it('should resolve target of nested include relative to current file', () => {
@@ -764,8 +764,8 @@ describe('loadAsciiDoc()', () => {
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('paragraph')
-      expect(firstBlock.$lines()).to.eql([nestedIncludeContents])
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
     })
 
     it('should skip nested include directive if target cannot be resolved relative to current file', () => {
@@ -791,8 +791,8 @@ describe('loadAsciiDoc()', () => {
       })
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.context).to.equal('paragraph')
-      expect(firstBlock.$lines()).to.eql(['+' + outerIncludeContents + '+'])
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql(['+' + outerIncludeContents + '+'])
     })
   })
 
@@ -1542,8 +1542,6 @@ describe('loadAsciiDoc()', () => {
   })
 
   describe('resolveConfig()', () => {
-    const toHash = (data) => global.Opal.hash(data)
-
     it('should return empty config if asciidoc category is not set in playbook', () => {
       const playbook = {}
       const config = loadAsciiDoc.resolveConfig(playbook)
@@ -1583,7 +1581,8 @@ describe('loadAsciiDoc()', () => {
       expect(config.extensions).to.have.lengthOf(1)
       expect(config.extensions[0]).to.be.instanceOf(Function)
       const Extensions = Asciidoctor.Extensions
-      const extensionGroupNames = Extensions.groups ? toHash(Extensions.groups).$keys() : []
+      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
+      const extensionGroupNames = Extensions.groups ? Object.keys(Extensions.getGroups()) : []
       expect(extensionGroupNames).to.have.lengthOf(0)
     })
 
@@ -1592,8 +1591,9 @@ describe('loadAsciiDoc()', () => {
       const config = loadAsciiDoc.resolveConfig(playbook)
       expect(config.extensions).to.not.exist()
       const Extensions = Asciidoctor.Extensions
+      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
       expect(Extensions.groups).to.exist()
-      const extensionGroupNames = toHash(Extensions.groups).$keys()
+      const extensionGroupNames = Object.keys(Extensions.getGroups())
       expect(extensionGroupNames).to.have.lengthOf(1)
       Extensions.unregisterAll()
     })
@@ -1603,7 +1603,8 @@ describe('loadAsciiDoc()', () => {
       loadAsciiDoc.resolveConfig(playbook)
       loadAsciiDoc.resolveConfig(playbook)
       const Extensions = Asciidoctor.Extensions
-      const extensionGroupNames = Extensions.groups ? toHash(Extensions.groups).$keys() : []
+      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
+      const extensionGroupNames = Extensions.groups ? Object.keys(Extensions.getGroups()) : []
       expect(extensionGroupNames).to.have.lengthOf(1)
       Extensions.unregisterAll()
     })
@@ -1651,8 +1652,9 @@ describe('loadAsciiDoc()', () => {
       expect(config.extensions[0]).to.be.instanceOf(Function)
       expect(config.extensions[1]).to.be.instanceOf(Function)
       const Extensions = Asciidoctor.Extensions
+      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
       expect(Extensions.groups).to.exist()
-      const extensionGroupNames = toHash(Extensions.groups).$keys()
+      const extensionGroupNames = Object.keys(Extensions.getGroups())
       expect(extensionGroupNames).to.have.lengthOf(1)
       Extensions.unregisterAll()
     })
