@@ -17,11 +17,11 @@
   "main": "lib/index.js",
   "dependencies": {
     "camelcase-keys": "^4.2.0",
-    "convict": "^4.0.2",
+    "convict": "^4.1.0",
     "cson-parser": "^3.0.0",
     "deep-freeze": "^0.0.1",
     "js-yaml": "^3.11.0",
-    "json5": "^1.0.0"
+    "json5": "^1.0.1"
   },
   "engines": {
     "node": ">= 8.0.0"
