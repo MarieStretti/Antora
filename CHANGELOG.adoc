@@ -5,24 +5,31 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== Unreleased (2018-03-xx)
+== 1.0.0-beta.3 (2018-03-23)
 
 === Added
 
-* *content-aggregator*: Interpret string branches and tags patterns for a content source as CSV
-* *demo*: Upgraded playbook for demo site to use the latest Antora features
-* *demo*: Created two versions in Demo Component B to demonstrate the component selector drawer and page version selector in default UI
+* *content-aggregator*: Interpret string branches and tags patterns defined on a content source as CSV (e.g., `master,v*`)
+* *page-composer*: Bind Antora version to antoraVersion variable in UI model
+* *default-ui*: Add support for additional languages in highlight.js configuration (Kotlin, Scala, Haskell, and nix)
+* *demo*: Upgrade playbook for demo site to use the latest Antora features
+* *demo*: Create two versions in Demo Component B to demonstrate the component selector drawer and page version selector in default UI
 
 === Changed
 
 * *content-aggregator*: Name folder of cloned repository using pattern <basename>-<sha1>.git
+* *content-aggregator*: No longer necessary to posixify path from git tree
 * *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6-rc.1 and switch to public API where possible
+* Upgrade dependencies
 
 === Fixed
 
 * *content-aggregator*: Only clone each remote content source once (group operations that share the same URL)
-* Corrected `site.start_page` and component descriptor `start_page` page IDs in documentation examples
-* Corrected `sources.branches` key YAML syntax; when branch names are in a comma-separated list, the list must be enclosed in square brackets (`[]`)
+* *default-ui*: Isolate expand/collapse state for each nav menu
+* *default-ui*: Fix Google Tag Manager (gtag) script
+* *default-ui*: Link to correct component version in root navigation and breadcrumb entries
+* Correct `site.start_page` and component descriptor `start_page` page IDs in documentation examples
+* Correct `sources.branches` key YAML syntax; when branch names are in a comma-separated list, the list must be enclosed in square brackets (`[]`)
 
 == 1.0.0-beta.2 (2018-03-13)
 
