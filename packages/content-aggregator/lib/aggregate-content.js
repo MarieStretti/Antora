@@ -19,11 +19,7 @@ const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER, CONTENT_GLOB } = require('./constants')
 const CSV_RX = /\s*,\s*/
-const DOT_OR_NOEXT_RX = ((sep) => new RegExp(`(?:^|[${sep}])(?:\\.|[^${sep}.]+$)`))(
-  Array.from(new Set(['/', ospath.sep]))
-    .join('')
-    .replace('\\', '\\\\')
-)
+const DOT_OR_NOEXT_RX = /(?:^|\/)(?:\.|[^/.]+$)/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
@@ -331,8 +327,9 @@ function srcGitTree (tree) {
     const files = []
     // NOTE walk only visits blobs (i.e., files)
     const walker = tree.walk()
-    // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
     walker.on('entry', (entry) => {
+      // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
+      // NOTE since nodegit 0.21.2, tree walker always returns posix paths
       if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
     })
     walker.on('error', reject)
@@ -347,8 +344,8 @@ async function entryToFile (entry) {
   const stat = new fs.Stats()
   stat.mode = entry.filemode()
   stat.size = contents.length
-  // nodegit currently returns paths containing backslashes on Windows; see nodegit#1433
-  return new File({ path: posixify ? posixify(entry.path()) : entry.path(), contents, stat })
+  // NOTE since nodegit 0.21.2, tree walker always returns posix paths
+  return new File({ path: entry.path(), contents, stat })
 }
 
 function loadComponentDescriptor (files, repoUrl) {
