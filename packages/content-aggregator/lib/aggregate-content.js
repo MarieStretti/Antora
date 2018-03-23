@@ -67,7 +67,7 @@ async function aggregateContent (playbook) {
   const actualCacheDir = await ensureCacheDir(cacheDir, startDir)
   return Promise.all(
     _.map(_.groupBy(sources, 'url'), (sources, url) =>
-      loadRepo(url, { pull, startDir, cacheDir: actualCacheDir, progress }).then(({ repo, repoPath, isRemote }) =>
+      loadRepository(url, { pull, startDir, cacheDir: actualCacheDir, progress }).then(({ repo, repoPath, isRemote }) =>
         Promise.all(
           sources.map((source) => {
             const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
@@ -111,7 +111,7 @@ function buildAggregate (componentVersions) {
     .value()
 }
 
-async function loadRepo (url, opts) {
+async function loadRepository (url, opts) {
   let isBare
   let isRemote
   let repo
@@ -184,12 +184,12 @@ async function loadRepo (url, opts) {
 }
 
 async function collectComponentVersions (source, repo, repoPath, isRemote, remoteName, refPatterns) {
-  return selectRefs(repo, remoteName, refPatterns).then((refs) =>
+  return selectReferences(repo, remoteName, refPatterns).then((refs) =>
     Promise.all(refs.map((ref) => populateComponentVersion(source, repo, repoPath, isRemote, remoteName, ref)))
   )
 }
 
-async function selectRefs (repo, remote, refPatterns) {
+async function selectReferences (repo, remote, refPatterns) {
   let { branches: branchPatterns, tags: tagPatterns } = refPatterns
   let isBare = !!repo.isBare()
   if (branchPatterns) {
