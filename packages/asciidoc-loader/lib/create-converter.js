@@ -14,14 +14,14 @@ const ConverterExtension = require('./xref/converter-extension')
  * @returns {Converter} An enhanced instance of Asciidoctor's HTML5 converter.
  */
 function createConverter (asciidoctor, callbacks) {
-  const converter = getConverterFactory(asciidoctor).$create('html5')
+  const converter = createBaseHtmlConverter(asciidoctor)
   converter.$extend(ConverterExtension)
   converter.$on_page_ref(callbacks.onPageRef)
   return converter
 }
 
-function getConverterFactory (asciidoctor) {
-  return asciidoctor.$$const.Converter.$$const.Factory.$default(false)
+function createBaseHtmlConverter (asciidoctor) {
+  return asciidoctor.Converter.Factory.getDefault(false).create('html5')
 }
 
 module.exports = createConverter

@@ -15,7 +15,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "asciidoctor.js": "^1.5.6-preview.5"
+    "asciidoctor.js": "^1.5.6-rc.1"
   },
   "engines": {
     "node": ">= 8.0.0"

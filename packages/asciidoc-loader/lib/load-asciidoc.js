@@ -134,12 +134,8 @@ function resolveConfig (playbook) {
 }
 
 function isExtensionRegistered (ext, registry) {
-  return (
-    registry.groups &&
-    global.Opal.hash(registry.groups)
-      .$values()
-      .includes(ext)
-  )
+  // FIXME drop check for groups property after upgrading to Asciidoctor.js 1.5.6
+  return registry.groups && Object.values(registry.getGroups()).includes(ext)
 }
 
 module.exports = loadAsciiDoc
