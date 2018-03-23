@@ -326,15 +326,16 @@ function srcGitTree (tree) {
   return new Promise((resolve, reject) => {
     const files = []
     // NOTE walk only visits blobs (i.e., files)
-    const walker = tree.walk()
-    walker.on('entry', (entry) => {
-      // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
-      // NOTE since nodegit 0.21.2, tree walker always returns posix paths
-      if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
-    })
-    walker.on('error', reject)
-    walker.on('end', () => resolve(Promise.all(files)))
-    walker.start()
+    tree
+      .walk()
+      .on('entry', (entry) => {
+        // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
+        // NOTE since nodegit 0.21.2, tree walker always returns posix paths
+        if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
+      })
+      .on('error', reject)
+      .on('end', () => resolve(Promise.all(files)))
+      .start()
   })
 }
 
