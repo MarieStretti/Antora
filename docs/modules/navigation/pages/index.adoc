@@ -2,57 +2,100 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+:description: An introduction to how Antora creates site and component navigation menus for multiple documentation products and multiple documentation versions.
+:keywords: navigate between documentation versions, navigate between projects, navigate to other versions of a page, add page links to a menu, add page links to a sidebar, add page links to an AsciiDoc list, set up website navigation with Antora, multi-version navigation, create a navigation menu with AsciiDoc
 // Settings
 :idprefix:
 :idseparator: -
 
-With Antora, tech writers can create their site's navigation with AsciiDoc and store it right alongside their documentation files.
+With Antora, you can create your site's navigation with AsciiDoc and store it right alongside your documentation files.
 
-== Navigation workflow
+== Navigation assembly requirements
 
-In order to populate a navigation menu for a component on your site, you need to create at least one navigation source file and then register that file in the component's descriptor file.
+The navigation for an Antora documentation site requires:
 
-//image
+* at least one navigation source file that contains at least one unordered AsciiDoc list,
+* at least one navigation source file registered in the component descriptor file,
+* a UI bundle, such as the Antora default UI, that can apply styles and interaction behavior to the menu(s) Antora generates.
 
-== Navigation source files
+// diagram
 
-A component’s navigation is described by one or more AsciiDoc lists in one or more navigation source files.
-Page links are added using the same cross referencing syntax used in the pages themselves.
-In addition to xrefs, the lists can contain normal text, images, icons, and URLs to other sites.
-There's no special syntax or UI template logic to learn.
+Let's take a brief look at each of the numbered items in this diagram.
 
-When you want these lists to be displayed in a component's published menu, you need to register them.
+=== 1 Input: Navigation source file
 
-== Registration
+The navigation for a component is described by at least one AsciiDoc file.
+However, as seen in the diagram, you can have as many navigation source files as you need.
+Creating a navigation source file per module is a common organizational structure we see.
+A navigation source file contains one or more AsciiDoc lists.
+Each item in the list can be the link to a documentation page, normal text, an image, icon, or the URL to a website page that isn't part of the documentation site.
+Documentation page links are created using the same cross referencing syntax used in the pages themselves.
 
-Navigation files are registered using the nav key (`nav`) in the component descriptor file.
-The order in which the files are listed is the order in which they're displayed in the component's menu on the published site.
+When you want the contents of a navigation source file to be published to a component's menu, you need to register the source file in the appropriate component descriptor file.
 
-== Component menu
+=== 2 Input: Nav key register
 
-Antora assembles the registered navigation source files for each version of each component.
-It then publishes the output to a navigation menu for each component version.
-The behavior and styling of the menu is dictated by the UI bundle that was specified in the playbook.
+Navigation source files are registered in the component descriptor file under the nav key (`nav`).
+List the files in the order you want them to be displayed in when they're published to the component menu on your site.
 
-== Component and component version selector
+When you run Antora, it will only use the navigation source files you registered to create the published component menu.
 
-Antora understands the relationships between components and component versions.
-A reader can select the component and version of that component in order to see its documentation.
-If you're using the default UI, this list is displayed in the component drawer that is accessible at the bottom of any component menu.
-Antora automatically list the components in alphabetical order and the versions in order from the greatest or latest.
+=== 3 Publish: Component menu
 
-== Page version selector
+Antora collects the contents of each registered navigation source file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled menu for the component to the site.
+The behavior and style of the menu is dictated by the UI bundle specify in your playbook.
 
-If a page is available in more than one version of a component, a dropdown selector is visible on the page.
-From this selector, the reader can navigate between additional versions of that page.
+// screenshot of component menu
+
+Antora carries out this navigation assembly process for each version of each component it locates in the repositories, branches, and tags listed under `sources` in the site's playbook.
+
+=== 4 Publish: Component version selector
+
+When you have several components and several versions of one or more components, Antora will assemble an aggregated list of the components and their versions.
+We refer to this master menu of components and versions as the component version selector.
+Antora automatically lists the components in alphabetical order and the versions in order from the greatest or latest.
+
+// screenshot of drawer
+
+In the default UI, this list is displayed in the drawer that is located at the bottom of any component menu.
+When a reader clicks on the drawer, it expands upwards and the reader can then select the component and version of that component they want to see.
+
+=== 5 Publish: Page version selector
+
+If a page is available in more than one version of a component, a dropdown selector is visible on that page.
+From this selector, the reader can navigate between other versions of that page.
 Antora automatically populates this selector menu when multiple versions of a page are available.
+
+// screenshot of page selector
 
 == What's next?
 
-* xref:create-a-navigation-file.adoc[Set up a new navigation file] and add different types of content to it.
-* Organize navigation files in a component.
-* Select the order the navigation lists should be displayed in a published site.
+*Deep Dives*: All the details about each concept.
 
-////
-describe and control the navigation structure as a content concern; navigation stored with the content; author-controlled, yet can still be manipulated by the UI / designer
-////
+* Pages: to add or not to add them to a navigation file?
+* Navigation list item syntax: xrefs, text, text styles, images, URLs, and more
+* Navigation list structures: nesting depth, single list, multi-list, titled versus non-titled lists
+* Naming and organizing navigation files
+* Navigation files and the AsciiDoc include directive
+* The nav key and registering navigation files
+* Component menu, home icon, and index / start page behavior
+* Breadcrumbs
+* Component version selector menu
+* Page version selector menu
+
+*Use Cases*: Workflows and tutorials.
+
+* xref:create-a-navigation-file.adoc[Create and register a basic navigation file]
+* Create a navigation file that contains multiple AsciiDoc lists
+* Add xrefs to pages in topic folders and other modules
+* Insert one module's navigation between the lists or list items of another module's navigation
+
+//* [Set up a new navigation file] and add different types of content to it.
+//* Organize navigation files in a component.
+//* Select the order the navigation lists should be displayed in a published site.
+
+// In addition to xrefs, the lists can contain normal text, images, icons, and URLs to other sites.
+// You don't need to know any special syntax just for creating navigation menus, it's just regular AsciiDoc.
+// There's no special syntax or file structure for creating navigation menus or UI template logic to learn.
+// It then publishes the output to a navigation menu for each component version.
+// describe and control the navigation structure as a content concern; navigation stored with the content; author-controlled, yet can still be manipulated by the UI / designer
