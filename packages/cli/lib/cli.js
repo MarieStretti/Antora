@@ -63,7 +63,7 @@ cli
       // TODO honor --generator option (or auto-detect)
       generateSite = requireLibrary('@antora/site-generator-default', ospath.resolve(playbookFile, '..'))
     } catch (err) {
-      const msg = 'error: Generator not found or failed to load. Try installing @antora/site-generator-default.'
+      const msg = 'Generator not found or failed to load. Try installing the @antora/site-generator-default package.'
       exitWithError(err, cli.stacktrace, msg)
     }
     const args = cli.rawArgs.slice(cli.rawArgs.indexOf(command.name()) + 1)

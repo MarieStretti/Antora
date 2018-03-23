@@ -25,6 +25,7 @@ This project utilizes semantic versioning.
 === Fixed
 
 * *content-aggregator*: Only clone each remote content source once (group operations that share the same URL)
+* *cli*: Fix duplicate error prefix when site generator is not found
 * *default-ui*: Isolate expand/collapse state for each nav menu
 * *default-ui*: Fix Google Tag Manager (gtag) script
 * *default-ui*: Link to correct component version in root navigation and breadcrumb entries
