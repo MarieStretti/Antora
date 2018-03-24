@@ -78,11 +78,6 @@ describe('build UI model', () => {
   })
 
   describe('buildSiteUiModel()', () => {
-    it('should set antoraVersion property to version of this package', () => {
-      const model = buildSiteUiModel(playbook, contentCatalog)
-      expect(model.antoraVersion).to.equal(VERSION)
-    })
-
     it('should set title property to value of site.title property from playbook', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
       expect(model.title).to.equal('Docs Site')
@@ -598,6 +593,12 @@ describe('build UI model', () => {
       const model = buildUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.page).to.exist()
       expect(model.page.url).to.equal(file.pub.url)
+    })
+
+    it('should set antoraVersion property to version of Antora', () => {
+      const model = buildUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.antoraVersion).to.exist()
+      expect(model.antoraVersion).to.equal(VERSION)
     })
 
     it('should set siteRootPath property to pub.rootPath of file', () => {
