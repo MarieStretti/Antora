@@ -1,0 +1,115 @@
+= Navigation List Structure
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:description: How to structure a single list or multi-list Antora navigation source file, nest items in a list, and use list titles to create nested component navigation menus.
+:keywords: nav.adoc, nested sidebar menu, nested navigation with AsciiDoc, Antora menu items
+// Settings
+:idprefix:
+:idseparator: -
+
+== Navigation list type and list item marker
+
+A navigation source file contains one or more xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[unordered AsciiDoc lists].
+An unordered list contains one or more list items.
+A list item is preceded by a marker.
+In the case of an unordered list, the marker is at least one asterisk (`{asterisk}`).
+Each list item must be on its own line.
+Blank lines and comment lines can be interspersed between the list items.
+
+== List item nesting
+
+The top-level list item in a navigation list is marked by a single (`{asterisk}`).
+Each top-level item can have as many nested items as you need.
+The greatest nesting depth allowed is level five (`+*****+`).
+
+.List depth levels
+[source,asciidoc]
+----
+* Level 1 (top)
+** Level 2
+*** Level 3
+**** Level 4
+***** Level 5
+----
+
+== List titles
+
+You can also add list titles to your navigation lists.
+A title is preceded by a period (`.`).
+Unlike list items, there must be *no spaces* between the `.` and the content of the title.
+
+.List title
+[source,asciidoc]
+----
+.List title
+* List item
+* Another list item
+----
+
+When converted into a component navigation menu, list titles become level one list items with all other item levels (`+*+` through `+*****+`) getting nested beneath them.
+
+A list title is optional when a navigation file only contains one list.
+If a navigation file contains multiple lists, each list in that file is must have a title.
+
+== Single list file
+
+A navigation source file contains at least one list.
+When the file only has one list, the list title is optional.
+
+.Single list structure
+[source,asciidoc]
+----
+* List item
+** Nested item
+
+* List item
+// Note to self
+* List item
+** Nested item
+*** Nested item
+----
+
+You can separate list items with blank lines or comment lines.
+The blank lines are be removed from the HTML when the list is published as a navigation menu, and the comments aren't visible to site visitors.
+
+= Multi-list file
+
+When a navigation source file contains multiple lists, each list must have a title and be separated by at least one blank line.
+
+.Multi-list structure
+[source,asciidoc]
+----
+.List title        // <1>
+* List item
+                   // <2>
+.Second list title // <3>
+* List item
+** Nested item
+*** Nested item
+----
+<1> Required list title
+<2> Required blank line between lists
+<3> Required list title
+
+When converted to HTML, the list titles become top level items and all of their list items are nested under them in cascading order.
+The blank line between the lists is not present in the published menu.
+
+== List titles and items
+
+A list item is denoted by one to five asterisks, depending on desired nesting level, directly followed by a single space, and then the content of the item.
+
+The content of a title and each item can be a page cross reference, URL, normal text, or an image.
+
+.List title and item content
+[source,asciidoc]
+----
+.xref:overview.adoc[The Special Project] // <1>
+* xref:install.adoc[Install the App] // <2>
+* More Resources // <3>
+** https://special-project.com/support[Get Help] // <4>
+----
+<1> Xref list title
+<2> Xref list item
+<3> Normal text list item
+<4> URL list item

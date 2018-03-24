@@ -31,33 +31,32 @@ A navigation source file contains one or more AsciiDoc lists.
 Each item in the list can be the link to a documentation page, normal text, an image, icon, or the URL to a website page that isn't part of the documentation site.
 Documentation page links are created using the same cross referencing syntax used in the pages themselves.
 
-When you want the contents of a navigation source file to be published to a component's menu, you need to register the source file in the appropriate component descriptor file.
+When you want the contents of a navigation source file to be published to a component's navigation menu, you need to register the source file in the appropriate component descriptor file.
 
-=== 2 Input: Nav key register
+=== 2 Input: Navigation enlistment
 
 Navigation source files are registered in the component descriptor file under the nav key (`nav`).
 List the files in the order you want them to be displayed in when they're published to the component menu on your site.
+When you run Antora, it will only use the registered navigation source files to create the component menu.
 
-When you run Antora, it will only use the navigation source files you registered to create the published component menu.
+=== 3 Publish: Component navigation menu
 
-=== 3 Publish: Component menu
-
-Antora collects the contents of each registered navigation source file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled menu for the component to the site.
-The behavior and style of the menu is dictated by the UI bundle specify in your playbook.
+Antora collects the contents of each registered navigation source file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled navigation menu for the component to the site.
+The behavior and style of the menu is dictated by the UI bundle specified in your playbook.
 
 // screenshot of component menu
 
-Antora carries out this navigation assembly process for each version of each component it locates in the repositories, branches, and tags listed under `sources` in the site's playbook.
+Antora carries out this assembly process for each version of each component that it locates in the repositories, branches, and tags listed under `sources` in the site's playbook.
 
 === 4 Publish: Component version selector
 
-When you have several components and several versions of one or more components, Antora will assemble an aggregated list of the components and their versions.
+When you have several components and/or several versions of one or more components, Antora will assemble an aggregated list of the components and their versions.
 We refer to this master menu of components and versions as the component version selector.
 Antora automatically lists the components in alphabetical order and the versions in order from the greatest or latest.
 
 // screenshot of drawer
 
-In the default UI, this list is displayed in the drawer that is located at the bottom of any component menu.
+In the default UI, this list is displayed in the "`drawer`" located at the bottom of any component menu.
 When a reader clicks on the drawer, it expands upwards and the reader can then select the component and version of that component they want to see.
 
 === 5 Publish: Page version selector
@@ -72,13 +71,16 @@ Antora automatically populates this selector menu when multiple versions of a pa
 
 *Deep Dives*: All the details about each concept.
 
-* Pages: to add or not to add them to a navigation file?
+* xref:source-files.adoc[Navigation file overview: purpose, file name, file format]
+//other ways to navigate to a page
+//Pages: to add or not to add them to a navigation file?
+* xref:list-structure.adoc[Navigation list structures: list item and title nesting depth, single list file, multi-list file]
+// source nesting depth versus published nesting depth, titled versus non-titled lists
 * Navigation list item syntax: xrefs, text, text styles, images, URLs, and more
-* Navigation list structures: nesting depth, single list, multi-list, titled versus non-titled lists
-* Naming and organizing navigation files
+* Valid navigation file locations
 * Navigation files and the AsciiDoc include directive
 * The nav key and registering navigation files
-* Component menu, home icon, and index / start page behavior
+* Component navigation menu, home icon, and the index / start page
 * Breadcrumbs
 * Component version selector menu
 * Page version selector menu
@@ -90,7 +92,7 @@ Antora automatically populates this selector menu when multiple versions of a pa
 * Add xrefs to pages in topic folders and other modules
 * Insert one module's navigation between the lists or list items of another module's navigation
 
-//* [Set up a new navigation file] and add different types of content to it.
+//* Set up a new navigation file and add different types of content to it.
 //* Organize navigation files in a component.
 //* Select the order the navigation lists should be displayed in a published site.
 

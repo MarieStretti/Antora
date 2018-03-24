@@ -2,6 +2,8 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+:description: An overview of the purpose of an Antora navigation source file, its file format, and its naming parameters.
+:keywords: AsciiDoc navigation file, nav.adoc
 // Settings
 :idprefix:
 :idseparator: -
@@ -9,14 +11,14 @@ endif::[]
 == Navigating to published pages
 
 All of the AsciiDoc files (`.adoc`) in a [.path]_pages_ directory are automatically published by Antora.
-That means readers can find a page using search tools or through cross references from other pages.
-If you want readers to be able to go to a page using a published navigation menu, then you must add a cross reference to that page in the appropriate navigation source file.
+That means readers can find a page using search tools or through links from other pages.
+If you want readers to be able to go to a page using a component navigation menu, then you must add a cross reference (`xref:`) to that page in the appropriate navigation source file.
 
 == What is a navigation source file?
 
-A navigation source file is a list the page cross references, URLs and other content you want displayed in a component's menu on your published site.
+A navigation source file contains a list or lists of page cross references, URLs and other content that Antora converts into HTML, combines with the appropriate UI template, and publishes as a component navigation menu on your site.
 
-At its most basic, it is an unordered list that is saved as an AsciiDoc file in the same module as the pages it will help readers navigate between.
-However, Antora allows for a variety of use cases so that you can create, store, and assemble these files to suit your documentation's requirements.
+At its most basic, the navigation source content is a single, unordered list that is saved as an AsciiDoc file in the same module as the pages it will help readers navigate between.
+However, Antora allows for a variety of use cases so that you can create, store, and assemble the navigation source files to suit your documentation requirements.
 
 The pages in this section will go over the fundamentals of creating and storing navigation files in a typical documentation component and then describe some alternative scenarios.
