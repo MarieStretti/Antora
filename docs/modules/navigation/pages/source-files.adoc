@@ -34,10 +34,11 @@ Navigation files are commonly named [.path]_nav.adoc_; however, you can use any 
 
 == What's next?
 
-The pages in the Site Navigation category describe the fundamentals of creating and storing navigation files in a typical documentation component.
+The pages in the Site Navigation category describe the fundamentals of creating and storing navigation files in a documentation component.
 
 * xref:list-structure.adoc[Navigation list structures: list item and title nesting depth, single list file, multi-list file]
 // source nesting depth versus published nesting depth, titled versus non-titled lists
 * xref:content-syntax.adoc[Navigation list item syntax: xrefs, URLs, text styles, images, icons, and more]
+* xref:register-navigation-files.adoc[Register a navigation file for display in a component menu]
 
 // and then describe some alternative scenarios.

@@ -2,7 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:description: An introduction to how Antora creates site and component navigation menus for multiple documentation products and multiple documentation versions.
+:description: An introduction to how Antora creates site, component, version, and page navigation menus or dropdown selectors for multiple documentation products and multiple documentation versions.
 :keywords: navigate between documentation versions, navigate between projects, navigate to other versions of a page, add page links to a menu, add page links to a sidebar, add page links to an AsciiDoc list, set up website navigation with Antora, multi-version navigation, create a navigation menu with AsciiDoc
 // Settings
 :idprefix:
@@ -14,8 +14,8 @@ With Antora, you can create your site's navigation with AsciiDoc and store it ri
 
 The navigation for an Antora documentation site requires:
 
-* at least one navigation source file that contains at least one unordered AsciiDoc list,
-* at least one navigation source file registered in the component descriptor file,
+* at least one navigation file that contains at least one unordered AsciiDoc list,
+* at least one navigation file registered in the component descriptor file,
 * a UI bundle, such as the Antora default UI, that can apply styles and interaction behavior to the menu(s) Antora generates.
 
 // diagram
@@ -24,19 +24,19 @@ Let's take a brief look at each of the numbered items in this diagram.
 
 === 1 Source: Navigation list files
 
-The navigation for a component is described by at least one AsciiDoc file.
+The navigation for a component is described by xref:source-files.adoc[at least one AsciiDoc file].
 However, as seen in the diagram, you can have as many navigation files as you need.
 Creating a navigation file per module is a common organizational structure we see.
 
-A navigation file contains one or more AsciiDoc lists.
-Each item in a list can be the link to a documentation page, URL to a website that isn't part of the site, or unlinked content such as a category title that groups a nested set of links.
+A navigation file contains xref:list-structure.adoc[one or more AsciiDoc lists].
+xref:content-syntax.adoc[Each item in a list] can be the link to a documentation page, URL to a website that isn't part of the site, or unlinked content such as a category title that groups a nested set of links.
 Documentation page links are created using the same cross referencing syntax used in the pages themselves.
 
 When you want the list contents of a navigation file to be published to a component's navigation menu, you need to register the file in the appropriate component descriptor file.
 
 === 2 Source: Navigation enlistment
 
-Navigation files are registered in a component descriptor file under the nav key (`nav`).
+Navigation files are xref:register-navigation-files.adoc[registered in a component descriptor file] under the nav key (`nav`).
 List the navigation files in the order you want them to be displayed in when they're published to the component menu on your site.
 When you run Antora, it will only use the registered navigation files to create the component menu.
 
@@ -80,16 +80,17 @@ Antora automatically populates this selector menu when multiple versions of a pa
 * xref:content-syntax.adoc[Navigation list item syntax: xrefs, URLs, text styles, images, icons, and more]
 * Valid navigation file locations
 //* Navigation files and the AsciiDoc include directive
-* The nav key and registering navigation files
+* xref:register-navigation-files.adoc[The nav key and registering navigation files]
 //* Component navigation menu, home icon, and the index / start page
-* Breadcrumbs
-* Component version selector menu
-* Page version selector menu
+//* Breadcrumbs
+//* Component version selector menu
+//* Page version selector menu
 
 *Use Cases*: Workflows and tutorials.
 
 * xref:create-a-navigation-file.adoc[Create and register a basic navigation file]
-* Create a navigation file that contains multiple AsciiDoc lists
+
+//* Create a navigation file that contains multiple AsciiDoc lists
 //* Add xrefs to pages in topic folders and other modules
 //* Insert one module's navigation between the lists or list items of another module's navigation
 

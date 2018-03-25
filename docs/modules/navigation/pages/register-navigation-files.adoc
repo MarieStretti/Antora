@@ -1,0 +1,66 @@
+= Register Navigation Files
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:description: How to enlist navigation files in a component descriptor so the Antora assembles them into a component navigation menu.
+:keywords: nav.adoc, antora.yml, register navigation files, add page link lists to a menu
+// Settings
+:idprefix:
+:idseparator: -
+
+On this page, you'll learn:
+
+* [x] The purpose of the component descriptor nav key.
+* [x] How to register navigation files in a component descriptor.
+
+== The component descriptor nav key
+
+The `nav` key accepts a list of xref:source-files.adoc[navigation files].
+Each value specifies the path to an individual navigation file.
+
+.Component descriptor with two registered navigation files
+[source,yaml]
+----
+name: component-b
+title: Component B
+version: '1.0'
+nav: # <1>
+- modules/ROOT/nav.adoc # <2>
+- modules/module-one/nav.adoc # <3>
+----
+<1> Nav key
+<2> Value registering a navigation file located in the ROOT module
+<3> Value registering a navigation file located in a module named module-one
+
+When a file is assigned to the nav key, this file is [.term]_registered_.
+Only the contents of registered navigation files are assembled into and published as a component navigation menu.
+
+=== Nav key structure
+
+The nav key must be entered on its own line be directly followed by a colon (`:`).
+Do not indent the nav key or its list of values.
+
+Nav key values must be structured as follows:
+
+* Each nav key value must be entered on its own line.
+* Each nav key value must start with a hyphen (`-`) and then a single blank space.
+* Following the single blank space, enter the path to an individual navigation file relative to the location of the component descriptor file.
+
+In this example, two navigation files have been registered.
+
+[source,yaml]
+----
+name: component-b
+title: Component B
+version: '1.0'
+nav:
+- modules/ROOT/nav.adoc
+- modules/module-one/nav.adoc
+----
+
+The navigation lists in these two files will be published into a single component menu for Component B 1.0.
+
+=== How registration order affects the component menu
+
+The order of the nav key values dictates the order the contents of the navigation files are assembled in the published component menu.
+In the case of the example from the previous section, the contents of the Root navigation file will be at the top of the component menu and the contents of the Module One navigation file will be appended to the end of the Root navigation list.
