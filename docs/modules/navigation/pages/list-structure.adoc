@@ -10,11 +10,11 @@ endif::[]
 
 == Navigation list type and list item marker
 
-A navigation source file contains one or more xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[unordered AsciiDoc lists].
+A navigation file contains one or more xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[unordered AsciiDoc lists].
 An unordered list contains one or more list items.
 A list item is preceded by a marker.
 In the case of an unordered list, the marker is at least one asterisk (`{asterisk}`).
-Each list item must be on its own line.
+Each list item must be entered on its own line.
 Blank lines and comment lines can be interspersed between the list items.
 
 == List item nesting
@@ -54,7 +54,7 @@ If a navigation file contains multiple lists, each list in that file is must hav
 
 == Single list file
 
-A navigation source file contains at least one list.
+A navigation file contains at least one list.
 When the file only has one list, the list title is optional.
 
 .Single list structure
@@ -71,11 +71,11 @@ When the file only has one list, the list title is optional.
 ----
 
 You can separate list items with blank lines or comment lines.
-The blank lines are be removed from the HTML when the list is published as a navigation menu, and the comments aren't visible to site visitors.
+The blank lines are removed from the HTML when the list is published as a navigation menu, and the comments aren't visible to site visitors.
 
-= Multi-list file
+== Multi-list file
 
-When a navigation source file contains multiple lists, each list must have a title and be separated by at least one blank line.
+When a navigation file contains multiple lists, each list must have a title and be separated by at least one blank line.
 
 .Multi-list structure
 [source,asciidoc]

@@ -23,10 +23,6 @@ On this page, you'll learn:
 Each module contains a navigation file named [.path]_nav.adoc_.
 In Antora, this navigation file is called linked navigation.
 
-== File format
-
-A navigation file is an AsciiDoc file (`.adoc`) that contains one or more unordered lists.
-
 == List structure
 
 In an xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[AsciiDoc unordered list], each top-level navigation item is marked by a single (`{asterisk}`).

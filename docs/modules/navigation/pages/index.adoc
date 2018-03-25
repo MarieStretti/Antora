@@ -22,47 +22,48 @@ The navigation for an Antora documentation site requires:
 
 Let's take a brief look at each of the numbered items in this diagram.
 
-=== 1 Input: Navigation source file
+=== 1 Source: Navigation list files
 
 The navigation for a component is described by at least one AsciiDoc file.
-However, as seen in the diagram, you can have as many navigation source files as you need.
-Creating a navigation source file per module is a common organizational structure we see.
-A navigation source file contains one or more AsciiDoc lists.
-Each item in the list can be the link to a documentation page, normal text, an image, icon, or the URL to a website page that isn't part of the documentation site.
+However, as seen in the diagram, you can have as many navigation files as you need.
+Creating a navigation file per module is a common organizational structure we see.
+
+A navigation file contains one or more AsciiDoc lists.
+Each item in a list can be the link to a documentation page, URL to a website that isn't part of the site, or unlinked content such as a category title that groups a nested set of links.
 Documentation page links are created using the same cross referencing syntax used in the pages themselves.
 
-When you want the contents of a navigation source file to be published to a component's navigation menu, you need to register the source file in the appropriate component descriptor file.
+When you want the list contents of a navigation file to be published to a component's navigation menu, you need to register the file in the appropriate component descriptor file.
 
-=== 2 Input: Navigation enlistment
+=== 2 Source: Navigation enlistment
 
-Navigation source files are registered in the component descriptor file under the nav key (`nav`).
-List the files in the order you want them to be displayed in when they're published to the component menu on your site.
-When you run Antora, it will only use the registered navigation source files to create the component menu.
+Navigation files are registered in a component descriptor file under the nav key (`nav`).
+List the navigation files in the order you want them to be displayed in when they're published to the component menu on your site.
+When you run Antora, it will only use the registered navigation files to create the component menu.
 
-=== 3 Publish: Component navigation menu
+=== 3 Site: Component navigation menu
 
-Antora collects the contents of each registered navigation source file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled navigation menu for the component to the site.
+Antora collects the contents of each registered navigation file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled navigation menu for the component to the site.
 The behavior and style of the menu is dictated by the UI bundle specified in your playbook.
 
 // screenshot of component menu
 
 Antora carries out this assembly process for each version of each component that it locates in the repositories, branches, and tags listed under `sources` in the site's playbook.
 
-=== 4 Publish: Component version selector
+=== 4 Site: Component version selector
 
-When you have several components and/or several versions of one or more components, Antora will assemble an aggregated list of the components and their versions.
+When your site has several components and/or several versions of one or more components, Antora assembles an aggregated list of the components and their versions.
 We refer to this master menu of components and versions as the component version selector.
 Antora automatically lists the components in alphabetical order and the versions in order from the greatest or latest.
 
 // screenshot of drawer
 
 In the default UI, this list is displayed in the "`drawer`" located at the bottom of any component menu.
-When a reader clicks on the drawer, it expands upwards and the reader can then select the component and version of that component they want to see.
+When a visitor clicks on the drawer, it expands upwards and the reader can then select the component and version they want to see.
 
-=== 5 Publish: Page version selector
+=== 5 Site: Page version selector
 
 If a page is available in more than one version of a component, a dropdown selector is visible on that page.
-From this selector, the reader can navigate between other versions of that page.
+From this selector, a visitor can navigate between other versions of that page.
 Antora automatically populates this selector menu when multiple versions of a page are available.
 
 // screenshot of page selector
@@ -76,11 +77,11 @@ Antora automatically populates this selector menu when multiple versions of a pa
 //Pages: to add or not to add them to a navigation file?
 * xref:list-structure.adoc[Navigation list structures: list item and title nesting depth, single list file, multi-list file]
 // source nesting depth versus published nesting depth, titled versus non-titled lists
-* Navigation list item syntax: xrefs, text, text styles, images, URLs, and more
+* xref:content-syntax.adoc[Navigation list item syntax: xrefs, URLs, text styles, images, icons, and more]
 * Valid navigation file locations
-* Navigation files and the AsciiDoc include directive
+//* Navigation files and the AsciiDoc include directive
 * The nav key and registering navigation files
-* Component navigation menu, home icon, and the index / start page
+//* Component navigation menu, home icon, and the index / start page
 * Breadcrumbs
 * Component version selector menu
 * Page version selector menu
@@ -89,8 +90,8 @@ Antora automatically populates this selector menu when multiple versions of a pa
 
 * xref:create-a-navigation-file.adoc[Create and register a basic navigation file]
 * Create a navigation file that contains multiple AsciiDoc lists
-* Add xrefs to pages in topic folders and other modules
-* Insert one module's navigation between the lists or list items of another module's navigation
+//* Add xrefs to pages in topic folders and other modules
+//* Insert one module's navigation between the lists or list items of another module's navigation
 
 //* Set up a new navigation file and add different types of content to it.
 //* Organize navigation files in a component.
