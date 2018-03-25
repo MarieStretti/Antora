@@ -29,6 +29,7 @@ External URLs are links to webpages that aren't built as part of your documentat
 
 When you want to link to a page that is part of your documentation site, use the xref:page-to-page-xref.adoc[page cross reference] instead.
 
+[#url-syntax]
 == URL syntax
 
 To create a link to an external URL, all you need to do is add the URL prefixed with its scheme.

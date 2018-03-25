@@ -1,0 +1,138 @@
+= Navigation List Item Content and Syntax
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:description: All of the types of content you can use in an Antora navigation menu and how to mark them up with valid AsciiDoc.
+:keywords: nav.adoc, menu labels, navigation labels, menu entries
+// Settings
+:idprefix:
+:idseparator: -
+
+List titles and items in a navigation source file can contain several types of content, such as text, images, and icons.
+In most cases this content will link to a page or resource.
+
+== Linking methods
+
+When content is linked, also known as anchored, it means that when the website visitor clicks on the content they are taken to another page or resource.
+The syntax used to link the content depends on what the destination page or resource is and where it is located.
+
+Site pages::
+When the link destination is a page in your site, the link is created using the Antora cross referencing system (`xref:page-id.adoc[link content]`).
+
+Site attachments::
+When the link destination is an attachment in your site (i.e., stored in [.path]_assets/attachments_), such as a PDF or downloadable ZIP, the link is created using the link macro (`link:{attachmentsdir}/filename.ext[link content]`).
+
+Other websites and resources::
+When the link destination is a website or resource that isn't part of your site, i.e., it isn't stored in a documentation component, the link is created using a valid URI scheme and address (`https://website.com[link content]`).
+//or, in a few unique cases, with the link macro.
+
+//Content in an Antora navigation source file becomes a link when it is marked up with a cross reference (`xref`) or a valid URI scheme and address.
+
+== Site page links
+
+Cross references in a navigation source file use the same syntax and page ID construction as cross references in the page content.
+Just set up the `xref` macro, insert the page ID of the destination page, and add the link content.
+The link content can be text, an image, and/or an icon.
+This is the content that is visible to the visitor in the component navigation menu.
+This content is also displayed in the breadcrumbs at the top of the destination page.
+When they click on the link content, they will be routed to the destination page specified by the page ID in the xref.
+
+*Whether in the content of a page or in a navigation source file, when a page is part of your site, you should always create links to it using the Antora cross referencing system.*
+
+=== In-module page links
+
+The most common items in a navigation source file are cross references to pages in the module where the navigation file is stored.
+In this case, the page ID doesn't require the component or module coordinates.
+
+.xrefs to in-module pages
+[source,asciidoc]
+----
+.xref:index.adoc[In-module page]
+* xref:a-page-in-this-module.adoc[Another in-module page]
+* xref:topic/page.adoc[In-module page in a topic folder]
+----
+
+=== Out-module and out-component page links
+
+Using the xref:asciidoc:page-to-page-xref.adoc[appropriate page ID pattern], you can link to any document in the site from a navigation source file, whether it's stored in the same module or not.
+
+.xrefs to pages in other modules and components
+[source,asciidoc]
+----
+* xref:index.adoc[In-module page]
+* xref:other-module:page.adoc[Page in same component, but a different module]
+** xref:topic/page.adoc[In-module page in a topic folder]
+** xref:component:module:page-a.adoc[Page in another component]
+----
+
+== Site resource links
+
+An attachment is a resource stored in a xref:ROOT:modules.adoc#attachments-dir[module's attachments directory] ([.path]_assets/attachments_), such as a PDF or a sample project ZIP archive, that you want your user to visit or download.
+To xref:asciidoc:link-attachment.adoc[insert a link to an attachment], use the AsciiDoc link macro (`+link:[]+`).
+
+.Attachment link syntax
+[source,asciidoc]
+----
+* link:{attachmentsdir}/filename.ext[Link to resource in attachments directory]
+----
+
+== Other website and resource links
+
+A navigation source list can contain links to websites and resources that are not part of your site.
+These links are created using the xref:asciidoc:external-urls.adoc#url-syntax[AsciiDoc URI syntax], which requires a valid URI scheme and address.
+//In a few unique cases, the link is created with a link macro.
+
+.Link to an external website
+[source,asciidoc]
+----
+* https://other-website.com/url[Link to another website]
+----
+
+== Unlinked content
+
+When you want to include content in a navigation list, but you don't want it to be a link, simply don't mark it up with any link syntax.
+
+[source,asciidoc]
+----
+* Unlinked Content
+** xref:a-page.adoc[Linked Content]
+----
+
+== Formatted text
+
+Whether linked or unlinked, the text you want displayed in your navigation menu can be formatted using inline AsciiDoc markup.
+
+[source,asciidoc]
+----
+* xref:index.adoc[*Bold linked text*]
+* `Monospaced` text
+* https://other-website.com[Some __ita__lic letters]
+----
+
+//== Images
+
+//=== Icons
+
+
+////
+
+.List title and item content
+[source,asciidoc]
+----
+.xref:overview.adoc[The Special Project] // <1>
+* xref:install.adoc[Install the App] // <2>
+* More Resources // <3>
+** https://special-project.com/support[Get Help] // <4>
+----
+<1> Xref list title
+<2> Xref list item
+<3> Normal text list item
+<4> URL list item
+
+
+Xrefs::
+A cross reference (xref) to a page in your documentation site.
+An xref always contains a page ID; the unique identifier assign to each documentation page.
+The xref usually also contains link content, such as text or an icon, that, when clicked on in the component navigation menu, takes the visitor to the webpage that corresponds with the page ID.
+Cross references that don't include link content are called bare.
+////

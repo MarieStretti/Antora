@@ -94,22 +94,3 @@ When a navigation source file contains multiple lists, each list must have a tit
 
 When converted to HTML, the list titles become top level items and all of their list items are nested under them in cascading order.
 The blank line between the lists is not present in the published menu.
-
-== List titles and items
-
-A list item is denoted by one to five asterisks, depending on desired nesting level, directly followed by a single space, and then the content of the item.
-
-The content of a title and each item can be a page cross reference, URL, normal text, or an image.
-
-.List title and item content
-[source,asciidoc]
-----
-.xref:overview.adoc[The Special Project] // <1>
-* xref:install.adoc[Install the App] // <2>
-* More Resources // <3>
-** https://special-project.com/support[Get Help] // <4>
-----
-<1> Xref list title
-<2> Xref list item
-<3> Normal text list item
-<4> URL list item
