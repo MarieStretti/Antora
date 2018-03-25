@@ -28,6 +28,7 @@ When the link destination is a website or resource that isn't part of your site,
 
 //Content in an Antora navigation source file becomes a link when it is marked up with a cross reference (`xref`) or a valid URI scheme and address.
 
+[#page]
 == Site page links
 
 Cross references in a navigation list use the same syntax and page ID construction as cross references in the page content.
@@ -65,6 +66,7 @@ Using the xref:asciidoc:page-to-page-xref.adoc[appropriate page ID pattern], you
 ** xref:component:module:page-a.adoc[Page in another component]
 ----
 
+[#resource]
 == Site resource links
 
 An attachment is a resource stored in a xref:ROOT:modules.adoc#attachments-dir[module's attachments directory] ([.path]_assets/attachments_), such as a PDF or a sample project ZIP archive, that you want your user to visit or download.
@@ -76,6 +78,7 @@ To xref:asciidoc:link-attachment.adoc[insert a link to an attachment], use the A
 * link:{attachmentsdir}/filename.ext[Link to resource in attachments directory]
 ----
 
+[#urls]
 == Other website and resource links
 
 A navigation list can contain links to websites and resources that are not part of your site.
@@ -88,6 +91,7 @@ These links are created using the xref:asciidoc:external-urls.adoc#url-syntax[As
 * https://other-website.com/url[Link to another website]
 ----
 
+[#content]
 == Unlinked content
 
 When you want to include content in a navigation list, but you don't want it to be a link, simply don't mark it up with any link syntax.

@@ -8,7 +8,7 @@ endif::[]
 :idprefix:
 :idseparator: -
 
-== Navigation list type and list item marker
+== AsciiDoc list type and list item marker
 
 A navigation file contains one or more xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[unordered AsciiDoc lists].
 An unordered list contains one or more list items.
@@ -52,6 +52,7 @@ When converted into a component navigation menu, list titles become level one li
 A list title is optional when a navigation file only contains one list.
 If a navigation file contains multiple lists, each list in that file is must have a title.
 
+[#single]
 == Single list file
 
 A navigation file contains at least one list.
@@ -73,6 +74,7 @@ When the file only has one list, the list title is optional.
 You can separate list items with blank lines or comment lines.
 The blank lines are removed from the HTML when the list is published as a navigation menu, and the comments aren't visible to site visitors.
 
+[#multi]
 == Multi-list file
 
 When a navigation file contains multiple lists, each list must have a title and be separated by at least one blank line.
