@@ -84,6 +84,7 @@ function createPageComposerInternal (site, layouts) {
 
 function buildUiModel (file, contentCatalog, navigationCatalog, site) {
   return {
+    antoraVersion: VERSION,
     page: buildPageUiModel(file, contentCatalog, navigationCatalog, site),
     site,
     siteRootPath: file.pub.rootPath,
@@ -92,7 +93,7 @@ function buildUiModel (file, contentCatalog, navigationCatalog, site) {
 }
 
 function buildSiteUiModel (playbook, contentCatalog) {
-  const model = { antoraVersion: VERSION, title: playbook.site.title }
+  const model = { title: playbook.site.title }
 
   let siteUrl = playbook.site.url
   if (siteUrl) {
