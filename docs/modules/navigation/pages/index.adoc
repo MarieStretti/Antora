@@ -45,7 +45,7 @@ When you run Antora, it will only use the registered navigation files to create 
 Antora collects the contents of each registered navigation file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled navigation menu for the component to the site.
 The behavior and style of the menu is dictated by the UI bundle specified in your playbook.
 
-// screenshot of component menu
+image::component-navigation-menu.png[Screenshot of the component navigation menu in an Antora documentation site,660]
 
 Antora carries out this assembly process for each version of each component that it locates in the repositories, branches, and tags listed under `sources` in the site's playbook.
 
@@ -55,7 +55,7 @@ When your site has several components and/or several versions of one or more com
 We refer to this master menu of components and versions as the component version selector.
 Antora automatically lists the components in alphabetical order and the versions in order from the greatest or latest.
 
-// screenshot of drawer
+image::component-version-selector.png[Screenshot of the component version selector dropdown menu in an Antora documentation site,660]
 
 In the default UI, this list is displayed in the "`drawer`" located at the bottom of any component menu.
 When a visitor clicks on the drawer, it expands upwards and the reader can then select the component and version they want to see.
@@ -66,7 +66,7 @@ If a page is available in more than one version of a component, a dropdown selec
 From this selector, a visitor can navigate between other versions of that page.
 Antora automatically populates this selector menu when multiple versions of a page are available.
 
-// screenshot of page selector
+image::page-version-selector.png[Screenshot of the page version selector dropdown menu in an Antora documentation site,660]
 
 == What's next?
 
