@@ -27,12 +27,22 @@ async function generateSite (args, env) {
   const asciidocConfig = resolveAsciiDocConfig(playbook)
   const pages = convertDocuments(contentCatalog, asciidocConfig)
   const navigationCatalog = buildNavigation(contentCatalog, asciidocConfig)
-  ;((composePage) => {
-    pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
-  })(createPageComposer(playbook, contentCatalog, uiCatalog))
+  const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+  pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
   const siteFiles = mapSite(playbook, contentCatalog).concat(produceRedirects(playbook, contentCatalog))
+  if (playbook.site.url) siteFiles.push(composePage(create404Page()))
   const siteCatalog = { getFiles: () => siteFiles }
   return publishSite(playbook, [contentCatalog, uiCatalog, siteCatalog])
+}
+
+function create404Page () {
+  return {
+    title: 'Page Not Found',
+    mediaType: 'text/html',
+    src: { stem: '404' },
+    out: { path: '404.html' },
+    pub: { url: '/404.html', rootPath: '' },
+  }
 }
 
 module.exports = generateSite
