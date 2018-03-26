@@ -20,6 +20,9 @@ const url = require('url')
  * @param {Object} playbook - The configuration object for Antora.
  * @param {Object} playbook.site - Site-related configuration data.
  * @param {String} playbook.site.url - The base URL of the site.
+ * @param {String} playbook.urls - URL-related configuration data.
+ * @param {String} playbook.urls.redirectFacility - The redirect facility for
+ *   which redirect configuration is being produced.
  * @param {ContentCatalog} contentCatalog - The content catalog that provides
  *   access to the virtual content files (i.e., pages) in the site.
  * @returns {Array<File>} An array of File objects that contain rewrite configuration for the web server.
