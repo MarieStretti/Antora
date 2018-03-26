@@ -18,7 +18,7 @@ The navigation for an Antora documentation site requires:
 * at least one navigation file registered in the component descriptor file,
 * a UI bundle, such as the Antora default UI, that can apply styles and interaction behavior to the menu(s) Antora generates.
 
-image::navigation-assembly.svg[Navigation assembly the inputs and outputs,600]
+image::navigation-assembly.svg[Antora navigation assembly diagram showing the required source files and the resulting site menus where the content from the source files is displayed,600]
 
 Let's take a brief look at each of the numbered items in this diagram.
 
