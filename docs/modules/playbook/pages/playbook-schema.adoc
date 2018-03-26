@@ -184,13 +184,25 @@ The `asciidoc` category contains keys that configure the AsciiDoc processor, suc
 [#asciidoc-attributes-key]
 === attributes
 
-The `attributes` key under the `asciidoc` category is used to define global (i.e., site-wide) AsciiDoc document attributes.
+The `attributes` key under the `asciidoc` category is a map used to define global (i.e., site-wide) AsciiDoc document attributes.
 These document attributes are made available to each page in the site.
 
 Learn more:
 
-* xref:configure-asciidoc.adoc#global-document-attributes[Define global document attributes]
+* xref:configure-asciidoc.adoc#define-global-document-attributes[Define global document attributes]
 * xref:configure-asciidoc.adoc#default-attribute-values[Allow pages to override certain global document attributes]
+
+[#asciidoc-extensions-key]
+=== extensions
+
+The `extensions` key under the `asciidoc` category is an array used to specify a set of Asciidoctor extensions to register.
+Each entry is either the name of an installed module or the path to a local script.
+Depending on the capabilities of the extension, the extension will either be registered globally or be scoped to the AsciiDoc processor instance for a page.
+
+Learn more:
+
+* xref:configure-asciidoc.adoc#global-extensions[Register global Asciidoctor extensions]
+* xref:configure-asciidoc.adoc#scoped-extensions[Register scoped Asciidoctor extensions]
 
 [#ui-keys]
 == UI keys
