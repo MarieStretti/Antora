@@ -60,9 +60,16 @@ When executed from the CLI, the options that are mapped to playbook keys, such a
 
 [#cli-options]
 .CLI Options
-[cols="2,3,1,1"]
+[cols="3,5,2,2"]
 |===
 |Option |Purpose |Format |Default
+
+|--attribute <attribute>
+|An AsciiDoc document attribute to add to each page in the site.
+Accepts the following forms: `name` (to set), `name!` (to unset), or `name='value'` (to set with a specific value).
+May be specified multiple times.
+|Key/Value Pair
+|hide-uri-scheme
 
 |--cache-dir <dir>
 |Directory where cached files are stored (git repositories clones and the UI bundle).
