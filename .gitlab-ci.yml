@@ -16,7 +16,6 @@ lint:
   script:
   - *run_yarn
   - $(npm bin)/gulp lint
-  - $(npm bin)/gulp commitlint
 test:
   stage: verify
   cache: *pull_cache
