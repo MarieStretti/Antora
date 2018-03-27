@@ -287,14 +287,14 @@ describe('createPageComposer()', () => {
     it('should throw an error if default layout cannot be found', () => {
       playbook.ui.defaultLayout = 'does-not-exist'
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
-      expect(() => composePage(file, contentCatalog, navigationCatalog)).to.throw(/layout does-not-exist not found/i)
+      expect(() => composePage(file, contentCatalog, navigationCatalog)).to.throw(/does-not-exist layout not found/i)
     })
 
     it('should throw an error if layout specified in page-layout attribute does not exist and is default', () => {
       playbook.ui.defaultLayout = 'also-does-not-exist'
       file.asciidoc.attributes['page-layout'] = 'does-not-exist'
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
-      expect(() => composePage(file, contentCatalog, navigationCatalog)).to.throw(/neither layout/i)
+      expect(() => composePage(file, contentCatalog, navigationCatalog)).to.throw(/neither .* layout .* found/i)
     })
 
     // QUESTION what should we do with a template execution error? (e.g., missing partial or helper)

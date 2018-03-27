@@ -133,6 +133,7 @@ describe('generateSite()', () => {
       .with.subDirs.with.members(['css', 'js', 'font', 'img'])
     expect(ospath.join(destAbsDir, '_/css/site.css')).to.be.a.file()
     expect(ospath.join(destAbsDir, '_/js/site.js')).to.be.a.file()
+    expect(ospath.join(destAbsDir, '404.html')).to.not.be.a.path()
     expect(ospath.join(destAbsDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
@@ -226,6 +227,17 @@ describe('generateSite()', () => {
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head link[rel=canonical]')).to.have.attr('href', 'https://example.com/docs/the-component/2.0/index.html')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', 'https://example.com/docs')
+  }).timeout(TIMEOUT)
+
+  it('should generate 404 page if site url is set in playbook', async () => {
+    playbookSpec.site.url = 'https://example.com'
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(destAbsDir, '404.html')).to.be.a.file()
+    $ = loadHtmlFile('404.html')
+    expect($('head > title')).to.have.text('Page Not Found :: The Site')
+    expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/_/css/site.css')
+    expect($('body > script:first-of-type')).to.have.attr('src', '/_/js/site.js')
   }).timeout(TIMEOUT)
 
   it('should pass AsciiDoc attributes defined in playbook to AsciiDoc processor', async () => {

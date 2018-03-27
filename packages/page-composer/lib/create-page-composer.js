@@ -65,12 +65,12 @@ function createPageComposerInternal (site, layouts) {
 
     let layout = uiModel.page.layout
     if (!(layout in layouts)) {
+      if (layout === '404') throw new Error('404 layout not found')
       const defaultLayout = uiModel.site.ui.defaultLayout
-      if (layout === defaultLayout) {
-        throw new Error(`Layout ${layout} not found in`, layouts)
-      }
-      if (!(defaultLayout in layouts)) {
-        throw new Error(`Neither layout ${layout} or default layout ${defaultLayout} found in`, layouts)
+      if (defaultLayout === layout) {
+        throw new Error(`${layout} layout not found`)
+      } else if (!(defaultLayout in layouts)) {
+        throw new Error(`Neither ${layout} layout or fallback ${defaultLayout} layout found`)
       }
       // TODO log a warning that the default template is being used; perhaps on file?
       layout = defaultLayout
@@ -122,6 +122,10 @@ function buildSiteUiModel (playbook, contentCatalog) {
 }
 
 function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
+  const { component: componentName, version, stem } = file.src
+
+  if (!componentName && stem === '404') return { layout: stem, title: file.title }
+
   // QUESTION should attributes be scoped to AsciiDoc, or should this work regardless of markup language? file.data?
   const asciidoc = file.asciidoc || {}
   const attributes = asciidoc.attributes || {}
@@ -130,9 +134,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     .filter((name) => !name.indexOf('page-'))
     .forEach((name) => (pageAttributes[name.substr(5)] = attributes[name]))
 
-  const { component: componentName, version } = file.src
   const url = file.pub.url
-
   const component = contentCatalog.getComponent(componentName)
   // QUESTION can we cache versions on file.rel so only computed once per page version group?
   const versions =
@@ -142,12 +144,12 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
 
   const model = {
     contents: file.contents,
+    layout: pageAttributes.layout || site.ui.defaultLayout,
     title: asciidoc.doctitle,
     url,
     description: attributes.description,
     keywords: attributes.keywords,
     attributes: pageAttributes,
-    layout: pageAttributes.layout || site.ui.defaultLayout,
     component,
     componentVersion: component.versions.find((candidate) => candidate.version === version),
     version,
