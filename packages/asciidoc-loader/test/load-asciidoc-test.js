@@ -148,12 +148,7 @@ describe('loadAsciiDoc()', () => {
       }).getFiles()[0]
       const doc = loadAsciiDoc(inputFile)
       expect(doc.getAttributes()).to.not.have.any.keys(
-        ...[
-          'page-component-name',
-          'page-component-version',
-          'page-module',
-          'page-relative',
-        ]
+        ...['page-component-name', 'page-component-version', 'page-module', 'page-relative']
       )
     })
 
