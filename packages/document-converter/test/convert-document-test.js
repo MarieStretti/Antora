@@ -145,7 +145,7 @@ describe('convertDocument()', () => {
 
       Page content.
     `)
-    const contentCatalog = { registerPageAlias: spy(() => {}) }
+    const contentCatalog = { registerPageAlias: spy(() => {}), getComponent: () => {} }
     convertDocument(inputFile, contentCatalog)
     expect(contentCatalog.registerPageAlias).to.have.been.called.exactly(4)
     expectCalledWith(contentCatalog.registerPageAlias, ['the-alias.adoc', inputFile], 0)
@@ -161,7 +161,7 @@ describe('convertDocument()', () => {
 
       Page content.
     `)
-    const contentCatalog = { registerPageAlias: spy(() => {}) }
+    const contentCatalog = { registerPageAlias: spy(() => {}), getComponent: () => {} }
     convertDocument(inputFile, contentCatalog)
     expect(contentCatalog.registerPageAlias).to.not.have.been.called()
   })
@@ -173,7 +173,7 @@ describe('convertDocument()', () => {
         url: '/component-a/1.2.3/module-b/page-b.html',
       },
     }
-    const contentCatalog = { resolvePage: spy(() => targetFile) }
+    const contentCatalog = { resolvePage: spy(() => targetFile), getComponent: () => {} }
     convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.resolvePage, ['module-b:page-b', inputFile.src])
     expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
@@ -195,7 +195,7 @@ describe('convertDocument()', () => {
         relative: 'definitions.adoc',
       },
     }
-    const contentCatalog = { getById: spy(() => partialFile) }
+    const contentCatalog = { getById: spy(() => partialFile), getComponent: () => {} }
     convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getById, {
       component: 'component-a',
@@ -243,7 +243,7 @@ describe('convertDocument()', () => {
         rootPath: '../../..',
       },
     }
-    const contentCatalog = { getByPath: spy(() => includedFile) }
+    const contentCatalog = { getByPath: spy(() => includedFile), getComponent: () => {} }
     convertDocument(includedFile)
     convertDocument(inputFile, contentCatalog)
     expectCalledWith(contentCatalog.getByPath, {
