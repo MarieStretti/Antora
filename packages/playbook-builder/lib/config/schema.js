@@ -49,6 +49,7 @@ module.exports = {
         format: String,
         default: undefined,
         arg: 'google-analytics-key',
+        env: 'GOOGLE_ANALYTICS_KEY',
       },
       //swiftype: {
       //  doc: 'The key to activate the Swiftype widget.',

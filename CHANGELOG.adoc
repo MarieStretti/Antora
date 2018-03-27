@@ -13,6 +13,7 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* *playbook-builder:* Allow Google Analytics key to be set using GOOGLE_ANALYTICS_KEY environment variable
 * *page-composer:* Move antoraVersion property from site to top-level variable in UI model
 * *page-composer:* Prepare a sparse UI model for the 404 page
 * *site-generator-default:* Create and compose a 404 page if the `site.url` key is set in the playbook
