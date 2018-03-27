@@ -18,7 +18,8 @@ On this page, you'll learn:
 
 == The component descriptor nav key
 
-The `nav` key accepts a list of xref:filenames-and-locations.adoc[navigation files].
+The nav key (`nav`) is set in the xref:ROOT:component-descriptor.adoc[component descriptor file] ([.path]_antora.yml_) of a component.
+The nav key accepts a list of xref:filenames-and-locations.adoc[navigation files].
 Each value specifies the path to an individual navigation file.
 
 .Component descriptor with two registered navigation files
@@ -66,11 +67,11 @@ The navigation lists in these two files will be published into a single componen
 === How registration order affects the component menu
 
 The order of the nav key values dictates the order the contents of the navigation files are assembled in the published component menu.
-In the case of the example from the previous section, the contents of the Root navigation file will be at the top of the component menu and the contents of the Module One navigation file will be appended to the end of the Root navigation list.
+In the case of the example from the previous section, the contents of the ROOT navigation file will be at the top of the component menu and the contents of the Module One navigation file will be appended to the end of the ROOT navigation list.
 
 == What's next?
 
 Learn all about creating navigation lists and navigation items:
 
 * xref:list-structures.adoc[Navigation lists: list title and item hierarchy, single list file, multi-list file]
-* xref:content-syntax.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
+* xref:link-syntax-and-content.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]

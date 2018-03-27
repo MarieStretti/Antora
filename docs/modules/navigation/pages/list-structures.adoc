@@ -110,7 +110,7 @@ The blank line between the lists is not present in the published menu.
 
 Learn all about creating navigation list items:
 
-* xref:content-syntax.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
+* xref:link-syntax-and-content.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
 
 Learn how to register navigation files so they get included in a component menu:
 

@@ -8,11 +8,11 @@ endif::[]
 :colon: :
 
 To link between documentation pages, you'll use the the AsciiDoc cross reference macro and a page ID.
-This syntax in also used to add pages to xref:navigation:create-a-navigation-file.adoc[navigation files].
+This syntax in also used to xref:navigation:link-syntax-and-content.adoc[add pages to navigation files].
 
 == Reference by page ID
 
-In Antora, a cross reference, also called an xref, needs a page ID in order to link to another documentation page.
+In Antora, a cross reference, also called an xref, needs a xref:ROOT:page-id.adoc[page ID] in order to link to another documentation page.
 The number of page ID coordinates you need to enter into the xref depends on the location of the current file and the location of the destination file (the document you're linking to).
 The closer the two files are, the shorter the page ID.
 

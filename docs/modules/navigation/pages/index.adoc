@@ -32,7 +32,7 @@ However, as seen in the diagram, you can have as many navigation files as you ne
 Creating a navigation file per module is a common organizational structure we see.
 
 A navigation file contains xref:list-structures.adoc[one or more AsciiDoc lists].
-xref:content-syntax.adoc[Each item in a list] can be the link to a documentation page, URL to a website that isn't part of the site, or unlinked content such as a category title that groups a nested set of links.
+xref:link-syntax-and-content.adoc[Each item in a list] can be the link to a documentation page, URL to a website that isn't part of the site, or unlinked content such as a category title that groups a nested set of links.
 Documentation page links are created using the same cross referencing syntax used in the pages themselves.
 
 When you want the list contents of a navigation file to be published to a component's navigation menu, you need to register the file in the appropriate component descriptor file.
@@ -78,16 +78,16 @@ image::page-version-selector.png[Screenshot of the page version selector dropdow
 * xref:filenames-and-locations.adoc[Navigation source file names, format, and storage locations]
 * xref:register-navigation-files.adoc[The nav key and registering navigation files]
 * xref:list-structures.adoc[Navigation list structures: list item and title nesting, single list file, multi-list file]
-* xref:content-syntax.adoc[Navigation list item syntax: xrefs, URLs, text styles, images, icons, and more]
+* xref:link-syntax-and-content.adoc[Navigation list item syntax: xrefs, URLs, text styles, images, icons, and more]
 //* Navigation files and the AsciiDoc include directive
 //* Component navigation menu, home icon, and the index / start page
 //* Breadcrumbs
 //* Component version selector menu
 //* Page version selector menu
 
-*Base Jumps*: Workflows and tutorials.
+//*Base Jumps*: Workflows and tutorials.
 
-* xref:create-a-navigation-file.adoc[Create and register a basic navigation file]
+//* xref:create-a-navigation-file.adoc[Create and register a basic navigation file]
 
 //* Create a navigation file that contains multiple AsciiDoc lists
 //* Add xrefs to pages in topic folders and other modules

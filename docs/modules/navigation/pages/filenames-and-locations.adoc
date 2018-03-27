@@ -26,7 +26,7 @@ When you want visitors to be able to locate and go to a page using a component n
 
 == What is a navigation source file?
 
-A navigation source file is a list of page cross references, resource links, external URIs, and other content that is marked up in AsciiDoc and stored at the root of a module.
+A navigation source file is a list of page cross references, resource links, external URIs, and other content that is marked up in AsciiDoc and stored at the base of a module.
 If registered in a component descriptor ([.path]_antora.yml_), the contents of the navigation file will be incorporated into a component menu and published to a site.
 
 == Navigation file format and naming
@@ -35,14 +35,15 @@ Navigation files must end with the AsciiDoc file extension (`.adoc`).
 They are typically named [.path]_nav.adoc_; however, you can use any name that is meaningful to you.
 Feel free to name your navigation files [.path]_kaboom.adoc_ if that's what makes your team happy.
 
+[#storage]
 == Navigation file storage locations
 
 A common pattern we see is for each module to contain its own navigation file.
 Modules already represent logical groups of concepts or objectives, so it's likely that you'd arrange the xrefs to that module's pages into a continuous, hierarchical flow of navigation menu entries.
 This also reduces the number of coordinates the cross references require when you add a page to the navigation file.
 
-Navigation files should be stored at the root of a module, i.e., at the same level as the module's [.path]_pages_ directory.
-*Don't* save navigation files inside [.path]_pages_, otherwise the navigation files will become individual published in your site.
+Navigation files should be stored at the base of a module, i.e., at the same level as the module's [.path]_pages_ directory.
+*Don't* save navigation files inside [.path]_pages_, otherwise the navigation files will be converted to individual pages and published as pages.
 
 === Multiple navigation files per module
 
@@ -66,7 +67,7 @@ Learn how to register navigation files so they get included in a component menu:
 Learn all about creating navigation lists and navigation items:
 
 * xref:list-structures.adoc[Navigation lists: list title and item hierarchy, single list file, multi-list file]
-* xref:content-syntax.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
+* xref:link-syntax-and-content.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
 
 //A component menu is created when, at runtime, Antora combines one or more navigation files as instructed by a component descriptor file, converts the assembled navigation lists into HTML, wraps the HTML with a UI template, and publishes the resulting component navigation menus to your site.
 //A component navigation menu allows site visitors to discover and navigate between a component's pages.
