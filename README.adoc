@@ -324,8 +324,6 @@ Thanks in advance for helping to make this project a success!
 
 == Release Policy
 
-IMPORTANT: The version, roadmap, and support policies described in this section will take affect when the initial stable release of the Antora Core components is published.
-
 The Antora Core components includes a default site generator package, the packages the default site generator delegates to, and a CLI package.
 These packages are released together and follow the https://semver.org[semantic versioning] rules.
 Each Antora platform release is versioned *major.minor.patch*.
