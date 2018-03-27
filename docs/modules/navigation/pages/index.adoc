@@ -31,7 +31,7 @@ The navigation for a component is described by xref:filenames-and-locations.adoc
 However, as seen in the diagram, you can have as many navigation files as you need.
 Creating a navigation file per module is a common organizational structure we see.
 
-A navigation file contains xref:list-structure.adoc[one or more AsciiDoc lists].
+A navigation file contains xref:list-structures.adoc[one or more AsciiDoc lists].
 xref:content-syntax.adoc[Each item in a list] can be the link to a documentation page, URL to a website that isn't part of the site, or unlinked content such as a category title that groups a nested set of links.
 Documentation page links are created using the same cross referencing syntax used in the pages themselves.
 
@@ -77,7 +77,7 @@ image::page-version-selector.png[Screenshot of the page version selector dropdow
 
 * xref:filenames-and-locations.adoc[Navigation source file names, format, and storage locations]
 * xref:register-navigation-files.adoc[The nav key and registering navigation files]
-* xref:list-structure.adoc[Navigation list structures: list item and title nesting, single list file, multi-list file]
+* xref:list-structures.adoc[Navigation list structures: list item and title nesting, single list file, multi-list file]
 * xref:content-syntax.adoc[Navigation list item syntax: xrefs, URLs, text styles, images, icons, and more]
 //* Navigation files and the AsciiDoc include directive
 //* Component navigation menu, home icon, and the index / start page

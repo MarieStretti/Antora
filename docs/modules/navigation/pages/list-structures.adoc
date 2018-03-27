@@ -1,8 +1,8 @@
-= Navigation List Structure
+= Single List & Multi-list Navigation Files
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:description: How to structure a single list or multi-list Antora navigation source file, nest items in a list, and use list titles to create nested component navigation menus.
+:description: How to structure a single list or multi-list Antora navigation source file, nest items in a list, and use list titles in order to create component navigation menus.
 :keywords: nav.adoc, nested sidebar menu, nested navigation with AsciiDoc, Antora menu items, UI, theme
 // Filters
 :page-tags: UI menu
@@ -10,7 +10,15 @@ endif::[]
 :idprefix:
 :idseparator: -
 
-== AsciiDoc list type and list item marker
+On this page, you'll learn:
+
+* [x] The type of AsciiDoc list navigation files require.
+* [x] How to nest list item into different hierarchy levels.
+* [x] How list titles affect item hierarchy and the number of lists a navigation file can contain.
+* [x] How to construct a single list navigation file.
+* [x] How to construct a navigation file that contains several lists.
+
+== Unordered AsciiDoc lists
 
 A navigation file contains one or more xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[unordered AsciiDoc lists].
 An unordered list contains one or more list items.
@@ -41,7 +49,7 @@ You can also add list titles to your navigation lists.
 A title is preceded by a period (`.`).
 Unlike list items, there must be *no spaces* between the `.` and the content of the title.
 
-.List title
+.List title syntax
 [source,asciidoc]
 ----
 .List title
@@ -52,22 +60,21 @@ Unlike list items, there must be *no spaces* between the `.` and the content of 
 When converted into a component navigation menu, list titles become level one list items with all other item levels (`+*+` through `+*****+`) getting nested beneath them.
 
 A list title is optional when a navigation file only contains one list.
-If a navigation file contains multiple lists, each list in that file is must have a title.
+If a navigation file contains multiple lists, each list in that file must have a title.
 
 [#single]
 == Single list file
 
-A navigation file contains at least one list.
 When the file only has one list, the list title is optional.
 
-.Single list structure
+.Single list structure and syntax
 [source,asciidoc]
 ----
 * List item
 ** Nested item
 
 * List item
-// Note to self
+// Comment line
 * List item
 ** Nested item
 *** Nested item
@@ -81,7 +88,7 @@ The blank lines are removed from the HTML when the list is published as a naviga
 
 When a navigation file contains multiple lists, each list must have a title and be separated by at least one blank line.
 
-.Multi-list structure
+.Multi-list structure and syntax
 [source,asciidoc]
 ----
 .List title        // <1>
@@ -98,3 +105,13 @@ When a navigation file contains multiple lists, each list must have a title and 
 
 When converted to HTML, the list titles become top level items and all of their list items are nested under them in cascading order.
 The blank line between the lists is not present in the published menu.
+
+== What's next?
+
+Learn all about creating navigation list items:
+
+* xref:content-syntax.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
+
+Learn how to register navigation files so they get included in a component menu:
+
+* xref:register-navigation-files.adoc[Register navigation files with a component for display in a component menu]

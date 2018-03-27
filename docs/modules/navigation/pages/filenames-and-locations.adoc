@@ -65,7 +65,7 @@ Learn how to register navigation files so they get included in a component menu:
 
 Learn all about creating navigation lists and navigation items:
 
-* xref:list-structure.adoc[Navigation lists: list title and item hierarchy, single list file, multi-list file]
+* xref:list-structures.adoc[Navigation lists: list title and item hierarchy, single list file, multi-list file]
 * xref:content-syntax.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
 
 //A component menu is created when, at runtime, Antora combines one or more navigation files as instructed by a component descriptor file, converts the assembled navigation lists into HTML, wraps the HTML with a UI template, and publishes the resulting component navigation menus to your site.

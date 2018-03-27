@@ -14,6 +14,7 @@ On this page, you'll learn:
 
 * [x] The purpose of the component descriptor nav key.
 * [x] How to register navigation files in a component descriptor.
+* [x] How registration order affects the component menu.
 
 == The component descriptor nav key
 
@@ -66,3 +67,10 @@ The navigation lists in these two files will be published into a single componen
 
 The order of the nav key values dictates the order the contents of the navigation files are assembled in the published component menu.
 In the case of the example from the previous section, the contents of the Root navigation file will be at the top of the component menu and the contents of the Module One navigation file will be appended to the end of the Root navigation list.
+
+== What's next?
+
+Learn all about creating navigation lists and navigation items:
+
+* xref:list-structures.adoc[Navigation lists: list title and item hierarchy, single list file, multi-list file]
+* xref:content-syntax.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
