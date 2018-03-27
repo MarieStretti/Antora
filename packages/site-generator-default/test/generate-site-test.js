@@ -152,7 +152,7 @@ describe('generateSite()', () => {
     expect($('body > script:first-of-type')).to.have.attr('src', '../../_/js/site.js')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', '../..')
     // assert current component version is correct
-    expect($('.navigation-explore .current .title')).to.have.text('The Component')
+    expect($('.navigation-explore .context .title')).to.have.text('The Component')
     expect($('.navigation-explore .component.is-current .title')).to.have.text('The Component')
     expect($('.navigation-explore .component.is-current .version')).to.have.lengthOf(1)
     expect($('.navigation-explore .component.is-current .version a')).to.have.text('2.0')
