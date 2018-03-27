@@ -2,24 +2,36 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+:keywords: AsciiDoc attrs, page header attributes
+// Filters
+:page-tags: playbook keys, AsciiDoc
+// Settings
 :idprefix:
 :idseparator: -
+:linkattrs:
+// External URIs
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
+:uri-attrs: {uri-adoc-manual}/#builtin-attributes-table
 
 On this page, you'll learn:
 
-* [x] How to configure global (site-wide) AsciiDoc document attributes.
-* [x] How to allow a page to override a global AsciiDoc document attribute.
+* [x] How to configure global (site-wide) AsciiDoc document attributes in a playbook.
+* [x] How to override a global AsciiDoc document attribute from a page.
 //* [x] How to register an Asciidoctor extension globally.
 //* [x] How to register an Asciidoctor extension that's scoped to each page.
 
-== Global Document Attributes
+== Global document attributes
 
 If you find yourself defining the same AsciiDoc document attributes over and over in every page, you can move these attributes to the playbook, where you only have to define them once.
 Antora then adds these attributes to every page it converts.
 
-You can define global (i.e., side-wide) AsciiDoc document attributes using the `attributes` key under the `asciidoc` category in the playbook.
+You can define global (i.e., site-wide) AsciiDoc document attributes using the `attributes` key under the `asciidoc` category in the playbook.
 This key accepts a map of name-value pairs.
-The attribute names can be those of https://asciidoctor.org/docs/user-manual/#builtin-attributes-table[built-in AsciiDoc attributes] you want to override (e.g., `sectnums`, `hide-uri-scheme`, `linkattrs`), custom attributes that are specific to your content (e.g., `product-name`), or attributes for configuring the behavior of custom extensions (e.g., `plantuml-server-url`).
+The attribute names can be:
+
+* {uri-attrs}[built-in AsciiDoc attributes^] you want to override such as `sectnums`, `hide-uri-scheme`, `linkattrs`,
+* custom attributes that are specific to your content (e.g., `product-name`), and
+* attributes for configuring the behavior of custom extensions (e.g., `plantuml-server-url`).
 
 .Defining global AsciiDoc document attributes
 [source,yaml]
@@ -31,15 +43,15 @@ asciidoc:
     toc: ~
 ----
 
-These attributes are now available to use on every page.
+These attributes will be applied and now available to use on every page in your site.
 You can output the value of these attributes using the attribute reference syntax (e.g., `+{product-name}+`).
 
 CAUTION: Certain built-in attributes are not applicable in the Antora environment.
 These attributes include `data-uri`, `allow-uri-read`, `docinfo`, `linkcss`, `noheader`, `nofooter`, `webfonts`, and `outfilesuffix`.
 Assigning a value to these attributes either has no effect or may cause Antora to malfunction.
-Other attributes, such as `imagesdir`, are implicit and cannot be overridden.
+Other attributes, such as `imagesdir`, are automatically set by Antora and cannot be overridden.
 
-=== Attribute Value Types
+=== Attribute value types
 
 There are three attribute value types in AsciiDoc: String, Number, and Boolean.
 
@@ -49,12 +61,11 @@ If the attribute value is a _String_, we recommend enclosing the value in quotes
 If the attribute value is a _Number_, no quotes are required around the value.
 
 If the attribute value is a _Boolean_, use an empty string (i.e., `''`) to set the attribute and a null value (i.e., `null` or `~`) to unset the value.
-(You can use true and false instead, though those values are not strictly portable in AsciiDoc).
 
 You can also use a null value to unset any type of attribute (e.g., `table-caption: ~`).
 This is a good way to disable attributes that authors may use for local preview but should never be set in Antora (e.g., `toc`).
 
-== Default Attribute Values
+== Default attribute values
 
 Sometimes, you want to assign a default value to an attribute, but still allow a given page to override that value.
 By default, an attribute defined in the playbook overrides any assignment in the document (i.e., page) itself.
@@ -62,7 +73,7 @@ This behavior can be changed by appending a modifier.
 
 If you add the `@` symbol at the end of an attribute value defined in the playbook, it lowers the precedence of the attribute assignment so a page may override the value.
 The `@` modifier is then dropped from the value.
-We refer to this as a soft setting an attribute.
+We refer to this as [.term]_soft setting_ an attribute.
 
 .Defining attributes that can be overridden by a page
 [source,yaml]
