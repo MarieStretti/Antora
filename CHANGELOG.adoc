@@ -17,6 +17,7 @@ This project utilizes semantic versioning.
 * *page-composer:* Move antoraVersion property from site to top-level variable in UI model
 * *page-composer:* Prepare a sparse UI model for the 404 page
 * *site-generator-default:* Create and compose a 404 page if the `site.url` key is set in the playbook
+* *site-generator-default:* Remove unhandled rejection listener; move to CLI, but leave disabled
 
 == 1.0.0-beta.3 (2018-03-23)
 
