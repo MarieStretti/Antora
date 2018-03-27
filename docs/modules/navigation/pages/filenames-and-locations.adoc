@@ -5,8 +5,8 @@ endif::[]
 :description: An overview of the purpose of an Antora navigation source file, its file format, its naming parameters, and storage location patterns.
 :keywords: AsciiDoc navigation file, nav.adoc, repository organization, save navigation in a repository, navigation file best practices
 // Filters
-:collection: core concepts
-:tags: docs component
+:page-collections: core concepts
+:page-tags: docs component
 // Settings
 :idprefix:
 :idseparator: -
@@ -59,11 +59,11 @@ For example, you could store a single navigation file in a component's ROOT modu
 
 == What's next?
 
-Learn about registering navigation files so they get included in a component menu:
+Learn how to register navigation files so they get included in a component menu:
 
 * xref:register-navigation-files.adoc[Register navigation files with a component for display in a component menu]
 
-Deep dive into creating the contents of a navigation file:
+Learn all about creating navigation lists and navigation items:
 
 * xref:list-structure.adoc[Navigation lists: list title and item hierarchy, single list file, multi-list file]
 * xref:content-syntax.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]

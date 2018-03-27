@@ -4,8 +4,8 @@ include::_attributes.adoc[]
 endif::[]
 // Filters
 // basics? fundamentals?
-:collection: basejumps, starter
-:tags: UI menu
+:page-collections: base jumps, starter
+:page-tags: UI menu
 // Settings
 :idprefix:
 :idseparator: -

@@ -5,7 +5,7 @@ endif::[]
 :description: How to structure a single list or multi-list Antora navigation source file, nest items in a list, and use list titles to create nested component navigation menus.
 :keywords: nav.adoc, nested sidebar menu, nested navigation with AsciiDoc, Antora menu items, UI, theme
 // Filters
-:tags: UI menu
+:page-tags: UI menu
 // Settings
 :idprefix:
 :idseparator: -

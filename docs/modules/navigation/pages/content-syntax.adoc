@@ -5,7 +5,7 @@ endif::[]
 :description: All of the types of content you can use in an Antora navigation menu and how to mark them up with valid AsciiDoc.
 :keywords: nav.adoc, menu labels, navigation labels, menu entries, UI, theme
 // Filters
-:tags: UI menu
+:page-tags: UI menu
 // Settings
 :idprefix:
 :idseparator: -

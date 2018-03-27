@@ -5,8 +5,8 @@ endif::[]
 :description: An introduction to how Antora creates site, component, version, and page navigation menus or dropdown selectors for multiple documentation products and multiple documentation versions.
 :keywords: navigate between documentation versions, navigate between projects, navigate to other versions of a page, add page links to a menu, add page links to a sidebar, add page links to an AsciiDoc list, set up website navigation with Antora, multi-version navigation, create a navigation menu with AsciiDoc, UI, theme
 // Filters
-:collection: core concepts
-:tags: UI menu, component versions, page versions
+:page-collections: core concepts
+:page-tags: UI menu, component versions, page versions
 // Settings
 :idprefix:
 :idseparator: -
@@ -25,7 +25,7 @@ image::navigation-assembly.svg[Antora navigation assembly diagram showing the re
 
 Let's take a brief look at each of the numbered items in this diagram.
 
-=== image:one.svg[One,34] Source: Navigation list files
+=== image:one.svg[One,30] Source: Navigation list files
 
 The navigation for a component is described by xref:filenames-and-locations.adoc[at least one AsciiDoc file].
 However, as seen in the diagram, you can have as many navigation files as you need.
@@ -37,13 +37,13 @@ Documentation page links are created using the same cross referencing syntax use
 
 When you want the list contents of a navigation file to be published to a component's navigation menu, you need to register the file in the appropriate component descriptor file.
 
-=== image:two.svg[Two,34] Source: Navigation enlistment
+=== image:two.svg[Two,30] Source: Navigation enlistment
 
 Navigation files are xref:register-navigation-files.adoc[registered in a component descriptor file] under the nav key (`nav`).
 List the navigation files in the order you want them to be displayed in when they're published to the component menu on your site.
 When you run Antora, it will only use the registered navigation files to create the component menu.
 
-=== image:three.svg[Three,34] Site: Component navigation menu
+=== image:three.svg[Three,30] Site: Component navigation menu
 
 Antora collects the contents of each registered navigation file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled navigation menu for the component to the site.
 The behavior and style of the menu is dictated by the UI bundle specified in your playbook.
@@ -52,7 +52,7 @@ image::component-navigation-menu.png[Screenshot of the component navigation menu
 
 Antora carries out this assembly process for each version of each component that it locates in the repositories, branches, and tags listed under `sources` in the site's playbook.
 
-=== image:four.svg[Four,34] Site: Component version selector
+=== image:four.svg[Four,30] Site: Component version selector
 
 When your site has several components and/or several versions of one or more components, Antora assembles an aggregated list of the components and their versions.
 We refer to this master menu of components and versions as the component version selector.
@@ -63,7 +63,7 @@ image::component-version-selector.png[Screenshot of the component version select
 In the default UI, this list is displayed in the "`drawer`" located at the bottom of any component menu.
 When a visitor clicks on the drawer, it expands upwards and the reader can then select the component and version they want to see.
 
-=== image:five.svg[Five,34] Site: Page version selector
+=== image:five.svg[Five,30] Site: Page version selector
 
 If a page is available in more than one version of a component, a dropdown selector is visible on that page.
 From this selector, a visitor can navigate between other versions of that page.
@@ -73,12 +73,11 @@ image::page-version-selector.png[Screenshot of the page version selector dropdow
 
 == What's next?
 
-*Deep Dives*: All the details about each concept.
+*Summit Stats*: All the details about each concept.
 
 * xref:filenames-and-locations.adoc[Navigation source file names, format, and storage locations]
 * xref:register-navigation-files.adoc[The nav key and registering navigation files]
-* xref:list-structure.adoc[Navigation list structures: list item and title nesting depth, single list file, multi-list file]
-// source nesting depth versus published nesting depth, titled versus non-titled lists
+* xref:list-structure.adoc[Navigation list structures: list item and title nesting, single list file, multi-list file]
 * xref:content-syntax.adoc[Navigation list item syntax: xrefs, URLs, text styles, images, icons, and more]
 //* Navigation files and the AsciiDoc include directive
 //* Component navigation menu, home icon, and the index / start page
@@ -86,7 +85,7 @@ image::page-version-selector.png[Screenshot of the page version selector dropdow
 //* Component version selector menu
 //* Page version selector menu
 
-*Use Cases*: Workflows and tutorials.
+*Base Jumps*: Workflows and tutorials.
 
 * xref:create-a-navigation-file.adoc[Create and register a basic navigation file]
 

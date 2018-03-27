@@ -5,7 +5,7 @@ endif::[]
 :description: How to enlist navigation files in a component descriptor so the Antora assembles them into a component navigation menu.
 :keywords: nav.adoc, antora.yml, register navigation files, add page link lists to a menu, UI, theme
 // Filters
-:tags: UI menu, antora.yml, component keys
+:page-tags: UI menu, antora.yml, component keys
 // Settings
 :idprefix:
 :idseparator: -

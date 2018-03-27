@@ -9,6 +9,5 @@
 ** xref:content-syntax.adoc#resource[Attachment Links]
 ** xref:content-syntax.adoc#urls[Other URI Links]
 * xref:content-syntax.adoc#content[Navigation Content & Link Formatting]
-* *Tutorials*
-* xref:create-a-navigation-file.adoc[Create a Navigation File]
+* xref:create-a-navigation-file.adoc[Create and Register a Navigation File]
 //* xref:organize-navigation-files.adoc[Organize and Register Navigation Files]
