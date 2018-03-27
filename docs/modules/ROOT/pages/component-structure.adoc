@@ -105,8 +105,8 @@ Helper file that enables assets, partials, and examples to be rendered in previe
 xref:navigation:index.adoc[<module>/nav.adoc] ::
 _Optional_; _Reserved_
 +
-A xref:navigation:source-files.adoc[navigation file] contains one or more AsciiDoc lists.
-Each navigation file must be declared in the component descriptor if you want it to be displayed in the component's navigation menu.
+A xref:navigation:filenames-and-locations.adoc[navigation file] contains one or more AsciiDoc lists.
+Each navigation file must be xref:navigation:register-navigation-files.adoc[declared in the component descriptor] if you want it to be displayed in the component's navigation menu.
 
 modules/user-named-module ::
 _Optional_

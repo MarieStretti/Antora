@@ -3,7 +3,9 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 :description: How to enlist navigation files in a component descriptor so the Antora assembles them into a component navigation menu.
-:keywords: nav.adoc, antora.yml, register navigation files, add page link lists to a menu
+:keywords: nav.adoc, antora.yml, register navigation files, add page link lists to a menu, UI, theme
+// Filters
+:tags: UI menu, antora.yml, component keys
 // Settings
 :idprefix:
 :idseparator: -
@@ -15,7 +17,7 @@ On this page, you'll learn:
 
 == The component descriptor nav key
 
-The `nav` key accepts a list of xref:source-files.adoc[navigation files].
+The `nav` key accepts a list of xref:filenames-and-locations.adoc[navigation files].
 Each value specifies the path to an individual navigation file.
 
 .Component descriptor with two registered navigation files

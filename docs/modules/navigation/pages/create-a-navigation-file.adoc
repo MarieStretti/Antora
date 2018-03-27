@@ -1,7 +1,11 @@
-= Create a Navigation File
+= Create a Navigation File and Register It
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+// Filters
+// basics? fundamentals?
+:collection: basejumps, starter
+:tags: UI menu
 // Settings
 :idprefix:
 :idseparator: -

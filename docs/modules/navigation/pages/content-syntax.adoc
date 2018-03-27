@@ -3,7 +3,9 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 :description: All of the types of content you can use in an Antora navigation menu and how to mark them up with valid AsciiDoc.
-:keywords: nav.adoc, menu labels, navigation labels, menu entries
+:keywords: nav.adoc, menu labels, navigation labels, menu entries, UI, theme
+// Filters
+:tags: UI menu
 // Settings
 :idprefix:
 :idseparator: -
@@ -17,13 +19,13 @@ When content is linked, also known as anchored, then a website visitor can click
 The syntax used to link the content depends on what the destination page or resource is and where it is located.
 
 Site pages::
-When the link destination is a page in your site, the link is created using the Antora cross referencing system (`xref:page-id.adoc[link content]`).
+When the link destination is a page in your site, the link is created using the Antora cross referencing system (`\xref:page-id.adoc[link content]`).
 
 Site attachments::
-When the link destination is an attachment in your site (i.e., stored in [.path]_assets/attachments_), such as a PDF or downloadable ZIP, the link is created using the link macro (`link:{attachmentsdir}/filename.ext[link content]`).
+When the link destination is an attachment in your site (i.e., stored in [.path]_assets/attachments_), such as a PDF or downloadable ZIP, the link is created using the link macro (`+link:{attachmentsdir}/filename.ext[link content]+`).
 
 Other websites and resources::
-When the link destination is a website or resource that isn't part of your site, i.e., it isn't stored in a documentation component, the link is created using a valid URI scheme and address (`https://website.com[link content]`).
+When the link destination is a website or resource that isn't part of your site, i.e., it isn't stored in a documentation component, the link is created using a valid URI scheme and address (`+https://website.com[link content]+`).
 //or, in a few unique cases, with the link macro.
 
 //Content in an Antora navigation source file becomes a link when it is marked up with a cross reference (`xref`) or a valid URI scheme and address.

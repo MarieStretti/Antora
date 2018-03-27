@@ -122,6 +122,6 @@ Otherwise, a start page must be specified using the `start_page` key in the comp
 [#nav-key]
 === nav
 
-The nav key accepts a list of xref:navigation:register-navigation-files.adoc[navigation files].
-Each value specifies the path to a navigation file (e.g., [.path]_modules/module-name/nav.adoc_).
+The nav key accepts a list of xref:navigation:filenames-and-locations.adoc[navigation files].
+Each xref:navigation:register-navigation-files.adoc[value specifies the path to a navigation file] (e.g., [.path]_modules/module-name/nav.adoc_).
 The order of the values dictates the order the contents of the navigation files are assembled in the published component menu.
