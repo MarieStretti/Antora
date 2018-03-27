@@ -25,17 +25,12 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 For a detailed list of current development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
 
-=== v1.0.0-beta.x
+=== v1.0.0 GA
 
-* [ ] Pass down page ID properties to AsciiDoc document {uri-issues}/196[#196]
+* [ ] Add architecture guidebook for redirect producer component {uri-issues}/181[#181]
 * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
 * [ ] Set up API documentation and automatically publish as CI artifact
 //* [ ] Pass algolia key in playbook
-
-=== v1.0.0 Release Window
-
-*Early March 2018*: Feature-complete v1.0.0-beta.1 is released.
-Subsequent betas may include minor API changes, bug fixes, and stability improvements.
 
 *Mid March 2018*: Stable v1.0.0 of the Antora platform is released.
 The Antora platform includes all of the packages that are assembled in the default site generator and the CLI package.
@@ -55,6 +50,8 @@ The Antora platform includes all of the packages that are assembled in the defau
 * [ ] Watch mode for files in worktree
 * [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
 * [ ] Upgrade build to Gulp 4
+
+==== v1.1.x Release Window
 
 *Release Timeframe*: 2018 Q2
 
@@ -82,21 +79,17 @@ For current demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
 
 For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
 
-=== v1.0.0-beta.x
+=== v1.0.0 GA
 
-* [x] Correct branches, start page, and Demo examples in documentation {uri-issues}/205[#205]
-* [x] _Demo_: Update Demo site playbook to use latest Antora features
-* [x] _Demo_: Created two versions (v1.0 and v2.0) of Demo Component B to demonstrate the component selector drawer and page version selector in the default UI
-* [x] Add Getting Help page {uri-issues}/204[#204]
-* [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
-* [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
-* [ ] Add how to create a partial page {uri-issues}/176[#176]
-* [ ] Document the `page-` attributes {uri-issues}/177[#177]
 * [ ] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
 * [ ] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
+* [ ] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 
 === v1.x
 
+* [ ] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
+* [ ] Document the `page-` attributes {uri-issues}/177[#177]
+* [ ] Add how to create a partial page {uri-issues}/176[#176]
 * [ ] Document sitemap features {uri-issues}/168[#168]
 * [ ] Document how to create user-defined page attributes
 * [ ] Expand private repository section {uri-issues}/139[#139]
@@ -113,10 +106,8 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 For a detailed list of current development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
 
-=== v1.0.0-beta.x
+=== v1.0.0 GA
 
-* [ ] Unexpected breadcrumb behavior with multiple versions of a component {uri-ui-issues}/46[#46]
-* [x] Residual state causing nav menu to open unexpectedly when switching components {uri-ui-issues}/45[#45]
 * [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
 * [ ] IE 11 fixes
 * [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
@@ -139,10 +130,32 @@ For a detailed list of current development tasks, refer to the default UI {uri-u
 
 See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 
+=== v1.0.0-rc.1 (2018-03-27)
+
+* [x] Add environment variables to UI model {uri-issues}/212[#212]
+* [x] Create and compose 404 page if site.url is set in playbook {uri-issues}/207[#207]
+* [x] Promote antoraVersion to top-level property in UI model
+* [x] Pass down page ID properties to AsciiDoc document {uri-issues}/196[#196]
+* [x] Fix 404 layout {uri-ui-issues}/47[UI #47]
+* [x] Unexpected breadcrumb behavior with multiple versions of a component {uri-ui-issues}/46[UI #46]
+* [x] Residual state causing nav menu to open unexpectedly when switching components {uri-ui-issues}/45[UI #45]
+* [x] Enable Kotlin and Scala language support in highlight.js config (UI)
+* [x] Enable nix language support in highlight.js config (UI)
+
+=== v1.0.0-beta.3 (2018-03-23)
+
+* [x] Pass Antora version to UI model as antoraVersion
+* [x] Change ui.bundle to a category in the playbook schema (ui.bundle.url, ui.bundle.start_path, ui.bundle.snapshot) {uri-issues}/201[#201]
+* [x] Rewrite main loop in aggregateContent to operate on unique URLs {uri-issues}/200[#200]
+* [x] Use Asciidoctor.js public API where possible {uri-issues}/37[#37]
+* [x] Correct branches, start page, and Demo examples in documentation {uri-issues}/205[#205]
+* [x] _Demo_: Update Demo site playbook to use latest Antora features
+* [x] _Demo_: Created two versions (v1.0 and v2.0) of Demo Component B to demonstrate the component selector drawer and page version selector in the default UI
+* [x] Add Getting Help page {uri-issues}/204[#204]
+
 === v1.0.0-beta.2 (2018-03-13)
 
 * [x] Add netlify redirect facility to redirect producer {uri-issues}/202[#202]
-* [x] Change ui.bundle to a category in the playbook schema (ui.bundle.url, ui.bundle.start_path, ui.bundle.snapshot) {uri-issues}/201[#201]
 * [x] Set up CI build for Windows Server 2016 and Windows 10 {uri-issues}/199[#199]
 * [x] Update CI image to use stretch version of Debian {uri-issues}/198[#198]
 * [x] Document supported platforms and configurations {uri-issues}/197[#197]
@@ -151,10 +164,13 @@ See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
 
 === v1.0.0-beta.1 (2018-03-07)
 
+* [x] Pass site start page to UI model which will link to home icon, if set {uri-issues}/193[#193]
 * [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
 * [x] Allow content to be aggregated from tags {uri-issues}/117[#117]
-* [x] Pass site start page to UI model which will link to home icon, if set {uri-issues}/193[#193]
 * [x] Document tag key and use case examples
+
+*Early March 2018*: Feature-complete v1.0.0-beta.1 is released.
+Subsequent betas may include minor API changes, bug fixes, and stability improvements.
 
 === 1.0.0-alpha.9 (2018-03-06)
 

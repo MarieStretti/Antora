@@ -8,10 +8,10 @@ endif::[]
 :idseparator: -
 :table-caption!:
 :core-version: 1.0
-:ga-date: 2018/03/26*
-:gs-date: 2018/03/26*
-:eol-date: 2019/03/26*
-:eogs-date: 2019/03/26*
+:ga-date: 2018/03/28
+:gs-date: 2018/03/28
+:eol-date: 2019/03/28
+:eogs-date: 2019/03/28
 
 == Version policy
 
@@ -142,6 +142,6 @@ The date after which the software no longer receives maintenance releases.
 
 |===
 
-{asterisk} Date is estimated and subject to change.
+//{asterisk} Date is estimated and subject to change.
 
 The information on this page is believed to be accurate as of the date of publication, but updates and revisions may be posted periodically and without notice.
