@@ -589,6 +589,12 @@ describe('build UI model', () => {
       expect(model.site).to.equal(site)
     })
 
+    it('should set env property to provided env object', () => {
+      const model = buildUiModel(file, contentCatalog, navigationCatalog, site, process.env)
+      expect(model.env).to.exist()
+      expect(model.env).to.equal(process.env)
+    })
+
     it('should compute and set page property', () => {
       const model = buildUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.page).to.exist()

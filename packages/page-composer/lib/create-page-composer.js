@@ -22,10 +22,11 @@ const { version: VERSION } = require('../package.json')
  *   that provides access to the virtual files in the site.
  * @param {UiCatalog} uiCatalog - The file catalog
  *   that provides access to the UI files for the site.
+ * @param {Object} [env=process.env] - A map of environment variables.
  * @returns {Function} A function to compose a page (i.e., wrap the embeddable
  *   HTML contents in a standalone page layout).
  */
-function createPageComposer (playbook, contentCatalog, uiCatalog) {
+function createPageComposer (playbook, contentCatalog, uiCatalog, env = process.env) {
   uiCatalog
     .findByType('helper')
     .forEach((file) => handlebars.registerHelper(file.stem, requireFromString(file.contents.toString(), file.path)))
@@ -37,10 +38,10 @@ function createPageComposer (playbook, contentCatalog, uiCatalog) {
     return accum
   }, {})
 
-  return createPageComposerInternal(buildSiteUiModel(playbook, contentCatalog), layouts)
+  return createPageComposerInternal(buildSiteUiModel(playbook, contentCatalog), env, layouts)
 }
 
-function createPageComposerInternal (site, layouts) {
+function createPageComposerInternal (site, env, layouts) {
   /**
    * Wraps the embeddable HTML contents of the specified file in a page layout.
    *
@@ -61,7 +62,7 @@ function createPageComposerInternal (site, layouts) {
    */
   return function composePage (file, contentCatalog, navigationCatalog) {
     // QUESTION should we pass the playbook to the uiModel?
-    const uiModel = buildUiModel(file, contentCatalog, navigationCatalog, site)
+    const uiModel = buildUiModel(file, contentCatalog, navigationCatalog, site, env)
 
     let layout = uiModel.page.layout
     if (!(layout in layouts)) {
@@ -82,9 +83,10 @@ function createPageComposerInternal (site, layouts) {
   }
 }
 
-function buildUiModel (file, contentCatalog, navigationCatalog, site) {
+function buildUiModel (file, contentCatalog, navigationCatalog, site, env) {
   return {
     antoraVersion: VERSION,
+    env,
     page: buildPageUiModel(file, contentCatalog, navigationCatalog, site),
     site,
     siteRootPath: file.pub.rootPath,

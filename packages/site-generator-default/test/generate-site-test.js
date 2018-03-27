@@ -274,6 +274,21 @@ describe('generateSite()', () => {
     global.Opal.Asciidoctor.Extensions.unregisterAll()
   }).timeout(TIMEOUT)
 
+  it('should be able to reference environment variable from UI template added as supplemental file', async () => {
+    env.SITE_NAME = 'Learn All The Things!'
+    playbookSpec.ui.supplemental_files = [
+      {
+        path: 'partials/head-meta.hbs',
+        contents: '<meta property="og:site_name" content="{{env.SITE_NAME}}">',
+      },
+    ]
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html'))
+      .to.be.a.file()
+      .with.contents.that.match(/<meta property="og:site_name" content="Learn All The Things!">/)
+  }).timeout(TIMEOUT)
+
   it('should add edit page link to toolbar if page.editUrl is set in UI model', async () => {
     await repositoryBuilder.open().then(() => repositoryBuilder.checkoutBranch('v2.0'))
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
