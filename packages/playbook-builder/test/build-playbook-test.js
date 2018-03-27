@@ -168,6 +168,12 @@ describe('buildPlaybook()', () => {
     expect(playbook.one.one).to.equal('the-env-value')
   })
 
+  it('should use env value over spec file value when env value is empty string', () => {
+    const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: '' }
+    const playbook = buildPlaybook([], env, schema)
+    expect(playbook.one.one).to.equal('')
+  })
+
   it('should use args value over spec file value or env value', () => {
     const args = ['--one-one', 'the-args-value']
     const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
@@ -190,6 +196,12 @@ describe('buildPlaybook()', () => {
     const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '777' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.two).to.equal(777)
+  })
+
+  it('should use env value over spec file value when env value is 0', () => {
+    const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '0' }
+    const playbook = buildPlaybook([], env, schema)
+    expect(playbook.two).to.equal(0)
   })
 
   it('should coerce Number values in args', () => {
