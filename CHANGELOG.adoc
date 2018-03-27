@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 1.0.0-x (Pending)
+
+=== Added
+
+* Expanded site navigation assembly, navigation file list structure and item functionality, and navigation file registration documentation
+
 == 1.0.0-rc.1 (2018-03-27)
 
 === Added
