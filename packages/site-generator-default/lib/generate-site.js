@@ -12,12 +12,6 @@ const produceRedirects = require('@antora/redirect-producer')
 const publishSite = require('@antora/site-publisher')
 const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
 
-// QUESTION should we move this listener to the cli?
-process.on('unhandledRejection', (reason) => {
-  console.error(`An unexpected error occurred: Unhandled promise rejection: ${reason.stack}`)
-  process.exitCode = 1
-})
-
 async function generateSite (args, env) {
   const playbook = buildPlaybook(args, env)
   const [contentCatalog, uiCatalog] = await Promise.all([
