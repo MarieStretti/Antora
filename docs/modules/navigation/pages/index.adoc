@@ -2,14 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:description: An introduction to how Antora creates site, component, version, and page navigation menus or dropdown selectors for multiple documentation products and multiple documentation versions.
+:description: An introduction to how Antora creates site, component, version, and page navigation menus and dropdown selectors for multiple documentation products and multiple documentation versions.
 :keywords: navigate between documentation versions, navigate between projects, navigate to other versions of a page, add page links to a menu, add page links to a sidebar, add page links to an AsciiDoc list, set up website navigation with Antora, multi-version navigation, create a navigation menu with AsciiDoc, UI, theme
 // Filters
 :page-collections: core concepts
 :page-tags: UI menu, component versions, page versions
-// Settings
-:idprefix:
-:idseparator: -
 
 With Antora, you can create your site's navigation with AsciiDoc and store it right alongside your documentation files.
 
@@ -18,7 +15,7 @@ With Antora, you can create your site's navigation with AsciiDoc and store it ri
 The navigation for an Antora documentation site requires:
 
 * at least one navigation file that contains at least one unordered AsciiDoc list,
-* at least one navigation file registered in the component descriptor file,
+* at least one navigation file registered in the component descriptor file, and
 * a UI bundle, such as the Antora default UI, that can apply styles and interaction behavior to the menu(s) Antora generates.
 
 image::navigation-assembly.svg[Antora navigation assembly diagram showing the required source files and the resulting site menus where the content from the source files is displayed,600]

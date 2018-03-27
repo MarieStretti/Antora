@@ -6,21 +6,18 @@ endif::[]
 :keywords: nav.adoc, nested sidebar menu, nested navigation with AsciiDoc, Antora menu items, UI, theme
 // Filters
 :page-tags: UI menu
-// Settings
-:idprefix:
-:idseparator: -
 
 On this page, you'll learn:
 
-* [x] The type of AsciiDoc list navigation files require.
-* [x] How to nest list item into different hierarchy levels.
+* [x] The AsciiDoc list type (unordered) that navigation files require.
+* [x] How to nest list items at different hierarchy levels.
 * [x] How list titles affect item hierarchy and the number of lists a navigation file can contain.
 * [x] How to construct a single list navigation file.
 * [x] How to construct a navigation file that contains several lists.
 
 == Unordered AsciiDoc lists
 
-A navigation file contains one or more xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[unordered AsciiDoc lists].
+A navigation file can contain one or more xref:asciidoc:ordered-and-unordered-lists.adoc#unordered[unordered AsciiDoc lists].
 An unordered list contains one or more list items.
 A list item is preceded by a marker.
 In the case of an unordered list, the marker is at least one asterisk (`{asterisk}`).
@@ -33,7 +30,7 @@ The top-level list item in a navigation list is marked by a single (`{asterisk}`
 Each top-level item can have as many nested items as you need.
 The greatest nesting depth allowed is level five (`+*****+`).
 
-.List depth levels
+.Item level syntax
 [source,asciidoc]
 ----
 * Level 1 (top)
@@ -60,12 +57,12 @@ Unlike list items, there must be *no spaces* between the `.` and the content of 
 When converted into a component navigation menu, list titles become level one list items with all other item levels (`+*+` through `+*****+`) getting nested beneath them.
 
 A list title is optional when a navigation file only contains one list.
-If a navigation file contains multiple lists, each list in that file must have a title.
+If a navigation file contains <<multi,multiple lists>>, each list in that file must have a title.
 
 [#single]
 == Single list file
 
-When the file only has one list, the list title is optional.
+When a navigation file only contains one list, a list title is optional.
 
 .Single list structure and syntax
 [source,asciidoc]
@@ -108,7 +105,7 @@ The blank line between the lists is not present in the published menu.
 
 == What's next?
 
-Learn all about creating navigation list items:
+Learn all about creating and formatting navigation list items:
 
 * xref:link-syntax-and-content.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
 

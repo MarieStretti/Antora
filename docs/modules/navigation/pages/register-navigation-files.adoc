@@ -6,9 +6,6 @@ endif::[]
 :keywords: nav.adoc, antora.yml, register navigation files, add page link lists to a menu, UI, theme
 // Filters
 :page-tags: UI menu, antora.yml, component keys
-// Settings
-:idprefix:
-:idseparator: -
 
 On this page, you'll learn:
 
@@ -37,7 +34,7 @@ nav: # <1>
 <3> Value registering a navigation file located in a module named module-one
 
 When a file is assigned to the nav key, this file is [.term]_registered_.
-Only the contents of registered navigation files are assembled into and published as a component navigation menu.
+Only the contents of registered navigation files are assembled into, and published as, a component navigation menu.
 
 === Nav key structure
 

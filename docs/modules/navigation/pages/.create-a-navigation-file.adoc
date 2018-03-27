@@ -6,9 +6,6 @@ endif::[]
 // basics? fundamentals?
 :page-collections: base jumps, starter
 :page-tags: UI menu
-// Settings
-:idprefix:
-:idseparator: -
 ////
 TODO:
 

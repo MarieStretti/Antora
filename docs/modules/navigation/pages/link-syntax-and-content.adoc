@@ -6,16 +6,13 @@ endif::[]
 :keywords: nav.adoc, menu labels, navigation labels, menu entries, UI, theme
 // Filters
 :page-tags: UI menu
-// Settings
-:idprefix:
-:idseparator: -
 
 List titles and items in a navigation file can contain several types of content, such as text, images, and icons.
 In most cases this content will link to a page or resource in your site.
 
 == Link types
 
-When content is linked, also known as anchored, then a website visitor can click on the visible content and jump to another page or resource.
+When content is linked, then a website visitor can click on the visible content and jump to another page or resource.
 The syntax used to link the content depends on what the destination page or resource is and where it is located.
 
 Site pages::
@@ -34,13 +31,14 @@ When the link destination is a website or resource that isn't part of your site,
 == Site page links
 
 Cross references in a navigation list use the xref:asciidoc:page-to-page-xref.adoc[same syntax and page ID construction as cross references in the page content].
-Just set up the `xref` macro, insert the page ID of the destination page, and add the link content.
+Just set up the `xref` macro, insert the destination page ID, and add the link content.
 The link content can be text, images, and/or icons.
-This is the content that is visible to the visitor in the component navigation menu.
-This content is also displayed in the breadcrumbs at the top of the destination page.
-When a visitor click on the link content, they will be routed to the destination page specified by the page ID in the xref.
+The link content is visible to the visitor in the component navigation menu.
+It is also displayed in the breadcrumbs at the top of the destination page.
+When a visitor clicks on the link content, they are routed to the destination page specified by the page ID in the xref.
 
-*Whether in the content of a page or in a navigation file, when a page is part of your site, you should always create links to it using the Antora cross referencing system.*
+*Whether in the body of a site page (i.e., AsciiDoc document stored in [.path]_<module>/pages_), or in a navigation file, always create page-to-page or navigation-to-page links using the page cross reference syntax.*
+*Antora's page IDs are what allows your site to be portable across environments, domains, and versions.*
 
 === In-module page links
 
@@ -57,7 +55,7 @@ In this case, the page ID doesn't require the component or module coordinates.
 
 === Links to pages in other modules and components
 
-Using the xref:asciidoc:page-to-page-xref.adoc[appropriate page ID pattern], you can link to any document in the site from a navigation list, whether it's stored in a different module or component.
+Using the appropriate page ID pattern, you can link to any document in the site from a navigation list, whether it's stored in a xref:asciidoc:page-to-page-xref.adoc#different-module[different module] or xref:asciidoc:page-to-page-xref.adoc#different-component[component].
 
 .xrefs to pages in other modules and components
 [source,asciidoc]

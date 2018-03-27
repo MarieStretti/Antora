@@ -7,9 +7,6 @@ endif::[]
 // Filters
 :page-collections: core concepts
 :page-tags: docs component
-// Settings
-:idprefix:
-:idseparator: -
 
 On this page, you'll learn:
 
@@ -39,8 +36,8 @@ Feel free to name your navigation files [.path]_kaboom.adoc_ if that's what make
 == Navigation file storage locations
 
 A common pattern we see is for each module to contain its own navigation file.
-Modules already represent logical groups of concepts or objectives, so it's likely that you'd arrange the xrefs to that module's pages into a continuous, hierarchical flow of navigation menu entries.
-This also reduces the number of coordinates the cross references require when you add a page to the navigation file.
+xref:ROOT:modules.adoc[Modules already represent logical groups of concepts or objectives], so it's likely that you'd arrange the xrefs to that module's pages into a continuous, hierarchical flow of navigation menu entries.
+This also reduces the number of coordinates the page IDs in the xrefs require when you add a page to the navigation file.
 
 Navigation files should be stored at the base of a module, i.e., at the same level as the module's [.path]_pages_ directory.
 *Don't* save navigation files inside [.path]_pages_, otherwise the navigation files will be converted to individual pages and published as pages.
@@ -52,10 +49,10 @@ This functionality helps you finely tune the navigation list order when you xref
 
 === Alternative storage patterns
 
-Storing a navigation file in the module it references the most simplifies the cross references entered into it.
+Storing a navigation file in the module it references the most simplifies the page cross references entered into it.
 It also helps writers locate the navigation that may be affected when they add pages to, or remove pages from, a module.
 However, links to other modules' pages (and even other components' pages) can be entered into any module's navigation file.
-You'll just need to add the module coordinate (or component coordinate) to the cross references you create in the navigation file.
+You'll just need to xref:asciidoc:page-to-page-xref.adoc#different-module[add the module coordinate] (or xref:asciidoc:page-to-page-xref.adoc#different-component[component coordinate]) to the cross references you create in the navigation file.
 For example, you could store a single navigation file in a component's ROOT module, and, instead of having navigation files in each module that may exist in the component, you could just add the cross references to pages in those other modules directly to the ROOT module's navigation file.
 
 == What's next?
