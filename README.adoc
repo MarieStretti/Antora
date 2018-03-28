@@ -225,11 +225,26 @@ In your terminal, type:
 
  $ antora site.yml
 
-Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to [.path]_build/site_.
+Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in a page template from the UI, then assemble the pages together along with the assets into the destination folder, which defaults to [.path]_build/site_.
 
-To view the site, navigate to any HTML page inside the destination folder in your browser.
-Using this example, look for the file [.path]_build/site/index.html_.
+To view your site, navigate to any HTML page inside the destination folder in your browser.
+Using this example, look for the entry point file [.path]_build/site/index.html_.
 That file will redirect you to the start page.
+
+==== Troubleshooting
+
+If something goes wrong during generation, you'll see an error message in the terminal.
+
+....
+error: a message that summarizes what went wrong
+....
+
+If this message does not provide enough information to fix the problem, you can ask Antora for more context.
+To tell Antora to reveal the calls leading up to the error (i.e., the stacktrace), run the `antora` command again, this time with the `--stacktrace` option:
+
+ demo-site $ antora --stacktrace site.yml
+
+Share this stacktrace when <<Getting Help,asking for help>>.
 
 ==== Changing Content
 
