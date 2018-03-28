@@ -2,8 +2,6 @@
 * xref:filenames-and-locations.adoc[Navigation File Names & Storage Locations]
 * xref:register-navigation-files.adoc[Navigation File Registration]
 * xref:list-structures.adoc[Single & Multi-list Navigation Files]
-//** xref:list-structures.adoc#single[Single List File]
-//** xref:list-structures.adoc#multi[Multi-list File]
 * xref:link-syntax-and-content.adoc[Link Types & Syntax]
 ** xref:link-syntax-and-content.adoc#page[Page Links]
 ** xref:link-syntax-and-content.adoc#resource[Attachment Links]
