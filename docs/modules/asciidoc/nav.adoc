@@ -14,6 +14,7 @@
 * xref:page-to-page-xref.adoc[Page to Page Links]
 * xref:in-page-xref.adoc[Same Page Links]
 * xref:external-urls.adoc[URLs]
+* xref:include-content.adoc[Include Content]
 * xref:ordered-and-unordered-lists.adoc[Ordered & Unordered Lists]
 * xref:labeled-lists.adoc[Labeled Lists]
 * xref:task-lists.adoc[Task Lists]
@@ -24,5 +25,4 @@
 * xref:admonitions.adoc[Admonitions]
 * xref:examples.adoc[Examples]
 * xref:sidebar.adoc[Sidebars]
-* xref:include-partial-page.adoc[Insert a Partial Page]
 * xref:comments.adoc[Comments]

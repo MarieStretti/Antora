@@ -1,0 +1,105 @@
+= Include Content
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// Settings
+:idprefix:
+:idseparator: -
+:linkattrs:
+// URLs
+:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
+:uri-include: {uri-adoc-manual}/#include-directive
+
+You can use the include directive (`include::[]`) to include content into an AsciiDoc file from another file.
+You can include a <<include-partial,partial>>, <<include-page,standalone page>>, or <<include-example,example file>>.
+(In other words, the file being included does not have to be an AsciiDoc file).
+
+There are a few things to know about using the include directive in the Antora environment, which this page covers.
+
+[#include-partial]
+== Include a partial
+
+To include a partial AsciiDoc file into a page, use the include directive with a target starting with `+{partialsdir}+`, which is a reference the [.path]_{blank}_partials_ directory.
+
+.Insert a partial page using an include directive
+[source,asciidoc]
+----
+\include::{partialsdir}/log-definition.adoc[]
+----
+
+Let's break this down.
+You start with the include directive prefix, `include::`.
+Next comes the target.
+Start the target with `+{partialsdir}+` to tell Antora where to look for the file.
+Then put the relative path of the partial after that.
+Finally, end with a pair of square brackets (`+[]+`).
+The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
+
+xref:ROOT:modules.adoc#partials-dir[Partial AsciiDoc files] should be saved in the [.path]_pages/_partials_ directory inside the current module.
+You don't need to set the path to this directory in the header of your AsciiDoc file.
+When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
+
+NOTE: Antora doesn't yet support filtering included lines by line number, only by tags.
+
+[#include-page]
+== Include a standalone page
+
+Instead of using a partial, you can include one standalone page into another (or a portion of it).
+
+.Include a stardard page using the include directive
+----
+\include::other-page.adoc[]
+----
+
+Once again, you start with the include directive prefix, `include::`.
+Next comes the target.
+The target is the path of the page being included relative to the current page.
+Then put the relative path of the partial after that.
+Finally, end with a pair of square brackets (`+[]+`).
+The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
+
+If you include one standalone page (not a partial) into another page, you *must* set the `page-partial` AsciiDoc attribute in the document header of the page being included.
+
+.A standalone page included in another page
+[source,asciidoc]
+----
+= Other Page
+:page-partial:
+
+Page contents.
+----
+
+This attribute lets Antora know that you intend to include the AsciiDoc source and not the converted HTML.
+
+[#include-example]
+== Include an example
+
+Thus far we've talked about including AsciiDoc in AsciiDoc.
+You can also use the include directive to insert non-AsciiDoc content.
+Most of the time, you'll use the include directive to insert source code from the examples directory into a listing block.
+
+In this case, you'll use the include directive with a target starting with `+{examplesdir}+`, which is a reference the [.path]_examples_ directory.
+
+.Inserting source code from the examples directory into a listing block
+[source,asciidoc]
+....
+[source,java]
+----
+include::{examplesdir}/HelloWorld.java
+----
+....
+
+Once again, you start with the include directive prefix, `include::`.
+Next comes the target.
+Start the target with `+{examplesdir}+` to tell Antora to look in the examples folder.
+Then put the relative path of the example file after that.
+Finally, end with a pair of square brackets (`+[]+`).
+The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
+
+Currently, all the example source code you want to include must live in the examples folder in the module.
+In the future, it will be possible to pull in example source code from other locations and sources.
+
+[discrete]
+==== Asciidoctor resources
+
+* {uri-include}[Using the AsciiDoc include directive^]
