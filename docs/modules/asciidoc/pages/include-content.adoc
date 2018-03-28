@@ -2,24 +2,22 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
 // URLs
 :uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-include: {uri-adoc-manual}/#include-directive
 
-You can use the include directive (`include::[]`) to include content into an AsciiDoc file from another file.
-You can include a <<include-partial,partial>>, <<include-page,standalone page>>, or <<include-example,example file>>.
-(In other words, the file being included does not have to be an AsciiDoc file).
+You can use the include directive (`include::[]`) to insert content from one file into an AsciiDoc file.
+You can include a <<include-partial,partial>>, a <<include-page,standard page>>, or an <<include-example,example file>>.
+Partial and standard pages are AsciiDoc files; examples are often other file types, such as source code or data values.
+//(In other words, the file being included does not have to be an AsciiDoc file).
 
 There are a few things to know about using the include directive in the Antora environment, which this page covers.
 
 [#include-partial]
-== Include a partial
+== Include a partial page
 
-To include a partial AsciiDoc file into a page, use the include directive with a target starting with `+{partialsdir}+`, which is a reference the [.path]_{blank}_partials_ directory.
+To include a xref:ROOT:pages.adoc#partial[partial AsciiDoc file] into a standard page, use the include directive with a target starting with the attribute reference `+{partialsdir}+`, followed by the relative path of the partial file.
+//, which is a reference to the [.path]_{blank}_partials_ directory.
 
 .Insert a partial page using an include directive
 [source,asciidoc]
@@ -28,37 +26,40 @@ To include a partial AsciiDoc file into a page, use the include directive with a
 ----
 
 Let's break this down.
-You start with the include directive prefix, `include::`.
-Next comes the target.
-Start the target with `+{partialsdir}+` to tell Antora where to look for the file.
-Then put the relative path of the partial after that.
-Finally, end with a pair of square brackets (`+[]+`).
-The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
 
-xref:ROOT:modules.adoc#partials-dir[Partial AsciiDoc files] should be saved in the [.path]_pages/_partials_ directory inside the current module.
-You don't need to set the path to this directory in the header of your AsciiDoc file.
+. On its own line, start with the include directive prefix, `include::`.
+. Next comes the target.
+Start the target with `+{partialsdir}+`; this tells Antora to look for the file in the [.path]_pages/_partials_ directory inside the current module.
+. Then enter the relative path of the partial directly after the reference.
+. Close the directive with a pair of square brackets (`+[]+`).
+The brackets can contain an optional list of attributes such as `leveloffset` and `tags`.
+The attributes should be entered as key=value pairs separated by commas.
+
+Partial AsciiDoc files should be saved in the xref:ROOT:modules.adoc#partials-dir[_pages/_partials_ directory] inside the current module.
+Antora knows the path to the [.path]_partials_ directory, so you don't need to set it in the header of your AsciiDoc file.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
-NOTE: Antora doesn't yet support filtering included lines by line number, only by tags.
+NOTE: Currently, Antora only supports filtering includes by tags.
 
 [#include-page]
-== Include a standalone page
+== Include a standard page
 
-Instead of using a partial, you can include one standalone page into another (or a portion of it).
+Instead of using a partial, you can insert the contents of a xref:ROOT:pages.adoc#standard[standard page] into another standard page.
+// or portion of a standard page using the
 
-.Include a stardard page using the include directive
+.Insert a standard page using the include directive
 ----
 \include::other-page.adoc[]
 ----
 
-Once again, you start with the include directive prefix, `include::`.
-Next comes the target.
+. On its own line, start with the include directive prefix, `include::`.
+. Next comes the target.
 The target is the path of the page being included relative to the current page.
-Then put the relative path of the partial after that.
-Finally, end with a pair of square brackets (`+[]+`).
-The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
+. Close the directive with a pair of square brackets (`+[]+`).
+The brackets can contain an optional list of attributes such as `leveloffset` and `tags`.
+The attributes should be entered as key=value pairs separated by commas.
 
-If you include one standalone page (not a partial) into another page, you *must* set the `page-partial` AsciiDoc attribute in the document header of the page being included.
+If you include a standard page (a page that is stored in the xref:ROOT:modules.adoc#pages-dir[_pages_ directory]) into another page, you *must* set the `page-partial` AsciiDoc attribute in the document header of the page being included.
 
 .A standalone page included in another page
 [source,asciidoc]
@@ -69,35 +70,41 @@ If you include one standalone page (not a partial) into another page, you *must*
 Page contents.
 ----
 
-This attribute lets Antora know that you intend to include the AsciiDoc source and not the converted HTML.
+This attribute lets Antora know that you intend to include the AsciiDoc source of the file into another AsciiDoc file.
 
 [#include-example]
 == Include an example
 
-Thus far we've talked about including AsciiDoc in AsciiDoc.
-You can also use the include directive to insert non-AsciiDoc content.
-Most of the time, you'll use the include directive to insert source code from the examples directory into a listing block.
+So far we've only talked about including AsciiDoc in AsciiDoc.
+You can also use the include directive to insert non-AsciiDoc content into a file.
+One common use case is to insert source code from a file stored in the [.path]_examples_ directory into a listing block.
 
-In this case, you'll use the include directive with a target starting with `+{examplesdir}+`, which is a reference the [.path]_examples_ directory.
+In this case, you'll use the include directive with a target starting with the attribute reference `+{examplesdir}+`, followed by the relative path of the example file.
 
-.Inserting source code from the examples directory into a listing block
+.Insert source code from the examples directory into a listing block
 [source,asciidoc]
 ....
 [source,java]
 ----
-include::{examplesdir}/HelloWorld.java
+\include::{examplesdir}/HelloWorld.java[]
 ----
 ....
 
-Once again, you start with the include directive prefix, `include::`.
-Next comes the target.
-Start the target with `+{examplesdir}+` to tell Antora to look in the examples folder.
-Then put the relative path of the example file after that.
-Finally, end with a pair of square brackets (`+[]+`).
-The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
+. On its own line, start with the include directive prefix, `include::`.
+. Next comes the target.
+Start the target with `+{examplesdir}+`; this tells Antora to look for the file in the [.path]_examples_ directory inside the current module.
+. Then put the relative path of the example file directly after the reference.
+. Close the directive with a pair of square brackets (`+[]+`).
+The brackets can contain an optional list of attributes such as `tags` and `indent`.
+The attributes should be entered as key=value pairs separated by commas.
 
-Currently, all the example source code you want to include must live in the examples folder in the module.
-In the future, it will be possible to pull in example source code from other locations and sources.
+Currently, all of the example files you want to include must live in the xref:ROOT:modules.adoc#examples-dir[_examples_ directory] inside the current module.
+In the future, it will be possible to pull in example source code and files from other locations.
+
+Like with partials, Antora knows the path to the [.path]_examples_ directory, so you don't need to set it in the header of your AsciiDoc file.
+When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
+
+NOTE: Antora doesn't yet support filtering includes by line number, only by tags.
 
 [discrete]
 ==== Asciidoctor resources

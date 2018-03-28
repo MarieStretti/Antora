@@ -13,6 +13,7 @@ AsciiDoc files are text files marked up with the AsciiDoc syntax and saved with 
 
 Whether Antora automatically processes an AsciiDoc file depends on where it is stored in a documentation component.
 
+[#standard]
 == Standard page
 
 Antora generates one site page for each AsciiDoc file located in the [.path]_pages_ directory of a module.
@@ -31,6 +32,7 @@ Learn more:
 * xref:component-structure.adoc[Documentation component overview]
 * xref:navigation:link-syntax-and-content.adoc#page[Add a page xref to a navigation file]
 
+[#partial]
 == Partial page
 
 Partial pages are AsciiDoc files located in [.path]_pages/_partials_.
