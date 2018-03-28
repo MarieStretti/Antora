@@ -92,6 +92,22 @@ Once cloning is complete, Antora converts the AsciiDoc pages to embeddable HTML,
 --
 
 . Antora has completed generation when the command prompt (`$`) reappears in the terminal.
++
+[TIP]
+====
+If something goes wrong during generation, you'll see an error message in the terminal.
+
+....
+error: a message that summarizes what went wrong
+....
+
+If the message does not provide enough information to fix the problem, you can ask Antora for more context.
+To tell Antora to reveal the calls leading up to the error (i.e., the stacktrace), run the `antora` command again, this time with the `--stacktrace` option:
+
+ demo-site $ antora --stacktrace site.yml
+
+Share this output when xref:project/get-help.adoc[asking for help].
+====
 
 . Switch into the site folder (`cd`) and list (`ls`) its contents.
 +
