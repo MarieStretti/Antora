@@ -93,7 +93,7 @@ Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] 
 |Preload the specified library or script.
 May be specified multiple times.
 |String
-|no set
+|not set
 
 |--silent
 |Suppress all messages, including warnings and errors.

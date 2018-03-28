@@ -9,8 +9,9 @@ This project utilizes semantic versioning.
 
 === Added
 
+* Document how to register Asciidoctor extensions
 * Document the `page-partial` attribute and including standard pages and example files
-* Document ability to set AsciiDoc page attributes in the playbook
+* Document ability to set AsciiDoc page attributes in the playbook and via the CLI
 * Expand site navigation assembly, navigation file list structure and item functionality, and navigation file registration documentation
 
 === Changed

@@ -114,7 +114,7 @@ asciidoc:
   - asciidoctor-emoji-macro
 ----
 
-In this case, `asciidoctor-emoji-macro` is the name of an installed node module and is thus available on the require path (either in the node_modules directory for the playbook project or in the global node_modules directory).
+In this case, `asciidoctor-emoji-macro` is the name of an installed node module and is thus available on the require path (either in the [.path]__node_modules__ directory for the playbook project or in the global [.path]__node_modules__ directory).
 
 .Register a global extension from a local script
 [source,yaml]
@@ -151,7 +151,7 @@ The context object includes the current file, the content catalog, and the Ascii
 
 Here's an example of a `register` function:
 
-.An  register function of a scoped Asciidoctor extension
+.Scoped Asciidoctor extension register function
 [source,js]
 ----
 module.exports.register = function (registry, context) {
@@ -181,7 +181,7 @@ The main difference is that if the extension exports the `register` function, it
 
 //Perhaps we should require #register at the end of the extension; hmmm
 
-== Preloading modules
+=== Preloading modules
 
 Instead of registering extensions using the playbook, you can preload extensions using the `-r` (or `--require`) CLI option.
 The value of this option may be either a path to a file (relative to the current directory), or a node module name.
@@ -195,10 +195,10 @@ If the node module or script is an Asciidoctor extension, it must self-register 
 (Antora merely requires the script.
 It does not invoke a function).
 
-Here's an example showing how use the `antora` CLI to preload multiple Asciidoctor extensions:
+Here's an example showing how to use the Antora CLI to preload multiple Asciidoctor extensions:
 
  $ antora -r ./lib/shout-block -r asciidoctor-emoji-macro site.yml
 
-The `-r` option can also be used for other purposes as well, such as to alter global state or override Antora components.
+The `-r` option can also be used for other purposes, such as to alter global state or override Antora components.
 
 For more information about the CLI, see the xref:ROOT:cli.adoc[CLI commands and options] page.
