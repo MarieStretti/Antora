@@ -5,10 +5,6 @@ endif::[]
 :keywords: AsciiDoc attrs, page header attributes
 // Filters
 :page-tags: playbook keys, AsciiDoc
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
 // External URIs
 :uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-attrs: {uri-adoc-manual}/#builtin-attributes-table
@@ -43,7 +39,7 @@ asciidoc:
     toc: ~
 ----
 
-These attributes will be applied and now available to use on every page in your site.
+These attributes will be applied and available to use on every page in your site.
 You can output the value of these attributes using the attribute reference syntax (e.g., `+{product-name}+`).
 
 CAUTION: Certain built-in attributes are not applicable in the Antora environment.
