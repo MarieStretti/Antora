@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:idprefix:
-:idseparator: -
-:experimental:
 
 On this page, you'll learn:
 
@@ -14,9 +11,9 @@ On this page, you'll learn:
 
 == Playbook file structure
 
-Here's a factitious example of a playbook file if all the keys were defined.
+Here's a factitious example of a playbook file showing all the keys that can be defined.
 
-WARNING: This example is merely for reference and is not intended to be copied.
+WARNING: This example is meant for illustration and is _not_ intended to be copied.
 
 [source,yaml]
 ----
@@ -32,18 +29,22 @@ content: # <7>
     branches: [v1.0, v2.0] # <10>
     tags: v3.* # <11>
     start_path: docs # <12>
-ui: # <13>
+asciidoc: # <13>
+  attributes: # <14>
+    linkattrs: ''
+    toc: ~
+ui: # <15>
   bundle:
-    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <14>
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable # <16>
     snapshot: true
-    start_path: dark # <15>
-  default_layout: base # <16>
-  output_dir: _/dark # <17>
-output: # <18>
-  clean: true # <19>
-  dir: ./public # <20>
-  destinations: # <21>
-  - provider: archive # <22>
+    start_path: dark # <17>
+  default_layout: base # <18>
+  output_dir: _/dark # <19>
+output: # <20>
+  clean: true # <21>
+  dir: ./public # <22>
+  destinations: # <23>
+  - provider: archive # <24>
 ----
 <1> <<site-key,Site keys>>
 <2> <<site-title-key,Title key>>
@@ -57,16 +58,18 @@ output: # <18>
 <10> <<branches-key,Content repository branches key>>
 <11> <<tags-key,Content repository tags key>>
 <12> <<sources-start-path-key,Content repository start path key>>
-<13> <<ui-keys,UI keys>>
-<14> <<ui-bundle-key,UI bundle repository key>>
-<15> <<ui-start-path-key,Bundle start path key>>
-<16> <<ui-default-layout-key,UI default layout key>>
-<17> <<ui-output-dir-key,UI output directory key>>
-<18> Published output keys
-<19> Clean output directory key
-<20> Output directory key
-<21> Output destinations key
-<22> Output provider key
+<13> <<asciidoc-keys,AsciiDoc keys>>
+<14> <<asciidoc-attributes-key,AsciiDoc attributes key>>
+<15> <<ui-keys,UI keys>>
+<16> <<ui-bundle-key,UI bundle repository key>>
+<17> <<ui-start-path-key,Bundle start path key>>
+<18> <<ui-default-layout-key,UI default layout key>>
+<19> <<ui-output-dir-key,UI output directory key>>
+<20> Published output keys
+<21> Clean output directory key
+<22> Output directory key
+<23> Output destinations key
+<24> Output provider key
 
 Let's explore the purpose and usage of each key and its values.
 
@@ -173,6 +176,21 @@ When the documentation component isn't stored at the root, you need to specify t
 Learn more:
 
 * xref:configure-content-sources.adoc#add-start-path[Specify a start path for a content repository]
+
+== AsciiDoc keys
+
+The `asciidoc` category contains keys that configure the AsciiDoc processor, such as AsciiDoc document attributes and extensions.
+
+[#asciidoc-attributes-key]
+=== attributes
+
+The `attributes` key under the `asciidoc` category is used to define global (i.e., site-wide) AsciiDoc document attributes.
+These document attributes are made available to each page in the site.
+
+Learn more:
+
+* xref:configure-asciidoc.adoc#global-document-attributes[Define global document attributes]
+* xref:configure-asciidoc.adoc#default-attribute-values[Allow pages to override certain global document attributes]
 
 [#ui-keys]
 == UI keys

@@ -7,6 +7,7 @@
 ** xref:configure-ui.adoc[UI Configuration]
 //*** xref:configure-redirects.adoc[Configure Redirects]
 ** xref:configure-output.adoc[Output Configuration]
+** xref:configure-asciidoc.adoc[AsciiDoc Configuration]
 ** xref:configure-runtime.adoc[Runtime Configuration]
 // ** Create a Playbook
 * xref:author-mode.adoc[Create an Author Workspace Playbook]

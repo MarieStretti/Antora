@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :table-caption!:
 
 Antora provides a command line interface (CLI) so you can interact with Antora using your terminal.
@@ -60,9 +57,16 @@ When executed from the CLI, the options that are mapped to playbook keys, such a
 
 [#cli-options]
 .CLI Options
-[cols="2,3,1,1"]
+[cols="3,5,2,2"]
 |===
 |Option |Purpose |Format |Default
+
+|--attribute <attribute>
+|Add an xref:playbook:configure-asciidoc.adoc[AsciiDoc document attribute] to each page in the site.
+Accepts the following forms: `name` (to set), `name!` (to unset), or `name='value'` (to set with a specific value).
+May be specified multiple times.
+|Key/Value Pair
+|not set
 
 |--cache-dir <dir>
 |Directory where cached files are stored (git repositories clones and the UI bundle).
