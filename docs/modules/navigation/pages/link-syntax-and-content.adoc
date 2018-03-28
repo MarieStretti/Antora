@@ -50,6 +50,7 @@ In this case, the page ID doesn't require the component or module coordinates.
 ----
 .xref:index.adoc[In-module page]
 * xref:a-page-in-this-module.adoc[Another in-module page]
+** xref:another-page.adoc#and-fragment[An in-module page deep link]
 * xref:topic/page.adoc[In-module page in a topic folder]
 ----
 
@@ -63,7 +64,8 @@ Using the appropriate page ID pattern, you can link to any document in the site 
 * xref:index.adoc[In-module page]
 * xref:other-module:page.adoc[Page in the same component, but a different module]
 ** xref:topic/page.adoc[In-module page in a topic folder]
-** xref:other-component:module:page.adoc[Page in another component]
+*** xref:other-module:page.adoc#fragment[A deep link to a page in the same component, but a different module]
+*** xref:other-component:module:page.adoc[Page in another component]
 ----
 
 [#resource]

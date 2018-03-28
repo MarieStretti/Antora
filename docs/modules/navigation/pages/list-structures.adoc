@@ -2,7 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:description: How to structure a single list or multi-list Antora navigation source file, nest items in a list, and use list titles in order to create component navigation menus.
+:description: How to structure a single list or multi-list Antora navigation source file, nest items in a list, and use list titles to create component navigation menus.
 :keywords: nav.adoc, nested sidebar menu, nested navigation with AsciiDoc, Antora menu items, UI, theme
 // Filters
 :page-tags: UI menu
