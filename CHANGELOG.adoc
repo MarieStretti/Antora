@@ -9,7 +9,12 @@ This project utilizes semantic versioning.
 
 === Added
 
-* Expanded site navigation assembly, navigation file list structure and item functionality, and navigation file registration documentation
+* Document ability to set AsciiDoc page attributes in the playbook
+* Expand site navigation assembly, navigation file list structure and item functionality, and navigation file registration documentation
+
+=== Changed
+
+* Remove commitlint
 
 == 1.0.0-rc.1 (2018-03-27)
 
@@ -18,6 +23,9 @@ This project utilizes semantic versioning.
 * *asciidoc-loader*: Pass information from src property on page available to AsciiDoc document via document attributes
 * *page-composer*: Make environment variables available to UI templates by assigning to `env` variable of UI model
 
+=== Changed
+
+*
 === Changed
 
 * *playbook-builder:* Allow Google Analytics key to be set using GOOGLE_ANALYTICS_KEY environment variable
