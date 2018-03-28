@@ -135,19 +135,19 @@ Instead, you should either host them in a binary repository such as Bintray or S
 [#examples-dir]
 == Examples
 
-The [.path]_examples_ directory contains source, literal, listing, or example block snippets that are inserted into that module's pages.
-
-These files are inserted into a page using the AsciiDoc include directive.
+The [.path]_examples_ directory can contain non-AsciiDoc file types, such as source code or data values.
+These files are often inserted into listing blocks using the xref:asciidoc:include-content.adoc#include-example[AsciiDoc include directive].
 
 [#pages-dir]
 == Pages
 
-AsciiDoc document files go in the [.path]_pages_ folder of a module.
+AsciiDoc document files that are destined to become xref:pages.adoc#standard[standard pages] are stored in the [.path]_pages_ folder of a module.
+These files are converted to HTML and automatically published as standalone pages in the generated site.
 
 image::pages-dir.svg[,260]
 
-These files are converted to HTML and automatically become pages in the generated site.
-When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages in that component's URL.
+
+When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
 
 Let's say the component illustrated above is the documentation for your newest software product, Hyper Lemur.
 What would the URL for [.path]_modules/ROOT/pages/deploy.adoc_ look like?
@@ -155,8 +155,8 @@ What would the URL for [.path]_modules/ROOT/pages/deploy.adoc_ look like?
 //.URL for deploy.adoc page in ROOT module
 image::root-page-url.svg[ROOT module page URL,role=grow-x]
 
-The base URL of the site is set in the playbook.
-The component name, in this case _hyperlemur_, is set in the [.path]_antora.yml_ file of the documentation component.
+The xref:playbook:configure-site.adoc#configure-url[base URL is set in the playbook].
+The component name, in this case _hyperlemur_, is set in the xref:component-descriptor.adoc#name-key[component descriptor].
 The page name segment is the basename of the AsciiDoc file.
 Notice that the name of the module, ROOT, isn't in the URL.
 Files that are stored directly in the [.path]_ROOT_ folder are published at the root of the component.
@@ -176,9 +176,10 @@ Learn more:
 [#partials-dir]
 === Partial AsciiDoc files
 
-Partial AsciiDoc files are stored in [.path]_pages/_partials_ in the same module as the page or pages that embed it.
-You don't need to set the path to the [.path]_{blank}_partials_ directory in the header of the primary AsciiDoc file.
+xref:pages.adoc#partial[Partials] are AsciiDoc files.
+They're stored in [.path]_pages/_partials_ in the same module as the standard pages that use them.
+A partial is inserted into a standard page using the xref:asciidoc:include-content.adoc#include-partial[AsciiDoc include directive].
+
+Don't set the path to the [.path]_{blank}_partials_ directory in the header of the AsciiDoc file.
 This is managed automatically by Antora.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
-
-A partial AsciiDoc file is inserted into a page using the xref:asciidoc:include-partial-page.adoc[AsciiDoc include directive].
