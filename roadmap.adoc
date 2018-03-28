@@ -82,7 +82,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 === v1.0.0 GA
 
 * [x] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
-* [ ] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
+* [x] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
 * [x] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
 * [x] Improve navigation file organization and registration pages {uri-issues}/159[#159]
 

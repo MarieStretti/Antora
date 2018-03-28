@@ -89,6 +89,12 @@ Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] 
 |Boolean
 |false
 
+|-r, --require <name>
+|Preload the specified library or script.
+May be specified multiple times.
+|String
+|not set
+
 |--silent
 |Suppress all messages, including warnings and errors.
 |Boolean
