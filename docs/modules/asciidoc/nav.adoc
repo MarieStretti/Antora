@@ -11,18 +11,23 @@
 * xref:quotes-and-apostrophes.adoc[Quote Marks & Apostrophes]
 * xref:subscript-and-superscript.adoc[Subscript & Superscript]
 * xref:special-characters-and-symbols.adoc[Special Characters & Symbols]
+// Cross References & Links
 * xref:page-to-page-xref.adoc[Page to Page Links]
 * xref:in-page-xref.adoc[Same Page Links]
 * xref:external-urls.adoc[URLs]
+// Lists
 * xref:ordered-and-unordered-lists.adoc[Ordered & Unordered Lists]
 * xref:labeled-lists.adoc[Labeled Lists]
 * xref:task-lists.adoc[Task Lists]
+// Include Partials, Pages, & Examples
+* xref:include-content.adoc[Include Content]
+// Assets & Attachments
 * xref:insert-image.adoc[Insert an Image]
 * xref:embed-video.adoc[Embed a Video]
 * xref:link-attachment.adoc[Link to an Attachment]
 * xref:ui-macros.adoc[UI Macros]
+// Paragraphs and Blocks
 * xref:admonitions.adoc[Admonitions]
 * xref:examples.adoc[Examples]
 * xref:sidebar.adoc[Sidebars]
-* xref:include-partial-page.adoc[Insert a Partial Page]
 * xref:comments.adoc[Comments]

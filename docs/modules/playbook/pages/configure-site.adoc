@@ -2,8 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:idprefix:
-:idseparator: -
 
 On this page, you'll learn:
 

@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Added
 
+* Document the `page-partial` attribute and including standard pages and example files
 * Document ability to set AsciiDoc page attributes in the playbook
 * Expand site navigation assembly, navigation file list structure and item functionality, and navigation file registration documentation
 

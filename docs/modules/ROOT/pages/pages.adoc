@@ -13,6 +13,7 @@ AsciiDoc files are text files marked up with the AsciiDoc syntax and saved with 
 
 Whether Antora automatically processes an AsciiDoc file depends on where it is stored in a documentation component.
 
+[#standard]
 == Standard page
 
 Antora generates one site page for each AsciiDoc file located in the [.path]_pages_ directory of a module.
@@ -27,24 +28,26 @@ If you don't want to include a page in a component menu, visitors will still be 
 Learn more:
 
 * xref:create-standard-page.adoc[Create a standard page]
+* xref:asciidoc:include-content.adoc#include-page[Insert a standard page into another page]
 * xref:modules.adoc#pages-dir[The _pages_ directory]
 * xref:component-structure.adoc[Documentation component overview]
 * xref:navigation:link-syntax-and-content.adoc#page[Add a page xref to a navigation file]
 
+[#partial]
 == Partial page
 
 Partial pages are AsciiDoc files located in [.path]_pages/_partials_.
 These files are *not* converted to HTML by Antora automatically.
-Instead, they must be referenced by an xref:asciidoc:include-partial-page.adoc[include directive] in a standard page.
+Instead, they must be referenced by an xref:asciidoc:include-content.adoc#include-partial[include directive] in a standard page.
 
 Partial pages are good for storing snippets of content, such as concept definitions or project introductions, that you want to reuse in one or more standard pages.
 When you change the content in a partial, those changes will be disseminated to all of the standard pages where you embedded that partial with an include directive.
 
 Learn more:
 
-* Create a partial page
+//* Create a partial page
 * xref:modules.adoc#partials-dir[The _{blank}_partials_ directory]
-* xref:asciidoc:include-partial-page.adoc[Include a partial page in a standard page with AsciiDoc]
+* xref:asciidoc:include-content.adoc#include-partial[Insert a partial into a standard page]
 * xref:component-structure.adoc[Documentation component overview]
 
 == Component index page
@@ -55,7 +58,7 @@ component:ROOT:index.adoc => site.com/component/index.html
 
 Learn more:
 
-* Create a component index page
+//* Create a component index page
 * xref:component-descriptor.adoc#start-page-key[Use another page to act as a component's start page]
 
 //* html extension options
