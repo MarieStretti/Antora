@@ -20,7 +20,7 @@ const { START_PAGE_ID } = require('./constants')
 function classifyContent (playbook, aggregate) {
   const catalog = aggregate.reduce(
     (catalog, { name: component, version, title, start_page: startPage, nav, files }) => {
-      files.forEach((file) => apportionSrc(file, component, version, nav) && catalog.addFile(file))
+      files.forEach((file) => allocateSrc(file, component, version, nav) && catalog.addFile(file))
       catalog.addComponentVersion(component, version, title, startPage)
       return catalog
     },
@@ -30,8 +30,7 @@ function classifyContent (playbook, aggregate) {
   return catalog
 }
 
-// classifySrc? bisectSrc? subdivideSrc? partitionSrc?
-function apportionSrc (file, component, version, nav) {
+function allocateSrc (file, component, version, nav) {
   const filepath = file.path
   const pathSegments = filepath.split('/')
   const navInfo = nav && getNavInfo(filepath, nav)
