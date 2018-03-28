@@ -53,7 +53,7 @@ function allocateSrc (file, component, version, nav) {
         file.src.family = 'partial'
         // relative to modules/<module>/pages/_partials
         file.src.relative = pathSegments.slice(4).join('/')
-      } else if (file.src.mediaType === 'text/asciidoc' && file.src.basename !== '_attributes.adoc') {
+      } else if (file.src.mediaType === 'text/asciidoc') {
         file.src.family = 'page'
         // relative to modules/<module>/pages
         file.src.relative = pathSegments.slice(3).join('/')
