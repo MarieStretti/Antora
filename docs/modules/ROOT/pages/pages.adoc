@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 On this page, you'll learn:
 
@@ -20,16 +17,19 @@ Whether Antora automatically processes an AsciiDoc file depends on where it is s
 
 Antora generates one site page for each AsciiDoc file located in the [.path]_pages_ directory of a module.
 These files are converted to individual HTML pages automatically.
-
 Another way to think about this: one AsciiDoc file in equals one HTML page out.
 
 my-page.adoc => my-page.html
+
+While all standard pages are automatically included in your site, if you want visitors to locate and go to a specific page using a component navigation menu, then you must add a cross reference (`xref`) to that page in the appropriate xref:navigation:index.adoc[navigation source file].
+If you don't want to include a page in a component menu, visitors will still be able to find it using search tools and through links to it on other pages, and in some scenarios, through dropdown menus such as the page version selector.
 
 Learn more:
 
 * xref:create-standard-page.adoc[Create a standard page]
 * xref:modules.adoc#pages-dir[The _pages_ directory]
 * xref:component-structure.adoc[Documentation component overview]
+* xref:navigation:link-syntax-and-content.adoc#page[Add a page xref to a navigation file]
 
 == Partial page
 

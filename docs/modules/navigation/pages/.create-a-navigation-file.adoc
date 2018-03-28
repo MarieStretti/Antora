@@ -1,10 +1,11 @@
-= Create a Navigation File
+= Create a Navigation File and Register It
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
+// Filters
+// basics? fundamentals?
+:page-collections: base jumps, starter
+:page-tags: UI menu
 ////
 TODO:
 
@@ -22,10 +23,6 @@ On this page, you'll learn:
 
 Each module contains a navigation file named [.path]_nav.adoc_.
 In Antora, this navigation file is called linked navigation.
-
-== File format
-
-A navigation file is an AsciiDoc file (`.adoc`) that contains one or more unordered lists.
 
 == List structure
 

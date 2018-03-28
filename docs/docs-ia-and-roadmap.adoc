@@ -567,35 +567,43 @@ _{r}_ Describes how to add metadata to the site (such as a site description).
 === Site Navigation
 
 Site Navigation (C, P)::
-_{r}_ Full explanation of the site navigation, including its purpose, input structure, what the user should consider when organizing the navigation source files, and output behavior.
+_{r}_ Brief introduction to the navigation input file, syntax, registration, and component menu.
+An image of the relationships might enhance this description.
 +
 _{s}_ Accepted
 
-Navigation input (SC, P)::
-_{r}_ Describes the nav.adoc file, including its purpose, format, syntax, structure, and storage locations.
+Navigation source files (P)::
+_{r}_ What is a navigation source file?
 
-Create a navigation file (P)::
-_{r}_ Tutorial describing when a user needs a navigation tree file, where to save it, and how to fill the tree with navigation entries.
-This last task is broken into sub-tutorials in the page sections (P#) that follow.
+Syntax & structure (P)::
+_{r}_ An overview of the syntax (unordered list items, xrefs, text, URLs) and structure (one or multiple lists) a nav file can accept.
 
-Add a page to a tree (P#)::
-_{r}_ Tutorial describing how to add a page to a navigation tree.
+Filenames & locations (P)::
+_{r}_ What the nav file is named and where it can be saved.
 
-Nest pages in a tree (P#)::
-_{r}_ Tutorial describing how to nest pages in a navigation tree.
+Add pages to a list (P)::
+_{r}_ Describe how to add in-module and out-module pages to the nav list.
 
-Add external links and non-page entries (P#)::
-_{r}_ Tutorial describing how to add external links and non-page/non-content entries to a navigation tree.
+Add text to a list (P)::
+_{r}_ Describe how to add regular text to the nav list.
 
-Menu assembly (P)::
-_{r}_ Describes how to register the navigation files, organize them into the site navigation menu, and any display options
+Add URLs to a list (P)::
+_{r}_ Describe how to add external URLs to the nav list.
 
-Register a navigation file (P)::
-_{r}_ Tutorial describing how users register navigation files in a component, how to order them in that component navigation tree, and how to order them in a site's navigation menu.
-The last task is split into the sub-tutorial in the page section (P#) that follows.
+Create a single list nav file (P)::
+_{r}_ Describe how to create a single list nav file and show output.
 
-Order navigation files in a site menu (P#)::
-_{r}_ Tutorial describing how each component's navigation file set gets ordered in the site menu.
+Create a multi-list nav file (P)::
+_{r}_ Describe how to create a multi-list nav file and show output.
+
+Component menu (P)::
+_{r}_ What is a component menu?
+
+Nav file registration (P)::
+_{r}_ Describe the purpose of registering a nav file with a component, how to register a nav file in a component descriptor file, and how to order them in the component's navigation menu.
+
+Add nav files to a component menu (P)::
+_{r}_ Show how to add and order navigation files in a component descriptor and how the resulting component menu will be displayed.
 
 Menu level display behavior (P)::
 _{s}_ Under consideration.

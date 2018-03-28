@@ -1,0 +1,37 @@
+<svg version="1.1" viewBox="0 0 1.2700001 1.2700001" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<title>Three</title>
+<metadata>
+<rdf:RDF>
+<cc:Work rdf:about="">
+<dc:format>image/svg+xml</dc:format>
+<dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+<dc:title>Three</dc:title>
+<cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/"/>
+<dc:creator>
+<cc:Agent>
+<dc:title>Sarah White</dc:title>
+</cc:Agent>
+</dc:creator>
+<dc:publisher>
+<cc:Agent>
+<dc:title>OpenDevise</dc:title>
+</cc:Agent>
+</dc:publisher>
+</cc:Work>
+<cc:License rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+<cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+<cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+<cc:requires rdf:resource="http://creativecommons.org/ns#Notice"/>
+<cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"/>
+<cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+<cc:requires rdf:resource="http://creativecommons.org/ns#ShareAlike"/>
+</cc:License>
+</rdf:RDF>
+</metadata>
+<g transform="matrix(.26458 0 0 .26458 .10399 .31119)" stroke-width="3.7795">
+<circle cx="2.007" cy="1.2239" r="2.4" fill="#1e88e5"/>
+<g transform="translate(-50.61 -260.95)" fill="#fff" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal" aria-label="3">
+<path d="m52.842 261.96q0.30798 0.0381 0.4699 0.20955t0.16192 0.42862q0 0.19368-0.09842 0.35243-0.09843 0.15875-0.29845 0.254-0.19685 0.0921-0.4826 0.0921-0.23812 0-0.46038-0.0667-0.21908-0.0698-0.37465-0.1905l0.1778-0.32068q0.12065 0.1016 0.2921 0.16193 0.17462 0.0571 0.35878 0.0571 0.21908 0 0.3429-0.0889 0.127-0.0921 0.127-0.24765 0-0.15558-0.12065-0.2413-0.11748-0.0889-0.36195-0.0889h-0.2032v-0.28258l0.50482-0.60007h-1.0096v-0.34608h1.5145v0.27623z" fill="#fff" stroke-width=".99999" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal"/>
+</g>
+</g>
+</svg>

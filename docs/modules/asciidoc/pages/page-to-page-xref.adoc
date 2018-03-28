@@ -2,17 +2,14 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :colon: :
 
 To link between documentation pages, you'll use the the AsciiDoc cross reference macro and a page ID.
-This syntax in also used to add pages to xref:navigation:create-a-navigation-file.adoc[navigation files].
+This syntax in also used to xref:navigation:link-syntax-and-content.adoc[add pages to your navigation files].
 
 == Reference by page ID
 
-In Antora, a cross reference, also called an xref, needs a page ID in order to link to another documentation page.
+In Antora, a cross reference, commonly called an xref, needs a xref:ROOT:page-id.adoc[page ID] in order to link to another site page.
 The number of page ID coordinates you need to enter into the xref depends on the location of the current file and the location of the destination file (the document you're linking to).
 The closer the two files are, the shorter the page ID.
 
@@ -73,6 +70,7 @@ A comma (`,`) should directly follow the link text, and the aspect attribute sho
 To learn more about referencing aspect pages, go to the xref:apect-page-link.adoc[referencing an aspect page].
 ////
 
+[#same-module]
 == Scenario: In the same component and module
 
 When the current page and the destination page are in the same module, you only need to enter the name of the destination file.
@@ -89,6 +87,7 @@ xref:concept/index.adoc[Key Concepts]
 [source,asciidoc]
 xref:3.3@error-handling.adoc#message-list[error messages]
 
+[#different-module]
 == Scenario: In the same component but a different module
 
 When the current page and the destination page are in the same component but different modules, you'll enter the name of the destination module and destination file.
@@ -105,6 +104,7 @@ xref:ROOT:transports/c04-reference.adoc[C04 Transports]
 [source,asciidoc]
 The xref:3.4@ROOT:scopes/super-mass.adoc[super massive scope] splits atoms.
 
+[#different-component]
 == Scenario: In a different component
 
 When the current page and the destination page are in different components, you'll enter values for all of the coordinates.

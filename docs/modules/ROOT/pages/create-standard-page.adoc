@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 A standard page is an AsciiDoc file in the [.path]_pages_ directory of a module.
 Standard pages have a header, which includes the page title, and a body, which includes the majority of the page's displayed content.
@@ -48,6 +45,7 @@ my-new-page.adoc => my-new-page.html
 
 You've now created a standard page.
 When you run Antora, it will be converted to an HTML page and published to your site automatically.
+If you want a site visitor to locate this page via a component navigation menu, you'll need to add a link to the page (`xref`) to a xref:navigation:index.adoc[navigation file].
 
 The page created in this example is simple.
 Using AsciiDoc, a page's header can encompass a wide range of capabilities and its body can handle complex content.
