@@ -1,14 +1,33 @@
-.Basics
-* xref:features.adoc[Features]
+* xref:features.adoc[How Antora Helps Docs Teams]
 * xref:how-antora-works.adoc[How Antora Works]
-* xref:supported-platforms.adoc[Supported Platforms]
-* xref:project/get-help.adoc[Get Help]
-* System Requirements
+* xref:projects/get-help.adoc[Get Help]
+
+* xref:supported-platforms.adoc[Supported Platforms & Requirements]
 ** xref:install/linux-requirements.adoc[Linux]
 ** xref:install/macos-requirements.adoc[macOS]
 ** xref:install/windows-requirements.adoc[Windows]
+
 * xref:install/install-antora.adoc[Install Antora]
 * xref:install/upgrade-antora.adoc[Upgrade Antora]
+
+* xref:run-antora-to-generate-site.adoc[Run Antora]
+** xref:run-antora-to-generate-site.adoc#cache[Cache]
+** xref:run-antora-to-generate-site.adoc#local-site-preview[Local Preview]
+
+* xref:cli.adoc[CLI Commands & Options]
+
+* xref:component-structure.adoc[File Organization]
+** xref:modules.adoc[Modules]
+//** Pages & Partials
+//** Assets
+//** Examples
+** xref:component-descriptor.adoc[Component Descriptor]
+** xref:component-versions.adoc[Versions & Branches]
+
+* xref:pages.adoc[Pages]
+** xref:create-standard-page.adoc[Create a Standard Page]
+** xref:page-id.adoc[Page ID]
+
 //* Source Files
 //** Content and asset files
 //** Navigation files
@@ -19,19 +38,3 @@
 //* Playbook files
 //
 //.Publishing
-* xref:run-antora-to-generate-site.adoc[Run Antora]
-** xref:run-antora-to-generate-site.adoc#cache[Cache]
-** xref:run-antora-to-generate-site.adoc#local-site-preview[Local Preview]
-* xref:cli.adoc[CLI Commands & Options]
-
-.xref:component-structure.adoc[File Organization]
-* xref:modules.adoc[Modules]
-//** Pages & Partials
-//** Assets
-//** Examples
-* xref:component-descriptor.adoc[Component Descriptor]
-* xref:component-versions.adoc[Versions & Branches]
-
-.xref:pages.adoc[Pages]
-* xref:create-standard-page.adoc[Create a Standard Page]
-* xref:page-id.adoc[Page ID]
