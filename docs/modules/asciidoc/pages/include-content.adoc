@@ -14,7 +14,7 @@ Partial and standard pages are AsciiDoc files; examples are often other file typ
 There are a few things to know about using the include directive in the Antora environment, which this page covers.
 
 [#include-partial]
-== Include a partial page
+== Include a partial
 
 To include a xref:ROOT:pages.adoc#partial[partial AsciiDoc file] into a standard page, use the include directive with a target starting with the attribute reference `+{partialsdir}+`, followed by the relative path of the partial file.
 //, which is a reference to the [.path]_{blank}_partials_ directory.
@@ -61,7 +61,7 @@ The attributes should be entered as key=value pairs separated by commas.
 
 If you include a standard page (a page that is stored in the xref:ROOT:modules.adoc#pages-dir[_pages_ directory]) into another page, you *must* set the `page-partial` AsciiDoc attribute in the document header of the page being included.
 
-.A standalone page included in another page
+.A standard page included in another standard page
 [source,asciidoc]
 ----
 = Other Page

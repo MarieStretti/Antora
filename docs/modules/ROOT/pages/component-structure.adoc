@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 Antora works with collections of documentation that follow a standard, well-defined project structure.
 The benefits of a standard project structure for documentation are as follows:
@@ -79,10 +76,11 @@ _Optional_; _Reserved_
 +
 Directory that contains pictures, screenshots, diagrams, and other graphics files that are displayed in a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro].
 
-<module>/examples ::
+xref:modules.adoc#examples-dir[<module>/examples] ::
 _Optional_; _Reserved_
 +
-Directory that contains source, literal, listing, or example block snippets that are inserted into that module's pages.
+Directory that contains non-AsciiDoc file types, such as source code or data values.
+These files are often inserted into listing blocks using the xref:asciidoc:include-content.adoc#include-example[AsciiDoc include directive].
 
 xref:modules.adoc#pages-dir[<module>/pages] ::
 _Required_; _Reserved_
@@ -95,7 +93,7 @@ _Optional_; _Reserved_
 +
 Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages_.
 These files are *not* converted to HTML by Antora directly.
-Instead, they must be referenced by an xref:asciidoc:include-partial-page.adoc[include directive] in a page in the [.path]_pages_ directory.
+Instead, they must be referenced by an xref:asciidoc:include-content.adoc#include-partial[include directive] in a page in the [.path]_pages_ directory.
 
 <module>/_attributes.adoc ::
 _Required_; _Reserved_

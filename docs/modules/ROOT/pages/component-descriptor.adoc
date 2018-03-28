@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 A documentation component must contain a component descriptor file named [.path]_antora.yml_.
 
@@ -67,8 +64,8 @@ It's used anywhere in the UI that the component is identified.
 //(or its super type, domain)
 This includes:
 
-* component navigation menu
-* component selector drawer
+* xref:navigation:index.adoc#component-menu[component navigation menu]
+* xref:navigation:index.adoc#component-dropdown[component version selector]
 * first breadcrumb position
 
 The component title *does not* have to be the same as the component name.
@@ -80,9 +77,9 @@ The value of the `version` key is both the display name and version coordinate.
 This includes:
 
 * page ID and cross references (xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version@])
-* component selector menu
-* component selector drawer
-* page version selector
+* xref:navigation:index.adoc#component-menu[component navigation menu]
+* xref:navigation:index.adoc#component-dropdown[component version selector]
+* xref:navigation:index.adoc#page-dropdown[page version selector]
 * edit page URI (not visible)
 
 The value can contain letter, number, period (`.`), underscore (`+_+`), and hyphen (`-`) characters.
@@ -93,7 +90,7 @@ If the value starts with a number, it must be contained within a set of single q
 * v2.0-beta
 * latest
 
-The version key value isn't related to a xref:component-versions.adoc[repository branch name] in any way.
+The version key value isn't related to a xref:component-versions.adoc[repository branch name or tag] in any way.
 Instead, the value should be useable by the documentation writers and useful to the readers.
 
 [#start-page-key]
@@ -101,10 +98,10 @@ Instead, the value should be useable by the documentation writers and useful to 
 
 By default, Antora looks for a file named [.path]_index.adoc_ in the ROOT module of each component to use as the start page for that component and version (e.g., _\https://example.org/component-name/index.html_).
 
-If the component doesn't have an [.path]_index.adoc_ page in the ROOT module, you must specify a start page explicitly in the component descriptor.
-The `start_page` key accepts the xref:page-id.adoc[page ID structure] and must point to an existing page in the same component (e.g., `ROOT:home.adoc`).
+If the ROOT module doesn't have an [.path]_index.adoc_ page, you must specify a start page explicitly in the component descriptor.
+The `start_page` key accepts the xref:page-id.adoc[page ID structure] and must point to an existing page in the same component (e.g., `ROOT:home.adoc`, `module-one:overview.adoc`).
 
-If a start page isn't specified, and the component does not have a ROOT module with an [.path]_index.adoc_ page, the reader will be directed to a 404 page when navigating to that component from the component drawer in the sidebar on any page.
+If a start page isn't specified, and the component does not have a ROOT module with an [.path]_index.adoc_ page, the reader will be directed to a 404 page when navigating to that component from the xref:navigation:index.adoc#component-dropdown[component version selector] on any page.
 
 .Start page value examples
 [source,yaml]
@@ -124,4 +121,4 @@ Otherwise, a start page must be specified using the `start_page` key in the comp
 
 The nav key accepts a list of xref:navigation:filenames-and-locations.adoc[navigation files].
 Each xref:navigation:register-navigation-files.adoc[value specifies the path to a navigation file] (e.g., [.path]_modules/module-name/nav.adoc_).
-The order of the values dictates the order the contents of the navigation files are assembled in the published component menu.
+The order of the values dictates the order the contents of the navigation files are assembled in the published xref:navigation:index.adoc#component-menu[component menu].

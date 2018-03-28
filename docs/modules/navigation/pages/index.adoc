@@ -40,6 +40,7 @@ Navigation files are xref:register-navigation-files.adoc[registered in a compone
 List the navigation files in the order you want them to be displayed in when they're published to the component menu on your site.
 When you run Antora, it will only use the registered navigation files to create the component menu.
 
+[#component-menu]
 === image:three.svg[Three,30] Site: Component navigation menu
 
 Antora collects the contents of each registered navigation file, puts the contents in the order the files are listed under the `nav` key, and publishes a fully assembled navigation menu for the component to the site.
@@ -49,6 +50,7 @@ image::component-navigation-menu.png[Screenshot of the component navigation menu
 
 Antora carries out this assembly process for each version of each component that it locates in the repositories, branches, and tags listed under `sources` in the site's playbook.
 
+[#component-dropdown]
 === image:four.svg[Four,30] Site: Component version selector
 
 When your site has several components and/or several versions of one or more components, Antora assembles an aggregated list of the components and their versions.
@@ -60,6 +62,7 @@ image::component-version-selector.png[Screenshot of the component version select
 In the default UI, this list is displayed in the "`drawer`" located at the bottom of any component menu.
 When a visitor clicks on the drawer, it expands upwards and the reader can then select the component and version they want to see.
 
+[#page-dropdown]
 === image:five.svg[Five,30] Site: Page version selector
 
 If a page is available in more than one version of a component, a dropdown selector is visible on that page.
