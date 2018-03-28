@@ -23,16 +23,47 @@ To insert a partial AsciiDoc file into a standard page, use the include directiv
 
 Let's break this down.
 You start with the include directive prefix, `include::`.
-Next is the target.
+Next comes the target.
 Start the target with the `+{partialsdir}+` reference to tell Antora where to look for the file.
 Then put the relative path of the partial after that.
 Finally, end with a pair of square brackets (`+[]+`).
+The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
 
 A xref:ROOT:modules.adoc#partials-dir[module's partial AsciiDoc files] should be saved in the [.path]_{blank}_partials_ directory.
 You don't need to set the path to this directory in the header of your AsciiDoc file.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
 NOTE: Antora doesn't yet support filtering included lines by line number, only by tags.
+
+[#include-page]
+== Include a standard page
+
+It's also possible to include one page into another.
+
+.Include a stardard page using the include directive
+----
+\include::other-page.adoc[]
+----
+
+Once again, you start with the include directive prefix, `include::`.
+Next comes the target.
+The target is the path of the page being included relative to the current page.
+Then put the relative path of the partial after that.
+Finally, end with a pair of square brackets (`+[]+`).
+The square brackets may contain an optional list of attributes (key=value pairs separated by commas).
+
+If you include one standalone page (not a partial) into another page, you *must* set the `page-partial` AsciiDoc attribute in the document header of the page being included.
+
+.A standalone page included in another page
+[source,asciidoc]
+----
+= Other Page
+:page-partial:
+
+Page contents.
+----
+
+This attribute lets Antora know that you intend to include the AsciiDoc source and not the converted HTML.
 
 [discrete]
 ==== Asciidoctor resources
