@@ -5,6 +5,9 @@ endif::[]
 // URLs
 :uri-adoc-manual: https://asciidoctor.org/docs/user-manual
 :uri-include: {uri-adoc-manual}/#include-directive
+:uri-tags: {uri-adoc-manual}/#by-tagged-regions
+:uri-leveloffset: {uri-adoc-manual}/#include-partitioning
+:uri-indent: {uri-adoc-manual}/#normalize-block-indentation
 
 You can use the include directive (`include::[]`) to insert content from one file into an AsciiDoc file.
 You can include a <<include-partial,partial>>, a <<include-page,standard page>>, or an <<include-example,example file>>.
@@ -110,3 +113,6 @@ NOTE: Antora doesn't yet support filtering includes by line number, only by tags
 ==== Asciidoctor resources
 
 * {uri-include}[Using the AsciiDoc include directive^]
+* {uri-leveloffset}[Offset section headings with leveloffset^]
+* {uri-tags}[Select regions of content with tags^]
+* {uri-indent}[Normalize block indentation with indent^]
