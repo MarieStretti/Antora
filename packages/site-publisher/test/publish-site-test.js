@@ -52,17 +52,17 @@ describe('publishSite()', () => {
     })
 
   const verifyArchiveOutput = (destFile) => {
-    let destAbsFile
+    let absDestFile
     if (ospath.isAbsolute(destFile) || !playbook.dir) {
-      destAbsFile = destFile
+      absDestFile = destFile
     } else {
       expect(ospath.resolve(destFile)).to.not.be.a.path()
-      destAbsFile = ospath.resolve(playbook.dir, destFile)
+      absDestFile = ospath.resolve(playbook.dir, destFile)
     }
-    expect(destAbsFile)
+    expect(absDestFile)
       .to.be.a.file()
       .and.not.empty()
-    return collectFilesFromZip(destAbsFile).then((files) => {
+    return collectFilesFromZip(absDestFile).then((files) => {
       expect(files).to.have.lengthOf(6)
       const filepaths = files.map((file) => file.path)
       expect(filepaths).to.have.members([
@@ -80,32 +80,32 @@ describe('publishSite()', () => {
   }
 
   const verifyFsOutput = (destDir) => {
-    let destAbsDir
+    let absDestDir
     if (ospath.isAbsolute(destDir) || !playbook.dir) {
-      destAbsDir = destDir
+      absDestDir = destDir
     } else {
       expect(ospath.resolve(destDir)).to.not.be.a.path()
-      destAbsDir = ospath.resolve(playbook.dir, destDir)
+      absDestDir = ospath.resolve(playbook.dir, destDir)
     }
-    expect(destAbsDir)
+    expect(absDestDir)
       .to.be.a.directory()
       .with.subDirs(['_', 'the-component'])
-    expect(ospath.join(destAbsDir, '_/css/site.css'))
+    expect(ospath.join(absDestDir, '_/css/site.css'))
       .to.be.a.file()
       .with.contents('body { color: red; }')
-    expect(ospath.join(destAbsDir, '_/js/site.js'))
+    expect(ospath.join(absDestDir, '_/js/site.js'))
       .to.be.a.file()
       .with.contents(';(function () {})()')
-    expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
+    expect(ospath.join(absDestDir, 'the-component/1.0/index.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(ospath.join(destAbsDir, 'the-component/1.0/the-page.html'))
+    expect(ospath.join(absDestDir, 'the-component/1.0/the-page.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(ospath.join(destAbsDir, 'the-component/1.0/the-module/index.html'))
+    expect(ospath.join(absDestDir, 'the-component/1.0/the-module/index.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
-    expect(ospath.join(destAbsDir, 'the-component/1.0/the-module/the-page.html'))
+    expect(ospath.join(absDestDir, 'the-component/1.0/the-module/the-page.html'))
       .to.be.a.file()
       .with.contents.that.match(HTML_RX)
   }
@@ -187,13 +187,13 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to fs at path relative to user home', async () => {
-    const destRelDir = ospath.relative(os.homedir(), ospath.join(playbook.dir, 'path/to/site'))
-    const destAbsDir = ospath.join(os.homedir(), destRelDir)
-    const destDir = '~' + ospath.sep + destRelDir
+    const relDestDir = ospath.relative(os.homedir(), ospath.join(playbook.dir, 'path/to/site'))
+    const absDestDir = ospath.join(os.homedir(), relDestDir)
+    const destDir = '~' + ospath.sep + relDestDir
     playbook.output.destinations.push({ provider: 'fs', path: destDir })
     await publishSite(playbook, catalogs)
     expect(playbook.output.destinations[0].path).to.equal(destDir)
-    verifyFsOutput(destAbsDir)
+    verifyFsOutput(absDestDir)
   })
 
   it('should publish site to fs at absolute path', async () => {
@@ -279,13 +279,13 @@ describe('publishSite()', () => {
   })
 
   it('should publish site to archive relative to user home', async () => {
-    const destRelFile = ospath.relative(os.homedir(), ospath.join(playbook.dir, 'path/to/site.zip'))
-    const destAbsFile = ospath.join(os.homedir(), destRelFile)
-    const destFile = '~' + ospath.sep + destRelFile
+    const relDestFile = ospath.relative(os.homedir(), ospath.join(playbook.dir, 'path/to/site.zip'))
+    const absDestFile = ospath.join(os.homedir(), relDestFile)
+    const destFile = '~' + ospath.sep + relDestFile
     playbook.output.destinations.push({ provider: 'archive', path: destFile })
     await publishSite(playbook, catalogs)
     expect(playbook.output.destinations[0].path).to.equal(destFile)
-    await verifyArchiveOutput(destAbsFile)
+    await verifyArchiveOutput(absDestFile)
   })
 
   it('should publish site to archive at absolute path', async () => {
@@ -408,10 +408,10 @@ describe('publishSite()', () => {
 
   it('should load custom provider from absolute path', async () => {
     const destFile = './report.txt'
-    const providerAbsPath = ospath.resolve(playbook.dir, 'reporter-abs.js')
-    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), providerAbsPath)
+    const absProviderPath = ospath.resolve(playbook.dir, 'reporter-abs.js')
+    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), absProviderPath)
     playbook.site = { title: 'The Site' }
-    playbook.output.destinations.push({ provider: providerAbsPath, path: destFile })
+    playbook.output.destinations.push({ provider: absProviderPath, path: destFile })
     await publishSite(playbook, catalogs)
     expect(ospath.resolve(playbook.dir, DEFAULT_DEST_FS)).to.not.be.a.path()
     expect(ospath.resolve(playbook.dir, destFile))
@@ -421,18 +421,18 @@ describe('publishSite()', () => {
 
   it('should load custom provider from an absolute path outside working directory', async () => {
     const destFile = './report.txt'
-    const providerAbsPath = ospath.join(TMP_DIR, `reporter-${process.pid}-${Date.now()}.js`)
+    const absProviderPath = ospath.join(TMP_DIR, `reporter-${process.pid}-${Date.now()}.js`)
     try {
-      fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), providerAbsPath)
+      fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), absProviderPath)
       playbook.site = { title: 'The Site' }
-      playbook.output.destinations.push({ provider: providerAbsPath, path: destFile })
+      playbook.output.destinations.push({ provider: absProviderPath, path: destFile })
       await publishSite(playbook, catalogs)
       expect(ospath.resolve(playbook.dir, DEFAULT_DEST_FS)).to.not.be.a.path()
       expect(ospath.resolve(playbook.dir, destFile))
         .to.be.a.file()
         .with.contents('published 6 files for The Site')
     } finally {
-      fs.removeSync(providerAbsPath)
+      fs.removeSync(absProviderPath)
     }
   })
 
@@ -464,8 +464,8 @@ describe('publishSite()', () => {
 
   it('should load custom provider from node modules path', async () => {
     const destFile = './report.txt'
-    const providerAbsPath = ospath.resolve(playbook.dir, 'node_modules/reporter-mod/index.js')
-    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), providerAbsPath)
+    const absProviderPath = ospath.resolve(playbook.dir, 'node_modules/reporter-mod/index.js')
+    fs.copySync(ospath.join(FIXTURES_DIR, 'reporter.js'), absProviderPath)
     playbook.site = { title: 'The Site' }
     playbook.output.destinations.push({ provider: 'reporter-mod', path: destFile })
     await publishSite(playbook, catalogs)

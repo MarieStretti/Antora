@@ -56,8 +56,8 @@ async function loadUi (playbook) {
   let resolveBundle
   if (isUrl(bundleUrl)) {
     const { cacheDir, pull } = playbook.runtime || {}
-    resolveBundle = ensureCacheDir(cacheDir, startDir).then((cacheAbsDir) => {
-      const cachePath = ospath.join(cacheAbsDir, `${sha1(bundleUrl)}.zip`)
+    resolveBundle = ensureCacheDir(cacheDir, startDir).then((absCacheDir) => {
+      const cachePath = ospath.join(absCacheDir, `${sha1(bundleUrl)}.zip`)
       return pull && bundle.snapshot
         ? downloadBundle(bundleUrl, cachePath)
         : fs.pathExists(cachePath).then((cached) => (cached ? cachePath : downloadBundle(bundleUrl, cachePath)))

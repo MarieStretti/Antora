@@ -22,7 +22,7 @@ const WORK_DIR = ospath.join(__dirname, 'work')
 Kapok.config.shouldShowLog = false
 
 describe('cli', () => {
-  let destAbsDir
+  let absDestDir
   let destDir
   let playbookSpec
   let playbookFile
@@ -54,7 +54,7 @@ describe('cli', () => {
     removeSyncForce(CONTENT_REPOS_DIR)
     await createContentRepository()
     destDir = 'build/site'
-    destAbsDir = ospath.join(WORK_DIR, destDir)
+    absDestDir = ospath.join(WORK_DIR, destDir)
     playbookFile = ospath.join(WORK_DIR, 'the-site.json')
     uiBundleUri = UI_BUNDLE_URI
   })
@@ -207,13 +207,13 @@ describe('cli', () => {
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => runAntora('generate the-site --quiet').on('exit', resolve)).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(destAbsDir)
+      expect(absDestDir)
         .to.be.a.directory()
         .with.subDirs(['_', 'the-component'])
-      expect(ospath.join(destAbsDir, 'the-component'))
+      expect(ospath.join(absDestDir, 'the-component'))
         .to.be.a.directory()
         .with.subDirs(['1.0'])
-      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(ospath.join(absDestDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
   }).timeout(TIMEOUT)
 
@@ -223,13 +223,13 @@ describe('cli', () => {
     return new Promise((resolve) => runAntora(['generate', playbookFile, '--quiet']).on('exit', resolve)).then(
       (exitCode) => {
         expect(exitCode).to.equal(0)
-        expect(destAbsDir)
+        expect(absDestDir)
           .to.be.a.directory()
           .with.subDirs(['_', 'the-component'])
-        expect(ospath.join(destAbsDir, 'the-component'))
+        expect(ospath.join(absDestDir, 'the-component'))
           .to.be.a.directory()
           .with.subDirs(['1.0'])
-        expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+        expect(ospath.join(absDestDir, 'the-component/1.0/index.html')).to.be.a.file()
       }
     )
   }).timeout(TIMEOUT)
@@ -237,7 +237,7 @@ describe('cli', () => {
   it('should resolve dot-relative paths in playbook relative to playbook dir', () => {
     const runCwd = ospath.join(WORK_DIR, 'some-other-folder')
     fs.ensureDirSync(runCwd)
-    const playbookRelFile = ospath.relative(runCwd, playbookFile)
+    const relPlaybookFile = ospath.relative(runCwd, playbookFile)
     playbookSpec.content.sources[0].url =
       '.' + ospath.sep + ospath.relative(WORK_DIR, playbookSpec.content.sources[0].url)
     playbookSpec.ui.bundle.url =
@@ -246,62 +246,62 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>
-      runAntora(['generate', playbookRelFile, '--quiet'], undefined, runCwd).on('exit', resolve)
+      runAntora(['generate', relPlaybookFile, '--quiet'], undefined, runCwd).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(destAbsDir)
+      expect(absDestDir)
         .to.be.a.directory()
         .with.subDirs(['_', 'the-component'])
-      expect(ospath.join(destAbsDir, 'the-component'))
+      expect(ospath.join(absDestDir, 'the-component'))
         .to.be.a.directory()
         .with.subDirs(['1.0'])
-      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(ospath.join(absDestDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
   }).timeout(TIMEOUT)
 
   it('should store cache in cache directory passed to --cache-dir option', () => {
     playbookSpec.content.sources[0].url = repositoryBuilder.url
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const cacheAbsDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
-    expect(cacheAbsDir).to.not.be.a.path()
+    const absCacheDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
+    expect(absCacheDir).to.not.be.a.path()
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>
       runAntora(['generate', 'the-site', '--cache-dir', '.antora-cache-override']).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(cacheAbsDir)
+      expect(absCacheDir)
         .to.be.a.directory()
         .with.subDirs(['content', 'ui'])
-      expect(ospath.join(cacheAbsDir, 'content'))
+      expect(ospath.join(absCacheDir, 'content'))
         .to.be.a.directory()
         .and.not.be.empty()
-      expect(ospath.join(cacheAbsDir, 'ui'))
+      expect(ospath.join(absCacheDir, 'ui'))
         .to.be.a.directory()
         .and.not.be.empty()
-      removeSyncForce(cacheAbsDir)
+      removeSyncForce(absCacheDir)
     })
   }).timeout(TIMEOUT)
 
   it('should store cache in cache directory defined by ANTORA_CACHE_DIR environment variable', () => {
     playbookSpec.content.sources[0].url = repositoryBuilder.url
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const cacheAbsDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
-    expect(cacheAbsDir).to.not.be.a.path()
+    const absCacheDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
+    expect(absCacheDir).to.not.be.a.path()
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>
       runAntora('generate the-site', { ANTORA_CACHE_DIR: '.antora-cache-override' }).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(cacheAbsDir)
+      expect(absCacheDir)
         .to.be.a.directory()
         .with.subDirs(['content', 'ui'])
-      expect(ospath.join(cacheAbsDir, 'content'))
+      expect(ospath.join(absCacheDir, 'content'))
         .to.be.a.directory()
         .and.not.be.empty()
-      expect(ospath.join(cacheAbsDir, 'ui'))
+      expect(ospath.join(absCacheDir, 'ui'))
         .to.be.a.directory()
         .and.not.be.empty()
-      removeSyncForce(cacheAbsDir)
+      removeSyncForce(absCacheDir)
     })
   }).timeout(TIMEOUT)
 
@@ -312,7 +312,7 @@ describe('cli', () => {
       runAntora(['generate', 'the-site', '--title', 'Awesome Docs', '--quiet']).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
+      expect(ospath.join(absDestDir, 'the-component/1.0/index.html'))
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<title>Index Page :: Awesome Docs</title>'))
     })
@@ -325,7 +325,7 @@ describe('cli', () => {
     return new Promise((resolve) => runAntora('generate the-site --quiet', env).on('exit', resolve)).then(
       (exitCode) => {
         expect(exitCode).to.equal(0)
-        expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
+        expect(ospath.join(absDestDir, 'the-component/1.0/index.html'))
           .to.be.a.file()
           .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
       }
@@ -340,7 +340,7 @@ describe('cli', () => {
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) => runAntora(args).on('exit', resolve)).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(ospath.join(destAbsDir, 'the-component/1.0/the-page.html'))
+      expect(ospath.join(absDestDir, 'the-component/1.0/the-page.html'))
         .to.be.a.file()
         .with.contents.that.match(/<h2 id="_section_a">Section A<\/h2>/)
         .and.with.contents.that.match(/<kbd>Ctrl<\/kbd>\+<kbd>T<\/kbd>/)
@@ -355,14 +355,14 @@ describe('cli', () => {
       runAntora('the-site.json --url https://docs.example.com --quiet').on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
+      expect(ospath.join(absDestDir, 'the-component/1.0/index.html'))
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
     })
   }).timeout(TIMEOUT)
 
   it('should clean output directory before generating when --clean switch is used', () => {
-    const residualFile = ospath.join(destAbsDir, 'the-component/1.0/old-page.html')
+    const residualFile = ospath.join(absDestDir, 'the-component/1.0/old-page.html')
     fs.ensureDirSync(ospath.dirname(residualFile))
     fs.writeFileSync(residualFile, '<!DOCTYPE html><html><body>contents</body></html>')
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -370,7 +370,7 @@ describe('cli', () => {
     return new Promise((resolve) => runAntora('generate the-site.json --clean --quiet').on('exit', resolve)).then(
       (exitCode) => {
         expect(exitCode).to.equal(0)
-        expect(ospath.join(destAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+        expect(ospath.join(absDestDir, 'the-component/1.0/index.html')).to.be.a.file()
         expect(residualFile).not.to.be.a.path()
       }
     )
@@ -379,15 +379,15 @@ describe('cli', () => {
   it('should output to directory specified by --to-dir option', () => {
     // NOTE we must use a subdirectory of destDir so it gets cleaned up properly
     const betaDestDir = ospath.join(destDir, 'beta')
-    const betaDestAbsDir = ospath.join(destAbsDir, 'beta')
+    const absBetaDestDir = ospath.join(absDestDir, 'beta')
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>
       runAntora(['generate', 'the-site.json', '--to-dir', betaDestDir, '--quiet']).on('exit', resolve)
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
-      expect(betaDestAbsDir).to.be.a.directory()
-      expect(ospath.join(betaDestAbsDir, 'the-component/1.0/index.html')).to.be.a.file()
+      expect(absBetaDestDir).to.be.a.directory()
+      expect(ospath.join(absBetaDestDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
   }).timeout(TIMEOUT)
 
@@ -405,18 +405,18 @@ describe('cli', () => {
     fs.writeFileSync(ospath.join(localModulePath, 'generate-site.js'), localScript)
     fs.writeJsonSync(ospath.join(localModulePath, 'package.json'), { main: 'generate-site.js' }, { spaces: 2 })
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const playbookRelFile = ospath.relative(runCwd, playbookFile)
+    const relPlaybookFile = ospath.relative(runCwd, playbookFile)
     const messages = []
     return new Promise((resolve) =>
-      runAntora(['generate', playbookRelFile, '--quiet'], undefined, runCwd)
+      runAntora(['generate', relPlaybookFile, '--quiet'], undefined, runCwd)
         .on('data', (data) => messages.push(data.message))
         .on('exit', resolve)
     ).then((exitCode) => {
       removeSyncForce(localNodeModules)
       expect(exitCode).to.equal(0)
       expect(messages).to.include('Using custom site generator')
-      expect(destAbsDir).to.be.a.directory()
-      expect(ospath.join(destAbsDir, 'the-component/1.0/index.html'))
+      expect(absDestDir).to.be.a.directory()
+      expect(ospath.join(absDestDir, 'the-component/1.0/index.html'))
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<title>Index Page :: Custom Site Generator</title>'))
     })
@@ -459,7 +459,7 @@ describe('cli', () => {
     ).then((exitCode) => {
       expect(exitCode).to.equal(0)
       expect(messages).to.include('warming up...')
-      expect(ospath.join(destAbsDir, 'the-component/1.0/the-page.html'))
+      expect(ospath.join(absDestDir, 'the-component/1.0/the-page.html'))
         .to.be.a.file()
         .with.contents.that.match(/<p>Fin!<\/p>/)
     })
