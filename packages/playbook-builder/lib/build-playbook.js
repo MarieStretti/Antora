@@ -31,22 +31,22 @@ const yaml = require('js-yaml')
 function buildPlaybook (args = [], env = {}, schema = undefined) {
   const config = loadConvictConfig(args, env, schema)
 
-  const specFileRelPath = config.get('playbook')
-  if (specFileRelPath) {
-    let specFileAbsPath = ospath.resolve(specFileRelPath)
-    if (ospath.extname(specFileAbsPath)) {
-      if (!fs.existsSync(specFileAbsPath)) throw new Error('playbook file does not exist')
-    } else if (fs.existsSync(specFileAbsPath + '.yml')) {
-      specFileAbsPath += '.yml'
-    } else if (fs.existsSync(specFileAbsPath + '.json')) {
-      specFileAbsPath += '.json'
-    } else if (fs.existsSync(specFileAbsPath + '.cson')) {
-      specFileAbsPath += '.cson'
+  const relSpecFilePath = config.get('playbook')
+  if (relSpecFilePath) {
+    let absSpecFilePath = ospath.resolve(relSpecFilePath)
+    if (ospath.extname(absSpecFilePath)) {
+      if (!fs.existsSync(absSpecFilePath)) throw new Error('playbook file does not exist')
+    } else if (fs.existsSync(absSpecFilePath + '.yml')) {
+      absSpecFilePath += '.yml'
+    } else if (fs.existsSync(absSpecFilePath + '.json')) {
+      absSpecFilePath += '.json'
+    } else if (fs.existsSync(absSpecFilePath + '.cson')) {
+      absSpecFilePath += '.cson'
     } else {
       throw new Error('playbook file could not be resolved')
     }
-    config.load(parseSpecFile(specFileAbsPath))
-    if (specFileRelPath !== specFileAbsPath) config.set('playbook', specFileAbsPath)
+    config.load(parseSpecFile(absSpecFilePath))
+    if (relSpecFilePath !== absSpecFilePath) config.set('playbook', absSpecFilePath)
   }
 
   config.validate({ allowed: 'strict' })

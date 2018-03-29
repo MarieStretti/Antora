@@ -18,7 +18,7 @@ const UI_BUNDLE_URI =
 
 describe('generateSite()', () => {
   let $
-  let destAbsDir
+  let absDestDir
   let destDir
   let env
   let playbookSpec
@@ -28,11 +28,11 @@ describe('generateSite()', () => {
 
   const readFile = (file, dir) => fs.readFileSync(dir ? ospath.join(dir, file) : file, 'utf8')
 
-  const loadHtmlFile = (relative) => cheerio.load(readFile(relative, destAbsDir))
+  const loadHtmlFile = (relative) => cheerio.load(readFile(relative, absDestDir))
 
   before(async () => {
     destDir = '_site'
-    destAbsDir = ospath.join(WORK_DIR, destDir)
+    absDestDir = ospath.join(WORK_DIR, destDir)
     playbookFile = ospath.join(WORK_DIR, 'the-site.json')
     repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true, bare: true })
     uiBundleUri = UI_BUNDLE_URI
@@ -128,19 +128,19 @@ describe('generateSite()', () => {
     playbookSpec.site.keys = { google_analytics: 'UA-XXXXXXXX-1' }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, '_'))
+    expect(ospath.join(absDestDir, '_'))
       .to.be.a.directory()
       .with.subDirs.with.members(['css', 'js', 'font', 'img'])
-    expect(ospath.join(destAbsDir, '_/css/site.css')).to.be.a.file()
-    expect(ospath.join(destAbsDir, '_/js/site.js')).to.be.a.file()
-    expect(ospath.join(destAbsDir, '404.html')).to.not.be.a.path()
-    expect(ospath.join(destAbsDir, 'the-component'))
+    expect(ospath.join(absDestDir, '_/css/site.css')).to.be.a.file()
+    expect(ospath.join(absDestDir, '_/js/site.js')).to.be.a.file()
+    expect(ospath.join(absDestDir, '404.html')).to.not.be.a.path()
+    expect(ospath.join(absDestDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
-    expect(ospath.join(destAbsDir, 'index.html'))
+    expect(ospath.join(absDestDir, 'index.html'))
       .to.be.a.file()
       .with.contents.that.match(/<meta http-equiv="refresh" content="0; url=the-component\/2.0\/index.html">/)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head > title')).to.have.text('Index Page :: The Site')
     // assert relative UI path is correct
@@ -162,9 +162,9 @@ describe('generateSite()', () => {
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', 'index.html')
     expect($('article h1')).to.have.text('Index Page')
     expect($('article img')).to.have.attr('src', '_images/activity-diagram.svg')
-    expect(ospath.join(destAbsDir, 'the-component/2.0/_images')).to.be.a.directory()
-    expect(ospath.join(destAbsDir, 'the-component/2.0/_images/activity-diagram.svg')).to.be.a.file()
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/_images')).to.be.a.directory()
+    expect(ospath.join(absDestDir, 'the-component/2.0/_images/activity-diagram.svg')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     expect($('nav.nav-menu .is-current-page')).to.have.lengthOf(1)
     expect($('nav.nav-menu .is-current-page > a.nav-link')).to.have.attr('href', 'the-page.html')
@@ -181,23 +181,23 @@ describe('generateSite()', () => {
     process.chdir(altWorkDir)
     await generateSite(['--playbook', ospath.relative('.', playbookFile)], env)
     process.chdir(cwd)
-    expect(ospath.join(destAbsDir, '_'))
+    expect(ospath.join(absDestDir, '_'))
       .to.be.a.directory()
       .with.subDirs.with.members(['css', 'js', 'font', 'img'])
-    expect(ospath.join(destAbsDir, 'the-component'))
+    expect(ospath.join(absDestDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
   }).timeout(TIMEOUT)
 
   it('should generate site into output directory specified in arguments', async () => {
     const destDirOverride = ospath.join(destDir, 'beta')
-    const destAbsDirOverride = ospath.join(WORK_DIR, destDirOverride)
+    const absDestDirOverride = ospath.join(WORK_DIR, destDirOverride)
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile, '--to-dir', '.' + ospath.sep + destDirOverride], env)
-    expect(ospath.join(destAbsDirOverride, '_'))
+    expect(ospath.join(absDestDirOverride, '_'))
       .to.be.a.directory()
       .with.subDirs.with.members(['css', 'js', 'font', 'img'])
-    expect(ospath.join(destAbsDirOverride, 'the-component'))
+    expect(ospath.join(absDestDirOverride, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['2.0'])
   }).timeout(TIMEOUT)
@@ -206,7 +206,7 @@ describe('generateSite()', () => {
     playbookSpec.site.start_page = 'the-component::index'
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'index.html'))
+    expect(ospath.join(absDestDir, 'index.html'))
       .to.be.a.file()
       .with.contents.that.match(/<meta http-equiv="refresh" content="0; url=the-component\/2.0\/index.html">/)
   }).timeout(TIMEOUT)
@@ -222,8 +222,8 @@ describe('generateSite()', () => {
     playbookSpec.site.url = 'https://example.com/docs/'
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'sitemap.xml')).to.be.a.file()
-    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'sitemap.xml')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head link[rel=canonical]')).to.have.attr('href', 'https://example.com/docs/the-component/2.0/index.html')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', 'https://example.com/docs')
@@ -233,7 +233,7 @@ describe('generateSite()', () => {
     playbookSpec.site.url = 'https://example.com'
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, '404.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, '404.html')).to.be.a.file()
     $ = loadHtmlFile('404.html')
     expect($('head > title')).to.have.text('Page Not Found :: The Site')
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/_/css/site.css')
@@ -246,12 +246,12 @@ describe('generateSite()', () => {
     }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     expect($('head meta[name=description]')).to.have.attr('content', 'Stuff about stuff')
     expect($('h2#_section_a')).to.have.html('1. Section A')
     expect($('h2#_section_b')).to.have.html('2. Section B')
-    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('head meta[name=description]')).to.have.attr('content', 'The almighty index page')
   }).timeout(TIMEOUT)
@@ -267,7 +267,7 @@ describe('generateSite()', () => {
     }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page.html'))
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html'))
       .to.be.a.file()
       .with.contents.that.match(/Section A content!!!/)
       .and.with.contents.that.match(/&#169;/)
@@ -284,7 +284,7 @@ describe('generateSite()', () => {
     ]
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html'))
+    expect(ospath.join(absDestDir, 'the-component/2.0/index.html'))
       .to.be.a.file()
       .with.contents.that.match(/<meta property="og:site_name" content="Learn All The Things!">/)
   }).timeout(TIMEOUT)
@@ -293,7 +293,7 @@ describe('generateSite()', () => {
     await repositoryBuilder.open().then(() => repositoryBuilder.checkoutBranch('v2.0'))
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     const thePagePath = 'modules/ROOT/pages/the-page.adoc'
     const editUrl =
@@ -323,10 +323,10 @@ describe('generateSite()', () => {
     playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component'))
+    expect(ospath.join(absDestDir, 'the-component'))
       .to.be.a.directory()
       .with.subDirs(['1.0', '2.0'])
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     // assert that all versions of page are shown
     expect($('.page-versions')).to.exist()
@@ -340,8 +340,8 @@ describe('generateSite()', () => {
       .to.have.lengthOf(1)
       .and.to.have.text('1.0')
       .and.to.have.attr('href', '../1.0/the-page.html')
-    expect(ospath.join(destAbsDir, 'the-component/1.0/new-page.html')).to.not.be.a.path()
-    expect(ospath.join(destAbsDir, 'the-component/2.0/new-page.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/1.0/new-page.html')).to.not.be.a.path()
+    expect(ospath.join(absDestDir, 'the-component/2.0/new-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/new-page.html')
     expect($('.page-versions a.version')).to.have.lengthOf(2)
     expect($('.page-versions a.version:not(.is-current)'))
@@ -365,7 +365,7 @@ describe('generateSite()', () => {
     )
       .to.have.text('1.0')
       .and.to.have.attr('href', '../1.0/index.html')
-    expect(ospath.join(destAbsDir, 'the-component/1.0/the-page.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/1.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/1.0/the-page.html')
     expect($('.navigation-explore .component.is-current .version')).to.have.lengthOf(2)
     expect($('.navigation-explore .component.is-current .version.is-latest a')).to.have.text('2.0')
@@ -419,8 +419,8 @@ describe('generateSite()', () => {
     })
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-other-component')).to.be.a.directory()
-    expect(ospath.join(destAbsDir, 'the-other-component/core/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-other-component')).to.be.a.directory()
+    expect(ospath.join(absDestDir, 'the-other-component/core/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-other-component/core/index.html')
     expect($('.navigation-explore .component')).to.have.lengthOf(2)
     // assert sorted by title
@@ -441,7 +441,7 @@ describe('generateSite()', () => {
     expect($('.navigation-explore .component.is-current .version').eq(0))
       .to.have.class('is-current')
       .and.to.have.class('is-latest')
-    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     // assert component link points to start page
     expect($('.navigation-explore .component:not(.is-current) a').eq(0)).to.have.attr(
@@ -453,37 +453,37 @@ describe('generateSite()', () => {
   it('should generate static redirect files for aliases by default', async () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-alias.html')).to.be.a.file()
-    const contents = readFile('the-component/2.0/the-alias.html', destAbsDir)
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-alias.html')).to.be.a.file()
+    const contents = readFile('the-component/2.0/the-alias.html', absDestDir)
     expect(contents).to.include(`<script>location="the-page.html"</script>`)
   }).timeout(TIMEOUT)
 
   it('should generate nginx rewrite config file for aliases when using nginx redirect facility', async () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile, '--redirect-facility', 'nginx'], env)
-    expect(ospath.join(destAbsDir, '.etc/nginx/rewrite.conf')).to.be.a.file()
-    const contents = readFile('.etc/nginx/rewrite.conf', destAbsDir)
+    expect(ospath.join(absDestDir, '.etc/nginx/rewrite.conf')).to.be.a.file()
+    const contents = readFile('.etc/nginx/rewrite.conf', absDestDir)
     const rules = `location = /the-component/2.0/the-alias.html { return 301 /the-component/2.0/the-page.html; }`
     expect(contents).to.include(rules)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-alias.html')).to.not.be.a.path()
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-alias.html')).to.not.be.a.path()
   }).timeout(TIMEOUT)
 
   it('should indexify URLs to internal pages', async () => {
     playbookSpec.urls = { html_extension_style: 'indexify' }
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
-    expect(ospath.join(destAbsDir, 'the-component/2.0/index.html')).to.be.a.file()
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('article a.page')).to.have.attr('href', 'the-page/')
     expect($('nav.crumbs a')).to.have.attr('href', './')
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', './')
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page/index.html')
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', '../')
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../../_/css/site.css')
-    expect(ospath.join(destAbsDir, 'the-component/2.0/the-alias/index.html')).to.be.a.file()
-    const contents = readFile('the-component/2.0/the-alias/index.html', destAbsDir)
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-alias/index.html')).to.be.a.file()
+    const contents = readFile('the-component/2.0/the-alias/index.html', absDestDir)
     expect(contents).to.include(`<script>location="../the-page/"</script>`)
   }).timeout(TIMEOUT)
 
