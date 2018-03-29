@@ -52,15 +52,17 @@ function mockContentCatalog (seed = []) {
     const pubVersion = version === 'master' ? '' : version
     const pubModule = module === 'ROOT' ? '' : module
     if (family === 'page' || family === 'alias') {
-      entry.out = {
-        path: path.join(component, pubVersion, pubModule, relative.slice(0, -5) + (indexify ? '/' : '.html')),
-        moduleRootPath: relative.includes('/')
-          ? Array(relative.split('/').length - 1)
-            .fill('..')
-            .join('/')
-          : '.',
+      if (!~('/' + relative).indexOf('/_')) {
+        entry.out = {
+          path: path.join(component, pubVersion, pubModule, relative.slice(0, -5) + (indexify ? '/' : '.html')),
+          moduleRootPath: relative.includes('/')
+            ? Array(relative.split('/').length - 1)
+              .fill('..')
+              .join('/')
+            : '.',
+        }
+        entry.pub = { url: '/' + entry.out.path, moduleRootPath: entry.out.moduleRootPath }
       }
-      entry.pub = { url: '/' + entry.out.path, moduleRootPath: entry.out.moduleRootPath }
     } else if (family === 'navigation') {
       entry.pub = {
         url: '/' + path.join(component, pubVersion, pubModule) + '/',
