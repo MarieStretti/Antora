@@ -15,7 +15,7 @@ See the {uri-changelog}[CHANGELOG^] for details.
 === Antora: The Static Site Generator for Tech Writers
 
 Antora makes it easy for tech writers to write documentation and publish it to the web.
-As a tech writer, you simply author content in xref:asciidoc:index.adoc[AsciiDoc], Antora's content markup language, then save those files under a standard project structure in one or more content repositories.
+As a tech writer, you simply author content in xref:asciidoc:index.adoc[AsciiDoc], Antora's content markup language, then save those files under a standard project structure inside one or more content repositories.
 Antora picks up your content from there and transforms it into a website.
 That's all there is to it!
 
@@ -44,9 +44,9 @@ All the CI job has to do is prepare the environment and launch a single command,
 == Managing docs as code
 
 With Antora, you manage *docs as code*.
-That means allowing your documentation process to benefit from the same practices used to produce successful software.
+That means your documentation process gets to benefit from the same practices used to produce successful software.
 
-These practices include:
+Some of these practices include:
 
 * Storing content in a version control system.
 * Keeping content, configuration, and presentation separate.
@@ -80,16 +80,16 @@ This is a sharp contrast to many other site generators that intermix all of thes
 
 == Where to begin
 
-If you just starting to explore Antora, you'll probably want to know xref:features.adoc[how Antora can help].
+If you're just beginning your journey with Antora, you'll probably want to know xref:features.adoc[how Antora can help you].
 
 If you're ready to set up a new documentation project or migrate an existing project to use with Antora, start by xref:component-structure.adoc[organizing your documentation files] for use with Antora.
 You'll then need to xref:playbook:index.adoc[create a playbook] to tell Antora where to find your documentation and UI for making your site.
 
-If you already have a documentation component set up, and you want to build it with Antora, start by xref:install/install-antora.adoc[installing Antora], then use Antora to xref:run-antora-to-generate-site.adoc[generate your site].
+If you already have a documentation component set up and you're ready to create your first site, check that you've met Antora's xref:supported-platforms.adoc[system requirements], xref:install/install-antora.adoc[install Antora], and then xref:run-antora-to-generate-site.adoc[generate your site] using Antora.
 
-If you're ready to start writing, learn how to use the xref:asciidoc:index.adoc[AsciiDoc syntax] to xref:pages.adoc[make documentation pages].
+If you want to jump into writing, learn how to use the xref:asciidoc:index.adoc[AsciiDoc syntax] to xref:pages.adoc[make documentation pages].
 
-If you want to dive deeper into the details of the generator pipeline, check out xref:how-antora-works.adoc[how Antora works].
+If you want to dive deeper into the details of the site generator pipeline, check out xref:how-antora-works.adoc[how Antora works].
 
 We hope you find making documentation sites with Antora enjoyable and rewarding.
 Happy writing!
