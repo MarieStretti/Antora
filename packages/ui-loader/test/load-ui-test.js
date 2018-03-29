@@ -571,8 +571,8 @@ describe('loadUi()', () => {
     })
   })
 
-  describe('should set the out property on assets relative to playbook.ui.outputDir', () => {
-    describe('when outputDir is relative', () => {
+  describe('should set the out property on assets relative to ui.outputDir from playbook', () => {
+    describe('when value is relative', () => {
       testAll('the-ui-bundle.zip', async (playbook) => {
         playbook.ui.outputDir = '_ui'
         const uiCatalog = await loadUi(playbook)
@@ -590,7 +590,7 @@ describe('loadUi()', () => {
       })
     })
 
-    describe('when outputDir is absolute', () => {
+    describe('when value is absolute', () => {
       testAll('the-ui-bundle.zip', async (playbook) => {
         playbook.ui.outputDir = '/_ui'
         const uiCatalog = await loadUi(playbook)
@@ -604,6 +604,35 @@ describe('loadUi()', () => {
           dirname: '_ui/js',
           basename: '01-one.js',
           path: '_ui/js/01-one.js',
+        })
+      })
+    })
+
+    describe('when value is undefined fall back to value specified in UI descriptor in bundle', () => {
+      testAll('the-ui-bundle-with-output-dir.zip', async (playbook) => {
+        const uiCatalog = await loadUi(playbook)
+        const uiAssets = uiCatalog.findByType('asset')
+        const css = uiAssets.find(({ path }) => path === 'css/one.css')
+        expect(css).to.exist()
+        expect(css.out).to.eql({
+          dirname: '_ui/css',
+          basename: 'one.css',
+          path: '_ui/css/one.css',
+        })
+      })
+    })
+
+    describe('even if output dir is defined in the UI descriptor in bundle', () => {
+      testAll('the-ui-bundle-with-output-dir.zip', async (playbook) => {
+        playbook.ui.outputDir = 'ui'
+        const uiCatalog = await loadUi(playbook)
+        const uiAssets = uiCatalog.findByType('asset')
+        const css = uiAssets.find(({ path }) => path === 'css/one.css')
+        expect(css).to.exist()
+        expect(css.out).to.eql({
+          dirname: 'ui/css',
+          basename: 'one.css',
+          path: 'ui/css/one.css',
         })
       })
     })

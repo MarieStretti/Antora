@@ -257,7 +257,7 @@ function loadConfig (files, outputDir) {
   if (configFile) {
     files.delete(UI_DESC_FILENAME)
     const config = yaml.safeLoad(configFile.contents.toString())
-    config.outputDir = outputDir
+    if (outputDir !== undefined) config.outputDir = outputDir
     const staticFiles = config.staticFiles
     if (staticFiles) {
       if (!Array.isArray(staticFiles)) {
