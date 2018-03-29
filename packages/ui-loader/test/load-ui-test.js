@@ -654,6 +654,14 @@ describe('loadUi()', () => {
     })
   })
 
+  it('should throw error if duplicate file is added to UI catalog', async () => {
+    const playbook = {
+      ui: { bundle: { url: ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip') } },
+    }
+    let uiCatalog = await loadUi(playbook)
+    expect(() => uiCatalog.addFile({ type: 'asset', path: 'css/one.css' })).to.throw('Duplicate file')
+  })
+
   it('should use remote bundle from cache on subsequent run', async () => {
     const playbook = {
       ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
