@@ -27,7 +27,7 @@ For a detailed list of current development tasks, refer to the core components {
 
 === v1.0.0 GA
 
-* [ ] Add architecture guidebook for redirect producer component {uri-issues}/181[#181]
+* [x] Add architecture guidebook for redirect producer component {uri-issues}/181[#181]
 * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
 * [ ] Set up API documentation and automatically publish as CI artifact
 //* [ ] Pass algolia key in playbook
