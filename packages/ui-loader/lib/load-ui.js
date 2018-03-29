@@ -17,7 +17,7 @@ const yaml = require('js-yaml')
 const vfs = require('vinyl-fs')
 const vzip = require('gulp-vinyl-zip')
 
-const { UI_CACHE_FOLDER, UI_CONFIG_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
+const { UI_CACHE_FOLDER, UI_DESC_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
 const URI_SCHEME_RX = /^https?:\/\//
 const EXT_RX = /\.[a-z]{2,3}$/
 
@@ -253,9 +253,9 @@ function mergeFiles (files, supplementalFiles) {
 }
 
 function loadConfig (files, outputDir) {
-  const configFile = files.get(UI_CONFIG_FILENAME)
+  const configFile = files.get(UI_DESC_FILENAME)
   if (configFile) {
-    files.delete(UI_CONFIG_FILENAME)
+    files.delete(UI_DESC_FILENAME)
     const config = yaml.safeLoad(configFile.contents.toString())
     config.outputDir = outputDir
     const staticFiles = config.staticFiles
