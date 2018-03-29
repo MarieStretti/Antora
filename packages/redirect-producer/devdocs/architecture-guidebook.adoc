@@ -2,7 +2,7 @@
 
 == Context
 
-Reorganizing pages in the site can cause existing references that originate from outside the site (e.g., a link from another site, a bookmark, a search result, etc) to break.
+Reorganizing pages in the site can cause existing references that originate from outside the site (e.g., a link from another site, a bookmark, a search result, etc.) to break.
 Antora can mitigate this problem by providing a mechanism to forward these references to their new location (at least during a transition period).
 To do so, each page can claim multiple aliases, or page IDs for pages that no longer exist.
 Using these aliases, the redirect producer can set up redirects (either static bounce pages or rewrite rules) from the URLs resolved from these aliases to the concrete target pages that claim them, thus effectively preserving the old URLs.
@@ -13,9 +13,9 @@ The main purpose of the redirect producer component is to generate the configura
 These redirects (i.e., URL mappings) are created from the page aliases defined in each page or by the site start page.
 The component produces configuration suitable for the redirect facility provided by the target environment (e.g., static bounce pages, nginx rewrite rules, mod_rewrite rules, netlify redirects file, etc.).
 Which configuration to produce is controlled by the redirect facility setting in the playbook.
-The redirect configuration files (i.e., bounce pages or a rewrite rule file) then get put into the site catalog to be published along with the other files in the site.
+Then, the redirect configuration files (i.e., bounce pages or a rewrite rule file) get put into the site catalog to be published along with the other files in the site.
 
-The redirect configuration is based on files in the `alias` family retrieved the content catalog.
+The redirect configuration is based on files in the `alias` family that are retrieved from the content catalog.
 Each entry represents an association between an alias page (i.e., a non-existent page) and the target page to which it points.
 (The contents of the alias file is empty).
 If the redirect facility is static, the redirect producer populates the contents of the alias file with a static HTML page that redirects the browser to the target page.
@@ -42,7 +42,7 @@ The redirect producer component should:
 * Accept a playbook and the content catalog
 * Retrieve the files from the content catalog in the `alias` family
 * Return an empty array if there are no aliases
-* Iterate over the alias files and generate redirect configuration suitable for the redirect facility
+* Iterate over the alias files and generate a redirect configuration suitable for the redirect facility
  ** _static:_ populate the `contents` property of each alias file with an HTML bounce page
  ** _nginx:_ generate an nginx configuration file containing rewrite rules generated from the alias files
   *** the output path of the file should be set to [.path]_.etc/nginx/rewrite.conf_
@@ -92,7 +92,7 @@ const produceRedirects = require('@antora/redirect-producer')
 const siteFiles = produceRedirects(playbook, contentCatalog)
 ----
 
-These files then need to be put into one of the catalogs (e.g., the site catalog) passed to the site publisher so that these files get published.
+These files then need to be put into one of the catalogs (e.g., the site catalog) and passed to the site publisher so that they get published.
 
 == Data
 
