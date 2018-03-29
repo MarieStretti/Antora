@@ -1,7 +1,7 @@
 * xref:features.adoc[How Antora Can Help]
 * xref:how-antora-works.adoc[How Antora Works]
 
-* Get Started
+* Get Antora
 ** xref:supported-platforms.adoc[System Requirements]
 *** xref:install/linux-requirements.adoc[Linux]
 *** xref:install/macos-requirements.adoc[macOS]
@@ -10,10 +10,9 @@
 ** xref:install/install-antora.adoc[Install Antora]
 ** xref:install/upgrade-antora.adoc[Upgrade Antora]
 
-** xref:run-antora-to-generate-site.adoc[Run Antora]
-*** xref:run-antora-to-generate-site.adoc#local-site-preview[Local Preview]
-*** xref:run-antora-to-generate-site.adoc#cache[Cache]
-
+* xref:run-antora-to-generate-site.adoc[Run Antora]
+** xref:run-antora-to-generate-site.adoc#local-site-preview[Local Preview]
+** xref:run-antora-to-generate-site.adoc#cache[Cache]
 ** xref:cli.adoc[CLI Reference]
 
 * xref:component-structure.adoc[File Organization]
