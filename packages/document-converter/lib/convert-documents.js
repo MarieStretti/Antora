@@ -20,6 +20,7 @@ const convertDocument = require('./convert-document')
 function convertDocuments (contentCatalog, asciidocConfig = {}) {
   return contentCatalog
     .findBy({ family: 'page' })
+    .filter((page) => page.out)
     .map((page) => (page.mediaType === 'text/asciidoc' ? convertDocument(page, contentCatalog, asciidocConfig) : page))
 }
 
