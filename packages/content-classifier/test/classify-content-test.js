@@ -487,7 +487,6 @@ describe('classifyContent()', () => {
           createFile('modules/ROOT/assets/bad-file.png'),
           createFile('modules/ROOT/pages/bad-file.xml'),
           createFile('modules/ROOT/documents/index.adoc'),
-          createFile('modules/ROOT/pages/_attributes.adoc'),
           createFile('modules/ROOT/bad-folder/bad-file.yml'),
         ]
       )
@@ -637,6 +636,24 @@ describe('classifyContent()', () => {
         moduleRootPath: '.',
         rootPath: '../..',
       })
+    })
+
+    it('should not set out and pub on file with leading underscore', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/pages/_attributes.adoc'))
+      const files = classifyContent(playbook, aggregate).getFiles()
+      expect(files).to.have.lengthOf(1)
+      const file = files[0]
+      expect(file).to.not.have.property('out')
+      expect(file).to.not.have.property('pub')
+    })
+
+    it('should not set out and pub on file in directory with leading underscore', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/pages/_attributes/common.adoc'))
+      const files = classifyContent(playbook, aggregate).getFiles()
+      expect(files).to.have.lengthOf(1)
+      const file = files[0]
+      expect(file).to.not.have.property('out')
+      expect(file).to.not.have.property('pub')
     })
 
     it('with master version', () => {

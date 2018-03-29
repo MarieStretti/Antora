@@ -73,18 +73,18 @@ class ContentCatalog {
     if (!File.isVinyl(file)) file = new File(file)
     const family = file.src.family
     const actingFamily = family === 'alias' ? file.rel.src.family : family
-    if (!('out' in file) && (actingFamily === 'page' || actingFamily === 'image' || actingFamily === 'attachment')) {
+    let publishable
+    if ('out' in file) {
+      publishable = true
+    } else if (
+      (actingFamily === 'page' || actingFamily === 'image' || actingFamily === 'attachment') &&
+      !~('/' + file.src.relative).indexOf('/_')
+    ) {
+      publishable = true
       file.out = computeOut(file.src, actingFamily, this.htmlUrlExtensionStyle)
     }
-    if (
-      !('pub' in file) &&
-      (actingFamily === 'page' ||
-        actingFamily === 'image' ||
-        actingFamily === 'attachment' ||
-        actingFamily === 'navigation')
-    ) {
+    if (!('pub' in file) && (publishable || actingFamily === 'navigation')) {
       file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
-      //if (family === 'alias' && this.urlRedirectFacility !== 'static') delete file.out
     }
     this[$files][id] = file
   }
