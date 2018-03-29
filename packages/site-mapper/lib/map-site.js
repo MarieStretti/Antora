@@ -39,7 +39,7 @@ function mapSite (playbook, contentCatalog) {
   let siteUrl = playbook.site.url
   if (!siteUrl) return []
   if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
-  const pages = contentCatalog.findBy({ family: 'page' })
+  const pages = contentCatalog.findBy({ family: 'page' }).filter((page) => page.out)
   if (!pages.length) return []
   const lastmodISO = new Date().toISOString()
   let sitemaps = pages.reduce((accum, file) => {

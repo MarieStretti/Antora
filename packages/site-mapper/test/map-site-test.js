@@ -96,6 +96,18 @@ describe('mapSite()', () => {
     })
   })
 
+  it('should only include publishable pages in sitemap', () => {
+    const contentCatalog = mockContentCatalog([
+      { family: 'page', relative: 'index.adoc' },
+      { family: 'page', relative: '_attributes.adoc' },
+    ])
+    const sitemaps = mapSite(playbook, contentCatalog)
+    const sitemap = sitemaps[0]
+    const urls = collectUrls(new DOMParser().parseFromString(sitemap.contents.toString()))
+    expect(urls).to.have.lengthOf(1)
+    expect(urls[0]).to.equal('https://docs.example.org/component-a/module-a/index.html')
+  })
+
   it('should sort entries in sitemap by version, then by URL path', () => {
     const contentCatalog = mockContentCatalog([
       { component: 'component-a', version: '1.0', family: 'page', relative: 'index.adoc' },
