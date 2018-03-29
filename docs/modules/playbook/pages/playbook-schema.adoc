@@ -46,26 +46,26 @@ output: # <20>
   destinations: # <23>
   - provider: archive # <24>
 ----
-<1> <<site-key,Site keys>>
-<2> <<site-title-key,Title key>>
+<1> <<site-category,Site category>>
+<2> <<site-title-key,Site title key>>
 <3> <<site-url-key,Base URL key>>
 <4> <<site-start-page-key,Start page key>>
-<5> <<site-service-keys,Service keys>>
+<5> <<site-service-integration-keys,Service integration keys>>
 <6> <<site-ga-key,Google analytics key>>
-<7> <<content-sources-keys,Content keys>>
-<8> <<content-sources-keys,Sources keys>>
-<9> <<sources-url-key,Content repository URL key>>
-<10> <<branches-key,Content repository branches key>>
-<11> <<tags-key,Content repository tags key>>
-<12> <<sources-start-path-key,Content repository start path key>>
-<13> <<asciidoc-keys,AsciiDoc keys>>
+<7> <<content-category,Content category>>
+<8> <<content-sources-keys,Content sources key>>
+<9> <<sources-url-key,Content source repository URL key>>
+<10> <<branches-key,Content source branches key>>
+<11> <<tags-key,Content source tags key>>
+<12> <<sources-start-path-key,Content source start path key>>
+<13> <<asciidoc-category,AsciiDoc category>>
 <14> <<asciidoc-attributes-key,AsciiDoc attributes key>>
-<15> <<ui-keys,UI keys>>
-<16> <<ui-bundle-key,UI bundle repository key>>
+<15> <<ui-category,UI category>>
+<16> <<ui-bundle-key,UI bundle URL key>>
 <17> <<ui-start-path-key,Bundle start path key>>
 <18> <<ui-default-layout-key,UI default layout key>>
 <19> <<ui-output-dir-key,UI output directory key>>
-<20> Published output keys
+<20> Output category
 <21> Clean output directory key
 <22> Output directory key
 <23> Output destinations key
@@ -73,8 +73,8 @@ output: # <20>
 
 Let's explore the purpose and usage of each key and its values.
 
-[#site-key]
-== Site keys
+[#site-category]
+== Site category
 
 The site's global properties are defined under the `site` category in the playbook schema.
 Antora applies these properties to the whole site when it is generated.
@@ -107,7 +107,7 @@ Learn more:
 
 * xref:configure-site.adoc#configure-start-page[Configure a start page for the base url]
 
-[#site-service-keys]
+[#site-service-integration-keys]
 === keys
 
 The account keys for global site services such as document search tools and Google Analytics.
@@ -121,8 +121,8 @@ Learn more:
 
 * xref:configure-site.adoc#configure-ga[Add a Google Analytics account key to the site]
 
-[#content-sources-keys]
-== Content and sources keys
+[#content-category]
+== Content category
 
 The `content` category contains an array of source repository specifications.
 These specifications are arranged under the `sources` subcategory.
@@ -177,7 +177,8 @@ Learn more:
 
 * xref:configure-content-sources.adoc#add-start-path[Specify a start path for a content repository]
 
-== AsciiDoc keys
+[#asciidoc-category]
+== AsciiDoc category
 
 The `asciidoc` category contains keys that configure the AsciiDoc processor, such as AsciiDoc document attributes and extensions.
 
@@ -204,8 +205,8 @@ Learn more:
 * xref:configure-asciidoc.adoc#global-extensions[Register global Asciidoctor extensions]
 * xref:configure-asciidoc.adoc#scoped-extensions[Register scoped Asciidoctor extensions]
 
-[#ui-keys]
-== UI keys
+[#ui-category]
+== UI category
 
 The `ui` category contains keys that specify the location of the UI bundle and how it should be processed.
 
@@ -259,7 +260,8 @@ Learn more:
 
 * xref:configure-ui.adoc#output-dir[Specify an output directory for the UI files]
 
-== Output keys
+[#output-category]
+== Output category
 
 The `output` category contains common output settings and a list of destination specifications.
 The destination specifications tell Antora which provider(s) to use to publish the site (e.g., fs, archive, ssh, s3) and where those files should go.
@@ -336,7 +338,8 @@ Learn more:
 The clean key can be specified directly on any `fs` provider.
 When specified at this location (instead of directly under output), it only cleans the output location specified by this destination.
 
-== Runtime keys
+[#runtime-category]
+== Runtime category
 
 The `runtime` category contains keys that manage the console output, resource update behavior, and cache location.
 

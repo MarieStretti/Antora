@@ -41,8 +41,6 @@ The key accepts a relative or absolute filesystem path.
 ----
 runtime:
   cache_dir: ./.antora-cache
-site:
-  ...
 ----
 
 In this case, the value resolves to the folder [.path]_.antora-cache_ relative to the location of the playbook file (because of the leading `.`).
