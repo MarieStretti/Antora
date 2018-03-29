@@ -1,4 +1,4 @@
-= How Antora Can Help You and Your Team
+= How Antora Helps You and Your Team
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]

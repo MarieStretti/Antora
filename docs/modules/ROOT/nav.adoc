@@ -1,4 +1,4 @@
-* xref:features.adoc[How Antora Helps Teams]
+* xref:features.adoc[How Antora Helps]
 * xref:how-antora-works.adoc[How Antora Works]
 
 * xref:supported-platforms.adoc[System Requirements]
