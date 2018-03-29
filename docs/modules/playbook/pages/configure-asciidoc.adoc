@@ -11,7 +11,7 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] How to configure global (site-wide) AsciiDoc document attributes in a playbook.
+* [x] How to define global (site-wide) AsciiDoc document attributes in a playbook.
 * [x] How to override a global AsciiDoc document attribute from a page.
 * [x] How to register an Asciidoctor extension globally.
 * [x] How to register an Asciidoctor extension that's scoped to each page.
@@ -24,11 +24,11 @@ Antora then adds these attributes to every page it converts.
 
 You can define global (i.e., site-wide) AsciiDoc document attributes using the `attributes` key under the `asciidoc` category in the playbook.
 This key accepts a map of name-value pairs.
-The attribute names can be:
+The attribute can be one of the following:
 
-* {uri-attrs}[built-in AsciiDoc attributes^] you want to override such as `sectnums`, `hide-uri-scheme`, `linkattrs`,
-* custom attributes that are specific to your content (e.g., `product-name`), and
-* attributes for configuring the behavior of custom extensions (e.g., `plantuml-server-url`).
+* A {uri-attrs}[built-in AsciiDoc attribute^] you want to override (e.g., `sectnums`, `hide-uri-scheme`, `linkattrs`)
+* A custom attribute specific to your content (e.g., `product-name`)
+* An attribute that configures the behavior of a custom extension (e.g., `plantuml-server-url`)
 
 .Defining global AsciiDoc document attributes
 [source,yaml]
@@ -40,8 +40,8 @@ asciidoc:
     toc: ~
 ----
 
-These attributes will be applied and available to use on every page in your site.
-You can output the value of these attributes using the attribute reference syntax (e.g., `+{product-name}+`).
+These attributes will be applied and available to every page in your site.
+You can yield the value of these attributes using the attribute reference syntax (e.g., `+{product-name}+`).
 
 CAUTION: Certain built-in attributes are not applicable in the Antora environment.
 These attributes include `data-uri`, `allow-uri-read`, `docinfo`, `linkcss`, `noheader`, `nofooter`, `webfonts`, and `outfilesuffix`.
@@ -52,25 +52,25 @@ Other attributes, such as `imagesdir`, are automatically set by Antora and canno
 
 There are three attribute value types in AsciiDoc: String, Number, and Boolean.
 
-If the attribute value is a _String_, we recommend enclosing the value in quotes just to be safe.
-(If you're using YAML for your playbook, you may be able to drop the quotes in most cases).
+If the attribute value is a _String_, we recommend enclosing the value in quotes just to be safe (e.g., `'Listing'`).
+(If you're using YAML for your playbook, and you are comfortable with the rules of the syntax, you may choose to drop the quotes when they aren't needed).
 
-If the attribute value is a _Number_, no quotes are required around the value.
+If the attribute value is a _Number_, no quotes should be used around the value (e.g., `3`).
 
 If the attribute value is a _Boolean_, use an empty string (i.e., `''`) to set the attribute and a null value (i.e., `null` or `~`) to unset the value.
 
 You can also use a null value to unset any type of attribute (e.g., `table-caption: ~`).
-This is a good way to disable attributes that authors may use for local preview but should never be set in Antora (e.g., `toc`).
+This is a good way to disable attributes that authors may use for local preview but should never be set in Antora (e.g., `toc: ~`).
 
 == Default attribute values
 
 Sometimes, you want to assign a default value to an attribute, but still allow a given page to override that value.
-By default, an attribute defined in the playbook overrides any assignment in the document (i.e., page) itself.
-This behavior can be changed by appending a modifier.
+By default, an attribute defined in the playbook overrides any assignment in the document (aka the page) itself.
+This behavior can be changed by appending the modifier `@`.
 
-If you add the `@` symbol at the end of an attribute value defined in the playbook, it lowers the precedence of the attribute assignment so a page may override the value.
-The `@` modifier is then dropped from the value.
-We refer to this as [.term]_soft setting_ an attribute.
+If you add the `@` symbol at the end of an attribute value defined in the playbook, it lowers the precedence of the attribute assignment so the page may override the value.
+The `@` modifier is then stripped from the value.
+We refer to this technique as [.term]_soft setting_ an attribute.
 
 .Defining attributes that can be overridden by a page
 [source,yaml]
@@ -89,24 +89,26 @@ Now, any page can override this attribute as follows:
 :product-name: Explosive Container Maker
 ----
 
-Unfortunately, it's not possible to soft unset an attribute.
+Unfortunately, it's not currently possible to soft unset an attribute.
 
 == Asciidoctor extensions
 
-The `asciidoc` category is also used for registering Asciidoctor extensions.
-First, you need to install the extension as a library dependency or add the extension script to the playbook project.
-Then, you can register these extensions using the `extensions` key.
-The `extensions` key accepts a list of names or paths.
+The `asciidoc` category can also used for registering Asciidoctor extensions.
+First, you need to install the extension code, which you can either do by installing it globally, declaring it as a dependency of the project, or adding the extension script to the playbook project.
+Then, you can register the extension using the `extensions` key.
+The `extensions` key accepts a list of node module names (i.e., npm package names) and/or paths.
 
 [#global-extensions]
 === Global Asciidoctor extensions
 
-Global extensions are registered once, before any pages are converted, and are shared by all documents that Antora converts using Asciidoctor (including navigation files).
-A global extension is a node module or script which, when required, exports a function that Antora passes directly to the `register` method of Asciidoctor's static extension registry.
+Global extensions are registered once, before any pages are converted.
+These extensions are shared by all documents Antora converts using Asciidoctor (including navigation files).
+A global extension is a node module or script that exports a function when required.
+Antora passes this function directly to the `register` method of Asciidoctor's static extension registry.
 
-To register a global extension, all you need to do is reference the name (if it's on the require path) or path (if it's a local script) in the `extensions` key.
+To register a global extension, all you need to do is reference its name (if it's a node module on the require path) or path (if it's a local script) in the `extensions` key.
 
-.Register a global extension from the require path
+.Register a global extension provided by a node module
 [source,yaml]
 ----
 asciidoc:
@@ -114,7 +116,7 @@ asciidoc:
   - asciidoctor-emoji-macro
 ----
 
-In this case, `asciidoctor-emoji-macro` is the name of an installed node module and is thus available on the require path (either in the [.path]__node_modules__ directory for the playbook project or in the global [.path]__node_modules__ directory).
+In this case, `asciidoctor-emoji-macro` is the name of an installed node module and is thus available on the require path (either in the [.path]__node_modules__ directory in the playbook project or in the global [.path]__node_modules__ directory).
 
 .Register a global extension from a local script
 [source,yaml]
@@ -126,7 +128,7 @@ asciidoc:
 
 In this case, the extension is a script located at the path [.path]_lib/shout-block.js_ relative to the playbook file.
 
-Here's how you'd register multiple global extensions:
+Here's an example that shows how to register multiple global extensions:
 
 .Register multiple global extensions
 [source,yaml]
@@ -140,16 +142,16 @@ asciidoc:
 [#scoped-extensions]
 === Scoped Asciidoctor extensions
 
-Rather than requiring an extension globally, you may want to register an extension per processor instance.
+Rather than requiring an extension globally, you may want to register an extension per instance of the AsciiDoc processor.
 The benefit of this approach is that it allows the extension to hook into the Antora lifecycle.
-Scoped extensions are only registered for pages, not for navigation files.
+The other difference is that scoped extensions are only registered and used for pages, not for navigation files.
 
-In order to register a scoped extension, the extension must support this mode of use.
-Specifically, the extension must export a `register` function.
-This function is called with a scoped (per-processor) extension registry and a context object.
+In order to register a scoped extension, the extension must support this mode of usage.
+Specifically, the extension must export a `register` function that accepts an extension registry on which it self registers.
+The function is called with a scoped (per-processor) extension registry and a context object.
 The context object includes the current file, the content catalog, and the AsciiDoc configuration object from the playbook.
 
-Here's an example of a `register` function:
+Here's an example of a `register` function for a scoped extension:
 
 .Scoped Asciidoctor extension register function
 [source,js]
@@ -159,7 +161,7 @@ module.exports.register = function (registry, context) {
 }
 ----
 
-A scoped extension is registered in exactly the same way as a global extension.
+A scoped extension is registered in the playbook in exactly the same way as a global extension.
 
 .Register a scoped extension from the require path
 [source,yaml]
@@ -177,7 +179,7 @@ asciidoc:
   - ./lib/equation-macro
 ----
 
-The main difference is that if the extension exports the `register` function, it's scoped to the processor instance instead of being registered globally.
+The main difference is that if the extension exports the `register` function, it gets scoped to the processor instance instead of being registered globally.
 
 //Perhaps we should require #register at the end of the extension; hmmm
 
@@ -189,11 +191,11 @@ The `-r` option may be specified multiple times.
 
 This option gives site authors the ability to load additional code into the runtime before Antora begins executing.
 The option follows the module resolution rules of the `require()` function in Node.js.
-A common use case for the flag is to register Asciidoctor extensions globally.
+A common use case for this option is to register Asciidoctor extensions globally.
 
 If the node module or script is an Asciidoctor extension, it must self-register with Asciidoctor's static extension registry when required in order for the extension to be used.
 (Antora merely requires the script.
-It does not invoke a function).
+It does not invoke its exported function).
 
 Here's an example showing how to use the Antora CLI to preload multiple Asciidoctor extensions:
 
