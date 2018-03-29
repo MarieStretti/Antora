@@ -1,4 +1,5 @@
-.xref:index.adoc[Navigation Assembly]
+//.xref:index.adoc[Content Navigation]
+.xref:index.adoc[Navigation]
 * xref:filenames-and-locations.adoc[Navigation File Names & Storage Locations]
 * xref:register-navigation-files.adoc[Navigation File Registration]
 * xref:list-structures.adoc[Single & Multi-list Navigation Files]

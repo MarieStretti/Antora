@@ -1,4 +1,4 @@
-= Pipeline Process
+= Antora's Site Generation Process
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -7,13 +7,19 @@ endif::[]
 :idseparator: -
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
-The steps listed on this page describe the operations the default site generator pipeline performs.
-Keep in mind that Antora is a modular pipeline.
-This architecture allows special use case and custom components, such as validators, to be inserted into the pipeline at multiple points as needed.
-Also, the pipeline executes operations asynchronously, so many of the steps listed below may occur in a different order or simultaneously.
-For example, the UI is loaded as early as possible, then waits until its templates are needed.
+Antora's default site generator handles all aspects of creating a documentation site, from fetching and aggregating to converting and arranging the content to publishing the files of the generated site.
+This page describes that process in detail.
 
-== Default Pipeline Steps
+The default pipeline is opinionated to get you started as quickly as possible.
+But understand that Antora features a modular, open architecture.
+That means this architecture can accomodate specialized use cases by allowing custom components, such as a validators, to be inserted into the pipeline at strategic points as needed.
+This page focuses on the core, built-in components and capabilities in Antora.
+
+== Steps in the Default Generator Pipeline
+
+The steps listed in this section describe the operations the default site generator performs.
+Certain operations are executed asynchronously, so some of the steps below may occur in a different order or happen simultaneously.
+For example, the UI is fetched and loaded while the content is being aggregated to optimize use of the network.
 
 Read playbook::
 When you're ready to generate a site, you give Antora a playbook and tell it to run.
