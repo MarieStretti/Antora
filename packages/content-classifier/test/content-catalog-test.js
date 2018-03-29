@@ -292,6 +292,42 @@ describe('ContentCatalog', () => {
       expect(result.pub).to.include({ url: '/the-component/1.2.3/the-page.html' })
     })
 
+    it('should not populate out and pub when filename begins with an underscore', () => {
+      const src = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: '_attributes.adoc',
+        basename: '_attributes.adoc',
+        stem: '_attributes',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.not.have.property('out')
+      expect(result).to.not.have.property('pub')
+    })
+
+    it('should not populate out and pub when file is in directory that begins with an underscore', () => {
+      const src = {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: '_attributes/common.adoc',
+        basename: '_attributes/common.adoc',
+        stem: '_attributes/common',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.not.have.property('out')
+      expect(result).to.not.have.property('pub')
+    })
+
     it('should respect htmlUrlExtensionStyle setting when computing pub', () => {
       const src = {
         component: 'the-component',
@@ -344,6 +380,25 @@ describe('ContentCatalog', () => {
         relative: 'nav.adoc',
         basename: 'nav.adoc',
         stem: 'nav',
+        mediaType: 'text/asciidoc',
+      }
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addFile(new File({ src }))
+      const result = contentCatalog.getById(src)
+      expect(result).to.not.have.property('out')
+      expect(result).to.have.property('pub')
+      expect(result.pub.url).to.equal('/the-component/')
+    })
+
+    it('should set pub property on file in navigation family even if filename begins with underscore', () => {
+      const src = {
+        component: 'the-component',
+        version: 'master',
+        module: 'ROOT',
+        family: 'navigation',
+        relative: 'pages/_nav.adoc',
+        basename: '_nav.adoc',
+        stem: 'pages/_nav',
         mediaType: 'text/asciidoc',
       }
       const contentCatalog = new ContentCatalog()
