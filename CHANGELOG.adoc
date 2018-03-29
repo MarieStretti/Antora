@@ -10,15 +10,20 @@ This project utilizes semantic versioning.
 === Added
 
 * *ui-loader:* use outputDir specified in ui.yml of bundle if ui.outputDir is not specified in playbook
-* Document how to register Asciidoctor extensions
-* Document the `page-partial` attribute and including standard pages and example files
-* Document ability to set AsciiDoc page attributes in the playbook and via the CLI
-* Expand site navigation assembly, navigation file list structure and item functionality, and navigation file registration documentation
 
 === Changed
 
+* *content-classifier*: Don't publish files with a leading underscore in filename or inside a directory with a leading underscore
+* *content-classifier*: Don't drop _attributes.adoc files found inside pages directory from content catalog
 * *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
 * Remove commitlint
+
+=== Documentation
+
+* Document how to register Asciidoctor extensions
+* Document the `page-partial` attribute and including standard pages and example files
+* Document ability to set AsciiDoc page attributes in the playbook and via the CLI
+* Expand documentation for content navigation, including assembly, file structure, functionality, and registration
 
 == 1.0.0-rc.1 (2018-03-27)
 
