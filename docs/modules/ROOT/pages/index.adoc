@@ -2,15 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-<<<<<<< HEAD
-// Settings:
-:idprefix:
-:idseparator: -
-:linkattrs:
-:release-version: 1.0.0-rc.1
-=======
 :keywords: Docs as Code, DocOps, content management system, docs writers, publish software documentation, CI and docs, CD and docs
->>>>>>> 2ff10bb... update nav
 // URIs:
 :uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
 ////
