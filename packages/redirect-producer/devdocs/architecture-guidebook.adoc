@@ -1,0 +1,161 @@
+= Redirect Producer Guidebook
+
+== Context
+
+Reorganizing pages in the site can cause existing references that originate from outside the site (e.g., a link from another site, a bookmark, a search result, etc.) to break.
+Antora can mitigate this problem by providing a mechanism to forward these references to their new location (at least during a transition period).
+To do so, each page can claim multiple aliases, or page IDs for pages that no longer exist.
+Using these aliases, the redirect producer can set up redirects (either static bounce pages or rewrite rules) from the URLs resolved from these aliases to the concrete target pages that claim them, thus effectively preserving the old URLs.
+
+== Functional Overview
+
+The main purpose of the redirect producer component is to generate the configuration necessary to redirect old URLs to new ones.
+These redirects (i.e., URL mappings) are created from the page aliases defined in each page or by the site start page.
+The component produces configuration suitable for the redirect facility provided by the target environment (e.g., static bounce pages, nginx rewrite rules, mod_rewrite rules, netlify redirects file, etc.).
+Which configuration to produce is controlled by the redirect facility setting in the playbook.
+Then, the redirect configuration files (i.e., bounce pages or a rewrite rule file) get put into the site catalog to be published along with the other files in the site.
+
+The redirect configuration is based on files in the `alias` family that are retrieved from the content catalog.
+Each entry represents an association between an alias page (i.e., a non-existent page) and the target page to which it points.
+(The contents of the alias file is empty).
+If the redirect facility is static, the redirect producer populates the contents of the alias file with a static HTML page that redirects the browser to the target page.
+In all other cases, the URL of the alias page is mapped to the URL of the target page.
+
+To make the rewrite configuration as portable as possible, the rewrite rules should be expressed as root relative paths.
+If the `site.url` property of the playbook has a path (i.e., a path after the hostname), that path should be added as a prefix to the rewrite paths.
+Doing so allows the documentation site to be run inside a subpath of another site.
+When making static bounce pages, the path should instead be relative.
+If the `site.url` property is set, the canonical URL should be computed and added to the HTML head of the bounce page.
+
+The redirect configuration should be produced even if the `site.url` property is not defined in the playbook.
+
+== Software Architecture
+
+The redirect producer component functionality is provided by the redirect-producer module.
+
+All the details of generating the redirect configuration should be encapsulated in the redirect producer component.
+The component should accept the playbook and the content catalog and return the redirect configuration files, if any, as a collection of virtual file objects.
+This component should not modify the content catalog.
+
+The redirect producer component should:
+
+* Accept a playbook and the content catalog
+* Retrieve the files from the content catalog in the `alias` family
+* Return an empty array if there are no aliases
+* Iterate over the alias files and generate a redirect configuration suitable for the redirect facility
+ ** _static:_ populate the `contents` property of each alias file with an HTML bounce page
+ ** _nginx:_ generate an nginx configuration file containing rewrite rules generated from the alias files
+  *** the output path of the file should be set to [.path]_.etc/nginx/rewrite.conf_
+ ** _netlify:_ generate a netlify redirects file generated from the alias files
+  *** the output path of the file should be set to [.path]_{blank}_redirects_
+* Unpublish the alias files unless the redirect facility is static
+* Return the virtual configuration files as a collection, or an empty array in the case the redirect facility is static
+
+The redirect producer also relies on collaboration with other components.
+The document converter should process the AsciiDoc `page-aliases` attribute in the document header.
+If this attribute is present, the document converter should read its value, parse the value as CSV, and pass each entry along with the current file to the `ContentCatalog#registerPageAlias` method.
+
+The content catalog--provided by the content classifier component--should include a `registerPageAlias` method.
+This method should expand the contextual / shorthand page ID to a qualified page ID using the context from the current file.
+It should use that page ID to instantiate a new virtual file in the `alias` family.
+The alias virtual file should define the `rel` property, which points to the file for which it is an alias.
+This file should then be added to the content catalog.
+Whenever a new file is added to the catalog, the catalog should populate its `out` and `pub` properties, if not already present.
+These alias files are the files on which the redirect producer operates.
+
+It's not possible to reference an alias file using a page reference (i.e., xref macro).
+
+A page alias should not be allowed to reference itself and it cannot occupy the position of another page.
+
+The site start page should also be stored as an alias file.
+
+.Inputs
+* Playbook (`site.url`, `urls.redirectFacility`)
+* Content catalog
+
+.Output
+* `File[]` -- The redirect configuration or bounce pages.
+
+== Code
+
+The redirect producer component is implemented as a dedicated node package (i.e., module).
+This module exports the function `produceRedirects`, which accepts a playbook instance and the content catalog and returns an array of virtual redirect configuration files (if applicable).
+
+The API for the redirect producer should be used as follows:
+
+[source,js]
+----
+const produceRedirects = require('@antora/redirect-producer')
+
+//...
+
+const siteFiles = produceRedirects(playbook, contentCatalog)
+----
+
+These files then need to be put into one of the catalogs (e.g., the site catalog) and passed to the site publisher so that they get published.
+
+== Data
+
+An alias file differs from a page file in the following ways:
+
+* It does not define the `contents` property
+* The `src.family` property has the value `alias`
+* The `rel` property is a reference to the target page
+
+Otherwise, it has the same data model as a page file.
+
+=== static
+
+When the redirect facility is static, the redirect producer should populate the `contents` property with the following HTML:
+
+[source,html]
+----
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="canonical" href="${canonicalUrl}">
+<script>location="${relativeUrl}"</script>
+<meta http-equiv="refresh" content="0; url=${relativeUrl}">
+<meta name="robots" content="noindex">
+<title>Redirect Notice</title>
+<h1>Redirect Notice</h1>
+<p>The page you requested has been relocated to <a href="${relativeUrl}">${canonicalUrl || relativeUrl}</a>.</p>
+----
+
+The canonical link should only be set if the `site.url` key is set in the playbook.
+
+This template may be configurable in the future.
+
+=== nginx
+
+When the redirect facility is nginx, the redirect producer should create a rewrite rules file with the following structure:
+
+....
+location = ${urlContext}${file.pub.url} { return 301 ${urlContext}${file.rel.pub.url}; }
+....
+
+The redirect configuration file should have the following property:
+
+* `out.path = '.etc/nginx/rewrite.conf'`
+
+=== netlify
+
+When the redirect facility is netlify, the redirect producer should create a rewrite rules file with the following structure:
+
+....
+${urlContext}${file.pub.url} ${urlContext}${file.rel.pub.url} 301
+....
+
+The redirect configuration file should have the following property:
+
+* `out.path = '_redirects'`
+
+== Consequences
+
+Without page aliases, reorganizing pages can cause references that originate from outside the site to break.
+Page aliases provide a way to map these old pages to current pages.
+
+The redirect producer component translates these pages aliases into redirects, either in the form of static bounce pages or rewrite/redirect rules in a configuration file.
+These files can then be put back into a catalog so they'll be published by the site publisher along with the other publishable files.
+As a result, the URLs of old pages can be preserved.
+
+The redirect producer can also handle the site start page capability, which is simply a redirect from the root of the site to a concrete page in the site.
