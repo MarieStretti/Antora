@@ -192,9 +192,9 @@ Antora also provides a default UI for us to use out of the box.
 ==== Create a Playbook File
 
 First, create a new directory for your site and switch to it.
-Next, add a playbook file named [.path]_demo-site.yml_ and populate it with the following contents:
+Next, add a playbook file named [.path]_site.yml_ and populate it with the following contents:
 
-.demo-site.yml
+.site.yml
 [source,yaml]
 ----
 site:
@@ -223,7 +223,7 @@ To generate the site, you simply point the `antora` command at your playbook fil
 
 In your terminal, type:
 
- $ antora demo-site.yml
+ $ antora site.yml
 
 Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to [.path]_build/site_.
 

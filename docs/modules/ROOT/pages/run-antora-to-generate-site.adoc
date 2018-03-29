@@ -8,7 +8,7 @@ endif::[]
 :experimental:
 :linkattrs:
 // URIs
-:uri-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/demo-site.yml
+:uri-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/site.yml
 :uri-ssh-key: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
 Assumptions:
@@ -53,10 +53,10 @@ $ mkdir demo-site
 [source]
 $ cd demo-site
 
-. Using your preferred text editor or IDE, create a new playbook file named [.path]_demo-site.yml_ and populate it with the contents of the following example.
+. Using your preferred text editor or IDE, create a new playbook file named [.path]_site.yml_ and populate it with the contents of the following example.
 You can also download {uri-demo-playbook}[the Demo site playbook] from the Demo repository.
 +
-.demo-site.yml
+.site.yml
 [source,yaml]
 ----
 site:
@@ -76,7 +76,7 @@ ui:
     snapshot: true
 ----
 
-. Save the playbook as [.path]_demo-site.yml_ in the [.path]_demo-site_ directory you made in Step 1.
+. Save the playbook as [.path]_site.yml_ in the [.path]_demo-site_ directory you made in Step 1.
 
 == Run Antora
 
@@ -84,7 +84,7 @@ ui:
 In the terminal, type:
 +
 [source]
-demo-site $ antora demo-site.yml
+demo-site $ antora site.yml
 +
 First, Antora will clone the content repositories.
 The cloning progress of each repository is displayed in the terminal.
