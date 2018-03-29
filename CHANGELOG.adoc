@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Added
 
+* *ui-loader:* use outputDir specified in ui.yml of bundle if ui.outputDir is not specified in playbook
 * Document how to register Asciidoctor extensions
 * Document the `page-partial` attribute and including standard pages and example files
 * Document ability to set AsciiDoc page attributes in the playbook and via the CLI
