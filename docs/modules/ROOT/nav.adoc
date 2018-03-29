@@ -1,4 +1,4 @@
-* xref:features.adoc[How Antora Helps]
+* xref:features.adoc[How Antora Can Help]
 * xref:how-antora-works.adoc[How Antora Works]
 
 * Get Started

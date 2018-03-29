@@ -1,4 +1,4 @@
-= How Antora Helps You and Your Team
+= How Antora Can Help You and Your Team
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -203,7 +203,7 @@ As you might expect, a page alias is a source reference, which allows Antora to 
 Since not all hosting environments are the same, the facility for performing a redirect isn't either.
 Antora generates the appropriate configuration for the redirect facility that the hosting environment provides, falling back to good old-fashioned static bounce pages if no other mechanism is supported.
 
-== Publish a site to multiple destinations
+== Publish sites to multiple destinations
 
 *Publish anywhere, whether local or remote.*
 
