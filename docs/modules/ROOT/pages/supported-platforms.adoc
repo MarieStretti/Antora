@@ -1,21 +1,27 @@
-= Supported Platforms
+= Supported Platforms and System Requirements
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
+:test-count: over 750
 // URIs
 :uri-repo: https://gitlab.com/antora/antora
 :uri-issues: {uri-repo}/issues
 :uri-chat-dev: https://gitter.im/antora/dev
 
-Antora operates on Linux, macOS, and Windows and should operate as designed on common VM environments and cloud platforms.
+Antora operates on macOS, Windows, and most Linux distributions.
+It should also operate as designed on common VM environments and cloud platforms.
 
-== Tested platforms
+//There's also an Antora Docker container.
 
-Antora is comprehensively tested on these platform.
+== Platforms
+
+Antora is actively tested on the platforms listed below.
+
+[NOTE]
+.Linux Distributions
+====
+While we only continuously test Antora on Alpine, Debian, and Fedora, it should operate as expected on most Linux distributions.
+====
 
 // When we have specific notes about a platform (tweaks and/or links to bugs) add a 3rd column to this table labeled "Good to Know"
 [cols="20,25a",width="45%"]
@@ -61,14 +67,30 @@ Windows Server 2016
 |8.10
 |===
 
+[caption="ANTORA STATS"]
+NOTE: At last count, Antora had {test-count} tests.
+And we add more every week.
+We're just a teeny-tiny bit obsessed with writing quality tests and achieving complete test coverage.
+
+== Cloud platforms
+
+Antora should operate as designed on common cloud platforms.
+How you provision your cloud instance depends on your workload requirements and remote git repository sizes.
+If you're running Antora on a cloud platform, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
+
+== Virtual Machine (VM) environments
+
+Antora runs in VirtualBox and should operate as designed in common VM environments such as VMware.
+If you're running Antora in a VM environment, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
+
 == Hardware recommendations
 
-Your hardware requirements will depend primarily on the size of the remote Git repositories your Antora pipeline fetches content from in order to generate site.
+Your hardware requirements will depend primarily on the size of the remote git repositories your Antora pipeline fetches content from when it is generating your site.
 
-The first time Antora runs, it fetches and clones all of the remote Git repositories specified in a playbook.
+The first time Antora runs, it fetches and clones all of the remote git repositories specified in a playbook.
 The speed of this operation is dictated by the size of the remote repositories, environment input/output parameters, and network performance.
 After the initial run, Antora caches the repositories locally.
-On subsequent runs, Antora will only reconnect to the remote repositories if the xref:cli.adoc#cli-options[`pull` key is on] or if the xref:playbook:configure-runtime.adoc[local cache is removed].
+On subsequent runs, Antora will only reconnect to the remote repositories if the pull key is on or if the local cache is removed.
 // Add xref to pull key when documentation is available
 
 [cols="5s,70",width="75%"]
@@ -81,16 +103,15 @@ On subsequent runs, Antora will only reconnect to the remote repositories if the
 |Maximum throughput and minimum latency always make things nicer but aren't required.
 |===
 
-== Cloud platforms
+== What's next?
 
-Antora should operate as designed on common cloud platforms.
-How you provision your cloud instance depends on your workload requirements and remote Git repository sizes.
-If you're running Antora on a cloud platform, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
+Prep your system for installing Antora:
 
-== Virtual Machine (VM) environments
+* xref:install/linux-requirements.adoc[Linux requirements]
+* xref:install/macos-requirements.adoc[macOS requirements]
+* xref:install/windows-requirements.adoc[Windows requirements]
 
-Antora runs in VirtualBox and should operate as designed in common VM environments such as VMware.
-If you're running Antora in a VM environment, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
+//* [Get the Antora Docker container]
 
 ////
 OS Release schedule links

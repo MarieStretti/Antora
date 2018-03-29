@@ -2,26 +2,32 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+<<<<<<< HEAD
 // Settings:
 :idprefix:
 :idseparator: -
 :linkattrs:
 :release-version: 1.0.0-rc.1
+=======
+:keywords: Docs as Code, DocOps, content management system, docs writers, publish software documentation, CI and docs, CD and docs
+>>>>>>> 2ff10bb... update nav
 // URIs:
 :uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
-
+////
 [caption="RELEASE STATUS"]
 TIP: Antora {release-version} is now available!
 See the {uri-changelog}[CHANGELOG^] for details.
+////
 
-Antora is designed to make it easy for tech writers to publish documentation to the web.
+Antora makes it easy for tech writers to write documentation and publish it to the web.
 As a tech writer, you simply author content in xref:asciidoc:index.adoc[AsciiDoc], Antora's preferred markup language, then save those files under a standard project structure in one or more content repositories.
 Antora picks up your content from there and transforms it into a website.
 That's all there is to it!
 
+////
 == Generator pipeline
 
-Antora's generator pipeline is a complete end-to-end solution for publishing.
+Antora's site generator pipeline is a complete end-to-end solution for publishing.
 While it can be extended, no additional scripts are needed.
 
 Antora's generator pipeline kicks off by aggregating files from a variety of sources.
@@ -38,25 +44,27 @@ Finally, it publishes the pages and supporting content and UI assets to one or m
 
 Antora's built-in orchestration makes it very CI-friendly.
 All the CI job has to do is prepare the environment and launch a single command, and out comes your site!
+////
 
-== Content is sovereign
+//== Content is sovereign
+== Documentation as Code
 
-While it's considered a best practice to split source code into discrete, well-defined modules, documentation for that code often gets lumped together into one massive book.
+While it's considered a best practice to split source code into discrete, well-defined modules, documentation for that code often gets lumped into one massive "`book`".
 This situation has brought many documentation projects to a grinding halt.
 
 By treating *docs as code*, the documentation process can benefit from the best practices that produce successful software.
 Antora helps you incorporate these practices into your documentation workflow.
 
-Antora's generator pipeline favors a modular approach to managing documentation.
-It consists of a playbook project, content repositories, a UI bundle, and the generator software, all of which are discrete parts.
-The playbook project controls how Antora generates and publishes your site, but it does not own any content itself.
+Antora favors a modular approach to managing documentation.
+It consists of a playbook, content repositories, a UI bundle, and the site generator pipeline, all of which are discrete parts.
+//The playbook controls how Antora generates and publishes your site, but it does not own any content itself.
 
-The separation of these parts keeps the configuration separate from content.
+The separation of these domains keeps the configuration separate from content.
 The content repositories just contain content.
 They can be enlisted, per branch, into the site generation process.
 
 This strategy makes it possible for content branches to be reused, substituted, deactivated, or archived.
-This is a sharp contrast to many other site generators, which intermix all these concerns, making the documentation difficult to manage, maintain, and enhance.
+This is a sharp contrast to many other site generators that intermix all of these concerns, making the documentation difficult to manage, maintain, and enhance.
 
 == Where to begin
 
