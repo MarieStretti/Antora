@@ -82,6 +82,8 @@ describe('buildPlaybook()', () => {
   const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
   const invalidObjectSpec = ospath.join(FIXTURES_DIR, 'invalid-object-spec-sample.yml')
   const invalidDirOrFilesSpec = ospath.join(FIXTURES_DIR, 'invalid-dir-or-files-spec-sample.yml')
+  const legacyUiBundleSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-bundle-sample.yml')
+  const legacyUiStartPathSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-start-path-sample.yml')
   const defaultSchemaSpec = ospath.join(FIXTURES_DIR, 'default-schema-spec-sample.yml')
 
   it('should set dir to process.cwd() when playbook file is not specified', () => {
@@ -363,15 +365,12 @@ describe('buildPlaybook()', () => {
     expect(playbook.output.destinations[0].path).to.equal('./site.zip')
   })
 
-  it('should migrate playbook data that defines ui.bundle as a String', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ospath.join(FIXTURES_DIR, 'legacy-ui-bundle-sample.yml') })
-    expect(playbook.ui.bundle.url).to.equal('https://example.org/ui-bundle.zip')
+  it('should not migrate playbook data that defines ui.bundle as a String', () => {
+    expect(() => buildPlaybook([], { PLAYBOOK: legacyUiBundleSpec })).to.throw(/not declared in the schema/)
   })
 
-  it('should migrate playbook data that defines ui.start_path', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ospath.join(FIXTURES_DIR, 'legacy-ui-start-path-sample.yml') })
-    expect(playbook.ui.bundle.url).to.equal('https://example.org/ui-bundle.zip')
-    expect(playbook.ui.bundle.startPath).to.equal('dark')
+  it('should not migrate playbook data that defines ui.start_path', () => {
+    expect(() => buildPlaybook([], { PLAYBOOK: legacyUiStartPathSpec })).to.throw(/not declared in the schema/)
   })
 
   it('should be decoupled from the process environment', () => {

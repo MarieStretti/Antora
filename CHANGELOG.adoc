@@ -16,6 +16,7 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
 * Remove commitlint
 
 == 1.0.0-rc.1 (2018-03-27)

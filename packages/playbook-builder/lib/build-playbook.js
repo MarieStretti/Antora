@@ -45,17 +45,7 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
     } else {
       throw new Error('playbook file could not be resolved')
     }
-    const playbookData = parseSpecFile(specFileAbsPath)
-    // temporary migration
-    if ('ui' in playbookData && typeof playbookData.ui.bundle === 'string') {
-      playbookData.ui.bundle = { url: playbookData.ui.bundle }
-      if ('start_path' in playbookData.ui) {
-        playbookData.ui.bundle.start_path = playbookData.ui.start_path
-        delete playbookData.ui.start_path
-      }
-    }
-    // end temporary migration
-    config.load(playbookData)
+    config.load(parseSpecFile(specFileAbsPath))
     if (specFileRelPath !== specFileAbsPath) config.set('playbook', specFileAbsPath)
   }
 
