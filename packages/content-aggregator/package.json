@@ -1,6 +1,6 @@
 {
   "name": "@antora/content-aggregator",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Fetches and aggregates content from distributed sources for use in an Antora documentation pipeline.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
