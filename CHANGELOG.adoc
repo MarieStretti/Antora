@@ -5,21 +5,22 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== 1.0.0-x (Pending)
+== Unreleased
 
 === Added
 
-* *ui-loader:* use outputDir specified in ui.yml of bundle if ui.outputDir is not specified in playbook
-* *redirect-producer:* add architecture guidebook for redirect producer component
+* *ui-loader:* Use outputDir specified in ui.yml of bundle if ui.outputDir is not specified in playbook
 
 === Changed
 
+* *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
 * *content-classifier*: Change compareVersion function to compare non-semantic versions as strings
 * *content-classifier*: Change compareVersion function to always prefer a non-semantic version over a semantic version
 * *content-classifier*: Don't publish files with a leading underscore in filename or inside a directory with a leading underscore
 * *content-classifier*: Don't drop _attributes.adoc files found inside pages directory from content catalog
-* *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
 * *asciidoc-loader*: Lock version of Asciidoctor.js to 1.5.6-rc.1
+* *document-converter*: Don't convert documents that don't have an out property
+* *site-mapper*: Change mapSite to accept a collection of pages (virtual files) instead of the content catalog
 * Remove commitlint
 
 === Fixed
@@ -28,6 +29,7 @@ This project utilizes semantic versioning.
 
 === Documentation
 
+* *redirect-producer:* Add architecture guidebook for redirect producer component
 * Document how to register Asciidoctor extensions
 * Document the `page-partial` attribute and including standard pages and example files
 * Document ability to set AsciiDoc page attributes in the playbook and via the CLI

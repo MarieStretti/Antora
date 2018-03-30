@@ -13,11 +13,16 @@ describe('convertDocuments()', () => {
     expectCalledWith(contentCatalog.findBy, { family: 'page' })
   })
 
-  it('should return files in page family in content catalog', () => {
+  it('should only process and return publishable files from the page family in the content catalog', () => {
     const contentCatalog = mockContentCatalog([
       {
         relative: 'index.adoc',
         contents: '= Home\n\nThis is the index page.',
+        mediaType: 'text/asciidoc',
+      },
+      {
+        relative: '_attributes.adoc',
+        contents: ':name: value',
         mediaType: 'text/asciidoc',
       },
       {
@@ -37,9 +42,12 @@ describe('convertDocuments()', () => {
         contents: '<svg>...</svg>',
       },
     ])
+    const attributesFile = contentCatalog.getFiles().find((f) => f.src.relative === '_attributes.adoc')
+    const attributesFileContents = attributesFile.contents
     const pages = convertDocuments(contentCatalog)
     expect(pages).to.have.lengthOf(2)
     pages.forEach((page) => expect(page.src.mediaType).to.equal('text/asciidoc'))
+    expect(attributesFile.contents).to.equal(attributesFileContents)
   })
 
   it('should convert contents of files in page family to embeddable HTML', () => {

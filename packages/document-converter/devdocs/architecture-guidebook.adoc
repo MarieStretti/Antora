@@ -8,7 +8,7 @@ The AsciiDoc must be converted to HTML so the contents of these documents can be
 
 == Functional Overview
 
-The files in the `page` family of the content catalog (i.e., text documents taken from the [.path]_pages_ directory, excluding partials) are written in AsciiDoc format.
+The files in the `page` family of the content catalog (i.e., text documents taken from the [.path]_pages_ directory, excluding partials or underscore files) are written in AsciiDoc format.
 These AsciiDoc documents are used to populate the main area of the web page.
 The document converter should use an AsciiDoc processor (Asciidoctor.js) to convert these files to HTML by way of the AsciiDoc loader component.
 
@@ -29,7 +29,7 @@ The document converter component functionality is provided by the document-conve
 At a high level, this component is an AsciiDoc to HTML converter that operates on the files in the `page` family of the content catalog.
 All the details of loading the AsciiDoc should be handled by the AsciiDoc loader component.
 
-For each file in the `page` family, this component should:
+For each publishable file in the `page` family (files which have an `out` property), this component should:
 
 * Use the `loadAsciiDoc()` function of the AsciiDoc loader component to transform the virtual AsciiDoc file into a document object.
 * Invoke the `getAttributes()` method on the document object to retrieve the attributes.
@@ -53,7 +53,8 @@ For each file in the `page` family, this component should:
 == Code
 
 The document converter is implemented as a dedicated node package (i.e., module).
-The document converter API exports the `convertDocuments()` function, which takes a playbook and a content catalog and converts all documents in the `page` family.
+The document converter API exports the `convertDocuments()` function, which takes a playbook and a content catalog and converts all publishable documents in the `page` family (documents which have an `out` property defined).
+It then returns the files which should be published as pages (even those which are not AsciiDoc documents).
 It also exports the `convertDocument()` function, which can be used to operate on a single file.
 
 The API for the document converter should be used as follows:
@@ -65,7 +66,7 @@ const convertDocuments = require('@antora/document-converter')
 
 //...
 
-convertDocuments(playbook, catalog)
+const pages = convertDocuments(playbook, catalog)
 ----
 
 Alternately, the pipeline can handle the conversion itself:
@@ -77,14 +78,14 @@ const convertDocument = require('@antora/document-converter/lib/convert-document
 
 //...
 
-catalog.findBy({ family: 'page' }).forEach((file) => {
+catalog.findBy({ family: 'page' }).filter((file) => 'out' in file).forEach((file) => {
   await convertDocument(file, playbook, catalog)
 })
 ----
 
 == Data
 
-The document converter mutates the files in the `page` family of the content catalog, which can be retrieved by invoking `findBy({ family: 'page' })` on the content catalog.
+The document converter mutates the files in the `page` family of the content catalog, which can be retrieved by invoking `findBy({ family: 'page' })` on the content catalog then selecting files that have an `out` property.
 Specifically, this component updates the value of the `contents` property by replacing the AsciiDoc with embeddable HTML.
 The previous value is still accessible via the `history` property on the file.
 It also assigns a hash of header attributes to the `asciidoc.attributes` property on the file object.

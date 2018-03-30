@@ -11,8 +11,8 @@ const SITEMAP_PREFIX = 'sitemap-'
 /**
  * Maps the site by creating sitemap files.
  *
- * Iterates over the files from the page family in the content catalog and
- * creates sitemap files. If there's only one component, all the entries are
+ * Iterates over the specified pages and creates sitemap files that list the
+ * URLs for these pages. If there's only one component, all the entries are
  * added to a sitemap.xml file that gets published to the root of the site. If
  * there's more than one component, the sitemaps are partitioned into separate
  * files by component (e.g., sitemap-component-name.xml). The URL of those
@@ -31,15 +31,13 @@ const SITEMAP_PREFIX = 'sitemap-'
  * @param {Object} playbook - The configuration object for Antora.
  * @param {Object} playbook.site - Site-related configuration data.
  * @param {String} playbook.site.url - The base URL of the site.
- * @param {ContentCatalog} contentCatalog - The content catalog that provides
- *   access to the virtual content files (i.e., pages) in the site.
+ * @param {Array<File>} pages - The publishable pages to to map.
  * @returns {Array<File>} An array of File objects that represent the sitemaps.
  */
-function mapSite (playbook, contentCatalog) {
+function mapSite (playbook, pages) {
   let siteUrl = playbook.site.url
   if (!siteUrl) return []
   if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
-  const pages = contentCatalog.findBy({ family: 'page' })
   if (!pages.length) return []
   const lastmodISO = new Date().toISOString()
   let sitemaps = pages.reduce((accum, file) => {
