@@ -5,7 +5,7 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== Unreleased
+== 1.0.0-rc.2 (2018-03-30)
 
 === Added
 
@@ -13,14 +13,16 @@ This project utilizes semantic versioning.
 
 === Changed
 
-* *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
+* *playbook-builder*: Remove automatic migration of legacy ui keys in playbook data
 * *content-classifier*: Change compareVersion function to compare non-semantic versions as strings
 * *content-classifier*: Change compareVersion function to always prefer a non-semantic version over a semantic version
-* *content-classifier*: Don't publish files with a leading underscore in filename or inside a directory with a leading underscore
+* *content-classifier*: Change compareVersion function to take into account prerelease identifiers
+* *content-classifier*: Don't publish underscore files (files with a filename that starts with an underscore or files below a directory that starts with an underscore)
 * *content-classifier*: Don't drop _attributes.adoc files found inside pages directory from content catalog
 * *asciidoc-loader*: Lock version of Asciidoctor.js to 1.5.6-rc.1
-* *document-converter*: Don't convert documents that don't have an out property
+* *document-converter*: Don't convert documents that are not published (don't have an out property)
 * *site-mapper*: Change mapSite to accept a collection of pages (virtual files) instead of the content catalog
+* Lock version of image used for CI job to prevent future CI outages
 * Remove commitlint
 
 === Fixed
