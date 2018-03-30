@@ -30,6 +30,10 @@ describe('mapSite()', () => {
     }
   })
 
+  it('should not generate sitemaps if pages is empty', () => {
+    expect(mapSite(playbook, [])).to.be.empty()
+  })
+
   it('should not generate sitemaps if site URL is not set', () => {
     delete playbook.site.url
     const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
