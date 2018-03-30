@@ -1,4 +1,4 @@
-As authors, you can control what content is included in your site, what user interface (UI) is applied to it, and where the site is published using a playbook file.
+You can control what content is included in your site, what user interface (UI) is applied to it, and where the site is published using a playbook file.
 The playbook file is designed to make it easy for writers to control a site without needing any programming knowledge.
 The settings in this file are used to make a playbook, the runtime configuration object that tells Antora how to operate.
 
