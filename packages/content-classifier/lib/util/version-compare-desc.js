@@ -26,8 +26,10 @@ function versionCompareDesc (a, b) {
     } else {
       return 1
     }
+  } else if (~b.indexOf('.')) {
+    return -1
   } else {
-    return ~b.indexOf('.') ? -1 : a.localeCompare(b)
+    return -1 * a.localeCompare(b, 'en', { numeric: true })
   }
 }
 

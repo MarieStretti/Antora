@@ -115,7 +115,7 @@ describe('classifyContent()', () => {
       expect(component).to.exist()
       expect(component.name).to.equal('the-component')
       const versions = component.versions.map((version) => version.version)
-      expect(versions).to.eql(['rev1', 'rev2', 'rev3'])
+      expect(versions).to.eql(['rev3', 'rev2', 'rev1'])
     })
 
     it('should sort non-semantic versions before semantic versions', () => {

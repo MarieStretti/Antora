@@ -69,7 +69,6 @@ describe('versionCompareDesc()', () => {
 
     versions.sort(versionCompareDesc)
     expect(versions).to.eql(['90.1', '80', '10', '9.0.2', '9.0.1', '8'])
->>>>>>> 95d413e... wip
   })
 
   it('should help ensure order is maintained on insertion', () => {
