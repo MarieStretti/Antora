@@ -137,6 +137,16 @@ describe('aggregateContent()', () => {
       })
     })
 
+    describe('should coerce version in component descriptor to string', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: 27 })
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include({ name: 'the-component', version: '27' })
+      })
+    })
+
     describe('should read properties from component descriptor then drop file', () => {
       testAll(async (repoBuilder) => {
         const componentDesc = {

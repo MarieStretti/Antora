@@ -1,7 +1,7 @@
 'use strict'
 
 const File = require('vinyl')
-const versionCompareDesc = require('@antora/content-classifier/lib/util/version-compare-desc')
+const versionCompare = require('@antora/content-classifier/lib/util/version-compare-desc')
 
 const XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>'
 const SITEMAPS_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9'
@@ -61,7 +61,7 @@ function mapSite (playbook, contentCatalog) {
       let sitemapEntries = sitemap.entries
       delete sitemap.entries
       sitemapEntries.sort((a, b) => a.url.localeCompare(b.url))
-      if (sitemap.versions.size > 1) sitemapEntries.sort((a, b) => versionCompareDesc(a.version, b.version))
+      if (sitemap.versions.size > 1) sitemapEntries.sort((a, b) => versionCompare(a.version, b.version))
       delete sitemap.versions
       sitemapEntries = sitemapEntries.map(createUrlElement.bind(null, siteUrl))
       sitemap.contents = Buffer.from(createSitemapDocument(sitemapEntries))

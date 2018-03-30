@@ -81,14 +81,61 @@ describe('classifyContent()', () => {
       aggregate.push({
         name: 'the-component',
         title: 'The Component',
-        version: 'v1.0.0',
+        version: 'v1',
         files: [],
       })
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
       expect(component).to.exist()
       expect(component.name).to.equal('the-component')
       const versions = component.versions.map((version) => version.version)
-      expect(versions).to.eql(['v2.0.0', 'v1.2.3', 'v1.0.0'])
+      expect(versions).to.eql(['v2.0.0', 'v1.2.3', 'v1'])
+    })
+
+    it('should register all versions of a component in sorted order when versions are not semantic', () => {
+      aggregate = []
+      aggregate.push({
+        name: 'the-component',
+        title: 'The Component',
+        version: 'rev3',
+        files: [],
+      })
+      aggregate.push({
+        name: 'the-component',
+        title: 'The Component',
+        version: 'rev1',
+        files: [],
+      })
+      aggregate.push({
+        name: 'the-component',
+        title: 'The Component',
+        version: 'rev2',
+        files: [],
+      })
+      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.name).to.equal('the-component')
+      const versions = component.versions.map((version) => version.version)
+      expect(versions).to.eql(['rev3', 'rev2', 'rev1'])
+    })
+
+    it('should sort non-semantic versions before semantic versions', () => {
+      aggregate.push({
+        name: 'the-component',
+        title: 'The Component',
+        version: 'dev',
+        files: [],
+      })
+      aggregate.push({
+        name: 'the-component',
+        title: 'The Component',
+        version: 'master',
+        files: [],
+      })
+      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.name).to.equal('the-component')
+      const versions = component.versions.map((version) => version.version)
+      expect(versions).to.eql(['master', 'dev', 'v1.2.3'])
     })
 
     it('should update title of component to match title of greatest version', () => {

@@ -14,10 +14,16 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* *content-classifier*: Change compareVersion function to compare non-semantic versions as strings
+* *content-classifier*: Change compareVersion function to always prefer a non-semantic version over a semantic version
 * *content-classifier*: Don't publish files with a leading underscore in filename or inside a directory with a leading underscore
 * *content-classifier*: Don't drop _attributes.adoc files found inside pages directory from content catalog
 * *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
 * Remove commitlint
+
+=== Fixed
+
+* *content-classifier*: Only fail to register a component version if version number is an exact match of a registered version
 
 === Documentation
 
