@@ -1,7 +1,5 @@
 'use strict'
 
-const semverCompare = require('semver-compare')
-
 /**
  * A modified semantic version comparison function.
  *
@@ -31,6 +29,41 @@ function versionCompareDesc (a, b) {
 
 function isNumber (str) {
   return !isNaN(Number(str))
+}
+
+function semverCompare (a, b) {
+  let preA
+  let preB
+  const preOffsetA = a.indexOf('-')
+  const preOffsetB = b.indexOf('-')
+  if (~preOffsetA) {
+    preA = a.substr(preOffsetA + 1)
+    a = a.substr(0, preOffsetA)
+  }
+  if (~preOffsetB) {
+    preB = b.substr(preOffsetB + 1)
+    b = b.substr(0, preOffsetB)
+  }
+  const numsA = a.split('.')
+  const numsB = b.split('.')
+  for (let i = 0; i < 3; i++) {
+    const numA = numsA[i] ? Number(numsA[i]) : 0
+    const numB = numsB[i] ? Number(numsB[i]) : 0
+    if (numA > numB) {
+      return 1
+    } else if (numB > numA) {
+      return -1
+    } else if (isNaN(numA)) {
+      if (!isNaN(numB)) return -1
+    } else if (isNaN(numB)) {
+      return 1
+    }
+  }
+  if (preA == null) {
+    return preB == null ? 0 : 1
+  } else {
+    return preB == null ? -1 : preA.localeCompare(preB, 'en', { numeric: true })
+  }
 }
 
 module.exports = versionCompareDesc

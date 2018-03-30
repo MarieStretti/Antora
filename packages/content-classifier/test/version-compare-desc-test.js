@@ -5,11 +5,29 @@ const { expect } = require('../../../test/test-utils')
 const versionCompareDesc = require('@antora/content-classifier/lib/util/version-compare-desc')
 
 describe('versionCompareDesc()', () => {
-  it('should order versions in descending semantic order', () => {
+  it('should consider same version string as equal', () => {
+    expect(versionCompareDesc('1.0', '1.0')).to.equal(0)
+  })
+
+  it('should weigh number higher than non-number in semantic version', () => {
+    const versions = ['1.x', '1.0', '2.0', '2.x']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['2.0', '2.x', '1.0', '1.x'])
+  })
+
+  it('should order versions with same number of segments in descending semantic order', () => {
     const versions = ['1.0', '2.0', '1.1']
 
     versions.sort(versionCompareDesc)
     expect(versions).to.eql(['2.0', '1.1', '1.0'])
+  })
+
+  it('should order versions with different number of segments in descending semantic order', () => {
+    const versions = ['1.0.1', '2', '1.1']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['2', '1.1', '1.0.1'])
   })
 
   it('should order versions in descending semantic order when versions begin with "v"', () => {
@@ -20,10 +38,10 @@ describe('versionCompareDesc()', () => {
   })
 
   it('should order final version before pre-release versions', () => {
-    const versions = ['1.0-alpha.1', '1.0', '1.0-alpha.2']
+    const versions = ['1.0-alpha.1', '1.0', '1.0-beta.1', '1.0-alpha.2']
 
     versions.sort(versionCompareDesc)
-    expect(versions).to.eql(['1.0', '1.0-alpha.2', '1.0-alpha.1'])
+    expect(versions).to.eql(['1.0', '1.0-beta.1', '1.0-alpha.2', '1.0-alpha.1'])
   })
 
   it('should order non-semantic version strings before semantic version strings', () => {
