@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 *This page is for people joining a documentation project that already uses Antora.*
 
@@ -26,7 +23,7 @@ The command clones an existing playbook project and then switches to the project
 == What's next?
 
 * xref:ROOT:run-antora-to-generate-site.adoc[Run Antora] to generate the site.
-* Modify the playbook to xref:playbook-schema.adoc[configure the site properties, inputs, and output].
+* Modify the playbook to xref:playbook-schema.adoc[configure the site properties, inputs, and outputs].
 
 ////
 Stay in this project folder in order to initialize the project using Yarn.

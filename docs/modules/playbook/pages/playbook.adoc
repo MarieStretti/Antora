@@ -42,7 +42,7 @@ include::{partialsdir}/playbook-project-summary.adoc[]
 
 == What's next?
 
-* Get a quick overview of all the xref:playbook-schema.adoc[properties you can use to configure your site].
+* Get a quick overview of all the xref:playbook-schema.adoc[category properties you can use to configure your site].
 
 //== How is a playbook created?
 

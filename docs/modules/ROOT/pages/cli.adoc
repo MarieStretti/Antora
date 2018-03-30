@@ -53,7 +53,7 @@ This command is implicitly executed if no command is specified.
 <<cli-run-ex,See examples>>.
 |===
 
-When executed from the CLI, the options that are mapped to playbook keys, such as `title`, will override any assigned values in the designated playbook.
+When executed from the CLI, the options that are mapped to xref:playbook:playbook.adoc[playbook keys], such as `title`, will override any assigned values in the designated playbook.
 
 [#cli-options]
 .CLI Options
