@@ -2,8 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:idprefix:
-:idseparator: -
 
 On this page, you'll learn:
 
@@ -40,7 +38,11 @@ Regardless of the format, a playbook contains structured xref:playbook-schema.ad
 
 == Where is a playbook stored?
 
-A playbook is usually located at the root of a xref:use-an-existing-playbook-project.adoc[playbook project].
+include::{partialsdir}/playbook-project-summary.adoc[]
+
+== What's next?
+
+* Get a quick overview of all the xref:playbook-schema.adoc[properties you can use to configure your site].
 
 //== How is a playbook created?
 

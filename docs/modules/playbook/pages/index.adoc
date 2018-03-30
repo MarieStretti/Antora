@@ -18,10 +18,3 @@ Let's begin by learning what inputs, outputs, and behaviors the playbook file ca
 include::{partialsdir}/playbook-summary.adoc[]
 
 == Playbook Project
-
-include::{partialsdir}/playbook-project-summary.adoc[]
-
-== What's next?
-
-* Select a xref:playbook.adoc[playbook file format and storage location].
-* Get a quick overview of all the xref:playbook-schema.adoc[properties you can use to configure your site].
