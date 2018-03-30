@@ -20,17 +20,17 @@ const semverCompare = require('semver-compare')
  */
 function versionCompareDesc (a, b) {
   if (a === b) return 0
-  if (~a.indexOf('.')) {
-    if (~b.indexOf('.')) {
-      return -1 * semverCompare(a.charAt() === 'v' ? a.substr(1) : a, b.charAt() === 'v' ? b.substr(1) : b)
-    } else {
-      return 1
-    }
-  } else if (~b.indexOf('.')) {
-    return -1
+  const semverA = a.charAt() === 'v' ? a.substr(1) : a
+  const semverB = b.charAt() === 'v' ? b.substr(1) : b
+  if (~a.indexOf('.') || isNumber(semverA)) {
+    return ~b.indexOf('.') || isNumber(semverB) ? -1 * semverCompare(semverA, semverB) : 1
   } else {
-    return -1 * a.localeCompare(b, 'en', { numeric: true })
+    return ~b.indexOf('.') || isNumber(semverB) ? -1 : -1 * a.localeCompare(b, 'en', { numeric: true })
   }
+}
+
+function isNumber (str) {
+  return !isNaN(Number(str))
 }
 
 module.exports = versionCompareDesc
