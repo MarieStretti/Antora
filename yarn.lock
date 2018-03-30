@@ -209,7 +209,7 @@ asap@~2.0.3:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
 
-asciidoctor.js@^1.5.6-rc.1:
+asciidoctor.js@1.5.6-rc.1:
   version "1.5.6-rc.1"
   resolved "https://registry.yarnpkg.com/asciidoctor.js/-/asciidoctor.js-1.5.6-rc.1.tgz#8bdd07d817817e626bc3e2e09aa35500bfce4b3d"
   dependencies:

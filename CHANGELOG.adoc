@@ -19,6 +19,7 @@ This project utilizes semantic versioning.
 * *content-classifier*: Don't publish files with a leading underscore in filename or inside a directory with a leading underscore
 * *content-classifier*: Don't drop _attributes.adoc files found inside pages directory from content catalog
 * *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
+* *asciidoc-loader*: Lock version of Asciidoctor.js to 1.5.6-rc.1
 * Remove commitlint
 
 === Fixed
