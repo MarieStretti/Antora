@@ -70,12 +70,12 @@ class ContentCatalog {
   // QUESTION should this method return the file added?
   addFile (file) {
     const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
-    if (id in this[$files]) throw new Error(`Duplicate ${file.src.family}: ${id.substr(id.indexOf('/') + 1)}`)
+    if (this[$files][id]) throw new Error(`Duplicate ${file.src.family}: ${id.substr(id.indexOf('/') + 1)}`)
     if (!File.isVinyl(file)) file = new File(file)
     const family = file.src.family
     const actingFamily = family === 'alias' ? file.rel.src.family : family
     let publishable
-    if ('out' in file) {
+    if (file.out) {
       publishable = true
     } else if (
       (actingFamily === 'page' || actingFamily === 'image' || actingFamily === 'attachment') &&
@@ -84,7 +84,7 @@ class ContentCatalog {
       publishable = true
       file.out = computeOut(file.src, actingFamily, this.htmlUrlExtensionStyle)
     }
-    if (!('pub' in file) && (publishable || actingFamily === 'navigation')) {
+    if (!file.pub && (publishable || actingFamily === 'navigation')) {
       file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
     }
     this[$files][id] = file
