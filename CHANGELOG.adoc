@@ -19,6 +19,10 @@ This project utilizes semantic versioning.
 * *playbook-builder*: Remove automatic migration of legacy ui schema in playbook data
 * Remove commitlint
 
+=== Fixed
+
+* *content-classifier*: Only fail to register a component version if version number is an exact match of a registered version
+
 === Documentation
 
 * Document how to register Asciidoctor extensions

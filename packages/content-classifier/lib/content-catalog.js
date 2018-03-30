@@ -38,10 +38,11 @@ class ContentCatalog {
     const component = this[$components][name]
     if (component) {
       const versions = component.versions
-      const insertIdx = versions.findIndex((candidate) => {
-        const verdict = versionCompare(candidate.version, version)
-        if (verdict === 0) throw new Error(`Duplicate version detected for component ${name}: ${version}`)
-        return verdict > 0
+      const insertIdx = versions.findIndex(({ version: candidateVersion }) => {
+        if (candidateVersion === version) {
+          throw new Error(`Duplicate version detected for component ${name}: ${version}`)
+        }
+        return versionCompare(candidateVersion, version) > 0
       })
       const versionEntry = { title, version, url }
       if (insertIdx < 0) {

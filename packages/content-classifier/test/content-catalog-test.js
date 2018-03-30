@@ -92,6 +92,27 @@ describe('ContentCatalog', () => {
       expect(component.latestVersion).to.eql({ title: title2, version: version2, url: url2 })
     })
 
+    it('should throw error if component version already exists', () => {
+      const contentCatalog = new ContentCatalog()
+      expect(() => {
+        contentCatalog.addComponentVersion('the-component', '1.0.0', 'The Component')
+        contentCatalog.addComponentVersion('the-component', '1.0.0', 'The Component')
+      }).to.throw('Duplicate version detected for component')
+    })
+
+    it('should add component version that has same comparison value as existing version', () => {
+      const contentCatalog = new ContentCatalog()
+      expect(() => {
+        contentCatalog.addComponentVersion('the-component', 'r.y', 'The Component')
+        contentCatalog.addComponentVersion('the-component', 'r.x', 'The Component')
+      }).not.to.throw()
+      const component = contentCatalog.getComponent('the-component')
+      const versions = component.versions
+      expect(versions).to.have.lengthOf(2)
+      expect(versions[0].version).to.equal('r.y')
+      expect(versions[1].version).to.equal('r.x')
+    })
+
     it('should use url from specified start page', () => {
       const name = 'the-component'
       const version = '1.0.0'
