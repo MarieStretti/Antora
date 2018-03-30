@@ -351,9 +351,7 @@ async function entryToFile (entry) {
 
 function loadComponentDescriptor (files, repoUrl) {
   const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
-  if (descriptorFileIdx < 0) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' not found in ' + repoUrl)
-  }
+  if (descriptorFileIdx < 0) throw new Error(COMPONENT_DESC_FILENAME + ' not found in ' + repoUrl)
 
   const descriptorFile = files[descriptorFileIdx]
   files.splice(descriptorFileIdx, 1)
@@ -363,6 +361,7 @@ function loadComponentDescriptor (files, repoUrl) {
   } else if (data.version == null) {
     throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version in ' + repoUrl)
   }
+  data.version = data.version.toString()
 
   return data
 }
