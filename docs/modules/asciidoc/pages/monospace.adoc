@@ -3,7 +3,7 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 :example-caption!:
-// External URIs
+// URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-mono: {url-adoc-manual}/#mono
 

@@ -5,9 +5,9 @@ endif::[]
 :keywords: AsciiDoc attrs, page header attributes
 // Filters
 :page-tags: playbook keys, AsciiDoc
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-attrs: {uri-adoc-manual}/#builtin-attributes-table
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-attrs: {url-adoc-manual}/#builtin-attributes-table
 
 On this page, you'll learn:
 
@@ -27,7 +27,7 @@ You can define global (i.e., site-wide) AsciiDoc document attributes using the `
 This key accepts a map of name-value pairs.
 The attribute can be one of the following:
 
-* A {uri-attrs}[built-in AsciiDoc attribute^] you want to override (e.g., `sectnums`, `hide-uri-scheme`, `linkattrs`)
+* A {url-attrs}[built-in AsciiDoc attribute^] you want to override (e.g., `sectnums`, `hide-uri-scheme`, `linkattrs`)
 * A custom attribute specific to your content (e.g., `product-name`)
 * An attribute that configures the behavior of a custom extension (e.g., `plantuml-server-url`)
 

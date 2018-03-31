@@ -30,8 +30,8 @@ Learn more:
 
 * xref:create-standard-page.adoc[Create a standard page]
 * xref:asciidoc:include-content.adoc#include-page[Insert a standard page into another page]
-* xref:ROOT:modules.adoc#pages-dir[The _pages_ directory]
-* xref:ROOT:component-structure.adoc[Documentation component overview]
+* xref::modules.adoc#pages-dir[The _pages_ directory]
+* xref::component-structure.adoc[Documentation component overview]
 * xref:navigation:link-syntax-and-content.adoc#page[Add a page xref to a navigation file]
 
 [#partial]
@@ -47,9 +47,9 @@ When you change the content in a partial, those changes will be disseminated to 
 Learn more:
 
 //* Create a partial page
-* xref:ROOT:modules.adoc#partials-dir[The _{blank}_partials_ directory]
+* xref::modules.adoc#partials-dir[The _{blank}_partials_ directory]
 * xref:asciidoc:include-content.adoc#include-partial[Insert a partial into a standard page]
-* xref:ROOT:component-structure.adoc[Documentation component overview]
+* xref::component-structure.adoc[Documentation component overview]
 
 == Component index page
 

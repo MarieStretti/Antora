@@ -3,13 +3,9 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :table-caption!:
-:linkattrs:
-// URIs
-:uri-antora-lcs: https://gitlab.com/antora/antora/blob/master/LICENSE
+// URLs
+:url-antora-lcs: https://gitlab.com/antora/antora/blob/master/LICENSE
 
 On this page, you'll find the list of Antora components that can be assembled into a custom site generator pipeline.
 Antora has a modular architecture so that components can be easily removed and replaced.
@@ -45,57 +41,57 @@ Once ready for xref:ROOT:project/version-and-lifecycle-policies.adoc#lifecycle-p
 It loads AsciiDoc content into an AsciiDoc Document object (AST).
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |CLI
 |Command line interface (CLI) for Antora.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Content Aggregator
 |Fetches and aggregates content distributed across multiple local and remote git repositories.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Content Classifier
 |Organizes aggregated content into a virtual file catalog.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Document Converter
 |Converts AsciiDoc documents to embeddable HTML.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Navigation Builder
 |Builds a navigation catalog sourced from navigation files.
 This navigation catalog can be used to add site navigation to pages.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Page Composer
 |Wraps the embeddable HTML contents of each page file from the content catalog in an HTML page layout.
 This step yields the standalone HTML pages in the generated site.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Playbook Builder
 |The configuration component that builds a playbook object from user input.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Redirect Producer
 |Produces redirects (HTTP redirections) to a given page from its registered aliases.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Site Generator Default
 |The default site generator pipeline for Antora.
@@ -103,27 +99,27 @@ Invoked by the `generate` command of Antora's CLI to produce and publish static 
 This package groups (i.e., has a dependency on) all the other packages in core except for the CLI.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Site Mapper
 |Generates the sitemap files for the site.
 These files, which are intended to be read by crawlers, provide a list of all published pages by URL.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |Site Publisher
 |Publishes (i.e., writing) the generated files to the destination(s) specified in the playbook.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 
 |UI Loader
 |Downloads and caches the UI bundle, then extracts and loads the files from that bundle into a UI catalog.
 The UI files are combined with the content files at the end of the Antora documentation pipeline to produce a complete site.
 |&#10003;
 |
-|{uri-antora-lcs}[MPL-2.0^]
+|{url-antora-lcs}[MPL-2.0^]
 |===
 
 // Custom components

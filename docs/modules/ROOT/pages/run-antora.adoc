@@ -2,9 +2,9 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// URIs
-:uri-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/site.yml
-:uri-ssh-key: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+// URLs
+:url-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/site.yml
+:url-ssh-key: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
 Assumptions:
 
@@ -47,7 +47,7 @@ For the examples on this page, we'll use the Demo materials.
  ~ $ cd demo-site
 
 . Using your preferred text editor or IDE, create a new playbook file named [.path]_site.yml_ and populate it with the contents of the following example.
-You can also download {uri-demo-playbook}[the Demo site playbook] from the Demo repository.
+You can also download {url-demo-playbook}[the Demo site playbook] from the Demo repository.
 +
 .site.yml
 [source,yaml]
@@ -169,7 +169,7 @@ If your playbook uses private repositories, you must have an SSH agent running w
 Otherwise, Antora will fail.
 
 The SSH agent allows Antora to authenticate with private repositories on your behalf.
-To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article {uri-ssh-key}[Generating a new SSH key and adding it to the ssh-agent^].
+To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article {url-ssh-key}[Generating a new SSH key and adding it to the ssh-agent^].
 
 == Local Site Preview
 

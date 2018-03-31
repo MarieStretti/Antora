@@ -2,15 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
-:linkattrs:
 :hash: #
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-highlight: {uri-adoc-manual}/#custom-styling-with-attributes
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-highlight: {url-adoc-manual}/#custom-styling-with-attributes
 
 On this page, you'll learn:
 
@@ -35,4 +31,4 @@ Let's #highlight this phrase# and the i and the s in th##is##.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-highlight}[Highlighted text formatting^]
+* {url-highlight}[Highlighted text formatting^]

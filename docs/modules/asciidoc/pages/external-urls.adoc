@@ -2,17 +2,13 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
-:linkattrs:
 :underscore: _
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-url: {uri-adoc-manual}/#url
-:uri-prevent-subs: {uri-adoc-manual}/#preventing-substitutions
-:uri-inline-pass: {uri-adoc-manual}/#inline-pass-macro-and-explicit-substitutions
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-url: {url-adoc-manual}/#url
+:url-prevent-subs: {url-adoc-manual}/#preventing-substitutions
+:url-inline-pass: {url-adoc-manual}/#inline-pass-macro-and-explicit-substitutions
 :url-peak: https://www.google.com/maps/place/Antora+Peak/@38.3249976,-106.2355882,14z/data=!3m1!4b1!4m5!3m4!1s0x871572433f469bd7:0xd2bdf15e615cd269!8m2!3d38.3249994!4d-106.2180786!5m1!1e4
 
 On this page, you'll learn:
@@ -63,7 +59,7 @@ Visit the https://gitter.im/antora/users[Antora chat room^].
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-url}[URL syntax and attributes^]
+* {url-url}[URL syntax and attributes^]
 
 == Escape a URL
 
@@ -83,7 +79,7 @@ This URL is displayed, \https://gitlab.com, but isn't clickable.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-prevent-subs}[Preventing substitutions^]
+* {url-prevent-subs}[Preventing substitutions^]
 
 == Troubleshooting URLs
 
@@ -144,4 +140,4 @@ Anyone want to climb this 13er with me? (pass:macros[https://www.14ers.com/13ers
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-inline-pass}[Inline pass macro and explicit substitutions^]
+* {url-inline-pass}[Inline pass macro and explicit substitutions^]

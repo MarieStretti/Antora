@@ -2,13 +2,9 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-comments: {uri-adoc-manual}/#comments
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-comments: {url-adoc-manual}/#comments
 
 On this page, you'll learn:
 
@@ -41,4 +37,4 @@ All of the text, including any AsciiDoc syntax, won't be visible when the file i
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-comments}[Comment lines and blocks^]
+* {url-comments}[Comment lines and blocks^]

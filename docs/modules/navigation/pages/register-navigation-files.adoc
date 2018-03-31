@@ -71,4 +71,4 @@ In the case of the example from the previous section, the contents of the ROOT n
 Learn all about creating navigation lists and navigation items:
 
 * xref:list-structures.adoc[Navigation lists: list title and item hierarchy, single list file, multi-list file]
-* xref:link-syntax-and-content.adoc[Navigation link syntax and content formatting: xrefs, URIs, text styles, images, and more]
+* xref:link-syntax-and-content.adoc[Navigation link syntax and content formatting: xrefs, URLs, text styles, images, and more]
