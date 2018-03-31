@@ -1,0 +1,109 @@
+// TODO document how to use the container in CI
+= Run Antora in a Container
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+// URLs
+:url-docs-job: https://gitlab.com/antora/docs.antora.org/blob/master/.gitlab-ci.yml
+:url-docker: https://docs.docker.com
+:url-docker-hub: https://hub.docker.com/r/antora/antora
+:url-plantuml-npm: https://www.npmjs.com/package/asciidoctor-plantuml
+
+The Antora project provides a Docker image so you can run the `antora` command inside a container (a process known as [.term]_containerization_).
+The benefit of this approach is that you can bypass installation of Antora and skip right to running it.
+All you need is Docker.
+
+Assumptions:
+
+* [x] You have {url-docker}[Docker] (command: `docker`) installed on your machine.
+* [x] The Docker daemon is running on your machine.
+* [x] You have configured your own xref:playbook:index.adoc[playbook] or you're using the Demo playbook.
+
+On this page, you'll learn:
+
+* [x] How to run Antora inside a container using the official Docker image for Antora.
+* [x] How to give the container access to a local directory.
+* [x] How to extend the Docker image for Antora to create your own image.
+
+== Docker image for Antora
+
+{url-docker}[Docker] is a tool for running container images.
+You can think of a container image as an application in a box.
+Inside that box is everything you need to run the application, including the code, the runtime, the settings, and even the operating system itself.
+Containers not only isolate software from the host environment, they also make it easy to get up and running quickly.
+And that's a perfect way to discover and explore Antora!
+
+The Antora project provides an official Docker image named `antora/antora` for running Antora inside a container.
+This image is published to {url-docker-hub}[Docker Hub].
+
+This image is a drop-in replacement for the `antora` command.
+Rather than installing the `antora` command on your own computer or in a CI environment, you simply run the command by running the container.
+In fact, the {url-docs-job}[CI job for the Antora documentation site] uses this image to generate the documentation you're currently reading.
+
+Let's find out how to run it.
+
+== Run the Antora image
+
+To demonstrate how to use this image, we’ll be using the Antora demo site.
+Start by cloning the the playbook repository for the demo site and switching to the cloned folder:
+
+ ~ $ git clone https://gitlab.com/antora/demo/demo-site.git && cd demo-site
+
+Next, execute the `docker run` command to run this image directly.
+
+ demo-site $ docker run --privileged -v `pwd`:/antora --rm antora/antora site.yml
+
+NOTE: The `--privileged` option is only required if you're running a Linux distribution that has SELinux enabled by default, such as Fedora.
+This option allows you to use volume mounts under SELinux.
+
+This command spins up a new container from the image, mounts the current directory to the path [.path]_/antora_ inside the container, runs the `antora` command, then stops and removes the container.
+It's exactly as though you ran a locally-installed `antora` command, only you used container superpowers to do it.
+
+== Enter the container
+
+If you want to shell into the container instead of having it run the `antora` command, set the `--entrypoint` option as follows:
+
+ demo-site $ docker run --entrypoint ash --privileged -v `pwd`:/antora --rm -it antora/antora
+
+Now you can run the `antora` command from anywhere inside the running container.
+This mode is useful to use while editing.
+Since the container continues to run, you can quickly execute the `antora` command.
+
+If the base Antora image doesn't include everything you need for your site, you can extend it.
+
+== Extend the Antora image
+
+You can use this image as a base for your own Docker image.
+The image comes preconfigured with Yarn so you can install additional extensions, such as {url-plantuml-npm}[Asciidoctor PlantUML] (`asciidoctor-plantuml`).
+
+. Clone the docker-antora repository and switch to it:
+
+ ~ $ git clone https://gitlab.com/antora/docker-antora.git && cd docker-antora
+
+. Create a custom Dockerfile file named [.path]_Dockerfile.custom_.
+. Populate the file with the following contents:
++
+.Dockerfile.custom
+[source,docker]
+----
+FROM antora/antora
+
+RUN yarn global add asciidoctor-plantuml # <1>
+----
+<1> Adds a custom extension to the base image.
+
+. Build the image using the following command:
+
+ docker-antora $ docker build -t local/antora:custom -f Dockerfile.custom .
+
+Once the build is finished, you'll have a new image available on your machine named `local/antora:custom`.
+To see a list of all your images, run the following command:
+
+ $ docker images
+
+To run this image, switch back to your playbook project and run the container as follows:
+
+ demo-site $ docker run --privileged -v `pwd`:/antora --rm local/antora:custom site.yml
+
+If you want to share this image with others, you'll need to publish it.
+Consult the {url-docker}[Docker documentation] to find out how.
