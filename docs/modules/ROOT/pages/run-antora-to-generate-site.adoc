@@ -15,7 +15,7 @@ Assumptions:
 
 On this page, you'll learn:
 
-* [x] How to run the default Antora pipeline.
+* [x] How to run Antora and generate a site.
 * [x] Where files are cached.
 * [x] How to update the cache.
 * [x] How to preview a generated site locally.
@@ -34,7 +34,7 @@ The instructions and examples on this page will show you how to operate Antora w
 == Choose a Playbook
 
 To produce a documentation site, Antora needs a playbook.
-First, you'll need to create or choose a directory where you'll store the playbook and where the generated site files will be saved (assuming you use the default output configuration).
+But first, you'll need to create or choose a directory where you'll store the playbook and where the generated site files will be saved (assuming you use the default output configuration).
 
 For the examples on this page, we'll use the Demo materials.
 
@@ -73,7 +73,7 @@ ui:
 
 == Run Antora
 
-. To generate the site with the default site generator pipeline, point the `antora` command at your playbook file.
+. To generate the site with the default Antora site generator, point the `antora` command at your playbook file.
 In the terminal, type:
 +
 --
