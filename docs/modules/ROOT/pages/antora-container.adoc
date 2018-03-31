@@ -17,7 +17,7 @@ Assumptions:
 
 * [x] You have {url-docker}[Docker] (command: `docker`) installed on your machine.
 * [x] The Docker daemon is running on your machine.
-* [x] You have configured your own xref:playbook:playbook.adoc[playbook] or you're using the Demo playbook.
+* [x] You have configured your own xref:playbook:index.adoc[playbook] or you're using the Demo playbook.
 
 On this page, you'll learn:
 

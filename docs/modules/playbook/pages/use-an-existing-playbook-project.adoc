@@ -22,7 +22,7 @@ The command clones an existing playbook project and then switches to the project
 
 == What's next?
 
-* xref:ROOT:run-antora-to-generate-site.adoc[Run Antora] to generate the site.
+* xref:ROOT:run-antora.adoc[Run Antora] to generate the site.
 * Modify the playbook to xref:playbook-schema.adoc[configure the site properties, inputs, and outputs].
 
 ////
@@ -44,7 +44,7 @@ Yarn installs these dependencies inside the project under the [.path]_node_modul
 
 NOTE: If you run into problems while installing dependencies, see xref:ROOT:troubleshoot-yarn-nodegit.adoc[Troubleshooting Yarn and NodeGit].
 
-Once you've installed Antora and its dependencies, you can xref:ROOT:run-antora-to-generate-site.adoc[generate your site] with your playbook.
+Once you've installed Antora and its dependencies, you can xref:ROOT:run-antora.adoc[generate your site] with your playbook.
 
 === Refresh dependencies
 
