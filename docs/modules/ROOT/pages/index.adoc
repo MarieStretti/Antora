@@ -12,8 +12,9 @@ See the {uri-changelog}[CHANGELOG^] for details.
 ////
 
 [discrete.tagline]
-=== Antora: The Static Site Generator for Tech Writers
+=== The Static Site Generator for Tech Writers
 
+This site provides technical documentation for Antora.
 Antora makes it easy for tech writers to write documentation and publish it to the web.
 As a tech writer, you simply author content in xref:asciidoc:index.adoc[AsciiDoc], Antora's content markup language, then save those files under a standard project structure inside one or more content repositories.
 Antora picks up your content from there and transforms it into a website.
