@@ -25,7 +25,7 @@ Specifically, a playbook tells Antora:
 * [x] Where the site should be xref:configure-output.adoc[published and in what format].
 * [x] How and when Antora should handle xref:configure-runtime.adoc[source repository updates, artifact updates, and its cache].
 
-Additionally, certain settings in the playbook file can be overridden using xref:ROOT:cli.adoc[CLI options] or environment variables, which allows an operations team to tailor the behavior for specific environments, such as production.
+Additionally, certain settings in the playbook file can be overridden using xref:cli:index.adoc[CLI options] or environment variables, which allows an operations team to tailor the behavior for specific environments, such as production.
 
 == Where is a playbook stored?
 
