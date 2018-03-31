@@ -3,11 +3,11 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 // URLs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-include: {uri-adoc-manual}/#include-directive
-:uri-tags: {uri-adoc-manual}/#by-tagged-regions
-:uri-leveloffset: {uri-adoc-manual}/#include-partitioning
-:uri-indent: {uri-adoc-manual}/#normalize-block-indentation
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-include: {url-adoc-manual}/#include-directive
+:url-tags: {url-adoc-manual}/#by-tagged-regions
+:url-leveloffset: {url-adoc-manual}/#include-partitioning
+:url-indent: {url-adoc-manual}/#normalize-block-indentation
 
 You can use the include directive (`include::[]`) to insert content from one file into an AsciiDoc file.
 You can include a <<include-partial,partial>>, a <<include-page,standard page>>, or an <<include-example,example file>>.
@@ -19,7 +19,7 @@ There are a few things to know about using the include directive in the Antora e
 [#include-partial]
 == Include a partial
 
-To include a xref:ROOT:pages.adoc#partial[partial AsciiDoc file] into a standard page, use the include directive with a target starting with the attribute reference `+{partialsdir}+`, followed by the relative path of the partial file.
+To include a xref:page:index.adoc#partial[partial AsciiDoc file] into a standard page, use the include directive with a target starting with the attribute reference `+{partialsdir}+`, followed by the relative path of the partial file.
 //, which is a reference to the [.path]_{blank}_partials_ directory.
 
 .Insert a partial page using an include directive
@@ -47,7 +47,7 @@ NOTE: Currently, Antora only supports filtering includes by tags.
 [#include-page]
 == Include a standard page
 
-Instead of using a partial, you can insert the contents of a xref:ROOT:pages.adoc#standard[standard page] into another standard page.
+Instead of using a partial, you can insert the contents of a xref:page:index.adoc#standard[standard page] into another standard page.
 // or portion of a standard page using the
 
 .Insert a standard page using the include directive
@@ -112,7 +112,7 @@ NOTE: Antora doesn't yet support filtering includes by line number, only by tags
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-include}[Using the AsciiDoc include directive^]
-* {uri-leveloffset}[Offset section headings with leveloffset^]
-* {uri-tags}[Select regions of content with tags^]
-* {uri-indent}[Normalize block indentation with indent^]
+* {url-include}[Using the AsciiDoc include directive^]
+* {url-leveloffset}[Offset section headings with leveloffset^]
+* {url-tags}[Select regions of content with tags^]
+* {url-indent}[Normalize block indentation with indent^]

@@ -2,15 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-sub-sup: {uri-adoc-manual}/#subscript-and-superscript
-:uri-stem: {uri-adoc-manual}/#activating-stem-support
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-sub-sup: {url-adoc-manual}/#subscript-and-superscript
+:url-stem: {url-adoc-manual}/#activating-stem-support
 
 On this page, you'll learn:
 
@@ -50,5 +46,5 @@ What is the answer to E=mc^2^?
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-sub-sup}[Subscript and superscript formatting^]
-* {uri-stem}[Using Asciidoctor's stem attribute for equations and formulas^]
+* {url-sub-sup}[Subscript and superscript formatting^]
+* {url-stem}[Using Asciidoctor's stem attribute for equations and formulas^]

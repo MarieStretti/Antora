@@ -2,17 +2,12 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:experimental:
 :example-caption!:
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-button: {uri-adoc-manual}/#ui-buttons
-:uri-keyboard: {uri-adoc-manual}/#keyboard-shortcuts
-:uri-menu: {uri-adoc-manual}/#menu-selections
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-button: {url-adoc-manual}/#ui-buttons
+:url-keyboard: {url-adoc-manual}/#keyboard-shortcuts
+:url-menu: {url-adoc-manual}/#menu-selections
 
 On this page, you'll learn:
 
@@ -46,7 +41,7 @@ Select a file in the file navigator and click btn:[Open].
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-button}[UI buttons^]
+* {url-button}[UI buttons^]
 
 == Keybinding syntax
 
@@ -74,7 +69,7 @@ kbd:[Ctrl+Shift+N] will open a new incognito window.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-keyboard}[Keyboard shortcuts^]
+* {url-keyboard}[Keyboard shortcuts^]
 
 == Menu syntax
 
@@ -98,4 +93,4 @@ Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-menu}[Menu selections^]
+* {url-menu}[Menu selections^]

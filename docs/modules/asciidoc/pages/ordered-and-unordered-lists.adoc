@@ -2,14 +2,10 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-ordered: {uri-adoc-manual}/#ordered-lists
-:uri-unordered: {uri-adoc-manual}/#unordered-lists
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-ordered: {url-adoc-manual}/#ordered-lists
+:url-unordered: {url-adoc-manual}/#unordered-lists
 
 On this page, you'll learn:
 
@@ -45,7 +41,7 @@ The maximum nesting level is five (`pass:[.....]`).
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-ordered}[Basic and complex ordered lists^]
+* {url-ordered}[Basic and complex ordered lists^]
 
 [#unordered]
 == Unordered list syntax
@@ -79,4 +75,4 @@ You'll use AsciiDoc's unordered list syntax to xref:navigation:create-a-navigati
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-unordered}[Basic and complex unordered lists^]
+* {url-unordered}[Basic and complex unordered lists^]

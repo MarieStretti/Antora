@@ -3,12 +3,12 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 :keywords: Docs as Code, DocOps, content management system, docs writers, publish software documentation, CI and docs, CD and docs
-// URIs:
-:uri-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
+// URLs
+:url-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
 ////
 [caption="RELEASE STATUS"]
 TIP: Antora {release-version} is now available!
-See the {uri-changelog}[CHANGELOG^] for details.
+See the {url-changelog}[CHANGELOG^] for details.
 ////
 
 [discrete.tagline]
@@ -88,7 +88,7 @@ You'll then need to xref:playbook:index.adoc[create a playbook] to tell Antora w
 
 If you already have a documentation component set up and you're ready to create your first site, check that you've met Antora's xref:supported-platforms.adoc[system requirements], xref:install/install-antora.adoc[install Antora], and then xref:run-antora.adoc[generate your site] using Antora.
 
-If you want to jump into writing, learn how to use the xref:asciidoc:index.adoc[AsciiDoc syntax] to xref:pages.adoc[make documentation pages].
+If you want to jump into writing, learn how to use the xref:asciidoc:index.adoc[AsciiDoc syntax] to xref:page:index.adoc[make documentation pages].
 
 If you want to dive deeper into the details of the site generator pipeline, check out xref:how-antora-works.adoc[how Antora works].
 

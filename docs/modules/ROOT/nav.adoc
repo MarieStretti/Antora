@@ -24,9 +24,9 @@
 ** xref:component-descriptor.adoc[Component Descriptor]
 ** xref:component-versions.adoc[Versions & Branches]
 
-* xref:pages.adoc[Pages]
-** xref:create-standard-page.adoc[Create a Standard Page]
-** xref:page-id.adoc[Page ID]
+* xref:page:index.adoc[Pages]
+** xref:page:create-standard-page.adoc[Create a Standard Page]
+** xref:page:page-id.adoc[Page ID]
 
 //* Source Files
 //** Content and asset files

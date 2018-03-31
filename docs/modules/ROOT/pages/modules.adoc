@@ -2,8 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// URLs
-:uri-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
 
 == What is a module?
 
@@ -21,7 +19,7 @@ Isn't a component enough?
 
 One thing we've learned about documentation is that it multiplies, often quickly and unpredictably.
 As more content is created and your documentation team grows, more often than not, you want to start grouping files into folders to make them easier to find and manage.
-Modules allow you to group text files and their associated assets together as your documentation expands, all while preserving the xref:page-id.adoc#important[full capability of Antora's page ID].
+Modules allow you to group text files and their associated assets together as your documentation expands, all while preserving the xref:page:page-id.adoc#important[full capability of Antora's page ID].
 
 Modules are also perfect when one software project is incubating a potential subproject that may spin off as its own project in the future.
 It's easy to later detach a module from a component and set it up as its own documentation component.
@@ -141,11 +139,10 @@ These files are often inserted into listing blocks using the xref:asciidoc:inclu
 [#pages-dir]
 == Pages
 
-AsciiDoc document files that are destined to become xref:pages.adoc#standard[standard pages] are stored in the [.path]_pages_ folder of a module.
+AsciiDoc document files that are destined to become xref:page:index.adoc#standard[standard pages] are stored in the [.path]_pages_ folder of a module.
 These files are converted to HTML and automatically published as standalone pages in the generated site.
 
 image::pages-dir.svg[,260]
-
 
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
 
@@ -171,12 +168,12 @@ The module name is the name of the module directory where that page is stored.
 
 Learn more:
 
-* xref:create-standard-page.adoc[Create a standard page]
+* xref:page:create-standard-page.adoc[Create a standard page]
 
 [#partials-dir]
 === Partial AsciiDoc files
 
-xref:pages.adoc#partial[Partials] are AsciiDoc files.
+xref:page:index.adoc#partial[Partials] are AsciiDoc files.
 They're stored in [.path]_pages/_partials_ in the same module as the standard pages that use them.
 A partial is inserted into a standard page using the xref:asciidoc:include-content.adoc#include-partial[AsciiDoc include directive].
 

@@ -99,7 +99,7 @@ Instead, the value should be useable by the documentation writers and useful to 
 By default, Antora looks for a file named [.path]_index.adoc_ in the ROOT module of each component to use as the start page for that component and version (e.g., _\https://example.org/component-name/index.html_).
 
 If the ROOT module doesn't have an [.path]_index.adoc_ page, you must specify a start page explicitly in the component descriptor.
-The `start_page` key accepts the xref:page-id.adoc[page ID structure] and must point to an existing page in the same component (e.g., `ROOT:home.adoc`, `module-one:overview.adoc`).
+The `start_page` key accepts the xref:page:page-id.adoc[page ID structure] and must point to an existing page in the same component (e.g., `ROOT:home.adoc`, `module-one:overview.adoc`).
 
 If a start page isn't specified, and the component does not have a ROOT module with an [.path]_index.adoc_ page, the reader will be directed to a 404 page when navigating to that component from the xref:navigation:index.adoc#component-dropdown[component version selector] on any page.
 

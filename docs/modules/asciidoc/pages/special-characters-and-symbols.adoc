@@ -2,16 +2,12 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :table-caption!:
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-special-chars: {uri-adoc-manual}/#special-characters
-:uri-symbols: {uri-adoc-manual}/#replacements
-:uri-char-attrs: {uri-adoc-manual}/#charref-attributes-table
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-special-chars: {url-adoc-manual}/#special-characters
+:url-symbols: {url-adoc-manual}/#replacements
+:url-char-attrs: {url-adoc-manual}/#charref-attributes-table
 
 On this page, you'll learn:
 
@@ -119,6 +115,6 @@ When flanked by space characters (e.g., `+a -- b+`), the normal spaces are repla
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-special-chars}[Special characters^]
-* {uri-symbols}[HTML, XML, and Unicode symbols^]
-* {uri-char-attrs}[Predefined attributes for character replacements^]
+* {url-special-chars}[Special characters^]
+* {url-symbols}[HTML, XML, and Unicode symbols^]
+* {url-char-attrs}[Predefined attributes for character replacements^]

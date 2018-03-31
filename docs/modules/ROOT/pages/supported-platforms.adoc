@@ -3,10 +3,10 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 :test-count: over 780
-// URIs
-:uri-repo: https://gitlab.com/antora/antora
-:uri-issues: {uri-repo}/issues
-:uri-chat-dev: https://gitter.im/antora/dev
+// URLs
+:url-repo: https://gitlab.com/antora/antora
+:url-issues: {uri-repo}/issues
+:url-chat-dev: https://gitter.im/antora/dev
 
 Antora operates on macOS, Windows, and most Linux distributions.
 It should also operate as designed on common VM environments and cloud platforms.
@@ -76,12 +76,12 @@ We're just a teeny-tiny bit obsessed with writing quality tests and achieving co
 
 Antora should operate as designed on common cloud platforms.
 How you provision your cloud instance depends on your workload requirements and remote git repository sizes.
-If you're running Antora on a cloud platform, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
+If you're running Antora on a cloud platform, we would love to hear about your experience (open a {url-issues}[new issue^] or join us in the {url-chat-dev}[development channel^]).
 
 == Virtual Machine (VM) environments
 
 Antora runs in VirtualBox and should operate as designed in common VM environments such as VMware.
-If you're running Antora in a VM environment, we would love to hear about your experience (open a {uri-issues}[new issue^] or join us in the {uri-chat-dev}[development channel^]).
+If you're running Antora in a VM environment, we would love to hear about your experience (open a {url-issues}[new issue^] or join us in the {url-chat-dev}[development channel^]).
 
 == Hardware recommendations
 
@@ -111,7 +111,9 @@ Prep your system for installing Antora:
 * xref:install/macos-requirements.adoc[macOS requirements]
 * xref:install/windows-requirements.adoc[Windows requirements]
 
-//* [Get the Antora Docker container]
+Or try out the Antora Docker container:
+
+* xref:antora-container.adoc[Antora Docker container]
 
 ////
 OS Release schedule links

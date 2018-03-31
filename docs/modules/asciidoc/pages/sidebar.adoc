@@ -2,15 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-sidebar: {uri-adoc-manual}/#sidebar
-:uri-block: {uri-adoc-manual}/#blocks
-:uri-block-subs: {uri-adoc-manual}/#built-in-blocks-summary
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-sidebar: {url-adoc-manual}/#sidebar
+:url-block: {url-adoc-manual}/#blocks
+:url-block-subs: {url-adoc-manual}/#built-in-blocks-summary
 
 On this page, you'll learn:
 
@@ -78,6 +74,6 @@ const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils'
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-sidebar}[Sidebar blocks^]
-* {uri-block}[Block titles and attributes^]
-* {uri-block-subs}[Substitutions by block type^]
+* {url-sidebar}[Sidebar blocks^]
+* {url-block}[Block titles and attributes^]
+* {url-block-subs}[Substitutions by block type^]
