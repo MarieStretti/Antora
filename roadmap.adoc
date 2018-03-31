@@ -21,239 +21,156 @@ This roadmap provides the current development direction and schedule for {uri-ho
 It is intended for informational purposes only.
 The proposed features, their scope, and the release timeline are not firm commitments.
 
-== Site Generator Pipeline & CLI
+== Antora Core Components
 
-For a detailed list of current development tasks, refer to the core components {uri-issues}[issue tracker] and {uri-milestones}[milestones].
+For a detailed list of current development tasks, refer to the Core components {uri-issues}[issue tracker].
 
-=== v1.0.0 GA
-
-* [x] Add architecture guidebook for redirect producer component {uri-issues}/181[#181]
-* [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
-* [ ] Set up API documentation and automatically publish as CI artifact
-//* [ ] Pass algolia key in playbook
-
-*Mid March 2018*: Stable v1.0.0 of the Antora platform is released.
-The Antora platform includes all of the packages that are assembled in the default site generator and the CLI package.
-
-=== v1.x
-
-* [ ] Implement fallback value for component version {uri-issues}/161[#161]
-* [ ] Allow custom generator to be specified
-* [ ] Add a logging infrastructure {uri-issues}/145[#145]
-* [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
-* [ ] Add Node 9 to CI matrix
-* [ ] Evaluate CHANGELOG policies and automatically generate CHANGELOG for release
-* [ ] Support loading the UI from a directory {uri-issues}/150[#150]
-* [ ] Add a merge mode to supplemental UI files {uri-issues}/149[#149]
-* [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
-* [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
-* [ ] Watch mode for files in worktree
-* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
-* [ ] Upgrade build to Gulp 4
-
-==== v1.1.x Release Window
+=== v1.1
 
 *Release Timeframe*: 2018 Q2
 
+* [ ] Set up API documentation and automatically publish as CI artifact
+* [ ] Mark prereleases with next tag and recommended stable version with latest tag {uri-issues}/170[#170]
+//* [ ] Pass algolia key in playbook
+// * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
+
 === Unscheduled
 
-The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.,
-They aren't slated imminent development but are reviewed for possible scheduling after each release.
+The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.
+They aren't slated for imminent development but are reviewed for possible scheduling after each release.
+
+* [ ] Show the file URI where the site can be previewed offline {uri-issues}/220[#220]
+
+* [ ] Generate a robots.txt file {uri-issues}/219[#219]
+
+* [ ] Add context as second argument to ContentCatalog#addFile {uri-issues}/209[#209]
+
+* [ ] Allow supplemental files to be fetched and added to the content catalog {uri-issues}/195[#195]
+
+* [ ] Add (Apache) httpd redirect facility to redirect producer {uri-issues}/192[#192]
+
+* [ ] Allow static redirect page to be customized using a UI template {uri-issues}/191[#191]
+
+* [ ] Allow page alias to be an explicit URL pathname {uri-issues}/190[#190]
+
+* [ ] Add CLI option to specify the site generator to use {uri-issues}/178[#178]
+
+* [ ] Implement fallback value for component version {uri-issues}/161[#161]
+
+* [ ] Support loading the UI from a directory {uri-issues}/150[#150]
+
+* [ ] Add a merge mode to supplemental UI files {uri-issues}/149[#149]
+
+* [ ] Add a logging infrastructure {uri-issues}/145[#145]
+
+* [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
+
+* [ ] Decide whether content aggregate should be sorted {uri-issues}/121[#121]
+
+* [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
+
+* [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
+
+* [ ] Separate content aggregator from git provider {uri-issues}/93[#93]
+
+* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
+
+* [ ] Allow module paths to be configurable {uri-issues}/28[#28]
+
+* [ ] Add support for a moduleless docs component {uri-issues}/27[#27]
+
+* Add Node 9 to CI matrix
+
+* Upgrade build to Gulp 4
+
+* Webhooks between repositories (e.g., docs.antora.org, docker-antora)
+
+* Component to host mapping, not just one site URL
+
+* Custom UI output dir missing test in generator
 
 * Decide whether to isolate id (or ctx) from src property on content file
-* Webhooks between repositories (e.g., docs.antora.org, docker-antora)
+
 * Be able to make references to page aliases; would require parsing all document headers in a separate step/phase
-* Decide whether content aggregate should be sorted {uri-issues}/121[#121]
-* Separate content aggregator from git provider {uri-issues}/93[#93]
-* Allow module paths to be configurable {uri-issues}/28[#28]
-* Add support for a moduleless docs component {uri-issues}/27[#27]
+//whiteboard
+* contentCatalog.resolvePage()
+//whiteboard
+* antora-version
+
 * Separate site publisher from providers
-* Add support for git-lfs for assets storage such as images
+
 * Evaluate new strategies for interpreting equations (e.g., build-time conversion to SVG)
 
-== Documentation, Demo, & Docs Site
+*  Watch mode for files in worktree
 
-For current pipeline documentation tasks, see the core components {uri-board}[issue board].
+.Accepted Ideas
+* Add support for git-lfs for assets storage such as images (Requirements: {uri-issues}/185[#185])
 
-For current demo tasks, see the demo materials {uri-demo-issues}[issue tracker].
+.Discussions
+* Properly store generated PlantUML images directly in Antora content folder instead of output directory (Requirements: {uri-issues}/189[#189])
+
+== Antora Documentation, Demo, & Docs Site
+
+For current Antora documentation tasks, see the Core components {uri-issues}[issue tracker].
+
+For current demo tasks, see the Demo materials {uri-demo-issues}[issue tracker].
 
 For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
 
-=== v1.0.0 GA
+=== v1.0.0
 
-* [x] Document the --stacktrace option {uri-issues}/213[#213]
-* [x] Document ability to use a page as a partial and standard page {uri-issues}/179[#179]
-* [x] Document ability to use custom AsciiDoc extensions {uri-issues}/174[#174]
-* [x] Document ability to set AsciiDoc page attributes in the playbook {uri-issues}/169[#169]
-* [x] Improve navigation file organization and registration pages {uri-issues}/159[#159]
+* [ ] Document how to run and extend the Docker image for Antora {uri-issues}/211[#211]
+* [ ] Move CLI documentation to its own module {uri-issues}/206[#206]
+* [ ] Move pages files into topic directory in AsciiDoc module and restructure navigation {uri-issues}/222[#222]
 
-=== v1.x
+=== Unscheduled
 
+* [ ] Switch docs.antora.org publishing to netlify and automate https certificate renewal
+* [ ] Switch antora.org publishing to netlify and automate https certificate renewal
+* [ ] Set up a roadmap page for Core components in the docs {uri-issues}/223[#223]
+* [ ] Document that .nojekyll file is required when publishing to GitHub Pages {uri-issues}/194[#194]
 * [ ] Document the `page-` attributes {uri-issues}/177[#177]
 * [ ] Add how to create a partial page {uri-issues}/176[#176]
 * [ ] Document sitemap features {uri-issues}/168[#168]
-* [ ] Document how to create user-defined page attributes
-* [ ] Expand private repository section {uri-issues}/139[#139]
-* [ ] Document redirect features
 * [ ] Improve custom publish provider documentation {uri-issues}/164[#164]
+* [ ] Expand private repository section {uri-issues}/139[#139]
+* [ ] Document how to create user-defined page attributes
+* [ ] Document redirect features
 * [ ] Document stem functionality with common UI integration scenarios
 * [ ] Document how to add MathJax integration to the UI
 * [ ] Document how to integrate external Javascript files with the UI
-* [ ] Document maintenance and bug fix priority policies (in repo, on project site)
+* [ ] Document maintenance and bug fix priority policies on antora.org
 * [ ] Document release schedule on project site
-* [ ] Add list of environment variables to usage
+* [ ] Document list of environment variables to usage
+* [ ] Make Get Antora a category landing page
+* [ ] Set up a What's New? in the Docs
+* [ ] Create community participation guidelines
+* [ ] Add changelog system to Docs
+* [ ] Add contributing guide to Docs
+* [ ] Remove most documentation-type content from README and replace with links to the appropriate Docs pages
 
-== UI
+== Antora Default UI
 
-For a detailed list of current development tasks, refer to the default UI {uri-ui-issues}[issue tracker].
-
-=== v1.0.0 GA
-
-* [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
-* [ ] IE 11 fixes
-* [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
-* [ ] Cut stable release of default UI
+For a detailed list of current development tasks, refer to the UI {uri-ui-issues}[issue tracker].
 
 === v1.0.0
 
 *Release Timeframe*: April 2018
 
-=== v1.x
+* [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
+* [ ] IE 11 fixes
+* [ ] Cut stable release of default UI
 
-* [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
-* [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
-* [ ] Enable unordered list marker styles {uri-ui-issues}/26[#26]
+=== Unscheduled
+
 * [ ] Create task list SVGs {uri-ui-issues}/31[#31]
+* [ ] Enable unordered list marker styles {uri-ui-issues}/26[#26]
+* [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
+* [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
+* [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 * [ ] Upgrade build to Gulp 4
 * [ ] Improve SVG options stability
 
 == Completed Releases
 
-See the {uri-changelog}[CHANGELOG] for a summary of notable changes by release.
-
-=== v1.0.0-rc.1 (2018-03-27)
-
-* [x] Add environment variables to UI model {uri-issues}/212[#212]
-* [x] Create and compose 404 page if site.url is set in playbook {uri-issues}/207[#207]
-* [x] Promote antoraVersion to top-level property in UI model
-* [x] Pass down page ID properties to AsciiDoc document {uri-issues}/196[#196]
-* [x] Fix 404 layout {uri-ui-issues}/47[UI #47]
-* [x] Unexpected breadcrumb behavior with multiple versions of a component {uri-ui-issues}/46[UI #46]
-* [x] Residual state causing nav menu to open unexpectedly when switching components {uri-ui-issues}/45[UI #45]
-* [x] Enable Kotlin and Scala language support in highlight.js config (UI)
-* [x] Enable nix language support in highlight.js config (UI)
-
-=== v1.0.0-beta.3 (2018-03-23)
-
-* [x] Pass Antora version to UI model as antoraVersion
-* [x] Change ui.bundle to a category in the playbook schema (ui.bundle.url, ui.bundle.start_path, ui.bundle.snapshot) {uri-issues}/201[#201]
-* [x] Rewrite main loop in aggregateContent to operate on unique URLs {uri-issues}/200[#200]
-* [x] Use Asciidoctor.js public API where possible {uri-issues}/37[#37]
-* [x] Correct branches, start page, and Demo examples in documentation {uri-issues}/205[#205]
-* [x] _Demo_: Update Demo site playbook to use latest Antora features
-* [x] _Demo_: Created two versions (v1.0 and v2.0) of Demo Component B to demonstrate the component selector drawer and page version selector in the default UI
-* [x] Add Getting Help page {uri-issues}/204[#204]
-
-=== v1.0.0-beta.2 (2018-03-13)
-
-* [x] Add netlify redirect facility to redirect producer {uri-issues}/202[#202]
-* [x] Set up CI build for Windows Server 2016 and Windows 10 {uri-issues}/199[#199]
-* [x] Update CI image to use stretch version of Debian {uri-issues}/198[#198]
-* [x] Document supported platforms and configurations {uri-issues}/197[#197]
-* [x] Emit graceful error message when repository clone fails {uri-issues}/155[#155]
-* [x] Fetch updates to content repositories upon request {uri-issues}/104[#104]
-
-=== v1.0.0-beta.1 (2018-03-07)
-
-* [x] Pass site start page to UI model which will link to home icon, if set {uri-issues}/193[#193]
-* [x] Create Docker container for evaluating Antora {uri-issues}/162[#162]
-* [x] Allow content to be aggregated from tags {uri-issues}/117[#117]
-* [x] Document tag key and use case examples
-
-*Early March 2018*: Feature-complete v1.0.0-beta.1 is released.
-Subsequent betas may include minor API changes, bug fixes, and stability improvements.
-
-=== 1.0.0-alpha.9 (2018-03-06)
-
-* [x] Add clone status indicator {uri-issues}/183[#183]
-* [x] Implement page redirect generator component {uri-issues}/182[#182]
-* [x] Don't fail if start page cannot be resolved {uri-issues}/111[#111]
-
-=== 1.0.0-alpha.8 (2018-02-27)
-
-* [x] Add convertDocuments function to the document converter {uri-issues}/172[#172]
-* [x] Interpret `~` symbol in the playbook file as home directory reference {uri-issues}/143[#143]
-* [x] Store cache files under user's cache directory {uri-issues}/137[#137]
-* [x] Improve sidebar block styles {uri-ui-issues}/27[UI #27]
-* [x] Document cache {uri-issues}/137[#137]
-
-=== 1.0.0-alpha.7 (2018-02-20)
-
-* [x] Allow custom Asciidoctor extensions to be registered {uri-issues}/167[#167]
-* [x] Add a require option to the CLI to preload modules {uri-issues}/166[#166]
-* [x] Add AsciiDoc attribute configuration to playbook schema {uri-issues}/160[#160]
-* [x] Enable ordered list numeration styles {uri-ui-issues}/24[#24]
-* [x] Refine literal, listing, and example block title styles {uri-ui-issues}/22[#22]
-* [x] Style keyboard UI macro {uri-ui-issues}/23[#23]
-* [x] Improve component and module index page content {uri-issues}/156[#156]
-* [x] Provide source URL configuration examples {uri-issues}/153[#153]
-* [x] Document UI bundle configuration features {uri-issues}/152[#152]
-* [x] _Docs Site:_ Set up supplemental UI files {uri-docs-site-issues}/4[#4]
-* [x] _Docs Site:_ Connect Docs and project sites
-* [x] Add page ID and xref anatomy diagrams {uri-issues}/76[#76]
-* [x] Document release, versioning, and support policy {uri-issues}/14[#14]
-
-=== 1.0.0-alpha.6 (2018-02-09)
-
-* [x] Deep page reference that resolves to current page should produce same input as in-page reference {uri-issues}/158[#158]
-* [x] Calculate repository URL correctly {uri-issues}/157[#157]
-* [x] Fix default branch caching {uri-issues}/151[#151]
-* [x] Provide capability to customize/override UI templates {uri-issues}/147[#147]
-* [x] Pass site keys to UI model {uri-issues}/146[#146]
-* [x] Improve error message when local workspace path cannot be found {uri-issues}/119[#119]
-* [x] Set the edit URL property on files in the content catalog {uri-issues}/87[#87]
-* [x] Style links in footer {uri-ui-issues}/40[UI #40]
-* [x] Don't show edit the page link when page.editUrl is undefined {uri-ui-issues}/39[UI #39]
-* [x] Don't include URL path when linking to current page {uri-ui-issues}/38[UI #38]
-* [x] Add Google analytics tracking code when key is set in playbook {uri-ui-issues}/37[UI #37]
-* [x] Open menu item in navigation when menu item is clicked {uri-ui-issues}/36[UI #36]
-* [x] Add list-style none on inline (flex) lists {uri-ui-issues}/35[UI #35]
-* [x] Look for in-page links anywhere in page {uri-ui-issues}/34[UI #34]
-* [x] Fix menu scroll conflict with footer in Chrome {uri-ui-issues}/33[UI #33]
-* [x] Display nav list titles in menu and breadcrumbs {uri-ui-issues}/28[UI #28]
-* [x] Document AsciiDoc syntax {uri-issues}/148[#148], {uri-issues}/154[#154]
-* [x] Document site configuration keys {uri-issues}/142[#142]
-* [x] Document how to upgrade to latest Antora version {uri-issues}/140[#140]
-* [x] Document page structure {uri-issues}/131[#131]
-* [x] Document Windows installation instructions {uri-issues}/130[#130]
-* [x] Document output provider and path features {uri-issues}/127[#127]
-* [x] _Docs Site:_ Add site and UI keys to production playbook
-* [x] _Docs Site_: Set up automatic deployment to GitLab pages for docs.antora.org {uri-docs-site-issues}/2[#2]
-
-=== 1.0.0-alpha.5 (2018-02-01)
-
-* [x] Allow start page to be specified for the site {uri-issues}/136[#136]
-* [x] Architect and implement site mapper component {uri-issues}/108[#108], {uri-issues}/109[#109]
-* [x] Resolve paths in playbook relative to playbook file {uri-issues}/105[#105]
-* [x] Set up Antora chat room {uri-issues}/134[#134]
-
-=== 1.0.0-alpha.4 (2018-01-28)
-
-* [x] Set up CI build on Windows (AppVeyor) {uri-issues}/129[#129]
-* [x] Set up automated releases {uri-issues}/7[#7]
-* [x] Document release process
-
-=== 1.0.0-alpha.3 (2018-01-28)
-
-* [x] Document CLI commands and site, ui, and to-dir options {uri-issues}/126[#126]
-* [x] Document playbook start_path {uri-issues}/112[#112]
-* [x] Document component descriptor start_page {uri-issues}/110[#110]
-* [x] Content aggregator should only discover branches, not tags {uri-issues}/107[#107]
-* [x] Test and document evaluation install on Windows {uri-issues}/103[#103], {uri-issues}/128[#128]
-* [x] Test and document evaluation install on macOS {uri-issues}/102[#102]
-* [x] Allow current branch to be specified in playbook using a token {uri-issues}/84[#84]
-* [x] Architect and implement site publisher component {uri-issues}/74[#74], {uri-issues}/122[#122]
-* [x] _UI:_ Enable task list markers {uri-ui-issues}/29[#29]
-* [x] _Docs Site:_ Add UI component to docs.antora.org playbook {uri-docs-site-issues}/3[#3]
-* [x] _Docs Site:_ Set up docs.antora.org playbook {uri-docs-site-issues}/1[#1]
-* [x] Set up documentation component for UI {uri-ui-issues}/19[#19]
+See the {uri-changelog}[CHANGELOG] for a summary of notable features, functionality, and bug fixes that have already been released.
