@@ -5,15 +5,15 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] The purpose of an Antora playbook file.
+* [x] The purpose of an Antora playbook.
 * [x] Where the playbook file is located.
 * [x] The playbook file formats Antora accepts.
 //* [x] How a playbook drives an Antora pipeline.
 
-== What is an Antora playbook file?
+== What is an Antora playbook?
 
-An Antora playbook file makes it easy for technical writers to control what content is included in your site, what user interface (UI) is applied to it, and where the site is published using a playbook file.
-The settings in the playbook, in combination with CLI options and environment variables, tell Antora how to operate.
+An Antora playbook makes it easy for technical writers to control what content is included in your site, what user interface (UI) is applied to it, and where the site is published using a playbook file.
+The settings in the playbook file, in combination with CLI options and environment variables, tell Antora how to operate.
 
 Specifically, a playbook tells Antora:
 
@@ -25,7 +25,7 @@ Specifically, a playbook tells Antora:
 * [x] Where the site should be xref:configure-output.adoc[published and in what format].
 * [x] How and when Antora should handle xref:configure-runtime.adoc[source repository updates, artifact updates, and its cache].
 
-Additionally, certain playbook file settings can be overridden using xref:ROOT:cli.adoc[CLI options] or environment variables, which allows an operations team to tailor the behavior for specific environments, such as production.
+Additionally, certain settings in the playbook file can be overridden using xref:ROOT:cli.adoc[CLI options] or environment variables, which allows an operations team to tailor the behavior for specific environments, such as production.
 
 == Where is a playbook stored?
 
