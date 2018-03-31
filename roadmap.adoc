@@ -119,7 +119,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === v1.0.0
 
-* [ ] Document how to run and extend the Docker image for Antora {uri-issues}/211[#211]
+* [x] Document how to run and extend the Docker image for Antora {uri-issues}/211[#211]
 * [x] Move CLI documentation to its own module {uri-issues}/206[#206]
 * [ ] Move pages files into topic directory in AsciiDoc module and restructure navigation {uri-issues}/222[#222]
 
