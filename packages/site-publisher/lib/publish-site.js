@@ -41,7 +41,7 @@ async function publishSite (playbook, catalogs) {
   const output = playbook.output
   const destinations = getDestinations(output)
 
-  if (!destinations.length) return
+  if (!destinations.length) return []
 
   const clean = output.clean
   const publishers = destinations.map((destination) => {
@@ -67,9 +67,7 @@ async function publishSite (playbook, catalogs) {
     return accum
   }, [])
 
-  return Promise.all(publishers.map((publish) => publish(new ReadableOutputFileArray(files), playbook))).then(
-    () => undefined
-  )
+  return Promise.all(publishers.map((publish) => publish(new ReadableOutputFileArray(files), playbook)))
 }
 
 function getDestinations (output) {

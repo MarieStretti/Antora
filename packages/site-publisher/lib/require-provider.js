@@ -2,7 +2,7 @@
 
 const ospath = require('path')
 
-const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[${[...new Set(['/', ospath.sep])].join('').replace('\\', '\\\\')}]`)
+const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[/${ospath.sep.replace('/', '').replace('\\', '\\\\')}]`)
 
 /**
  * Generates a function to resolve and require a custom provider.

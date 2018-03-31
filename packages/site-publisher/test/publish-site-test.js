@@ -347,6 +347,34 @@ describe('publishSite()', () => {
       .and.be.empty()
   })
 
+  it('should return publish report for each destination', async () => {
+    playbook.output.destinations.push({ provider: 'fs' })
+    playbook.output.destinations.push({ provider: 'archive' })
+    const reports = await publishSite(playbook, catalogs)
+    expect(reports).to.have.lengthOf(2)
+    const fsReport = reports.find((report) => report.provider === 'fs')
+    expect(fsReport).to.exist()
+    const absFsPath = ospath.resolve(playbook.dir, DEFAULT_DEST_FS)
+    expect(fsReport).to.include({
+      path: DEFAULT_DEST_FS,
+      resolvedPath: absFsPath,
+      fileUri: 'file://' + (ospath.sep === '\\' ? '/' + absFsPath.replace(/\\/g, '/') : absFsPath),
+    })
+    const archiveReport = reports.find((report) => report.provider === 'archive')
+    expect(archiveReport).to.exist()
+    expect(archiveReport).to.include({
+      path: DEFAULT_DEST_ARCHIVE,
+      resolvedPath: ospath.resolve(playbook.dir, DEFAULT_DEST_ARCHIVE),
+    })
+    verifyFsOutput(DEFAULT_DEST_FS)
+    await verifyArchiveOutput(DEFAULT_DEST_ARCHIVE)
+  })
+
+  it('should return empty array if site is not published to any destinations', async () => {
+    const reports = await publishSite(playbook, catalogs)
+    expect(reports).to.be.empty()
+  })
+
   it('should publish site to fs at destination path override when another destination is specified', async () => {
     const destDir = './output'
     playbook.output.destinations.push(Object.freeze({ provider: 'archive' }))

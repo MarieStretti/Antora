@@ -8,7 +8,7 @@ const configSchema = require('@antora/playbook-builder/lib/config/schema')
 const ospath = require('path')
 const solitaryConvict = require('@antora/playbook-builder/lib/solitary-convict')
 
-const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[${[...new Set(['/', ospath.sep])].join('').replace('\\', '\\\\')}]`)
+const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[/${ospath.sep.replace('/', '').replace('\\', '\\\\')}]`)
 const { version: VERSION } = require('../package.json')
 
 async function run () {

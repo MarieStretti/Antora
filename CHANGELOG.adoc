@@ -5,6 +5,14 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Changed
+
+* *site-publisher*: The publishSite function returns an array of report objects collected from calling the destination providers
+* *site-publisher*: The destination provider functions are expected to return a report object
+* *site-publisher*: The built-in destination providers (fs and archive) return a report object that contains publishing information
+
 == 1.0.0-rc.2 (2018-03-30)
 
 === Added
