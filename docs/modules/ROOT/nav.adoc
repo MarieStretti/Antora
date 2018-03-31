@@ -13,7 +13,7 @@
 * xref:run-antora-to-generate-site.adoc[Run Antora]
 ** xref:run-antora-to-generate-site.adoc#local-site-preview[Local Preview]
 ** xref:run-antora-to-generate-site.adoc#cache[Cache]
-** xref:cli.adoc[CLI Reference]
+** xref:cli:index.adoc[CLI Reference]
 
 * xref:component-structure.adoc[File Organization]
 ** xref:modules.adoc[Modules]

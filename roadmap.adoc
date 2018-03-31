@@ -120,7 +120,7 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 === v1.0.0
 
 * [ ] Document how to run and extend the Docker image for Antora {uri-issues}/211[#211]
-* [ ] Move CLI documentation to its own module {uri-issues}/206[#206]
+* [x] Move CLI documentation to its own module {uri-issues}/206[#206]
 * [ ] Move pages files into topic directory in AsciiDoc module and restructure navigation {uri-issues}/222[#222]
 
 === Unscheduled
@@ -141,13 +141,15 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 * [ ] Document how to integrate external Javascript files with the UI
 * [ ] Document maintenance and bug fix priority policies on antora.org
 * [ ] Document release schedule on project site
-* [ ] Document list of environment variables to usage
+* [ ] Document list of environment variables as page (or as appropriate) in CLI module
 * [ ] Make Get Antora a category landing page
 * [ ] Set up a What's New? in the Docs
 * [ ] Create community participation guidelines
 * [ ] Add changelog system to Docs
 * [ ] Add contributing guide to Docs
 * [ ] Remove most documentation-type content from README and replace with links to the appropriate Docs pages
+// https://gitlab.com/antora/antora/issues/206#note_63768866
+* [ ] Partition the CLI options into two tables, general options and generate options
 
 == Antora Default UI
 

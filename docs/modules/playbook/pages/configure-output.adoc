@@ -26,7 +26,7 @@ A relative path will be expanded to an absolute path.
 * If the first path segment is `~+`, or does not begin with an aforementioned prefix, the path is resolved relative to the current working directory.
 
 IMPORTANT: The dir key overrides the path key of the first `fs` provider specified in the destinations key.
-This allows the output directory to be overridden from the xref:ROOT:cli.adoc[CLI] using the `--to-dir=<dir>` option.
+This allows the output directory to be overridden from the xref:cli:index.adoc[CLI] using the `--to-dir=<dir>` option.
 
 === Default output dir
 
