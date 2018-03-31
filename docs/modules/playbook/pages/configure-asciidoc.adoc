@@ -17,6 +17,7 @@ On this page, you'll learn:
 * [x] How to register an Asciidoctor extension that's scoped to each page.
 * [x] How to preload modules into the Antora runtime.
 
+[#attrs]
 == Global document attributes
 
 If you find yourself defining the same AsciiDoc document attributes over and over in every page, you can move these attributes to the playbook, where you only have to define them once.
@@ -91,6 +92,7 @@ Now, any page can override this attribute as follows:
 
 Unfortunately, it's not currently possible to soft unset an attribute.
 
+[#extensions]
 == Asciidoctor extensions
 
 The `asciidoc` category can also used for registering Asciidoctor extensions.

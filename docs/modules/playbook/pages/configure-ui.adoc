@@ -2,8 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:idprefix:
-:idseparator: -
 :uri-zip-file-format: https://en.wikipedia.org/wiki/Zip_(file_format)
 
 On this page, you'll learn:

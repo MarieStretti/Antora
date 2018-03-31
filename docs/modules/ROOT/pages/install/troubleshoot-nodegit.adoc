@@ -2,10 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
 // URIs
 :uri-nodegit: http://www.nodegit.org
 :uri-nodegit-dev: http://www.nodegit.org/guides/install/from-source
@@ -63,6 +59,6 @@ Be aware that recompiling nodegit will make installation take considerably longe
 
 Now that the default Antora site generator is installed, you are ready to:
 
-* Set up a xref:playbook:playbook.adoc[playbook] or use the Demo playbook.
+* Set up a xref:playbook:index.adoc[playbook] or use the Demo playbook.
 * Organize a xref:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
 * xref:run-antora-to-generate-site.adoc[Run Antora] and generate a documentation site.

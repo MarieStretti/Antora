@@ -2,7 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:test-count: over 750
+:test-count: over 780
 // URIs
 :uri-repo: https://gitlab.com/antora/antora
 :uri-issues: {uri-repo}/issues
@@ -30,26 +30,26 @@ While we only continuously test Antora on Alpine, Debian, and Fedora, it should 
 
 |Alpine Linux
 |[%hardbreaks]
-3.6
 3.7
+3.6
 
 |Debian Linux
 |9.3
 
 |Fedora Linux
 |[%hardbreaks]
-26
 27
+26
 
 |macOS
 |High Sierra
 
 |Microsoft
 |[%hardbreaks]
-Windows 8.1
 Windows 10
-Windows Server 2012 R2
+Windows 8.1
 Windows Server 2016
+Windows Server 2012 R2
 
 |Chrome
 |Latest stable version

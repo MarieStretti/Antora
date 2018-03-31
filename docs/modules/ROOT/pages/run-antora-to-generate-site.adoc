@@ -2,11 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:experimental:
-:linkattrs:
 // URIs
 :uri-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/site.yml
 :uri-ssh-key: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
@@ -14,9 +9,9 @@ endif::[]
 Assumptions:
 
 * [x] You've xref:install/install-antora.adoc[installed the Antora CLI and a site generator pipeline].
-* [x] You have your own xref:playbook:playbook.adoc[playbook], or you're using the Demo playbook.
+* [x] You have your own xref:playbook:index.adoc[playbook], or you're using the Demo playbook.
 * [x] Your playbook is configured to access at least one of your own  xref:component-structure.adoc[documentation component repositories] or Antora's Demo docs components.
-* [x] Your playbook is configured to use a custom UI bundle or Antora's default UI bundle.
+* [x] Your playbook is configured to use a xref:playbook:configure-ui.adoc[custom UI bundle or Antora's default UI bundle].
 
 On this page, you'll learn:
 

@@ -1,27 +1,57 @@
-= Site Configuration
+= The Antora Playbook
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
-The behavior of Antora is determined by a runtime configuration object called a [.term]_playbook_.
-As the site author, you populate the playbook using a playbook configuration file, or [.term]_playbook file_ for short.
-You can override certain settings specified in the playbook file using CLI options and environment variables.
-These settings get compiled to make the playbook.
+On this page, you'll learn:
 
-Let's begin by learning what inputs, outputs, and behaviors the playbook file can control.
+* [x] The purpose of an Antora playbook file.
+* [x] Where the playbook file is located.
+* [x] The playbook file formats Antora accepts.
+//* [x] How a playbook drives an Antora pipeline.
 
-== Playbook File
+== What is an Antora playbook file?
 
-include::{partialsdir}/playbook-summary.adoc[]
+An Antora playbook file makes it easy for technical writers to control what content is included in your site, what user interface (UI) is applied to it, and where the site is published using a playbook file.
+The settings in the playbook, in combination with CLI options and environment variables, tell Antora how to operate.
 
-== Playbook Project
+Specifically, a playbook tells Antora:
+
+* [x] What information should be applied to the xref:configure-site.adoc[site globally], such as its title, base URL, and service integrations.
+* [x] The page that sits at the root of the site (i.e., xref:configure-site.adoc#configure-start-page[home or landing page content]).
+* [x] Which xref:configure-content-sources.adoc[content repositories, branches, and tags] to feed into Antora.
+* [x] What xref:configure-asciidoc.adoc#attrs[AsciiDoc document attributes] and xref:configure-asciidoc.adoc#extensions[Asciidoctor extensions] should be applied site wide.
+* [x] Which xref:configure-ui.adoc[UI bundle] to use to control the visual layout, style, and behavior of the pages.
+* [x] Where the site should be xref:configure-output.adoc[published and in what format].
+* [x] How and when Antora should handle xref:configure-runtime.adoc[source repository updates, artifact updates, and its cache].
+
+Additionally, certain playbook file settings can be overridden using xref:ROOT:cli.adoc[CLI options] or environment variables, which allows an operations team to tailor the behavior for specific environments, such as production.
+
+== Where is a playbook stored?
 
 include::{partialsdir}/playbook-project-summary.adoc[]
 
+== Playbook file formats
+
+Playbooks can be written in YAML, JSON, and CSON.
+
+YAML is a common configuration language for defining automated tasks.
+Most of the playbook examples in this documentation use YAML since it's less verbose than JSON and CSON.
+
+Regardless of the format, a playbook contains structured xref:playbook-schema.adoc[categories and keys] for specifying general site properties, content and UI input sources, and published output destinations and providers.
+
 == What's next?
 
-* Select a xref:playbook.adoc[playbook file format and storage location].
-* Get a quick overview of all the xref:playbook-schema.adoc[properties you can use to configure your site].
+* Get a quick overview of all the xref:playbook-schema.adoc[category properties you can use to configure your site].
+
+//== How is a playbook created?
+
+//== How does Antora get a playbook?
+
+////
+== Why does Antora need a playbook?
+
+A playbook is the configuration object for Antora.
+It tells an Antora pipeline what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
+The playbook is populated using a combination of a playbook file, CLI options, and environment variables.
+////
