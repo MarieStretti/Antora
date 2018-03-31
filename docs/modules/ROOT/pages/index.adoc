@@ -83,7 +83,7 @@ This is a sharp contrast to many other site generators that intermix all of thes
 If you're just beginning your journey with Antora, you'll probably want to know xref:features.adoc[how Antora can help you].
 
 If you're ready to set up a new documentation project or migrate an existing project to use with Antora, start by xref:component-structure.adoc[organizing your documentation files] for use with Antora.
-You'll then need to xref:playbook:playbook.adoc[create a playbook] to tell Antora where to find your documentation and UI for making your site.
+You'll then need to xref:playbook:index.adoc[create a playbook] to tell Antora where to find your documentation and UI for making your site.
 
 If you already have a documentation component set up and you're ready to create your first site, check that you've met Antora's xref:supported-platforms.adoc[system requirements], xref:install/install-antora.adoc[install Antora], and then xref:run-antora-to-generate-site.adoc[generate your site] using Antora.
 

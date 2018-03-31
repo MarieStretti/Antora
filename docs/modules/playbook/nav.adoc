@@ -1,4 +1,4 @@
-* xref:playbook.adoc[Playbook]
+* xref:index.adoc[Playbook]
 //*** xref:playbook-formats.adoc[File Formats]
 ** xref:playbook-schema.adoc[Configuration Schema]
 *** xref:configure-site.adoc[Site]
