@@ -23,7 +23,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-nvm-windows: https://github.com/coreybutler/nvm-windows
 :uri-opendevise: https://opendevise.com
 // Versions:
-:version-node: 8.10.0
+:version-node: 8.11.1
 
 ifdef::badges[]
 image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
@@ -102,7 +102,8 @@ Once you've installed nvm, open a *new* terminal and install Node 8 using:
 
  $ nvm install 8
 
-IMPORTANT: If you're using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
+IMPORTANT: If you're using nvm for Windows, you must enter the full version of Node when running commands (e.g., `nvm install {version-node}`, `nvm use {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
+Run `nvm list available` for a list of all available Node versions.
 
 Switch to this version of Node using the following command:
 
