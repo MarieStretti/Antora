@@ -14,7 +14,7 @@ const ospath = require('path')
 const { posix: path } = ospath
 const resolveIncludeFile = require('./include/resolve-include-file')
 
-const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[${[...new Set(['/', ospath.sep])].join('').replace('\\', '\\\\')}]`)
+const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[/${ospath.sep.replace('/', '').replace('\\', '\\\\')}]`)
 const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
 
 /**
