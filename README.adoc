@@ -4,6 +4,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :badges:
 // Project URIs:
 :uri-project: https://antora.org
+:uri-docs: https://docs.antora.org
 :uri-repo: https://gitlab.com/antora/antora
 :uri-issues: {uri-repo}/issues
 :uri-ci-pipelines: {uri-repo}/pipelines
@@ -34,12 +35,12 @@ endif::[]
 
 Antora's toolchain and workflow help documentation and engineering teams create, manage, collaborate on, remix, and publish documentation sites sourced from multiple versioned git repositories without needing expertise in web technologies, build automation, or system administration.
 
-This project includes a command-line interface (CLI) and a preassembled site generator pipeline so you can quickly start publishing documentation sites with Antora.
+This project includes a command line interface (CLI) and a preassembled site generator pipeline so you can quickly start publishing documentation sites with Antora.
 
 == Quickstart
 
 This section offers a basic tutorial for evaluating Antora.
-A more comprehensive tutorial will be in the documentation.
+More comprehensive installation instructions are in the {uri-docs}[Antora documentation].
 
 === Prerequisites
 
@@ -63,7 +64,7 @@ If you're running Linux, select the appropriate base build tools package for you
 * Arch Linux: `pacman -S base-devel`
 * Alpine Linux*: `apk add g++ libressl-dev make python curl-dev`
 
-{asterisk} To use Antora on Alpine Linux, you must force nodegit to be recompiled using BUILD_ONLY=true (see below).
+{asterisk} To use Antora on Alpine Linux, you must force nodegit to be recompiled using BUILD_ONLY=true (see instructions below).
 
 If you're running macOS, you need the https://railsapps.github.io/xcode-command-line-tools.html[Xcode command line tools].
 Even if you've installed these tools in the past, it's good to do it again.
@@ -80,7 +81,7 @@ Once you have these tools installed, you can expect the remaining installation t
 Antora requires Node 8, the current long-term support (LTS) release of Node.
 While you can try Node 9, Antora is not currently tested on it.
 
-To consult which version of Node you have installed, if any, open a terminal and type:
+To determine which version of Node you have installed, if any, open a terminal and type:
 
  $ node --version
 
@@ -131,13 +132,13 @@ Verify the `antora` command is available on your PATH by running:
 
  $ antora -v
 
-If installation worked, this command should complete successfully and report the version of Antora.
+If the installation worked, this command should complete successfully and report the version of the Antora CLI.
 
 Next, install the default Antora site generator using npm (or Yarn):
 
  $ npm install -g @antora/site-generator-default
 
-You can opt to install the site generator inside the project containing your playboook file instead of installing it globally.
+You can opt to install the site generator inside the project containing your playbook file instead of installing it globally.
 
 .Troubleshooting nodegit Installation
 [CAUTION]
@@ -186,8 +187,8 @@ Now that the Antora CLI and default site generator are installed, you are ready 
 === Run Antora to Generate a Site
 
 To generate a site with Antora, you need a playbook file that points to at least one content source repository and a UI bundle.
-Since the Antora repository is set up as an Antora documentation project, we can use that for now as our content source.
-Antora also provides a default UI for us to use out of the box.
+Since the Antora repository is set up as an Antora documentation project, we can use that for now as your content source.
+Antora also provides a default UI for you to use out of the box.
 
 ==== Create a Playbook File
 
@@ -219,17 +220,32 @@ If you want to use your own UI bundle, follow the instructions in the README for
 
 ==== Run Antora
 
-To generate the site, you simply point the `antora` command at your playbook file.
+To generate the site, simply point the `antora` command at your playbook file.
 
 In your terminal, type:
 
  $ antora site.yml
 
-Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in the page template from the UI, then assemble the pages together with the assets under the destination folder, which defaults to [.path]_build/site_.
+Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in a page template from the UI, then assemble the pages together along with the assets into the destination folder, which defaults to [.path]_build/site_.
 
-To view the site, navigate to any HTML page inside the destination folder in your browser.
-Using this example, look for the file [.path]_build/site/index.html_.
+To view your site, navigate to any HTML page inside the destination folder in your browser.
+Using this example, look for the entry point file [.path]_build/site/index.html_.
 That file will redirect you to the start page.
+
+==== Troubleshooting
+
+If something goes wrong during generation, you'll see an error message in the terminal.
+
+....
+error: a message that summarizes what went wrong
+....
+
+If this message does not provide enough information to fix the problem, you can ask Antora for more context.
+To tell Antora to reveal the calls leading up to the error (i.e., the stacktrace), run the `antora` command again, this time with the `--stacktrace` option:
+
+ $ antora --stacktrace site.yml
+
+Share this stacktrace when <<Getting Help,asking for help>>.
 
 ==== Changing Content
 
@@ -354,12 +370,12 @@ Major releases require architecture, implementation, and QA iterations that are 
 
 === Support
 
-Major versions of the Antora Core components are maintained for at least 1 year after the initial public stable release.
+Major versions of the Antora Core components are maintained for at least 1 year after the {uri-docs}/antora/1.0/project/version-and-lifecycle-policies[initial public stable release].
 Only the latest minor release for a major release will receive maintenance releases.
 
 == Copyright and License
 
-Copyright (C) 2017-2018 OpenDevise Inc. and individual Antora Project contributors.
+Copyright (C) 2017-2018 by OpenDevise Inc. and the individual contributors to Antora.
 
 Use of this software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).
 See link:LICENSE[] to find the full license text.

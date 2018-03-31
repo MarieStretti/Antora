@@ -15,7 +15,7 @@ Assumptions:
 
 On this page, you'll learn:
 
-* [x] How to run the default Antora pipeline.
+* [x] How to run Antora and generate a site.
 * [x] Where files are cached.
 * [x] How to update the cache.
 * [x] How to preview a generated site locally.
@@ -34,19 +34,17 @@ The instructions and examples on this page will show you how to operate Antora w
 == Choose a Playbook
 
 To produce a documentation site, Antora needs a playbook.
-First, you'll need to create or choose a directory where you'll store the playbook and where the generated site files will be saved (assuming you use the default output configuration).
+But first, you'll need to create or choose a directory where you'll store the playbook and where the generated site files will be saved (assuming you use the default output configuration).
 
 For the examples on this page, we'll use the Demo materials.
 
 . Open a terminal and make a new directory named [.path]_demo-site_.
-+
-[source]
-$ mkdir demo-site
+
+ ~ $ mkdir demo-site
 
 . Switch (`cd`) into the directory you just made.
-+
-[source]
-$ cd demo-site
+
+ ~ $ cd demo-site
 
 . Using your preferred text editor or IDE, create a new playbook file named [.path]_site.yml_ and populate it with the contents of the following example.
 You can also download {uri-demo-playbook}[the Demo site playbook] from the Demo repository.
@@ -75,46 +73,75 @@ ui:
 
 == Run Antora
 
-. To generate the site with the default site generator pipeline, point the `antora` command at your playbook file.
+. To generate the site with the default Antora site generator, point the `antora` command at your playbook file.
 In the terminal, type:
 +
-[source]
-demo-site $ antora site.yml
-+
+--
+ demo-site $ antora site.yml
+
 First, Antora will clone the content repositories.
 The cloning progress of each repository is displayed in the terminal.
-+
+
 .Repository cloning progress
-[source]
-----
+....
 [clone] https://gitlab.com/antora/demo/demo-component-a.git [################]
 [clone] https://gitlab.com/antora/demo/demo-component-b.git [################]
-----
-+
+....
+
 Once cloning is complete, Antora converts the AsciiDoc pages to embeddable HTML, wraps the HTML in the UI page templates, then assembles the pages into a site under the destination folder, which defaults to _build/site_.
+--
 
 . Antora has completed generation when the command prompt (`$`) reappears in the terminal.
++
+[TIP]
+====
+If something goes wrong during generation, you'll see an error message in the terminal.
+
+....
+error: a message that summarizes what went wrong
+....
+
+If this message does not provide enough information to fix the problem, you can ask Antora for more context.
+To tell Antora to reveal the calls leading up to the error (i.e., the stacktrace), run the `antora` command again, this time with the `--stacktrace` option:
+
+ demo-site $ antora --stacktrace site.yml
+
+Share this stacktrace when xref:project/get-help.adoc[asking for help].
+====
 
 . Switch into the site folder (`cd`) and list (`ls`) its contents.
 +
-[source]
-----
-demo-site $ cd build/site/
-site $ ls
-_  component-a  component-b  index.html  sitemap-component-a.xml sitemap-component-b.xml  sitemap.xml
-----
-+
-You should see the first page of your documentation site, in this case [.path]_index.html_.
+--
+ demo-site $ cd build/site/
 
-. In some operating systems, you can open the site directly from the command line by typing `open`, followed by the name of the HTML file.
+Inside the [.path]_build/site_ folder, run:
+
+ site $ ls -1
+
+You should see the following list of files:
+
+....
+_
+404.html
+component-a
+component-b
+index.html
+sitemap-component-a.xml
+sitemap-component-b.xml
+sitemap.xml
+....
+
+This list includes the entry point of your documentation site, [.path]_index.html_.
+--
+
+. On some operating systems, you can open the site directly from the command line by typing `open`, followed by the name of the HTML file.
 +
-[source]
-----
-site $ open index.html
-----
-+
+--
+ site $ open index.html
+
 Or, you can navigate to an HTML page inside the destination folder in your browser.
-If you've been following along with the Demo materials, look for the file `/demo-site/build/site/index.html`.
+If you've been following along with the Demo materials, once you find the demo-site directory, navigate to the file [.path]_build/site/index.html_.
+--
 
 [#cache]
 === Cache
@@ -159,18 +186,19 @@ You can use the serve package for this purpose.
 
 Install the serve package globally using npm:
 
-[source]
-$ npm i -g serve
+ demo-site $ npm i -g serve
 
 That puts a command by the same name on your PATH.
 Now launch the web server by pointing it at the location of the generated site.
 In the terminal, type `serve build/site`.
 After executing the command, a the local address should be displayed in your terminal.
 
-[source]
-----
-demo-site $ serve build/site
+ demo-site $ serve build/site
 
+You should see the following output in your terminal.
+
+[.output]
+....
    ┌─────────────────────────────────────────────────┐
    │                                                 │
    │   Serving!                                      │
@@ -181,9 +209,11 @@ demo-site $ serve build/site
    │   Copied local address to clipboard!            │
    │                                                 │
    └─────────────────────────────────────────────────┘
-----
+....
 
 Paste the provided URL into the location bar of your browser to view your site through a local web server.
+
+Press kbd:[Ctrl,C] to stop the server.
 
 ////
 When generation is complete, you'll see a URL in the terminal that is specific to your machine.
