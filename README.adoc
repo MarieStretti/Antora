@@ -103,7 +103,7 @@ Once you've installed nvm, open a *new* terminal and install Node 8 using:
  $ nvm install 8
 
 IMPORTANT: If you're using nvm for Windows, you must enter the full version of Node when running commands (e.g., `nvm install {version-node}`, `nvm use {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
-Run `nvm list available` for a list of all available Node versions.
+Run `nvm list available` to see a list of available Node versions.
 
 Switch to this version of Node using the following command:
 
