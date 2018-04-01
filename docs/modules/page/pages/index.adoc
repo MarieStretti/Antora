@@ -2,6 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+:keywords: Antora file, Antora site page
 
 On this page, you'll learn:
 
@@ -9,7 +10,7 @@ On this page, you'll learn:
 * [x] How Antora handles an [.path]_index.adoc_ file stored in the ROOT module of a component.
 
 Antora generates site pages from AsciiDoc files.
-AsciiDoc files are text files marked up with the AsciiDoc syntax and saved with the file extension `.adoc`.
+AsciiDoc files are text files marked up with the xref:asciidoc:asciidoc.adoc[AsciiDoc syntax] and saved with the file extension `.adoc`.
 
 Whether Antora automatically processes an AsciiDoc file depends on where it is stored in a documentation component.
 
@@ -29,8 +30,8 @@ Learn more:
 
 * xref:create-standard-page.adoc[Create a standard page]
 * xref:asciidoc:include-content.adoc#include-page[Insert a standard page into another page]
-* xref:modules.adoc#pages-dir[The _pages_ directory]
-* xref:component-structure.adoc[Documentation component overview]
+* xref:ROOT:modules.adoc#pages-dir[The _pages_ directory]
+* xref:ROOT:component-structure.adoc[Documentation component overview]
 * xref:navigation:link-syntax-and-content.adoc#page[Add a page xref to a navigation file]
 
 [#partial]
@@ -46,9 +47,9 @@ When you change the content in a partial, those changes will be disseminated to 
 Learn more:
 
 //* Create a partial page
-* xref:modules.adoc#partials-dir[The _{blank}_partials_ directory]
+* xref:ROOT:modules.adoc#partials-dir[The _{blank}_partials_ directory]
 * xref:asciidoc:include-content.adoc#include-partial[Insert a partial into a standard page]
-* xref:component-structure.adoc[Documentation component overview]
+* xref:ROOT:component-structure.adoc[Documentation component overview]
 
 == Component index page
 
@@ -59,10 +60,10 @@ component:ROOT:index.adoc => site.com/component/index.html
 Learn more:
 
 //* Create a component index page
-* xref:component-descriptor.adoc#start-page-key[Use another page to act as a component's start page]
+* xref:ROOT:component-descriptor.adoc#start-page-key[Use another page to act as a component's start page]
 
 //* html extension options
-* xref:modules.adoc#root-dir[The ROOT directory]
+* xref:ROOT:modules.adoc#root-dir[The ROOT directory]
 
 // TIP: see the html strategies for dropping the html and index for URLs
 

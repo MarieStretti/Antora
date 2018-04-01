@@ -2,14 +2,9 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:experimental:
-:linkattrs:
-// URIs
-:uri-choco: https://chocolatey.org
-:uri-nvm-windows: https://github.com/coreybutler/nvm-windows
+// URLs
+:url-choco: https://chocolatey.org
+:url-nvm-windows: https://github.com/coreybutler/nvm-windows
 // Versions:
 :version-node: 8.10.0
 
@@ -45,7 +40,7 @@ Go directly to <<upgrade-node,upgrade Node>> for instructions.
 [#install-choco]
 == Install Chocolatey
 
-The best way to install the Node Version Manager (nvm) and Node is with {uri-choco}[Chocolatey^], the package manager for Windows.
+The best way to install the Node Version Manager (nvm) and Node is with {url-choco}[Chocolatey^], the package manager for Windows.
 
 . Open a PowerShell terminal and run it as an Administrator by right clicking on the PowerShell icon and selecting menu:Run as Administrator[].
 
@@ -63,7 +58,7 @@ TIP: If you just installed Chocolatey using the instructions in the proceeding s
 
 . Open a PowerShell terminal, right click on the PowerShell icon, and select menu:Run as Administrator[].
 
-. To install the {uri-nvm-windows}[Node Version Manager (nvm) for Windows^], enter the following command in the terminal:
+. To install the {url-nvm-windows}[Node Version Manager (nvm) for Windows^], enter the following command in the terminal:
 +
 [source]
 $ choco install -y nvm
@@ -75,7 +70,7 @@ $ choco install -y nvm
 [source,subs=attributes+]
 $ nvm install {version-node}
 +
-IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
+IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
 
 Now that Node is installed, you're ready to xref:install/install-antora.adoc[install Antora].
 
@@ -98,7 +93,7 @@ If you have nvm installed but your Node version is less than 8.0.0, type the fol
 [source,subs=attributes+]
 $ nvm install {version-node}
 
-IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
+IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
 
 Now that you've upgraded Node, you're ready to xref:install/install-antora.adoc[install Antora].
 

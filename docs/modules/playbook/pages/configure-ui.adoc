@@ -2,7 +2,8 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:uri-zip-file-format: https://en.wikipedia.org/wiki/Zip_(file_format)
+// URLs
+:url-zip-file-format: https://en.wikipedia.org/wiki/Zip_(file_format)
 
 On this page, you'll learn:
 
@@ -16,7 +17,7 @@ These keys define the location of the UI and control how it should be processed.
 
 == UI bundle
 
-The URL key (`url`) under the `bundle` subcategory defines the location Antora should look to find a UI archive in {uri-zip-file-format}[ZIP] format (i.e., UI bundle).
+The URL key (`url`) under the `bundle` subcategory defines the location Antora should look to find a UI archive in {url-zip-file-format}[ZIP] format (i.e., UI bundle).
 The key accepts a URL or a filesystem path.
 
 [#remote-bundle]

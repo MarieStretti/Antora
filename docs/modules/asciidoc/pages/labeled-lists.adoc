@@ -2,14 +2,10 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-labeled: {uri-adoc-manual}/#labeled-list
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-labeled: {url-adoc-manual}/#labeled-list
 
 On this page, you'll learn:
 
@@ -49,4 +45,4 @@ The description of each item is displayed below the label when rendered.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-labeled}[Basic and complex labeled lists^]
+* {url-labeled}[Basic and complex labeled lists^]

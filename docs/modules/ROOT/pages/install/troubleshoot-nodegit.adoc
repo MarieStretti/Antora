@@ -2,11 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// URIs
-:uri-nodegit: http://www.nodegit.org
-:uri-nodegit-dev: http://www.nodegit.org/guides/install/from-source
+// URLs
+:url-nodegit: http://www.nodegit.org
+:url-nodegit-dev: http://www.nodegit.org/guides/install/from-source
 
-Antora interfaces with git repositories using {uri-nodegit}[nodegit^].
+Antora interfaces with git repositories using {url-nodegit}[nodegit^].
 During installation of the site generator, Antora pulls in nodegit as a dependency and installs it automatically.
 If your Antora installation fails, nodegit is the most probable culprit.
 

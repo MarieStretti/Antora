@@ -117,12 +117,6 @@ For current demo tasks, see the Demo materials {uri-demo-issues}[issue tracker].
 
 For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tracker].
 
-=== v1.0.0
-
-* [x] Document how to run and extend the Docker image for Antora {uri-issues}/211[#211]
-* [x] Move CLI documentation to its own module {uri-issues}/206[#206]
-* [ ] Move pages files into topic directory in AsciiDoc module and restructure navigation {uri-issues}/222[#222]
-
 === Unscheduled
 
 * [ ] Switch docs.antora.org publishing to netlify and automate https certificate renewal

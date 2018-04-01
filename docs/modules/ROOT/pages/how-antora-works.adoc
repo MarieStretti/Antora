@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
 Antora's default site generator handles all aspects of creating a documentation site, from fetching and aggregating to converting and arranging the content to publishing the files of the generated site.
@@ -12,7 +9,7 @@ This page describes that process in detail.
 
 The default pipeline is opinionated to get you started as quickly as possible.
 But understand that Antora features a modular, open architecture.
-That means this architecture can accomodate specialized use cases by allowing custom components, such as a validators, to be inserted into the pipeline at strategic points as needed.
+That means this architecture can accommodate specialized use cases by allowing custom components, such as a validators, to be inserted into the pipeline at strategic points as needed.
 This page focuses on the core, built-in components and capabilities in Antora.
 
 == Steps in the Default Generator Pipeline
@@ -25,7 +22,7 @@ Read playbook::
 When you're ready to generate a site, you give Antora a playbook and tell it to run.
 The pipeline loads and reads the playbook.
 +
-A xref:playbook:playbook.adoc[playbook is a configuration file], written in YAML, JSON, or CSON, that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
+A xref:playbook:index.adoc[playbook is a configuration file], written in YAML, JSON, or CSON, that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
 
 Locate content repositories and branches::
 Using the xref:playbook:configure-content-sources.adoc[content source URLs and branch names] listed in the playbook, Antora searches for and locates the specified repositories and branches.
@@ -62,7 +59,7 @@ Antora further sorts the aggregated files into a content catalog that can be que
 
 // add pages xref when page is available
 Convert AsciiDoc files to embeddable HTML::
-The AsciiDoc files in the xref:pages.adoc[page family] of the content catalog are converted to embeddable HTML with Asciidoctor.js.
+The AsciiDoc files in the xref:page:index.adoc[page family] of the content catalog are converted to embeddable HTML with Asciidoctor.js.
 
 Convert navigation files::
 Antora retrieves xref:navigation:index.adoc[navigation files] from the content catalog, translates their contents into navigation items organized in a specified hierarchy (navigation trees grouped inside a navigation menu), and returns a navigation model.

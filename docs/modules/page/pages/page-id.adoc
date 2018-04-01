@@ -2,9 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 //Antora's page IDs are one of its foundational elements.
 
@@ -22,7 +19,7 @@ We call a page's "`number`" a page identifier, or page ID for short.
 
 The page ID is unique and stable because it is constructed from the properties of the source document.
 
-A page ID is based on a documentation component's xref:component-structure.adoc[standard project structure].
+A page ID is based on a documentation component's xref:ROOT:component-structure.adoc[standard project structure].
 Documentation components ensure that each page lives in a defined, describable location.
 From this structure, each location derives unique, reliable coordinates we can use to refer to it.
 
@@ -45,10 +42,10 @@ These coordinates are organize in a standard structure to create a unique, fully
 
 image::page-id-anatomy-diagram.svg[Page ID anatomy,600]
 
-For example, this is the fully-qualified page ID for this page.
+For example, this is the fully-qualified page ID for the "`How Antora Works`" page, which is located in the ROOT module of the Antora docs component.
 
 [source,asciidoc]
-1.0@antora:ROOT:page-id.adoc
+1.0@antora:ROOT:how-antora-works.adoc
 
 == How is a page referenced with its ID?
 
@@ -59,17 +56,17 @@ image::xref-macro-anatomy-diagram.svg[Page reference anatomy,780]
 Here's how that looks in practice:
 
 [source,asciidoc]
-Learn all about xref:1.0@antora:ROOT:page-id.adoc[page IDs].
+Learn all about xref:1.0@antora:ROOT:how-antora-works.adoc[the Antora pipeline].
 
 Specifying the version, component, and even module every time seems like overkill, right?
 Don't worry, there's a shorthand.
 
 For instance, if you're linking to a page in the same module as the page you're linking from, all you need to do is specify the `page` coordinate.
-The next example shows a cross reference from this page ([.path]_page-id.adoc_) to the [.path]_create-standard-page.adoc_ page.
+The next example shows a cross reference from the "`How Antora Works`"  page ([.path]_how-antora-works.adoc_) to the "`Run Antora`" page ([.path]_run-antora.adoc_).
 Both of these pages live in the same component and module.
 
 [source,asciidoc]
-Let's create a xref:create-standard-page.adoc[new page].
+Let's xref:run-antora.adoc[run Antora]!
 
 A whole range of examples, from linking between different components to linking to different versions of a page, are explained in xref:asciidoc:page-to-page-xref.adoc[page cross references].
 

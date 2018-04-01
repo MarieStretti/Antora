@@ -2,16 +2,12 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
-// External URLs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
-:uri-hosted-video: {uri-adoc-manual}/#video
-:uri-shared-video: {uri-adoc-manual}/#youtube-and-vimeo-videos
-:uri-video-attrs: {uri-adoc-manual}/#supported-attributes
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
+:url-hosted-video: {url-adoc-manual}/#video
+:url-shared-video: {url-adoc-manual}/#youtube-and-vimeo-videos
+:url-video-attrs: {url-adoc-manual}/#supported-attributes
 
 On this page, you'll learn:
 
@@ -23,7 +19,7 @@ On this page, you'll learn:
 You can embed self-hosted videos or videos shared on YouTube and Vimeo.
 
 Video format support is dictated by the user's browser and/or system.
-For a list of the web video formats each browser supports, see the {uri-video-formats}[Mozilla Developer Supported Media Formats documentation^].
+For a list of the web video formats each browser supports, see the {url-video-formats}[Mozilla Developer Supported Media Formats documentation^].
 
 TIP: Insert animated GIFs with the xref:insert-image.adoc[image macro].
 
@@ -50,6 +46,6 @@ video::rPQoq7ThGAU[youtube]
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-hosted-video}[The AsciiDoc video macro^]
-* {uri-shared-video}[Embed Youtube and Vimeo videos^]
-* {uri-video-attrs}[Video macro options and attributes^]
+* {url-hosted-video}[The AsciiDoc video macro^]
+* {url-shared-video}[Embed Youtube and Vimeo videos^]
+* {url-video-attrs}[Video macro options and attributes^]

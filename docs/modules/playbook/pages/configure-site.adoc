@@ -49,11 +49,11 @@ When the site is generated, the component, version, module, and page URL segment
 You can use a page from a documentation component as the index page for your site.
 When a start page is specified, visitors are redirected from the site's base URL index page to the URL of the start page.
 
-The start page key (`start_page`) accepts a xref:ROOT:page-id.adoc[page ID] as a value.
+The start page key (`start_page`) accepts a xref:page:page-id.adoc[page ID] as a value.
 
 === Use a specific version
 
-If you want the site's start page to be a specific version of the assigned page, include the xref:ROOT:page-id.adoc#id-version[version name in the page ID].
+If you want the site's start page to be a specific version of the assigned page, include the xref:page:page-id.adoc#id-version[version name in the page ID].
 
 [source,yaml]
 ----

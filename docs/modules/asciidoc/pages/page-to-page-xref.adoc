@@ -9,14 +9,14 @@ This syntax in also used to xref:navigation:link-syntax-and-content.adoc[add pag
 
 == Reference by page ID
 
-In Antora, a cross reference, commonly called an xref, needs a xref:ROOT:page-id.adoc[page ID] in order to link to another site page.
+In Antora, a cross reference, commonly called an xref, needs a xref:page:page-id.adoc[page ID] in order to link to another site page.
 The number of page ID coordinates you need to enter into the xref depends on the location of the current file and the location of the destination file (the document you're linking to).
 The closer the two files are, the shorter the page ID.
 
 In the next section, will go over each part of the xref and page ID syntax.
 
 NOTE: The page ID is integral to Antora's ability to publish a site to multiple environments and domains without you needing to modify your source content.
-If you want to learn more about the page ID, see xref:ROOT:page-id.adoc#important[Why are page IDs important?]
+If you want to learn more about the page ID, see xref:page:page-id.adoc#important[Why are page IDs important?]
 
 == Xref and page ID anatomy
 

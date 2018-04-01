@@ -101,7 +101,7 @@ Learn more:
 === start_page
 
 You can use a page from a documentation component as the index page for your site.
-The start page key accepts a xref:ROOT:page-id.adoc[page ID] as a value.
+The start page key accepts a xref:page:page-id.adoc[page ID] as a value.
 
 Learn more:
 

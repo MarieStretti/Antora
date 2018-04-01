@@ -2,14 +2,10 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-task: {uri-adoc-manual}/#checklist
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-task: {url-adoc-manual}/#checklist
 
 On this page, you'll learn:
 
@@ -39,4 +35,4 @@ Here’s an example:
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-task}[Checklists^]
+* {url-task}[Checklists^]

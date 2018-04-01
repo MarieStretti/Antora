@@ -2,15 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
-:linkattrs:
 :underscore: _
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-bold-italic: {uri-adoc-manual}/#bold-and-italic
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-bold-italic: {url-adoc-manual}/#bold-and-italic
 
 On this page, you'll learn:
 
@@ -51,4 +47,4 @@ Bold and italicized text can also be xref:monospace.adoc[monospaced].
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-bold-italic}[Bold and italic text formatting^]
+* {url-bold-italic}[Bold and italic text formatting^]

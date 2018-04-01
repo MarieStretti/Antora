@@ -2,15 +2,11 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
-:linkattrs:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-block: {uri-adoc-manual}/#blocks
-:uri-block-subs: {uri-adoc-manual}/#built-in-blocks-summary
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-block: {url-adoc-manual}/#blocks
+:url-block-subs: {url-adoc-manual}/#built-in-blocks-summary
 
 On this page, you'll learn:
 
@@ -67,5 +63,5 @@ TIP: xref:admonitions.adoc[Complex admonitions] use the delimited example block 
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-block}[Block titles and attributes^]
-* {uri-block-subs}[Substitutions by block type^]
+* {url-block}[Block titles and attributes^]
+* {url-block-subs}[Substitutions by block type^]

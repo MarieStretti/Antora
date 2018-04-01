@@ -2,13 +2,9 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
-// URIs
-:uri-nvm: https://github.com/creationix/nvm
-:uri-nvm-install: {uri-nvm}#installation
+// URLs
+:url-nvm: https://github.com/creationix/nvm
+:url-nvm-install: {url-nvm}#installation
 // Versions:
 :version-node: 8.10.0
 
@@ -65,8 +61,8 @@ Now you're ready to xref:install/install-antora.adoc[install Antora].
 [#install-nvm]
 == Install nvm and Node
 
-If your package manager doesn't provide Node, we recommend using the {uri-nvm}[Node Version Manager (nvm)^] to manage your Node installations.
-Follow these {uri-nvm-install}[installation instructions^] to set up nvm on your machine.
+If your package manager doesn't provide Node, we recommend using the {url-nvm}[Node Version Manager (nvm)^] to manage your Node installations.
+Follow these {url-nvm-install}[installation instructions^] to set up nvm on your machine.
 
 TIP: Many CI environments use nvm to install the version of Node used for the build job.
 By using nvm, you can closely align your setup with the environment that is used to generate and publish your production site.

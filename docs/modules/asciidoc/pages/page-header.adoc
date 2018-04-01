@@ -2,16 +2,12 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
 :note-caption: Ops Hint
 // URLs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-author: {uri-adoc-manual}/#author-and-email
-:uri-attrs: {uri-adoc-manual}/#attributes
-:uri-builtin-attrs: {uri-adoc-manual}/#builtin-attributes
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-author: {url-adoc-manual}/#author-and-email
+:url-attrs: {url-adoc-manual}/#attributes
+:url-builtin-attrs: {url-adoc-manual}/#builtin-attributes
 
 On this page, you'll learn:
 
@@ -94,7 +90,7 @@ Whether any author information is also displayed on a published page depends on 
 
 Refer to the Asciidoctor user manual for additional author attributes and methods for specifying author information.
 
-* {uri-author}[Author attributes and usage examples^]
+* {url-author}[Author attributes and usage examples^]
 
 === Description syntax
 
@@ -141,7 +137,7 @@ The keywords attribute contains a list of comma-separated values that are assign
 
 AsciiDoc provides numerous built-in attributes that can activate and control syntax output behavior and styles.
 
-TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the {uri-attrs}[attributes section of the Asciidoctor manual^].
+TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the {url-attrs}[attributes section of the Asciidoctor manual^].
 
 Page attributes are set in the header and are available to the whole page.
 Built-in AsciiDoc attributes are reserved attributes that have special, pre-defined behavior.
@@ -196,5 +192,5 @@ NOTE: This is an Ops Hint.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-builtin-attrs}[Built-in page attributes^]
-* {uri-attrs}[AsciiDoc attribute restrictions or operations precedence^]
+* {url-builtin-attrs}[Built-in page attributes^]
+* {url-attrs}[AsciiDoc attribute restrictions or operations precedence^]

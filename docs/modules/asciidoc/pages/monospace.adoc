@@ -2,14 +2,10 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
 :example-caption!:
-// External URIs
-:uri-adoc-manual: https://asciidoctor.org/docs/user-manual
-:uri-mono: {uri-adoc-manual}/#mono
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-mono: {url-adoc-manual}/#mono
 
 On this page, you'll learn:
 
@@ -54,4 +50,4 @@ The italic syntax is always the innermost set.
 [discrete]
 ==== Asciidoctor resources
 
-* {uri-mono}[Monospace text formatting^]
+* {url-mono}[Monospace text formatting^]
