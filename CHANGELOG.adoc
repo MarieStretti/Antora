@@ -5,7 +5,9 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== Unreleased
+== 1.0.0 (2018-03-31)
+
+* First stable release!
 
 === Changed
 
