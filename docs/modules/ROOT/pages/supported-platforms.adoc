@@ -5,7 +5,7 @@ endif::[]
 :test-count: over 780
 // URLs
 :url-repo: https://gitlab.com/antora/antora
-:url-issues: {uri-repo}/issues
+:url-issues: {url-repo}/issues
 :url-chat-dev: https://gitter.im/antora/dev
 
 Antora operates on macOS, Windows, and most Linux distributions.

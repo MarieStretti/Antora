@@ -70,7 +70,7 @@ The maximum nesting level is five (`pass:[*****]`).
 ** Item B2
 * Item C
 
-You'll use AsciiDoc's unordered list syntax to xref:navigation:create-a-navigation-file.adoc[structure your site's navigation] as well.
+You'll use AsciiDoc's unordered list syntax to xref:navigation:list-structures.adoc[structure your site's navigation] as well.
 
 [discrete]
 ==== Asciidoctor resources

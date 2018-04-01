@@ -27,11 +27,8 @@ If the sidebar content is contiguous, the block name `sidebar` can be placed dir
 Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
 ----
 
-.Result
---
 [sidebar]
 Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
---
 
 === Delimited sidebar block
 
@@ -55,8 +52,6 @@ const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils'
 ****
 ....
 
-.Result
---
 .Optional Title
 ****
 Sidebars are used to visually separate auxiliary bits of content that supplement the main text.
@@ -69,7 +64,6 @@ TIP: They can contain any type of content.
 const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
 ----
 ****
---
 
 [discrete]
 ==== Asciidoctor resources

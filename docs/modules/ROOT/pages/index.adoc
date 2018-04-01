@@ -16,7 +16,7 @@ See the {url-changelog}[CHANGELOG^] for details.
 
 This site provides technical documentation for Antora.
 Antora makes it easy for tech writers to write documentation and publish it to the web.
-As a tech writer, you simply author content in xref:asciidoc:index.adoc[AsciiDoc], Antora's content markup language, then save those files under a standard project structure inside one or more content repositories.
+As a tech writer, you simply author content in xref:asciidoc:asciidoc.adoc[AsciiDoc], Antora's content markup language, then save those files under a standard project structure inside one or more content repositories.
 Antora picks up your content from there and transforms it into a website.
 That's all there is to it!
 
@@ -88,7 +88,7 @@ You'll then need to xref:playbook:index.adoc[create a playbook] to tell Antora w
 
 If you already have a documentation component set up and you're ready to create your first site, check that you've met Antora's xref:supported-platforms.adoc[system requirements], xref:install/install-antora.adoc[install Antora], and then xref:run-antora.adoc[generate your site] using Antora.
 
-If you want to jump into writing, learn how to use the xref:asciidoc:index.adoc[AsciiDoc syntax] to xref:page:index.adoc[make documentation pages].
+If you want to jump into writing, learn how to use the AsciiDoc syntax to xref:page:index.adoc[make documentation pages].
 
 If you want to dive deeper into the details of the site generator pipeline, check out xref:how-antora-works.adoc[how Antora works].
 
