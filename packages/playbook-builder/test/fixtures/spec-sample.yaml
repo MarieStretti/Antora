@@ -1,0 +1,9 @@
+one:
+  one: yaml-spec-value-one
+two: 42
+three: false
+four:
+- name: Ringo
+  lastname: Starr
+- name: George
+  lastname: Harrison

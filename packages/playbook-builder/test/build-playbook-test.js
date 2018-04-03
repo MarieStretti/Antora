@@ -72,6 +72,7 @@ describe('buildPlaybook()', () => {
   })
 
   const ymlSpec = ospath.join(FIXTURES_DIR, 'spec-sample.yml')
+  const yamlSpec = ospath.join(FIXTURES_DIR, 'spec-sample.yaml')
   const extensionlessSpec = ospath.join(FIXTURES_DIR, 'spec-sample')
   const extensionlessJsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-json')
   const extensionlessCsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-cson')
@@ -99,11 +100,20 @@ describe('buildPlaybook()', () => {
     expect(playbook.playbook).to.not.exist()
   })
 
-  it('should load YML playbook spec file', () => {
+  it('should load YAML playbook spec file with .yml extension', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(ymlSpec)
     expectedPlaybook.file = ymlSpec
     expectedPlaybook.one.one = 'yml-spec-value-one'
+    expect(playbook).to.eql(expectedPlaybook)
+  })
+
+  it('should load YAML playbook file with .yaml extension', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: yamlSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(yamlSpec)
+    expectedPlaybook.file = yamlSpec
+    expectedPlaybook.one.one = 'yaml-spec-value-one'
+    expectedPlaybook.four = [{ lastname: 'Starr', name: 'Ringo' }, { lastname: 'Harrison', name: 'George' }]
     expect(playbook).to.eql(expectedPlaybook)
   })
 
@@ -123,7 +133,7 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load YML playbook spec file first when no file extension is given', () => {
+  it('should load YAML playbook spec file first when no file extension is given', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: extensionlessSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(extensionlessSpec)
     expectedPlaybook.file = extensionlessSpec + '.yml'
