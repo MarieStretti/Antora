@@ -1,0 +1,50 @@
+= Italics
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:example-caption!:
+:underscore: _
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-bold-italic: {url-adoc-manual}/#bold-and-italic
+
+On this page, you'll learn:
+
+* [x] How to italicize text with AsciiDoc.
+
+[#italic]
+== Italic syntax
+
+To apply bold styling to a word or phrase, place an asterisk (`{asterisk}`) at the beginning and end of the text you wish to format.
+To bold one or more characters bounded by other characters, place two asterisks (`{asterisk}{asterisk}`) before and after the characters.
+
+Words are italicized when they're enclosed in a single set of underscores (`{underscore}`).
+Bounded characters are italicized by a set of two underscores (`{underscore}{underscore}`).
+
+.Bold and italic inline formatting
+[source,asciidoc,subs=replacements]
+----
+*bold phrase* & **char**acter**s**
+
+_italic phrase_ & __char__acter__s__
+
+*_bold italic phrase_* & **__char__**acter**__s__**
+----
+
+To apply both bold and italic formatting, the bold syntax must be the outermost set and the italic syntax the innermost set.
+
+.Result
+====
+*bold phrase* & **char**acter**s**
+
+_italic phrase_ & __char__acter__s__
+
+*_bold italic phrase_* & **__char__**acter**__s__**
+====
+
+Bold and italicized text can also be xref:monospace.adoc[monospaced].
+
+[discrete]
+==== Asciidoctor resources
+
+* {url-bold-italic}[Italic text formatting^]

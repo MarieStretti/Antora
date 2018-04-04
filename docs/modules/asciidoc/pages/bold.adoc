@@ -1,0 +1,66 @@
+= Bold
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:example-caption!:
+:underscore: _
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-bold: {url-adoc-manual}/#bold-and-italic
+
+On this page, you'll learn:
+
+* [x] How to bold text with AsciiDoc.
+
+Text that is marked up as bold will stand out against the regular, surrounding text due to the application of a thicker and/or darker font.
+Bold is useful when the text needs to catch the attention of a site visitor quickly scanning a page.
+
+== Bold syntax
+
+A word or phrase is marked as bold when it is enclosed in a single set of asterisks (`{asterisk}word{asterisk}`).
+Constrained characters are marked as bold when they're enclosed in a double set of asterisks (`char{asterisk}{asterisk}act{asterisk}{asterisk}ers`).
+Constrained characters are characters that are:
+
+* directly preceded by a non-whitespace character, or
+* directly followed by a non-whitespace character.
+
+.Bold inline formatting
+[source,asciidoc,subs=replacements]
+----
+A bold *word*, and a *bold phrase*.
+
+Bold c**hara**cter**s** in a sentence.
+----
+
+Notice that you don't need to use double asterisks when an entire word or phrase is marked as bold and directly followed by a common punctuation mark, such as `;`, `"`, and `!`.
+
+.Results
+====
+A bold *word*, and a *bold phrase*.
+
+Bold c**hara**cter**s** in a sentence.
+====
+
+You can add multiple emphasis styles to bold text as long as the syntax is placed in the correct order.
+xref:monospace.adoc[Monospace syntax] (`{backtick}`) must be the outermost formatting set (i.e., outside the bold formatting set).
+xref:italics.adoc[Italic syntax] (`{underscore}`) is always the innermost formatting set.
+
+.Order of inline formatting syntax
+[source,asciidoc,subs=replacements]
+----
+`*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
+----
+
+.Result
+====
+`*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
+====
+
+[discrete]
+==== Asciidoctor resources
+
+* {url-bold}[Bold text formatting^]
+
+== Site styles
+
+How bold text appears on your site depends on the CSS styles your UI applies to the bold AsciiDoc syntax.
