@@ -9,45 +9,61 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] How to apply monospaced formatting to inline text.
+* [x] How to apply monospace formatting to inline text.
+* [x] Where to modify your site's inline monospace text styling.
 
-AsciiDoc's monospaced formatting applies a fixed-width font to phrases and characters.
+Technical content often requires text to be styled in a way that indicates it is a command or source code.
+Such text is usually emphasized using a fixed-width, i.e., monospace, font.
 
 == Inline monospace syntax
 
-To apply the monospaced style to a phrase or word, enclose it in a single set of backticks ({backtick}).
-A character bounded by other characters must be enclosed in a double set of backticks ({backtick}{backtick}).
+A word or phrase is marked as monospace when it is enclosed in a single set of backticks (`{backtick}word{backtick}`).
+Constrained characters are marked as monospace when they're enclosed in a double set of backticks (`char{backtick}{backtick}act{backtick}{backtick}ers`).
+Constrained characters are characters that are:
+
+* directly preceded by a non-whitespace character, or
+* directly followed by a non-whitespace character.
 
 .Monospace inline formatting
 [source,asciidoc]
 ----
-`monospace phrase` & ``char``acter``s``
+A monospace `word`, and a `monospace phrase`.
 
-`*monospace bold phrase*` & ``**char**``acter``**s**``
-
-`_monospace italic phrase_` & ``__char__``acter``__s__``
-
-`*_monospace bold italic phrase_*` &
-``**__char__**``acter``**__s__**``
+Monospace c``hara``cter``s`` in a sentence.
 ----
 
-Monospaced text can be xref:bold-and-italic.adoc[bold and italicized], as long as the syntax sets are entered in the right order.
-The monospace syntax must be the outermost set, then the bold set.
-The italic syntax is always the innermost set.
+Notice that you don't need to use double backticks when an entire word or phrase is marked as monospace and directly followed by a common punctuation mark, such as `;`, `"`, and `!`.
+
+.Results
+====
+A monospace `word`, and a `monospace phrase`.
+
+Monospace c``hara``cter``s`` in a sentence.
+====
+
+You can add multiple emphasis styles to monospace text as long as the syntax is placed in the correct order.
+
+.Order of inline formatting syntax
+[source,asciidoc,subs=replacements]
+----
+`*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
+----
+
+Monospace syntax is always the outermost formatting set.
+xref:bold.adoc[Bold syntax] (`{asterisk}`) must be outside the italics formatting set.
+xref:italics.adoc[Italic syntax] (`+_+`) is always the innermost formatting set.
 
 .Result
 ====
-`monospace phrase` & ``char``acter``s``
-
-`*monospace bold phrase*` & ``**char**``acter``**s**``
-
-`_monospace italic phrase_` & ``__char__``acter``__s__``
-
-`*_monospace bold italic phrase_*` &
-``**__char__**``acter``**__s__**``
+`*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
 ====
 
+== Site styles
+
+How inline monospace text appears on your site depends on the fonts loaded by your UI and any CSS styles it applies to the `<code>` HTML tag.
+You can learn more about customizing xref:antora-ui-default::inline-text-styles.adoc#monospace[how monospace text appears in your site] in the UI documentation.
+
 [discrete]
-==== Asciidoctor resources
+=== Asciidoctor resources
 
 * {url-mono}[Monospace text formatting^]
