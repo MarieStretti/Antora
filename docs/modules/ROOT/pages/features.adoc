@@ -53,6 +53,14 @@ This description boils down to a) where to get the content, b) what UI to apply 
 That's all Antora needs to know to do its job.
 Only when you're looking for additional customization do you need to dive deeper.
 
+*Offline first.*
+
+A site generated using Antora can be viewed entirely offline.
+All the references in the site are self-contained (i.e., relative), so you don't need to run a web server to view it.
+Just open one of the generated HTML files in your browser and from there you can navigate to all the pages from the UI.
+Even redirects work offline by default.
+If a web server is available, you can pass additional configuration to tell Antora to take advantage of its capabilities.
+
 // This section feels just a touch discordant to me
 ////
 *No build automation or system administration required.*
@@ -95,7 +103,7 @@ Like with software, you can use branches and tags to manage versions of the docu
 This content can even be stored with the software itself.
 Antora happily gathers all this content and organizes it so users can access each version of the documentation, all under a single site.
 
-*Easily navigate between product versions and even between pages that exist in different versions.*
+*Explore different product versions or navigate between pages across versions.*
 
 With multiple versions of documentation available, the user needs a way to navigate to them.
 Antora provides a catalog of documentation components and versions that are presented to the reader as a menu.
@@ -210,7 +218,8 @@ Antora generates the appropriate configuration for the redirect facility that th
 //A site isn't much good if it lives in the dark.
 Sites are meant to be published.
 Antora helps with that.
-Whether the destination is local or remote, and the provider is built-in or custom, Antora streams the generated site there.
+Whether the destination is local or remote Antora streams the cnotent there using a built-in or custom provider.
+And yet, no matter where the site is published, the site is not coupled to the host environment.
 Antora supports as many output streams as you want, which could be a local directory, a local archive, a directory on a remote SSH server, or a web service endpoint like S3, or a combination of destinations.
 You can be sure Antora gets the files where they need to go for publishing.
 All in a single build.
