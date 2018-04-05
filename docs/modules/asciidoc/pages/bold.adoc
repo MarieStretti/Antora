@@ -3,7 +3,6 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 :example-caption!:
-:underscore: _
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-bold: {url-adoc-manual}/#bold-and-italic
@@ -11,6 +10,7 @@ endif::[]
 On this page, you'll learn:
 
 * [x] How to bold text with AsciiDoc.
+* [x] Where to modify your site's bold text styling.
 
 Text that is marked up as bold will stand out against the regular, surrounding text due to the application of a thicker and/or darker font.
 Bold is useful when the text needs to catch the attention of a site visitor quickly scanning a page.
@@ -42,8 +42,6 @@ Bold c**hara**cter**s** in a sentence.
 ====
 
 You can add multiple emphasis styles to bold text as long as the syntax is placed in the correct order.
-xref:monospace.adoc[Monospace syntax] (`{backtick}`) must be the outermost formatting set (i.e., outside the bold formatting set).
-xref:italics.adoc[Italic syntax] (`{underscore}`) is always the innermost formatting set.
 
 .Order of inline formatting syntax
 [source,asciidoc,subs=replacements]
@@ -51,16 +49,20 @@ xref:italics.adoc[Italic syntax] (`{underscore}`) is always the innermost format
 `*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
 ----
 
+xref:monospace.adoc[Monospace syntax] (`{backtick}`) must be the outermost formatting set (i.e., outside the bold formatting set).
+xref:italics.adoc[Italic syntax] (`+_+`) is always the innermost formatting set.
+
 .Result
 ====
 `*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
 ====
 
-[discrete]
-==== Asciidoctor resources
-
-* {url-bold}[Bold text formatting^]
-
 == Site styles
 
-How bold text appears on your site depends on the CSS styles your UI applies to the bold AsciiDoc syntax.
+How bold text appears on your site depends on the fonts loaded by your UI and any CSS styles it applies to the `<strong>` HTML tag.
+You can learn more about customizing xref:antora-ui-default::inline-text-styles.adoc#bold[how bold text appears in your site] in the UI documentation.
+
+[discrete]
+=== Asciidoctor resources
+
+* {url-bold}[Bold text formatting^]

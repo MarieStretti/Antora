@@ -5,25 +5,25 @@ endif::[]
 
 == Visual Emphasis
 
-AsciiDoc provides markup for many common, modern ways to visually emphasize text.
+AsciiDoc provides multiple ways to visually emphasize inline text.
 
-xref:bold-and-italic.adoc#bold[Bold]::
-Text that is marked up as bold will stand out against the regular, surrounding text due to the application of a thicker and/or darker font.
+xref:bold.adoc[Bold]::
+Text that is bold will stand out against the regular, surrounding text due to the application of a thicker and/or darker font.
 Bold is useful when the text needs to catch the attention of a person visually scanning a page.
 
-xref:bold-and-italic.adoc#italic[Italics]::
+xref:italics.adoc[Italics]::
 Text is often italicized in order to stress a word or phrase, quote a speaker, or introduce a term.
 Italic type slants slightly to the right, and depending on the font, may have cursive swashes and flourishes.
 
 xref:monospace.adoc[Monospace]::
-Technical content that documents software often requires text to be styled in a way that indicates it is a command or source code.
+Technical content often requires text to be styled in a way that indicates it is a command or source code.
 Such text is usually emphasized using a fixed-width, i.e., monospace, font.
 
 xref:highlight.adoc[Highlight]::
-Instead of bold, another way to make visual scanning easier for website visitors is to highlight text that states key points.
-
-// Subscript and Superscript
+Another way to make visual scanning easier for website visitors is to highlight text that states key points.
 
 == Punctuation
 
 == Symbols, Signs, and Marks
+
+// Subscript and Superscript

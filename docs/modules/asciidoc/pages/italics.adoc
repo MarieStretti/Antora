@@ -48,3 +48,8 @@ Bold and italicized text can also be xref:monospace.adoc[monospaced].
 ==== Asciidoctor resources
 
 * {url-bold-italic}[Italic text formatting^]
+
+== Site styles
+
+How italic text appears on your site depends on the font and any CSS styles your UI applies to the italic AsciiDoc syntax.
+If you're customizing a fork of xref:antora-ui-default::style-guide.adoc[Antora's default UI], the site-wide italic font is specified in the [.path]_css/typeface-roboto.css_ file.
