@@ -5,15 +5,15 @@ endif::[]
 :colon: :
 
 To link between documentation pages, you'll use the the AsciiDoc cross reference macro and a page ID.
-This syntax in also used to xref:navigation:link-syntax-and-content.adoc[add pages to your navigation files].
+This syntax in also used to xref:navigation:link-syntax-and-content.adoc[reference pages from your navigation files].
 
 == Reference by page ID
 
-In Antora, a cross reference, commonly called an xref, needs a xref:page:page-id.adoc[page ID] in order to link to another site page.
-The number of page ID coordinates you need to enter into the xref depends on the location of the current file and the location of the destination file (the document you're linking to).
+In Antora, a cross reference, commonly abbreviated xref, needs a xref:page:page-id.adoc[page ID] in order to link to another page in the site.
+The number of page ID coordinates you need to specify in the xref depends on the location of the current page in relation to the location of the destination page (i.e., the page you want to link to).
 The closer the two files are, the shorter the page ID.
 
-In the next section, will go over each part of the xref and page ID syntax.
+In the next section, we'll go over each part of the xref and page ID syntax.
 
 NOTE: The page ID is integral to Antora's ability to publish a site to multiple environments and domains without you needing to modify your source content.
 If you want to learn more about the page ID, see xref:page:page-id.adoc#important[Why are page IDs important?]
@@ -27,7 +27,7 @@ image::xref-macro-anatomy-diagram.svg[Page reference anatomy,role=grow-x]
 Here's what each part of the cross reference and page ID does:
 
 xref{colon}::
-The prefix of the AsciiDoc source file to source file cross reference macro.
+The prefix of the AsciiDoc cross reference (xref) macro, which we're using here to make a page reference.
 
 [#page-id-vname-def]
 version@::
