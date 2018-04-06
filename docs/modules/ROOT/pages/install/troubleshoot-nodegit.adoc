@@ -7,8 +7,20 @@ endif::[]
 :url-nodegit-dev: http://www.nodegit.org/guides/install/from-source
 
 Antora interfaces with git repositories using {url-nodegit}[nodegit^].
-During installation of the site generator, Antora pulls in nodegit as a dependency and installs it automatically.
-If your Antora installation fails, nodegit is the most probable culprit.
+During installation (specifically the default site generator), Antora downloads and installs nodegit automatically.
+But this step requires support from your system.
+If Antora fails to install or run, nodegit is the most probable culprit.
+This page helps you troubleshoot the problem.
+
+== Check prerequisites
+
+If installation fails when it arrives at installing nodegit, the first thing to check is that you've satisfied all prerequisites.
+Specifically, you must have installed the base build tools for your system (Linux and macOS only).
+
+* xref:install/linux-requirements.adoc#base-build-tools[Install base build tools for Linux]
+* xref:install/macos-requirements.adoc#base-build-tools[Install base build tools for macOS]
+
+If that doesn't do the trick, or Antora fails at runtime, you may either need to patch your system or force nodegit to be recompiled.
 
 == nodegit and Linux
 

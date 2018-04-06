@@ -58,7 +58,7 @@ Switch to the playbook project and type:
 
  $ npm i @antora/site-generator-default
 
-CAUTION: If you're on Linux and get an error message that refers to `libcurl-gnutls.so.4`, see xref:install/troubleshoot-nodegit.adoc[Troubleshooting nodegit].
+CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, you'll need to xref:install/troubleshoot-nodegit.adoc[patch your nodegit installation].
 
 == What's next?
 
