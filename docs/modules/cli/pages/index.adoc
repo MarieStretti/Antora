@@ -1,4 +1,4 @@
-= Command Line Interface
+= Command Line Interface (CLI) Reference
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -6,6 +6,7 @@ endif::[]
 
 Antora provides a command line interface (CLI) so you can interact with Antora using your terminal.
 When installed, the CLI adds the `antora` command to your terminal's PATH.
+This page covers the commands and options the `antora` command accepts and shows several examples.
 
 == Terminal conventions
 
