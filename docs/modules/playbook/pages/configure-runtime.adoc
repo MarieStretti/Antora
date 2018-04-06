@@ -8,6 +8,7 @@ On this page, you'll learn:
 * [x] How to configure the cache directory.
 * [x] How to pull updates to content sources and UI.
 
+[#cache]
 == Cache directory
 
 The first time Antora runs, it will cache remote git repositories and remote UI bundle.

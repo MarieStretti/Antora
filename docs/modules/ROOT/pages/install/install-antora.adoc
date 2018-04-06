@@ -6,7 +6,8 @@ endif::[]
 
 Assumptions:
 
-* [x] You've installed Node 8 on your xref:install/linux-requirements.adoc[Linux], xref:install/windows-requirements.adoc[Windows], or xref:install/macos-requirements.adoc[macOS] machine.
+* [x] You've installed the base build tools on your xref:install/linux-requirements.adoc#base-build-tools[Linux] or xref:install/macos-requirements.adoc#base-build-tools[macOS] machine (not applicable for Windows).
+* [x] You've installed Node 8 on your xref:install/linux-requirements.adoc#node-8[Linux], xref:install/windows-requirements.adoc#node-8[Windows], or xref:install/macos-requirements.adoc#node-8[macOS] machine.
 
 On this page, you'll learn:
 
