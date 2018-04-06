@@ -22,12 +22,13 @@ Switch to the newly created directory and clone one of the repositories:
 
  $ git clone https://github.com/my-antora-demo/server-docs workspace/server-docs
 
-Next, copy your playbook file to a separate version for author mode.
+Next, make a copy of your playbook file for local use.
+In the example below, [.path]_site.yml_ is copied and the new file is named [.path]_site-workspace.yml_.
 
  $ cp site.yml site-workspace.yml
 
-Next, open your new playbook file and configure it to use this clone instead.
-You can specify the repository either as a path relative to the project root or as an absolute path.
+Next, open your new playbook file and configure it to use the cloned repository instead of the remote repository.
+You can specify the repository either as a path relative to the playbook file or as an absolute path.
 
 // also a good place to use the demo
 // need clarification about where these local sources can be in relation to the playbook project
@@ -38,9 +39,8 @@ You can specify the repository either as a path relative to the project root or 
 content:
   sources:
   - url: ./workspace/server-docs
-    branches: HEAD <1>
+    branches: HEAD # <1>
 ----
-
 <1> In author mode, you usually want to use the currently checked out HEAD of the local repository.
 
 Build your Antora site using the new playbook file.
@@ -49,7 +49,7 @@ Build your Antora site using the new playbook file.
 
 The contents of your local repository will be incorporated into the pipeline.
 
-NOTE: If your _workspace_ directory is inside of your playbook repository, it is best to add it to your `.gitignore` file so as not to push it to the remote.
+NOTE: If your [.path]_workspace_ directory is inside of your playbook repository, it is best to add it to your `.gitignore` file so as not to push it to the remote.
 
 == Author mode order of operations
 
