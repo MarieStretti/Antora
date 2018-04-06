@@ -20,24 +20,36 @@ To begin, create a folder named [.path]_workspace_ in your project.
 
 Switch to the newly created directory and clone one of the repositories:
 
- $ cd workspace &&
-   git clone https://github.com/my-antora-demo/server-docs
+ $ git clone https://github.com/my-antora-demo/server-docs workspace/server-docs
 
-Next, open your playbook file and configure it to use this clone.
-You can specify the repository either as a path relative to the project root or as an absolute path.
+Next, make a copy of your playbook file for local use.
+In the example below, [.path]_site.yml_ is copied and the new file is named [.path]_site-workspace.yml_.
+
+ $ cp site.yml site-workspace.yml
+
+Next, open your new playbook file and configure it to use the cloned repository instead of the remote repository.
+You can specify the repository either as a path relative to the playbook file or as an absolute path.
 
 // also a good place to use the demo
 // need clarification about where these local sources can be in relation to the playbook project
 
-.site.yml (excerpt)
+.site-workspace.yml (excerpt)
 [source,yaml]
 ----
 content:
   sources:
   - url: ./workspace/server-docs
+    branches: HEAD # <1>
 ----
+<1> In author mode, you usually want to use the currently checked out HEAD of the local repository.
 
-Now when you run Antora, the contents of your local repository will be incorporated into the pipeline.
+Build your Antora site using the new playbook file.
+
+ $ antora site-workspace.yml
+
+The contents of your local repository will be incorporated into the pipeline.
+
+NOTE: If your [.path]_workspace_ directory is inside of your playbook repository, it is best to add it to your `.gitignore` file so as not to push it to the remote.
 
 == Author mode order of operations
 
@@ -54,6 +66,9 @@ Here's how the branches are selected in author mode:
 * If a local branch has the same name as a remote branch, the local branch is chosen.
 * The contents of the working tree get used in place of the files from the current branch.
 Aside from its name, the current branch is effectively ignored.
+* The current HEAD branch of your working tree must match the `branches` filter configured in your `sources` entry.
+If not the working tree will be ignored.
+You can use the special `HEAD` value to ensure the current working tree is always used.
 
 If you want to use multiple working trees, simply clone the repository multiple times and configure multiple entries in the playbook.
 You can use the `branches` key to xref:configure-content-sources.adoc#branches[filter out the names of branches you don't want].
