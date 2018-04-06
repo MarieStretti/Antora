@@ -2,6 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+:keywords: oblique, boldface, typeface
 
 == Visual Emphasis
 
@@ -24,6 +25,23 @@ Another way to make visual scanning easier for website visitors is to highlight 
 
 == Punctuation
 
+Common punctuation is typed in an AsciiDoc document just as you would in an email or word process.
+Less common punctuation can be entered using your operating system's keybinding sequence for that mark.
+For example, on macOS you can enter an en dash by pressing kbd:[⌥ Opt+-].
+
+When you want extra control to ensure that you get exactly the mark you want on your published site, AsciiDoc also provides mark up for curved (smart) quotes and built-in attributes for punctuation that can be misinterpreted when converted to HTML.
+
+xref:quotes-and-apostrophes.adoc[Quotation and apostrophe marks]::
+Quotation marks and apostrophes can be explicitly marked as straight or curved.
+
+// Break up special character and symbols table into punctuation, intellectual property, etc.
+// Add category for equations, formulas, sub/superscript
+
 == Symbols, Signs, and Marks
+
+Special character and symbol replacement is built right into AsciiDoc.
+
+xref:special-characters-and-symbols.adoc[Special characters and symbols]::
+AsciiDoc accepts HTML and XML character entities as well as decimal and hexadecimal Unicode code point references.
 
 // Subscript and Superscript
