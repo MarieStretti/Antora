@@ -9,7 +9,7 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] How to bold text with AsciiDoc.
+* [x] How to make text bold in AsciiDoc.
 * [x] Where to modify your site's bold text styling.
 
 Text that is marked up as bold will stand out against the regular, surrounding text due to the application of a thicker and/or darker font.
@@ -17,40 +17,43 @@ Bold is useful when the text needs to catch the attention of a site visitor quic
 
 == Bold syntax
 
-A word or phrase is marked as bold when it is enclosed in a single set of asterisks (`{asterisk}word{asterisk}`).
-Constrained characters are marked as bold when they're enclosed in a double set of asterisks (`char{asterisk}{asterisk}act{asterisk}{asterisk}ers`).
-Constrained characters are characters that are:
+A word or phrase is marked as bold when it's enclosed in a single set of asterisks (e.g., `+*word*+`) (constrained formatting).
+Bounded characters are marked as bold when they're enclosed in a set of double asterisks (e.g., `+char**act**ers+`) (unconstrained formatting).
+
+Bounded characters are characters that are:
 
 * directly preceded by a non-whitespace character, or
 * directly followed by a non-whitespace character.
 
 .Bold inline formatting
-[source,asciidoc,subs=replacements]
+[source,asciidoc]
 ----
-A bold *word*, and a *bold phrase*.
+A bold *word*, and a bold *phrase of text*.
 
-Bold c**hara**cter**s** in a sentence.
+Bold c**hara**cter**s** within a word.
 ----
 
-Notice that you don't need to use double asterisks when an entire word or phrase is marked as bold and directly followed by a common punctuation mark, such as `;`, `"`, and `!`.
+You don't need to use double asterisks when an entire word or phrase marked as bold is directly followed by a common punctuation mark, such as `;`, `"`, and `!`.
 
 .Results
 ====
-A bold *word*, and a *bold phrase*.
+A bold *word*, and a bold *phrase of text*.
 
-Bold c**hara**cter**s** in a sentence.
+Bold c**hara**cter**s** within a word.
 ====
+
+== Mixing bold with other formatting
 
 You can add multiple emphasis styles to bold text as long as the syntax is placed in the correct order.
 
 .Order of inline formatting syntax
-[source,asciidoc,subs=replacements]
+[source,asciidoc]
 ----
 `*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
 ----
 
-xref:monospace.adoc[Monospace syntax] (`{backtick}`) must be the outermost formatting set (i.e., outside the bold formatting set).
-xref:italics.adoc[Italic syntax] (`+_+`) is always the innermost formatting set.
+xref:monospace.adoc[Monospace syntax] (`++`++`) must be the outermost formatting set (i.e., outside the bold formatting set).
+xref:italic.adoc[Italic syntax] (`+_+`) is always the innermost formatting set.
 
 .Result
 ====
@@ -59,7 +62,7 @@ xref:italics.adoc[Italic syntax] (`+_+`) is always the innermost formatting set.
 
 == Site styles
 
-How bold text appears on your site depends on the fonts loaded by your UI and any CSS styles it applies to the `<strong>` HTML tag.
+How bold text appears on your site depends on the fonts loaded by your UI and any CSS styles applied to the `<strong>` HTML tag.
 You can learn more about customizing xref:antora-ui-default::inline-text-styles.adoc#bold[how bold text appears in your site] in the UI documentation.
 
 [discrete]

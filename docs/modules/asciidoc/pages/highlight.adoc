@@ -15,8 +15,8 @@ On this page, you'll learn:
 
 == Highlight syntax
 
-To apply highlighting to a word or phrase, place a hash (`{hash}`) at the beginning and end of the text you wish to format.
-To highlight one or more characters bounded by other characters, place two hashes (`{hash}{hash}`) before and after the characters.
+To highlight (or mark) a word or phrase, place a hash (`#`) at the beginning and end of the text you wish to format (constrained formatting).
+To highlight one or more characters bounded by other characters, place two hashes (`##`) before and after the characters (unconstrained formatting).
 
 .Highlight inline formatting
 [source,asciidoc]
@@ -31,7 +31,7 @@ Let's #highlight this phrase# and the i and the s in th##is##.
 
 == Site styles
 
-How highlighted text appears on your site depends on the CSS styles it applies to the `<mark>` HTML tag.
+How highlighted text appears on your site depends on the CSS styles applied to the `<mark>` HTML tag.
 You can learn more about customizing xref:antora-ui-default::inline-text-styles.adoc#highlight[how highlighted text appears in your site] in the UI documentation.
 
 [discrete]

@@ -8,7 +8,7 @@
 * xref:section-headings.adoc[Page Sections]
 * xref:text-and-punctuation.adoc[Text & Punctuation Styles]
 ** xref:bold.adoc[Bold]
-** xref:italics.adoc[Italics]
+** xref:italic.adoc[Italic]
 ** xref:monospace.adoc[Monospace]
 ** xref:highlight.adoc[Highlight]
 ** xref:quotes-and-apostrophes.adoc[Quote Marks & Apostrophes]

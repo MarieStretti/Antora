@@ -6,30 +6,34 @@ endif::[]
 
 == Visual Emphasis
 
-AsciiDoc provides multiple ways to visually emphasize inline text.
+AsciiDoc provides multiple ways to visually emphasize inline text (words, phrases, and characters).
 
 xref:bold.adoc[Bold]::
 Text that is bold will stand out against the regular, surrounding text due to the application of a thicker and/or darker font.
 Bold is useful when the text needs to catch the attention of a person visually scanning a page.
 
-xref:italics.adoc[Italics]::
+xref:italic.adoc[Italic]::
 Text is often italicized in order to stress a word or phrase, quote a speaker, or introduce a term.
 Italic type slants slightly to the right, and depending on the font, may have cursive swashes and flourishes.
 
 xref:monospace.adoc[Monospace]::
-Technical content often requires text to be styled in a way that indicates it is a command or source code.
-Such text is usually emphasized using a fixed-width, i.e., monospace, font.
+Technical content often requires text to be styled in a way that indicates a command or source code.
+Such text is usually emphasized using a fixed-width (i.e., monospace) font.
 
 xref:highlight.adoc[Highlight]::
-Another way to make visual scanning easier for website visitors is to highlight text that states key points.
+Another way to draw attention to text is to highlight (or mark) it.
+This semantic style is used for reference or notation purposes, or to mark the importance of a key subject or point.
 
 == Punctuation
 
-Common punctuation is typed in an AsciiDoc document just as you would in an email or word process.
-Less common punctuation can be entered using your operating system's keybinding sequence for that mark.
-For example, on macOS you can enter an en dash by pressing kbd:[⌥ Opt+-].
+Common punctuation is entered into an AsciiDoc document just as you would in an email or word processor.
+Less common punctuation can be entered directly or using AsciiDoc shorthands.
 
-When you want extra control to ensure that you get exactly the mark you want on your published site, AsciiDoc also provides mark up for curved (smart) quotes and built-in attributes for punctuation that can be misinterpreted when converted to HTML.
+One way to enter less common punctuation is by using the compose key for your operating system (i.e., a special key sequence).
+For example, on macOS you can enter an en dash by typing the key sequence kbd:[⌥ Opt,-].
+
+Since key sequences can be hard to remember, AsciiDoc offers a simpler way to enter less common punctuation.
+AsciiDoc has a shorthand syntax for entering curved (smart) quotes and offers built-in replacements and attributes for many extended punctuation symbols.
 
 xref:quotes-and-apostrophes.adoc[Quotation and apostrophe marks]::
 Quotation marks and apostrophes can be explicitly marked as straight or curved.
