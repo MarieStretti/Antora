@@ -25,8 +25,7 @@ You should install (`i`) the CLI globally (`-g`) so the `antora` command is avai
 
 Open a terminal and type:
 
-[source]
-$ npm i -g @antora/cli
+ $ npm i -g @antora/cli
 
 IMPORTANT: When we say "`globally`" here, it does not imply system-wide.
 It means the location where Node is installed.
@@ -36,17 +35,13 @@ NOTE: If you prefer Yarn over npm, you can install Antora using `yarn global add
 
 Verify the `antora` command is available on your PATH by running:
 
-[source]
-$ antora -v
+ $ antora -v
 
 If the installation worked, this command should report the version of Antora.
 
-.CLI installation success
 [subs=attributes+]
-....
-$ antora -v
-{version}
-....
+ $ antora -v
+ {version}
 
 == Install the default Antora site generator
 
@@ -54,15 +49,13 @@ Next, install the default site generator.
 
 To install the generator globally, type:
 
-[source]
-$ npm i -g @antora/site-generator-default
+ $ npm i -g @antora/site-generator-default
 
-If you don't want to install the generator globally, you can opt to install it inside a project directory that contains a playbook file.
+If you don't want to install the generator globally, you can opt to install it inside the playbook project (the project that contains the playbook file(s) for your site).
 
-Move into the project directory and then type:
+Switch to the playbook project and type:
 
-[source]
-$ npm i @antora/site-generator-default
+ $ npm i @antora/site-generator-default
 
 CAUTION: If you're on Linux and get an error message that refers to `libcurl-gnutls.so.4`, see xref:install/troubleshoot-nodegit.adoc[Troubleshooting nodegit].
 
