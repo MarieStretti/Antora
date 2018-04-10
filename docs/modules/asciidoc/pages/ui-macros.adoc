@@ -19,6 +19,7 @@ On this page, you'll learn:
 
 The attribute `experimental` must be set in the xref:page-header.adoc#page-attrs[page header] or globally to enable the UI macros styles in HTML.
 
+[#button]
 == Button syntax
 
 Communicate that a user should press a button with the button macro.
@@ -39,10 +40,11 @@ Select a file in the file navigator and click btn:[Open].
 ====
 
 [discrete]
-==== Asciidoctor resources
+=== Asciidoctor resources
 
 * {url-button}[UI buttons^]
 
+[#keybinding]
 == Keybinding syntax
 
 Create keyboard shortcuts with the keybinding macro.
@@ -67,10 +69,11 @@ kbd:[Ctrl+Shift+N] will open a new incognito window.
 ====
 
 [discrete]
-==== Asciidoctor resources
+=== Asciidoctor resources
 
 * {url-keyboard}[Keyboard shortcuts^]
 
+[#menu]
 == Menu syntax
 
 Show readers how to select a menu item with the menu macro.
@@ -91,6 +94,6 @@ Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
 ====
 
 [discrete]
-==== Asciidoctor resources
+=== Asciidoctor resources
 
 * {url-menu}[Menu selections^]

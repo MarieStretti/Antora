@@ -1,0 +1,74 @@
+= Italic
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:example-caption!:
+:underscore: _
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-italic: {url-adoc-manual}/#bold-and-italic
+
+On this page, you'll learn:
+
+* [x] How to italicize text in AsciiDoc.
+* [x] Where to modify your site's italic text styling.
+
+Text is often italicized in order to stress a word or phrase, quote a speaker, or introduce a term.
+Italic type slants slightly to the right, and depending on the font, may have cursive swashes and flourishes.
+
+[#italic]
+== Italic syntax
+
+A word or phrase is marked as italic when it is enclosed in a single set of underscores (`+_word_+`) (constrained formatting).
+Bounded characters are marked as italic when they're enclosed in a set of double underscores (`+char__act__ers+`) (unconstrained formatting).
+
+Bounded characters are characters that are:
+
+* directly preceded by a non-whitespace character, or
+* directly followed by a non-whitespace character.
+
+.Italic inline formatting
+[source,asciidoc]
+----
+An italic _word_, and an italic _phrase of text_.
+
+Italic c__hara__cter__s__ within a word.
+----
+
+You don't need to use double underscores when an entire word or phrase marked as italic is directly followed by a common punctuation mark, such as `;`, `"`, and `!`.
+
+.Results
+====
+An italic _word_, and an italic _phrase of text_.
+
+Italic c__hara__cter__s__ within a word.
+====
+
+== Mixing italic with other formatting
+
+You can add multiple emphasis styles to italic text as long as the syntax is placed in the correct order.
+
+.Order of inline formatting syntax
+[source,asciidoc]
+----
+`*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
+----
+
+xref:monospace.adoc[Monospace syntax] (`++`++`) must be the outermost formatting set.
+xref:bold.adoc[Bold syntax] (`+*+`) must be outside the italics formatting set.
+Italic syntax is always the innermost formatting set.
+
+.Result
+====
+`*_monospace bold italic phrase_*` & ``**__char__**``acter``**__s__**``
+====
+
+== Site styles
+
+How italic text appears on your site depends on the fonts loaded by your UI and any CSS styles applied to the `<em>` HTML tag.
+You can learn more about customizing xref:antora-ui-default::inline-text-styles.adoc#italics[how italic text appears in your site] in the UI documentation.
+
+[discrete]
+=== Asciidoctor resources
+
+* {url-italic}[Italic text formatting^]
