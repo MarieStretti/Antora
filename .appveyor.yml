@@ -4,7 +4,7 @@ branches:
   except:
   - releases
 skip_tags: true
-clone_depth: 2
+clone_depth: 5
 environment:
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
