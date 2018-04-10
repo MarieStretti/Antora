@@ -52,7 +52,7 @@ Some of these practices include:
 
 * Storing content in a version control system.
 * Separating content, configuration, and presentation.
-* Leveraging automation for compilation, validation, and publishing.
+* Leveraging automation for compilation, validation, verification, and publishing.
 * Reusing shared materials (DRY).
 
 Antora helps you incorporate these practices into your documentation workflow.
