@@ -63,6 +63,7 @@ function parseSpecFile (specFilePath) {
 
   switch (ospath.extname(specFilePath)) {
     case '.yml':
+    case '.yaml':
       return yaml.safeLoad(data)
     case '.json':
       return json.parse(data)

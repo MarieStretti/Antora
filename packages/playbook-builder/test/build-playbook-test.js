@@ -72,6 +72,7 @@ describe('buildPlaybook()', () => {
   })
 
   const ymlSpec = ospath.join(FIXTURES_DIR, 'spec-sample.yml')
+  const yamlSpec = ospath.join(FIXTURES_DIR, 'spec-sample.yaml')
   const extensionlessSpec = ospath.join(FIXTURES_DIR, 'spec-sample')
   const extensionlessJsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-json')
   const extensionlessCsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-cson')
@@ -99,7 +100,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.playbook).to.not.exist()
   })
 
-  it('should load YML playbook spec file', () => {
+  it('should load YAML playbook file with .yml extension', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(ymlSpec)
     expectedPlaybook.file = ymlSpec
@@ -107,7 +108,16 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load JSON (JSON 5) playbook spec file', () => {
+  it('should load YAML playbook file with .yaml extension', () => {
+    const playbook = buildPlaybook([], { PLAYBOOK: yamlSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(yamlSpec)
+    expectedPlaybook.file = yamlSpec
+    expectedPlaybook.one.one = 'yaml-spec-value-one'
+    expectedPlaybook.four = [{ lastname: 'Starr', name: 'Ringo' }, { lastname: 'Harrison', name: 'George' }]
+    expect(playbook).to.eql(expectedPlaybook)
+  })
+
+  it('should load JSON (JSON 5) playbook file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: jsonSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(jsonSpec)
     expectedPlaybook.file = jsonSpec
@@ -115,7 +125,7 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load CSON playbook spec file', () => {
+  it('should load CSON playbook file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: csonSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(csonSpec)
     expectedPlaybook.file = csonSpec
@@ -123,7 +133,7 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load YML playbook spec file first when no file extension is given', () => {
+  it('should load YAML playbook file first when no file extension is given', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: extensionlessSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(extensionlessSpec)
     expectedPlaybook.file = extensionlessSpec + '.yml'
@@ -151,32 +161,32 @@ describe('buildPlaybook()', () => {
     expect(() => buildPlaybook([], { PLAYBOOK: iniSpec }, schema)).to.throw('Unsupported file type')
   })
 
-  it('should throw error if specified spec file does not exist', () => {
+  it('should throw error if specified playbook file does not exist', () => {
     expect(() => buildPlaybook([], { PLAYBOOK: 'non-existent/file.yml' }, schema)).to.throw('does not exist')
   })
 
-  it('should throw error if spec file without extension cannot be resolved', () => {
+  it('should throw error if playbook file without extension cannot be resolved', () => {
     expect(() => buildPlaybook([], { PLAYBOOK: 'non-existent/file' }, schema)).to.throw('could not be resolved')
   })
 
-  it('should use default value if spec file is not specified', () => {
+  it('should use default value if playbook file is not specified', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
     expect(playbook.one.two).to.equal('default-value')
   })
 
-  it('should use env value over spec file value', () => {
+  it('should use env value over value in playbook file', () => {
     const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.one.one).to.equal('the-env-value')
   })
 
-  it('should use env value over spec file value when env value is empty string', () => {
+  it('should use env value over value in playbook file when env value is empty string', () => {
     const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: '' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.one.one).to.equal('')
   })
 
-  it('should use args value over spec file value or env value', () => {
+  it('should use args value over value in playbook file or env value', () => {
     const args = ['--one-one', 'the-args-value']
     const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
     const playbook = buildPlaybook(args, env, schema)
@@ -189,7 +199,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.one.widgetKey).to.equal('xxxyyyzzz')
   })
 
-  it('should coerce Number values in spec file', () => {
+  it('should coerce Number values in playbook file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
     expect(playbook.two).to.equal(42)
   })
@@ -200,7 +210,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.two).to.equal(777)
   })
 
-  it('should use env value over spec file value when env value is 0', () => {
+  it('should use env value over value in playbook file when env value is 0', () => {
     const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '0' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.two).to.equal(0)
@@ -211,7 +221,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.two).to.equal(777)
   })
 
-  it('should coerce Boolean values in spec file', () => {
+  it('should coerce Boolean values in playbook file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
     expect(playbook.three).to.be.false()
   })
@@ -227,7 +237,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.three).to.be.true()
   })
 
-  it('should coerce Object value in spec file', () => {
+  it('should coerce Object value in playbook file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
     expect(playbook.stuff).to.eql({ key: 'val', foo: 'bar', nada: null, yep: true, nope: false })
   })
@@ -285,7 +295,7 @@ describe('buildPlaybook()', () => {
     })
   })
 
-  it('should use Object value in args in place of Object value from spec file', () => {
+  it('should use Object value in args in place of Object value from playbook file', () => {
     const playbook = buildPlaybook(['--stuff', 'idprefix=_'], { PLAYBOOK: coerceValueSpec }, schema)
     expect(playbook.stuff).to.eql({ idprefix: '_' })
   })
@@ -319,7 +329,7 @@ describe('buildPlaybook()', () => {
     expect(() => buildPlaybook([], { PLAYBOOK: badSpec }, schema)).to.throw('not declared')
   })
 
-  it('should throw error when spec file used values of the wrong format', () => {
+  it('should throw error when playbook file uses values of the wrong format', () => {
     schema.two.format = String
     expect(() => buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)).to.throw('must be of type String')
   })
@@ -331,7 +341,7 @@ describe('buildPlaybook()', () => {
     }).to.throw()
   })
 
-  it('should use default schema if none is specified', () => {
+  it('should use default schema if no schema is specified', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: defaultSchemaSpec })
     expect(playbook.runtime.cacheDir).to.equal('./.antora-cache')
     expect(playbook.runtime.pull).to.equal(true)
