@@ -28,6 +28,10 @@ Open a terminal and type:
 [source]
 $ npm i -g @antora/cli
 
+IMPORTANT: When we say "`globally`" here, it does not imply system-wide.
+It means the location where Node is installed.
+If you used nvm to install Node, this location will be inside your home directory (thus not requiring elevated permissions).
+
 NOTE: If you prefer Yarn over npm, you can install Antora using `yarn global add @antora/cli`.
 
 Verify the `antora` command is available on your PATH by running:
@@ -60,7 +64,7 @@ Move into the project directory and then type:
 [source]
 $ npm i @antora/site-generator-default
 
-CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, go to xref:install/troubleshoot-nodegit.adoc[Troubleshooting nodegit].
+CAUTION: If you're on Linux and get an error message that refers to `libcurl-gnutls.so.4`, see xref:install/troubleshoot-nodegit.adoc[Troubleshooting nodegit].
 
 == What's next?
 
