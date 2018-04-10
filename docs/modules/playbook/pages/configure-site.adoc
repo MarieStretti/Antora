@@ -44,16 +44,16 @@ site:
 When the site is generated, the component, version, module, and page URL segments are appended to the site URL, e.g.,  _\https://demo.antora.org/component/version/page.html_.
 
 [#configure-start-page]
-== Configure a start page for the base URL
+== Configure the site start page
 
 You can use a page from a documentation component as the index page for your site.
-When a start page is specified, visitors are redirected from the site's base URL index page to the URL of the start page.
+When a start page is specified, visitors are redirected from the site's index page at the base URL to the URL of the start page.
 
 The start page key (`start_page`) accepts a xref:page:page-id.adoc[page ID] as a value.
 
 === Use a specific version
 
-If you want the site's start page to be a specific version of the assigned page, include the xref:page:page-id.adoc#id-version[version name in the page ID].
+If you want the site's start page to be a specific version of the designated page, include the xref:page:page-id.adoc#id-version[version in the page ID].
 
 [source,yaml]
 ----
@@ -67,7 +67,7 @@ In this example, _\https://demo.antora.org/index.html_ will redirect to _\https:
 
 === Use the latest version
 
-Don't include the version name in the page ID when the start page should always be the latest version of that page.
+If you want the start page to always point to the last version of the page you designate, don't include a version in the page ID.
 
 [source,yaml]
 ----
@@ -78,7 +78,7 @@ site:
 ----
 
 For this example, let's say that version 2.0 is the latest version of Component B.
-Therefore, _\https://demo.antora.org/index.html_ will redirect to _\https://demo.antora.org/component-b/2.0/index.html_.
+In this case, _\https://demo.antora.org/index.html_ will redirect to _\https://demo.antora.org/component-b/2.0/index.html_.
 
 [#configure-ga]
 == Add a Google analytics account
