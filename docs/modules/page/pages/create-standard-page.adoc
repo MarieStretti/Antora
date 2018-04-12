@@ -69,7 +69,7 @@ The page body includes the:
 
 * preamble
 * section headings
-* section content such as paragraphs, source code blocks, images, included partials, and much more
+* section content such as paragraphs, xref:asciidoc:lists.adoc[lists], source code blocks, images, included partials, and much more
 
 //To explore the full capabilities of each AsciiDoc element, check out the documentation under the AsciiDoc collection in the menu on the left.
 

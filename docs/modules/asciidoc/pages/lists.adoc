@@ -20,7 +20,7 @@ A list of terms and their corresponding descriptions and definitions.
 xref:ordered-and-unordered-lists.adoc#ordered[Ordered list]::
 A list of enumerated items preceded by a number or letter in a sequence.
 
-xref:checklist.adoc[Checklist]::
+xref:checklists.adoc[Checklist]::
 Also known as a task or punch list, these lists contain items marked by either an empty ballot box (&#9744;) or a checked box (&#9745;).
 You can even create interactive task lists with AsciiDoc.
 

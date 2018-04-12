@@ -185,7 +185,7 @@ An example block
 Another paragraph
 --
 
-You can find xref:labeled-list.adoc#complex[another complex list example] on the description list page.
+You can find xref:description-lists.adoc#complex[another complex list example] on the description list page.
 
 [discrete]
 === Asciidoctor resources
