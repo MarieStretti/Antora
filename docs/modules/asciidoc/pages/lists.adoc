@@ -1,0 +1,29 @@
+= Lists
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+
+With AsciiDoc you can create several types of lists that contain a variety of AsciiDoc elements, such as images, example blocks, and notices.
+You can even mix the different list item types into one list.
+
+But first, some terminology.
+
+A *list* is an AsciiDoc block element that contains list items.
+
+A *list item* is content, which can include multiple paragraphs or blocks, that may be preceded by a marker, numeral, letter, or symbol depending on the list type and options assigned to list.
+
+== List types
+
+xref:description-lists.adoc[Description list]::
+A list of terms and their corresponding descriptions and definitions.
+
+xref:ordered-and-unordered-lists.adoc#ordered[Ordered list]::
+A list of enumerated items preceded by a number or letter in a sequence.
+
+xref:checklist.adoc[Checklist]::
+Also known as a task or punch list, these lists contain items marked by either an empty ballot box (&#9744;) or a checked box (&#9745;).
+You can even create interactive task lists with AsciiDoc.
+
+xref:ordered-and-unordered-lists.adoc#unordered[Unordered list]::
+A list of items typically preceded by a bullet (&#8226;), and therefore also known as bullet points or bulleted lists.
+xref:navigation:list-structures.adoc[Component navigation menus] are constructed from unordered AsciiDoc lists.

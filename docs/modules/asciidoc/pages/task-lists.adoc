@@ -2,6 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+:keywords: check list, tick, ballot, punch list, O mark, tally, X mark
 :example-caption!:
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
@@ -10,6 +11,7 @@ endif::[]
 On this page, you'll learn:
 
 * [x] How to mark up a task list with AsciiDoc.
+* [x] How to create an interactive task list with AsciiDoc.
 
 == Checked and unchecked list syntax
 
@@ -25,14 +27,27 @@ Here’s an example:
 * [ ] not checked
 ----
 
-.Result
-====
 * [*] checked
 * [x] also checked
 * [ ] not checked
-====
+
+If you want to make the checkbox clickable, add the `interactive` option to the checklist, which is shown here using the shorthand syntax (`%`) for `options`.
+
+.Interactive task list syntax
+[source,asciidoc]
+----
+[%interactive]
+* [ ] Binge watch Death in Paradise
+* [ ] Visit a tropical island
+----
+
+Go ahead, click a box.
+
+[%interactive]
+* [ ] Binge watch Death in Paradise
+* [ ] Visit a tropical island
 
 [discrete]
-==== Asciidoctor resources
+=== Asciidoctor resources
 
 * {url-task}[Checklists^]
