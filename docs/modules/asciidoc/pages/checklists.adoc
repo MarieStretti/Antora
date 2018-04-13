@@ -1,4 +1,4 @@
-= Task Lists
+= Checkists
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -10,16 +10,16 @@ endif::[]
 
 On this page, you'll learn:
 
-* [x] How to mark up a task list with AsciiDoc.
-* [x] How to create an interactive task list with AsciiDoc.
+* [x] How to mark up a checklist with AsciiDoc.
+* [x] How to create an clickable checklist with AsciiDoc.
 
-== Checked and unchecked list syntax
+== Checklist syntax
 
-Task lists are xref:ordered-and-unordered-lists#unordered[unordered lists] that have list items marked as checked (`[*]` or `[x]`) or unchecked (`[ ]`).
+Task lists are xref:ordered-and-unordered-lists#unordered[unordered lists] that have list items marked as checked or not checked.
 
 Here’s an example:
 
-.Task list syntax
+.Checklist syntax
 [source,asciidoc]
 ----
 * [*] checked
@@ -33,7 +33,7 @@ Here’s an example:
 
 If you want to make the checkbox clickable, add the `interactive` option to the checklist, which is shown here using the shorthand syntax (`%`) for `options`.
 
-.Interactive task list syntax
+.Interactive checklist syntax
 [source,asciidoc]
 ----
 [%interactive]

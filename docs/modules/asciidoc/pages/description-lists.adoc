@@ -48,19 +48,19 @@ It can even contain other list types.
 [#complex]
 === Complex description list
 
-Let's look at an example of a that includes content other than a single paragraph.
+Let's look at an example that includes content other than a single paragraph.
 
 .A description list including complex content
 [source,asciidoc]
 ----
 term 1::
 This description needs two paragraphs.
-To "`attach`" them both to term 1, use a list continuation (`+`) on the line separating the paragraphs.
+To attach them both to term 1, use a list continuation (+) on the line separating the paragraphs.
 +
 This is the second paragraph for term 1.
 
 term 2:: This description includes an admonition block.
-Like additional paragraphs, blocks also need to be connected with a `+`.
+Like additional paragraphs, blocks also need to be connected with a +.
 +
 NOTE: An admonition block that is part of term 2's description.
 
@@ -74,7 +74,7 @@ Here's the result of the example.
 
 term 1::
 This description needs two paragraphs.
-To "`attach`" them both to term 1, use a list continuation (`{plus}`) on the line separating the paragraphs.
+To attach them both to term 1, use a list continuation (`{plus}`) on the line separating the paragraphs.
 +
 This is the second paragraph for term 1.
 

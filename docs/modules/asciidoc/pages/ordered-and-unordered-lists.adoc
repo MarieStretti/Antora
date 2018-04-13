@@ -36,7 +36,7 @@ The dot (or dots) is separated from the content of the list item by a single spa
 ----
 
 The maximum nesting level is five (`+.....+`).
-A different number scheme is provided for each level of nesting.
+A different numbering or lettering scheme is provided for each nesting level.
 
 . Step 1
 . Step 2
@@ -50,7 +50,7 @@ A different number scheme is provided for each level of nesting.
 [#unordered]
 == Unordered list syntax
 
-When you're list doesn't need to be numbered, use an unordered list.
+When your list doesn't need to be numbered, use an unordered list.
 First level list items are marked using an asterisk (`+*+`) and nested items by two or more asterisk.
 
 .Unordered list with nested levels
@@ -85,7 +85,7 @@ You'll use AsciiDoc's unordered list syntax to xref:navigation:list-structures.a
 
 List items can be any AsciiDoc element.
 You can also mix ordered and unordered list items.
-Let's look at an example of a list that contains a variety of content and list item types.
+Let's look at an example that contains a variety of content and list item types.
 
 [source,asciidoc]
 ....
@@ -101,7 +101,7 @@ Let's look at an example of a list that contains a variety of content and list i
 An example block
 ====
 
-** A literal paragraph does not require a list continuation.
+** A literal paragraph doesn't require a list continuation.
 
  $ antora site.yml
 
@@ -112,13 +112,13 @@ An example block
 + // <1>
 term:: A description list term and content.
 ....
-<1> A list continuation is a plus symbol (`{plus}`) symbol on a line by itself that is immediately adjacent to the block being attached.
+<1> A [.term]_list continuation_ is a plus symbol (`{plus}`) on a line by itself that is immediately adjacent to the block being attached.
 
-To add additional paragraphs or blocks to a list item, you must "`attach`" them with a [.term]_list continuation_ (`{plus}`).
-Using the list continuation, you can attach as many AsciiDoc elements to a list item as you require.
+To add additional paragraphs or blocks to a list item, you must attach them with a list continuation (`{plus}`).
 
 Here's how the complex list above is rendered.
 
+--
 * A list item can contain two or more paragraphs or blocks of content.
 +
 [source,yaml]
@@ -131,7 +131,7 @@ Here's how the complex list above is rendered.
 An example block
 ====
 
-** A literal paragraph does not require a list continuation.
+** A literal paragraph doesn't require a list continuation.
 
  $ antora site.yml
 
@@ -141,6 +141,7 @@ An example block
 .... Another ordered list item
 +
 term:: A description list term and content.
+--
 
 Alternatively, when a list item contains multiple blocks, you can wrap them in a delimited open block (`+--+`).
 Then you only need a single list continuation line to attach the open block to the list item.
