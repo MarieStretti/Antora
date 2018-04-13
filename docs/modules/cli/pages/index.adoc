@@ -80,6 +80,12 @@ Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] 
 |Boolean
 |false
 
+|--google-analytics-key
+|The API key for Google Analytics / Tag Manager.
+Setting this option implicitly enables the Google Analytics / Tag Manager embed code when using the default UI.
+|String
+|no set
+
 |--pull
 |Download updates to remote resources (content sources and UI bundle).
 |Boolean
