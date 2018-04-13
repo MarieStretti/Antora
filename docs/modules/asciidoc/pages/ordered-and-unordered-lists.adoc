@@ -2,6 +2,7 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
+:keywords: enumerated sequence, bullet points, bulleted list, ol, ul
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-ordered: {url-adoc-manual}/#ordered-lists
@@ -11,8 +12,15 @@ On this page, you'll learn:
 
 * [x] How to mark up an ordered list with AsciiDoc.
 * [x] How to mark up an unordered list with AsciiDoc.
+* [x] How to add other AsciiDoc elements to a list item.
+* [x] How to mix ordered and unordered items in the same list.
 
+[#ordered]
 == Ordered list syntax
+
+Ordered lists are useful when you need to number list items.
+First level list items are created with a single dot (a period) and nested items by using two or more dots in front of each the item.
+The dot (or dots) is separated from the content of the list item by a single space.
 
 .Ordered list with nested levels
 [source,asciidoc]
@@ -27,7 +35,8 @@ On this page, you'll learn:
 . Step 3
 ----
 
-The maximum nesting level is five (`pass:[.....]`).
+The maximum nesting level is five (`+.....+`).
+A different numbering or lettering scheme is provided for each nesting level.
 
 . Step 1
 . Step 2
@@ -38,13 +47,11 @@ The maximum nesting level is five (`pass:[.....]`).
 .. More details
 . Step 3
 
-[discrete]
-==== Asciidoctor resources
-
-* {url-ordered}[Basic and complex ordered lists^]
-
 [#unordered]
 == Unordered list syntax
+
+When your list doesn't need to be numbered, use an unordered list.
+First level list items are marked using an asterisk (`+*+`) and nested items by two or more asterisk.
 
 .Unordered list with nested levels
 [source,asciidoc]
@@ -59,7 +66,8 @@ The maximum nesting level is five (`pass:[.....]`).
 * Item C
 ----
 
-The maximum nesting level is five (`pass:[*****]`).
+The maximum nesting level is five (`+*****+`).
+Unordered lists use a bullet or other illustrative marker before each list item depending on nesting level.
 
 * Item A
 * Item B
@@ -72,7 +80,116 @@ The maximum nesting level is five (`pass:[*****]`).
 
 You'll use AsciiDoc's unordered list syntax to xref:navigation:list-structures.adoc[structure your site's navigation] as well.
 
-[discrete]
-==== Asciidoctor resources
+[#complex]
+== Complex ordered and unordered lists
 
+List items can be any AsciiDoc element.
+You can also mix ordered and unordered list items.
+Let's look at an example that contains a variety of content and list item types.
+
+[source,asciidoc]
+....
+* A list item can contain two or more paragraphs or blocks of content.
++ // <1>
+[source,yaml]
+----
+  artifacts:
+    expire_in: 1 week
+----
++ // <1>
+====
+An example block
+====
+
+** A literal paragraph doesn't require a list continuation.
+
+ $ antora site.yml
+
+* You can also mix list item types in the same list.
+** Unordered list item
+... Ordered list item
+.... Another ordered list item
++ // <1>
+term:: A description list term and content.
+....
+<1> A [.term]_list continuation_ is a plus symbol (`{plus}`) on a line by itself that is immediately adjacent to the block being attached.
+
+To add additional paragraphs or blocks to a list item, you must attach them with a list continuation (`{plus}`).
+
+Here's how the complex list above is rendered.
+
+--
+* A list item can contain two or more paragraphs or blocks of content.
++
+[source,yaml]
+----
+  artifacts:
+    expire_in: 1 week
+----
++
+====
+An example block
+====
+
+** A literal paragraph doesn't require a list continuation.
+
+ $ antora site.yml
+
+* You can also mix list item types in the same list.
+.. Ordered list item
+*** Unordered list item
+.... Another ordered list item
++
+term:: A description list term and content.
+--
+
+Alternatively, when a list item contains multiple blocks, you can wrap them in a delimited open block (`+--+`).
+Then you only need a single list continuation line to attach the open block to the list item.
+
+.Use an open block instead of multiple list continuations
+[source,asciidoc]
+....
+* A list item that includes several blocks wrapped in an open block.
++ // <1>
+-- // <2>
+[source,yaml]
+----
+  artifacts:
+    expire_in: 1 week
+----
+
+====
+An example block
+====
+
+Another paragraph
+-- // <2>
+....
+<1> Single list continuation attaching the open block to the list item.
+<2> Open block delimiters wrapping multiple blocks.
+
+Here's how that example looks when rendered.
+
+* A list item that includes several blocks wrapped in an open block.
++
+--
+[source,yaml]
+----
+  artifacts:
+    expire_in: 1 week
+----
+
+====
+An example block
+====
+
+Another paragraph
+--
+
+You can find xref:description-lists.adoc#complex[another complex list example] on the description list page.
+
+[discrete]
+=== Asciidoctor resources
+
+* {url-ordered}[Basic and complex ordered lists^]
 * {url-unordered}[Basic and complex unordered lists^]

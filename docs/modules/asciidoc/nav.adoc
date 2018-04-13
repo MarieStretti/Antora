@@ -18,10 +18,10 @@
 * xref:page-to-page-xref.adoc[Page to Page Links]
 * xref:in-page-xref.adoc[Same Page Links]
 * xref:external-urls.adoc[URLs]
-// Lists
-* xref:ordered-and-unordered-lists.adoc[Ordered & Unordered Lists]
-* xref:labeled-lists.adoc[Labeled Lists]
-* xref:task-lists.adoc[Task Lists]
+* xref:lists.adoc[Lists]
+** xref:ordered-and-unordered-lists.adoc[Ordered & Unordered Lists]
+** xref:description-lists.adoc[Description Lists]
+** xref:checklists.adoc[Checklists]
 // Include Partials, Pages, & Examples
 * xref:include-content.adoc[Include Content]
 // Assets & Attachments

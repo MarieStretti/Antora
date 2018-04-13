@@ -1,0 +1,96 @@
+= Description Lists
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:example-caption!:
+:keywords: definition list, association list, labeled list, dl, dt, dd
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-labeled: {url-adoc-manual}/#labeled-list
+
+On this page, you'll learn:
+
+* [x] How to mark up a description list with AsciiDoc.
+* [x] How to add other AsciiDoc elements to the description content.
+
+Description lists, also known as definition lists, provide a list of terms or phrases and their descriptions.
+
+== Description list syntax
+
+Each item in a description list consists of a term or phrase followed by:
+
+* a separator of two consecutive colons (`::`),
+* then at least one space or endline,
+* and finally, the description or definition of the item.
+
+=== Basic description list
+
+Here's an example of a description list with two terms and their content.
+
+[source,asciidoc]
+----
+Keyboard::
+Used to enter text or control items on the screen. // <1>
+Mouse:: Used to point to and select items on your computer screen. // <2>
+----
+<1> The term and its description can be placed on separate lines.
+<2> The term and its description can be placed on the same line as long as there is at least one blank space between the `::` and description content.
+
+The description of each item is displayed below the term when rendered.
+
+Keyboard::
+Used to enter text or control items on the screen.
+Mouse:: Used to point to and select items on your computer screen.
+
+The content of a description list can be any AsciiDoc element.
+It can even contain other list types.
+
+[#complex]
+=== Complex description list
+
+Let's look at an example that includes content other than a single paragraph.
+
+.A description list including complex content
+[source,asciidoc]
+----
+term 1::
+This description needs two paragraphs.
+To attach them both to term 1, use a list continuation (+) on the line separating the paragraphs.
++
+This is the second paragraph for term 1.
+
+term 2:: This description includes an admonition block.
+Like additional paragraphs, blocks also need to be connected with a +.
++
+NOTE: An admonition block that is part of term 2's description.
+
+term 3::
+* unordered list item
+.. ordered list item
+... another ordered list item
+----
+
+Here's the result of the example.
+
+term 1::
+This description needs two paragraphs.
+To attach them both to term 1, use a list continuation (`{plus}`) on the line separating the paragraphs.
++
+This is the second paragraph for term 1.
+
+term 2:: This description includes an admonition block.
+Like additional paragraphs, blocks also need to be connected with a `+`.
++
+NOTE: An admonition block that is part of term 2's description.
+
+term 3::
+* unordered list item
+.. ordered list item
+... another ordered list item
+
+Additional xref:ordered-and-unordered-lists.adoc#complex[complex list examples and information about attaching multiple blocks to a list item] are on the ordered and unordered lists page.
+
+[discrete]
+=== Asciidoctor resources
+
+* {url-labeled}[Basic and complex description lists^]

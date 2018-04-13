@@ -1,0 +1,53 @@
+= Checkists
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:keywords: check list, tick, ballot, punch list, O mark, tally, X mark
+:example-caption!:
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-task: {url-adoc-manual}/#checklist
+
+On this page, you'll learn:
+
+* [x] How to mark up a checklist with AsciiDoc.
+* [x] How to create an clickable checklist with AsciiDoc.
+
+== Checklist syntax
+
+Task lists are xref:ordered-and-unordered-lists#unordered[unordered lists] that have list items marked as checked or not checked.
+
+Here’s an example:
+
+.Checklist syntax
+[source,asciidoc]
+----
+* [*] checked
+* [x] also checked
+* [ ] not checked
+----
+
+* [*] checked
+* [x] also checked
+* [ ] not checked
+
+If you want to make the checkbox clickable, add the `interactive` option to the checklist, which is shown here using the shorthand syntax (`%`) for `options`.
+
+.Interactive checklist syntax
+[source,asciidoc]
+----
+[%interactive]
+* [ ] Binge watch Death in Paradise
+* [ ] Visit a tropical island
+----
+
+Go ahead, click a box.
+
+[%interactive]
+* [ ] Binge watch Death in Paradise
+* [ ] Visit a tropical island
+
+[discrete]
+=== Asciidoctor resources
+
+* {url-task}[Checklists^]
