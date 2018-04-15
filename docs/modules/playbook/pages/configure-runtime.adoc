@@ -54,9 +54,9 @@ A relative path is expanded to an absolute path using the following rules:
 == Pull updates
 
 As previously stated, the first time Antora runs, it caches the remote git repositories and remote UI bundle.
-On subsequent runs, it uses these resources from the cache folder by default (effectively running offline).
+On subsequent runs, Antora looks for these resources in the cache folder by default (effectively running offline).
 
-If you want Antora to refresh the cache, you must set the `pull` key under the `runtime` category to true.
+You can tell Antora to refresh the cache by setting the `pull` key under the `runtime` category to `true`.
 
 [source,yaml]
 ----
@@ -64,12 +64,16 @@ runtime:
   pull: true
 ----
 
-Most of the time, however, you'll just use the `--pull` CLI switch instead of modifying the playbook directly.
-This switch is mapped to the `pull` key described in this section.
+However, you don't have to modify the playbook file directly to set this key.
+Most of the time, you'll just use the `--pull` CLI switch.
+
+ $ antora --pull site.yml
+
+The `--pull` CLI switch sets the `pull` key described in this section to `true`, overridding any value set in the playbook file.
 
 Setting the `pull` key to true activates two behaviors in Antora:
 
 . Run a fetch operation on all cloned repositories (content sources that are remote)
-. Download the UI bundle fresh (if the UI bundle is remote)
+. Download the remove UI bundle anew if it's marked as a xref:configure-ui.adoc#snapshot[snapshot]
 
-You only need to enable the `pull` key when you want to retrieve updates to the remote content sources and/or remote UI bundle.
+Enable the `pull` key whenever you want to retrieve updates to the remote content sources and/or remote UI bundle snapshot.
