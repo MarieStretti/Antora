@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Changed
+
+* *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6
+
 === Fixed
 
 * *playbook-builder*: recognize .yaml as a valid YAML extension for a playbook file (when specified explicitly)
