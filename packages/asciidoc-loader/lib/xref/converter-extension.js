@@ -12,15 +12,21 @@ const ConverterExtension = (() => {
       if (
         node.getAttribute('path') ||
         // NOTE refSpec is undefined if inter-document xref refers to current docname and fragment is empty
+        // TODO remove check for file extension after upgrading to 1.5.7
         (refSpec && refSpec.endsWith('.adoc') && (refSpec = refSpec.substr(0, refSpec.length - 5)) !== undefined)
       ) {
         const callback = this[$pageRefCallback]
         if (callback) {
           const { content, target } = callback(refSpec, node.getText())
-          // TODO pass attributes (e.g., id, role) once core parses them
-          const attributes = target.charAt() === '#' ? undefined : Opal.hash({ role: 'page' })
-          // FIXME switch to node.getParent() after upgrading to Asciidoctor.js 1.5.6
-          node = Inline.$new(node.parent, 'anchor', content, Opal.hash({ type: 'link', target, attributes }))
+          let options
+          if (target.charAt() === '#') {
+            options = Opal.hash2(['type', 'target'], { type: 'link', target })
+          } else {
+            // TODO pass attributes (e.g., id, role) after upgrading to 1.5.7
+            const attributes = Opal.hash2(['role'], { role: 'page' })
+            options = Opal.hash2(['type', 'target', 'attributes'], { type: 'link', target, attributes })
+          }
+          node = Inline.$new(node.getParent(), 'anchor', content, options)
         }
       }
     }

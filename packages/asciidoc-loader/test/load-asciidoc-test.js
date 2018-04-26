@@ -1667,8 +1667,7 @@ describe('loadAsciiDoc()', () => {
       expect(config.extensions).to.have.lengthOf(1)
       expect(config.extensions[0]).to.be.instanceOf(Function)
       const Extensions = Asciidoctor.Extensions
-      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
-      const extensionGroupNames = Extensions.groups ? Object.keys(Extensions.getGroups()) : []
+      const extensionGroupNames = Object.keys(Extensions.getGroups())
       expect(extensionGroupNames).to.have.lengthOf(0)
     })
 
@@ -1677,8 +1676,6 @@ describe('loadAsciiDoc()', () => {
       const config = loadAsciiDoc.resolveConfig(playbook)
       expect(config.extensions).to.not.exist()
       const Extensions = Asciidoctor.Extensions
-      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
-      expect(Extensions.groups).to.exist()
       const extensionGroupNames = Object.keys(Extensions.getGroups())
       expect(extensionGroupNames).to.have.lengthOf(1)
       Extensions.unregisterAll()
@@ -1689,8 +1686,7 @@ describe('loadAsciiDoc()', () => {
       loadAsciiDoc.resolveConfig(playbook)
       loadAsciiDoc.resolveConfig(playbook)
       const Extensions = Asciidoctor.Extensions
-      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
-      const extensionGroupNames = Extensions.groups ? Object.keys(Extensions.getGroups()) : []
+      const extensionGroupNames = Object.keys(Extensions.getGroups())
       expect(extensionGroupNames).to.have.lengthOf(1)
       Extensions.unregisterAll()
     })
@@ -1738,8 +1734,6 @@ describe('loadAsciiDoc()', () => {
       expect(config.extensions[0]).to.be.instanceOf(Function)
       expect(config.extensions[1]).to.be.instanceOf(Function)
       const Extensions = Asciidoctor.Extensions
-      // FIXME remove groups check after upgrading to Asciidoctor.js 1.5.6
-      expect(Extensions.groups).to.exist()
       const extensionGroupNames = Object.keys(Extensions.getGroups())
       expect(extensionGroupNames).to.have.lengthOf(1)
       Extensions.unregisterAll()
