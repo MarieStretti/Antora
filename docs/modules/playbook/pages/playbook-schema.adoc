@@ -53,7 +53,7 @@ output: # <20>
 <5> <<site-service-integration-keys,Service integration keys>>
 <6> <<site-ga-key,Google analytics key>>
 <7> <<content-category,Content category>>
-<8> <<content-sources-keys,Content sources key>>
+<8> <<content-category,Content sources key>>
 <9> <<sources-url-key,Content source repository URL key>>
 <10> <<branches-key,Content source branches key>>
 <11> <<tags-key,Content source tags key>>
