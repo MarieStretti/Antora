@@ -21,11 +21,11 @@
     "cache-directory": "^2.0.0",
     "fs-extra": "^5.0.0",
     "js-yaml": "^3.11.0",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.10",
     "matcher": "^1.1.0",
     "mime-types": "^2.1.18",
     "multi-progress": "^2.0.0",
-    "nodegit": "^0.21.2",
+    "nodegit": "^0.22.0",
     "through2": "^2.0.3",
     "vinyl": "^2.1.0",
     "vinyl-fs": "^3.0.2"

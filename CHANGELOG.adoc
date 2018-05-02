@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Changed
+
+* *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6
+
 === Fixed
 
 * *playbook-builder*: recognize .yaml as a valid YAML extension for a playbook file (when specified explicitly)
@@ -25,7 +29,7 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *ui-loader:* Use outputDir specified in ui.yml of bundle if ui.outputDir is not specified in playbook
+* *ui-loader*: Use outputDir specified in ui.yml of bundle if ui.outputDir is not specified in playbook
 
 === Changed
 
@@ -47,7 +51,7 @@ This project utilizes semantic versioning.
 
 === Documentation
 
-* *redirect-producer:* Add architecture guidebook for redirect producer component
+* *redirect-producer*: Add architecture guidebook for redirect producer component
 * Document how to register Asciidoctor extensions
 * Document the `page-partial` attribute and including standard pages and example files
 * Document ability to set AsciiDoc page attributes in the playbook and via the CLI
@@ -62,14 +66,11 @@ This project utilizes semantic versioning.
 
 === Changed
 
-*
-=== Changed
-
-* *playbook-builder:* Allow Google Analytics key to be set using GOOGLE_ANALYTICS_KEY environment variable
-* *page-composer:* Move antoraVersion property from site to top-level variable in UI model
-* *page-composer:* Prepare a sparse UI model for the 404 page
-* *site-generator-default:* Create and compose a 404 page if the `site.url` key is set in the playbook
-* *site-generator-default:* Remove unhandled rejection listener; move to CLI, but leave disabled
+* *playbook-builder*: Allow Google Analytics key to be set using GOOGLE_ANALYTICS_KEY environment variable
+* *page-composer*: Move antoraVersion property from site to top-level variable in UI model
+* *page-composer*: Prepare a sparse UI model for the 404 page
+* *site-generator-default*: Create and compose a 404 page if the `site.url` key is set in the playbook
+* *site-generator-default*: Remove unhandled rejection listener; move to CLI, but leave disabled
 
 == 1.0.0-beta.3 (2018-03-23)
 
@@ -147,10 +148,10 @@ This project utilizes semantic versioning.
 * *playbook-builder*: Add key to playbook schema to control how HTTP redirects are produced (`urls.redirect_facility`)
 * *content-aggregator*: Honor `runtime.quiet` and `runtime.silent` flags if set in playbook (don't show progress bars)
 * *content-aggregator*: Add progress bar for all git operations using multi-progress (only activate when running in a tty)
-* *content-classifier:* Add support for alias files (family=alias) in content catalog
-* *content-classifier:* Add ContentCatalog#registerPageAlias method for adding an alias for a page
+* *content-classifier*: Add support for alias files (family=alias) in content catalog
+* *content-classifier*: Add ContentCatalog#registerPageAlias method for adding an alias for a page
 * *document-converter*: Register aliases defined in page-aliases document attribute with content catalog
-* *redirect-producer:* Add component responsible for generating HTTP redirects to a page from its registered aliases
+* *redirect-producer*: Add component responsible for generating HTTP redirects to a page from its registered aliases
 
 === Changed
 
@@ -249,53 +250,53 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *docs:* Add Getting Help section to README
-* *content-aggregator:* Assign src.editUrl property on file if applicable
-* *page-composer:* Pass defined site.keys to UI model (as site.keys)
-* *page-composer:* Pass edit URL for page to UI model (as page.editUrl)
-* *playbook-builder:* Add ui.supplemental_files property to playbook schema
-* *ui-loader:* Append supplemental files to UI bundle
+* *docs*: Add Getting Help section to README
+* *content-aggregator*: Assign src.editUrl property on file if applicable
+* *page-composer*: Pass defined site.keys to UI model (as site.keys)
+* *page-composer*: Pass edit URL for page to UI model (as page.editUrl)
+* *playbook-builder*: Add ui.supplemental_files property to playbook schema
+* *ui-loader*: Append supplemental files to UI bundle
 
 === Changed
 
-* *docs:* Prepare documentation for initial publication to docs.antora.org
-* *content-aggregator:* Report accurate messages if local directory doesn't exist or isn't a git repository (@benignbala)
-* *content-aggregator:* Move src.origin.git property to src.origin with type qualifier property
-* *content-aggregator:* Share src.origin data between files taken from the same branch
-* *content-aggregator:* Set src.origin.url to absolute repository path if remote url can't be resolved
-* *content-aggregator:* Add src.origin.worktree flag for files taken from worktree
-* *content-aggregator:* Force set remote name to 'origin' when using repository from cache
-* *content-aggregator:* Use async operation to remove cached repository directory
-* *content-aggregator:* Remove local branch created by nodegit in cached (bare) repository
-* *ui-loader:* Improve how UI bundle is loaded
+* *docs*: Prepare documentation for initial publication to docs.antora.org
+* *content-aggregator*: Report accurate messages if local directory doesn't exist or isn't a git repository (@benignbala)
+* *content-aggregator*: Move src.origin.git property to src.origin with type qualifier property
+* *content-aggregator*: Share src.origin data between files taken from the same branch
+* *content-aggregator*: Set src.origin.url to absolute repository path if remote url can't be resolved
+* *content-aggregator*: Add src.origin.worktree flag for files taken from worktree
+* *content-aggregator*: Force set remote name to 'origin' when using repository from cache
+* *content-aggregator*: Use async operation to remove cached repository directory
+* *content-aggregator*: Remove local branch created by nodegit in cached (bare) repository
+* *ui-loader*: Improve how UI bundle is loaded
 
 === Fixed
 
-* *asciidoc-loader:* Output correct href value for self-referencing page reference (with and without fragment)
-* *content-aggregator:* Prefer remote branches over local branches in a bare repository
-* *site-generator-default:* Await function calls properly to avoid unhandled promise rejections
+* *asciidoc-loader*: Output correct href value for self-referencing page reference (with and without fragment)
+* *content-aggregator*: Prefer remote branches over local branches in a bare repository
+* *site-generator-default*: Await function calls properly to avoid unhandled promise rejections
 
 == 1.0.0-alpha.5 (2018-02-01)
 
 === Added
 
-* *site-mapper:* First release of component
-* *site-generator-default:* Add support for site start page defined in playbook (redirect from index.html)
+* *site-mapper*: First release of component
+* *site-generator-default*: Add support for site start page defined in playbook (redirect from index.html)
 
 === Changed
 
 * Resolve relative paths in playbook relative to directory of playbook file (playbook.dir)
-* *content-aggregator:* Append .git to the bare repository folder in the content cache
-* *content-classifier:* Don't set pub.absoluteUrl property on virtual content files
-* *asciidoc-loader:* Default to latest version of component when resolving a page reference
-* *playbook-builder:* Set file and dir properties on playbook model
-* *playbook-builder:* Make playbook file optional (still required by CLI)
+* *content-aggregator*: Append .git to the bare repository folder in the content cache
+* *content-classifier*: Don't set pub.absoluteUrl property on virtual content files
+* *asciidoc-loader*: Default to latest version of component when resolving a page reference
+* *playbook-builder*: Set file and dir properties on playbook model
+* *playbook-builder*: Make playbook file optional (still required by CLI)
 * Switch Gulp build from minimist to yargs-parser for parsing CLI arguments
 
 === Fixed
 
-* *content-aggregator:* Clean value of start path on content source data
-* *content-aggregator:* Make URI and drive letter regular expressions more accurate
+* *content-aggregator*: Clean value of start path on content source data
+* *content-aggregator*: Make URI and drive letter regular expressions more accurate
 
 == 1.0.0-alpha.4 (2018-01-28)
 
@@ -307,8 +308,8 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *site-publisher:* First release of component
-* *content-aggregator:* Recognize HEAD and . in playbook as placeholder for current branch
+* *site-publisher*: First release of component
+* *content-aggregator*: Recognize HEAD and . in playbook as placeholder for current branch
 * Update installations instructions in README to cover Windows
 * Add AppVeyor CI build for testing on Windows
 * Configure CI to automate releases
@@ -317,8 +318,8 @@ This project utilizes semantic versioning.
 
 === Changed
 
-* *content-aggregator:* Only select git references which are branches
-* *ui-loader:* Switch from download to got
+* *content-aggregator*: Only select git references which are branches
+* *ui-loader*: Switch from download to got
 * Replace chai-as-promised with async/await in test suite
 
 === Fixed

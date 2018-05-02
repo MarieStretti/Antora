@@ -162,8 +162,7 @@ function resolveConfig (playbook) {
 }
 
 function isExtensionRegistered (ext, registry) {
-  // FIXME drop check for groups property after upgrading to Asciidoctor.js 1.5.6
-  return registry.groups && Object.values(registry.getGroups()).includes(ext)
+  return Object.values(registry.getGroups()).includes(ext)
 }
 
 module.exports = loadAsciiDoc
