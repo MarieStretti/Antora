@@ -211,14 +211,15 @@ async function selectReferences (repo, remote, refPatterns) {
 
   if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = tagPatterns.split(CSV_RX)
 
-  return Object.values(
+  return Array.from(
     (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
       let segments
       let name
       let refData
       if (ref.isTag()) {
         if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
-          accum.push({ obj: ref, name, type: 'tag' })
+          // NOTE tags are stored using symbol keys to distinguish them from branches
+          accum.set(Symbol(name), { obj: ref, name, type: 'tag' })
         }
         return accum
       } else if (!branchPatterns) {
@@ -234,14 +235,14 @@ async function selectReferences (repo, remote, refPatterns) {
       }
 
       // NOTE if branch is present in accum, we already know it matches the pattern
-      if (name in accum) {
-        if (isBare === !!refData.remote) accum[name] = refData
+      if (accum.has(name)) {
+        if (isBare === !!refData.remote) accum.set(name, refData)
       } else if (branchPatterns && matcher([name], branchPatterns).length) {
-        accum[name] = refData
+        accum.set(name, refData)
       }
 
       return accum
-    }, [])
+    }, new Map()).values()
   )
 }
 

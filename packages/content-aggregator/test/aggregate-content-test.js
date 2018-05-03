@@ -360,6 +360,21 @@ describe('aggregateContent()', () => {
       })
     })
 
+    describe('should not select a branch named push if not specified', () => {
+      testAll(async (repoBuilder) => {
+        const componentName = 'the-component'
+        await initRepoWithBranches(repoBuilder, componentName, async () =>
+          repoBuilder
+            .checkoutBranch('push')
+            .then(() => repoBuilder.addComponentDescriptor({ name: componentName, version: 'push' }))
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v1.0' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: componentName, version: 'v1.0' })
+      })
+    })
+
     describe('should filter branches using wildcard', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder)

@@ -9,11 +9,12 @@ This project utilizes semantic versioning.
 
 === Changed
 
-* *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6
+* *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6 (from release candidate)
 
 === Fixed
 
-* *playbook-builder*: recognize .yaml as a valid YAML extension for a playbook file (when specified explicitly)
+* *playbook-builder*: recognize .yaml as a valid YAML extension for a playbook file (when specified explicitly) (#229)
+* *content-aggregator*: don't select branches that match the name of internal properties (store branches in a Map) (#241)
 
 == 1.0.0 (2018-03-31)
 
