@@ -7,6 +7,8 @@ const File = require('./file')
 const fs = require('fs-extra')
 const getCacheDir = require('cache-directory')
 const git = require('nodegit')
+const GIT_TYPE_OID = git.Reference.TYPE.OID
+const GIT_TYPE_COMMIT = git.Object.TYPE.COMMIT
 const { obj: map } = require('through2')
 const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
@@ -18,13 +20,13 @@ const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER, CONTENT_GLOB } = require('./constants')
+const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
 const DOT_OR_NOEXT_RX = /(?:^|\/)(?:\.|[^/.]+$)/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
-const ANY_SEPARATOR_RX = /[:/]/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -212,7 +214,7 @@ async function selectReferences (repo, remote, refPatterns) {
   if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = tagPatterns.split(CSV_RX)
 
   return Array.from(
-    (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
+    (await repo.getReferences(GIT_TYPE_OID)).reduce((accum, ref) => {
       let segments
       let name
       let refData
@@ -310,7 +312,7 @@ async function readFilesFromGitTree (repository, ref, startPath) {
 async function getGitTree (repository, ref, startPath) {
   let commit
   if (ref.isTag()) {
-    commit = await ref.peel(git.Object.TYPE.COMMIT).then((target) => repository.getCommit(target))
+    commit = await ref.peel(GIT_TYPE_COMMIT).then((target) => repository.getCommit(target))
   } else {
     commit = await repository.getBranchCommit(ref)
   }
