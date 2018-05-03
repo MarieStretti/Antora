@@ -214,37 +214,39 @@ async function selectReferences (repo, remote, refPatterns) {
   if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = tagPatterns.split(CSV_RX)
 
   return Array.from(
-    (await repo.getReferences(GIT_TYPE_OID)).reduce((accum, ref) => {
-      let segments
-      let name
-      let refData
-      if (ref.isTag()) {
-        if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
-          // NOTE tags are stored using symbol keys to distinguish them from branches
-          accum.set(Symbol(name), { obj: ref, name, type: 'tag' })
+    (await repo.getReferences(GIT_TYPE_OID))
+      .reduce((accum, ref) => {
+        let segments
+        let name
+        let refData
+        if (ref.isTag()) {
+          if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
+            // NOTE tags are stored using symbol keys to distinguish them from branches
+            accum.set(Symbol(name), { obj: ref, name, type: 'tag' })
+          }
+          return accum
+        } else if (!branchPatterns) {
+          return accum
+        } else if ((segments = ref.name().split('/'))[1] === 'heads') {
+          name = ref.shorthand()
+          refData = { obj: ref, name, type: 'branch', isHead: !!ref.isHead() }
+        } else if (segments[1] === 'remotes' && segments[2] === remote) {
+          name = segments.slice(3).join('/')
+          refData = { obj: ref, name, type: 'branch', remote }
+        } else {
+          return accum
         }
-        return accum
-      } else if (!branchPatterns) {
-        return accum
-      } else if ((segments = ref.name().split('/'))[1] === 'heads') {
-        name = ref.shorthand()
-        refData = { obj: ref, name, type: 'branch', isHead: !!ref.isHead() }
-      } else if (segments[1] === 'remotes' && segments[2] === remote) {
-        name = segments.slice(3).join('/')
-        refData = { obj: ref, name, type: 'branch', remote }
-      } else {
-        return accum
-      }
 
-      // NOTE if branch is present in accum, we already know it matches the pattern
-      if (accum.has(name)) {
-        if (isBare === !!refData.remote) accum.set(name, refData)
-      } else if (branchPatterns && matcher([name], branchPatterns).length) {
-        accum.set(name, refData)
-      }
+        // NOTE if branch is present in accum, we already know it matches the pattern
+        if (accum.has(name)) {
+          if (isBare === !!refData.remote) accum.set(name, refData)
+        } else if (branchPatterns && matcher([name], branchPatterns).length) {
+          accum.set(name, refData)
+        }
 
-      return accum
-    }, new Map()).values()
+        return accum
+      }, new Map())
+      .values()
   )
 }
 
