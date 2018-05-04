@@ -16,6 +16,7 @@ const MultiProgress = require('multi-progress')
 const ospath = require('path')
 const { posix: path } = ospath
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
+const { URL } = require('url')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
@@ -27,6 +28,7 @@ const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
+const URL_AUTH_CLEANER_RX = /^(https?:\/\/)(?:[^/@]+@)?(.*)/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -402,17 +404,29 @@ function assignFileProperties (file, origin) {
   return file
 }
 
-// QUESTION should we create dedicate instance of progress and set progress.label?
-function getFetchOptions (progress, progressLabel, operation) {
-  let sshKeyAuthAttempted
+// QUESTION should we create dedicate (mutable) instance of progress and set progress.label?
+function getFetchOptions (progress, uri, operation) {
+  let authAttempted
+  let isUrl
+  let urlAuth
+  let progressLabel = uri
+  if ((isUrl = uri.startsWith('https://') || uri.startsWith('http://')) && uri.includes('@')) {
+    try {
+      urlAuth = new URL(uri)
+      progressLabel = uri.replace(URL_AUTH_CLEANER_RX, '$1$2')
+    } catch (e) {}
+  }
   return {
     callbacks: {
       // https://github.com/nodegit/nodegit/blob/master/guides/cloning/ssh-with-agent/README.md#github-certificate-issue-in-os-x
       certificateCheck: () => 1,
+      // NOTE nodegit will continue to make attempts until git.Cred.defaultNew() or undefined is returned
       credentials: (_, username) => {
-        // NOTE nodegit will continue to make attempts until undefined (or git.Cred.defaultNew()) is returned
-        if (!sshKeyAuthAttempted) {
-          sshKeyAuthAttempted = true
+        if (authAttempted) return process.platform === 'win32' ? undefined : git.Cred.defaultNew()
+        authAttempted = true
+        if (isUrl) {
+          return urlAuth ? git.Cred.userpassPlaintextNew(urlAuth.username, urlAuth.password) : git.Cred.usernameNew('')
+        } else {
           // NOTE sshKeyFromAgent gracefully handles SSH agent not running
           return git.Cred.sshKeyFromAgent(username)
         }

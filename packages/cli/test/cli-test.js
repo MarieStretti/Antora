@@ -6,11 +6,10 @@ const { expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
 const fs = require('fs-extra')
 const { default: Kapok } = require('kapok-js')
 const pkg = require('@antora/cli/package.json')
-const os = require('os')
 const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
-const ANTORA_CLI = ospath.resolve('node_modules', '.bin', os.platform() === 'win32' ? 'antora.cmd' : 'antora')
+const ANTORA_CLI = ospath.resolve('node_modules', '.bin', process.platform === 'win32' ? 'antora.cmd' : 'antora')
 const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
 const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const TIMEOUT = 30000

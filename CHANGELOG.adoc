@@ -10,6 +10,7 @@ This project utilizes semantic versioning.
 === Changed
 
 * *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6 (from release candidate)
+* *content-aggregator*: Add support for basic authentication tokens in a git URL (#238)
 
 === Fixed
 
