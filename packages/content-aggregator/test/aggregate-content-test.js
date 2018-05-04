@@ -84,6 +84,27 @@ describe('aggregateContent()', () => {
     }
   }
 
+  const withMockStdout = async (testBlock, columns = 120, isTTY = true) => {
+    const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
+      accum[name] = process.stdout[name]
+      return accum
+    }, {})
+    try {
+      const lines = []
+      Object.assign(process.stdout, {
+        clearLine: spy(() => {}),
+        columns,
+        cursorTo: spy(() => {}),
+        isTTY,
+        moveCursor: spy(() => {}),
+        write: (line) => /\[(?:clone|fetch)\]/.test(line) && lines.push(line),
+      })
+      await testBlock(lines)
+    } finally {
+      Object.assign(process.stdout, defaultStdout)
+    }
+  }
+
   beforeEach(() => {
     playbookSpec = {
       runtime: { quiet: true },
@@ -1500,27 +1521,6 @@ describe('aggregateContent()', () => {
   describe('progress bars', () => {
     let repoBuilder
 
-    const withMockStdout = async (testBlock, columns = 120, isTTY = true) => {
-      const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
-        accum[name] = process.stdout[name]
-        return accum
-      }, {})
-      try {
-        const lines = []
-        Object.assign(process.stdout, {
-          clearLine: spy(() => {}),
-          columns,
-          cursorTo: spy(() => {}),
-          isTTY,
-          moveCursor: spy(() => {}),
-          write: (line) => /\[(?:clone|fetch)\]/.test(line) && lines.push(line),
-        })
-        await testBlock(lines)
-      } finally {
-        Object.assign(process.stdout, defaultStdout)
-      }
-    }
-
     beforeEach(async () => {
       playbookSpec.runtime.quiet = false
       repoBuilder = new RepositoryBuilder(WORK_DIR, FIXTURES_DIR, { remote: true })
@@ -1779,6 +1779,19 @@ describe('aggregateContent()', () => {
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+    })
+
+    it('should not show auth information in progress bar label', async () => {
+      const url = 'http://0123456789@localhost:1337/401/invalid-repository.git'
+      const expectedErrorMessage =
+        'Content repository not found or you have insufficient credentials to access it: ' + url
+      return withMockStdout(async (lines) => {
+        playbookSpec.runtime.quiet = false
+        playbookSpec.content.sources.push({ url })
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+        expect(lines[0]).not.to.include('0123456789@')
+      }, 9 + url.length * 2)
     })
 
     it('should throw meaningful error if server returns unexpected error', async () => {
