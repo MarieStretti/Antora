@@ -33,10 +33,12 @@ function createPageComposer (playbook, contentCatalog, uiCatalog, env = process.
 
   uiCatalog.findByType('partial').forEach((file) => handlebars.registerPartial(file.stem, file.contents.toString()))
 
-  const layouts = uiCatalog.findByType('layout').reduce((accum, file) => {
-    accum[file.stem] = handlebars.compile(file.contents.toString(), HANDLEBARS_COMPILE_OPTIONS)
-    return accum
-  }, {})
+  const layouts = uiCatalog
+    .findByType('layout')
+    .reduce(
+      (accum, file) => accum.set(file.stem, handlebars.compile(file.contents.toString(), HANDLEBARS_COMPILE_OPTIONS)),
+      new Map()
+    )
 
   return createPageComposerInternal(buildSiteUiModel(playbook, contentCatalog), env, layouts)
 }
@@ -65,12 +67,12 @@ function createPageComposerInternal (site, env, layouts) {
     const uiModel = buildUiModel(file, contentCatalog, navigationCatalog, site, env)
 
     let layout = uiModel.page.layout
-    if (!(layout in layouts)) {
+    if (!layouts.has(layout)) {
       if (layout === '404') throw new Error('404 layout not found')
       const defaultLayout = uiModel.site.ui.defaultLayout
       if (defaultLayout === layout) {
         throw new Error(`${layout} layout not found`)
-      } else if (!(defaultLayout in layouts)) {
+      } else if (!layouts.has(defaultLayout)) {
         throw new Error(`Neither ${layout} layout or fallback ${defaultLayout} layout found`)
       }
       // TODO log a warning that the default template is being used; perhaps on file?
@@ -78,7 +80,7 @@ function createPageComposerInternal (site, env, layouts) {
     }
 
     // QUESTION should we call trim() on result?
-    file.contents = Buffer.from(layouts[layout](uiModel))
+    file.contents = Buffer.from(layouts.get(layout)(uiModel))
     return file
   }
 }

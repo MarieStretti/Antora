@@ -7,6 +7,8 @@ const File = require('./file')
 const fs = require('fs-extra')
 const getCacheDir = require('cache-directory')
 const git = require('nodegit')
+const GIT_TYPE_OID = git.Reference.TYPE.OID
+const GIT_TYPE_COMMIT = git.Object.TYPE.COMMIT
 const { obj: map } = require('through2')
 const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
@@ -18,13 +20,13 @@ const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
 const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER, CONTENT_GLOB } = require('./constants')
+const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
 const DOT_OR_NOEXT_RX = /(?:^|\/)(?:\.|[^/.]+$)/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
-const ANY_SEPARATOR_RX = /[:/]/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -211,37 +213,40 @@ async function selectReferences (repo, remote, refPatterns) {
 
   if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = tagPatterns.split(CSV_RX)
 
-  return Object.values(
-    (await repo.getReferences(git.Reference.TYPE.OID)).reduce((accum, ref) => {
-      let segments
-      let name
-      let refData
-      if (ref.isTag()) {
-        if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
-          accum.push({ obj: ref, name, type: 'tag' })
+  return Array.from(
+    (await repo.getReferences(GIT_TYPE_OID))
+      .reduce((accum, ref) => {
+        let segments
+        let name
+        let refData
+        if (ref.isTag()) {
+          if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
+            // NOTE tags are stored using symbol keys to distinguish them from branches
+            accum.set(Symbol(name), { obj: ref, name, type: 'tag' })
+          }
+          return accum
+        } else if (!branchPatterns) {
+          return accum
+        } else if ((segments = ref.name().split('/'))[1] === 'heads') {
+          name = ref.shorthand()
+          refData = { obj: ref, name, type: 'branch', isHead: !!ref.isHead() }
+        } else if (segments[1] === 'remotes' && segments[2] === remote) {
+          name = segments.slice(3).join('/')
+          refData = { obj: ref, name, type: 'branch', remote }
+        } else {
+          return accum
         }
-        return accum
-      } else if (!branchPatterns) {
-        return accum
-      } else if ((segments = ref.name().split('/'))[1] === 'heads') {
-        name = ref.shorthand()
-        refData = { obj: ref, name, type: 'branch', isHead: !!ref.isHead() }
-      } else if (segments[1] === 'remotes' && segments[2] === remote) {
-        name = segments.slice(3).join('/')
-        refData = { obj: ref, name, type: 'branch', remote }
-      } else {
-        return accum
-      }
 
-      // NOTE if branch is present in accum, we already know it matches the pattern
-      if (name in accum) {
-        if (isBare === !!refData.remote) accum[name] = refData
-      } else if (branchPatterns && matcher([name], branchPatterns).length) {
-        accum[name] = refData
-      }
+        // NOTE if branch is present in accum, we already know it matches the pattern
+        if (accum.has(name)) {
+          if (isBare === !!refData.remote) accum.set(name, refData)
+        } else if (branchPatterns && matcher([name], branchPatterns).length) {
+          accum.set(name, refData)
+        }
 
-      return accum
-    }, [])
+        return accum
+      }, new Map())
+      .values()
   )
 }
 
@@ -309,7 +314,7 @@ async function readFilesFromGitTree (repository, ref, startPath) {
 async function getGitTree (repository, ref, startPath) {
   let commit
   if (ref.isTag()) {
-    commit = await ref.peel(git.Object.TYPE.COMMIT).then((target) => repository.getCommit(target))
+    commit = await ref.peel(GIT_TYPE_COMMIT).then((target) => repository.getCommit(target))
   } else {
     commit = await repository.getBranchCommit(ref)
   }

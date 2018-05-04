@@ -391,7 +391,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql([includeContents])
     })
 
-    it('should not apply tag filtering to include contents if tag attribute is empty', () => {
+    it('should not apply tag filtering to contents of include if tag attribute is empty', () => {
       const includeContents = heredoc`
         # tag::hello[]
         puts "Hello, World!"
@@ -415,7 +415,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
     })
 
-    it('should not apply tag filtering to include contents if tags attribute is empty', () => {
+    it('should not apply tag filtering to contents of include if tags attribute is empty', () => {
       const includeContents = heredoc`
         # tag::hello[]
         puts "Hello, World!"
@@ -439,7 +439,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
     })
 
-    it('should not apply tag filtering to include contents if tags attribute has empty values', () => {
+    it('should not apply tag filtering to contents of include if tags attribute has empty values', () => {
       const includeContents = heredoc`
         # tag::hello[]
         puts "Hello, World!"
@@ -463,7 +463,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
     })
 
-    it('should apply tag filtering to include contents if tag is specified', () => {
+    it('should apply tag filtering to contents of include if tag is specified', () => {
       const includeContents = heredoc`
         # greet example
         # tag::hello[]
@@ -512,7 +512,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => !l.startsWith('/*')))
     })
 
-    it('should apply tag filtering to include contents if negated tag is specified', () => {
+    it('should apply tag filtering to contents of include if negated tag is specified', () => {
       const includeContents = heredoc`
         # tag::hello[]
         puts "Hello, World!"
@@ -536,7 +536,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.be.empty()
     })
 
-    it('should apply tag filtering to include contents if tags are specified', () => {
+    it('should apply tag filtering to contents of include if tags are specified', () => {
       const includeContents = heredoc`
         # tag::hello[]
         puts "Hello, World!"
@@ -563,7 +563,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
     })
 
-    it('should apply tag filtering to include contents if negated tags are specified', () => {
+    it('should apply tag filtering to contents of include if negated tags are specified', () => {
       const includeContents = heredoc`
         # tag::hello[]
         puts "Hello, World!"
@@ -590,7 +590,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"'])
     })
 
-    it('should include nested tags when applying tag filtering to include contents', () => {
+    it('should include nested tags when applying tag filtering to contents of include', () => {
       const includeContents = heredoc`
         # tag::decl[]
         msgs = { hello: "Hello, World!", goodbye: "Goodbye, World!" }

@@ -35,21 +35,17 @@ function getTags (attrs) {
   if (attrs['$key?']('tag')) {
     const tag = attrs['$[]']('tag')
     if (tag && tag !== '!') {
-      return tag.charAt() === '!' ? { [tag.substr(1)]: false } : { [tag]: true }
+      return tag.charAt() === '!' ? new Map().set(tag.substr(1), false) : new Map().set(tag, true)
     }
   } else if (attrs['$key?']('tags')) {
     const tags = attrs['$[]']('tags')
     if (tags) {
-      let result = {}
+      let result = new Map()
       let any = false
       tags.split(TAG_DELIMITER_RX).forEach((tag) => {
         if (tag && tag !== '!') {
           any = true
-          if (tag.charAt() === '!') {
-            result[tag.substr(1)] = false
-          } else {
-            result[tag] = true
-          }
+          tag.charAt() === '!' ? result.set(tag.substr(1), false) : result.set(tag, true)
         }
       })
       if (any) return result
@@ -59,20 +55,20 @@ function getTags (attrs) {
 
 function applyTagFiltering (contents, tags) {
   let selecting, selectingDefault, wildcard
-  if ('**' in tags) {
-    if ('*' in tags) {
-      selectingDefault = selecting = tags['**']
-      wildcard = tags['*']
-      delete tags['*']
+  if (tags.has('**')) {
+    if (tags.has('*')) {
+      selectingDefault = selecting = tags.get('**')
+      wildcard = tags.get('*')
+      tags.delete('*')
     } else {
-      selectingDefault = selecting = wildcard = tags['**']
+      selectingDefault = selecting = wildcard = tags.get('**')
     }
-    delete tags['**']
+    tags.delete('**')
   } else {
-    selectingDefault = selecting = !Object.values(tags).includes(true)
-    if ('*' in tags) {
-      wildcard = tags['*']
-      delete tags['*']
+    selectingDefault = selecting = !Array.from(tags.values()).includes(true)
+    if (tags.has('*')) {
+      wildcard = tags.get('*')
+      tags.delete('*')
     }
   }
 
@@ -98,7 +94,7 @@ function applyTagFiltering (contents, tags) {
         if (thisTag === activeTag) {
           tagStack.shift()
           ;[activeTag, selecting] = tagStack.length ? tagStack[0] : [undefined, selectingDefault]
-        } else if (thisTag in tags) {
+        } else if (tags.has(thisTag)) {
           const idx = tagStack.findIndex(([name]) => name === thisTag)
           if (~idx) {
             tagStack.splice(idx, 1)
@@ -108,9 +104,9 @@ function applyTagFiltering (contents, tags) {
           //  //console.warn(`line ${lineNum}: unexpected end tag in include: ${thisTag}`)
           //}
         }
-      } else if (thisTag in tags) {
+      } else if (tags.has(thisTag)) {
         usedTags.push(thisTag)
-        tagStack.unshift([(activeTag = thisTag), (selecting = tags[thisTag])])
+        tagStack.unshift([(activeTag = thisTag), (selecting = tags.get(thisTag))])
       } else if (wildcard !== undefined) {
         selecting = activeTag && !selecting ? false : wildcard
         tagStack.unshift([(activeTag = thisTag), selecting])
