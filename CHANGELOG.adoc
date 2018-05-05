@@ -17,6 +17,7 @@ This project utilizes semantic versioning.
 
 * *playbook-builder*: Recognize .yaml as a valid YAML extension for a playbook file (when specified explicitly) (#229)
 * *content-aggregator*: Don't select branches that match the name of internal properties (store branches in a Map) (#241)
+* *page-composer*: Ignore fragment in URL of navigation entry when comparing URLs to resolve breadcrumb path (#244)
 
 == 1.0.0 (2018-03-31)
 

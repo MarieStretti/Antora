@@ -182,8 +182,11 @@ function getBreadcrumbs (pageUrl, pageTitle, menu) {
 }
 
 function findBreadcrumbPath (matchUrl, currentItem, currentPath = []) {
-  if (currentItem.url === matchUrl && currentItem.urlType === 'internal') {
-    return currentPath.concat(currentItem)
+  if (currentItem.urlType === 'internal') {
+    const currentItemUrl = currentItem.hash
+      ? currentItem.url.substr(0, currentItem.url.length - currentItem.hash.length)
+      : currentItem.url
+    if (currentItemUrl === matchUrl) return currentPath.concat(currentItem)
   }
   const items = currentItem.items
   let numItems

@@ -72,14 +72,19 @@ function partitionContent (content) {
   if (~content.indexOf('<a')) {
     const match = content.match(LINK_RX)
     if (match) {
-      let url = match[1]
-      let urlType = 'external'
-      if (match[2] === 'page') {
-        urlType = 'internal'
+      const [, url, role, content] = match
+      if (role === 'page') {
+        const hashIdx = url.indexOf('#')
+        if (~hashIdx) {
+          return { content, url, urlType: 'internal', hash: url.substr(hashIdx) }
+        } else {
+          return { content, url, urlType: 'internal' }
+        }
       } else if (url.charAt() === '#') {
-        urlType = 'fragment'
+        return { content, url, urlType: 'fragment', hash: url }
+      } else {
+        return { content, url, urlType: 'external' }
       }
-      return { content: match[3], url, urlType }
     }
   }
   return { content }

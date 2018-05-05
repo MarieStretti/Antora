@@ -463,6 +463,81 @@ describe('build UI model', () => {
       expect(model.breadcrumbs[1]).to.equal(itemC1)
     })
 
+    it('should find entry in navigation tree even when URL of all matching entries contain fragments', () => {
+      let item1
+      menu.push({
+        order: 0,
+        root: true,
+        items: [
+          (item1 = {
+            content: 'The Page (top)',
+            hash: '#_top',
+            url: '/the-component/1.0/the-page.html#_top',
+            urlType: 'internal',
+            items: [
+              {
+                content: 'The Page (section)',
+                hash: '#_section',
+                url: '/the-component/1.0/the-page.html#_section',
+                urlType: 'internal',
+              },
+              {
+                content: 'Page B',
+                url: '/the-component/1.0/page-b.html',
+                urlType: 'internal',
+              },
+            ],
+          }),
+          {
+            content: 'Page A',
+            url: '/the-component/1.0/page-a.html',
+            urlType: 'internal',
+          },
+        ],
+      })
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.breadcrumbs).to.exist()
+      expect(model.breadcrumbs).to.have.lengthOf(1)
+      expect(model.breadcrumbs[0]).to.equal(item1)
+    })
+
+    it('should find entry in navigation tree even when URL of first matching entry contains a fragment', () => {
+      let item1
+      menu.push({
+        order: 0,
+        root: true,
+        items: [
+          (item1 = {
+            content: 'The Page (section)',
+            hash: '#_section',
+            url: '/the-component/1.0/the-page.html#_section',
+            urlType: 'internal',
+            items: [
+              {
+                content: 'The Page',
+                url: '/the-component/1.0/the-page.html',
+                urlType: 'internal',
+              },
+              {
+                content: 'Page B',
+                url: '/the-component/1.0/page-b.html',
+                urlType: 'internal',
+              },
+            ],
+          }),
+          {
+            content: 'Page A',
+            url: '/the-component/1.0/page-a.html',
+            urlType: 'internal',
+          },
+        ],
+      })
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.breadcrumbs).to.exist()
+      expect(model.breadcrumbs).to.have.lengthOf(1)
+      expect(model.breadcrumbs[0]).to.equal(item1)
+    })
+
     it('should not set versions property if component only has one version', () => {
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.versions).to.not.exist()
