@@ -11,11 +11,12 @@ This project utilizes semantic versioning.
 
 * *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6 (from release candidate)
 * *content-aggregator*: Add support for basic authentication tokens in a git URL (#238)
+* *page-composer*: Add entry for current page to breadcrumbs when page is discrete (a page not present in navigation tree) (#243)
 
 === Fixed
 
-* *playbook-builder*: recognize .yaml as a valid YAML extension for a playbook file (when specified explicitly) (#229)
-* *content-aggregator*: don't select branches that match the name of internal properties (store branches in a Map) (#241)
+* *playbook-builder*: Recognize .yaml as a valid YAML extension for a playbook file (when specified explicitly) (#229)
+* *content-aggregator*: Don't select branches that match the name of internal properties (store branches in a Map) (#241)
 
 == 1.0.0 (2018-03-31)
 
