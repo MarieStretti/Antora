@@ -12,8 +12,8 @@
 ** xref:install/upgrade-antora.adoc[Upgrade Antora]
 
 * xref:run-antora.adoc[Run Antora]
+** xref:run-antora.adoc#cache[About the Cache]
 ** xref:run-antora.adoc#local-site-preview[Local Preview]
-** xref:run-antora.adoc#cache[Cache]
 ** xref:antora-container.adoc[Run Antora in a Container]
 ** xref:cli:index.adoc[CLI Reference]
 
