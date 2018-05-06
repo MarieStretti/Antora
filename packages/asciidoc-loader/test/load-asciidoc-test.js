@@ -391,6 +391,43 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql([includeContents])
     })
 
+    it('should not register include in document catalog', () => {
+      const includeContents = 'Hello, World!'
+      const contentCatalog = mockContentCatalog({
+        family: 'partial',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('getById')
+      setInputFileContents('include::{partialsdir}/greeting.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'greeting.adoc',
+      })
+      expect(doc.getCatalog().includes['$empty?']()).to.be.true()
+    })
+
+    it('should not mangle a page reference if reference matches rootname of include', () => {
+      const includeContents = 'Hello, World!'
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'partial',
+          relative: 'greeting.adoc',
+          contents: includeContents,
+        },
+        {
+          family: 'page',
+          relative: 'greeting.adoc',
+        },
+      ]).spyOn('getById')
+      setInputFileContents('include::{partialsdir}/greeting.adoc[]\n\nsee xref:greeting.adoc#message[greeting message]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(doc.convert()).to.include('<a href="greeting.html#message"')
+    })
+
     it('should not apply tag filtering to contents of include if tag attribute is empty', () => {
       const includeContents = heredoc`
         # tag::hello[]
