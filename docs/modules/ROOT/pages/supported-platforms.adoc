@@ -3,25 +3,21 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 :test-count: over 780
+:test-coverage: 99%
 // URLs
 :url-repo: https://gitlab.com/antora/antora
 :url-issues: {url-repo}/issues
 :url-chat-dev: https://gitter.im/antora/dev
 
-Antora operates on macOS, Windows, and most Linux distributions.
-It should also operate as designed on common VM environments and cloud platforms.
+Antora runs on well-known Linux distributions, macOS, and Windows.
+Thanks to this broad platform support, Antora can be used with most continuous integration environments and cloud platforms.
 
-//There's also an Antora Docker container.
+This page provides an <<platforms,overview of the platforms>> Antora supports and directs you to the <<what-s-next,system requirements>> for each platform.
+The Antora project also provides an official xref:antora-container.adoc[Docker container] you can use to bypass the installation process.
 
 == Platforms
 
 Antora is actively tested on the platforms listed below.
-
-[NOTE]
-.Linux Distributions
-====
-While we only continuously test Antora on Alpine, Debian, and Fedora, it should operate as expected on most Linux distributions.
-====
 
 // When we have specific notes about a platform (tweaks and/or links to bugs) add a 3rd column to this table labeled "Good to Know"
 [cols="20,25a",width="45%"]
@@ -33,10 +29,10 @@ While we only continuously test Antora on Alpine, Debian, and Fedora, it should 
 3.7
 3.6
 
-|Debian Linux
+|Debian
 |9.3
 
-|Fedora Linux
+|Fedora
 |[%hardbreaks]
 27
 26
@@ -64,13 +60,17 @@ Windows Server 2012 R2
 |Latest stable version
 
 |Node
-|8.10
+|8 (latest release in line)
 |===
 
-[caption="ANTORA STATS"]
-NOTE: At last count, Antora had {test-count} tests.
-And we add more every week.
-We're just a teeny-tiny bit obsessed with writing quality tests and achieving complete test coverage.
+While we only continuously test Antora on Fedora, Alpine Linux, Debian, and Ubuntu, we anticipate it should operate as expected on most well-known Linux distributions.
+
+.About the Antora Test Suite
+****
+At last count, Antora had {test-count} tests that coverage over {test-coverage} of the lines.
+We add more tests every week.
+We're just a teeny bit obsessed with writing high quality tests and achieving complete test coverage.
+****
 
 == Cloud platforms
 
@@ -78,10 +78,12 @@ Antora should operate as designed on common cloud platforms.
 How you provision your cloud instance depends on your workload requirements and remote git repository sizes.
 If you're running Antora on a cloud platform, we would love to hear about your experience (open a {url-issues}[new issue^] or join us in the {url-chat-dev}[development channel^]).
 
+////
 == Virtual Machine (VM) environments
 
 Antora runs in VirtualBox and should operate as designed in common VM environments such as VMware.
 If you're running Antora in a VM environment, we would love to hear about your experience (open a {url-issues}[new issue^] or join us in the {url-chat-dev}[development channel^]).
+////
 
 == Hardware recommendations
 
@@ -90,8 +92,7 @@ Your hardware requirements will depend primarily on the size of the remote git r
 The first time Antora runs, it fetches and clones all of the remote git repositories specified in a playbook.
 The speed of this operation is dictated by the size of the remote repositories, environment input/output parameters, and network performance.
 After the initial run, Antora caches the repositories locally.
-On subsequent runs, Antora will only reconnect to the remote repositories if the pull key is on or if the local cache is removed.
-// Add xref to pull key when documentation is available
+On subsequent runs, Antora only reconnects to the remote repositories if the xref:playbook:configure-runtime.adoc#pull[pull option] is enabled or the xref:playbook:configure-runtime.adoc#cache[cache folder] is removed.
 
 [cols="5s,70",width="75%"]
 |===
@@ -111,9 +112,7 @@ Prep your system for installing Antora:
 * xref:install/macos-requirements.adoc[macOS requirements]
 * xref:install/windows-requirements.adoc[Windows requirements]
 
-Or try out the Antora Docker container:
-
-* xref:antora-container.adoc[Antora Docker container]
+Or try out the official xref:antora-container.adoc[Antora Docker container].
 
 ////
 OS Release schedule links

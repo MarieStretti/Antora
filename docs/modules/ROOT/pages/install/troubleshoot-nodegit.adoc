@@ -1,4 +1,4 @@
-= Troubleshoot nodegit
+= Troubleshoot NodeGit
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -7,10 +7,22 @@ endif::[]
 :url-nodegit-dev: http://www.nodegit.org/guides/install/from-source
 
 Antora interfaces with git repositories using {url-nodegit}[nodegit^].
-During installation of the site generator, Antora pulls in nodegit as a dependency and installs it automatically.
-If your Antora installation fails, nodegit is the most probable culprit.
+During installation (specifically the default site generator), Antora downloads and installs nodegit automatically.
+But this step requires support from your system.
+If Antora fails to install or run, nodegit is the most probable culprit.
+This page helps you troubleshoot the problem.
 
-== nodegit and Linux
+== Check prerequisites
+
+If installation fails when it arrives at installing nodegit, the first thing to check is that you've satisfied all prerequisites.
+Specifically, you must have installed the base build tools for your system (Linux and macOS only).
+
+* xref:install/linux-requirements.adoc#base-build-tools[Install base build tools for Linux]
+* xref:install/macos-requirements.adoc#base-build-tools[Install base build tools for macOS]
+
+If that doesn't do the trick, or Antora fails at runtime, you may either need to patch your system or force nodegit to be recompiled.
+
+== NodeGit and Linux
 
 The nodegit dependency may fail on certain Linux distributions when you attempt to install the default Antora site generator.
 
@@ -44,11 +56,11 @@ Once you've made that symlink, run the `npm install` command to install the site
 $ npm install -g @antora/site-generator-default
 
 [#recompile-nodegit]
-== Option 2: Recompile nodegit
+== Option 2: Recompile NodeGit
 
 If you aren't comfortable making a system-wide change, or you're on Alpine Linux, you can recompile nodegit on your machine instead.
 
-Force nodegit to recompile by passing the `BUILD_ONLY` environment variable to the `npm install` command.
+Force nodegit to recompile by passing the `BUILD_ONLY=true` environment variable to the `npm install` command.
 
 [source]
 $ BUILD_ONLY=true npm install -g @antora/site-generator-default
