@@ -42,18 +42,15 @@ If you're using Alpine Linux, you must <<recompile-nodegit,force nodegit to reco
 
 To create the missing symlink, run the following command:
 
-[source]
-$ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
+ $ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
 
 If that fails, run:
 
-[source]
-$ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
+ $ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
 
 Once you've made that symlink, run the `npm install` command to install the site generator.
 
-[source]
-$ npm install -g @antora/site-generator-default
+ $ npm install -g @antora/site-generator-default
 
 [#recompile-nodegit]
 == Option 2: Recompile NodeGit
@@ -62,8 +59,7 @@ If you aren't comfortable making a system-wide change, or you're on Alpine Linux
 
 Force nodegit to recompile by passing the `BUILD_ONLY=true` environment variable to the `npm install` command.
 
-[source]
-$ BUILD_ONLY=true npm install -g @antora/site-generator-default
+ $ BUILD_ONLY=true npm install -g @antora/site-generator-default
 
 Be aware that recompiling nodegit will make installation take considerably longer.
 
