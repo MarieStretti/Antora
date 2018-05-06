@@ -63,10 +63,11 @@ When executed from the CLI, the options that are mapped to xref:playbook:index.a
 |Option |Purpose |Format |Default
 
 |--attribute <attribute>
-|Add an xref:playbook:configure-asciidoc.adoc[AsciiDoc document attribute] to each page in the site.
-Accepts the following forms: `name` (to set), `name!` (to unset), or `name='value'` (to set with a specific value).
+|A global document attribute to set on each AsciiDoc document.
 May be specified multiple times.
-|Key/Value Pair
+The value must adhere to the form `name` or `name=value`.
+Append `@` to the value to allow it to be overridden in a document.
+|String, String=String
 |not set
 
 |--cache-dir <dir>
