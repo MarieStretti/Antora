@@ -20,11 +20,14 @@ const IncludeProcessor = (() => {
   Opal.defn(scope, '$process', function (doc, reader, target, attrs) {
     const resolvedFile = this[$callback](doc, target, doc.getReader().getCursor())
     if (resolvedFile) {
-      let contents = resolvedFile.contents
+      let includeContents = resolvedFile.contents
       let startLineNum = 1
       const tags = getTags(attrs)
-      if (tags) [contents, startLineNum] = applyTagFiltering(contents, tags)
-      reader.pushInclude(contents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
+      if (tags) [includeContents, startLineNum] = applyTagFiltering(includeContents, tags)
+      const includes = doc.getCatalog().includes.$dup()
+      reader.pushInclude(includeContents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
+      // TODO after upgrading to 1.5.7, pass partial-option attribute instead
+      doc.getCatalog().includes.$replace(includes)
     }
   })
 
