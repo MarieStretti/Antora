@@ -259,6 +259,7 @@ describe('buildNavigation()', () => {
         },
         {
           content: 'Older Version',
+          hash: '#detail',
           url: '/component-a/0.9/module-a/page-c.html#detail',
           urlType: 'internal',
         },
@@ -474,6 +475,7 @@ describe('buildNavigation()', () => {
         },
         {
           content: 'Back to top',
+          hash: '#',
           url: '#',
           urlType: 'fragment',
         },
