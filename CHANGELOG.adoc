@@ -9,9 +9,10 @@ This project utilizes semantic versioning.
 
 === Improved
 
-* *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.6 (from release candidate)
+* *asciidoc-loader*: Upgrade to Asciidoctor.js from 1.5.6-rc.1 to 1.5.6 (final)
 * *asciidoc-loader*: Don't register include in catalog (to avoid mangling page references)
 * *content-aggregator*: Add support for basic authentication tokens in a git URL (#238)
+* *ui-loader*: Allow keys in the UI descriptor to be written in snake_case (#245)
 * *page-composer*: Add entry for current page to breadcrumbs when page is discrete (a page not present in navigation tree) (#243)
 
 === Fixed

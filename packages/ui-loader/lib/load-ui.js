@@ -1,5 +1,6 @@
 'use strict'
 
+const camelCaseKeys = require('camelcase-keys')
 const collectBuffer = require('bl')
 const { createHash } = require('crypto')
 const expandPath = require('@antora/expand-path-helper')
@@ -256,7 +257,7 @@ function loadConfig (files, outputDir) {
   const configFile = files.get(UI_DESC_FILENAME)
   if (configFile) {
     files.delete(UI_DESC_FILENAME)
-    const config = yaml.safeLoad(configFile.contents.toString())
+    const config = camelCaseKeys(yaml.safeLoad(configFile.contents.toString()), { deep: true })
     if (outputDir !== undefined) config.outputDir = outputDir
     const staticFiles = config.staticFiles
     if (staticFiles) {
