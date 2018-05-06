@@ -358,6 +358,32 @@ describe('build UI model', () => {
       expect(model.breadcrumbs[0]).to.equal(menu[0].items[0])
     })
 
+    it('should create breadcrumb entry for current page if entry not found in any navigation tree', () => {
+      file.asciidoc = {
+        doctitle: 'The Page Title',
+      }
+      menu.push({
+        order: 0,
+        root: true,
+        items: [
+          {
+            content: 'Not The Page',
+            url: '/the-component/1.0/not-the-page.html',
+            urlType: 'internal',
+          },
+        ],
+      })
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.breadcrumbs).to.exist()
+      expect(model.breadcrumbs).to.have.lengthOf(1)
+      expect(model.breadcrumbs[0]).to.eql({
+        content: 'The Page Title',
+        url: file.pub.url,
+        urlType: 'internal',
+        discrete: true,
+      })
+    })
+
     it('should use breadcrumb path of first occurrence of page in nav tree', () => {
       let itemA
       let itemC1

@@ -144,23 +144,24 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   const versions =
     component.versions.length > 1 ? getPageVersions(file.src, component, contentCatalog, { sparse: true }) : undefined
   const navigation = navigationCatalog.getMenu(componentName, version) || []
-  const breadcrumbs = getBreadcrumbs(url, navigation)
+  const title = asciidoc.doctitle
 
   const model = {
     contents: file.contents,
     layout: pageAttributes.layout || site.ui.defaultLayout,
-    title: asciidoc.doctitle,
+    title,
     url,
     description: attributes.description,
     keywords: attributes.keywords,
     attributes: pageAttributes,
     component,
-    componentVersion: component.versions.find((candidate) => candidate.version === version),
+    componentVersion: getComponentVersion(component.versions, version),
     version,
     module: file.src.module,
     versions,
     navigation,
-    breadcrumbs,
+    // QUESTION should we filter out component start page?
+    breadcrumbs: getBreadcrumbs(url, title, navigation),
     editUrl: file.src.editUrl,
     home: url === site.homeUrl,
   }
@@ -172,12 +173,12 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   return model
 }
 
-function getBreadcrumbs (matchUrl, menu) {
+function getBreadcrumbs (pageUrl, pageTitle, menu) {
   for (let i = 0, numTrees = menu.length; i < numTrees; i++) {
-    const breadcrumbs = findBreadcrumbPath(matchUrl, menu[i])
+    const breadcrumbs = findBreadcrumbPath(pageUrl, menu[i])
     if (breadcrumbs) return breadcrumbs
   }
-  return []
+  return pageTitle ? [{ content: pageTitle, url: pageUrl, urlType: 'internal', discrete: true }] : []
 }
 
 function findBreadcrumbPath (matchUrl, currentItem, currentPath = []) {
@@ -196,6 +197,10 @@ function findBreadcrumbPath (matchUrl, currentItem, currentPath = []) {
       if (matchingPath) return matchingPath
     }
   }
+}
+
+function getComponentVersion (versions, currentVersion) {
+  return versions.find((candidate) => candidate.version === currentVersion)
 }
 
 // QUESTION should this go in ContentCatalog?
