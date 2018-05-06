@@ -1,4 +1,4 @@
-= Troubleshoot nodegit
+= Troubleshoot NodeGit
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
@@ -22,7 +22,7 @@ Specifically, you must have installed the base build tools for your system (Linu
 
 If that doesn't do the trick, or Antora fails at runtime, you may either need to patch your system or force nodegit to be recompiled.
 
-== nodegit and Linux
+== NodeGit and Linux
 
 The nodegit dependency may fail on certain Linux distributions when you attempt to install the default Antora site generator.
 
@@ -56,11 +56,11 @@ Once you've made that symlink, run the `npm install` command to install the site
 $ npm install -g @antora/site-generator-default
 
 [#recompile-nodegit]
-== Option 2: Recompile nodegit
+== Option 2: Recompile NodeGit
 
 If you aren't comfortable making a system-wide change, or you're on Alpine Linux, you can recompile nodegit on your machine instead.
 
-Force nodegit to recompile by passing the `BUILD_ONLY` environment variable to the `npm install` command.
+Force nodegit to recompile by passing the `BUILD_ONLY=true` environment variable to the `npm install` command.
 
 [source]
 $ BUILD_ONLY=true npm install -g @antora/site-generator-default

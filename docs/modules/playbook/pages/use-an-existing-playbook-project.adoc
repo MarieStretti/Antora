@@ -42,7 +42,7 @@ In your terminal, execute the following command from the root folder of the play
 The install command uses dependency information defined in [.path]_package.json_ and [.path]_yarn.lock_ to resolve dependencies.
 Yarn installs these dependencies inside the project under the [.path]_node_modules_ folder.
 
-NOTE: If you run into problems while installing dependencies, see xref:ROOT:troubleshoot-yarn-nodegit.adoc[Troubleshooting Yarn and NodeGit].
+NOTE: If you run into problems while installing dependencies, see xref:ROOT:troubleshoot-yarn-nodegit.adoc[Troubleshoot Yarn and NodeGit].
 
 Once you've installed Antora and its dependencies, you can xref:ROOT:run-antora.adoc[generate your site] with your playbook.
 

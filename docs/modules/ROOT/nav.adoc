@@ -8,7 +8,7 @@
 *** xref:install/windows-requirements.adoc[Windows]
 
 ** xref:install/install-antora.adoc[Install Antora]
- *** xref:install/troubleshoot-nodegit.adoc[Troubleshoot Nodegit]
+ *** xref:install/troubleshoot-nodegit.adoc[Troubleshoot NodeGit]
 ** xref:install/upgrade-antora.adoc[Upgrade Antora]
 
 * xref:run-antora.adoc[Run Antora]
