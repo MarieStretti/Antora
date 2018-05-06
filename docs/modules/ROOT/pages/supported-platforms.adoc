@@ -67,9 +67,9 @@ While we only continuously test Antora on Fedora, Alpine Linux, Debian, and Ubun
 
 .About the Antora Test Suite
 ****
-At last count, Antora had {test-count} tests that coverage over {test-coverage} of the lines.
-We add more tests every week.
-We're just a teeny bit obsessed with writing high quality tests and achieving complete test coverage.
+At last count, Antora had {test-count} tests that cover over {test-coverage} of the lines.
+And we add more tests with every change.
+You could say we're just a teeny bit obsessed with writing high quality tests and maintaining complete test coverage.
 ****
 
 == Cloud platforms
