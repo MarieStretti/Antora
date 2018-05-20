@@ -65,11 +65,11 @@ output: # <20>
 <17> <<ui-start-path-key,Bundle start path key>>
 <18> <<ui-default-layout-key,UI default layout key>>
 <19> <<ui-output-dir-key,UI output directory key>>
-<20> Output category
-<21> Clean output directory key
-<22> Output directory key
-<23> Output destinations key
-<24> Output provider key
+<20> <<output-category,Output category>>
+<21> <<output-clean-key,Clean output directory key>>
+<22> <<output-dir-key,Output directory key>>
+<23> <<output-destinations-key,Output destinations key>>
+<24> <<output-provider-key,Output provider key>>
 
 Let's explore the purpose and usage of each key and its values.
 
@@ -269,7 +269,7 @@ The provider, in turn, determines which transport protocol to use (local, SSH, H
 
 The output key is not required.
 
-[#clean-key]
+[#output-clean-key]
 === clean
 
 The clean key is a boolean.
@@ -280,7 +280,7 @@ This key only applies to the filesystem providers currently.
 WARNING: Use this key with great care.
 For example, if you set `dir` to your computer's home directory and `clean` to true, you will delete ALL of the folders and files in your home directory.
 
-[#dir-key]
+[#output-dir-key]
 === dir
 
 The output `dir` key specifies the directory to publish the generated site files.
@@ -295,6 +295,7 @@ Learn more:
 
 * xref:configure-output.adoc#output-dir[Specify an output directory]
 
+[#output-destinations-key]
 === destinations
 
 The destinations key contains a list of specifications that determine how, by which provider, and where the site will be published.
@@ -304,6 +305,7 @@ When no destinations are specified, Antora publishes the site to the local files
 
 To disable publishing entirely, including the default output, set destinations to an empty array (`[]`).
 
+[#output-provider-key]
 ==== provider
 
 The provider key specifies the transport protocol Antora should use for publishing the generated site.
