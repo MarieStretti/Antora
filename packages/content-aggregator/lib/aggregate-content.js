@@ -203,7 +203,7 @@ async function selectReferences (repo, remote, refPatterns) {
       if (branchPatterns.length) {
         let currentBranchIdx
         if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-          branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
+          (branchPatterns = branchPatterns.slice(0))[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
         }
       } else {
         branchPatterns = undefined
