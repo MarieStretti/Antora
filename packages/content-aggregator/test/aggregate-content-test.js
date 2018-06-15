@@ -382,6 +382,21 @@ describe('aggregateContent()', () => {
       })
     })
 
+    describe('should select a branch that matches a numeric value', () => {
+      testAll(async (repoBuilder) => {
+        const componentName = 'the-component'
+        await initRepoWithBranches(repoBuilder, componentName, async () =>
+          repoBuilder
+            .checkoutBranch('5.6')
+            .then(() => repoBuilder.addComponentDescriptor({ name: componentName, version: '5.6' }))
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 5.6 })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: componentName, version: '5.6' })
+      })
+    })
+
     describe('should not select a branch named push if not specified', () => {
       testAll(async (repoBuilder) => {
         const componentName = 'the-component'
@@ -414,7 +429,7 @@ describe('aggregateContent()', () => {
         await initRepoWithBranches(repoBuilder)
         playbookSpec.content.sources.push({
           url: repoBuilder.url,
-          branches: ['master', 'v1*', 'v3.*'],
+          branches: ['master', 'v1*', 'v3.*', 5.6],
         })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(3)
@@ -588,16 +603,27 @@ describe('aggregateContent()', () => {
       })
     })
 
+    describe('should select a tag that matches a numeric value', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () => repoBuilder.createTag('1', 'v1.0'))
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: 1 })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+      })
+    })
+
     describe('should filter tags using multiple filters passed as array', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder, 'the-component', async () =>
           repoBuilder
-            .createTag('v1.0.0', 'v1.0')
+            .createTag('1', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
             .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
         )
         playbookSpec.content.branches = undefined
-        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: ['v1.0.0', 'v3.*'] })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: [1, 'v3.*'] })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(2)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })

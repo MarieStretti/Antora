@@ -202,18 +202,23 @@ async function selectReferences (repo, remote, refPatterns) {
     } else if (Array.isArray(branchPatterns)) {
       if (branchPatterns.length) {
         let currentBranchIdx
+        branchPatterns = branchPatterns.map((p) => p.toString())
         if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-          (branchPatterns = branchPatterns.slice(0))[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
+          branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
         }
       } else {
         branchPatterns = undefined
       }
     } else {
-      branchPatterns = branchPatterns.split(CSV_RX)
+      branchPatterns = branchPatterns.toString().split(CSV_RX)
     }
   }
 
-  if (tagPatterns && !Array.isArray(tagPatterns)) tagPatterns = tagPatterns.split(CSV_RX)
+  if (tagPatterns) {
+    tagPatterns = Array.isArray(tagPatterns)
+      ? tagPatterns.map((p) => p.toString())
+      : tagPatterns.toString().split(CSV_RX)
+  }
 
   return Array.from(
     (await repo.getReferences(GIT_TYPE_OID))
