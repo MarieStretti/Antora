@@ -25,83 +25,80 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 For a detailed list of current development tasks, refer to the Core components {uri-issues}[issue tracker].
 
-=== v1.1
+=== v1.0.2
 
-*Release Timeframe*: 2018 Q2
+* [ ] Automatically convert branches and tags patterns on content source to string {uri-issues}/262[#262]
+* [ ] Fix crash if branches pattern is specified as array and one of the entries is HEAD or . {uri-issues}/261[#261]
+* [ ] --attribute CLI option should not erase attributes specified in site.yml {uri-issues}/250[#250]
+//* tag conflict issue that Alex reported
 
-* [ ] Set up API documentation and automatically publish as CI artifact
+=== v1.1.0
+
+*Release Timeframe*: July 2018
+
+* [ ] Make branch for v1.0.x (for docs and patch releases)
+* [ ] Replace nodegit with isomorphic-git {uri-issues}/264[#264]
+* [ ] Support including content from other modules and components using contextual page ID {uri-issues}/226[#226]
+* [ ] Allow navigation files to be composited using open blocks {uri-issues}/265[#265]
+* [ ] Allow a navigation file from another module to be referenced (currently has to be a partial)
+* [ ] Allow AsciiDoc attributes to be specified per component-version (in antora.yml) {uri-issues}/251[#251]
+* [ ] Add CLI option to specify a different site generator pipeline {uri-issues}/178[#178]
+* [ ] Move partials directory to <module>/partials {uri-issues}/254[#254]
+* [ ] Upgrade to Asciidoctor 1.5.7
+* [ ] Make components available as a map in the UI model {uri-issues}/253[#253]
+* [ ] Support loading the UI from a directory {uri-issues}/150[#150]
 * [ ] Mark prereleases with next tag and recommended stable version with latest tag {uri-issues}/170[#170]
-//* [ ] Pass algolia key in playbook
-// * [ ] Upgrade to Asciidoctor.js 1.5.6 (see https://github.com/asciidoctor/asciidoctor/issues/2455#issuecomment-369465086[asciidoctor#2455])
+//* allow a group to be defined in antora.yml
+//* make all metadata from antora.yml available to model
+//* allow static files in UI to be decorated with page template / access UI model
+//* make module path configurable (using antora.yml) {uri-issues}/28[#28]
+
+=== v1.2.0
+
+*Release Timeframe*: Q3 2018
+
+* [ ] Allow content to be included from a URL {uri-issues}/246[#246]
+* [ ] Implement fallback value for component version (use git ref) {uri-issues}/161[#161]
+* [ ] Navigation model should provide access to prev, next, parent page {uri-issues}/233[#233]
+* [ ] Add a logging infrastructure {uri-issues}/145[#145]
 
 === Unscheduled
 
 The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.
 They aren't slated for imminent development but are reviewed for possible scheduling after each release.
 
+//* [ ] Pass algolia keys in playbook
+* [ ] Set up API documentation and automatically publish as CI artifact
 * [ ] Show the file URI where the site can be previewed offline {uri-issues}/220[#220]
-
-* [ ] Generate a robots.txt file {uri-issues}/219[#219]
-
+* [ ] Generate a robots.txt file (perhaps configured in site.yml) {uri-issues}/219[#219]
 * [ ] Add context as second argument to ContentCatalog#addFile {uri-issues}/209[#209]
-
 * [ ] Allow supplemental files to be fetched and added to the content catalog {uri-issues}/195[#195]
-
 * [ ] Add (Apache) httpd redirect facility to redirect producer {uri-issues}/192[#192]
-
 * [ ] Allow static redirect page to be customized using a UI template {uri-issues}/191[#191]
-
 * [ ] Allow page alias to be an explicit URL pathname {uri-issues}/190[#190]
-
-* [ ] Add CLI option to specify the site generator to use {uri-issues}/178[#178]
-
-* [ ] Implement fallback value for component version {uri-issues}/161[#161]
-
-* [ ] Support loading the UI from a directory {uri-issues}/150[#150]
-
 * [ ] Add a merge mode to supplemental UI files {uri-issues}/149[#149]
-
-* [ ] Add a logging infrastructure {uri-issues}/145[#145]
-
 * [ ] Allow a component to be promoted to the site root {uri-issues}/132[#132]
-
 * [ ] Decide whether content aggregate should be sorted {uri-issues}/121[#121]
-
 * [ ] Ignore duplicate component in same repository if it matches component in HEAD {uri-issues}/120[#120]
-
 * [ ] Set up UI acceptance test suite {uri-issues}/95[#95]
-
 * [ ] Separate content aggregator from git provider {uri-issues}/93[#93]
-
 * [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
-
 * [ ] Allow module paths to be configurable {uri-issues}/28[#28]
-
 * [ ] Add support for a moduleless docs component {uri-issues}/27[#27]
-
-* Add Node 9 to CI matrix
-
+* Add Node 10 to CI matrix
 * Upgrade build to Gulp 4
-
-* Webhooks between repositories (e.g., docs.antora.org, docker-antora)
-
+* Set up webhooks between repositories (e.g., docs.antora.org, docker-antora)
 * Component to host mapping, not just one site URL
-
 * Custom UI output dir missing test in generator
-
 * Decide whether to isolate id (or ctx) from src property on content file
-
 * Be able to make references to page aliases; would require parsing all document headers in a separate step/phase
 //whiteboard
 * contentCatalog.resolvePage()
 //whiteboard
 * antora-version
-
 * Separate site publisher from providers
-
 * Evaluate new strategies for interpreting equations (e.g., build-time conversion to SVG)
-
-*  Watch mode for files in worktree
+* Watch mode for files in worktree
 
 .Accepted Ideas
 * Add support for git-lfs for assets storage such as images (Requirements: {uri-issues}/185[#185])
@@ -119,8 +116,6 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 
 === Unscheduled
 
-* [ ] Switch docs.antora.org publishing to netlify and automate https certificate renewal
-* [ ] Switch antora.org publishing to netlify and automate https certificate renewal
 * [ ] Set up a roadmap page for Core components in the docs {uri-issues}/223[#223]
 * [ ] Document that .nojekyll file is required when publishing to GitHub Pages {uri-issues}/194[#194]
 * [ ] Document the `page-` attributes {uri-issues}/177[#177]
@@ -151,7 +146,7 @@ For a detailed list of current development tasks, refer to the UI {uri-ui-issues
 
 === v1.0.0
 
-*Release Timeframe*: April 2018
+*Release Timeframe*: Q3 2018
 
 * [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
 * [ ] IE 11 fixes
