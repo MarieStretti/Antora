@@ -31,6 +31,7 @@ For a detailed list of current development tasks, refer to the Core components {
 * [ ] Fix crash if branches pattern is specified as array and one of the entries is HEAD or . {uri-issues}/261[#261]
 * [ ] --attribute CLI option should not erase attributes specified in site.yml {uri-issues}/250[#250]
 //* tag conflict issue that Alex reported
+* [ ] Upgrade dependencies
 
 === v1.1.0
 
