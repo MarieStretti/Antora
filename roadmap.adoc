@@ -30,8 +30,10 @@ For a detailed list of current development tasks, refer to the Core components {
 * [ ] Automatically convert branches and tags patterns on content source to string {uri-issues}/262[#262]
 * [ ] Fix crash if branches pattern is specified as array and one of the entries is HEAD or . {uri-issues}/261[#261]
 * [ ] --attribute CLI option should not erase attributes specified in site.yml {uri-issues}/250[#250]
-//* tag conflict issue that Alex reported
 * [ ] Upgrade dependencies
+* [ ] Don't leak credentials in error messages
+* [ ] loadComponentDescriptor should report which reference is missing antora.yml
+//* tag conflict issue?
 
 === v1.1.0
 
