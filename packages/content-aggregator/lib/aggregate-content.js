@@ -108,7 +108,7 @@ function buildAggregate (componentVersions) {
         .reduce((a, b) => _.assign(a, b), {})
       component.files = _(componentVersions)
         .map('files')
-        .reduce((a, b) => [...a, ...b], [])
+        .reduce((a, b) => a.concat(b), [])
       return component
     })
     .sortBy(['name', 'version'])
