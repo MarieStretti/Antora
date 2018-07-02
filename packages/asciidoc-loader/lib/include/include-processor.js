@@ -82,7 +82,7 @@ function applyTagFiltering (contents, tags) {
   let lineNum = 0
   let startLineNum
   contents.split(NEWLINE_RX).forEach((line) => {
-    lineNum += 1
+    lineNum++
     let m
     let l = line
     if (
