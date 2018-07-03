@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Fixed
+
+* *content-aggregator*: Avoid crash when resolving HEAD reference by copying branches array before modifying it
+
 == 1.0.1 (2018-05-06)
 
 === Improved

@@ -3,7 +3,7 @@
 const camelCaseKeys = require('camelcase-keys')
 const convict = require('./solitary-convict')
 const cson = require('cson-parser')
-const freezeDeep = require('deep-freeze')
+const deepFreeze = require('deep-freeze')
 const fs = require('fs')
 const json = require('json5')
 const ospath = require('path')
@@ -83,7 +83,7 @@ function exportModel (config) {
   if (asciidocProperty) playbook.asciidoc = asciidocProperty
   playbook.dir = playbook.playbook ? ospath.dirname((playbook.file = playbook.playbook)) : process.cwd()
   delete playbook.playbook
-  return freezeDeep(playbook)
+  return deepFreeze(playbook)
 }
 
 module.exports = buildPlaybook
