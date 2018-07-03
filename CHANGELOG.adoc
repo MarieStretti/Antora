@@ -7,10 +7,14 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Improved
+
+* *content-aggregator*: Include start path and reference name in error messages about antora.yml (#267)
+
 === Fixed
 
-* *content-aggregator*: Fix crash when resolving HEAD reference by copying branches array before modifying it
-* *content-aggregator*: Convert ref patterns (branches and tags) defined in playbook to strings
+* *content-aggregator*: Fix crash when resolving HEAD reference by copying branches array before modifying it (#261)
+* *content-aggregator*: Convert ref patterns (branches and tags) defined in playbook to strings (#262)
 
 == 1.0.1 (2018-05-06)
 

@@ -229,17 +229,17 @@ async function selectReferences (repo, remote, refPatterns) {
         if (ref.isTag()) {
           if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
             // NOTE tags are stored using symbol keys to distinguish them from branches
-            accum.set(Symbol(name), { obj: ref, name, type: 'tag' })
+            accum.set(Symbol(name), { obj: ref, name, fqn: `tags/${name}`, type: 'tag' })
           }
           return accum
         } else if (!branchPatterns) {
           return accum
         } else if ((segments = ref.name().split('/'))[1] === 'heads') {
-          name = ref.shorthand()
-          refData = { obj: ref, name, type: 'branch', isHead: !!ref.isHead() }
+          name = segments.slice(2).join('/')
+          refData = { obj: ref, name, fqn: name, type: 'branch', isHead: !!ref.isHead() }
         } else if (segments[1] === 'remotes' && segments[2] === remote) {
           name = segments.slice(3).join('/')
-          refData = { obj: ref, name, type: 'branch', remote }
+          refData = { obj: ref, name, fqn: `remotes/${remote}/${name}`, type: 'branch', remote }
         } else {
           return accum
         }
@@ -265,8 +265,14 @@ async function populateComponentVersion (source, repo, repoPath, isRemote, remot
   const files = worktreePath
     ? await readFilesFromWorktree(worktreePath)
     : await readFilesFromGitTree(repo, ref.obj, startPath)
-  const componentVersion = loadComponentDescriptor(files, source.url)
   const url = isRemote ? source.url : await resolveRepoUrl(repo, repoPath, remoteName)
+  let componentVersion
+  try {
+    componentVersion = loadComponentDescriptor(files, startPath)
+  } catch (e) {
+    e.message += ' in ' + (isRemote ? url : repoPath) + ' [ref: ' + ref.fqn + (worktreePath ? ' <worktree>' : '') + ']'
+    throw e
+  }
   const origin = computeOrigin(url, ref.name, ref.type, startPath, worktreePath)
   componentVersion.files = files.map((file) => assignFileProperties(file, origin))
   return componentVersion
@@ -361,20 +367,18 @@ async function entryToFile (entry) {
   return new File({ path: entry.path(), contents, stat })
 }
 
-function loadComponentDescriptor (files, repoUrl) {
+function loadComponentDescriptor (files, startPath) {
   const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
-  if (descriptorFileIdx < 0) throw new Error(COMPONENT_DESC_FILENAME + ' not found in ' + repoUrl)
-
+  if (descriptorFileIdx < 0) throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' not found')
   const descriptorFile = files[descriptorFileIdx]
   files.splice(descriptorFileIdx, 1)
   const data = yaml.safeLoad(descriptorFile.contents.toString())
   if (data.name == null) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a name in ' + repoUrl)
+    throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a name')
   } else if (data.version == null) {
-    throw new Error(COMPONENT_DESC_FILENAME + ' is missing a version in ' + repoUrl)
+    throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a version')
   }
   data.version = data.version.toString()
-
   return data
 }
 
