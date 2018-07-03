@@ -9,7 +9,8 @@ This project utilizes semantic versioning.
 
 === Fixed
 
-* *content-aggregator*: Avoid crash when resolving HEAD reference by copying branches array before modifying it
+* *content-aggregator*: Fix crash when resolving HEAD reference by copying branches array before modifying it
+* *content-aggregator*: Convert ref patterns (branches and tags) defined in playbook to strings
 
 == 1.0.1 (2018-05-06)
 
