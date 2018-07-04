@@ -131,9 +131,7 @@ describe('aggregateContent()', () => {
 
     describe('should throw if component descriptor cannot be found', () => {
       testAll(async (repoBuilder) => {
-        const ref = repoBuilder.remote
-          ? 'remotes/origin/master'
-          : (repoBuilder.bare ? 'master' : 'master <worktree>')
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await repoBuilder.init('the-component').then(() => repoBuilder.close())
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} [ref: ${ref}]`
@@ -144,9 +142,7 @@ describe('aggregateContent()', () => {
 
     describe('should throw if component descriptor does not define a name', () => {
       testAll(async (repoBuilder) => {
-        const ref = repoBuilder.remote
-          ? 'remotes/origin/master'
-          : (repoBuilder.bare ? 'master' : 'master <worktree>')
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithComponentDescriptor(repoBuilder, { version: 'v1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a name in ${repoBuilder.url} [ref: ${ref}]`
@@ -157,9 +153,7 @@ describe('aggregateContent()', () => {
 
     describe('should throw if component descriptor does not define a version', () => {
       testAll(async (repoBuilder) => {
-        const ref = repoBuilder.remote
-          ? 'remotes/origin/master'
-          : (repoBuilder.bare ? 'master' : 'master <worktree>')
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a version in ${repoBuilder.url} [ref: ${ref}]`

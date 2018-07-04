@@ -68,10 +68,10 @@ async function aggregateContent (playbook) {
       )
     )
   }
-  const actualCacheDir = await ensureCacheDir(cacheDir, startDir)
+  const absCacheDir = await ensureCacheDir(cacheDir, startDir)
   return Promise.all(
     _.map(_.groupBy(sources, 'url'), (sources, url) =>
-      loadRepository(url, { pull, startDir, cacheDir: actualCacheDir, progress }).then(({ repo, repoPath, isRemote }) =>
+      loadRepository(url, { pull, startDir, cacheDir: absCacheDir, progress }).then(({ repo, repoPath, isRemote }) =>
         Promise.all(
           sources.map((source) => {
             const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
@@ -414,15 +414,15 @@ function assignFileProperties (file, origin) {
 }
 
 // QUESTION should we create dedicate (mutable) instance of progress and set progress.label?
-function getFetchOptions (progress, uri, operation) {
+function getFetchOptions (progress, url, operation) {
   let authAttempted
-  let isUrl
-  let urlAuth
-  let progressLabel = uri
-  if ((isUrl = uri.startsWith('https://') || uri.startsWith('http://')) && uri.includes('@')) {
+  let isHttp
+  let parsedUrl
+  let progressLabel = url
+  if ((isHttp = url.startsWith('https://') || url.startsWith('http://')) && url.includes('@')) {
     try {
-      urlAuth = new URL(uri)
-      progressLabel = uri.replace(URL_AUTH_CLEANER_RX, '$1$2')
+      parsedUrl = new URL(url)
+      progressLabel = url.replace(URL_AUTH_CLEANER_RX, '$1$2')
     } catch (e) {}
   }
   return {
@@ -433,8 +433,10 @@ function getFetchOptions (progress, uri, operation) {
       credentials: (_, username) => {
         if (authAttempted) return process.platform === 'win32' ? undefined : git.Cred.defaultNew()
         authAttempted = true
-        if (isUrl) {
-          return urlAuth ? git.Cred.userpassPlaintextNew(urlAuth.username, urlAuth.password) : git.Cred.usernameNew('')
+        if (isHttp) {
+          return parsedUrl
+            ? git.Cred.userpassPlaintextNew(parsedUrl.username, parsedUrl.password)
+            : git.Cred.usernameNew('')
         } else {
           // NOTE sshKeyFromAgent gracefully handles SSH agent not running
           return git.Cred.sshKeyFromAgent(username)
