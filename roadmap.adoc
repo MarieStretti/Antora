@@ -31,8 +31,9 @@ For a detailed list of current development tasks, refer to the Core components {
 * [x] Fix crash if branches pattern is specified as array and one of the entries is HEAD or . {uri-issues}/261[#261]
 * [x] Report start path and reference name in error messages about antora.yml {uri-issues}/267[#267]
 * [x] --attribute CLI option should not erase attributes specified in site.yml {uri-issues}/250[#250]
+* [x] Don't include URL credentials in error messages {uri-issues}/270[#270]
 * [ ] Upgrade dependencies
-* [ ] Don't leak credentials in error messages
+* [ ] More informative message when start_path does not exist in reference of content source
 * [ ] Implicitly disable branches pattern if tags pattern is specified in content source
 
 === v1.1.0
