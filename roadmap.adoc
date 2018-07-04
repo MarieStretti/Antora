@@ -33,7 +33,7 @@ For a detailed list of current development tasks, refer to the Core components {
 * [ ] --attribute CLI option should not erase attributes specified in site.yml {uri-issues}/250[#250]
 * [ ] Upgrade dependencies
 * [ ] Don't leak credentials in error messages
-//* tag conflict issue?
+* [ ] Implicitly disable branches pattern if tags pattern is specified in content source
 
 === v1.1.0
 
