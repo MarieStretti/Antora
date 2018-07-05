@@ -44,17 +44,18 @@ function solitaryConvict (schema, opts = {}) {
 
 function registerCustomFormats (convict) {
   convict.addFormat({
-    name: 'object',
+    name: 'map',
     validate: (val) => {
-      if (typeof val !== 'object') throw new Error('must be an object (key/value pairs)')
+      if (typeof val !== 'object') throw new Error('must be a map of key/value pairs')
     },
-    coerce: (val) => {
-      const accum = {}
+    coerce: (val, config) => {
+      // TODO we can remove this hardcoded value once coerce passes the path to which this function is bound
+      const accum = config.has('asciidoc.attributes') ? config.get('asciidoc.attributes') : {}
       let match
       ARGS_SCANNER_RX.lastIndex = 0
       while ((match = ARGS_SCANNER_RX.exec(val))) {
         const [, k, v] = match
-        if (k) accum[k] = v ? yaml.safeLoad(v) : ''
+        if (k) accum[k] = v ? (v === '-' ? '-' : yaml.safeLoad(v)) : ''
       }
       return accum
     },

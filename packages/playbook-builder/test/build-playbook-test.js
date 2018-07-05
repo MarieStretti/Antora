@@ -52,7 +52,7 @@ describe('buildPlaybook()', () => {
         default: null,
       },
       stuff: {
-        format: 'object',
+        format: 'map',
         default: {},
         arg: 'stuff',
         env: 'STUFF',
@@ -81,7 +81,7 @@ describe('buildPlaybook()', () => {
   const iniSpec = ospath.join(FIXTURES_DIR, 'spec-sample.ini')
   const badSpec = ospath.join(FIXTURES_DIR, 'bad-spec-sample.yml')
   const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
-  const invalidObjectSpec = ospath.join(FIXTURES_DIR, 'invalid-object-spec-sample.yml')
+  const invalidMapSpec = ospath.join(FIXTURES_DIR, 'invalid-map-spec-sample.yml')
   const invalidDirOrFilesSpec = ospath.join(FIXTURES_DIR, 'invalid-dir-or-files-spec-sample.yml')
   const legacyUiBundleSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-bundle-sample.yml')
   const legacyUiStartPathSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-start-path-sample.yml')
@@ -237,12 +237,12 @@ describe('buildPlaybook()', () => {
     expect(playbook.three).to.be.true()
   })
 
-  it('should coerce Object value in playbook file', () => {
+  it('should coerce map value in playbook file', () => {
     const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
     expect(playbook.stuff).to.eql({ key: 'val', foo: 'bar', nada: null, yep: true, nope: false })
   })
 
-  it('should coerce Object value in env', () => {
+  it('should coerce map value in env', () => {
     const val = 'key=val,keyonly,=valonly,empty=,tilde="~",tags="a,b,c",nada=~,y=true,n=false'
     const env = { PLAYBOOK: ymlSpec, STUFF: val }
     const playbook = buildPlaybook([], env, schema)
@@ -258,7 +258,7 @@ describe('buildPlaybook()', () => {
     })
   })
 
-  it('should coerce Object value in args', () => {
+  it('should coerce map value in args', () => {
     const playbook = buildPlaybook(
       [
         '--stuff',
@@ -295,13 +295,25 @@ describe('buildPlaybook()', () => {
     })
   })
 
-  it('should use Object value in args in place of Object value from playbook file', () => {
-    const playbook = buildPlaybook(['--stuff', 'idprefix=_'], { PLAYBOOK: coerceValueSpec }, schema)
-    expect(playbook.stuff).to.eql({ idprefix: '_' })
+  it('should use map value in args in place of map value from playbook file', () => {
+    const playbook = buildPlaybook(['--stuff', 'foo=baz'], { PLAYBOOK: coerceValueSpec }, schema)
+    expect(playbook.stuff).to.eql({ foo: 'baz' })
+  })
+
+  it('should update map value from playbook file with map values in args when name is asciidoc.attributes', () => {
+    const args = ['--attribute', 'idprefix=user-', '--attribute', 'idseparator=-']
+    const playbook = buildPlaybook(args, { PLAYBOOK: defaultSchemaSpec })
+    expect(playbook.asciidoc.attributes).to.eql({
+      'allow-uri-read': true,
+      idprefix: 'user-',
+      idseparator: '-',
+      toc: false,
+      'uri-project': 'https://antora.org',
+    })
   })
 
   it('should throw error if value of object key is not an object', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: invalidObjectSpec }, schema)).to.throw('must be an object')
+    expect(() => buildPlaybook([], { PLAYBOOK: invalidMapSpec }, schema)).to.throw('must be a map')
   })
 
   it('should coerce String value to Array', () => {
