@@ -143,9 +143,12 @@ async function loadRepository (url, opts) {
       repo = await git.Repository.openBare(dir)
       if (isRemote && opts.pull) {
         const progress = opts.progress
-        const fetchOpts = getFetchOptions(progress, url, credentials, 'fetch')
+        const fetchOpts = Object.assign(
+          { prune: 1, downloadTags: git.Remote.AUTOTAG_OPTION.DOWNLOAD_TAGS_ALL },
+          getFetchOptions(progress, url, credentials, 'fetch')
+        )
         // fetch new refs and delete obsolete local ones
-        await repo.fetch('origin', Object.assign({ prune: 1 }, fetchOpts))
+        await repo.fetch('origin', fetchOpts)
         if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
       }
     } else {

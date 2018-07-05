@@ -60,6 +60,13 @@ class RepositoryBuilder {
     return this
   }
 
+  async deleteBranch (branchName) {
+    try {
+      ;(await this.repository.getBranch(branchName)).delete()
+    } catch (e) {}
+    return this
+  }
+
   async addComponentDescriptorToWorktree (data) {
     const path_ = (this.startPath = data.startPath || '') ? ospath.join(this.startPath, 'antora.yml') : 'antora.yml'
     delete data.startPath
