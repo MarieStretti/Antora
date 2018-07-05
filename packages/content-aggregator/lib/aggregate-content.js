@@ -175,13 +175,17 @@ async function loadRepository (url, opts) {
           throw new Error(msg + ': ' + url)
         })
         .then((repo) =>
-          repo.getCurrentBranch().then((ref) => {
-            // NOTE we have a test that will catch if nodegit changes to match behavior of native git client
-            repo.detachHead()
-            ref.delete()
-            if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
-            return repo
-          })
+          repo.getCurrentBranch().then((ref) =>
+            // NOTE nodegit does not create references in a bare repository correctly
+            // NOTE we have a test that will detect if nodegit changes to match behavior of native git client
+            git.Reference.symbolicCreate(repo, 'HEAD', 'refs/remotes/origin/' + ref.shorthand(), 1, 'remap HEAD').then(
+              () => {
+                ref.delete()
+                if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
+                return repo
+              }
+            )
+          )
         )
     } else {
       throw new Error(
@@ -214,13 +218,13 @@ async function selectReferences (repo, remote, refPatterns) {
   let isBare = !!repo.isBare()
   if (branchPatterns) {
     if (branchPatterns === 'HEAD' || branchPatterns === '.') {
-      branchPatterns = [(await repo.getCurrentBranch()).shorthand()]
+      branchPatterns = [await getCurrentBranch(repo)]
     } else if (Array.isArray(branchPatterns)) {
       if (branchPatterns.length) {
         let currentBranchIdx
         branchPatterns = branchPatterns.map((p) => p.toString())
         if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-          branchPatterns[currentBranchIdx] = (await repo.getCurrentBranch()).shorthand()
+          branchPatterns[currentBranchIdx] = await getCurrentBranch(repo)
         }
       } else {
         branchPatterns = undefined
@@ -253,7 +257,7 @@ async function selectReferences (repo, remote, refPatterns) {
         } else if ((segments = ref.name().split('/'))[1] === 'heads') {
           name = segments.slice(2).join('/')
           refData = { obj: ref, name, fqn: name, type: 'branch', isHead: !!ref.isHead() }
-        } else if (segments[1] === 'remotes' && segments[2] === remote) {
+        } else if (ref.isRemote() && segments[2] === remote) {
           name = segments.slice(3).join('/')
           refData = { obj: ref, name, fqn: `remotes/${remote}/${name}`, type: 'branch', remote }
         } else {
@@ -271,6 +275,13 @@ async function selectReferences (repo, remote, refPatterns) {
       }, new Map())
       .values()
   )
+}
+
+function getCurrentBranch (repo) {
+  return repo.getCurrentBranch().then((ref) => {
+    const refName = ref.shorthand()
+    return ref.isRemote() ? refName.substr(refName.indexOf('/') + 1) : refName
+  })
 }
 
 async function populateComponentVersion (source, repo, repoUrl, repoPath, isRemote, remoteName, ref) {
