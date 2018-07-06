@@ -221,6 +221,28 @@ describe('aggregateContent()', () => {
       })
     })
 
+    describe('should throw if start path is not found at reference', () => {
+      testAll(async (repoBuilder) => {
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: 'v1.0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'does-not-exist' })
+        const expectedMessage = `the start path 'does-not-exist' does not exist in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
+    describe('should throw if start path at reference is not a directory', () => {
+      testAll(async (repoBuilder) => {
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: 'v1.0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'antora.yml' })
+        const expectedMessage = `the start path 'antora.yml' is not a directory in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
     describe('should discover components across multiple repositories', () => {
       testAll(async (repoBuilderA, repoBuilderB) => {
         const componentDescA = { name: 'the-component', title: 'The Component', version: 'v1.2' }

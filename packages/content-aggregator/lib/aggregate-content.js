@@ -286,17 +286,18 @@ function getCurrentBranch (repo) {
   })
 }
 
-async function populateComponentVersion (source, repo, repoUrl, repoPath, isRemote, remoteName, ref) {
+async function populateComponentVersion (source, repo, url, repoPath, isRemote, remoteName, ref) {
+  if (!isRemote) url = await resolveRemoteUrl(repo, repoPath, remoteName)
   let startPath = source.startPath || ''
   if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
   // Q: should worktreePath be passed in?
   const worktreePath = ref.isHead && !(isRemote || repo.isBare()) ? ospath.join(repoPath, startPath) : undefined
-  const files = worktreePath
-    ? await readFilesFromWorktree(worktreePath)
-    : await readFilesFromGitTree(repo, ref.obj, startPath)
-  const url = isRemote ? repoUrl : await resolveRepoUrl(repo, repoPath, remoteName)
+  let files
   let componentVersion
   try {
+    files = worktreePath
+      ? await readFilesFromWorktree(worktreePath, startPath)
+      : await readFilesFromGitTree(repo, ref.obj, startPath)
     componentVersion = loadComponentDescriptor(files, startPath)
   } catch (e) {
     e.message += ` in ${isRemote ? url : repoPath} [ref: ${ref.fqn}${worktreePath ? ' <worktree>' : ''}]`
@@ -307,15 +308,23 @@ async function populateComponentVersion (source, repo, repoUrl, repoPath, isRemo
   return componentVersion
 }
 
-function readFilesFromWorktree (base) {
-  return new Promise((resolve, reject) => {
-    const opts = { base, cwd: base, removeBOM: false }
-    vfs
-      .src(CONTENT_GLOB, opts)
-      .on('error', reject)
-      .pipe(relativizeFiles())
-      .pipe(collectFiles(resolve))
-  })
+function readFilesFromWorktree (base, startPath) {
+  return fs
+    .stat(base)
+    .catch(() => {
+      throw new Error(`the start path '${startPath}' does not exist`)
+    })
+    .then((stat) => {
+      if (!stat.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
+      return new Promise((resolve, reject) => {
+        const opts = { base, cwd: base, removeBOM: false }
+        vfs
+          .src(CONTENT_GLOB, opts)
+          .on('error', reject)
+          .pipe(relativizeFiles())
+          .pipe(collectFiles(resolve))
+      })
+    })
 }
 
 /**
@@ -362,7 +371,11 @@ async function getGitTree (repository, ref, startPath) {
   }
   if (startPath) {
     const tree = await commit.getTree()
-    const subTreeEntry = await tree.getEntry(startPath)
+    const subTreeEntry = await tree.getEntry(startPath).catch((err) => {
+      if (err.errno === git.Error.CODE.ENOTFOUND) err.message = `the start path '${startPath}' does not exist`
+      throw err
+    })
+    if (!subTreeEntry.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
     return repository.getTree(subTreeEntry.id())
   } else {
     return commit.getTree()
@@ -535,7 +548,7 @@ function generateCloneFolderName (url) {
  * @returns {String} The URL of the specified remote, or the repository path if the
  * remote does not exist.
  */
-async function resolveRepoUrl (repo, repoPath, remoteName) {
+async function resolveRemoteUrl (repo, repoPath, remoteName) {
   return (
     repo
       .getRemote(remoteName)
