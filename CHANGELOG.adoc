@@ -16,6 +16,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: CLI --attribute option updates map of attributes defined in playbook file instead of replacing it (#250)
 * *content-aggregator*: Fix crash when resolving HEAD reference by copying branches array before modifying it (#261)
 * *content-aggregator*: Convert ref patterns (branches and tags) defined in playbook to strings (#262)
+* *content-aggregator*: Remove authentication credentials from repository URL when used in error messages (#270)
 
 == 1.0.1 (2018-05-06)
 

@@ -1818,8 +1818,9 @@ describe('aggregateContent()', () => {
 
     it('should not show auth information in progress bar label', async () => {
       const url = 'http://0123456789@localhost:1337/401/invalid-repository.git'
+      const sanitizedUrl = 'http://localhost:1337/401/invalid-repository.git'
       const expectedErrorMessage =
-        'Content repository not found or you have insufficient credentials to access it: ' + url
+        'Content repository not found or you have insufficient credentials to access it: ' + sanitizedUrl
       return withMockStdout(async (lines) => {
         playbookSpec.runtime.quiet = false
         playbookSpec.content.sources.push({ url })

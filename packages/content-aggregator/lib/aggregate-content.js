@@ -16,7 +16,6 @@ const MultiProgress = require('multi-progress')
 const ospath = require('path')
 const { posix: path } = ospath
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
-const { URL } = require('url')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
@@ -28,7 +27,7 @@ const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
-const URL_AUTH_CLEANER_RX = /^(https?:\/\/)(?:[^/@]+@)?(.*)/
+const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)(?::([^/@]+))?@)?(.*)/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -48,11 +47,12 @@ const URL_AUTH_CLEANER_RX = /^(https?:\/\/)(?:[^/@]+@)?(.*)/
  * @param {String} [playbook.runtime.cacheDir=undefined] - The base cache directory.
  * @param {Array} playbook.content - An array of content sources.
  *
- * @returns {Object} A map of files organized by component version.
+ * @returns {Promise<Object>} A map of files organized by component version.
  */
-async function aggregateContent (playbook) {
+function aggregateContent (playbook) {
   const startDir = playbook.dir || '.'
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
+  const sourcesByUrl = _.groupBy(sources, 'url')
   const { cacheDir, pull, silent, quiet } = playbook.runtime
   const progress = {}
   const term = process.stdout
@@ -62,40 +62,43 @@ async function aggregateContent (playbook) {
     progress.manager = new MultiProgress(term)
     progress.maxLabelWidth = Math.min(
       Math.ceil((term.columns - 8) / 2),
-      sources.reduce(
-        (max, { url }) => Math.max(max, ~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url) ? url.length : 0),
+      Object.keys(sourcesByUrl).reduce(
+        (max, url) =>
+          Math.max(max, ~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url) ? extractCredentials(url).url.length : 0),
         0
       )
     )
   }
-  const absCacheDir = await ensureCacheDir(cacheDir, startDir)
-  return Promise.all(
-    _.map(_.groupBy(sources, 'url'), (sources, url) =>
-      loadRepository(url, { pull, startDir, cacheDir: absCacheDir, progress }).then(({ repo, repoPath, isRemote }) =>
-        Promise.all(
-          sources.map((source) => {
-            const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
-            // NOTE if repository is in cache, we can assume the remote name is origin
-            const remoteName = isRemote ? 'origin' : source.remote || 'origin'
-            return collectComponentVersions(source, repo, repoPath, isRemote, remoteName, refPatterns)
-          })
+  return ensureCacheDir(cacheDir, startDir).then((absCacheDir) =>
+    Promise.all(
+      _.map(sourcesByUrl, (sources, url) =>
+        loadRepository(url, { pull, startDir, cacheDir: absCacheDir, progress }).then(
+          ({ repo, repoUrl, repoPath, isRemote }) =>
+            Promise.all(
+              sources.map((source) => {
+                const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
+                // NOTE if repository is in cache, we can assume the remote name is origin
+                const remoteName = isRemote ? 'origin' : source.remote || 'origin'
+                return collectComponentVersions(source, repo, repoUrl, repoPath, isRemote, remoteName, refPatterns)
+              })
+            )
+              .then((componentVersions) => {
+                repo.free()
+                return componentVersions
+              })
+              .catch((err) => {
+                repo.free()
+                throw err
+              })
         )
-          .then((componentVersions) => {
-            repo.free()
-            return componentVersions
-          })
-          .catch((err) => {
-            repo.free()
-            throw err
-          })
       )
     )
+      .then((allComponentVersions) => buildAggregate(allComponentVersions))
+      .catch((err) => {
+        progress.manager && progress.manager.terminate()
+        throw err
+      })
   )
-    .then((allComponentVersions) => buildAggregate(allComponentVersions))
-    .catch((err) => {
-      progress.manager && progress.manager.terminate()
-      throw err
-    })
 }
 
 function buildAggregate (componentVersions) {
@@ -116,43 +119,45 @@ function buildAggregate (componentVersions) {
 }
 
 async function loadRepository (url, opts) {
+  let credentials
   let isBare
   let isRemote
   let repo
-  let repoPath
+  let dir
 
   if (~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url)) {
     isBare = isRemote = true
-    repoPath = ospath.join(opts.cacheDir, generateCloneFolderName(url))
-  } else if (isLocalDirectory((repoPath = expandPath(url, '~+', opts.startDir)))) {
-    isBare = !isLocalDirectory(ospath.join(repoPath, '.git'))
+    ;({ url, credentials } = extractCredentials(url))
+    dir = ospath.join(opts.cacheDir, generateCloneFolderName(url))
+  } else if (isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
+    isBare = !isLocalDirectory(ospath.join(dir, '.git'))
     isRemote = false
   } else {
     throw new Error(
-      `Local content source does not exist: ${repoPath}${url !== repoPath ? ' (resolved from url: ' + url + ')' : ''}`
+      `Local content source does not exist: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
     )
   }
 
   try {
     if (isBare) {
-      repo = await git.Repository.openBare(repoPath)
+      repo = await git.Repository.openBare(dir)
       if (isRemote && opts.pull) {
         const progress = opts.progress
-        const fetchOpts = getFetchOptions(progress, url, 'fetch')
+        const fetchOpts = getFetchOptions(progress, url, credentials, 'fetch')
         // fetch new refs and delete obsolete local ones
         await repo.fetch('origin', Object.assign({ prune: 1 }, fetchOpts))
         if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
       }
     } else {
-      repo = await git.Repository.open(repoPath)
+      repo = await git.Repository.open(dir)
     }
   } catch (e) {
     if (isRemote) {
       const progress = opts.progress
-      const fetchOpts = getFetchOptions(progress, url, 'clone')
+      const fetchOpts = getFetchOptions(progress, url, credentials, 'clone')
       repo = await fs
-        .remove(repoPath)
-        .then(() => git.Clone.clone(url, repoPath, { bare: 1, fetchOpts }))
+        .remove(dir)
+        .then(() => git.Clone.clone(url, dir, { bare: 1, fetchOpts }))
         .catch((err) => {
           let msg = err.message
           if (~msg.indexOf('invalid cred') || ~msg.indexOf('SSH credentials') || ~msg.indexOf('status code: 401')) {
@@ -177,19 +182,27 @@ async function loadRepository (url, opts) {
         )
     } else {
       throw new Error(
-        `Local content source must be a git repository: ${repoPath}${
-          url !== repoPath ? ' (resolved from url: ' + url + ')' : ''
-        }`
+        `Local content source must be a git repository: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
       )
     }
   }
-  // NOTE return the computed repoPath since Repository API doesn't return same value
-  return { repo, repoPath, isRemote }
+  // NOTE return repoPath separately since the nodegit Repository API doesn't always return same value
+  return { repo, repoUrl: url, repoPath: dir, isRemote }
 }
 
-async function collectComponentVersions (source, repo, repoPath, isRemote, remoteName, refPatterns) {
+function extractCredentials (url) {
+  if ((url.startsWith('https://') || url.startsWith('http://')) && url.includes('@')) {
+    const [, scheme, username, password, rest] = url.match(URL_AUTH_EXTRACTOR_RX)
+    // QUESTION does the token work on GitLab and BitBucket when passed this way?
+    return { url: scheme + rest, credentials: { username, password: password || '' } }
+  } else {
+    return { url }
+  }
+}
+
+async function collectComponentVersions (source, repo, repoUrl, repoPath, isRemote, remoteName, refPatterns) {
   return selectReferences(repo, remoteName, refPatterns).then((refs) =>
-    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, repoPath, isRemote, remoteName, ref)))
+    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, repoUrl, repoPath, isRemote, remoteName, ref)))
   )
 }
 
@@ -257,7 +270,7 @@ async function selectReferences (repo, remote, refPatterns) {
   )
 }
 
-async function populateComponentVersion (source, repo, repoPath, isRemote, remoteName, ref) {
+async function populateComponentVersion (source, repo, repoUrl, repoPath, isRemote, remoteName, ref) {
   let startPath = source.startPath || ''
   if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
   // Q: should worktreePath be passed in?
@@ -265,12 +278,12 @@ async function populateComponentVersion (source, repo, repoPath, isRemote, remot
   const files = worktreePath
     ? await readFilesFromWorktree(worktreePath)
     : await readFilesFromGitTree(repo, ref.obj, startPath)
-  const url = isRemote ? source.url : await resolveRepoUrl(repo, repoPath, remoteName)
+  const url = isRemote ? repoUrl : await resolveRepoUrl(repo, repoPath, remoteName)
   let componentVersion
   try {
     componentVersion = loadComponentDescriptor(files, startPath)
   } catch (e) {
-    e.message += ' in ' + (isRemote ? url : repoPath) + ' [ref: ' + ref.fqn + (worktreePath ? ' <worktree>' : '') + ']'
+    e.message += ` in ${isRemote ? url : repoPath} [ref: ${ref.fqn}${worktreePath ? ' <worktree>' : ''}]`
     throw e
   }
   const origin = computeOrigin(url, ref.name, ref.type, startPath, worktreePath)
@@ -414,17 +427,8 @@ function assignFileProperties (file, origin) {
 }
 
 // QUESTION should we create dedicate (mutable) instance of progress and set progress.label?
-function getFetchOptions (progress, url, operation) {
+function getFetchOptions (progress, url, credentials, operation) {
   let authAttempted
-  let isHttp
-  let parsedUrl
-  let progressLabel = url
-  if ((isHttp = url.startsWith('https://') || url.startsWith('http://')) && url.includes('@')) {
-    try {
-      parsedUrl = new URL(url)
-      progressLabel = url.replace(URL_AUTH_CLEANER_RX, '$1$2')
-    } catch (e) {}
-  }
   return {
     callbacks: {
       // https://github.com/nodegit/nodegit/blob/master/guides/cloning/ssh-with-agent/README.md#github-certificate-issue-in-os-x
@@ -433,16 +437,16 @@ function getFetchOptions (progress, url, operation) {
       credentials: (_, username) => {
         if (authAttempted) return process.platform === 'win32' ? undefined : git.Cred.defaultNew()
         authAttempted = true
-        if (isHttp) {
-          return parsedUrl
-            ? git.Cred.userpassPlaintextNew(parsedUrl.username, parsedUrl.password)
+        if (url.startsWith('https://') || url.startsWith('http://')) {
+          return credentials
+            ? git.Cred.userpassPlaintextNew(credentials.username, credentials.password)
             : git.Cred.usernameNew('')
         } else {
           // NOTE sshKeyFromAgent gracefully handles SSH agent not running
           return git.Cred.sshKeyFromAgent(username)
         }
       },
-      transferProgress: progress.manager ? createTransferProgress(progress, progressLabel, operation) : undefined,
+      transferProgress: progress.manager ? createTransferProgress(progress, url, operation) : undefined,
     },
   }
 }
