@@ -34,10 +34,9 @@ For a detailed list of current development tasks, refer to the Core components {
 * [x] Don't include URL credentials in error messages {uri-issues}/270[#270]
 * [x] Fetch all tags when the runtime pull option is enabled {uri-issues}/271[#271]
 * [x] Honor HEAD when using remote URL (should use the default branch) {uri-issues}/272[#272]
+* [x] Add --stacktrace to failure to load generator message {uri-issues}/273[#273]
 * [ ] Upgrade dependencies
 * [ ] More informative message when start_path does not exist in reference of content source
-* [ ] Implicitly disable branches pattern if tags pattern is specified in content source
-* [ ] Add --stacktrace to failure to load generator message
 
 === v1.1.0
 

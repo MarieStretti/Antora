@@ -192,12 +192,21 @@ describe('cli', () => {
       .done()
   }).timeout(TIMEOUT)
 
-  it('should show stack if --stacktrace option is specified and exception is thrown during generation', () => {
+  it('should show stack if --stacktrace option is specified and an exception is thrown during generation', () => {
     playbookSpec.ui.bundle.url = false
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     return runAntora('--stacktrace generate the-site')
       .assert(/^Error: ui\.bundle\.url: must be of type String/)
       .assert(/at /)
+      .done()
+  }).timeout(TIMEOUT)
+
+  it('should recommend --stacktrace option if not specified and an exception is thrown during generation', () => {
+    playbookSpec.ui.bundle.url = false
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    return runAntora('generate the-site')
+      .assert(/^error: ui\.bundle\.url: must be of type String/)
+      .assert(/--stacktrace option/)
       .done()
   }).timeout(TIMEOUT)
 

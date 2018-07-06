@@ -23,8 +23,9 @@ async function run () {
 //  process.exitCode = 1
 //})
 
-function exitWithError (err, showStack, message = undefined) {
-  console.error(showStack ? err.stack : `error: ${message || err.message}`)
+function exitWithError (err, showStack, msg = undefined) {
+  msg = showStack ? err.stack : `error: ${msg || err.message}\nAdd the --stacktrace option to see the cause.`
+  console.error(msg)
   process.exit(1)
 }
 
