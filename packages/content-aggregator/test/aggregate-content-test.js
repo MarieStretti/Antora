@@ -1380,8 +1380,9 @@ describe('aggregateContent()', () => {
   it('should create bare repository with detached HEAD under cache directory', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(repoBuilder)
-    playbookSpec.content.sources.push({ url: repoBuilder.url })
-    await aggregateContent(playbookSpec)
+    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'HEAD' })
+    const aggregate = await aggregateContent(playbookSpec)
+    expect(aggregate).to.have.lengthOf(1)
     expect(CONTENT_CACHE_DIR)
       .to.be.a.directory()
       .with.subDirs.have.lengthOf(1)
