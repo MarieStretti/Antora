@@ -200,7 +200,9 @@ async function loadRepository (url, opts) {
 function extractCredentials (url) {
   if ((url.startsWith('https://') || url.startsWith('http://')) && url.includes('@')) {
     const [, scheme, username, password, rest] = url.match(URL_AUTH_EXTRACTOR_RX)
-    // QUESTION does the token work on GitLab and BitBucket when passed this way?
+    // GitHub: <token>@ or <token>:x-oauth-basic@
+    // GitLab: oauth2:<token>@
+    // BitBucket: x-token-auth:token@
     return { url: scheme + rest, credentials: { username, password: password || '' } }
   } else {
     return { url }

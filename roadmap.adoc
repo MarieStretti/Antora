@@ -37,7 +37,6 @@ For a detailed list of current development tasks, refer to the Core components {
 * [ ] Upgrade dependencies
 * [ ] More informative message when start_path does not exist in reference of content source
 * [ ] Implicitly disable branches pattern if tags pattern is specified in content source
-* [ ] Test oauth token for GitLab and Bitbucket URLs
 * [ ] Add --stacktrace to failure to load generator message
 
 === v1.1.0
