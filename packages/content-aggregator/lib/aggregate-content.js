@@ -47,9 +47,9 @@ const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)(?::([^/@]+))?@)?(.*)/
  * @param {String} [playbook.runtime.cacheDir=undefined] - The base cache directory.
  * @param {Array} playbook.content - An array of content sources.
  *
- * @returns {Object} A map of files organized by component version.
+ * @returns {Promise<Object>} A map of files organized by component version.
  */
-async function aggregateContent (playbook) {
+function aggregateContent (playbook) {
   const startDir = playbook.dir || '.'
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
   const sourcesByUrl = _.groupBy(sources, 'url')
@@ -69,35 +69,36 @@ async function aggregateContent (playbook) {
       )
     )
   }
-  const absCacheDir = await ensureCacheDir(cacheDir, startDir)
-  return Promise.all(
-    _.map(sourcesByUrl, (sources, url) =>
-      loadRepository(url, { pull, startDir, cacheDir: absCacheDir, progress }).then(
-        ({ repo, repoUrl, repoPath, isRemote }) =>
-          Promise.all(
-            sources.map((source) => {
-              const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
-              // NOTE if repository is in cache, we can assume the remote name is origin
-              const remoteName = isRemote ? 'origin' : source.remote || 'origin'
-              return collectComponentVersions(source, repo, repoUrl, repoPath, isRemote, remoteName, refPatterns)
-            })
-          )
-            .then((componentVersions) => {
-              repo.free()
-              return componentVersions
-            })
-            .catch((err) => {
-              repo.free()
-              throw err
-            })
+  return ensureCacheDir(cacheDir, startDir).then((absCacheDir) =>
+    Promise.all(
+      _.map(sourcesByUrl, (sources, url) =>
+        loadRepository(url, { pull, startDir, cacheDir: absCacheDir, progress }).then(
+          ({ repo, repoUrl, repoPath, isRemote }) =>
+            Promise.all(
+              sources.map((source) => {
+                const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
+                // NOTE if repository is in cache, we can assume the remote name is origin
+                const remoteName = isRemote ? 'origin' : source.remote || 'origin'
+                return collectComponentVersions(source, repo, repoUrl, repoPath, isRemote, remoteName, refPatterns)
+              })
+            )
+              .then((componentVersions) => {
+                repo.free()
+                return componentVersions
+              })
+              .catch((err) => {
+                repo.free()
+                throw err
+              })
+        )
       )
     )
+      .then((allComponentVersions) => buildAggregate(allComponentVersions))
+      .catch((err) => {
+        progress.manager && progress.manager.terminate()
+        throw err
+      })
   )
-    .then((allComponentVersions) => buildAggregate(allComponentVersions))
-    .catch((err) => {
-      progress.manager && progress.manager.terminate()
-      throw err
-    })
 }
 
 function buildAggregate (componentVersions) {
