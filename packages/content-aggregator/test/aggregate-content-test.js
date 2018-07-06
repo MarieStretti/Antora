@@ -1399,9 +1399,9 @@ describe('aggregateContent()', () => {
   it('should pull updates into cached repository when pull runtime option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
-      repoBuilder.checkoutBranch('v1.2.3')
+      repoBuilder.checkoutBranch('v1.2.x')
     )
-    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
+    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*', tags: 'release/*' })
 
     const firstAggregate = await aggregateContent(playbookSpec)
 
@@ -1412,10 +1412,14 @@ describe('aggregateContent()', () => {
 
     await repoBuilder
       .open()
-      .then(() => repoBuilder.checkoutBranch('v2.0.0'))
+      .then(() => repoBuilder.checkoutBranch('v2.0.x'))
       .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v2.0.0' }))
       .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-two.adoc'))
-      .then(() => repoBuilder.checkoutBranch('v1.2.3'))
+      .then(() => repoBuilder.checkoutBranch('2.0.x-releases'))
+      .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v2.0.1' }))
+      .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/topic-b/page-four.adoc'))
+      .then(() => repoBuilder.createTag('release/2.0.1'))
+      .then(() => repoBuilder.checkoutBranch('v1.2.x'))
       .then(() => repoBuilder.addToWorktree('modules/ROOT/pages/page-one.adoc', '= Page One\n\nUpdate received!'))
       .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/topic-a/page-three.adoc'))
       .then(() => repoBuilder.close())
@@ -1423,7 +1427,7 @@ describe('aggregateContent()', () => {
     playbookSpec.runtime.pull = true
     const secondAggregate = await aggregateContent(playbookSpec)
 
-    expect(secondAggregate).to.have.lengthOf(2)
+    expect(secondAggregate).to.have.lengthOf(3)
     expect(secondAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
     page1v1 = secondAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
     expect(page1v1).to.exist()
@@ -1436,6 +1440,48 @@ describe('aggregateContent()', () => {
     const page1v2 = secondAggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
     expect(page1v2).to.exist()
     expect(page1v2.contents.toString()).to.not.have.string('Update received!')
+    const page2v2 = secondAggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
+    expect(page2v2).to.exist()
+    expect(secondAggregate[2]).to.include({ name: 'the-component', version: 'v2.0.1' })
+    const page4v2 = secondAggregate[2].files.find((file) => file.path === 'modules/ROOT/pages/topic-b/page-four.adoc')
+    expect(page4v2).to.exist()
+  })
+
+  it('should fetch tags not reachable from fetched commits when pull runtime option is enabled', async () => {
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
+      repoBuilder.checkoutBranch('v1.2.x')
+    )
+    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
+
+    const firstAggregate = await aggregateContent(playbookSpec)
+
+    expect(firstAggregate).to.have.lengthOf(1)
+    expect(firstAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+    let page1v1 = firstAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(page1v1).to.exist()
+
+    await repoBuilder
+      .open()
+      .then(() => repoBuilder.checkoutBranch('v1.2.x'))
+      .then(() => repoBuilder.createTag('v1.2.3'))
+      .then(() => repoBuilder.checkoutBranch('v2.0.x'))
+      .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v2.0.1' }))
+      .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-two.adoc'))
+      .then(() => repoBuilder.createTag('v2.0.1'))
+      .then(() => repoBuilder.deleteBranch('v2.0.x'))
+      .then(() => repoBuilder.close())
+
+    playbookSpec.runtime.pull = true
+    playbookSpec.content.sources[0].branches = 'v2*'
+    playbookSpec.content.sources[0].tags = 'v*'
+    const secondAggregate = await aggregateContent(playbookSpec)
+
+    expect(secondAggregate).to.have.lengthOf(2)
+    expect(secondAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+    page1v1 = secondAggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    expect(page1v1).to.exist()
+    expect(secondAggregate[1]).to.include({ name: 'the-component', version: 'v2.0.1' })
     const page2v2 = secondAggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
     expect(page2v2).to.exist()
   })
