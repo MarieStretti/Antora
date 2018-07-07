@@ -16,7 +16,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@antora/content-classifier": "1.0.1",
-    "vinyl": "^2.1.0"
+    "vinyl": "^2.2.0"
   },
   "devDependencies": {
     "xmldom": "^0.1.27"

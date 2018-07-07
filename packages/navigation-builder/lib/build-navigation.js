@@ -55,8 +55,11 @@ function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
 function getChildList (node) {
   let candidate = node.getBlocks()[0]
   let context
-  if (candidate && ((context = candidate.getContext()) === 'ulist' || (context === 'open' &&
-      (candidate = candidate.getBlocks()[0]) && candidate.getContext() === 'ulist'))) {
+  if (
+    candidate &&
+    ((context = candidate.getContext()) === 'ulist' ||
+      (context === 'open' && (candidate = candidate.getBlocks()[0]) && candidate.getContext() === 'ulist'))
+  ) {
     return candidate
   }
 }
