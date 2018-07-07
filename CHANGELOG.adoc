@@ -13,6 +13,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Honor HEAD branch name when using remote URL (resolves to default branch) (#272)
 * *content-aggregator*: Show informative message when start path in content repository doesn't exist or isn't a directory (#274)
 * *cli*: Recommend adding the --stacktrace option when the CLI exits with an error (#273)
+* *playbook-builder*: Upgrade convict and remove workarounds for environment isolation and parsing custom data formats
 
 === Fixed
 

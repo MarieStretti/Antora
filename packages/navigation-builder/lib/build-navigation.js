@@ -43,7 +43,10 @@ function buildNavigation (contentCatalog, asciidocConfig = {}) {
 function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
   const lists = loadAsciiDoc(navFile, contentCatalog, asciidocConfig).blocks.filter((b) => b.getContext() === 'ulist')
   if (!lists.length) return []
-  const { src: { component, version }, nav: { index } } = navFile
+  const {
+    src: { component, version },
+    nav: { index },
+  } = navFile
   return lists.map((list, idx) => {
     const tree = buildNavigationTree(list.getTitle(), list)
     tree.root = true

@@ -5,8 +5,8 @@
 const cli = require('./commander')
 // Q: can we ask the playbook builder for the config schema?
 const configSchema = require('@antora/playbook-builder/lib/config/schema')
+const convict = require('@antora/playbook-builder/lib/solitary-convict')
 const ospath = require('path')
-const solitaryConvict = require('@antora/playbook-builder/lib/solitary-convict')
 
 const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[/${ospath.sep.replace('/', '').replace('\\', '\\\\')}]`)
 const { version: VERSION } = require('../package.json')
@@ -57,7 +57,7 @@ cli
 cli
   .command('generate <playbook>')
   .description('Generate a documentation site specified in <playbook>.')
-  .optionsFromConvict(solitaryConvict(configSchema), { exclude: 'playbook' })
+  .optionsFromConvict(convict(configSchema), { exclude: 'playbook' })
   .action(async (playbookFile, command) => {
     try {
       requireLibraries(cli.requirePaths)
