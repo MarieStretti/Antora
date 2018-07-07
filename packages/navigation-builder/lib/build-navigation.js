@@ -53,8 +53,12 @@ function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
 }
 
 function getChildList (node) {
-  const firstBlock = node.getBlocks()[0]
-  if (firstBlock && firstBlock.getContext() === 'ulist') return firstBlock
+  let candidate = node.getBlocks()[0]
+  let context
+  if (candidate && ((context = candidate.getContext()) === 'ulist' || (context === 'open' &&
+      (candidate = candidate.getBlocks()[0]) && candidate.getContext() === 'ulist'))) {
+    return candidate
+  }
 }
 
 function buildNavigationTree (formattedContent, list) {
