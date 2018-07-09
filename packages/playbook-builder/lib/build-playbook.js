@@ -2,12 +2,9 @@
 
 const camelCaseKeys = require('camelcase-keys')
 const convict = require('./solitary-convict')
-const cson = require('cson-parser')
 const deepFreeze = require('deep-freeze')
 const fs = require('fs')
-const json = require('json5')
 const ospath = require('path')
-const yaml = require('js-yaml')
 
 /**
  * Builds a playbook object according to the provided schema from the specified
@@ -45,7 +42,7 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
     } else {
       throw new Error('playbook file could not be resolved')
     }
-    config.load(parseSpecFile(absSpecFilePath))
+    config.loadFile(absSpecFilePath)
     if (relSpecFilePath !== absSpecFilePath) config.set('playbook', absSpecFilePath)
   }
 
@@ -55,23 +52,7 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
 }
 
 function loadConvictConfig (args, env, customSchema) {
-  return convict(customSchema || require('./config/schema'), { args: args, env: env })
-}
-
-function parseSpecFile (specFilePath) {
-  const data = fs.readFileSync(specFilePath, 'utf8')
-
-  switch (ospath.extname(specFilePath)) {
-    case '.yml':
-    case '.yaml':
-      return yaml.safeLoad(data)
-    case '.json':
-      return json.parse(data)
-    case '.cson':
-      return cson.parse(data)
-    default:
-      throw new Error('Unsupported file type')
-  }
+  return convict(customSchema || require('./config/schema'), { args, env })
 }
 
 function exportModel (config) {

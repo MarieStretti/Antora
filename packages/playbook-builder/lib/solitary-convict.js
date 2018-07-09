@@ -1,48 +1,38 @@
 'use strict'
 
 const convict = require('convict')
+const cson = require('cson-parser')
+const json = require('json5')
 const yaml = require('js-yaml')
 
 const ARGS_SCANNER_RX = /(?:([^=,]+)|(?==))(?:,|$|=(|("|').*?\3|[^,]+)(?:,|$))/g
 
 /**
- * A convict function wrapper that decouples it from the process environment.
- * This wrapper allows the args array and env map to be specified as options.
+ * A convict function wrapper that registers custom formats and parsers and
+ * isolates the configuration from the process environment by default.
  */
-function solitaryConvict (schema, opts = {}) {
-  registerCustomFormats(convict)
-
-  let processArgv
-  let args = opts.args || []
-  processArgv = process.argv
-  // NOTE convict expects first two arguments to be node command and script filename
-  let argv = processArgv.slice(0, 2).concat(args)
-  process.argv = argv
-
-  let processEnv
-  let env = opts.env || {}
-  processEnv = process.env
-  process.env = env
-
-  const config = convict(schema)
-
-  process.argv = processArgv
-  process.env = processEnv
-
-  const originalLoad = config.load
-  config.load = function (configOverlay) {
-    process.argv = argv
-    process.env = env
-    const combinedConfig = originalLoad.apply(this, [configOverlay])
-    process.argv = processArgv
-    process.env = processEnv
-    return combinedConfig
-  }
-
-  return config
+function solitaryConvict (schema, opts) {
+  registerFormats(convict)
+  registerParsers(convict)
+  return convict(schema, opts || { args: [], env: {} })
 }
 
-function registerCustomFormats (convict) {
+function registerParsers (convict) {
+  convict.addParser([
+    { extension: 'cson', parse: cson.parse },
+    { extension: 'json', parse: json.parse },
+    { extension: 'yaml', parse: yaml.safeLoad },
+    { extension: 'yml', parse: yaml.safeLoad },
+    {
+      extension: '*',
+      parse: () => {
+        throw new Error('Unexpected playbook file type (must be yml, json, or cson')
+      },
+    },
+  ])
+}
+
+function registerFormats (convict) {
   convict.addFormat({
     name: 'map',
     validate: (val) => {

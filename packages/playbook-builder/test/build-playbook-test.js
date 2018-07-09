@@ -158,7 +158,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should throw error when loading unknown type file', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: iniSpec }, schema)).to.throw('Unsupported file type')
+    expect(() => buildPlaybook([], { PLAYBOOK: iniSpec }, schema)).to.throw('Unexpected playbook file type')
   })
 
   it('should throw error if specified playbook file does not exist', () => {
@@ -186,11 +186,18 @@ describe('buildPlaybook()', () => {
     expect(playbook.one.one).to.equal('')
   })
 
-  it('should use args value over value in playbook file or env value', () => {
+  it('should use args value over value in playbook file or env value even if value is falsy', () => {
     const args = ['--one-one', 'the-args-value']
     const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
     const playbook = buildPlaybook(args, env, schema)
     expect(playbook.one.one).to.equal('the-args-value')
+  })
+
+  it('should use arg value over value in playbook file when arg value is falsy', () => {
+    const args = ['--two', '0']
+    const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '47' }
+    const playbook = buildPlaybook(args, env, schema)
+    expect(playbook.two).to.equal(0)
   })
 
   it('should convert properties of playbook to camelCase', () => {
@@ -210,7 +217,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.two).to.equal(777)
   })
 
-  it('should use env value over value in playbook file when env value is 0', () => {
+  it('should use env value over value in playbook file when env value is falsy', () => {
     const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '0' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.two).to.equal(0)
@@ -393,6 +400,10 @@ describe('buildPlaybook()', () => {
 
   it('should not migrate playbook data that defines ui.start_path', () => {
     expect(() => buildPlaybook([], { PLAYBOOK: legacyUiStartPathSpec })).to.throw(/not declared in the schema/)
+  })
+
+  it('should throw if no configuration data is given', () => {
+    expect(() => buildPlaybook()).to.throw()
   })
 
   it('should be decoupled from the process environment', () => {
