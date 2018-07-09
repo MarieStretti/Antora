@@ -17,7 +17,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "lodash": "^4.17.10",
-    "vinyl": "^2.1.0"
+    "vinyl": "^2.2.0"
   },
   "devDependencies": {
     "@antora/content-aggregator": "1.0.1"

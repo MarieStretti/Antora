@@ -68,7 +68,8 @@ class RepositoryBuilder {
   }
 
   async addComponentDescriptorToWorktree (data) {
-    const path_ = (this.startPath = data.startPath || '') ? ospath.join(this.startPath, 'antora.yml') : 'antora.yml'
+    const startPath = (this.startPath = data.startPath || '')
+    const path_ = startPath ? ospath.join(startPath, 'antora.yml') : 'antora.yml'
     delete data.startPath
     if (data.name && !data.title) {
       data.title = data.name
