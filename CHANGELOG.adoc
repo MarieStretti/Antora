@@ -21,6 +21,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Convert ref patterns (branches and tags) defined in playbook to strings (#262)
 * *content-aggregator*: Remove authentication credentials from repository URL when used in error messages (#270)
 * *content-aggregator*: Fetch all tags when the runtime pull option is enabled (#271)
+* *navigation-builder*: Allow navigation sublists to be enclosed in open blocks (#265)
 
 == 1.0.1 (2018-05-06)
 

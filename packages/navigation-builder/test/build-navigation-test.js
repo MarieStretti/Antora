@@ -715,6 +715,77 @@ describe('buildNavigation()', () => {
     })
   })
 
+  it('should allow items to be nested inside an open block', () => {
+    const navContents = heredoc`
+      * xref:get-started.adoc[Get Started]
+       ** xref:installation.adoc[Installation]
+      +
+      --
+      * xref:installation/development.adoc[Development]
+      * xref:installation/production.adoc[Production]
+      --
+       ** xref:upgrade.adoc[Upgrade]
+      * xref:tutorials.adoc[Tutorials]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'navigation',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'get-started.adoc' },
+      { family: 'page', relative: 'installation.adoc' },
+      { family: 'page', relative: 'installation/development.adoc' },
+      { family: 'page', relative: 'installation/production.adoc' },
+      { family: 'page', relative: 'upgrade.adoc' },
+      { family: 'page', relative: 'tutorials.adoc' },
+    ])
+    const navCatalog = buildNavigation(contentCatalog)
+    const menu = navCatalog.getMenu('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      items: [
+        {
+          content: 'Get Started',
+          url: '/component-a/module-a/get-started.html',
+          urlType: 'internal',
+          items: [
+            {
+              content: 'Installation',
+              url: '/component-a/module-a/installation.html',
+              urlType: 'internal',
+              items: [
+                {
+                  content: 'Development',
+                  url: '/component-a/module-a/installation/development.html',
+                  urlType: 'internal',
+                },
+                {
+                  content: 'Production',
+                  url: '/component-a/module-a/installation/production.html',
+                  urlType: 'internal',
+                },
+              ],
+            },
+            {
+              content: 'Upgrade',
+              url: '/component-a/module-a/upgrade.html',
+              urlType: 'internal',
+            },
+          ],
+        },
+        {
+          content: 'Tutorials',
+          url: '/component-a/module-a/tutorials.html',
+          urlType: 'internal',
+        },
+      ],
+    })
+  })
+
   it('should process navigation file containing multiple lists', () => {
     const navContents = heredoc`
       .xref:basics.adoc[Basics]

@@ -36,6 +36,7 @@ For a detailed list of current development tasks, refer to the Core components {
 * [x] Honor HEAD when using remote URL (should use the default branch) {uri-issues}/272[#272]
 * [x] Add --stacktrace to failure to load generator message {uri-issues}/273[#273]
 * [x] Show more informative message when start path does not exist in reference of content source {uri-issues}/274[#274]
+* [x] Allow navigation files to be composited using open blocks {uri-issues}/265[#265]
 * [ ] Upgrade dependencies
 
 === v1.1.0
@@ -45,7 +46,6 @@ For a detailed list of current development tasks, refer to the Core components {
 * [ ] Make branch for v1.0.x (for docs and patch releases)
 * [ ] Implicitly disable branches pattern if tags pattern is specified in content source {uri-issues}/268[#268]
 * [ ] Support including content from other modules and components using contextual page ID {uri-issues}/226[#226]
-* [ ] Allow navigation files to be composited using open blocks {uri-issues}/265[#265]
 * [ ] Allow a navigation file from another module to be referenced (currently has to be a partial)
 * [ ] Allow AsciiDoc attributes to be specified per component-version (in antora.yml) {uri-issues}/251[#251]
 * [ ] Add CLI option to specify a different site generator pipeline {uri-issues}/178[#178]
