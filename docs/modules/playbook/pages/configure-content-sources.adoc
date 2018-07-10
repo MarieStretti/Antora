@@ -99,7 +99,7 @@ Let's look at some examples of each of these name declaration methods.
 === Default branch filter
 
 When no branches are specified for a source, Antora will use the [.term]_default branch filter_.
-By default, Antora will select branches from the repository that begin with `v` as well as the branch named "`master`".
+By default, Antora will select branches from the repository that begin with "`v`" as well as the branch named "`master`".
 
 .Use default branch filter
 [source,yaml]
@@ -176,7 +176,7 @@ content:
     - v2.0
 ----
 
-A branch name that begins with a number, like `1.0`, must be enclosed in single quotes (`+'+`), per YAML rules.
+A branch name that begins with a number, like `1.0`, must be enclosed in single quotes (`'`), per YAML rules.
 
 [#current-branch]
 === Using the current branch
@@ -235,11 +235,14 @@ content:
 
 The tags key (`tags`) accepts match patterns just like the <<branches,branches key>>.
 
+NOTE: Setting the `tags` key does not disable the <<default-branch,default branches>>.
+If you want to disable all branches, you must set the `branches` key to an empty array (e.g., `[]`).
+
 [#default-tag]
 === Add a default sources tag filter
 
-If you want to apply the same tag filter to all source entries that don't declare the `tags` key explicitly, assign a value to the `tags` key directly on the `content` category.
-Unlike branches, the default `tags` key does not have a default value (i.e., no tags are used by default).
+Tags are not used by default.
+If you want to apply the same tag filter to all source entries that don't declare the `tags` key explicitly (i.e., a default tag filter), assign a value to the `tags` key directly on the `content` category.
 
 .Assign a default tag filter to content sources
 [source,yaml]
@@ -251,12 +254,12 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-b.git
 ----
 
-Antora will find and collect all tags that begin with `v` for all content sources that don't define an override for `tags`.
+Antora will now discover and use tags that begin with "`v`" for all content sources that don't declare the `tags` key.
 
 [#mix-branches-and-tags]
 == Use tags and branches from the same content repository
 
-In this example, we'll fetch the `master` branch from a content repository.
+In this example, we'll fetch the "`master`" branch from a content repository.
 From the same repository, we'll also fetch all of the tags starting with "`v`".
 
 [source,yaml]
@@ -265,8 +268,18 @@ content:
   sources:
   - url: https://gitlab.com/org/project-docs.git
     branches: master
-    tags:
-    - v*
+    tags: v*
+----
+
+If you only want to use tags, you must explicitly disable branches.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://gitlab.com/org/project-docs.git
+    branches: []
+    tags: v*
 ----
 
 [#mix-local-remote-branches]
