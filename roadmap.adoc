@@ -38,7 +38,7 @@ For a detailed list of current development tasks, refer to the Core components {
 * [x] Show more informative message when start path does not exist in reference of content source {uri-issues}/274[#274]
 * [x] Allow navigation files to be composited using open blocks {uri-issues}/265[#265]
 * [x] Upgrade convict and remove workarounds (solitary convict and manual file loading / parsing)
-* [ ] Upgrade dependencies
+* [x] Upgrade dependencies
 
 === v1.1.0
 

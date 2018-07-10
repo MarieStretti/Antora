@@ -163,13 +163,18 @@ It will also force Antora to download a fresh copy of the UI bundle, if remote.
 If you want to clear the cache altogether, you'll need to locate the Antora cache directory on your system and delete it.
 
 [#using-private-repositories]
-=== Private GitHub repositories
+=== Private git repositories
 
-If your playbook uses private repositories, you must have an SSH agent running with the identity (i.e., SSH key) you've linked to your GitHub account.
-Otherwise, Antora will fail.
+Antora supports connecting to private repositories using SSH or HTTP/HTTPS.
+
+If your playbook contains private repositories that use SSH, you must have an SSH agent running with the identity (i.e., SSH key) you've linked to your account on the git host.
+Otherwise, Antora will fail when cloning the repository.
 
 The SSH agent allows Antora to authenticate with private repositories on your behalf.
 To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article {url-ssh-key}[Generating a new SSH key and adding it to the ssh-agent^].
+
+In addition to SSH, Antora can also authenticate with a private repository over HTTP.
+To learn more about how to configure private repositories in your playbook, refer to xref:playbook:configure-content-sources.adoc#private-urls[using private repositories].
 
 == Local Site Preview
 
