@@ -52,10 +52,12 @@ EOF
 done
 
 # release!
-if case $RELEASE_VERSION in major|minor|patch|pre*) ;; *) false;; esac; then
-  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --yes
+if case $RELEASE_VERSION in major|minor|patch) ;; *) false;; esac; then
+  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:-latest} --yes
+elif case $RELEASE_VERSION in pre*) ;; *) false;; esac; then
+  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:-next} --yes
 else
-  lerna publish --exact --force-publish=* --repo-version=$RELEASE_VERSION --yes
+  lerna publish --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:-latest} --repo-version=$RELEASE_VERSION --yes
 fi
 
 git status -s -b

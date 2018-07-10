@@ -113,9 +113,23 @@ RELEASE_VERSION=patch
 
 Lines containing other data, such as a date, are ignored, but may be added for informational purposes.
 
-If the value assigned to the RELEASE_VERSION variable matches one of the increment keywords (major, minor, patch, premajor, preminor, prepatch, prerelease), that value is passed to Lerna's `--cd-version` flag.
+If the value assigned to the RELEASE_VERSION variable matches one of the increment keywords (major, minor, patch, premajor, preminor, prepatch, prerelease), that value is passed to Lerna's `--cd-version` option.
 Consult the Lerna documentation for details about how these values determine the next version number.
-Otherwise, the value is assumed to be an explicit version number, which is used as is by passing it to Lerna's `--repo-version` flag.
+Otherwise, the value is assumed to be an explicit version number, which is used as is by passing it to Lerna's `--repo-version` option.
+
+If the RELEASE_NPM_TAG variable is set, its value is passed to Lerna's `--npm-tag` option.
+This setting can be used to publish releases that do not get installed by default (e.g., prereleases).
+If the RELEASE_NPM_TAG variable is not set, and the RELEASE_VERSION beings with `pre`, the RELEASE_NPM_TAG variable defaults to `next`.
+Otherwise, it defaults to `latest`.
+To override these defaults, set the RELEASE_NPM_TAG shell variable in the [.path]_releaserc_ file.
+For example:
+
+.releaserc
+[source,bash]
+----
+RELEASE_VERSION=2.0.0-alpha.1
+RELEASE_NPM_TAG=next
+----
 
 The [.path]_releaserc_ file can also control the branch from which the release will be cut.
 But default, the release is cut from the master branch.
