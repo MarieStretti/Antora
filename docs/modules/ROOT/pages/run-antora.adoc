@@ -247,3 +247,25 @@ These subsequent runs complete much faster because only the changes to the repos
 The repositories are cached under the [.path]_build/sources/_ directory.
 If you remove the [.path]_build/_ directory, the repositories will have to be downloaded again from scratch.
 ////
+
+== Publish to GitHub Pages
+
+Antora is designed to create sites that run anywhere, whether it be a static web host or the local filesystem.
+However, some hosts offer "`features`" that interfere with Antora's output.
+GitHub Pages is one of those hosts.
+
+By default, GitHub Pages runs all files through another static site generator named Jekyll.
+Since Antora already produces a ready-made site, there's no need for this.
+It's also problematic since Jekyll has the nasty side effect of removing all files that begin with an underscore (`+_+`).
+Antora puts UI files in a directory named `+_+`, which Jekyll subsequently erases.
+As a result, no UI.
+Antora also puts images in a folder named `_images` inside each module, so no images either.
+
+Fortunately, there's a way to disable this "`feature`" of GitHub Pages.
+The solution is to add a [.path]_.nojekyll_ file to the root of the published site.
+Simply create an empty [.path]_.nojekyll_ file in the output directory before committing the files to GitHub Pages.
+
+ $ touch build/site/.nojekyll
+
+The presence of the [.path]_.nojekyll_ file at the root of the `gh-pages` branch tells GitHub Pages not to run the published files through Jekyll.
+The result is that your Antora-made site will work as expected (and will be available sooner).

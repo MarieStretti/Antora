@@ -14,6 +14,7 @@
 * xref:run-antora.adoc[Run Antora]
 ** xref:run-antora.adoc#cache[About the Cache]
 ** xref:run-antora.adoc#local-site-preview[Local Preview]
+** xref:run-antora.adoc#publish-to-github-pages[Publish to GitHub Pages]
 ** xref:antora-container.adoc[Run Antora in a Container]
 ** xref:cli:index.adoc[CLI Reference]
 
