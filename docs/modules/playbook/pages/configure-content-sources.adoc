@@ -257,7 +257,7 @@ content:
 Antora will now discover and use tags that begin with "`v`" for all content sources that don't declare the `tags` key.
 
 [#mix-branches-and-tags]
-== Use tags and branches from the same content repository
+=== Use tags and branches from the same content repository
 
 In this example, we'll fetch the "`master`" branch from a content repository.
 From the same repository, we'll also fetch all of the tags starting with "`v`".
@@ -283,7 +283,7 @@ content:
 ----
 
 [#mix-local-remote-branches]
-== Mix local and remote repositories and branches
+=== Mix local and remote repositories and branches
 
 You can generate your site using remote branches and a local branch of a component.
 In this example, we'll fetch all of the `v1.x` and `v2.x` branches from Component B's remote content repository.
