@@ -24,6 +24,10 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Fetch all tags when the runtime pull option is enabled (#271)
 * *navigation-builder*: Allow navigation sublists to be enclosed in open blocks (#265)
 
+=== Documented
+
+* Document that a .nojekyll file is required to publish an Antora-generated site to GitHub Pages (#194)
+
 == 1.0.1 (2018-05-06)
 
 === Improved
