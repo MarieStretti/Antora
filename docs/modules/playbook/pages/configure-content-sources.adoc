@@ -53,7 +53,7 @@ Note that a colon is permitted when it's part of a Windows drive letter (e.g., `
 Look for these rules in the sections that follow.
 
 [#remote-urls]
-=== Fetch remote content repositories
+=== Fetch and use remote content repositories
 
 Remote repositories can be fetched via URLs (http, https), SSH URIs, and git URIs.
 
@@ -65,14 +65,15 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
   - url: git@gitlab.com:antora/demo/demo-component-b.git
   - url: git://github.com/org/content-repo.git
+  - url: https://x-oauth-token:YOUR_BITBUCKET_TOKEN@bitbucket.org:org/project-docs.git
 ----
 
 Whether or not the `.git` extension is required depends on the settings of the git host.
 It's usually best to include it.
 
-// For more info, see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a.
+See xref:private-repository.adoc[Private repository authentication] to learn how to connect Antora to a private repository via SSH or HTTP/HTTPS using a username+password or an OAuth (personal access) token.
 
-[#author-urls]
+[#mixing-urls]
 === Configure local and remote URLs in the same playbook
 
 You can build your documentation site using a combination of local and remote content repositories, even when the local repositories have uncommitted changes.

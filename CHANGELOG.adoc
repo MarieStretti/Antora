@@ -27,6 +27,7 @@ This project utilizes semantic versioning.
 === Documented
 
 * Document that a .nojekyll file is required to publish an Antora-generated site to GitHub Pages (#194)
+* Add how to configure private repositories in the playbook file (#139)
 
 == 1.0.1 (2018-05-06)
 
