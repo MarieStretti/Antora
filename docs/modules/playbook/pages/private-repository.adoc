@@ -1,0 +1,74 @@
+= Private Repository Authentication
+ifndef::env-site,env-github[]
+include::_attributes.adoc[]
+endif::[]
+:url-ssh-github: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+:url-ssh-gitlab: https://docs.gitlab.com/ce/ssh/README.html
+
+Antora can connect to private repositories using either SSH or HTTP/HTTPS.
+
+[#ssh-auth]
+== Connect to a private repository using SSH
+
+One option for connecting to a private repository is to use public-private key authentication over SSH.
+Antora will attempt to initiate an SSH connection if the URL follows the pattern `user@host:repo.git`.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: git@gitlab.com:antora/demo/demo-component-a.git
+----
+
+Antora relies on the SSH agent to authenticate with the private SSH repository on your behalf.
+This works similarly to the `git` command, except Antora only supports use of the SSH agent (not the git credentials store).
+That means you must have an SSH agent running on your machine and it must be configured with a public-private key pair (i.e., identity) that's known to the host of the git repository (e.g., GitHub).
+If the SSH agent isn't running, or your key and account don't match, Antora will fail when it attempts to clone the private repository.
+
+To check if you have an SSH agent running, execute the following command:
+
+ $ ssh-add -l -E md5
+
+You should see a list of keys.
+If, instead, you get an error message, you need to start the SSH agent.
+To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, see {url-ssh-github}[Generating a new SSH key and adding it to the ssh-agent^].
+For GitLab users, refer to {url-ssh-gitlab}[GitLab and SSH keys^].
+
+Once you see a list of identities, you'll need to verify that one of them is registered with the git host.
+Check that a fingerprint value that follows the prefix `MD5:` matches a value listed in your accounts settings (e.g., https://github.com/settings/keys).
+If none of the fingerprints match, you need to add the SSH public key to your account.
+
+If the SSH agent is running and one of the identities is known to the git host, Antora should be able to connect to a private (or public) repository on your behalf using SSH.
+
+[#http-auth]
+== Connect to a private repository using HTTP/HTTPS authentication
+
+Another option for connecting to a private repository is to use HTTP/HTTPS authentication.
+HTTP/HTTPS authentication can be performed using either a username+password or an OAuth (personal access) token.
+Antora will attempt to authenticate over HTTP or HTTPS if the URL begins with `http://` or `https://` and the URL contains credentials in front of the hostname (e.g., `username:password@` or `token@`).
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://YOUR_GITHUB_TOKEN:x-oauth-basic@github.com:org/project-docs.git
+  - url: https://oauth2:YOUR_GITLAB_TOKEN@gitlab.com:org/project-docs.git
+  - url: https://x-oauth-token:YOUR_BITBUCKET_TOKEN@bitbucket.org:org/project-docs.git
+----
+
+TIP: Tokens are placed in different locations in the URL depending on the git host.
+
+Antora will extract the credentials that precede the hostname and use them to perform authentication on your behalf.
+
+The downside of using HTTP/HTTPS authentication is that it requires you to put your credentials directly in the playbook file.
+That may be fine for a local playbook file, but becomes problematic in a CI environment where the credentials can be leaked.
+To work around this problem, put a placeholder for the credentials in the playbook file and use a script in CI to substitute it with the real value before running Antora.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://%GITHUB_TOKEN%:x-oauth-basic@github.com:org-name/project-docs.git
+----
+
+Antora *does not* yet replace environment variables in the playbook file, though it may do so in the future.

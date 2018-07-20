@@ -139,6 +139,7 @@ Learn more:
 
 * xref:configure-content-sources.adoc#local-urls[Use local content repositories]
 * xref:configure-content-sources.adoc#remote-urls[Fetch remote content repositories]
+* xref:private-repository.adoc[Authenticate private repositories]
 * xref:configure-content-sources.adoc#author-urls[Configure remote and local content repository URLs in the same playbook]
 * xref:configure-content-sources.adoc#mix-local-remote-branches[Mix local and remote repositories and branches]
 

@@ -4,7 +4,8 @@ include::_attributes.adoc[]
 endif::[]
 // URLs
 :url-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/site.yml
-:url-ssh-key: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+:url-ssh-github: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+:url-ssh-gitlab: https://docs.gitlab.com/ce/ssh/README.html
 
 Assumptions:
 
@@ -19,10 +20,6 @@ On this page, you'll learn:
 * [x] Where files are cached.
 * [x] How to update the cache.
 * [x] How to preview a generated site locally.
-
-////
-To generate a site with Antora, you need a playbook file that points to at least one content source repository (aka docs component) and a UI bundle.
-////
 
 == Antora Demo
 
@@ -167,21 +164,18 @@ If you want to clear the cache altogether, you'll need to locate the Antora cach
 
 Antora supports connecting to private repositories using SSH or HTTP/HTTPS.
 
-If your playbook contains private repositories that use SSH, you must have an SSH agent running with the identity (i.e., SSH key) you've linked to your account on the git host.
-Otherwise, Antora will fail when cloning the repository.
+If your playbook is xref:playbook:private-repository.adoc[configured to fetch private repositories via SSH], you must run an SSH agent with the identity (i.e., SSH key) you've linked to your account on the git host.
+If the SSH agent isn't running, or your key and account don't match, Antora will fail when it attempts to clone the private repository.
 
-The SSH agent allows Antora to authenticate with private repositories on your behalf.
-To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, please refer to the article {url-ssh-key}[Generating a new SSH key and adding it to the ssh-agent^].
-
-In addition to SSH, Antora can also authenticate with a private repository over HTTP.
-To learn more about how to configure private repositories in your playbook, refer to xref:playbook:configure-content-sources.adoc#private-urls[using private repositories].
+Antora can also authenticate with a private repository over HTTP/HTTPS.
+See xref:playbook:private-repository.adoc#http-auth[Connect to a private repository using HTTP authentication] to learn more.
 
 == Local Site Preview
 
 Since Antora generates static sites, *you do not need to publish the site to a server in order to preview it*.
 
 To view the site, navigate to any HTML page inside the destination folder in your browser.
-If your using the Demo, look for the file `/demo-site/build/site/index.html`.
+If your using the Demo, look for the file [.path]_/demo-site/build/site/index.html_.
 
 === Optional: Run local server
 
@@ -238,7 +232,8 @@ Depending on what you built, you may have to navigate to an HTML file from that 
 
 
 The script loads and executes Antora and passes any trailing configuration flags and switches.
-// Move this to a fragment or file in the playbook module
+
+#Move this to a fragment or file in the playbook module#
 For example, you can specify a custom playbook as follows:
 
  $ node generate --playbook=custom-site
