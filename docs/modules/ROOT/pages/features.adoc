@@ -219,7 +219,7 @@ Antora generates the appropriate configuration for the redirect facility that th
 //A site isn't much good if it lives in the dark.
 Sites are meant to be published.
 Antora helps with that.
-Whether the destination is local or remote Antora streams the cnotent there using a built-in or custom provider.
+Whether the destination is local or remote Antora streams the content there using a built-in or custom provider.
 And yet, no matter where the site is published, the site is not coupled to the host environment.
 Antora supports as many output streams as you want, which could be a local directory, a local archive, a directory on a remote SSH server, or a web service endpoint like S3, or a combination of destinations.
 You can be sure Antora gets the files where they need to go for publishing.
