@@ -20,6 +20,7 @@ describe('produceRedirects()', () => {
       { family: 'alias', relative: 'alias-a.adoc' },
       { family: 'alias', module: 'module-b', relative: 'alias-b.adoc' },
       { family: 'alias', component: 'component-b', version: '1.0', module: 'ROOT', relative: 'alias-c.adoc' },
+      { family: 'alias', component: '', version: '', module: '', relative: 'index.adoc' },
     ])
     const targetFile = contentCatalog.findBy({ family: 'page' })[0]
     contentCatalog.findBy({ family: 'alias' }).forEach((file) => (file.rel = targetFile))
@@ -45,6 +46,7 @@ describe('produceRedirects()', () => {
         'alias-a.adoc': 'the-target.html',
         'alias-b.adoc': '../module-a/the-target.html',
         'alias-c.adoc': '../../component-a/module-a/the-target.html',
+        'index.adoc': 'component-a/module-a/the-target.html',
       }
       contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
         const expectedRelativeUrl = expectedRelativeUrls[file.src.relative]
@@ -104,6 +106,7 @@ describe('produceRedirects()', () => {
         '/component-a/module-a/alias-a.html /component-a/module-a/the-target.html 301',
         '/component-a/module-b/alias-b.html /component-a/module-a/the-target.html 301',
         '/component-b/1.0/alias-c.html /component-a/module-a/the-target.html 301',
+        '/index.html /component-a/module-a/the-target.html 301',
       ])
     })
 
@@ -120,6 +123,7 @@ describe('produceRedirects()', () => {
         '/docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html 301',
         '/docs/component-a/module-b/alias-b.html /docs/component-a/module-a/the-target.html 301',
         '/docs/component-b/1.0/alias-c.html /docs/component-a/module-a/the-target.html 301',
+        '/docs/index.html /docs/component-a/module-a/the-target.html 301',
       ])
     })
 
@@ -136,6 +140,7 @@ describe('produceRedirects()', () => {
         '/component-a/module-a/alias-a.html /component-a/module-a/the-target.html 301',
         '/component-a/module-b/alias-b.html /component-a/module-a/the-target.html 301',
         '/component-b/1.0/alias-c.html /component-a/module-a/the-target.html 301',
+        '/index.html /component-a/module-a/the-target.html 301',
       ])
     })
 
@@ -166,6 +171,7 @@ describe('produceRedirects()', () => {
         'location = /component-a/module-a/alias-a.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-a/module-b/alias-b.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-b/1.0/alias-c.html { return 301 /component-a/module-a/the-target.html; }',
+        'location = /index.html { return 301 /component-a/module-a/the-target.html; }',
       ])
     })
 
@@ -182,6 +188,7 @@ describe('produceRedirects()', () => {
         'location = /docs/component-a/module-a/alias-a.html { return 301 /docs/component-a/module-a/the-target.html; }',
         'location = /docs/component-a/module-b/alias-b.html { return 301 /docs/component-a/module-a/the-target.html; }',
         'location = /docs/component-b/1.0/alias-c.html { return 301 /docs/component-a/module-a/the-target.html; }',
+        'location = /docs/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
       ])
     })
 
@@ -198,6 +205,7 @@ describe('produceRedirects()', () => {
         'location = /component-a/module-a/alias-a.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-a/module-b/alias-b.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-b/1.0/alias-c.html { return 301 /component-a/module-a/the-target.html; }',
+        'location = /index.html { return 301 /component-a/module-a/the-target.html; }',
       ])
     })
 
@@ -223,10 +231,5 @@ describe('produceRedirects()', () => {
     })
   })
 
-  /*
-TESTS:
-- includes context path in nginx redirect rule
-
-QUESTION should function return a single virtual file instead of multiple?
-*/
+  // QUESTION should function return a single virtual file instead of an array?
 })
