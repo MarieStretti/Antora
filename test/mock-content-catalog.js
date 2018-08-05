@@ -20,8 +20,8 @@ function mockContentCatalog (seed = []) {
   const entriesByPath = {}
   const entriesByFamily = {}
   seed.forEach(({ component, version, module, family, relative, contents, mediaType, navIndex, indexify }) => {
-    if (!component) component = 'component-a'
-    if (!version) version = 'master'
+    if (component == null) component = 'component-a'
+    if (version == null) version = 'master'
     if (module == null) module = 'module-a'
     if (!family) family = 'page'
     if (!contents) contents = ''

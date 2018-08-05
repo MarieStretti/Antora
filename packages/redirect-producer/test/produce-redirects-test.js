@@ -20,6 +20,8 @@ describe('produceRedirects()', () => {
       { family: 'alias', relative: 'alias-a.adoc' },
       { family: 'alias', module: 'module-b', relative: 'alias-b.adoc' },
       { family: 'alias', component: 'component-b', version: '1.0', module: 'ROOT', relative: 'alias-c.adoc' },
+      { family: 'alias', relative: 'old-target/index.adoc' },
+      { family: 'alias', component: '', version: '', module: '', relative: 'index.adoc' },
     ])
     const targetFile = contentCatalog.findBy({ family: 'page' })[0]
     contentCatalog.findBy({ family: 'alias' }).forEach((file) => (file.rel = targetFile))
@@ -43,8 +45,10 @@ describe('produceRedirects()', () => {
       const expectedQualifiedUrl = 'https://docs.example.org/component-a/module-a/the-target.html'
       const expectedRelativeUrls = {
         'alias-a.adoc': 'the-target.html',
+        'old-target/index.adoc': '../the-target.html',
         'alias-b.adoc': '../module-a/the-target.html',
         'alias-c.adoc': '../../component-a/module-a/the-target.html',
+        'index.adoc': 'component-a/module-a/the-target.html',
       }
       contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
         const expectedRelativeUrl = expectedRelativeUrls[file.src.relative]
@@ -101,9 +105,55 @@ describe('produceRedirects()', () => {
         .split('\n')
         .sort()
       expect(rules).to.eql([
+        '/ /component-a/module-a/the-target.html 301',
         '/component-a/module-a/alias-a.html /component-a/module-a/the-target.html 301',
+        '/component-a/module-a/old-target/ /component-a/module-a/the-target.html 301',
+        '/component-a/module-a/old-target/index.html /component-a/module-a/the-target.html 301',
         '/component-a/module-b/alias-b.html /component-a/module-a/the-target.html 301',
         '/component-b/1.0/alias-c.html /component-a/module-a/the-target.html 301',
+        '/index.html /component-a/module-a/the-target.html 301',
+      ])
+    })
+
+    it('should not include extra redirect for directory if HTML URL extension style is indexify', () => {
+      contentCatalog.getFiles().forEach((file) => {
+        file.pub.url = file.pub.url.slice(0, file.pub.url.endsWith('/index.html') ? -11 : -5) + '/'
+      })
+      playbook.urls.htmlExtensionStyle = 'indexify'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('_redirects')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.eql([
+        '/ /component-a/module-a/the-target/ 301',
+        '/component-a/module-a/alias-a/ /component-a/module-a/the-target/ 301',
+        '/component-a/module-a/old-target/ /component-a/module-a/the-target/ 301',
+        '/component-a/module-b/alias-b/ /component-a/module-a/the-target/ 301',
+        '/component-b/1.0/alias-c/ /component-a/module-a/the-target/ 301',
+      ])
+    })
+
+    it('should not include extra redirect for directory if HTML URL extension style is drop', () => {
+      contentCatalog.getFiles().forEach((file) => {
+        file.pub.url = file.pub.url.slice(0, file.pub.url.endsWith('/index.html') ? -10 : -5)
+      })
+      playbook.urls.htmlExtensionStyle = 'drop'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('_redirects')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.eql([
+        '/ /component-a/module-a/the-target 301',
+        '/component-a/module-a/alias-a /component-a/module-a/the-target 301',
+        '/component-a/module-a/old-target/ /component-a/module-a/the-target 301',
+        '/component-a/module-b/alias-b /component-a/module-a/the-target 301',
+        '/component-b/1.0/alias-c /component-a/module-a/the-target 301',
       ])
     })
 
@@ -117,9 +167,13 @@ describe('produceRedirects()', () => {
         .split('\n')
         .sort()
       expect(rules).to.eql([
+        '/docs/ /docs/component-a/module-a/the-target.html 301',
         '/docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html 301',
+        '/docs/component-a/module-a/old-target/ /docs/component-a/module-a/the-target.html 301',
+        '/docs/component-a/module-a/old-target/index.html /docs/component-a/module-a/the-target.html 301',
         '/docs/component-a/module-b/alias-b.html /docs/component-a/module-a/the-target.html 301',
         '/docs/component-b/1.0/alias-c.html /docs/component-a/module-a/the-target.html 301',
+        '/docs/index.html /docs/component-a/module-a/the-target.html 301',
       ])
     })
 
@@ -133,9 +187,13 @@ describe('produceRedirects()', () => {
         .split('\n')
         .sort()
       expect(rules).to.eql([
+        '/ /component-a/module-a/the-target.html 301',
         '/component-a/module-a/alias-a.html /component-a/module-a/the-target.html 301',
+        '/component-a/module-a/old-target/ /component-a/module-a/the-target.html 301',
+        '/component-a/module-a/old-target/index.html /component-a/module-a/the-target.html 301',
         '/component-a/module-b/alias-b.html /component-a/module-a/the-target.html 301',
         '/component-b/1.0/alias-c.html /component-a/module-a/the-target.html 301',
+        '/index.html /component-a/module-a/the-target.html 301',
       ])
     })
 
@@ -164,8 +222,10 @@ describe('produceRedirects()', () => {
         .sort()
       expect(rules).to.eql([
         'location = /component-a/module-a/alias-a.html { return 301 /component-a/module-a/the-target.html; }',
+        'location = /component-a/module-a/old-target/index.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-a/module-b/alias-b.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-b/1.0/alias-c.html { return 301 /component-a/module-a/the-target.html; }',
+        'location = /index.html { return 301 /component-a/module-a/the-target.html; }',
       ])
     })
 
@@ -180,8 +240,10 @@ describe('produceRedirects()', () => {
         .sort()
       expect(rules).to.eql([
         'location = /docs/component-a/module-a/alias-a.html { return 301 /docs/component-a/module-a/the-target.html; }',
+        'location = /docs/component-a/module-a/old-target/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
         'location = /docs/component-a/module-b/alias-b.html { return 301 /docs/component-a/module-a/the-target.html; }',
         'location = /docs/component-b/1.0/alias-c.html { return 301 /docs/component-a/module-a/the-target.html; }',
+        'location = /docs/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
       ])
     })
 
@@ -196,8 +258,10 @@ describe('produceRedirects()', () => {
         .sort()
       expect(rules).to.eql([
         'location = /component-a/module-a/alias-a.html { return 301 /component-a/module-a/the-target.html; }',
+        'location = /component-a/module-a/old-target/index.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-a/module-b/alias-b.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-b/1.0/alias-c.html { return 301 /component-a/module-a/the-target.html; }',
+        'location = /index.html { return 301 /component-a/module-a/the-target.html; }',
       ])
     })
 
@@ -223,10 +287,5 @@ describe('produceRedirects()', () => {
     })
   })
 
-  /*
-TESTS:
-- includes context path in nginx redirect rule
-
-QUESTION should function return a single virtual file instead of multiple?
-*/
+  // QUESTION should function return a single virtual file instead of an array?
 })
