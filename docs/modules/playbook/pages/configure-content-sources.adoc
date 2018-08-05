@@ -52,6 +52,26 @@ If the value matches either of these rules, the value is handled as a remote URI
 Note that a colon is permitted when it's part of a Windows drive letter (e.g., `c:/`).
 Look for these rules in the sections that follow.
 
+=== Use the git worktree
+
+When using a local, non-bare repository, Antora will use files from the worktree (i.e., the working directory) for the current branch when it's matched by the <<branches,branches filter>>.
+(You can also use the value `HEAD` in the branches filter as a shorthand for the current branch).
+This behavior is central to xref:author-mode.adoc[author mode].
+It means you *don't have to commit files locally* in order for Antora to use them.
+
+CAUTION: Antora will not use files from the worktree if the current branch is not matched by the branches filter.
+On the other hand, if the current branch is matched, and the worktree contains the same files as another branch matched by the branches filter, Antora may fail to run because it will find duplicate files.
+
+To prevent Antora from using files from the worktree when using a local URL, change the URL to point directly to the [.path]_.git_ directory.
+That way, Antora will know not see the worktree.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: ./demo-component-b/.git
+----
+
 [#remote-urls]
 === Fetch and use remote content repositories
 
