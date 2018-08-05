@@ -71,7 +71,7 @@ content:
 Whether or not the `.git` extension is required depends on the settings of the git host.
 It's usually best to include it.
 
-See xref:private-repository.adoc[Private repository authentication] to learn how to connect Antora to a private repository via SSH or HTTP/HTTPS using a username+password or an OAuth (personal access) token.
+See xref:private-repository-auth.adoc[private repository authentication] to learn how to use Antora to connect to private repositories over SSH using an SSH agent or over HTTP/HTTPS using a username+password or OAuth (personal access) token.
 
 [#mixing-urls]
 === Configure local and remote URLs in the same playbook

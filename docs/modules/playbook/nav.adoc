@@ -3,7 +3,7 @@
 ** xref:playbook-schema.adoc[Configuration Schema]
 *** xref:configure-site.adoc[Site]
 *** xref:configure-content-sources.adoc[Content Sources]
-**** xref:private-repository.adoc[Private Repository Authentication]
+**** xref:private-repository-auth.adoc[Private Repository Authentication]
 *** xref:configure-asciidoc.adoc[AsciiDoc]
 *** xref:configure-ui.adoc[UI]
 //*** xref:configure-redirects.adoc[Configure Redirects]
