@@ -516,6 +516,8 @@ describe('loadUi()', () => {
     describe('should discover static files when specified with single glob string', () => {
       testAll('the-ui-bundle-with-static-files-single-glob.zip', async (playbook) => {
         const uiCatalog = await loadUi(playbook)
+        const filepaths = uiCatalog.getFiles().map((file) => file.path)
+        expect(filepaths).not.to.include('ui.yml')
         const staticFiles = uiCatalog.findByType('static')
         staticFiles.forEach(({ type }) => expect(type).to.equal('static'))
         const staticFilePaths = staticFiles.map((file) => file.path)

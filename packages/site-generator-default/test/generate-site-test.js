@@ -495,4 +495,5 @@ describe('generateSite()', () => {
   // - test if component start page is missing (current throws an error because its undefined)
   // - path to images from topic dir
   // - html URL extension style
+  // - ui.yml is not published
 })
