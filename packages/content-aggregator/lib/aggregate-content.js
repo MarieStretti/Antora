@@ -218,28 +218,50 @@ async function collectComponentVersions (source, repo, repoUrl, repoPath, isRemo
 async function selectReferences (repo, remote, refPatterns) {
   let { branches: branchPatterns, tags: tagPatterns } = refPatterns
   let isBare = !!repo.isBare()
-  if (branchPatterns) {
-    if (branchPatterns === 'HEAD' || branchPatterns === '.') {
-      branchPatterns = [await getCurrentBranch(repo)]
-    } else if (Array.isArray(branchPatterns)) {
-      if (branchPatterns.length) {
-        let currentBranchIdx
-        branchPatterns = branchPatterns.map((p) => p.toString())
-        if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-          branchPatterns[currentBranchIdx] = await getCurrentBranch(repo)
-        }
-      } else {
-        branchPatterns = undefined
-      }
-    } else {
-      branchPatterns = branchPatterns.toString().split(CSV_RX)
-    }
-  }
+  const refs = new Map()
 
   if (tagPatterns) {
     tagPatterns = Array.isArray(tagPatterns)
       ? tagPatterns.map((p) => p.toString())
       : tagPatterns.toString().split(CSV_RX)
+  }
+
+  if (branchPatterns) {
+    if (branchPatterns === 'HEAD' || branchPatterns === '.') {
+      if (repo.headDetached()) {
+        refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', fqn: 'HEAD', type: 'branch', isHead: true })
+        if (tagPatterns && tagPatterns.length) {
+          branchPatterns = undefined
+        } else {
+          return [refs.get('HEAD')]
+        }
+      } else {
+        branchPatterns = [await getCurrentBranchName(repo)]
+      }
+    } else {
+      branchPatterns = Array.isArray(branchPatterns)
+        ? branchPatterns.map((p) => p.toString())
+        : branchPatterns.toString().split(CSV_RX)
+      if (branchPatterns.length) {
+        let currentBranchIdx
+        if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
+          if (repo.headDetached()) {
+            refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', fqn: 'HEAD', type: 'branch', isHead: true })
+            if (branchPatterns.length > 1) {
+              branchPatterns.splice(currentBranchIdx, 1)
+            } else if (tagPatterns && tagPatterns.length) {
+              branchPatterns = undefined
+            } else {
+              return [refs.get('HEAD')]
+            }
+          } else {
+            branchPatterns[currentBranchIdx] = await getCurrentBranchName(repo)
+          }
+        }
+      } else {
+        branchPatterns = undefined
+      }
+    }
   }
 
   return Array.from(
@@ -274,12 +296,12 @@ async function selectReferences (repo, remote, refPatterns) {
         }
 
         return accum
-      }, new Map())
+      }, refs)
       .values()
   )
 }
 
-function getCurrentBranch (repo) {
+function getCurrentBranchName (repo) {
   return repo.getCurrentBranch().then((ref) => {
     const refName = ref.shorthand()
     return ref.isRemote() ? refName.substr(refName.indexOf('/') + 1) : refName
