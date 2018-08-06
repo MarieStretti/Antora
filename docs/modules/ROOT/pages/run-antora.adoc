@@ -164,11 +164,11 @@ If you want to clear the cache altogether, you'll need to locate the Antora cach
 
 Antora supports connecting to private repositories using SSH or HTTP/HTTPS.
 
-If your playbook is xref:playbook:private-repository.adoc[configured to fetch private repositories via SSH], you must run an SSH agent with the identity (i.e., SSH key) you've linked to your account on the git host.
+If your playbook is xref:playbook:private-repository-auth.adoc[configured to fetch private repositories via SSH], you must run an SSH agent with the identity (i.e., SSH key) you've linked to your account on the git host.
 If the SSH agent isn't running, or your key and account don't match, Antora will fail when it attempts to clone the private repository.
 
 Antora can also authenticate with a private repository over HTTP/HTTPS.
-See xref:playbook:private-repository.adoc#http-auth[Connect to a private repository using HTTP authentication] to learn more.
+See xref:playbook:private-repository-auth.adoc#http-auth[Connect to a private repository using HTTP authentication] to learn more.
 
 == Local Site Preview
 
