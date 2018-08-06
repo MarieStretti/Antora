@@ -229,7 +229,7 @@ async function selectReferences (repo, remote, refPatterns) {
   if (branchPatterns) {
     if (branchPatterns === 'HEAD' || branchPatterns === '.') {
       if (repo.headDetached()) {
-        refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', fqn: 'HEAD', type: 'branch', isHead: true })
+        refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
         if (tagPatterns && tagPatterns.length) {
           branchPatterns = undefined
         } else {
@@ -246,7 +246,7 @@ async function selectReferences (repo, remote, refPatterns) {
         let currentBranchIdx
         if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
           if (repo.headDetached()) {
-            refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', fqn: 'HEAD', type: 'branch', isHead: true })
+            refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
             if (branchPatterns.length > 1) {
               branchPatterns.splice(currentBranchIdx, 1)
             } else if (tagPatterns && tagPatterns.length) {
@@ -273,17 +273,17 @@ async function selectReferences (repo, remote, refPatterns) {
         if (ref.isTag()) {
           if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
             // NOTE tags are stored using symbol keys to distinguish them from branches
-            accum.set(Symbol(name), { obj: ref, name, fqn: `tags/${name}`, type: 'tag' })
+            accum.set(Symbol(name), { obj: ref, name, qname: `tags/${name}`, type: 'tag' })
           }
           return accum
         } else if (!branchPatterns) {
           return accum
         } else if ((segments = ref.name().split('/'))[1] === 'heads') {
           name = segments.slice(2).join('/')
-          refData = { obj: ref, name, fqn: name, type: 'branch', isHead: !!ref.isHead() }
+          refData = { obj: ref, name, qname: name, type: 'branch', isHead: !!ref.isHead() }
         } else if (ref.isRemote() && segments[2] === remote) {
           name = segments.slice(3).join('/')
-          refData = { obj: ref, name, fqn: `remotes/${remote}/${name}`, type: 'branch', remote }
+          refData = { obj: ref, name, qname: `remotes/${remote}/${name}`, type: 'branch', remote }
         } else {
           return accum
         }
@@ -322,7 +322,7 @@ async function populateComponentVersion (source, repo, url, repoPath, isRemote, 
       : await readFilesFromGitTree(repo, ref.obj, startPath)
     componentVersion = loadComponentDescriptor(files, startPath)
   } catch (e) {
-    e.message += ` in ${isRemote ? url : repoPath} [ref: ${ref.fqn}${worktreePath ? ' <worktree>' : ''}]`
+    e.message += ` in ${isRemote ? url : repoPath} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
     throw e
   }
   const origin = computeOrigin(url, ref.name, ref.type, startPath, worktreePath)
