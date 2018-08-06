@@ -579,13 +579,40 @@ describe('aggregateContent()', () => {
         expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
       })
 
-      it('should ignore HEAD if not on a branch', async () => {
+      it('should select current branch if CSV pattern includes HEAD', async () => {
         const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
         await initRepoWithBranches(repoBuilder)
           .then(() => repoBuilder.open())
+          .then(() => repoBuilder.close('v3.0'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'master,HEAD' })
+        deepFreeze(playbookSpec)
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+
+      it('should select current branch if CSV pattern includes .', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+          .then(() => repoBuilder.open())
+          .then(() => repoBuilder.close('v3.0'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'master,.' })
+        deepFreeze(playbookSpec)
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+        expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+
+      it('should use worktree for HEAD if not on branch', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+          .then(() => repoBuilder.open())
+          .then(() => repoBuilder.checkoutBranch('v3.0'))
           .then(() => repoBuilder.repository.detachHead())
           .then(() => repoBuilder.close())
-        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['HEAD', 'v*'] })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['HEAD', 'v1.0', 'v2.0'] })
         deepFreeze(playbookSpec)
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(3)
