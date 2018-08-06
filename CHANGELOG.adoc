@@ -9,10 +9,11 @@ This project utilizes semantic versioning.
 
 === Improved
 
-* *content-aggregator*: Include start path and reference name in error messages about antora.yml (#267)
+* *content-aggregator*: Include start path and name of reference in error messages regarding antora.yml (#267)
 * *content-aggregator*: Honor HEAD branch name when using remote URL (resolves to default branch) (#272)
 * *content-aggregator*: Use worktree when branch is HEAD and repository is not on a branch (#279)
 * *content-aggregator*: Show informative message when start path in content repository doesn't exist or isn't a directory (#274)
+* *navigation-builder*: Allow navigation sublists to be enclosed in open blocks (#265)
 * *cli*: Recommend adding the --stacktrace option when the CLI exits with an error (#273)
 * *playbook-builder*: Upgrade convict and remove workarounds for environment isolation and parsing custom data formats
 * *redirect-producer*: Add directory redirects to Netlify redirect config for URLs ending in /index.html when using default HTML URL extension style (#278)
@@ -24,13 +25,14 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Convert ref patterns (branches and tags) defined in playbook to strings (#262)
 * *content-aggregator*: Remove authentication credentials from repository URL when used in error messages (#270)
 * *content-aggregator*: Fetch all tags when the runtime pull option is enabled (#271)
-* *navigation-builder*: Allow navigation sublists to be enclosed in open blocks (#265)
 
 === Documented
 
-* Document that a .nojekyll file must be used to publish an Antora-generated site to GitHub Pages (#194)
-* Explain how to configure Antora to connect to private repositories listed in the playbook file (#139)
-* Document trick to prevent Antora from using the worktree for a local URL (#236)
+* A .nojekyll file must be used to publish an Antora-generated site to GitHub Pages (#194)
+* Explain how to use private content repositories with Antora (#139)
+* Share trick to prevent Antora from using the worktree for a local URL (#236)
+* Branches remain enabled even when tags are set
+* Packages required to install/recompile nodegit on RHEL
 
 == 1.0.1 (2018-05-06)
 
