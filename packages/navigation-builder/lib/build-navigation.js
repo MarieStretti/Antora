@@ -48,30 +48,41 @@ function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
     nav: { index },
   } = navFile
   return lists.map((list, idx) => {
-    const tree = buildNavigationTree(list.getTitle(), list)
+    const tree = buildNavigationTree(list.getTitle(), list.getItems())
     tree.root = true
     tree.order = idx ? parseFloat((index + idx / lists.length).toFixed(4)) : index
     return { component, version, tree }
   })
 }
 
-function getChildList (node) {
-  let candidate = node.getBlocks()[0]
-  let context
-  if (
-    candidate &&
-    ((context = candidate.getContext()) === 'ulist' ||
-      (context === 'open' && (candidate = candidate.getBlocks()[0]) && candidate.getContext() === 'ulist'))
-  ) {
-    return candidate
+function getChildListItems (listItem) {
+  const blocks = listItem.getBlocks()
+  const candidate = blocks[0]
+  if (candidate) {
+    if (blocks.length === 1 && candidate.getContext() === 'ulist') {
+      return candidate.getItems()
+    } else {
+      let context
+      return blocks.reduce((accum, block) => {
+        if (
+          (context = block.getContext()) === 'ulist' ||
+          (context === 'open' && (block = block.getBlocks()[0]) && block.getContext() === 'ulist')
+        ) {
+          accum.push(...block.getItems())
+        }
+        return accum
+      }, [])
+    }
+  } else {
+    return []
   }
 }
 
-function buildNavigationTree (formattedContent, list) {
+function buildNavigationTree (formattedContent, items) {
   const entry = formattedContent ? partitionContent(formattedContent) : {}
 
-  if (list) {
-    entry.items = list.getItems().map((item) => buildNavigationTree(item.getText(), getChildList(item)))
+  if (items.length) {
+    entry.items = items.map((item) => buildNavigationTree(item.getText(), getChildListItems(item)))
   }
 
   return entry
