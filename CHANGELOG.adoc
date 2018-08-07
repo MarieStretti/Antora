@@ -5,13 +5,13 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== 1.0.2 (2018-08-06)
+== Unreleased
 
 === Fixed
 
 * *navigation-builder*: Preserve list items in navigation tree that are siblings of open blocks (#265)
 
-== 1.0.2 (2018-05-06)
+== 1.0.2 (2018-08-06)
 
 === Improved
 
