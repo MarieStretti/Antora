@@ -786,6 +786,193 @@ describe('buildNavigation()', () => {
     })
   })
 
+  // NOTE Asciidoctor messes up structure in this case unless first child is attached with a list continuation
+  it('should fuse sibling list items with list items inside open block', () => {
+    const navContents = heredoc`
+      * User Interface
+      +
+       ** xref:ui/overview.adoc[Overview]
+
+      +
+      --
+      * Layouts
+       ** xref:ui/layouts/overview.adoc[Overview]
+       ** xref:ui/layouts/responsive.adoc[Responsive UIs]
+      --
+       ** xref:ui/notifications.adoc[Notifications]
+
+      +
+      --
+      * Search
+       ** xref:ui/search/overview.adoc[Overview]
+       ** xref:ui/search/query-suggestions.adoc[Query Suggestions]
+       ** xref:ui/search/configuration.adoc[Configuration]
+      --
+       ** xref:ui/drag-drop.adoc[Drag & Drop]
+      * xref:app-data.adoc[App Data]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'navigation',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'ui/overview.adoc' },
+      { family: 'page', relative: 'ui/layouts/overview.adoc' },
+      { family: 'page', relative: 'ui/layouts/responsive.adoc' },
+      { family: 'page', relative: 'ui/notifications.adoc' },
+      { family: 'page', relative: 'ui/search/overview.adoc' },
+      { family: 'page', relative: 'ui/search/query-suggestions.adoc' },
+      { family: 'page', relative: 'ui/search/configuration.adoc' },
+      { family: 'page', relative: 'ui/drag-drop.adoc' },
+      { family: 'page', relative: 'app-data.adoc' },
+    ])
+    const navCatalog = buildNavigation(contentCatalog)
+    const menu = navCatalog.getMenu('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      items: [
+        {
+          content: 'User Interface',
+          items: [
+            {
+              content: 'Overview',
+              url: '/component-a/module-a/ui/overview.html',
+              urlType: 'internal',
+            },
+            {
+              content: 'Layouts',
+              items: [
+                {
+                  content: 'Overview',
+                  url: '/component-a/module-a/ui/layouts/overview.html',
+                  urlType: 'internal',
+                },
+                {
+                  content: 'Responsive UIs',
+                  url: '/component-a/module-a/ui/layouts/responsive.html',
+                  urlType: 'internal',
+                },
+              ],
+            },
+            {
+              content: 'Notifications',
+              url: '/component-a/module-a/ui/notifications.html',
+              urlType: 'internal',
+            },
+            {
+              content: 'Search',
+              items: [
+                {
+                  content: 'Overview',
+                  url: '/component-a/module-a/ui/search/overview.html',
+                  urlType: 'internal',
+                },
+                {
+                  content: 'Query Suggestions',
+                  url: '/component-a/module-a/ui/search/query-suggestions.html',
+                  urlType: 'internal',
+                },
+                {
+                  content: 'Configuration',
+                  url: '/component-a/module-a/ui/search/configuration.html',
+                  urlType: 'internal',
+                },
+              ],
+            },
+            {
+              content: 'Drag &amp; Drop',
+              url: '/component-a/module-a/ui/drag-drop.html',
+              urlType: 'internal',
+            },
+          ],
+        },
+        {
+          content: 'App Data',
+          url: '/component-a/module-a/app-data.html',
+          urlType: 'internal',
+        },
+      ],
+    })
+  })
+
+  it('should skip block which is not an unordered list or an unordered list wrapped inside an open block', () => {
+    const navContents = heredoc`
+      * Testing
+      +
+      Testing is good.
+      +
+       ** xref:testing/overview.adoc[Overview]
+
+      +
+      --
+      Never leave testing for production.
+      --
+      +
+      --
+      // But everyone still tests in production.
+      --
+      +
+      --
+      * Writing effective unit tests
+       ** xref:testing/unit-tests/overview.adoc[Overview]
+       ** xref:testing/unit-tests/mocks-stubs.adoc[Mocks & Stubs]
+      --
+      * Performance
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'navigation',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'testing/overview.adoc' },
+      { family: 'page', relative: 'testing/unit-tests/overview.adoc' },
+      { family: 'page', relative: 'testing/unit-tests/mocks-stubs.adoc' },
+    ])
+    const navCatalog = buildNavigation(contentCatalog)
+    const menu = navCatalog.getMenu('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      items: [
+        {
+          content: 'Testing',
+          items: [
+            {
+              content: 'Overview',
+              url: '/component-a/module-a/testing/overview.html',
+              urlType: 'internal',
+            },
+            {
+              content: 'Writing effective unit tests',
+              items: [
+                {
+                  content: 'Overview',
+                  url: '/component-a/module-a/testing/unit-tests/overview.html',
+                  urlType: 'internal',
+                },
+                {
+                  content: 'Mocks &amp; Stubs',
+                  url: '/component-a/module-a/testing/unit-tests/mocks-stubs.html',
+                  urlType: 'internal',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          content: 'Performance',
+        },
+      ],
+    })
+  })
+
   it('should process navigation file containing multiple lists', () => {
     const navContents = heredoc`
       .xref:basics.adoc[Basics]
