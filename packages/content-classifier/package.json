@@ -1,6 +1,6 @@
 {
   "name": "@antora/content-classifier",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Organizes aggregated content into a virtual file catalog for use in an Antora documentation pipeline.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
@@ -20,7 +20,7 @@
     "vinyl": "^2.2.0"
   },
   "devDependencies": {
-    "@antora/content-aggregator": "1.0.2"
+    "@antora/content-aggregator": "1.0.3"
   },
   "engines": {
     "node": ">= 8.0.0"
