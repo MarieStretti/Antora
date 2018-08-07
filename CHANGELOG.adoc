@@ -9,7 +9,7 @@ This project utilizes semantic versioning.
 
 === Improved
 
-* *content-aggregator*: Include start path and name of reference in error messages regarding antora.yml (#267)
+* *content-aggregator*: Include start path and name of reference in error messages that pertain to antora.yml (#267)
 * *content-aggregator*: Honor HEAD branch name when using remote URL (resolves to default branch) (#272)
 * *content-aggregator*: Use worktree when branch is HEAD and repository is not on a branch (#279)
 * *content-aggregator*: Show informative message when start path in content repository doesn't exist or isn't a directory (#274)
