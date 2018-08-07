@@ -1,7 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "version": "node scripts/version.js"
   },
   "devDependencies": {
     "chai": "^4.1.2",
