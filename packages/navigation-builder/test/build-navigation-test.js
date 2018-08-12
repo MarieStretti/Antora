@@ -29,7 +29,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'requirements.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
@@ -62,7 +62,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'index.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
@@ -110,7 +110,7 @@ describe('buildNavigation()', () => {
       { component: 'component-b', module: 'ROOT', family: 'page', relative: 'the-page.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menuA = navCatalog.getMenu('component-a', 'master')
+    const menuA = navCatalog.getNavigation('component-a', 'master')
     expect(menuA).to.exist()
     expect(menuA).to.have.lengthOf(1)
     expect(menuA[0]).to.eql({
@@ -127,7 +127,7 @@ describe('buildNavigation()', () => {
         },
       ],
     })
-    const menuB = navCatalog.getMenu('component-b', 'master')
+    const menuB = navCatalog.getNavigation('component-b', 'master')
     expect(menuB).to.exist()
     expect(menuB).to.have.lengthOf(1)
     expect(menuB[0]).to.eql({
@@ -144,6 +144,44 @@ describe('buildNavigation()', () => {
         },
       ],
     })
+  })
+
+  it('should assign navigation to component version in content catalog', () => {
+    const navContentsA = heredoc`
+      .xref:index.adoc[Component A]
+      * xref:the-page.adoc[The Page]
+    `
+    const navContentsB = heredoc`
+      .xref:index.adoc[Component B]
+      * xref:the-page.adoc[The Page]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContentsA,
+        navIndex: 0,
+      },
+      {
+        component: 'component-b',
+        module: 'ROOT',
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContentsB,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'index.adoc' },
+      { family: 'page', relative: 'the-page.adoc' },
+      { component: 'component-b', module: 'ROOT', family: 'page', relative: 'index.adoc' },
+      { component: 'component-b', module: 'ROOT', family: 'page', relative: 'the-page.adoc' },
+    ])
+    const navCatalog = buildNavigation(contentCatalog)
+    expect(contentCatalog.getComponentVersion('component-a', 'master').navigation).to.equal(
+      navCatalog.getNavigation('component-a', 'master')
+    )
+    expect(contentCatalog.getComponentVersion('component-b', 'master').navigation).to.equal(
+      navCatalog.getNavigation('component-b', 'master')
+    )
   })
 
   it('should resolve page references relative to module of navigation file', () => {
@@ -241,7 +279,7 @@ describe('buildNavigation()', () => {
       { component: 'component-b', version: 'master', module: 'ROOT', family: 'page', relative: 'page-d.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -293,7 +331,7 @@ describe('buildNavigation()', () => {
       { module: 'advanced', family: 'page', relative: 'caching.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
@@ -350,7 +388,7 @@ describe('buildNavigation()', () => {
       { module: 'advanced', family: 'page', relative: 'caching.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
@@ -413,7 +451,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'index.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog, { attributes })
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -454,7 +492,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'asciidoc/syntax-primer.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -502,7 +540,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'page-c.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -539,7 +577,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'page-a.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -568,7 +606,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'tuning-performance.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -617,7 +655,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'command/remove.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -667,7 +705,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'requirements.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -742,7 +780,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'tutorials.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -829,7 +867,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'app-data.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -935,7 +973,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'testing/unit-tests/mocks-stubs.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
       order: 0,
@@ -994,7 +1032,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'gitlab-pages.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(2)
     expect(menu[0]).to.eql({
@@ -1075,7 +1113,7 @@ describe('buildNavigation()', () => {
       { module: 'module-d', family: 'page', relative: 'the-page.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(5)
     expect(menu[0].root).to.be.true()
@@ -1127,7 +1165,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'gitlab-pages.adoc' },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(2)
     expect(menu[0].content).to.equal('Basics')
@@ -1150,7 +1188,7 @@ describe('buildNavigation()', () => {
       },
     ])
     const navCatalog = buildNavigation(contentCatalog)
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(1)
     expect(menu[0].content).to.equal('Basics')
@@ -1216,7 +1254,7 @@ describe('buildNavigation()', () => {
       ],
       1
     )
-    const menu = navCatalog.getMenu('component-a', 'master')
+    const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu).to.have.lengthOf(2)
     expect(menu[0]).to.eql({

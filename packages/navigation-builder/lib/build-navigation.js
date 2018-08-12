@@ -13,7 +13,7 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  * the AsciiDoc Loader component to parse the source of each file into an
  * Asciidoctor Document object. It then looks in each file for one or more nested
  * unordered lists, which are used to build the navigation trees. It then
- * combines those trees in sorted order as a navigation menu, which gets
+ * combines those trees in sorted order as a navigation set, which gets
  * stored in the navigation catalog by component/version pair.
  *
  * @memberof navigation-builder
@@ -33,9 +33,9 @@ function buildNavigation (contentCatalog, asciidocConfig = {}) {
   delete asciidocConfig.extensions
   return navFiles
     .map((navFile) => loadNavigationFile(navFile, contentCatalog, asciidocConfig))
-    .reduce((accum, treeSet) => accum.concat(treeSet), [])
+    .reduce((accum, trees) => accum.concat(trees), [])
     .reduce((catalog, { component, version, tree }) => {
-      catalog.addTree(component, version, tree)
+      contentCatalog.getComponentVersion(component, version).navigation = catalog.addTree(component, version, tree)
       return catalog
     }, new NavigationCatalog())
 }
