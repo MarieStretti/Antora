@@ -108,8 +108,8 @@ function buildSiteUiModel (playbook, contentCatalog) {
   const startPage = contentCatalog.getSiteStartPage()
   if (startPage) model.homeUrl = startPage.pub.url
 
-  // QUESTION should components be pre-sorted?
-  model.components = contentCatalog.getComponents().sort((a, b) => a.title.localeCompare(b.title))
+  // QUESTION should components be pre-sorted? should we make this configurable?
+  model.components = contentCatalog.getComponentMapSortedBy('title')
 
   model.keys = Object.entries(playbook.site.keys || {}).reduce((accum, [key, value]) => {
     if (value) accum[key] = value
