@@ -34,6 +34,10 @@ To check if you have an SSH agent running, execute the following command:
 
 You should see a list of keys in the form of MD5 fingerprints.
 If you get an error message instead, you need to start the SSH agent.
+That entails running:
+
+ $ eval $(ssh-agent -s)
+   ssh-add ~/.ssh/id_rsa
 
 To learn how to generate an SSH key, start the SSH agent, add your identity, and add your SSH key to your GitHub account, see {url-ssh-github}[Generating a new SSH key and adding it to the ssh-agent^].
 For GitLab users, refer to {url-ssh-gitlab}[GitLab and SSH keys^].
