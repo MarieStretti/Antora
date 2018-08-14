@@ -61,6 +61,13 @@ _Required_; _Reserved_
 Directory that contains the xref:modules.adoc#root[mandatory ROOT module].
 The directory name must be written in all uppercase letters.
 
+modules/user-named-module ::
+_Optional_
++
+In addition to the ROOT module, you can create as many additional modules as your documentation component requires.
+
+Each module, whether the ROOT module or an additional module, is structured as follows :
+
 xref:modules.adoc#assets-dir[<module>/assets] ::
 _Optional_; _Reserved_
 +
@@ -105,10 +112,5 @@ _Optional_; _Reserved_
 +
 A xref:navigation:filenames-and-locations.adoc[navigation file] contains one or more AsciiDoc lists.
 Each navigation file must be xref:navigation:register-navigation-files.adoc[declared in the component descriptor] if you want it to be displayed in the component's navigation menu.
-
-modules/user-named-module ::
-_Optional_
-+
-In addition to the ROOT module, you can create as many additional modules as your documentation component requires.
 
 //We know the structure in the example above represents a documentation component because of the presence of an [.path]_antora.yml_ file.
