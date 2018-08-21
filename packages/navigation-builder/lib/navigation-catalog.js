@@ -23,7 +23,7 @@ class NavigationCatalog {
   }
 
   [$generateId] (component, version) {
-    return component + ':' + version
+    return version + '@' + component
   }
 }
 

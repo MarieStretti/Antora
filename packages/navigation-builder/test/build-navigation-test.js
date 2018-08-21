@@ -1194,16 +1194,10 @@ describe('buildNavigation()', () => {
     expect(menu[0].content).to.equal('Basics')
   })
 
-  // FIXME we want to support includes relative to nav.adoc, but those files aren't added to catalog
-  // we could classify files in the nav directory as navigation without a nav.index property
-  // another option is to move partials from pages/_partials to partials; then partials/nav makes sense
-  it('should support navigation file with includes', () => {
+  it('should resolve include target prefixed with {partialsdir} in navigation file', () => {
     const navContents = heredoc`
       .xref:index.adoc[Basics]
       include::{partialsdir}/nav/basics.adoc[]
-
-      .xref:advanced/index.adoc[Advanced]
-      include::{partialsdir}/nav/advanced.adoc[]
     `
     const contentCatalog = mockContentCatalog([
       {
@@ -1217,46 +1211,22 @@ describe('buildNavigation()', () => {
         relative: 'nav/basics.adoc',
         contents: '* xref:basics/requirements.adoc[Requirements]',
       },
-      {
-        family: 'partial',
-        relative: 'nav/advanced.adoc',
-        contents: '* xref:advanced/caching.adoc[Caching]',
-      },
       { family: 'page', relative: 'index.adoc' },
       { family: 'page', relative: 'basics/requirements.adoc' },
-      { family: 'page', relative: 'advanced/index.adoc' },
-      { family: 'page', relative: 'advanced/caching.adoc' },
     ]).spyOn('getById')
     const navCatalog = buildNavigation(contentCatalog)
-    expectCalledWith(
-      contentCatalog.getById,
-      [
-        {
-          component: 'component-a',
-          version: 'master',
-          module: 'module-a',
-          family: 'partial',
-          relative: 'nav/basics.adoc',
-        },
-      ],
-      0
-    )
-    expectCalledWith(
-      contentCatalog.getById,
-      [
-        {
-          component: 'component-a',
-          version: 'master',
-          module: 'module-a',
-          family: 'partial',
-          relative: 'nav/advanced.adoc',
-        },
-      ],
-      1
-    )
+    expectCalledWith(contentCatalog.getById, [
+      {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'nav/basics.adoc',
+      },
+    ])
     const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
-    expect(menu).to.have.lengthOf(2)
+    expect(menu).to.have.lengthOf(1)
     expect(menu[0]).to.eql({
       order: 0,
       root: true,
@@ -1271,16 +1241,102 @@ describe('buildNavigation()', () => {
         },
       ],
     })
-    expect(menu[1]).to.eql({
-      order: 0.5,
+  })
+
+  it('should resolve include target resource ID in navigation file', () => {
+    const navContents = heredoc`
+      .xref:intermediate/index.adoc[Intermediate]
+      include::partial$nav/intermediate.adoc[]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      {
+        family: 'partial',
+        relative: 'nav/intermediate.adoc',
+        contents: '* xref:intermediate/redirects.adoc[Redirects]',
+      },
+      { family: 'page', relative: 'intermediate/index.adoc' },
+      { family: 'page', relative: 'intermediate/redirects.adoc' },
+    ]).spyOn('getById')
+    const navCatalog = buildNavigation(contentCatalog)
+    expectCalledWith(contentCatalog.getById, [
+      {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'nav/intermediate.adoc',
+      },
+    ])
+    const menu = navCatalog.getNavigation('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu).to.have.lengthOf(1)
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      content: 'Intermediate',
+      url: '/component-a/module-a/intermediate/index.html',
+      urlType: 'internal',
+      items: [
+        {
+          content: 'Redirects',
+          url: '/component-a/module-a/intermediate/redirects.html',
+          urlType: 'internal',
+        },
+      ],
+    })
+  })
+
+  it('should resolve include target resource ID pointing to separate module in navigation file', () => {
+    const navContents = heredoc`
+      .xref:advanced:index.adoc[Advanced]
+      include::advanced:partial$nav/advanced.adoc[]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      {
+        module: 'advanced',
+        family: 'partial',
+        relative: 'nav/advanced.adoc',
+        // FIXME can the module be inferred in this case?
+        contents: '* xref:advanced:caching.adoc[Caching]',
+      },
+      { module: 'advanced', family: 'page', relative: 'index.adoc' },
+      { module: 'advanced', family: 'page', relative: 'caching.adoc' },
+    ]).spyOn('getById')
+    const navCatalog = buildNavigation(contentCatalog)
+    expectCalledWith(contentCatalog.getById, [
+      {
+        component: 'component-a',
+        version: 'master',
+        module: 'advanced',
+        family: 'partial',
+        relative: 'nav/advanced.adoc',
+      },
+    ])
+    const menu = navCatalog.getNavigation('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu).to.have.lengthOf(1)
+    expect(menu[0]).to.eql({
+      order: 0,
       root: true,
       content: 'Advanced',
-      url: '/component-a/module-a/advanced/index.html',
+      url: '/component-a/advanced/index.html',
       urlType: 'internal',
       items: [
         {
           content: 'Caching',
-          url: '/component-a/module-a/advanced/caching.html',
+          url: '/component-a/advanced/caching.html',
           urlType: 'internal',
         },
       ],

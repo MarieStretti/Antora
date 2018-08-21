@@ -884,6 +884,25 @@ describe('ContentCatalog', () => {
     })
   })
 
+  describe('#resolveResource()', () => {
+    beforeEach(() => {
+      aggregate = [
+        {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          files: [createFile('modules/ROOT/assets/images/foo.png'), createFile('modules/ROOT/pages/page-one.adoc')],
+        },
+      ]
+    })
+
+    it('should find file by qualified resource spec', () => {
+      const pageSpec = 'v1.2.3@the-component:ROOT:image$foo.png'
+      const page = classifyContent(playbook, aggregate).resolveResource(pageSpec)
+      expect(page.path).to.equal('modules/ROOT/assets/images/foo.png')
+    })
+  })
+
   describe('#getById()', () => {
     beforeEach(() => {
       aggregate = [

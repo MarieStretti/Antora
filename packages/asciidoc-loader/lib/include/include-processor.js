@@ -26,6 +26,9 @@ const IncludeProcessor = (() => {
       if (tags) [includeContents, startLineNum] = applyTagFiltering(includeContents, tags)
       const includes = doc.getCatalog().includes.$dup()
       reader.pushInclude(includeContents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
+      if (resolvedFile.context) {
+        ;(reader.file = new String(reader.file)).context = resolvedFile.context // eslint-disable-line no-new-wrappers
+      }
       // TODO after upgrading to 1.5.7, pass partial-option attribute instead
       doc.getCatalog().includes.$replace(includes)
     }
