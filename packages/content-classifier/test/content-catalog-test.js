@@ -774,6 +774,13 @@ describe('ContentCatalog', () => {
       expect(result).to.not.exist()
     })
 
+    it('should not register alias if version is unknown', () => {
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const result = contentCatalog.registerPageAlias('1.0@alias.adoc', targetPage)
+      expect(result).to.not.exist()
+    })
+
     it('should not register alias if version not specified and component unknown', () => {
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
