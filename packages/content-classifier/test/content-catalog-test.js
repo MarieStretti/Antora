@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, expectCalledWith, spy } = require('../../../test/test-utils')
+const { expect, spy } = require('../../../test/test-utils')
 
 const classifyContent = require('@antora/content-classifier')
 const ContentCatalog = require('@antora/content-classifier/lib/content-catalog')
@@ -764,7 +764,7 @@ describe('ContentCatalog', () => {
 
     it('should return undefined if site start page does not exist in catalog', () => {
       expect(contentCatalog.getSiteStartPage()).to.not.exist()
-      expectCalledWith(contentCatalog.getById, [START_PAGE_ID])
+      expect(contentCatalog.getById).to.have.been.called.with(START_PAGE_ID)
     })
 
     it('should return site start page if stored as a concrete page', () => {
@@ -778,7 +778,7 @@ describe('ContentCatalog', () => {
         src: startPageSrc,
       })
       const result = contentCatalog.getSiteStartPage()
-      expectCalledWith(contentCatalog.getById, [START_PAGE_ID])
+      expect(contentCatalog.getById).to.have.been.called.with(START_PAGE_ID)
       expect(result).to.exist()
       expect(result.src).to.equal(startPageSrc)
       expect(result.contents.toString()).to.equal('I am your home base!')
@@ -811,10 +811,10 @@ describe('ContentCatalog', () => {
         src: startPageSrc,
         rel: contentCatalog.getById(thePageId),
       })
-      contentCatalog.getById.reset()
+      contentCatalog.getById = spy(contentCatalog.getById)
       const result = contentCatalog.getSiteStartPage()
-      expectCalledWith(contentCatalog.getById, [START_PAGE_ID], 0)
-      expectCalledWith(contentCatalog.getById, [Object.assign({}, START_PAGE_ID, { family: 'alias' })], 1)
+      expect(contentCatalog.getById).on.nth(1).called.with(START_PAGE_ID)
+      expect(contentCatalog.getById).on.nth(2).called.with(Object.assign({}, START_PAGE_ID, { family: 'alias' }))
       expect(result).to.exist()
       expect(result.src).to.equal(thePageSrc)
       expect(result.contents.toString()).to.equal('I am your home base!')

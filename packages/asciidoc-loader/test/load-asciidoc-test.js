@@ -328,7 +328,7 @@ describe('loadAsciiDoc()', () => {
       const inputContents = 'include::{partialsdir}/does-not-exist.adoc[]'
       setInputFileContents(inputContents)
       const doc = loadAsciiDoc(inputFile, contentCatalog)
-      expectCalledWith(contentCatalog.getById, {
+      expect(contentCatalog.getById).to.have.been.called.with({
         component: 'component-a',
         version: 'master',
         module: 'module-a',

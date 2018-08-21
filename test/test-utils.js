@@ -37,7 +37,7 @@ uninterceptRequire()
 
 chai.use(require('chai-fs'))
 chai.use(require('chai-cheerio'))
-chai.use(require('chai-spies-next'))
+chai.use(require('chai-spies'))
 // dirty-chai must be loaded after the other plugins
 // see https://github.com/prodatakey/dirty-chai#plugin-assertions
 chai.use(require('dirty-chai'))
@@ -56,6 +56,7 @@ module.exports = {
     return deferredFn
   },
   expect: chai.expect,
+  // TODO after upgrading to Asciidoctor 1.5.7, switch to expect(spied).on.nth(n).called.with(args)
   expectCalledWith: (observed, args, i = 0) =>
     chai
       .expect(observed.__spy.calls[i])
