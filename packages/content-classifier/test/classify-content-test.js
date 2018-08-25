@@ -326,7 +326,7 @@ describe('classifyContent()', () => {
       expect(component.versions[1].url).to.equal('/the-component/v1.2.3/index.html')
     })
 
-    it('should classify a partial page', () => {
+    it('should classify a partial page in pages/_partials', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/_partials/foo.adoc'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files).to.have.lengthOf(1)
@@ -340,6 +340,25 @@ describe('classifyContent()', () => {
         relative: 'foo.adoc',
         basename: 'foo.adoc',
         moduleRootPath: '../..',
+      })
+      expect(file.out).to.not.exist()
+      expect(file.pub).to.not.exist()
+    })
+
+    it('should classify a partial page in partials', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/partials/foo.adoc'))
+      const files = classifyContent(playbook, aggregate).getFiles()
+      expect(files).to.have.lengthOf(1)
+      const file = files[0]
+      expect(file.path).to.equal('modules/ROOT/partials/foo.adoc')
+      expect(file.src).to.include({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'partial',
+        relative: 'foo.adoc',
+        basename: 'foo.adoc',
+        moduleRootPath: '..',
       })
       expect(file.out).to.not.exist()
       expect(file.pub).to.not.exist()

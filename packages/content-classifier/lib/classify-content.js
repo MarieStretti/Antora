@@ -47,39 +47,46 @@ function allocateSrc (file, component, version, nav) {
       file.src.relative = filepath
     }
   } else if (pathSegments[0] === 'modules') {
-    if (pathSegments[2] === 'pages') {
-      if (pathSegments[3] === '_partials') {
-        // QUESTION should this family be partial-page instead?
-        file.src.family = 'partial'
-        // relative to modules/<module>/pages/_partials
-        file.src.relative = pathSegments.slice(4).join('/')
-      } else if (file.src.mediaType === 'text/asciidoc') {
-        file.src.family = 'page'
-        // relative to modules/<module>/pages
+    switch (pathSegments[2]) {
+      case 'pages':
+        if (pathSegments[3] === '_partials') {
+          file.src.family = 'partial'
+          // relative to modules/<module>/pages/_partials; deprecated (in the future, warn)
+          file.src.relative = pathSegments.slice(4).join('/')
+          break
+        } else if (file.src.mediaType === 'text/asciidoc') {
+          file.src.family = 'page'
+          // relative to modules/<module>/pages
+          file.src.relative = pathSegments.slice(3).join('/')
+          break
+        }
+        return
+      case 'assets':
+        if (pathSegments[3] === 'images') {
+          file.src.family = 'image'
+          // relative to modules/<module>/assets/images
+          file.src.relative = pathSegments.slice(4).join('/')
+          break
+        } else if (pathSegments[3] === 'attachments') {
+          file.src.family = 'attachment'
+          // relative to modules/<module>/assets/attachments
+          file.src.relative = pathSegments.slice(4).join('/')
+          break
+        }
+        return
+      case 'examples':
+        file.src.family = 'example'
+        // relative to modules/<module>/examples
         file.src.relative = pathSegments.slice(3).join('/')
-      } else {
+        break
+      case 'partials':
+        file.src.family = 'partial'
+        // relative to modules/<module>/partials
+        file.src.relative = pathSegments.slice(3).join('/')
+        break
+      default:
         return
-      }
-    } else if (pathSegments[2] === 'assets') {
-      if (pathSegments[3] === 'images') {
-        file.src.family = 'image'
-        // relative to modules/<module>/assets/images
-        file.src.relative = pathSegments.slice(4).join('/')
-      } else if (pathSegments[3] === 'attachments') {
-        file.src.family = 'attachment'
-        // relative to modules/<module>/assets/attachments
-        file.src.relative = pathSegments.slice(4).join('/')
-      } else {
-        return
-      }
-    } else if (pathSegments[2] === 'examples') {
-      file.src.family = 'example'
-      // relative to modules/<module>/examples
-      file.src.relative = pathSegments.slice(3).join('/')
-    } else {
-      return
     }
-
     file.src.module = pathSegments[1]
     file.src.moduleRootPath = calculateRootPath(pathSegments.length - 3)
   } else {

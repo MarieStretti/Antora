@@ -38,7 +38,7 @@ Start the target with `+{partialsdir}+`; this tells Antora to look for the file 
 The brackets can contain an optional list of attributes such as `leveloffset` and `tags`.
 The attributes should be entered as key=value pairs separated by commas.
 
-Partial AsciiDoc files should be saved in the xref:ROOT:modules.adoc#partials-dir[_pages/_partials_ directory] inside the current module.
+Partial AsciiDoc files should be saved in the xref:ROOT:modules.adoc#partials-dir[_partials_ directory] (or xref:ROOT:modules.adoc#partials-dir[_pages/_partials_ directory]) inside the current module.
 Antora knows the path to the [.path]_partials_ directory, so you don't need to set it in the header of your AsciiDoc file.
 When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 

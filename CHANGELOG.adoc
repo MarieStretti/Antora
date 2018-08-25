@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Added
+
+* *content-classifier*: Look for partial files in the partials folder inside the module in addition to pages/_partials (#254)
+
 == 1.0.3 (2018-08-07)
 
 === Fixed
@@ -205,7 +211,7 @@ This project utilizes semantic versioning.
 * *content-classifier*: Skip files in aggregate which cannot be classified
 * *content-classifier*: Use ContentCatalog#resolvePage to resolve start page for component version and site
 * *content-classifier*: Store select settings from playbook in ContentCatalog (htmlUrlExtensionStyle)
-* *contnet-classifier*: Rename ContentCatalog#registerComponentVersion to ContentCatalog#addComponentVersion
+* *content-classifier*: Rename ContentCatalog#registerComponentVersion to ContentCatalog#addComponentVersion
 * *content-classifier*: Move resolveStartPageUrl logic into ContentCatalog#addComponentVersion
 * *content-classifier*: Don't call getById in ContentCatalog#resolvePage if component not found
 * *site-mapper*: Rename generateSitemaps function to mapSite function in site mapper component
