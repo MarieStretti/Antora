@@ -45,14 +45,14 @@ class ContentCatalog {
         return versionCompare(candidateVersion, version) > 0
       })
       const versionEntry = { title, version, url }
-      if (insertIdx < 0) {
-        versions.push(versionEntry)
-      } else {
+      if (~insertIdx) {
         versions.splice(insertIdx, 0, versionEntry)
-        if (insertIdx === 0) {
+        if (!insertIdx) {
           component.title = title
           component.url = url
         }
+      } else {
+        versions.push(versionEntry)
       }
     } else {
       this[$components][name] = Object.defineProperty(
