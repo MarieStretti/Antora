@@ -47,11 +47,11 @@ To check which version of Node you have installed, if any, open a terminal and t
 $ node --version
 
 *If this command fails with an error*, you don't have Node installed.
-The best way to install Node 8 is via the package manager.
-However, if the package manager doesn't provide Node, skip directly to <<install-nvm,install nvm and Node>> for instructions.
+The best way to install Node 8 is to use nvm.
+See <<install-nvm>> for instructions.
+If your package manager provides Node and npm packages, and you're familiar with using the tools installed system-wide, that may be a more suitable option for you.
 
-*If the command returns a version less than 8.0.0*, upgrade to the latest Node 8 version using the package manager.
-Or, if the package manager doesn't provide Node and you have nvm installed, go directly to <<upgrade-node,upgrade Node with nvm>> for instructions.
+*If the command returns a version less than 8.0.0*, upgrade to the latest Node 8 version using nvm or your package manager.
 
 *If the command returns a Node 8 version*, set Node 8 as the default by typing the following command in your terminal.
 
@@ -63,7 +63,7 @@ Now you're ready to xref:install/install-antora.adoc[install Antora].
 [#install-nvm]
 == Install nvm and Node
 
-If your package manager doesn't provide Node, we recommend using the {url-nvm}[Node Version Manager (nvm)^] to manage your Node installations.
+We recommend using the {url-nvm}[Node Version Manager (nvm)^] to manage your Node installations, especially if your package manager doesn't provide Node and npm.
 Follow these {url-nvm-install}[installation instructions^] to set up nvm on your machine.
 
 TIP: Many CI environments use nvm to install the version of Node used for the build job.

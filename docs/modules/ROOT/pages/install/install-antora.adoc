@@ -19,26 +19,35 @@ Once these packages are installed, you can use the `antora` command to publish a
 
 == Install the Antora CLI
 
-We'll begin by installing the Antora CLI using the base call for Node's package manager, `npm`.
+We'll begin by installing the Antora CLI using npm, the package manager for Node.
 This package manager was installed when you installed Node.
-
-You should install (`i`) the CLI globally (`-g`) so the `antora` command is available on your PATH.
 
 Open a terminal and type:
 
  $ npm i -g @antora/cli
 
+We recommend installing (`i` subcommand) the CLI package globally (`-g` flag) so the `antora` command, which is provided by the CLI package, becomes available on your PATH.
+
 IMPORTANT: When we say "`globally`" here, it does not imply system-wide.
 It means the location where Node is installed.
 If you used nvm to install Node, this location will be inside your home directory (thus not requiring elevated permissions).
 
-NOTE: If you prefer Yarn over npm, you can install Antora using `yarn global add @antora/cli`.
+If you prefer Yarn over npm, use this command instead:
+
+ $ yarn global add @antora/cli
+
+CAUTION: If you're using a system-wide Node installation managed by a package manager, you may run into permission problems when installing packages.
+In that case, just drop the `-g` flag so that the package is installed under the [.path]_node_modules_ folder in the current directory.
 
 Verify the `antora` command is available on your PATH by running:
 
  $ antora -v
 
-If the installation worked, this command should report the version of Antora.
+If you installed the package locally, meaning without the `-g` flag, you'll need to prefix the command as follows:
+
+ $ $(npm bin)/antora
+
+If installation was successful, the command should report the version of Antora.
 
 [subs=attributes+]
  $ antora -v
@@ -52,7 +61,11 @@ To install the generator globally, type:
 
  $ npm i -g @antora/site-generator-default
 
-If you don't want to install the generator globally, you can opt to install it inside the playbook project (the project that contains the playbook file(s) for your site).
+If you prefer Yarn over npm, use this command instead:
+
+ $ yarn global add @antora/site-generator-default
+
+If you don't want to install the generator globally (or run into permission problems trying), you can opt to install it inside the playbook project (the project that contains the playbook file(s) for your site).
 
 Switch to the playbook project and type:
 
