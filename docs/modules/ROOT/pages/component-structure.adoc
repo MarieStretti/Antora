@@ -38,6 +38,8 @@ When Antora encounters these folders and files in a properly structured componen
 ****
 *Required* - Must be present in the documentation component.
 
+*Recommended* - Should be present in the documentation component, but not required.
+
 *Optional* - Doesn't need to be created if the directory, file, or content type isn't applicable to the component or module.
 
 *Reserved* - Directory or file is associated with specific pipeline operations.
@@ -56,17 +58,19 @@ _Required_; _Reserved_
 Except for [.path]_antora.yml_, all of the files in a component reside in this directory.
 
 xref:modules.adoc#root[modules/ROOT] ::
-_Required_; _Reserved_
+_Recommended_; _Reserved_
 +
-Directory that contains the xref:modules.adoc#root[mandatory ROOT module].
+Directory that contains the xref:modules.adoc#root[ROOT (aka top-level) module].
+This special directory does not appear in the output path.
+Instead, it becomes the parent folder of any user-defined modules.
 The directory name must be written in all uppercase letters.
 
-modules/user-named-module ::
+modules/<user-defined-module> ::
 _Optional_
 +
 In addition to the ROOT module, you can create as many additional modules as your documentation component requires.
 
-Each module, whether the ROOT module or an additional module, is structured as follows :
+Each module, whether the ROOT module or an additional module, is structured as follows:
 
 xref:modules.adoc#assets-dir[<module>/assets] ::
 _Optional_; _Reserved_
