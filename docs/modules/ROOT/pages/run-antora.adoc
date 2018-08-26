@@ -51,8 +51,8 @@ You can also download {url-demo-playbook}[the Demo site playbook] from the Demo 
 ----
 site:
   title: Antora Demo Site
-  url: https://demo.antora.org
-  start_page: component-b::index
+  url: https://example.org/docs # <1>
+  start_page: component-b::index.adoc # <2>
 content:
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
@@ -65,6 +65,8 @@ ui:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
 ----
+<1> The 404 page and sitemap files are only generated if the site.url property is set.
+<2> The site.start_page property accepts the same page ID syntax that's used in xrefs.
 
 . Save the playbook as [.path]_site.yml_ in the [.path]_demo-site_ directory you made in Step 1.
 
@@ -115,7 +117,7 @@ Inside the [.path]_build/site_ folder, run:
 
  site $ ls -1
 
-You should see the following list of files:
+You should see the following list of files and directories:
 
 ....
 _
@@ -127,6 +129,8 @@ sitemap-component-a.xml
 sitemap-component-b.xml
 sitemap.xml
 ....
+
+NOTE: The 404 page and sitemap files will be missing if the `site.url` property is not defined in your playbook.
 
 This list includes the entry point of your documentation site, [.path]_index.html_.
 --
