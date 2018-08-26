@@ -37,7 +37,7 @@ Learn more:
 [#partial]
 == Partial page
 
-Partial pages are AsciiDoc files located in [.path]_pages/_partials_.
+Partial pages are AsciiDoc files located in [.path]_partials_ (or [.path]_pages/_partials_).
 These files are *not* converted to HTML by Antora automatically.
 Instead, they must be referenced by an xref:asciidoc:include-content.adoc#include-partial[include directive] in a standard page.
 

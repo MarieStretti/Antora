@@ -174,7 +174,7 @@ Learn more:
 === Partial AsciiDoc files
 
 xref:page:index.adoc#partial[Partials] are AsciiDoc files.
-They're stored in [.path]_pages/_partials_ in the same module as the standard pages that use them.
+They're stored in [.path]_partials_ (or [.path]_pages/_partials_) in the same module as the standard pages that use them.
 A partial is inserted into a standard page using the xref:asciidoc:include-content.adoc#include-partial[AsciiDoc include directive].
 
 Don't set the path to the [.path]_{blank}_partials_ directory in the header of the AsciiDoc file.

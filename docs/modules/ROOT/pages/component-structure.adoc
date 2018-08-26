@@ -99,7 +99,7 @@ _Required_; _Reserved_
 Directory that contains all of a module's AsciiDoc files.
 These files are automatically enlisted by Antora and converted to standalone HTML pages.
 
-xref:modules.adoc#partials-dir[<module>/pages/_partials] ::
+xref:modules.adoc#partials-dir[<module>/partials (or <module>/pages/_partials)] ::
 _Optional_; _Reserved_
 +
 Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages_.
