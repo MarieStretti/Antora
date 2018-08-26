@@ -1,6 +1,6 @@
 name: antora
 title: Antora
-version: '1.0'
+version: '1.1'
 nav:
 - modules/ROOT/nav.adoc
 - modules/asciidoc/nav.adoc
