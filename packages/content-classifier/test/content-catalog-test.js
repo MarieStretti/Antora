@@ -33,6 +33,44 @@ describe('ContentCatalog', () => {
     }
   })
 
+  describe('#getComponentMap()', () => {
+    it('should return components as a map ordered by insertion order', () => {
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addComponentVersion('foo', '1.0', 'Foo')
+      contentCatalog.addComponentVersion('bar', '1.0', 'Bar')
+      contentCatalog.addComponentVersion('yin', '1.0', 'Yin')
+      contentCatalog.addComponentVersion('yang', '1.0', 'Yang')
+      const componentMap = contentCatalog.getComponentMap()
+      expect(Object.keys(componentMap)).to.eql(['foo', 'bar', 'yin', 'yang'])
+      expect(Object.values(componentMap).map((v) => v.title)).to.eql(['Foo', 'Bar', 'Yin', 'Yang'])
+    })
+  })
+
+  describe('#getComponentsSortedBy()', () => {
+    it('should return components sorted by title', () => {
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addComponentVersion('foo', '1.0', 'Foo')
+      contentCatalog.addComponentVersion('bar', '1.0', 'Bar')
+      contentCatalog.addComponentVersion('yin', '1.0', 'Yin')
+      contentCatalog.addComponentVersion('yang', '1.0', 'Yang')
+      const components = contentCatalog.getComponentsSortedBy('title')
+      expect(components.map((v) => v.title)).to.eql(['Bar', 'Foo', 'Yang', 'Yin'])
+    })
+  })
+
+  describe('#getComponentMapSortedBy()', () => {
+    it('should return components as map sorted by title', () => {
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.addComponentVersion('foo', '1.0', 'Foo')
+      contentCatalog.addComponentVersion('bar', '1.0', 'Bar')
+      contentCatalog.addComponentVersion('yin', '1.0', 'Yin')
+      contentCatalog.addComponentVersion('yang', '1.0', 'Yang')
+      const componentMap = contentCatalog.getComponentMapSortedBy('title')
+      expect(Object.keys(componentMap)).to.eql(['bar', 'foo', 'yang', 'yin'])
+      expect(Object.values(componentMap).map((v) => v.title)).to.eql(['Bar', 'Foo', 'Yang', 'Yin'])
+    })
+  })
+
   describe('#addComponentVersion()', () => {
     it('should add new component to catalog if component is not present', () => {
       const name = 'the-component'

@@ -108,14 +108,26 @@ class ContentCatalog {
     return this[$components][name]
   }
 
-  getComponents () {
-    return Object.values(this[$components])
-  }
-
   //getComponentVersion (name, version) {
   //  const component = this.getComponent(name)
   //  return component && component.versions.find((candidate) => candidate.version === version)
   //}
+
+  getComponentMap () {
+    return Object.assign({}, this[$components])
+  }
+
+  getComponentMapSortedBy (property) {
+    return this.getComponentsSortedBy(property).reduce((accum, it) => (accum[it.name] = it) && accum, {})
+  }
+
+  getComponents () {
+    return Object.values(this[$components])
+  }
+
+  getComponentsSortedBy (property) {
+    return this.getComponents().sort((a, b) => a[property].localeCompare(b[property]))
+  }
 
   getFiles () {
     return Object.values(this[$files])

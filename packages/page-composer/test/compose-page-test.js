@@ -138,7 +138,7 @@ describe('createPageComposer()', () => {
     ]
 
     contentCatalog = {
-      getComponents: () => [],
+      getComponentMapSortedBy: (property) => ({}),
       getSiteStartPage: () => undefined,
     }
 
@@ -208,7 +208,13 @@ describe('createPageComposer()', () => {
 
       contentCatalog = {
         getComponent: (name) => component,
-        getComponents: () => components,
+        getComponentMapSortedBy: (property) => components
+          .slice(0)
+          .sort((a, b) => a[property].localeCompare(b[property]))
+          .reduce((accum, it) => {
+            accum[it.name] = it
+            return accum
+          }, {}),
         getSiteStartPage: () => undefined,
       }
 

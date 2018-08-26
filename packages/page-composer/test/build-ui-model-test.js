@@ -51,7 +51,13 @@ describe('build UI model', () => {
 
     contentCatalog = {
       getComponent: spy((name) => component),
-      getComponents: spy(() => components),
+      getComponentMapSortedBy: spy((property) => components
+        .slice(0)
+        .sort((a, b) => a[property].localeCompare(b[property]))
+        .reduce((accum, it) => {
+          accum[it.name] = it
+          return accum
+        }, {})),
       getSiteStartPage: spy(() => undefined),
     }
 
@@ -100,9 +106,9 @@ describe('build UI model', () => {
 
     it('should set components property to array of components from content catalog sorted by title', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
-      expect(contentCatalog.getComponents).to.have.been.called()
-      expect(model.components).to.have.lengthOf(3)
-      const componentTitles = model.components.map((component) => component.title)
+      expect(contentCatalog.getComponentMapSortedBy).to.have.been.called()
+      expect(Object.keys(model.components)).to.have.lengthOf(3)
+      const componentTitles = Object.values(model.components).map((component) => component.title)
       expect(componentTitles).to.eql(['Component B', 'Component C', 'The Component'])
     })
 

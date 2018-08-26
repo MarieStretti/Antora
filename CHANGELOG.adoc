@@ -10,6 +10,11 @@ This project utilizes semantic versioning.
 === Added
 
 * *content-classifier*: Look for partial files in the partials folder inside the module in addition to pages/_partials (#254)
+* *content-classifier*: Add additional methods to content catalog: getComponentsSortedBy(), getComponentMap(), getComponentMapSortedBy()
+
+=== Improved
+
+* *page-composer*: Assign components to `site.components` as a map instead of an array (#253)
 
 == 1.0.3 (2018-08-07)
 
