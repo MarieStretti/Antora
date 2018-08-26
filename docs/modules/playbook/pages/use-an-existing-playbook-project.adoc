@@ -61,7 +61,7 @@ You can see that this is the only dependency declared in [.path]_package.json_:
 [source,json,subs=attributes+]
 ----
 "dependencies": {
-  "antora": "{uri-antora-repo}#v1.0.2"
+  "antora": "{uri-antora-repo}#v1.0.3"
 },
 ----
 
