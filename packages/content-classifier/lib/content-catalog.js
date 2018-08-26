@@ -21,46 +21,52 @@ class ContentCatalog {
     //this.urlRedirectFacility = _.get(playbook, ['urls', 'redirectFacility'], 'static')
   }
 
-  addComponentVersion (name, version, title, startPageSpec = undefined) {
-    let startPage = this.resolvePage(startPageSpec || 'index.adoc', { component: name, version, module: 'ROOT' })
+  registerComponentVersion (name, version, { title, prerelease, startPage } = {}) {
+    const startPageSpec = startPage
+    startPage = this.resolvePage(startPageSpec || 'index.adoc', { component: name, version, module: 'ROOT' })
     if (!startPage) {
-      if (startPageSpec) {
-        throw new Error(`Start page specified for ${version}@${name} not found: ` + startPageSpec)
-      } else {
-        // TODO throw error or report warning
-        //throw new Error(`Start page for ${version}@${name} not specified and no index page found.`)
-        const startPageSrc = expandPageSrc({ component: name, version, module: 'ROOT', relative: 'index.adoc' })
-        const startPageOut = computeOut(startPageSrc, startPageSrc.family, this.htmlUrlExtensionStyle)
-        startPage = { pub: computePub(startPageSrc, startPageOut, startPageSrc.family, this.htmlUrlExtensionStyle) }
-      }
+      if (startPageSpec) throw new Error(`Start page specified for ${version}@${name} not found: ` + startPageSpec)
+      // TODO throw error or report warning; for now, we're just faking it
+      //throw new Error(`Start page for ${version}@${name} not specified and no index page found.`)
+      const startPageSrc = expandPageSrc({ component: name, version, module: 'ROOT', relative: 'index.adoc' })
+      const startPageOut = computeOut(startPageSrc, startPageSrc.family, this.htmlUrlExtensionStyle)
+      const startPagePub = computePub(startPageSrc, startPageOut, startPageSrc.family, this.htmlUrlExtensionStyle)
+      startPage = { pub: startPagePub }
     }
-    const url = startPage.pub.url
+    const componentVersion = { title: title || name, version, url: startPage.pub.url }
+    if (prerelease) componentVersion.prerelease = prerelease
     const component = this[$components][name]
     if (component) {
-      const versions = component.versions
-      const insertIdx = versions.findIndex(({ version: candidateVersion }) => {
-        if (candidateVersion === version) {
-          throw new Error(`Duplicate version detected for component ${name}: ${version}`)
-        }
-        return versionCompare(candidateVersion, version) > 0
+      const componentVersions = component.versions
+      const insertIdx = componentVersions.findIndex(({ version: candidate }) => {
+        if (candidate === version) throw new Error(`Duplicate version detected for component ${name}: ${version}`)
+        return versionCompare(candidate, version) > 0
       })
-      const versionEntry = { title, version, url }
       if (~insertIdx) {
-        versions.splice(insertIdx, 0, versionEntry)
-        if (!insertIdx) {
-          component.title = title
-          component.url = url
-        }
+        componentVersions.splice(insertIdx, 0, componentVersion)
       } else {
-        versions.push(versionEntry)
+        componentVersions.push(componentVersion)
       }
+      component.latest = componentVersions.find((candidate) => !candidate.prerelease) || componentVersions[0]
     } else {
-      this[$components][name] = Object.defineProperty(
-        { name, title, url, versions: [{ title, version, url }] },
-        'latestVersion',
+      this[$components][name] = Object.defineProperties(
+        { name, latest: componentVersion, versions: [componentVersion] },
         {
-          get: function () {
-            return this.versions[0]
+          // NOTE alias latestVersion to latest for backwards compatibility
+          latestVersion: {
+            get: function () {
+              return this.latest
+            },
+          },
+          title: {
+            get: function () {
+              return this.latest.title
+            },
+          },
+          url: {
+            get: function () {
+              return this.latest.url
+            },
           },
         }
       )
@@ -108,10 +114,11 @@ class ContentCatalog {
     return this[$components][name]
   }
 
-  //getComponentVersion (name, version) {
-  //  const component = this.getComponent(name)
-  //  return component && component.versions.find((candidate) => candidate.version === version)
-  //}
+  getComponentVersion (component, version) {
+    return (component.versions || (this.getComponent(component) || {}).versions || []).find(
+      (candidate) => candidate.version === version
+    )
+  }
 
   getComponentMap () {
     return Object.assign({}, this[$components])
@@ -147,10 +154,9 @@ class ContentCatalog {
     const component = this.getComponent(src.component)
     if (!component) return
     if (src.version) {
-      const version = src.version
-      if (!component.versions.find((candidate) => candidate.version === version)) return
+      if (!this.getComponentVersion(component, src.version)) return
     } else {
-      src.version = component.latestVersion.version
+      src.version = component.latest.version
     }
     const existingPage = this.getById(src)
     if (existingPage) {

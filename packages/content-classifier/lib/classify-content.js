@@ -19,9 +19,9 @@ const { START_PAGE_ID } = require('./constants')
  */
 function classifyContent (playbook, aggregate) {
   const catalog = aggregate.reduce(
-    (catalog, { name: component, version, title, start_page: startPage, nav, files }) => {
+    (catalog, { name: component, version, title, prerelease, start_page: startPage, nav, files }) => {
       files.forEach((file) => allocateSrc(file, component, version, nav) && catalog.addFile(file))
-      catalog.addComponentVersion(component, version, title, startPage)
+      catalog.registerComponentVersion(component, version, { title, prerelease, startPage })
       return catalog
     },
     new ContentCatalog(playbook)

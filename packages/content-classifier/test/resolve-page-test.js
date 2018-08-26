@@ -97,7 +97,7 @@ describe('resolvePage', () => {
         relative: 'the-page.adoc',
       },
     }
-    const contentCatalog = mockContentCatalog(targetFile, { latestVersion: { version: '1.0' } })
+    const contentCatalog = mockContentCatalog(targetFile, { latest: { version: '1.0' } })
     const targetPageIdSpec = 'the-component::the-page.adoc'
     const targetPageId = {
       component: 'the-component',
