@@ -25,50 +25,44 @@ The proposed features, their scope, and the release timeline are not firm commit
 
 For a detailed list of current development tasks, refer to the Core components {uri-issues}[issue tracker].
 
-=== v1.0.2
-
-* [x] Automatically convert branches and tags patterns on content source to string {uri-issues}/262[#262]
-* [x] Fix crash if branches pattern is specified as array and one of the entries is HEAD or . {uri-issues}/261[#261]
-* [x] Report start path and reference name in error messages about antora.yml {uri-issues}/267[#267]
-* [x] --attribute CLI option should not erase attributes specified in site.yml {uri-issues}/250[#250]
-* [x] Don't include URL credentials in error messages {uri-issues}/270[#270]
-* [x] Fetch all tags when the runtime pull option is enabled {uri-issues}/271[#271]
-* [x] Honor HEAD when using remote URL (should use the default branch) {uri-issues}/272[#272]
-* [x] Add --stacktrace to failure to load generator message {uri-issues}/273[#273]
-* [x] Show more informative message when start path does not exist in reference of content source {uri-issues}/274[#274]
-* [x] Allow navigation files to be composited using open blocks {uri-issues}/265[#265]
-* [x] Upgrade convict and remove workarounds (solitary convict and manual file loading / parsing)
-* [x] Upgrade dependencies
-
 === v1.1.0
 
-*Release Timeframe*: July 2018
+*Release Timeframe*: August 2018
 
 * [ ] Make branch for v1.0.x (for docs and patch releases)
-* [ ] Implicitly disable branches pattern if tags pattern is specified in content source {uri-issues}/268[#268]
-* [ ] Support including content from other modules and components using contextual page ID {uri-issues}/226[#226]
+* [ ] Support including content from other modules and components using contextual resource ID {uri-issues}/226[#226]
 * [ ] Allow a navigation file from another module to be referenced (currently has to be a partial)
-* [ ] Allow AsciiDoc attributes to be specified per component-version (in antora.yml) {uri-issues}/251[#251]
+* [ ] Implicitly disable branches pattern if tags pattern is specified in content source {uri-issues}/268[#268]
 * [ ] Add CLI option to specify a different site generator pipeline {uri-issues}/178[#178]
 * [ ] Move partials directory to <module>/partials {uri-issues}/254[#254]
 * [ ] Upgrade to Asciidoctor 1.5.7
 * [ ] Make components available as a map in the UI model {uri-issues}/253[#253]
-* [ ] Support loading the UI from a directory {uri-issues}/150[#150]
-* [ ] Mark prereleases with next tag and recommended stable version with latest tag {uri-issues}/170[#170]
-//* allow a group to be defined in antora.yml
-//* make all metadata from antora.yml available to model
-//* allow static files in UI to be decorated with page template / access UI model
-//* make module path configurable (using antora.yml) {uri-issues}/28[#28]
+* [ ] Make navigation of all component versions accessible from the UI model {uri-issues}/281[#281]
+* [ ] Allow pattern for edit URL to be configurable {uri-issues}/283[#283]
+* [ ] Make the latest version of a component configurable
+* [ ] Test on Node 10 and add Node 10 to CI matrix
+* [x] Mark prereleases with next tag and recommended stable version with latest tag {uri-issues}/170[#170]
 
 === v1.2.0
 
 *Release Timeframe*: Q3 2018
 
+* [ ] Allow AsciiDoc attributes to be specified per component-version (in antora.yml) {uri-issues}/251[#251]
+* [ ] Add authentication for remote UI bundles {uri-issues}/280[#280]
 * [ ] Replace nodegit with isomorphic-git {uri-issues}/264[#264]
+* [ ] Support loading the UI from a directory {uri-issues}/150[#150]
 * [ ] Allow content to be included from a URL {uri-issues}/246[#246]
 * [ ] Implement fallback value for component version (use git ref) {uri-issues}/161[#161]
 * [ ] Navigation model should provide access to prev, next, parent page {uri-issues}/233[#233]
 * [ ] Add a logging infrastructure {uri-issues}/145[#145]
+//* allow a group to be defined in antora.yml
+//* make all metadata from antora.yml available to model
+//* allow static files in UI to be decorated with page template / access UI model
+//* make module path configurable (using antora.yml) {uri-issues}/28[#28]
+
+=== v1.3.0
+
+*Release Timeframe*: Q4 2018
 
 === Unscheduled
 
@@ -93,7 +87,6 @@ They aren't slated for imminent development but are reviewed for possible schedu
 * [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {uri-issues}/82[#82]
 * [ ] Allow module paths to be configurable {uri-issues}/28[#28]
 * [ ] Add support for a moduleless docs component {uri-issues}/27[#27]
-* Add Node 10 to CI matrix
 * Upgrade build to Gulp 4
 * Set up webhooks between repositories (e.g., docs.antora.org, docker-antora)
 * Component to host mapping, not just one site URL
@@ -125,12 +118,10 @@ For current docs.antora.org tasks, see the site {uri-docs-site-issues}[issue tra
 === Unscheduled
 
 * [ ] Set up a roadmap page for Core components in the docs {uri-issues}/223[#223]
-* [ ] Document that .nojekyll file is required when publishing to GitHub Pages {uri-issues}/194[#194]
 * [ ] Document the `page-` attributes {uri-issues}/177[#177]
-* [ ] Add how to create a partial page {uri-issues}/176[#176]
+* [ ] Explain how to create a partial page {uri-issues}/176[#176]
 * [ ] Document sitemap features {uri-issues}/168[#168]
 * [ ] Improve custom publish provider documentation {uri-issues}/164[#164]
-* [ ] Expand private repository section {uri-issues}/139[#139]
 * [ ] Document how to create user-defined page attributes
 * [ ] Document redirect features
 * [ ] Document stem functionality with common UI integration scenarios
@@ -159,16 +150,17 @@ For a detailed list of current development tasks, refer to the UI {uri-ui-issues
 * [ ] Add client-side search (algolia docsearch) {uri-ui-issues}/44[#44]
 * [ ] IE 11 fixes
 * [ ] Cut stable release of default UI
+* [ ] Support sample content for preview pages written in AsciiDoc
+* [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
 
 === Unscheduled
 
 * [ ] Create task list SVGs {uri-ui-issues}/31[#31]
 * [ ] Enable unordered list marker styles {uri-ui-issues}/26[#26]
-* [ ] Enable start number attribute for ordered lists {uri-ui-issues}/25[#25]
-* [ ] Upgrade preview site sample content {uri-ui-issues}/20[#20]
 * [ ] Extract all colors into CSS variables {uri-ui-issues}/18[#18]
 * [ ] Upgrade build to Gulp 4
 * [ ] Improve SVG options stability
+* [ ] Allow SVGs to be embedded directly into Handlebars template
 
 == Completed Releases
 
