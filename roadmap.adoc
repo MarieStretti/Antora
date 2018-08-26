@@ -29,7 +29,7 @@ For a detailed list of current development tasks, refer to the Core components {
 
 *Release Timeframe*: August 2018
 
-* [ ] Make branch for v1.0.x (for docs and patch releases)
+* [x] Make branch for v1.0.x (for docs and patch releases)
 * [ ] Support including content from other modules and components using contextual resource ID {uri-issues}/226[#226]
 * [ ] Allow a navigation file from another module to be referenced (currently has to be a partial)
 * [ ] Implicitly disable branches pattern if tags pattern is specified in content source {uri-issues}/268[#268]
