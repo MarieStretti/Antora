@@ -15,19 +15,19 @@ const { START_PAGE_ID } = require('./constants')
  * @param {Object} playbook.urls - URL settings for the site.
  * @param {String} playbook.urls.htmlExtensionStyle - The style to use when computing page URLs.
  * @param {Object} aggregate - The raw aggregate of virtual file objects to be classified.
- * @returns {ContentCatalog} An organized catalog of virtual content files.
+ * @returns {ContentCatalog} A structured catalog of content components and virtual content files.
  */
 function classifyContent (playbook, aggregate) {
-  const catalog = aggregate.reduce(
-    (catalog, { name: component, version, title, prerelease, start_page: startPage, nav, files }) => {
-      files.forEach((file) => allocateSrc(file, component, version, nav) && catalog.addFile(file))
-      catalog.registerComponentVersion(component, version, { title, prerelease, startPage })
-      return catalog
+  const contentCatalog = aggregate.reduce(
+    (accum, { name, version, display_version: displayVersion, prerelease, title, start_page: startAt, nav, files }) => {
+      files.forEach((file) => allocateSrc(file, name, version, nav) && accum.addFile(file))
+      accum.registerComponentVersion(name, version, { displayVersion, title, prerelease, startPage: startAt })
+      return accum
     },
     new ContentCatalog(playbook)
   )
-  registerSiteStartPage(playbook, catalog)
-  return catalog
+  registerSiteStartPage(playbook, contentCatalog)
+  return contentCatalog
 }
 
 function allocateSrc (file, component, version, nav) {

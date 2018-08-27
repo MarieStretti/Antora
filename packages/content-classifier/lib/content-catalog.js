@@ -21,7 +21,7 @@ class ContentCatalog {
     //this.urlRedirectFacility = _.get(playbook, ['urls', 'redirectFacility'], 'static')
   }
 
-  registerComponentVersion (name, version, { title, prerelease, startPage } = {}) {
+  registerComponentVersion (name, version, { displayVersion, prerelease, title, startPage } = {}) {
     const startPageSpec = startPage
     startPage = this.resolvePage(startPageSpec || 'index.adoc', { component: name, version, module: 'ROOT' })
     if (!startPage) {
@@ -33,8 +33,19 @@ class ContentCatalog {
       const startPagePub = computePub(startPageSrc, startPageOut, startPageSrc.family, this.htmlUrlExtensionStyle)
       startPage = { pub: startPagePub }
     }
-    const componentVersion = { title: title || name, version, url: startPage.pub.url }
-    if (prerelease) componentVersion.prerelease = prerelease
+    const componentVersion = {
+      version,
+      displayVersion: displayVersion || version,
+      title: title || name,
+      url: startPage.pub.url,
+    }
+    if (prerelease) {
+      componentVersion.prerelease = prerelease
+      if (!displayVersion && (typeof prerelease === 'string' || prerelease instanceof String)) {
+        const sep = prerelease.startsWith('-') || prerelease.startsWith('.') ? '' : ' '
+        componentVersion.displayVersion = `${version}${sep}${prerelease}`
+      }
+    }
     const component = this[$components][name]
     if (component) {
       const componentVersions = component.versions

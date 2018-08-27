@@ -638,6 +638,66 @@ describe('build UI model', () => {
       ])
     })
 
+    it('should propogate prerelease and display version from component version to page version', () => {
+      component.versions.unshift({
+        version: '2.0',
+        prerelease: 'Beta',
+        displayVersion: '2.0 Beta',
+        title: 'The Component',
+        url: '/the-component/2.0/index.html',
+      })
+      const files = {
+        '1.0': file,
+        '2.0': {
+          src: {
+            path: 'modules/ROOT/pages/the-page.adoc',
+            component: 'the-component',
+            version: '2.0',
+            module: 'ROOT',
+          },
+          pub: {
+            url: '/the-component/2.0/the-page.html',
+          },
+        },
+      }
+      contentCatalog.getById = spy((filter) => files[filter.version])
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expectCalledWith(contentCatalog.getById, [
+        {
+          component: 'the-component',
+          module: 'ROOT',
+          family: 'page',
+          relative: 'the-page.adoc',
+          version: '2.0',
+        },
+      ])
+      expectCalledWith(
+        contentCatalog.getById,
+        [
+          {
+            component: 'the-component',
+            module: 'ROOT',
+            family: 'page',
+            relative: 'the-page.adoc',
+            version: '1.0',
+          },
+        ],
+        1
+      )
+      expect(model.versions).to.exist()
+      expect(model.versions).to.have.lengthOf(2)
+      expect(model.versions).to.eql([
+        {
+          version: '2.0',
+          displayVersion: '2.0 Beta',
+          prerelease: 'Beta',
+          title: 'The Component',
+          url: '/the-component/2.0/the-page.html',
+        },
+        { version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
+      ])
+    })
+
     it('should add sparse entry in value of versions property if page is missing for version', () => {
       component.url = '/the-component/2.0/index.html'
       component.versions.unshift({
