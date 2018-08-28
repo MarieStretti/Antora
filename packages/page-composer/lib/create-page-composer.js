@@ -133,10 +133,10 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   // QUESTION should attributes be scoped to AsciiDoc, or should this work regardless of markup language? file.data?
   const asciidoc = file.asciidoc || {}
   const attributes = asciidoc.attributes || {}
-  const pageAttributes = {}
-  Object.keys(attributes)
-    .filter((name) => !name.indexOf('page-'))
-    .forEach((name) => (pageAttributes[name.substr(5)] = attributes[name]))
+  const pageAttributes = Object.entries(attributes).reduce((accum, [name, val]) => {
+    if (name.startsWith('page-')) accum[name.substr(5)] = val
+    return accum
+  }, {})
 
   const url = file.pub.url
   const component = contentCatalog.getComponent(componentName)
