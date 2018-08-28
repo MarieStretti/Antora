@@ -58,18 +58,20 @@ cli
   .command('generate <playbook>')
   .description('Generate a documentation site specified in <playbook>.')
   .optionsFromConvict(convict(configSchema), { exclude: 'playbook' })
+  .option('--generator <library>', 'Site generator library', '@antora/site-generator-default')
   .action(async (playbookFile, command) => {
     try {
       requireLibraries(cli.requirePaths)
     } catch (err) {
       exitWithError(err, cli.stacktrace)
     }
+    const generator = command.generator
     let generateSite
     try {
-      // TODO honor --generator option (or auto-detect)
-      generateSite = requireLibrary('@antora/site-generator-default', ospath.resolve(playbookFile, '..'))
+      generateSite = requireLibrary(generator, ospath.resolve(playbookFile, '..'))
     } catch (err) {
-      const msg = 'Generator not found or failed to load. Try installing the @antora/site-generator-default package.'
+      let msg = 'Generator not found or failed to load.'
+      if (generator && !generator.startsWith('.')) msg += ` Try installing the \`${generator}' package.`
       exitWithError(err, cli.stacktrace, msg)
     }
     const args = cli.rawArgs.slice(cli.rawArgs.indexOf(command.name()) + 1)

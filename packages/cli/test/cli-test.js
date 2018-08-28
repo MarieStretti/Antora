@@ -170,7 +170,7 @@ describe('cli', () => {
           expect(optionForms).to.include('--url <url>')
           expect(optionForms).to.include('--html-url-extension-style <default|drop|indexify>')
           expect(options['--html-url-extension-style <default|drop|indexify>']).to.have.string('(default: default)')
-          // check for sorted option, except drop -h as it always comes last
+          // check options are sorted, except drop -h as we know it always comes last
           expect(optionForms.slice(0, -1)).to.eql(
             Object.keys(options)
               .slice(0, -1)
@@ -368,6 +368,28 @@ describe('cli', () => {
     })
   }).timeout(TIMEOUT)
 
+  it('should use the generator specified by the --generator option', () => {
+    const generator = ospath.resolve(FIXTURES_DIR, 'simple-generator')
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    return new Promise((resolve) => runAntora(`generate the-site.json --generator ${generator}`)
+      .on('exit', resolve)).then(
+      (exitCode) => {
+        expect(exitCode).to.equal(0)
+        expect(ospath.join(absDestDir, '418.html'))
+          .to.be.a.file()
+          .with.contents.that.match(/I'm a teapot/)
+      }
+    )
+  })
+
+  it('should show error message if custom generator fails to load', () => {
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    // FIXME assert that exit code is 1 (limitation in Kapok when using assert)
+    return runAntora('--generator no-such-module generate the-site')
+      .assert(/error: Generator not found or failed to load. Try installing the `no-such-module' package./i)
+      .done()
+  })
+
   it('should clean output directory before generating when --clean switch is used', () => {
     const residualFile = ospath.join(absDestDir, 'the-component/1.0/old-page.html')
     fs.ensureDirSync(ospath.dirname(residualFile))
@@ -432,7 +454,7 @@ describe('cli', () => {
   it('should show error message if require path fails to load', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // FIXME assert that exit code is 1 (limitation in Kapok when using assert)
-    return runAntora('-r not-a-valid-node-module-name generate the-site')
+    return runAntora('-r no-such-module generate the-site')
       .assert(/error: Cannot find module/i)
       .done()
   })
