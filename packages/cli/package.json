@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@antora/playbook-builder": "1.0.3",
-    "commander": "^2.17.0"
+    "commander": "^2.17.1"
   },
   "devDependencies": {
     "convict": "^4.3.2",
