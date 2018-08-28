@@ -1,7 +1,4 @@
 = Troubleshoot NodeGit
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-nodegit: http://www.nodegit.org
 :url-nodegit-dev: http://www.nodegit.org/guides/install/from-source

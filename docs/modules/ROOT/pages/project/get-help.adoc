@@ -1,11 +1,4 @@
 = Getting Help
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-// Settings
-:idprefix:
-:idseparator: -
-:linkattrs:
 // URIs
 :uri-repo: https://gitlab.com/antora/antora
 :uri-issues: {uri-repo}/issues

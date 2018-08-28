@@ -1,12 +1,9 @@
 = Windows Installation Requirements
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-choco: https://chocolatey.org
 :url-nvm-windows: https://github.com/coreybutler/nvm-windows
 // Versions:
-:version-node: 8.10.0
+:version-node: 8.11.4
 
 On this page, you'll learn:
 
