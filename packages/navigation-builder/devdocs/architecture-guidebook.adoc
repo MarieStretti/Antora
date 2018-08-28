@@ -35,7 +35,7 @@ The navigation model built by this component is subsequently passed on to a layo
 The navigation builder component functionality is provided by the navigation-builder module.
 
 This component builds a navigation model from navigation files declared by the descriptor in each component.
-The navigation files used as input should be retrieved by invoking `findBy({ family: 'navigation'})` on the content catalog.
+The navigation files used as input should be retrieved by invoking `findBy({ family: 'nav'})` on the content catalog.
 The navigation model is an instance of the NavigationCatalog class.
 
 Each navigation file in a component version should be processed as follows:
@@ -87,7 +87,7 @@ const navigationMenu = navigationCatalog.getMenu('component-a', '1.0')
 == Data
 
 The navigation builder reads in files from the `navigation` family.
-These files can be retrieved by invoking `findBy({ family: 'navigation' })` on the content catalog.
+These files can be retrieved by invoking `findBy({ family: 'nav' })` on the content catalog.
 This component should not modify the files retrieved from the content catalog.
 
 Here's a sample navigation file:
@@ -155,6 +155,6 @@ For linked navigation, the navigation is indexed by component then version, know
 For aspect navigation, this component generates a corresponding aspect domain dynamically based on the navigation filename.
 These navigation models can then be looked up by domain.
 
-The linked navigation files should be retrieved by calling `findBy({ family: 'navigation'})` on the content catalog.
+The linked navigation files should be retrieved by calling `findBy({ family: 'nav'})` on the content catalog.
 The aspect navigation files should be resolved from the `nav` property of the playbook.
 ////

@@ -142,7 +142,7 @@ describe('loadAsciiDoc()', () => {
     it('should not set page attributes if file is not in page family', () => {
       const inputFile = mockContentCatalog({
         version: '4.5',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: '* xref:module-a:index.adoc[Module A]',
       }).getFiles()[0]

@@ -27,7 +27,7 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  * @returns {NavigationCatalog} A navigation catalog built from the navigation files in the content catalog.
  */
 function buildNavigation (contentCatalog, asciidocConfig = {}) {
-  const navFiles = contentCatalog.findBy({ family: 'navigation' })
+  const navFiles = contentCatalog.findBy({ family: 'nav' })
   if (!(navFiles && navFiles.length)) return new NavigationCatalog()
   asciidocConfig = Object.assign({}, asciidocConfig, { relativizePageRefs: false })
   delete asciidocConfig.extensions

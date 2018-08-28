@@ -101,7 +101,7 @@ class ContentCatalog {
       publishable = true
       file.out = computeOut(file.src, actingFamily, this.htmlUrlExtensionStyle)
     }
-    if (!file.pub && (publishable || actingFamily === 'navigation')) {
+    if (!file.pub && (publishable || actingFamily === 'nav')) {
       file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
     }
     this[$files][id] = file
@@ -246,7 +246,7 @@ function computeOut (src, family, htmlUrlExtensionStyle) {
 function computePub (src, out, family, htmlUrlExtensionStyle) {
   const pub = {}
   let url
-  if (family === 'navigation') {
+  if (family === 'nav') {
     const urlSegments = [src.component]
     if (src.version !== 'master') urlSegments.push(src.version)
     if (src.module && src.module !== 'ROOT') urlSegments.push(src.module)

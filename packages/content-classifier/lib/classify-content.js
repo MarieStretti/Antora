@@ -36,7 +36,7 @@ function allocateSrc (file, component, version, nav) {
   const navInfo = nav && getNavInfo(filepath, nav)
   if (navInfo) {
     file.nav = navInfo
-    file.src.family = 'navigation'
+    file.src.family = 'nav'
     if (pathSegments[0] === 'modules' && pathSegments.length > 2) {
       file.src.module = pathSegments[1]
       // relative to modules/<module>
