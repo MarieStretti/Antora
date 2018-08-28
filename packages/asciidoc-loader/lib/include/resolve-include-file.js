@@ -3,7 +3,7 @@
 const { posix: path } = require('path')
 const splitOnce = require('../util/split-once')
 
-const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('../constants')
+const { EXAMPLES_DIR_TOKEN, PARTIALS_DIR_TOKEN } = require('../constants')
 
 /**
  * Resolves the specified include target to a virtual file in the content catalog.
@@ -11,55 +11,60 @@ const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('../constants')
  * @memberof asciidoc-loader
  *
  * @param {String} target - The target of the include directive to resolve.
- * @param {File} file - The outermost virtual file from which the include originated (not
+ * @param {File} page - The outermost virtual file from which the include originated (not
  *   necessarily the current file).
  * @param {Cursor} cursor - The cursor of the reader for file that contains the include directive.
  * @param {ContentCatalog} catalog - The content catalog that contains the virtual files in the site.
  * @returns {Object} A map containing the file, path, and contents of the resolved file.
  */
-function resolveIncludeFile (target, file, cursor, catalog) {
-  let [family, relative] = splitOnce(target, '/')
-  if (family === PARTIALS_DIR_PROXY) {
-    family = 'partial'
-  } else if (family === EXAMPLES_DIR_PROXY) {
-    family = 'example'
-  } else {
-    family = undefined
-    relative = target
-  }
-
-  let resolvedIncludeFile
-  if (family) {
-    resolvedIncludeFile = catalog.getById({
-      component: file.src.component,
-      version: file.src.version,
-      module: file.src.module,
-      family,
-      relative,
-    })
-  } else {
-    // TODO can we keep track of the virtual file we're currently in instead of relying on cursor.dir?
-    resolvedIncludeFile = catalog.getByPath({
-      component: file.src.component,
-      version: file.src.version,
-      path: path.join(cursor.dir, relative),
-    })
-  }
-
-  if (resolvedIncludeFile) {
-    return {
-      file: resolvedIncludeFile.src.path,
-      path: resolvedIncludeFile.src.basename,
-      // NOTE src.contents is set if a page is marked as a partial
-      contents: (resolvedIncludeFile.src.contents || resolvedIncludeFile.contents).toString(),
+function resolveIncludeFile (target, page, cursor, catalog) {
+  const ctx = (cursor.file || {}).context || page.src
+  let resolved
+  let family
+  let relative
+  let placeholder
+  if (~target.indexOf('$')) {
+    if (target.startsWith(PARTIALS_DIR_TOKEN) || target.startsWith(EXAMPLES_DIR_TOKEN)) {
+      ;[family, relative] = splitOnce(target, '$')
+      if (relative.charAt() === '/') {
+        relative = relative.substr(1)
+        placeholder = true
+      }
+      resolved = catalog.getById({
+        component: ctx.component,
+        version: ctx.version,
+        module: ctx.module,
+        family,
+        relative,
+      })
+    } else {
+      resolved = catalog.resolveResource(target, { component: ctx.component, version: ctx.version, module: ctx.module })
     }
   } else {
-    if (family) target = `{${family}sdir}/${relative}`
+    resolved = catalog.getByPath({
+      component: ctx.component,
+      version: ctx.version,
+      // QUESTION does cursor.dir always contain the value we expect?
+      path: path.join(cursor.dir.toString(), target),
+    })
+  }
+  if (resolved) {
+    const resolvedSrc = resolved.src
+    return {
+      context: resolvedSrc,
+      file: resolvedSrc.path,
+      path: resolvedSrc.basename,
+      // NOTE src.contents is set if page is marked as a partial
+      // TODO if include file is a page, warn if not marked as a partial
+      contents: (resolvedSrc.contents || resolved.contents).toString(),
+    }
+  } else {
     // FIXME use replace next line instead of pushing an include; maybe raise error
     // TODO log "Unresolved include"
     return {
+      context: cursor.dir.context,
       file: cursor.file,
-      contents: `+include::${target}[]+`,
+      contents: `+include::${placeholder ? '{' + family + 'sdir}/' + relative : target}[]+`,
     }
   }
 }

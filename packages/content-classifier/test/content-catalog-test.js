@@ -774,6 +774,13 @@ describe('ContentCatalog', () => {
       expect(result).to.not.exist()
     })
 
+    it('should not register alias if version is unknown', () => {
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const result = contentCatalog.registerPageAlias('1.0@alias.adoc', targetPage)
+      expect(result).to.not.exist()
+    })
+
     it('should not register alias if version not specified and component unknown', () => {
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
@@ -881,6 +888,25 @@ describe('ContentCatalog', () => {
       const context = {}
       const page = classifyContent(playbook, aggregate).resolvePage(pageSpec, context)
       expect(page).not.to.exist()
+    })
+  })
+
+  describe('#resolveResource()', () => {
+    beforeEach(() => {
+      aggregate = [
+        {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          files: [createFile('modules/ROOT/assets/images/foo.png'), createFile('modules/ROOT/pages/page-one.adoc')],
+        },
+      ]
+    })
+
+    it('should find file by qualified resource spec', () => {
+      const pageSpec = 'v1.2.3@the-component:ROOT:image$foo.png'
+      const page = classifyContent(playbook, aggregate).resolveResource(pageSpec)
+      expect(page.path).to.equal('modules/ROOT/assets/images/foo.png')
     })
   })
 

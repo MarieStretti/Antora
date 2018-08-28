@@ -323,12 +323,30 @@ describe('loadAsciiDoc()', () => {
   })
 
   describe('include directive', () => {
-    it('should skip include directive if target cannot be resolved', () => {
+    it('should skip include directive if target prefixed with {partialsdir} cannot be resolved', () => {
       const contentCatalog = mockContentCatalog().spyOn('getById')
       const inputContents = 'include::{partialsdir}/does-not-exist.adoc[]'
       setInputFileContents(inputContents)
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       expect(contentCatalog.getById).to.have.been.called.with({
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'does-not-exist.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql(['+' + inputContents + '+'])
+    })
+
+    it('should skip include directive if target resource ID cannot be resolved', () => {
+      const contentCatalog = mockContentCatalog().spyOn('getById')
+      const inputContents = 'include::partial$does-not-exist.adoc[]'
+      setInputFileContents(inputContents)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
         version: 'master',
         module: 'module-a',
@@ -349,6 +367,28 @@ describe('loadAsciiDoc()', () => {
         contents: includeContents,
       }).spyOn('getById')
       setInputFileContents('include::{partialsdir}/greeting.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'greeting.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([includeContents])
+    })
+
+    it('should resolve include target with resource ID in partial family', () => {
+      const includeContents = 'Hello, World!'
+      const contentCatalog = mockContentCatalog({
+        family: 'partial',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('getById')
+      setInputFileContents('include::partial$greeting.adoc[]')
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
@@ -389,6 +429,370 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getContext()).to.equal('listing')
       expect(firstBlock.getStyle()).to.equal('source')
       expect(firstBlock.getSourceLines()).to.eql([includeContents])
+    })
+
+    it('should resolve include target with resource ID in example family', () => {
+      const includeContents = 'puts "Hello, World!"'
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/hello.rb',
+        contents: includeContents,
+      }).spyOn('getById')
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::example$ruby/hello.rb[]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'example',
+        relative: 'ruby/hello.rb',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getStyle()).to.equal('source')
+      expect(firstBlock.getSourceLines()).to.eql([includeContents])
+    })
+
+    it('should resolve include target with resource ID in separate module', () => {
+      const includeContents = 'Hello, World!'
+      const contentCatalog = mockContentCatalog({
+        module: 'another-module',
+        family: 'partial',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('getById')
+      setInputFileContents('include::another-module:partial$greeting.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'another-module',
+        family: 'partial',
+        relative: 'greeting.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([includeContents])
+    })
+
+    it('should resolve include target with resource ID in separate component', () => {
+      const includeContents = 'Hello, World!'
+      const contentCatalog = mockContentCatalog({
+        component: 'another-component',
+        version: '1.1',
+        module: 'ROOT',
+        family: 'partial',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('getById')
+      setInputFileContents('include::1.1@another-component::partial$greeting.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
+        component: 'another-component',
+        version: '1.1',
+        module: 'ROOT',
+        family: 'partial',
+        relative: 'greeting.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([includeContents])
+    })
+
+    it('should resolve target of nested include relative to current file', () => {
+      const outerIncludeContents = 'include::deeply/nested.adoc[]'
+      const nestedIncludeContents = 'All that is nested is not lost.'
+      const contentCatalog = mockContentCatalog([
+        {
+          family: 'partial',
+          relative: 'outer.adoc',
+          contents: outerIncludeContents,
+        },
+        {
+          family: 'partial',
+          relative: 'deeply/nested.adoc',
+          contents: nestedIncludeContents,
+        },
+      ]).spyOn('getById', 'getByPath')
+      setInputFileContents('include::{partialsdir}/outer.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'outer.adoc',
+      })
+      expectCalledWith(contentCatalog.getByPath, {
+        component: 'component-a',
+        version: 'master',
+        path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
+    })
+
+    it('should skip nested include directive if target cannot be resolved relative to current file', () => {
+      const outerIncludeContents = 'include::deeply/nested.adoc[]'
+      const contentCatalog = mockContentCatalog({
+        family: 'partial',
+        relative: 'outer.adoc',
+        contents: outerIncludeContents,
+      }).spyOn('getById', 'getByPath')
+      setInputFileContents('include::{partialsdir}/outer.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'outer.adoc',
+      })
+      expectCalledWith(contentCatalog.getByPath, {
+        component: 'component-a',
+        version: 'master',
+        path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql(['+' + outerIncludeContents + '+'])
+    })
+
+    it('should resolve relative target of nested include in separate module relative to current file', () => {
+      const outerIncludeContents = 'include::deeply/nested.adoc[]'
+      const nestedIncludeContents = 'All that is nested is not lost.'
+      const contentCatalog = mockContentCatalog([
+        {
+          module: 'other-module',
+          family: 'partial',
+          relative: 'outer.adoc',
+          contents: outerIncludeContents,
+        },
+        {
+          module: 'other-module',
+          family: 'partial',
+          relative: 'deeply/nested.adoc',
+          contents: nestedIncludeContents,
+        },
+      ]).spyOn('resolveResource', 'getByPath')
+      setInputFileContents('include::other-module:partial$outer.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.resolveResource, [
+        'other-module:partial$outer.adoc',
+        {
+          component: inputFile.src.component,
+          version: inputFile.src.version,
+          module: inputFile.src.module,
+        },
+      ])
+      expectCalledWith(contentCatalog.getByPath, {
+        component: 'component-a',
+        version: 'master',
+        path: 'modules/other-module/pages/_partials/deeply/nested.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
+    })
+
+    it('should resolve target resource ID of nested include in separate module relative to current file', () => {
+      const outerIncludeContents = 'include::yet-another-module:partial$deeply/nested.adoc[]'
+      const nestedIncludeContents = 'All that is nested is not lost.'
+      const contentCatalog = mockContentCatalog([
+        {
+          module: 'other-module',
+          family: 'partial',
+          relative: 'outer.adoc',
+          contents: outerIncludeContents,
+        },
+        {
+          module: 'yet-another-module',
+          family: 'partial',
+          relative: 'deeply/nested.adoc',
+          contents: nestedIncludeContents,
+        },
+      ]).spyOn('resolveResource')
+      setInputFileContents('include::other-module:partial$outer.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(contentCatalog.resolveResource).to.have.been.called.twice()
+      expectCalledWith(contentCatalog.resolveResource, [
+        'other-module:partial$outer.adoc',
+        {
+          component: inputFile.src.component,
+          version: inputFile.src.version,
+          module: inputFile.src.module,
+        },
+      ])
+      expectCalledWith(
+        contentCatalog.resolveResource,
+        [
+          'yet-another-module:partial$deeply/nested.adoc',
+          {
+            component: 'component-a',
+            version: 'master',
+            module: 'other-module',
+          },
+        ],
+        1
+      )
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
+    })
+
+    it('should resolve relative target of nested include in separate component relative to current file', () => {
+      const outerIncludeContents = 'include::deeply/nested.adoc[]'
+      const nestedIncludeContents = 'All that is nested is not lost.'
+      const contentCatalog = mockContentCatalog([
+        {
+          component: 'component-b',
+          module: 'ROOT',
+          family: 'partial',
+          relative: 'outer.adoc',
+          contents: outerIncludeContents,
+        },
+        {
+          component: 'component-b',
+          module: 'ROOT',
+          family: 'partial',
+          relative: 'deeply/nested.adoc',
+          contents: nestedIncludeContents,
+        },
+      ]).spyOn('resolveResource', 'getByPath')
+      setInputFileContents('include::component-b::partial$outer.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expectCalledWith(contentCatalog.resolveResource, [
+        'component-b::partial$outer.adoc',
+        {
+          component: inputFile.src.component,
+          version: inputFile.src.version,
+          module: inputFile.src.module,
+        },
+      ])
+      expectCalledWith(contentCatalog.getByPath, {
+        component: 'component-b',
+        version: 'master',
+        path: 'modules/ROOT/pages/_partials/deeply/nested.adoc',
+      })
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
+    })
+
+    it('should resolve target resource ID of nested include from other component relative to file context', () => {
+      const outerIncludeContents = 'include::another-module:partial$deeply/nested.adoc[]'
+      const nestedIncludeContents = 'All that is nested is not lost.'
+      const contentCatalog = mockContentCatalog([
+        {
+          component: 'component-b',
+          module: 'ROOT',
+          family: 'partial',
+          relative: 'outer.adoc',
+          contents: outerIncludeContents,
+        },
+        {
+          component: 'component-b',
+          module: 'another-module',
+          family: 'partial',
+          relative: 'deeply/nested.adoc',
+          contents: nestedIncludeContents,
+        },
+      ]).spyOn('resolveResource')
+      setInputFileContents('include::component-b::partial$outer.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(contentCatalog.resolveResource).to.have.been.called.twice()
+      expectCalledWith(
+        contentCatalog.resolveResource,
+        [
+          'component-b::partial$outer.adoc',
+          {
+            component: inputFile.src.component,
+            version: inputFile.src.version,
+            module: inputFile.src.module,
+          },
+        ],
+        0
+      )
+      expectCalledWith(
+        contentCatalog.resolveResource,
+        [
+          'another-module:partial$deeply/nested.adoc',
+          {
+            component: 'component-b',
+            version: 'master',
+            module: 'ROOT',
+          },
+        ],
+        1
+      )
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
+    })
+
+    it('should ignore current context when resolving nested include if target is qualified resource ID', () => {
+      const outerIncludeContents = 'include::component-a:module-a:partial$deeply/nested.adoc[]'
+      const nestedIncludeContents = 'All that is nested is not lost.'
+      const contentCatalog = mockContentCatalog([
+        {
+          component: 'component-b',
+          module: 'ROOT',
+          family: 'partial',
+          relative: 'outer.adoc',
+          contents: outerIncludeContents,
+        },
+        {
+          family: 'partial',
+          relative: 'deeply/nested.adoc',
+          contents: nestedIncludeContents,
+        },
+      ]).spyOn('resolveResource')
+      setInputFileContents('include::component-b::partial$outer.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(contentCatalog.resolveResource).to.have.been.called.twice()
+      expectCalledWith(
+        contentCatalog.resolveResource,
+        [
+          'component-b::partial$outer.adoc',
+          {
+            component: inputFile.src.component,
+            version: inputFile.src.version,
+            module: inputFile.src.module,
+          },
+        ],
+        0
+      )
+      expectCalledWith(
+        contentCatalog.resolveResource,
+        [
+          'component-a:module-a:partial$deeply/nested.adoc',
+          {
+            component: 'component-b',
+            version: 'master',
+            module: 'ROOT',
+          },
+        ],
+        1
+      )
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
     })
 
     it('should not register include in document catalog', () => {
@@ -835,8 +1239,7 @@ describe('loadAsciiDoc()', () => {
       ])
     })
 
-    // TODO if we're going to support includes in nav files, we need a place for them to live?
-    it('should resolve top-level include target relative to current file', () => {
+    it('should resolve top-level include target relative to current page', () => {
       const includeContents = 'changelog'
       const contentCatalog = mockContentCatalog({
         family: 'page',
@@ -854,68 +1257,6 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
       expect(firstBlock.getSourceLines()).to.eql([includeContents])
-    })
-
-    it('should resolve target of nested include relative to current file', () => {
-      const outerIncludeContents = 'include::deeply/nested.adoc[]'
-      const nestedIncludeContents = 'All that is nested is not lost.'
-      const contentCatalog = mockContentCatalog([
-        {
-          family: 'partial',
-          relative: 'outer.adoc',
-          contents: outerIncludeContents,
-        },
-        {
-          family: 'partial',
-          relative: 'deeply/nested.adoc',
-          contents: nestedIncludeContents,
-        },
-      ]).spyOn('getById', 'getByPath')
-      setInputFileContents('include::{partialsdir}/outer.adoc[]')
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
-      expectCalledWith(contentCatalog.getById, {
-        component: 'component-a',
-        version: 'master',
-        module: 'module-a',
-        family: 'partial',
-        relative: 'outer.adoc',
-      })
-      expectCalledWith(contentCatalog.getByPath, {
-        component: 'component-a',
-        version: 'master',
-        path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
-      })
-      const firstBlock = doc.getBlocks()[0]
-      expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.getContext()).to.equal('paragraph')
-      expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
-    })
-
-    it('should skip nested include directive if target cannot be resolved relative to current file', () => {
-      const outerIncludeContents = 'include::deeply/nested.adoc[]'
-      const contentCatalog = mockContentCatalog({
-        family: 'partial',
-        relative: 'outer.adoc',
-        contents: outerIncludeContents,
-      }).spyOn('getById', 'getByPath')
-      setInputFileContents('include::{partialsdir}/outer.adoc[]')
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
-      expectCalledWith(contentCatalog.getById, {
-        component: 'component-a',
-        version: 'master',
-        module: 'module-a',
-        family: 'partial',
-        relative: 'outer.adoc',
-      })
-      expectCalledWith(contentCatalog.getByPath, {
-        component: 'component-a',
-        version: 'master',
-        path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
-      })
-      const firstBlock = doc.getBlocks()[0]
-      expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.getContext()).to.equal('paragraph')
-      expect(firstBlock.getSourceLines()).to.eql(['+' + outerIncludeContents + '+'])
     })
   })
 

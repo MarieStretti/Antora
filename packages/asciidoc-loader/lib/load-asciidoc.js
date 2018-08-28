@@ -3,7 +3,7 @@
 // IMPORTANT eagerly load Opal to force the String encoding from UTF-16LE to UTF-8
 const Opal = require('opal-runtime').Opal
 if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF-8') {
-  String.prototype.encoding = Opal.const_get_local(Opal.const_get_qualified('::', 'Encoding'), 'UTF_8') // eslint-disable-line
+  String.prototype.encoding = Opal.const_get_local(Opal.const_get_qualified('::', 'Encoding'), 'UTF_8') // eslint-disable-line no-extend-native
 }
 
 const asciidoctor = require('asciidoctor.js')()
@@ -15,7 +15,7 @@ const { posix: path } = ospath
 const resolveIncludeFile = require('./include/resolve-include-file')
 
 const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[/${ospath.sep.replace('/', '').replace('\\', '\\\\')}]`)
-const { EXAMPLES_DIR_PROXY, PARTIALS_DIR_PROXY } = require('./constants')
+const { EXAMPLES_DIR_TOKEN, PARTIALS_DIR_TOKEN } = require('./constants')
 
 /**
  * Loads the AsciiDoc source from the specified file into a Document object.
@@ -61,8 +61,8 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     docfilesuffix: fileSrc.extname,
     imagesdir: path.join(file.pub.moduleRootPath, '_images'),
     attachmentsdir: path.join(file.pub.moduleRootPath, '_attachments'),
-    examplesdir: EXAMPLES_DIR_PROXY,
-    partialsdir: PARTIALS_DIR_PROXY,
+    examplesdir: EXAMPLES_DIR_TOKEN,
+    partialsdir: PARTIALS_DIR_TOKEN,
   }
   const pageAttrs = fileSrc.family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : {}
   const attributes = Object.assign({}, envAttrs, defaultAttrs, config.attributes, intrinsicAttrs, pageAttrs)

@@ -1,7 +1,7 @@
 'use strict'
 
 const { posix: path } = require('path')
-const resolvePage = require('@antora/content-classifier/lib/util/resolve-page')
+const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
 const { spy } = require('./test-utils')
 
 function mockContentCatalog (seed = []) {
@@ -87,8 +87,11 @@ function mockContentCatalog (seed = []) {
     getComponent: (name) => components[name],
     getComponentVersion: (name, version) => components[name].latest,
     getFiles: () => entries,
-    resolvePage: function (spec, ctx) {
-      return resolvePage(spec, this, ctx)
+    resolvePage: function (spec, ctx = {}) {
+      return resolveResource(spec, this, ctx, ['page'])
+    },
+    resolveResource: function (spec, ctx = {}, families = undefined) {
+      return resolveResource(spec, this, ctx, families)
     },
     spyOn: function (...names) {
       names.forEach((name) => (this[name] = spy(this[name])))

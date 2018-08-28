@@ -2,9 +2,9 @@
 
 const _ = require('lodash')
 const File = require('./file')
-const parsePageId = require('./util/parse-page-id')
+const parseResourceId = require('./util/parse-resource-id')
 const { posix: path } = require('path')
-const resolvePage = require('./util/resolve-page')
+const resolveResource = require('./util/resolve-resource')
 const versionCompare = require('./util/version-compare-desc')
 
 const { START_PAGE_ID } = require('./constants')
@@ -86,8 +86,10 @@ class ContentCatalog {
 
   // QUESTION should this method return the file added?
   addFile (file) {
-    const id = this[$generateId](_.pick(file.src, 'component', 'version', 'module', 'family', 'relative'))
-    if (this[$files][id]) throw new Error(`Duplicate ${file.src.family}: ${id.substr(id.indexOf('/') + 1)}`)
+    const id = this[$generateId](file.src)
+    if (this[$files][id]) {
+      throw new Error(`Duplicate ${file.src.family}: ${id.replace(':' + file.src.family + '$', ':')}`)
+    }
     if (!File.isVinyl(file)) file = new File(file)
     const family = file.src.family
     const actingFamily = family === 'alias' ? file.rel.src.family : family
@@ -159,7 +161,7 @@ class ContentCatalog {
 
   // QUESTION should this be addPageAlias?
   registerPageAlias (aliasSpec, targetPage) {
-    const src = parsePageId(aliasSpec, targetPage.src)
+    const src = parseResourceId(aliasSpec, targetPage.src, ['page'])
     // QUESTION should we throw an error if alias is invalid or out of bounds?
     if (!src) return
     const component = this.getComponent(src.component)
@@ -173,7 +175,7 @@ class ContentCatalog {
     if (existingPage) {
       // TODO we'll need some way to easily get a displayable page ID
       let qualifiedSpec = this[$generateId](existingPage.src)
-      qualifiedSpec = qualifiedSpec.substr(qualifiedSpec.indexOf('/') + 1)
+      qualifiedSpec = qualifiedSpec.replace(':page$', ':')
       const message =
         existingPage === targetPage
           ? 'Page alias cannot reference itself'
@@ -190,12 +192,33 @@ class ContentCatalog {
     return file
   }
 
-  resolvePage (pageSpec, context = {}) {
-    return resolvePage(pageSpec, this, context)
+  /**
+   * Attempts to resolve a string contextual page ID spec to a file in the catalog.
+   *
+   * Parses the specified contextual page ID spec into a page ID object, then attempts to lookup a
+   * file with this page ID in the catalog. If a component is specified, but not a version, the
+   * latest version of the component stored in the catalog is used. If a file cannot be resolved,
+   * the function returns undefined. If the spec does not match the page ID syntax, this function
+   * throws an error.
+   *
+   * @param {String} spec - The contextual page ID spec (e.g.,
+   *   version@component:module:topic/page followed by optional .adoc extension).
+   * @param {ContentCatalog} catalog - The content catalog in which to resolve the page file.
+   * @param {Object} [ctx={}] - The context to use to qualified the contextual page ID.
+   *
+   * @return {File} The virtual file to which the contextual page ID spec refers, or undefined if the
+   * file cannot be resolved.
+   */
+  resolvePage (spec, context = {}) {
+    return resolveResource(spec, this, context, ['page'])
+  }
+
+  resolveResource (spec, context = {}, families = undefined) {
+    return resolveResource(spec, this, context, families)
   }
 
   [$generateId] ({ component, version, module, family, relative }) {
-    return `$${family}/${version}@${component}:${module}:${relative}`
+    return `${version}@${component}:${module}:${family}$${relative}`
   }
 }
 
