@@ -222,8 +222,8 @@ async function selectReferences (repo, remote, refPatterns) {
 
   if (tagPatterns) {
     tagPatterns = Array.isArray(tagPatterns)
-      ? tagPatterns.map((p) => p.toString())
-      : tagPatterns.toString().split(CSV_RX)
+      ? tagPatterns.map((pattern) => String(pattern))
+      : String(tagPatterns).split(CSV_RX)
   }
 
   if (branchPatterns) {
@@ -240,8 +240,8 @@ async function selectReferences (repo, remote, refPatterns) {
       }
     } else {
       branchPatterns = Array.isArray(branchPatterns)
-        ? branchPatterns.map((p) => p.toString())
-        : branchPatterns.toString().split(CSV_RX)
+        ? branchPatterns.map((pattern) => String(pattern))
+        : String(branchPatterns).split(CSV_RX)
       if (branchPatterns.length) {
         let currentBranchIdx
         if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
@@ -442,7 +442,8 @@ function loadComponentDescriptor (files, startPath) {
   } else if (data.version == null) {
     throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a version')
   }
-  data.version = data.version.toString()
+  data.name = String(data.name)
+  data.version = String(data.version)
   return data
 }
 

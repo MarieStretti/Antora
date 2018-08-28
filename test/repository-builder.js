@@ -71,7 +71,7 @@ class RepositoryBuilder {
     const startPath = (this.startPath = data.startPath || '')
     const path_ = startPath ? ospath.join(startPath, 'antora.yml') : 'antora.yml'
     delete data.startPath
-    if (data.name && !data.title) {
+    if (!data.title && typeof data.name === 'string') {
       data.title = data.name
         .split('-')
         .map((w) => w.charAt(0).toUpperCase() + w.substr(1))
