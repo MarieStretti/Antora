@@ -14,6 +14,7 @@ This project utilizes semantic versioning.
 * *content-classifier*: Add ContentCatalog#getComponentVersion(component, version) method (#287)
 * *content-classifier*: Allow display version to be set in component descriptor; assign displayVersion property to component version (#288)
 * *content-classifier*: If prerelease property on component version is a string and display version is not set, automatically construct and assign display version (#288)
+* *cli*: Add --generator option to specify a custom site generator library or script (#178)
 
 === Changed
 

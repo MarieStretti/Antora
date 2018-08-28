@@ -20,8 +20,8 @@ The Core components are versioned together.
 At this time, only Core components with the same version are designed to work together.
 For example, if you want to use the Content Classifier and Page Composer in a custom site generator, make sure each component has the same version.
 
-If you use the CLI with the default site generator, then you just have to keep the versions of the @antora/cli and @antora/site-generator-default in sync.
-If you make a custom site generator, then you are responsible for keeping each individual component you use in sync.
+If you use the CLI (@antora/cli) with the default site generator (@antora/site-generator-default), then you just have to keep the versions of the CLI and the default site generator in sync.
+If you make a custom site generator, you are responsible for keeping each individual component you use in sync.
 
 == Extended components
 

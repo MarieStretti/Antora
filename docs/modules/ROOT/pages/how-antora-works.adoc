@@ -93,3 +93,8 @@ Antora generates a site map that can be used as an internal report or published 
 Publish site::
 Antora writes the generated pages to a default or xref:playbook:configure-output.adoc#output-dir[user-specified location].
 The site can be published in multiple formats to multiple locations over multiple protocols using xref:playbook:configure-output.adoc#output-destinations[built-in and custom destination providers].
+
+It's possible to substitute this pipeline (the default site generator) with a custom one.
+You first need to create a library or script that exports the function with signature `generateSite(args, env)`.
+Within that script, you're free to import core components from Antora to reassemble your own pipeline.
+You then activate your pipeline by passing the name of the library or script to the `--generator` option of the xref:cli:index.adoc[Antora CLI].
