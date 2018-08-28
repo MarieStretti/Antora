@@ -1,8 +1,5 @@
 = Antora Copyright and License
 :keywords: license, MPL-2.0
-// Settings
-:idprefix:
-:idseparator: -
 
 == Copyright
 

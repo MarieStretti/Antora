@@ -1,15 +1,9 @@
 = Antora Version and Lifecycle Policies
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :keywords: EOL, GA
 // Settings
-:idprefix:
-:idseparator: -
 :table-caption!:
-:core-version: 1.0
-:ga-date: 2018/03/31
-:gs-date: 2018/03/31
+:ga-date: 2018/08/28
+:gs-date: 2018/08/28
 :eol-date: 2019/03/31
 :eogs-date: 2019/03/31
 
@@ -53,7 +47,7 @@ End of General Support (EOGS)::
 General Support ends on the date a major release reaches its End of Life.
 
 End of Life (EOL)::
-The date after which the software no longer receives maintenance releases.
+The date after which the software no longer receives minor or patch releases.
 
 [#ga-and-eol]
 === Release GA and EOL matrix
@@ -62,79 +56,79 @@ The date after which the software no longer receives maintenance releases.
 |===
 |Antora Core Components	|GA |GS	|EOL |EOGS
 
-|AsciiDoc Loader {core-version}
+|AsciiDoc Loader {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|CLI {core-version}
+|CLI {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Content Aggregator {core-version}
+|Content Aggregator {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Content Classifier {core-version}
+|Content Classifier {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Document Converter {core-version}
+|Document Converter {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Navigation Builder {core-version}
+|Navigation Builder {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Page Composer {core-version}
+|Page Composer {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Playbook Builder {core-version}
+|Playbook Builder {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Redirect Producer {core-version}
+|Redirect Producer {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Site Generator Default {core-version}
+|Site Generator Default {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Site Mapper {core-version}
+|Site Mapper {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|Site Publisher {core-version}
+|Site Publisher {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
 |{eogs-date}
 
-|UI Loader {core-version}
+|UI Loader {page-component-version}
 |{ga-date}
 |{gs-date}
 |{eol-date}
