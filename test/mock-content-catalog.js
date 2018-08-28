@@ -10,7 +10,7 @@ function mockContentCatalog (seed = []) {
     alias: 'pages',
     example: 'examples',
     image: 'images',
-    navigation: '',
+    nav: '',
     page: 'pages',
     partial: 'pages/_partials',
   }
@@ -63,7 +63,7 @@ function mockContentCatalog (seed = []) {
         }
         entry.pub = { url: '/' + entry.out.path, moduleRootPath: entry.out.moduleRootPath }
       }
-    } else if (family === 'navigation') {
+    } else if (family === 'nav') {
       entry.pub = {
         url: '/' + path.join(component, pubVersion, pubModule) + '/',
         moduleRootPath: '.',

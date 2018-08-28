@@ -441,7 +441,7 @@ describe('classifyContent()', () => {
       aggregate[0].files.push(createFile('modules/module-a/pages/index.adoc'))
       aggregate[0].files.push(createFile('modules/module-a/nav.adoc'))
       const contentCatalog = classifyContent(playbook, aggregate)
-      const files = contentCatalog.findBy({ family: 'navigation' })
+      const files = contentCatalog.findBy({ family: 'nav' })
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/module-a/nav.adoc')
@@ -449,7 +449,7 @@ describe('classifyContent()', () => {
         component: 'the-component',
         version: 'v1.2.3',
         module: 'module-a',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         basename: 'nav.adoc',
         moduleRootPath: '.',
@@ -472,7 +472,7 @@ describe('classifyContent()', () => {
         component: 'the-component',
         version: 'v1.2.3',
         module: 'module-a',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav/primary.adoc',
         basename: 'primary.adoc',
         moduleRootPath: '..',
@@ -495,7 +495,7 @@ describe('classifyContent()', () => {
       expect(file.src).to.include({
         component: 'the-component',
         version: 'v1.2.3',
-        family: 'navigation',
+        family: 'nav',
         relative: 'modules/nav.adoc',
         basename: 'nav.adoc',
       })
@@ -518,7 +518,7 @@ describe('classifyContent()', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/the-page.adoc'))
       aggregate[0].files.push(createFile('modules/ROOT/nav.adoc'))
       const contentCatalog = classifyContent(playbook, aggregate)
-      expect(contentCatalog.findBy({ family: 'navigation' })).to.have.lengthOf(0)
+      expect(contentCatalog.findBy({ family: 'nav' })).to.have.lengthOf(0)
     })
 
     it('should assign a nav.index property to navigation file according to order listed in component descriptor', () => {

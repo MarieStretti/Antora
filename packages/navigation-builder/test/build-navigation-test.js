@@ -10,7 +10,7 @@ describe('buildNavigation()', () => {
   it('should run on all files in the navigation family', () => {
     const contentCatalog = mockContentCatalog().spyOn('findBy')
     buildNavigation(contentCatalog)
-    expectCalledWith(contentCatalog.findBy, { family: 'navigation' })
+    expectCalledWith(contentCatalog.findBy, { family: 'nav' })
   })
 
   it('should build single navigation list with title', () => {
@@ -20,7 +20,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -54,7 +54,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -89,7 +89,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
 
         relative: 'nav.adoc',
 
@@ -99,7 +99,7 @@ describe('buildNavigation()', () => {
       {
         component: 'component-b',
         module: 'ROOT',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContentsB,
         navIndex: 0,
@@ -155,7 +155,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -230,7 +230,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -282,7 +282,7 @@ describe('buildNavigation()', () => {
     const contentCatalog = mockContentCatalog([
       {
         module: '',
-        family: 'navigation',
+        family: 'nav',
         relative: 'modules/nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -339,7 +339,7 @@ describe('buildNavigation()', () => {
     const contentCatalog = mockContentCatalog([
       {
         module: 'ROOT',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav/level.adoc',
         contents: navContents,
         navIndex: 0,
@@ -405,7 +405,7 @@ describe('buildNavigation()', () => {
     }
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -445,7 +445,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -492,7 +492,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -531,7 +531,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -559,7 +559,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -608,7 +608,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -654,7 +654,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -729,7 +729,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -813,7 +813,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -925,7 +925,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -983,7 +983,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -1031,21 +1031,21 @@ describe('buildNavigation()', () => {
     const contentCatalog = mockContentCatalog([
       {
         module: 'module-a',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: '.xref:index.adoc[Module A]\n* xref:the-page.adoc[Page in A]',
         navIndex: 2,
       },
       {
         module: 'module-b',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: '.xref:index.adoc[Module B]\n* xref:the-page.adoc[Page in B]',
         navIndex: 3,
       },
       {
         module: 'module-c',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: heredoc`
           .xref:index.adoc[Module C]
@@ -1058,7 +1058,7 @@ describe('buildNavigation()', () => {
       },
       {
         module: 'module-d',
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: '.xref:index.adoc[Module D]\n* xref:the-page.adoc[Page in D]',
         navIndex: 0,
@@ -1116,7 +1116,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,
@@ -1137,13 +1137,13 @@ describe('buildNavigation()', () => {
   it('should skip navigation file if it contains no unordered lists', () => {
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: 'Sorry, no lists here :(',
         navIndex: 0,
       },
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: '.Basics\n* xref:first-steps.adoc[First Steps]',
         navIndex: 1,
@@ -1169,7 +1169,7 @@ describe('buildNavigation()', () => {
     `
     const contentCatalog = mockContentCatalog([
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: navContents,
         navIndex: 0,

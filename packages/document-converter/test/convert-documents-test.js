@@ -31,7 +31,7 @@ describe('convertDocuments()', () => {
         mediaType: 'text/asciidoc',
       },
       {
-        family: 'navigation',
+        family: 'nav',
         relative: 'nav.adoc',
         contents: '* xref:index.adoc[Index]\n* xref:topic/index.adoc[Topic]',
         navIndex: 0,
