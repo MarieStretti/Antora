@@ -157,6 +157,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     version,
     componentVersion,
     module: file.src.module,
+    origin: file.src.origin,
     versions,
     navigation,
     // QUESTION should we filter out component start page?

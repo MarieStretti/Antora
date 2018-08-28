@@ -217,6 +217,18 @@ describe('build UI model', () => {
       expect(model.version).to.equal('1.0')
     })
 
+    it('should set origin property to value from file src object', () => {
+      file.src.origin = {
+        type: 'git',
+        url: 'git@github.com:foo/bar.git',
+        branch: 'master',
+        editUrlPattern: 'https://github.com/foo/bar/edit/master/%s',
+      }
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.origin).to.exist()
+      expect(model.origin).to.equal(file.src.origin)
+    })
+
     it('should set url property to pub url of file', () => {
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.url).to.equal('/the-component/1.0/the-page.html')
