@@ -24,7 +24,7 @@ const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
 const DOT_OR_NOEXT_RX = /(?:^|\/)(?:\.|[^/.]+$)/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
-const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org)[:/](.+?)(?:\.git)?$/
+const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org|pagure\.io)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
 const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)(?::([^/@]+))?@)?(.*)/
@@ -456,8 +456,18 @@ function computeOrigin (url, refName, refType, startPath, worktreePath = undefin
     // Q: should we set worktreePath instead (or additionally?)
     origin.worktree = true
   } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
-    const action = match[1] === 'bitbucket.org' ? 'src' : refType === 'branch' ? 'edit' : 'blob'
-    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, refName, startPath, '%s')
+    const host = match[1]
+    let action
+    let category = ''
+    if (host === 'pagure.io') {
+      action = 'blob'
+      category = 'f'
+    } else if (host === 'bitbucket.org') {
+      action = 'src'
+    } else {
+      action = refType === 'branch' ? 'edit' : 'blob'
+    }
+    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, refName, category, startPath, '%s')
   }
   return origin
 }

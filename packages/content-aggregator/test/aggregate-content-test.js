@@ -1145,6 +1145,25 @@ describe('aggregateContent()', () => {
         })
       })
 
+      it('should generate correct origin data for file taken from repository on pagure.io', () => {
+        const urls = [
+          'https://pagure.io/group-name/repo-name.git',
+          'https://pagure.io/group-name/repo-name',
+          'git@pagure.io:group-name/repo-name.git',
+          'git@pagure.io:group-name/repo-name',
+        ]
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        refs.forEach(([name, type]) => {
+          const expectedEditUrlPattern = 'https://pagure.io/group-name/repo-name/blob/' + name + '/f/%s'
+          urls.forEach((url) => {
+            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            expect(origin.url).to.equal(url)
+            expect(origin[type]).to.equal(name)
+            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          })
+        })
+      })
+
       it('should generate correct origin data for file taken from worktree', () => {
         const url = 'the-component'
         const worktreePath = ospath.join(CONTENT_REPOS_DIR, url)
