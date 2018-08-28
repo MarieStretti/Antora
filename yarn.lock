@@ -323,11 +323,11 @@ arrify@^1.0.0, arrify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
-asciidoctor.js@1.5.6:
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/asciidoctor.js/-/asciidoctor.js-1.5.6.tgz#12f4810c62ea47867da145e819fc93b0674b5431"
+asciidoctor.js@1.5.7:
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/asciidoctor.js/-/asciidoctor.js-1.5.7.tgz#e52980ee3a4f108af2bb4cded0f9c1fae33f023b"
   dependencies:
-    opal-runtime "1.0.3"
+    opal-runtime "1.0.10"
 
 assertion-error@^1.0.1:
   version "1.1.0"
@@ -547,10 +547,6 @@ caller-path@^0.1.0:
   resolved "https://registry.yarnpkg.com/caller-path/-/caller-path-0.1.0.tgz#94085ef63581ecd3daa92444a8fe94e82577751f"
   dependencies:
     callsites "^0.2.0"
-
-callsite@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/callsite/-/callsite-1.0.0.tgz#280398e5d664bd74038b6f0905153e6e8af1bc20"
 
 callsites@^0.2.0:
   version "0.2.0"
@@ -2290,13 +2286,6 @@ inquirer@^6.1.0:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-intercept-require@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/intercept-require/-/intercept-require-1.1.0.tgz#e8e2409d4adb2535c31a7e4a05cf60cda744f665"
-  dependencies:
-    callsite "^1.0.0"
-    object-assign "^2.0.0"
-
 interpret@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.1.0.tgz#7ed1b1410c6a0e0f78cf95d3b8440c63f78b8614"
@@ -3348,10 +3337,6 @@ nyc@^13.0.1:
     yargs "11.1.0"
     yargs-parser "^9.0.2"
 
-object-assign@^2.0.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-2.1.1.tgz#43c36e5d569ff8e4816c4efa8be02d26967c18aa"
-
 object-assign@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-3.0.0.tgz#9bedd5ca0897949bca47e7ff408062d549f587f2"
@@ -3438,9 +3423,9 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
-opal-runtime@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/opal-runtime/-/opal-runtime-1.0.3.tgz#e81e5c2a2568bbb0b05743b427d035dd901485b7"
+opal-runtime@1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/opal-runtime/-/opal-runtime-1.0.10.tgz#0c693c723f251dad39972903a9edc4f55d8b937f"
   dependencies:
     glob "6.0.4"
     xmlhttprequest "1.8.0"
