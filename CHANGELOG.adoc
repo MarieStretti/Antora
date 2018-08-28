@@ -10,7 +10,17 @@ This project utilizes semantic versioning.
 === Added
 
 * *content-classifier*: Look for partial files in the partials folder inside the module in addition to pages/_partials (#254)
-* *content-classifier*: Add additional methods to content catalog: getComponentsSortedBy(), getComponentMap(), getComponentMapSortedBy()
+* *content-classifier*: Add additional methods to content catalog: getComponentsSortedBy(), getComponentMap(), getComponentMapSortedBy() (#253)
+* *content-classifier*: Add ContentCatalog#getComponentVersion(component, version) method (#287)
+
+=== Changed
+
+* *content-classifier*: Skip component version flagged as prerelease when determining latest version unless all versions are prereleases (#287)
+* *content-classifier*: Rename ContentCatalog#addComponentVersion(...) method to ContentCatalog#registerComponentVersion(...) (#287)
+* *content-classifier*: Change arguments of ContentCatalog#registerComponentVersion(...) to `name, version, { title, prerelease, startPage } = {}` (#287)
+* *content-classifier*: Rename latestVersion property on component version to latest; add alias for latestVersion (#287)
+* *page-composer*: Set canonicalUrl to qualified URL of latest page version unless version is a prerelease (#287)
+* *page-composer*: Look up page version using ContentCatalog#getById(resourceId) instead of ContentCatalog#findBy(critiera) (#287)
 
 === Improved
 

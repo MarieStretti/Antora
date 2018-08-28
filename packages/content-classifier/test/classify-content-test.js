@@ -138,7 +138,14 @@ describe('classifyContent()', () => {
       expect(versions).to.eql(['master', 'dev', 'v1.2.3'])
     })
 
-    it('should update title of component to match title of greatest version', () => {
+    it('should use name as title if title is falsy', () => {
+      aggregate[0].title = undefined
+      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.title).to.equal(component.name)
+    })
+
+    it('should update title of component to match title of latest version', () => {
       aggregate.push({
         name: 'the-component',
         title: 'The Component (Newest)',
@@ -164,7 +171,7 @@ describe('classifyContent()', () => {
       expect(component.versions[1].title).to.equal('The Component (Patch)')
     })
 
-    it('should configure latestVersion property to resolve to greatest version', () => {
+    it('should configure latest property to resolve to latest version', () => {
       aggregate.push({
         name: 'the-component',
         title: 'The Component',
@@ -177,17 +184,13 @@ describe('classifyContent()', () => {
         version: 'v1.0.0',
         files: [],
       })
-      const component = classifyContent(playbook, aggregate).getComponent('the-component')
+      const catalog = classifyContent(playbook, aggregate)
+      const component = catalog.getComponent('the-component')
       expect(component).to.exist()
-      expect(component.latestVersion).to.exist()
-      expect(component.latestVersion.version).to.equal('v2.0.0')
-      // use low-level operation to ensure property is dynamic
-      component.versions.unshift({
-        version: 'v3.0.0',
-        title: 'The Component',
-        url: '/the-component/v3.0.0/index.html',
-      })
-      expect(component.latestVersion.version).to.equal('v3.0.0')
+      expect(component.latest).to.exist()
+      expect(component.latest.version).to.equal('v2.0.0')
+      catalog.registerComponentVersion('the-component', 'v3.0.0')
+      expect(component.latest.version).to.equal('v3.0.0')
     })
 
     it('should throw when adding a duplicate version of a component', () => {
@@ -310,7 +313,7 @@ describe('classifyContent()', () => {
       expect(component.versions[0].url).to.equal(expectedUrl)
     })
 
-    it('should update url of component to match url of greatest version', () => {
+    it('should update url of component to match url of latest version', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
       aggregate.push({
         name: 'the-component',

@@ -51,13 +51,19 @@ describe('build UI model', () => {
 
     contentCatalog = {
       getComponent: spy((name) => component),
-      getComponentMapSortedBy: spy((property) => components
-        .slice(0)
-        .sort((a, b) => a[property].localeCompare(b[property]))
-        .reduce((accum, it) => {
-          accum[it.name] = it
-          return accum
-        }, {})),
+      getComponentVersion: (component, version) => {
+        if (!component.versions) component = this.getComponent(component)
+        return component.versions.find((candidate) => candidate.version === version)
+      },
+      getComponentMapSortedBy: spy((property) =>
+        components
+          .slice(0)
+          .sort((a, b) => a[property].localeCompare(b[property]))
+          .reduce((accum, it) => {
+            accum[it.name] = it
+            return accum
+          }, {})
+      ),
       getSiteStartPage: spy(() => undefined),
     }
 
@@ -561,8 +567,8 @@ describe('build UI model', () => {
         title: 'The Component',
         url: '/the-component/1.0-beta/index.html',
       })
-      const files = [
-        {
+      const files = {
+        '1.0-beta': {
           src: {
             path: 'modules/ROOT/pages/the-page.adoc',
             component: 'the-component',
@@ -573,8 +579,8 @@ describe('build UI model', () => {
             url: '/the-component/1.0-beta/the-page.html',
           },
         },
-        file,
-        {
+        '1.0': file,
+        '2.0': {
           src: {
             path: 'modules/ROOT/pages/the-page.adoc',
             component: 'the-component',
@@ -585,23 +591,50 @@ describe('build UI model', () => {
             url: '/the-component/2.0/the-page.html',
           },
         },
-      ]
-      contentCatalog.findBy = spy((filter) => files)
+      }
+      contentCatalog.getById = spy((filter) => files[filter.version])
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
-      expectCalledWith(contentCatalog.findBy, [
+      expectCalledWith(contentCatalog.getById, [
         {
           component: 'the-component',
           module: 'ROOT',
           family: 'page',
           relative: 'the-page.adoc',
+          version: '2.0',
         },
       ])
+      expectCalledWith(
+        contentCatalog.getById,
+        [
+          {
+            component: 'the-component',
+            module: 'ROOT',
+            family: 'page',
+            relative: 'the-page.adoc',
+            version: '1.0',
+          },
+        ],
+        1
+      )
+      expectCalledWith(
+        contentCatalog.getById,
+        [
+          {
+            component: 'the-component',
+            module: 'ROOT',
+            family: 'page',
+            relative: 'the-page.adoc',
+            version: '1.0-beta',
+          },
+        ],
+        2
+      )
       expect(model.versions).to.exist()
       expect(model.versions).to.have.lengthOf(3)
       expect(model.versions).to.eql([
-        { version: '2.0', url: '/the-component/2.0/the-page.html' },
-        { version: '1.0', url: '/the-component/1.0/the-page.html' },
-        { version: '1.0-beta', url: '/the-component/1.0-beta/the-page.html' },
+        { version: '2.0', title: 'The Component', url: '/the-component/2.0/the-page.html' },
+        { version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
+        { version: '1.0-beta', title: 'The Component', url: '/the-component/1.0-beta/the-page.html' },
       ])
     })
 
@@ -617,9 +650,9 @@ describe('build UI model', () => {
         title: 'The Component',
         url: '/the-component/1.0-beta/index.html',
       })
-      const files = [
-        file,
-        {
+      const files = {
+        '1.0': file,
+        '2.0': {
           src: {
             path: 'modules/ROOT/pages/the-page.adoc',
             component: 'the-component',
@@ -630,37 +663,64 @@ describe('build UI model', () => {
             url: '/the-component/2.0/the-page.html',
           },
         },
-      ]
-      contentCatalog.findBy = spy((filter) => files)
+      }
+      contentCatalog.getById = spy((filter) => files[filter.version])
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
-      expectCalledWith(contentCatalog.findBy, [
+      expectCalledWith(contentCatalog.getById, [
         {
           component: 'the-component',
           module: 'ROOT',
           family: 'page',
           relative: 'the-page.adoc',
+          version: '2.0',
         },
       ])
+      expectCalledWith(
+        contentCatalog.getById,
+        [
+          {
+            component: 'the-component',
+            module: 'ROOT',
+            family: 'page',
+            relative: 'the-page.adoc',
+            version: '1.0',
+          },
+        ],
+        1
+      )
+      expectCalledWith(
+        contentCatalog.getById,
+        [
+          {
+            component: 'the-component',
+            module: 'ROOT',
+            family: 'page',
+            relative: 'the-page.adoc',
+            version: '1.0-beta',
+          },
+        ],
+        2
+      )
       expect(model.versions).to.exist()
       expect(model.versions).to.have.lengthOf(3)
       expect(model.versions).to.eql([
-        { version: '2.0', url: '/the-component/2.0/the-page.html' },
-        { version: '1.0', url: '/the-component/1.0/the-page.html' },
-        { version: '1.0-beta', url: '/the-component/1.0-beta/index.html', missing: true },
+        { version: '2.0', title: 'The Component', url: '/the-component/2.0/the-page.html' },
+        { version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
+        { version: '1.0-beta', title: 'The Component', url: '/the-component/1.0-beta/index.html', missing: true },
       ])
     })
 
-    it('should set canonicalUrl property to url of greatest version', () => {
+    it('should set canonicalUrl property to url of latest version', () => {
       site.url = 'http://example.com'
-      component.url = '/the-component/2.0/index.html'
       component.versions.unshift({
         version: '2.0',
+        prerelease: true,
         title: 'The Component',
         url: '/the-component/2.0/index.html',
       })
-      const files = [
-        file,
-        {
+      const files = {
+        '1.0': file,
+        '2.0': {
           src: {
             path: 'modules/ROOT/pages/the-page.adoc',
             component: 'the-component',
@@ -671,11 +731,47 @@ describe('build UI model', () => {
             url: '/the-component/2.0/the-page.html',
           },
         },
-      ]
-      contentCatalog.findBy = spy((filter) => files)
+      }
+      contentCatalog.getById = spy((filter) => files[filter.version])
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.canonicalUrl).to.exist()
-      expect(model.canonicalUrl).to.equal('http://example.com/the-component/2.0/the-page.html')
+      expect(model.canonicalUrl).to.equal('http://example.com/the-component/1.0/the-page.html')
+    })
+
+    it('should not set canonicalUrl property if all versions are prereleases', () => {
+      site.url = 'http://example.com'
+      component.versions[0].prerelease = true
+      component.versions.unshift({
+        version: '2.0',
+        prerelease: true,
+        title: 'The Component',
+        url: '/the-component/2.0/index.html',
+      })
+      const files = {
+        '1.0': file,
+        '2.0': {
+          src: {
+            path: 'modules/ROOT/pages/the-page.adoc',
+            component: 'the-component',
+            version: '2.0',
+            module: 'ROOT',
+          },
+          pub: {
+            url: '/the-component/2.0/the-page.html',
+          },
+        },
+      }
+      contentCatalog.getById = spy((filter) => files[filter.version])
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.canonicalUrl).to.not.exist()
+    })
+
+    it('should not set canonicalUrl property if only versions is a prerelease', () => {
+      site.url = 'http://example.com'
+      component.versions[0].prerelease = true
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.versions).to.not.exist()
+      expect(model.canonicalUrl).to.not.exist()
     })
   })
 

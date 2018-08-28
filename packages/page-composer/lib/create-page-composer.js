@@ -3,7 +3,6 @@
 const handlebars = require('handlebars')
 const { posix: path } = require('path')
 const requireFromString = require('require-from-string')
-const versionCompare = require('@antora/content-classifier/lib/util/version-compare-desc')
 
 const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants')
 const { version: VERSION } = require('../package.json')
@@ -140,9 +139,9 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
 
   const url = file.pub.url
   const component = contentCatalog.getComponent(componentName)
-  // QUESTION can we cache versions on file.rel so only computed once per page version group?
-  const versions =
-    component.versions.length > 1 ? getPageVersions(file.src, component, contentCatalog, { sparse: true }) : undefined
+  const componentVersion = contentCatalog.getComponentVersion(component, version)
+  // QUESTION can we cache versions on file.rel so only computed once per page version lineage?
+  const versions = component.versions.length > 1 ? getPageVersions(file.src, component, contentCatalog) : undefined
   const navigation = navigationCatalog.getMenu(componentName, version) || []
   const title = asciidoc.doctitle
 
@@ -155,8 +154,8 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     keywords: attributes.keywords,
     attributes: pageAttributes,
     component,
-    componentVersion: getComponentVersion(component.versions, version),
     version,
+    componentVersion,
     module: file.src.module,
     versions,
     navigation,
@@ -167,7 +166,11 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   }
 
   if (site.url) {
-    model.canonicalUrl = file.pub.canonicalUrl = site.url + (versions ? versions[0].url : url)
+    // NOTE not always the same as the latest component version (since the page might cease to exist)
+    const latestPageVersion = versions
+      ? versions.find((candidate) => !candidate.prerelease)
+      : !componentVersion.prerelease && { url }
+    if (latestPageVersion) model.canonicalUrl = file.pub.canonicalUrl = site.url + latestPageVersion.url
   }
 
   return model
@@ -202,38 +205,21 @@ function findBreadcrumbPath (matchUrl, currentItem, currentPath = []) {
   }
 }
 
-function getComponentVersion (versions, currentVersion) {
-  return versions.find((candidate) => candidate.version === currentVersion)
-}
-
-// QUESTION should this go in ContentCatalog?
-// should it accept module and relative instead of pageSrc?
-function getPageVersions (pageSrc, component, contentCatalog, opts = {}) {
-  const pageIdSansVersion = {
+// QUESTION should this function go in ContentCatalog?
+// QUESTION should this function accept component, module, relative instead of pageSrc?
+function getPageVersions (pageSrc, component, contentCatalog) {
+  const basePageId = {
     component: pageSrc.component,
     module: pageSrc.module,
     family: 'page',
     relative: pageSrc.relative,
   }
-  if (opts.sparse) {
-    if (component.versions.length > 1) {
-      let pageVersions = contentCatalog.findBy(pageIdSansVersion).reduce((accum, page) => {
-        accum[page.src.version] = { version: page.src.version, url: page.pub.url }
-        return accum
-      }, {})
 
-      return component.versions
-        .map(({ version, url }) => (version in pageVersions ? pageVersions[version] : { version, url, missing: true }))
-        .sort((a, b) => versionCompare(a.version, b.version))
-    }
-  } else {
-    const pages = contentCatalog.findBy(pageIdSansVersion)
-    if (pages.length > 1) {
-      return pages
-        .map((page) => ({ version: page.src.version, url: page.pub.url }))
-        .sort((a, b) => versionCompare(a.version, b.version))
-    }
-  }
+  // QUESTION should title be title of component or page?
+  return component.versions.map((componentVersion) => {
+    const page = contentCatalog.getById(Object.assign({ version: componentVersion.version }, basePageId))
+    return Object.assign({}, componentVersion, page ? { url: page.pub.url } : { missing: true })
+  })
 }
 
 module.exports = createPageComposer
