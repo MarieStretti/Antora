@@ -97,9 +97,9 @@ describe('ContentCatalog', () => {
         name,
         title,
         url,
-        versions: [{ title, version, url }],
+        versions: [{ version, displayVersion: version, title, url }],
       })
-      expect(components[0].latest).to.eql({ title, version, url })
+      expect(components[0].latest).to.eql({ version, displayVersion: version, title, url })
       // NOTE verify latestVersion alias
       expect(components[0].latestVersion).to.equal(components[0].latest)
     })
@@ -127,9 +127,12 @@ describe('ContentCatalog', () => {
         name,
         title: title2,
         url: url2,
-        versions: [{ title: title2, version: version2, url: url2 }, { title: title1, version: version1, url: url1 }],
+        versions: [
+          { version: version2, displayVersion: version2, title: title2, url: url2 },
+          { version: version1, displayVersion: version1, title: title1, url: url1 },
+        ],
       })
-      expect(component.latest).to.eql({ title: title2, version: version2, url: url2 })
+      expect(component.latest).to.eql({ version: version2, displayVersion: version2, title: title2, url: url2 })
     })
 
     it('should throw error if component version already exists', () => {
@@ -178,10 +181,10 @@ describe('ContentCatalog', () => {
       expect(contentCatalog.getComponent(componentName)).to.equal(component)
 
       expect(component.versions).to.eql([
-        { title: title2, version: version2, url: url2, prerelease: prerelease2 },
-        { title: title1, version: version1, url: url1 },
+        { version: version2, displayVersion: version2, title: title2, url: url2, prerelease: prerelease2 },
+        { version: version1, displayVersion: version1, title: title1, url: url1 },
       ])
-      expect(component.latest).to.eql({ title: title1, version: version1, url: url1 })
+      expect(component.latest).to.eql({ version: version1, displayVersion: version1, title: title1, url: url1 })
       expect(component.name).to.equal(componentName)
       expect(component.title).to.equal(title1)
       expect(component.url).to.equal(url1)
@@ -213,13 +216,66 @@ describe('ContentCatalog', () => {
       expect(contentCatalog.getComponent(componentName)).to.equal(component)
 
       expect(component.versions).to.eql([
-        { title: title2, version: version2, url: url2, prerelease: prerelease2 },
-        { title: title1, version: version1, url: url1, prerelease: prerelease1 },
+        { version: version2, displayVersion: version2, title: title2, url: url2, prerelease: prerelease2 },
+        { version: version1, displayVersion: version1, title: title1, url: url1, prerelease: prerelease1 },
       ])
-      expect(component.latest).to.eql({ title: title2, version: version2, url: url2, prerelease: prerelease2 })
+      expect(component.latest).to.eql({
+        version: version2,
+        displayVersion: version2,
+        title: title2,
+        url: url2,
+        prerelease: prerelease2,
+      })
       expect(component.name).to.equal(componentName)
       expect(component.title).to.equal(title2)
       expect(component.url).to.equal(url2)
+    })
+
+    it('should set displayVersion property to specified value', () => {
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.registerComponentVersion('the-component', '1.0', { title: 'ACME', displayVersion: '1.0 Beta' })
+      const component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.versions[0]).to.exist()
+      expect(component.versions[0].displayVersion).to.equal('1.0 Beta')
+    })
+
+    it('should set displayVersion property automatically if prerelease is a string literal', () => {
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.registerComponentVersion('the-component', '1.0', { title: 'ACME', prerelease: 'Beta' })
+      const component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.versions[0]).to.exist()
+      expect(component.versions[0].prerelease).to.equal('Beta')
+      expect(component.versions[0].displayVersion).to.equal('1.0 Beta')
+    })
+
+    it('should set displayVersion property automatically if prerelease is a string object', () => {
+      const contentCatalog = new ContentCatalog()
+      const prerelease = new String('Beta') // eslint-disable-line no-new-wrappers
+      contentCatalog.registerComponentVersion('the-component', '1.0', { title: 'ACME', prerelease })
+      const component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.versions[0]).to.exist()
+      expect(component.versions[0].prerelease.toString()).to.equal('Beta')
+      expect(component.versions[0].displayVersion).to.equal('1.0 Beta')
+    })
+
+    it('should not offset prerelease label by space in displayVersion property if begins with dot or hyphen', () => {
+      const contentCatalog = new ContentCatalog()
+      contentCatalog.registerComponentVersion('the-component', '1.0', { title: 'ACME', prerelease: '-dev' })
+      contentCatalog.registerComponentVersion('the-other-component', '1.0', { title: 'XYZ', prerelease: '.beta.1' })
+      let component
+      component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.versions[0]).to.exist()
+      expect(component.versions[0].prerelease).to.equal('-dev')
+      expect(component.versions[0].displayVersion).to.equal('1.0-dev')
+      component = contentCatalog.getComponent('the-other-component')
+      expect(component).to.exist()
+      expect(component.versions[0]).to.exist()
+      expect(component.versions[0].prerelease).to.equal('.beta.1')
+      expect(component.versions[0].displayVersion).to.equal('1.0.beta.1')
     })
 
     it('should use url from specified start page', () => {
@@ -246,9 +302,9 @@ describe('ContentCatalog', () => {
         name,
         title,
         url,
-        versions: [{ title, version, url }],
+        versions: [{ version, displayVersion: version, title, url }],
       })
-      expect(components[0].latest).to.eql({ title, version, url })
+      expect(components[0].latest).to.eql({ version, displayVersion: version, title, url })
     })
 
     it('should throw error if specified start page not found', () => {
