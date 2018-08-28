@@ -58,7 +58,7 @@ function createPageComposerInternal (site, env, layouts) {
    * @param {ContentCatalog} contentCatalog - The content catalog
    *   that provides access to the virtual files in the site.
    * @param {NavigationCatalog} navigationCatalog - The navigation catalog
-   *   that provides access to the navigation menu for each component version.
+   *   that provides access to the navigation for each component version.
    * @returns {File} The file whose contents were wrapped in the specified page layout.
    */
   return function composePage (file, contentCatalog, navigationCatalog) {
@@ -142,7 +142,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   const componentVersion = contentCatalog.getComponentVersion(component, version)
   // QUESTION can we cache versions on file.rel so only computed once per page version lineage?
   const versions = component.versions.length > 1 ? getPageVersions(file.src, component, contentCatalog) : undefined
-  const navigation = navigationCatalog.getMenu(componentName, version) || []
+  const navigation = navigationCatalog.getNavigation(componentName, version) || []
   const title = asciidoc.doctitle
 
   const model = {
@@ -177,9 +177,9 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   return model
 }
 
-function getBreadcrumbs (pageUrl, pageTitle, menu) {
-  for (let i = 0, numTrees = menu.length; i < numTrees; i++) {
-    const breadcrumbs = findBreadcrumbPath(pageUrl, menu[i])
+function getBreadcrumbs (pageUrl, pageTitle, navigation) {
+  for (let i = 0, numTrees = navigation.length; i < numTrees; i++) {
+    const breadcrumbs = findBreadcrumbPath(pageUrl, navigation[i])
     if (breadcrumbs) return breadcrumbs
   }
   return pageTitle ? [{ content: pageTitle, url: pageUrl, urlType: 'internal', discrete: true }] : []

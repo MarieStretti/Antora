@@ -1,31 +1,25 @@
 'use strict'
 
-const $menus = Symbol('menus')
+const $sets = Symbol('sets')
 const $generateId = Symbol('generateId')
 
 class NavigationCatalog {
   constructor () {
-    this[$menus] = {}
+    this[$sets] = {}
   }
 
   addTree (component, version, tree) {
     const id = this[$generateId](component, version)
-    const menu = id in this[$menus] ? this[$menus][id] : (this[$menus][id] = [])
+    const navigation = id in this[$sets] ? this[$sets][id] : (this[$sets][id] = [])
     // NOTE retain order on insert
-    const insertIdx = menu.findIndex((candidate) => candidate.order >= tree.order)
-    ~insertIdx ? menu.splice(insertIdx, 0, tree) : menu.push(tree)
+    const insertIdx = navigation.findIndex((candidate) => candidate.order >= tree.order)
+    ~insertIdx ? navigation.splice(insertIdx, 0, tree) : navigation.push(tree)
+    return navigation
   }
 
-  //getMenus () {
-  //  return _.map(this[$menus], (trees, id) => {
-  //    const [component, version] = id.split(':')
-  //    return { component, version, trees }
-  //  })
-  //}
-
-  getMenu (component, version) {
+  getNavigation (component, version) {
     const id = this[$generateId](component, version)
-    return this[$menus][id]
+    return this[$sets][id]
   }
 
   [$generateId] (component, version) {

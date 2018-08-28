@@ -70,7 +70,7 @@ describe('build UI model', () => {
     menu = []
 
     navigationCatalog = {
-      getMenu: spy((name, version) => menu),
+      getNavigation: spy((name, version) => menu),
     }
 
     file = {
@@ -110,12 +110,32 @@ describe('build UI model', () => {
       expect(model.keys).to.eql({ googleAnalytics: 'UA-XXXXXXXX-1' })
     })
 
-    it('should set components property to array of components from content catalog sorted by title', () => {
+    it('should set components property to map of components from content catalog sorted by title', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
       expect(contentCatalog.getComponentMapSortedBy).to.have.been.called()
       expect(Object.keys(model.components)).to.have.lengthOf(3)
       const componentTitles = Object.values(model.components).map((component) => component.title)
       expect(componentTitles).to.eql(['Component B', 'Component C', 'The Component'])
+    })
+
+    it('should be able to access navigation for any component version from UI model', () => {
+      const component = contentCatalog.getComponent('the-component')
+      menu.push({
+        order: 0,
+        root: true,
+        items: [
+          {
+            content: 'The Page',
+            url: '/the-component/1.0/the-page.html',
+            urlType: 'internal',
+          },
+        ],
+      })
+      component.versions[0].navigation = navigationCatalog.getNavigation('the-component', '1.0')
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model.components['the-component'].versions[0].navigation).to.exist()
+      expect(model.components['the-component'].versions[0].navigation.length).to.equal(1)
+      expect(model.components['the-component'].versions[0].navigation[0]).to.equal(menu[0])
     })
 
     it('should not set url property if site.url property is not set in playbook', () => {
@@ -317,7 +337,7 @@ describe('build UI model', () => {
         ],
       })
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
-      expectCalledWith(navigationCatalog.getMenu, ['the-component', '1.0'])
+      expectCalledWith(navigationCatalog.getNavigation, ['the-component', '1.0'])
       expect(model.navigation).to.exist()
       expect(model.navigation).to.equal(menu)
     })

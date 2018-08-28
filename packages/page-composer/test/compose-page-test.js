@@ -226,7 +226,7 @@ describe('createPageComposer()', () => {
       menu = []
 
       navigationCatalog = {
-        getMenu: (name, version) => menu,
+        getNavigation: (name, version) => menu,
       }
     })
 

@@ -85,6 +85,7 @@ function mockContentCatalog (seed = []) {
     getByPath: ({ path: path_, component, version }) =>
       entriesByPath[buildComponentVersionKey(component, version) + path_],
     getComponent: (name) => components[name],
+    getComponentVersion: (name, version) => components[name].latest,
     getFiles: () => entries,
     resolvePage: function (spec, ctx) {
       return resolvePage(spec, this, ctx)
