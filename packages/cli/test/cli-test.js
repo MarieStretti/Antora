@@ -371,15 +371,14 @@ describe('cli', () => {
   it('should use the generator specified by the --generator option', () => {
     const generator = ospath.resolve(FIXTURES_DIR, 'simple-generator')
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    return new Promise((resolve) => runAntora(`generate the-site.json --generator ${generator}`)
-      .on('exit', resolve)).then(
-      (exitCode) => {
-        expect(exitCode).to.equal(0)
-        expect(ospath.join(absDestDir, '418.html'))
-          .to.be.a.file()
-          .with.contents.that.match(/I'm a teapot/)
-      }
-    )
+    return new Promise((resolve) =>
+      runAntora(`generate the-site.json --generator ${generator}`).on('exit', resolve)
+    ).then((exitCode) => {
+      expect(exitCode).to.equal(0)
+      expect(ospath.join(absDestDir, '418.html'))
+        .to.be.a.file()
+        .with.contents.that.match(/I'm a teapot/)
+    })
   })
 
   it('should show error message if custom generator fails to load', () => {

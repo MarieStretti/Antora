@@ -1,8 +1,4 @@
 = Upgrade Antora
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-:version: 1.0.3
 
 On this page, you'll learn:
 
@@ -40,9 +36,9 @@ The output will also show the CLI and site generator versions, which should be t
 .List of globally installed Node packages
 [subs=attributes+]
 ....
-/home/user/.nvm/versions/node/v8.10.0/lib
-├── @antora/cli@{version}
-├── @antora/site-generator-default@{version}
+/home/user/.nvm/versions/node/v8.11.4/lib
+├── @antora/cli@{page-component-version}.x
+├── @antora/site-generator-default@{page-component-version}.x
 ├── npm@5.6.0
 └── ...
 ....
@@ -73,7 +69,7 @@ If you installed the site generator in a playbook project, update the version nu
 ----
 {
   "dependencies": {
-    "@antora/site-generator-default": "^{version}"
+    "@antora/site-generator-default": "^{page-component-version}.0"
   }
 }
 ----

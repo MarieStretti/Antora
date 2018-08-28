@@ -14,20 +14,23 @@ This project utilizes semantic versioning.
 * *content-classifier*: Add ContentCatalog#getComponentVersion(component, version) method (#287)
 * *content-classifier*: Allow display version to be set in component descriptor; assign displayVersion property to component version (#288)
 * *content-classifier*: If prerelease property on component version is a string and display version is not set, automatically construct and assign display version (#288)
+* *page-composer*: Pass the origin information for a page to the UI model as `page.origin` (#293)
 * *cli*: Add --generator option to specify a custom site generator library or script (#178)
 
 === Changed
 
+* *content-aggregator*: Set component title to name if title is not defined
 * *content-classifier*: Skip component version flagged as prerelease when determining latest version unless all versions are prereleases (#287)
 * *content-classifier*: Rename ContentCatalog#addComponentVersion(...) method to ContentCatalog#registerComponentVersion(...) (#287)
 * *content-classifier*: Change arguments of ContentCatalog#registerComponentVersion(...) to `name, version, { title, prerelease, startPage } = {}` (#287)
 * *content-classifier*: Rename latestVersion property on component version to latest; add alias for latestVersion (#287)
 * *page-composer*: Set canonicalUrl to qualified URL of latest page version unless version is a prerelease (#287)
 * *page-composer*: Look up page version using ContentCatalog#getById(resourceId) instead of ContentCatalog#findBy(critiera) (#287)
-
-=== Improved
-
 * *page-composer*: Assign components to `site.components` as a map instead of an array (#253)
+
+=== Fixed
+
+* *content-aggregator*: Coerce component name to a string
 
 == 1.0.3 (2018-08-07)
 

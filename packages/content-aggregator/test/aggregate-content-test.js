@@ -122,12 +122,20 @@ describe('aggregateContent()', () => {
   })
 
   describe('read component descriptor', () => {
-    const initRepoWithComponentDescriptor = async (repoBuilder, componentDesc, beforeClose) =>
-      repoBuilder
-        .init(componentDesc.name)
+    const initRepoWithComponentDescriptor = async (repoBuilder, componentDesc, beforeClose) => {
+      let repoName
+      if ('repoName' in componentDesc) {
+        repoName = componentDesc.repoName
+        delete componentDesc.repoName
+      } else {
+        repoName = componentDesc.name
+      }
+      return repoBuilder
+        .init(repoName)
         .then(() => repoBuilder.addComponentDescriptor(componentDesc))
         .then(() => beforeClose && beforeClose())
         .then(() => repoBuilder.close())
+    }
 
     describe('should throw if component descriptor cannot be found', () => {
       testAll(async (repoBuilder) => {
@@ -159,6 +167,16 @@ describe('aggregateContent()', () => {
         const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a version in ${repoBuilder.url} [ref: ${ref}]`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
+    describe('should coerce name in component descriptor to string', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithComponentDescriptor(repoBuilder, { repoName: 'the-component', name: 10, version: '1.0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include({ name: '10', version: '1.0' })
       })
     })
 

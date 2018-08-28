@@ -1,13 +1,8 @@
 = macOS Installation Requirements
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-xcode: https://railsapps.github.io/xcode-command-line-tools.html
 :url-nvm: https://github.com/creationix/nvm
 :url-nvm-install: {url-nvm}#installation
-// Versions:
-:version-node: 8.10.0
 
 On this page, you'll learn:
 

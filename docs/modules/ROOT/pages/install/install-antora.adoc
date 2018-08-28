@@ -1,8 +1,4 @@
 = Install Antora
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-:version: 1.0.3
 
 Assumptions:
 
@@ -51,7 +47,7 @@ If installation was successful, the command should report the version of Antora.
 
 [subs=attributes+]
  $ antora -v
- {version}
+ {page-component-version}.x
 
 == Install the default Antora site generator
 
