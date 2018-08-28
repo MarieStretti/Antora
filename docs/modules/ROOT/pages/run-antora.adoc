@@ -189,9 +189,12 @@ You can use the serve package for this purpose.
 
 Install the serve package globally using npm:
 
- demo-site $ npm i -g serve
+ demo-site $ npm i -g serve@6.5.8
 
 That puts a command by the same name on your PATH.
+
+IMPORTANT: We specifically recommend using serve 6.5.8 since that's the last version known to work reliably.
+
 Now launch the web server by pointing it at the location of the generated site.
 In the terminal, type `serve build/site`.
 After executing the command, a the local address should be displayed in your terminal.
