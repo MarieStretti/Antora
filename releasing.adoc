@@ -155,32 +155,45 @@ Modifying the [.path]_releaserc_ file is the central mechanism for triggering a 
 
 === Release Trigger
 
-A branch named "`releases`" has been reserved for performing releases.
-A release is triggered by pushing a commit to the releases branch (typically by modifying the [.path]_releaserc_ file).
-The commit message should be something like "`cut release`".
+A release is made from the release branch, which is the branch from which the release is being cut.
+A branch named "`releases`" has been reserved for performing the release.
+The release is triggered by pushing a new commit to the releases branch.
 
- $ git commit --amend --date="$(date)" -m "cut release" releaserc
+The steps to perform a release are as follows:
+
+. Rebase the releases branch on top of the release branch (e.g., master).
+. Update the [.path]_releaserc_ file, if necessary (typically to set the release version).
+ ** The commit message on the release branch is arbitrary, but can be something like "`cut release`".
+. Force push the branch.
+
+The releases branch must be ahead of the release branch (the branch from which the release is being made).
+In other words, the common fork point between the release branch and releases branches must be the HEAD of the release branch.
+If this is not the case, the release job will refuse to publish the release.
+
+(Unfortunately, that means the branch cannot be protected).
+
+Here are the steps in the form of a commands:
+
+ $ git fetch origin
+   git rebase origin/master
+   git commit --amend --date="$(date)" -m "cut release" releaserc
    git push --force origin releases
 
-This commit activates the release job in the CI pipeline, which is configured to only run on the releases branch.
-
-NOTE: In the future, we may decide to add multiple release branches, one for each version line (e.g., 1.x, 2.x, master, etc.)
-
-The release branch must be ahead of master.
-In other words, the common fork point between the master and releases branches must be the HEAD of the master branch.
-Otherwise, the release job will refuse to publish the release.
-
-The release job immediately clones the master branch and performs the release from there.
+This commit activates the release job in the CI pipeline.
+This job is configured to only run on the releases branch.
+The release job immediately clones the release branch and performs the release from there.
 Thus, the releases branch is merely a utility.
-It's used to:
+
+//NOTE: In the future, we may decide to add multiple release branches, one for each version line (e.g., 1.x, 2.x, master, etc.)
+
+In summary, the releases branch is used to:
 
 * trigger the CI pipeline
 * pass release instructions via the [.path]_releaserc_ file
 * track whether a release has already been performed from a given CI pipeline (by examining the fork point)
- ** this prevents the CI pipeline from being inadvertently rerun
+ ** this prevents the CI pipeline from being inadvertently run again
 
-In order to trigger another release, it's necessary to rebase the releases branch on top of master, update the [.path]_releaserc_ file if necessary, then force push the branch.
-(Unfortunately, that means the branch cannot be protected).
+The CI job will publish the packages to npmjs.com at the end of the job execution.
 
 == Testing a Release
 
