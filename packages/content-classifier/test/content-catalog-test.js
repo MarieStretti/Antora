@@ -460,8 +460,8 @@ describe('ContentCatalog', () => {
       expect(pages[6].src.version).to.equal('v4.5.6')
     })
 
-    it('should find files by basename', () => {
-      const pages = classifyContent(playbook, aggregate).findBy({ basename: 'page-one.adoc' })
+    it('should find files by relative path', () => {
+      const pages = classifyContent(playbook, aggregate).findBy({ relative: 'page-one.adoc' })
       expect(pages).to.have.lengthOf(2)
       pages.sort((a, b) => a.src.version.localeCompare(b.src.version))
       expect(pages[0].path).to.equal('modules/ROOT/pages/page-one.adoc')

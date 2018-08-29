@@ -109,9 +109,8 @@ class ContentCatalog {
     this[$files][id] = file
   }
 
-  findBy (options) {
-    const srcFilter = _.pick(options, 'component', 'version', 'module', 'family', 'relative', 'basename', 'extname')
-    return _.filter(this[$files], { src: srcFilter })
+  findBy (criteria) {
+    return _.filter(this[$files], { src: criteria })
   }
 
   getById ({ component, version, module, family, relative }) {
