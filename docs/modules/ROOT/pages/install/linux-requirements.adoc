@@ -37,6 +37,7 @@ Antora requires Node 8, the current long term support (LTS) release of Node.
 While you can try Node 9, Antora is not currently tested on it.
 
 [IMPORTANT]
+.Node 10 and nodegit
 ====
 Installing Antora using Node 10 fails due to a known compatibility issue with nodegit. 
 
