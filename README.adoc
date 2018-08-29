@@ -23,7 +23,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-nvm-windows: https://github.com/coreybutler/nvm-windows
 :uri-opendevise: https://opendevise.com
 // Versions:
-:version-node: 8.11.1
+:version-node: 8.11.4
 
 ifdef::badges[]
 image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
