@@ -1,8 +1,5 @@
 = Page Header
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-:note-caption: Ops Hint
+:note-caption: OPS HINT
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-author: {url-adoc-manual}/#author-and-email
@@ -28,19 +25,19 @@ The header is separated from the page body by at least one blank line.
 First Middle Last <author@email.com> // <2>
 :description: A description of the page stored in an HTML meta tag. // <3>
 :keywords: comma-separated values, stored, in an HTML, meta, tag // <4>
-:sectanchors: // <5>
-:url-repo: https://my-git-repo.com // <6>
+:page-role: tiles // <5>
+:sectanchors: // <6>
+:url-repo: https://my-git-repo.com // <7>
 ----
 <1> Title of the page
 <2> Author name and email address
 <3> Description attribute
 <4> Keywords attribute
-<5> Example of a built-in page attribute
-<6> Example of a user created and defined page attribute
+<5> A user-defined `page` attribute
+<6> A built-in AsciiDoc attribute
+<7> A user-defined attribute
 
 Each attribute entry must be entered on its own line.
-Attributes can be placed in any order in the header, including above the page title.
-However, the preferred placement is below the title.
 The header can also contain xref:comments.adoc[comments].
 
 [#page-title]
@@ -57,7 +54,7 @@ A page title is specified by one equals sign (`=`), followed by one blank space,
 [#page-meta]
 == Page metadata
 
-AsciiDoc provides several optional, built-in attributes for defining page metadata.
+AsciiDoc provides several built-in attributes for defining page metadata.
 
 === Author syntax
 
@@ -133,23 +130,24 @@ The keywords attribute contains a list of comma-separated values that are assign
 ....
 
 [#page-attrs]
-== Built-in page attributes
+== Built-in attributes
 
-AsciiDoc provides numerous built-in attributes that can activate and control syntax output behavior and styles.
+Antora and AsciiDoc provide built-in attributes that activate and control syntax output behavior and styles.
+See xref:page:page-and-site-attributes.adoc[Page and Site Attributes] to learn about the built-in Antora attributes.
 
 TIP: If you're not familiar with AsciiDoc attribute restrictions or operations precedence, review the {url-attrs}[attributes section of the Asciidoctor manual^].
 
-Page attributes are set in the header and are available to the whole page.
 Built-in AsciiDoc attributes are reserved attributes that have special, pre-defined behavior.
 Many built-in attributes also have a restricted set of accepted values.
 
-Built-in page attributes usually do two things; they toggle a behavior on or off (boolean), and they change the generated output by accepting an alternate value or replacement content (variable).
+These attributes usually do two things; they toggle a behavior on or off (boolean), and they change the generated output by accepting an alternate value or replacement content (variable).
 
+[#set-attribute]
 === Set and unset built-in attributes
 
 Let's turn on the attribute `sectanchors`.
 
-.Set a built-in page attribute
+.Set a built-in attribute
 [source,asciidoc]
 ----
 = Page Title
@@ -162,7 +160,7 @@ The attribute is turned on, also known as _set_, by simply entering it into the 
 
 Built-in attributes that are on by default, like `table-captions`, can be _unset_ (turned _off_) with a leading or trailing `!` added to its name.
 
-.Unset a built-in page attribute
+.Unset a built-in attribute
 [source,asciidoc]
 ----
 = Page Title
