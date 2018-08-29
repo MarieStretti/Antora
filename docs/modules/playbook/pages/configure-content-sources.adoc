@@ -52,6 +52,8 @@ If the value matches either of these rules, the value is handled as a remote URI
 Note that a colon is permitted when it's part of a Windows drive letter (e.g., `c:/`).
 Look for these rules in the sections that follow.
 
+NOTE: When working with local content repositories, before running Antora, make sure they have at least one commit.
+
 === Use the git worktree
 
 When using a local, non-bare repository, Antora reads files from the worktree (i.e., the working directory) when the current branch is matched by the <<branches,branches filter>>.
