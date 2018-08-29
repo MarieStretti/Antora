@@ -38,7 +38,7 @@ While you can try Node 9, Antora is not currently tested on it.
 
 [IMPORTANT]
 ====
-Installing Antora using Node 10 fails due to a known nodegit issue. 
+Installing Antora using Node 10 fails due to a known compatibility issue with nodegit. 
 
 See: https://github.com/nodegit/nodegit/issues/1490
 ====
