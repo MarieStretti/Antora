@@ -1,0 +1,35 @@
+= Resource Identifier
+
+No matter which component or module it is stored in, you can include any partial or example in any page, just like you can "`call`" any page using its page ID.
+
+To insert a partial or example from another module or component into a page, you use it's resource ID.
+A resource ID is very similar to a page ID except it specifies a family coordinate.
+
+== How is a resource ID structured?
+
+The resource ID is identical to a xref:page-id.adoc#structure[page ID], except it specifies one additional coordinate, the Family.
+
+Family::
+The purpose of a resource file.
+Files are assigned a family designation based on whether they're stored in _partials_ or _examples_.
+
+The family coordinate is appended with a dollar sign (`$`) and specified after the module coordinate but before the page coordinate.
+
+ version@component:module:family$relative/path-to/resource.ext
+
+The family coordinate accepts the value `partial` or `example`.
+
+== How is a resource referenced with its ID?
+
+A resource ID is used in an AsciiDoc include directive.
+Here's how the include directive is structured when inserting a specific version of a partial resource from the ROOT module of a component named cli.
+
+[source,asciidoc]
+\include:2.2@cli::partial$commands.adoc[]
+
+Or, if you included a tagged region of an example into a page in the same module.
+
+[source,asciidoc]
+\include:example$config.json[tag=parse]
+
+See xref:asciidoc:include-content.adoc[Include Content] for more include directive examples and information.
