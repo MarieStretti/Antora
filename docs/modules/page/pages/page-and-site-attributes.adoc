@@ -1,0 +1,55 @@
+= Page and Site Attributes
+//TODO provide example of user-defined page attribute
+
+Attributes that are prefixed with `page-` are cataloged by Antora and available to both the page they're set on and the pipeline components during site generation.
+These attributes are helpful when passing data from a page to the site UI and integrations, such as a search service.
+In addition to user-defined page attributes, Antora also provides built-in page attributes.
+
+== Built-in Antora attributes
+
+Antora sets the following attributes for each page:
+
+`page-component-name`:: The name of the component as specified in _antora.yml_.
+`page-component-version`:: The version of the component as specified in _antora.yml_.
+`page-component-title`:: The title (aka display name) of the component as specified in  _antora.yml_.
+`page-module`:: The name of the module where the page is located.
+`page-relative`:: The family-relative source path of the page.
+`page-origin-type`:: The content source type (e.g., git).
+`page-origin-url`:: The content source URL (i.e., the URL of the git repository).
+`page-origin-start-path`:: The path where the component is located in the repository.
+`page-origin-refname`:: The name of the reference where the page is located in the repository.
+`page-origin-branch`:: The shortname of the branch where the page is located in the repository.
+`page-origin-tag`:: The tag where this page is located in the repository (mutually exclusive with branch)
+`page-origin-reftype`:: The reference type where the page is located in the repository (tag or branch).
+`page-origin-worktree`:: Set if the file was taken from the git worktree.
+
+These attributes are available to the pipeline during processing and can be referenced in a page.
+
+[source,asciidoc]
+----
+Let's install *{page-component-title} {page-component-version}*.
+The source document for this page is in the *{page-module}* module.
+----
+
+Rendered as:
+
+[%hardbreaks]
+Let's install *{page-component-title} {page-component-version}*.
+The source document for this page is in the *{page-module}* module.
+
+TIP: This data is also available via the xref:antora-ui-default::templates.adoc#template-variables[UI model].
+
+== Site attributes
+
+There may be times when your document needs to know that it's being processed by Antora.
+Antora sets these site attributes for each page.
+
+* `env=site`
+* `env-site`
+* `site-gen=antora`
+* `site-gen-antora`
+
+== Learn more
+
+* xref:asciidoc:page-header.adoc#set-attribute[Set and unset AsciiDoc attributes].
+//* Create your own page attributes.

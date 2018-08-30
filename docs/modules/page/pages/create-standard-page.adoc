@@ -1,7 +1,4 @@
 = Create a Standard Page
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 A standard page is an AsciiDoc file in the [.path]_pages_ directory of a module.
 Standard pages have a header, which includes the page title, and a body, which includes the majority of the page's displayed content.
@@ -58,10 +55,10 @@ The xref:asciidoc:page-header.adoc[page header] is a set of contiguous lines tha
 The header encapsulates the following elements:
 
 * xref:asciidoc:page-header.adoc#page-title[page title] (required)
-* xref:asciidoc:page-header.adoc#page-meta[metadata], such as author information, a page description, and keywords
+* xref:asciidoc:page-header.adoc#page-meta[metadata], such as author information, a page description, and user-defined `page` attributes
 * environment settings
-* xref:asciidoc:page-header.adoc#page-attrs[built-in document attributes], such as section numbering
-* user-defined page attributes, such as common replacement text and URLs
+* xref:asciidoc:page-header.adoc#page-attrs[built-in AsciiDoc attributes], such as section numbering
+* user-defined attributes
 
 A single blank line signals the end of the page header.
 The next line with content is the start of the page body.
