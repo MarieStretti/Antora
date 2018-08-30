@@ -1,6 +1,5 @@
 name: antora
 version: '1.1'
-prerelease: '-dev'
 title: Antora
 nav:
 - modules/ROOT/nav.adoc
