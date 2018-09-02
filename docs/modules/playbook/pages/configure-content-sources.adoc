@@ -52,7 +52,8 @@ If the value matches either of these rules, the value is handled as a remote URI
 Note that a colon is permitted when it's part of a Windows drive letter (e.g., `c:/`).
 Look for these rules in the sections that follow.
 
-NOTE: When working with local content repositories, before running Antora, make sure they have at least one commit.
+IMPORTANT: In order to use a local content repository with Antora, even when using the worktree (i.e., HEAD), the repository _must_ have at least one commit.
+If you're not ready to commit other files, simply create an empty [.path]_.gitignore_ file and commit it.
 
 === Use the git worktree
 
