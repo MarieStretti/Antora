@@ -1,7 +1,4 @@
 = Modules
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 == What is a module?
 
@@ -89,9 +86,9 @@ The subdirectory names automatically recognized by Antora and associated to the 
 * [.path]_assets/images_
 * [.path]_assets/videos_
 
-You don't need to set the path to these three subdirectories in the header of your AsciiDoc files.
+You don't need to set the path to these three, predefined subdirectories in the header of your AsciiDoc files.
 This is managed automatically by Antora.
-When viewing the file in a preview tool, such as Atom or the Asciidoctor Chrome extension, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
+//When viewing the file in a preview tool, such as Atom or the Asciidoctor Chrome extension, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
 // You can create custom subdirectories, however, you'll need to add them to X & Y so that Antora can manage them.
 
@@ -131,10 +128,10 @@ If your documentation component contains large asset files, we do not recommend 
 Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
 
 [#examples-dir]
-== Examples
+== Example files
 
-The [.path]_examples_ directory can contain non-AsciiDoc file types, such as source code or data values.
-These files are often inserted into listing blocks using the xref:asciidoc:include-content.adoc#include-example[AsciiDoc include directive].
+The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or data values.
+An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
 
 [#pages-dir]
 == Pages
@@ -174,9 +171,9 @@ Learn more:
 === Partial AsciiDoc files
 
 xref:page:index.adoc#partial[Partials] are AsciiDoc files.
-They're stored in [.path]_partials_ (or [.path]_pages/_partials_) in the same module as the standard pages that use them.
-A partial is inserted into a standard page using the xref:asciidoc:include-content.adoc#include-partial[AsciiDoc include directive].
+They're stored in the [.path]_partials_ directory in a module.
+//(or [.path]_pages/_partials_) in the same module as the standard pages that use them.
+A partial is inserted into a standard page using the xref:asciidoc:include-partial.adoc[AsciiDoc include directive and the partial's resource ID].
 
-Don't set the path to the [.path]_{blank}_partials_ directory in the header of the AsciiDoc file.
-This is managed automatically by Antora.
-When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
+//Don't set the path to the [.path]_{blank}_partials_ directory in the header of the AsciiDoc file.
+//This is managed automatically by Antora.

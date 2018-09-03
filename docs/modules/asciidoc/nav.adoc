@@ -15,17 +15,20 @@
 ** xref:quotes-and-apostrophes.adoc[Quote Marks and Apostrophes]
 ** xref:special-characters-and-symbols.adoc[Special Characters and Symbols]
 ** xref:subscript-and-superscript.adoc[Subscript and Superscript]
-// Cross References & Links
-* xref:page-to-page-xref.adoc[Page to Page Links]
-* xref:in-page-xref.adoc[Same Page Links]
-* xref:external-urls.adoc[URLs]
+* Cross References and Links
+** xref:page-to-page-xref.adoc[Page to Page Xrefs]
+** xref:in-page-xref.adoc[Same Page Xrefs]
+** xref:external-urls.adoc[URLs]
 * xref:lists.adoc[Lists]
-** xref:ordered-and-unordered-lists.adoc[Ordered and Unordered Lists]
+** xref:ordered-and-unordered-lists.adoc[Bullet and Numbered Lists]
 ** xref:description-lists.adoc[Description Lists]
 ** xref:checklists.adoc[Checklists]
-// Include Partials, Pages, and Examples
-* xref:include-content.adoc[Include Content]
-// Assets and Attachments
+* Include Partials, Pages, and Examples
+** xref:page:resource-id.adoc[Antora Resource ID]
+** xref:include-partial.adoc[Include a Partial]
+** xref:include-example.adoc[Include an Example]
+** xref:include-page.adoc[Include a Page]
+// Assets & Attachments
 * xref:insert-image.adoc[Insert an Image]
 * xref:embed-video.adoc[Embed a Video]
 * xref:link-attachment.adoc[Link to an Attachment]

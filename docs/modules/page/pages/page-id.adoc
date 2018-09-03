@@ -1,7 +1,4 @@
 = Page Identifier
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 //Antora's page IDs are one of its foundational elements.
 
@@ -17,7 +14,7 @@ We call a page's "`number`" a page identifier, or page ID for short.
 [#structure]
 == How is a page ID structured?
 
-The page ID is unique and stable because it is constructed from the properties of the source document.
+The page ID is unique and stable because it's constructed from the properties of the source document.
 
 A page ID is based on a documentation component's xref:ROOT:component-structure.adoc[standard project structure].
 Documentation components ensure that each page lives in a defined, describable location.
@@ -36,7 +33,7 @@ Module::
 The content bundle in which the page is grouped; if empty, defaults to ROOT.
 
 Page::
-The path to the page's source file in the module, including any leading topic directories and the [.path]_.adoc_ file extension.
+The path to the page's source file in the module, including any leading topic directories and the _.adoc_ file extension.
 
 These coordinates are organize in a standard structure to create a unique, fully-qualified page ID.
 
@@ -45,7 +42,7 @@ image::page-id-anatomy-diagram.svg[Page ID anatomy,600]
 For example, this is the fully-qualified page ID for the "`How Antora Works`" page, which is located in the ROOT module of the Antora docs component.
 
 [source,asciidoc]
-1.0@antora:ROOT:how-antora-works.adoc
+1.1@antora:ROOT:how-antora-works.adoc
 
 == How is a page referenced with its ID?
 
