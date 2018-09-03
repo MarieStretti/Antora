@@ -25,7 +25,7 @@
 ** xref:checklists.adoc[Checklists]
 * Include Partials, Pages, and Examples
 ** xref:page:resource-id.adoc[Antora Resource ID]
-** xref:include-content.adoc[Include Content]
+** xref:include-partial.adoc[Include a Partial]
 // Assets & Attachments
 * xref:insert-image.adoc[Insert an Image]
 * xref:embed-video.adoc[Embed a Video]

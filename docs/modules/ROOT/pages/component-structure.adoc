@@ -1,7 +1,4 @@
 = Organizing Your Documentation for Antora
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 Antora works with collections of documentation that follow a standard, well-defined project structure.
 The benefits of a standard project structure for documentation are as follows:
@@ -99,17 +96,17 @@ _Required_; _Reserved_
 Directory that contains all of a module's AsciiDoc files.
 These files are automatically enlisted by Antora and converted to standalone HTML pages.
 
-xref:modules.adoc#partials-dir[<module>/partials (or <module>/pages/_partials)] ::
+xref:modules.adoc#partials-dir[<module>/partials]::
 _Optional_; _Reserved_
 +
-Directory that contains AsciiDoc files that can be inserted into the files stored directly under [.path]_pages_.
+Directory that contains AsciiDoc files that can be inserted into the files stored in [.path]_pages_.
 These files are *not* converted to HTML by Antora directly.
-Instead, they must be referenced by an xref:asciidoc:include-content.adoc#include-partial[include directive] in a page in the [.path]_pages_ directory.
+Instead, they must be referenced by an xref:asciidoc:include-partial.adoc[include directive] in a page in the [.path]_pages_ directory.
 
-<module>/_attributes.adoc ::
-_Required_; _Reserved_
-+
-Helper file that enables assets, partials, and examples to be rendered in preview tools such as Atom and the Asciidoctor Chrome extension.
+//<module>/_attributes.adoc ::
+//_Required_; _Reserved_
+//+
+//Helper file that enables assets, partials, and examples to be rendered in preview tools such as Atom and the Asciidoctor Chrome extension.
 
 xref:navigation:index.adoc[<module>/nav.adoc] ::
 _Optional_; _Reserved_

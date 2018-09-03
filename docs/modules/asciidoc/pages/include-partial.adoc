@@ -1,0 +1,97 @@
+= Include a Partial
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-tags: {url-adoc-manual}/#by-tagged-regions
+:url-leveloffset: {url-adoc-manual}/#include-partitioning
+
+Partials are AsciiDoc files that contain reusable snippets of content.
+Partials are saved in the xref:ROOT:modules.adoc#partials-dir[_partials_ directory].
+Typically, a partial and the standard page it's used in are stored in the same module.
+However, regardless of a partial's source module, it can be inserted into any standard page in your documentation site using the include directive and the partial file's resource ID.
+
+== Include directive structure for partials
+
+Let's break down the AsciiDoc syntax and resource coordinates you need to include a partial into a standard page.
+
+----
+\include::version@component:module:partial$name-of-file.adoc[optional attributes]
+----
+
+. On a new line, enter the name of the directive followed by two colons, `include::`.
++
+[subs=quotes]
+----
+**include::**version@component:module:partial$name-of-file.adoc[optional attributes]
+----
+
+. Enter the xref:page:resource-id.adoc[resource ID] of the partial file.
+A partial's resource coordinates are determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
++
+[subs=quotes]
+----
+\include::**version@component:module:partial$name-of-file.adoc**[optional attributes]
+----
+
+. The resource ID must contain the `partial$` family.
++
+[subs=quotes]
+----
+\include::version@component:module:**partial$**name-of-file.adoc[optional attributes]
+----
+
+. Close the directive with a set of square brackets (`+[]+`).
+The brackets can contain an optional list of attributes such as `leveloffset` and `tags`.
+The attributes should be entered as key=value pairs separated by commas.
++
+[subs=quotes]
+----
+include::version@component:module:partial$name-of-file.adoc**[optional attributes]**
+----
+
+NOTE: Currently, Antora only supports filtering includes by tags.
+
+== Include a partial from the same module
+
+When the partial file and the standard page file belong to the same module, you only need to enter the family name (`partial$`) and the name of the partial file.
+
+----
+A paragraph in the standard page.
+
+include::partial$cli-options.adoc[] // <1>
+
+Another paragraph in the standard page.
+include::partial$addendum/lifecycle.adoc[] // <2>
+----
+<1> Enter the include on a new line.
+If you want the partial contents to be a standalone block, make sure there's a blank line above and below it.
+<2> To attach the partial to another block, enter it on a new line but don't insert a blank line between the include and the block content.
+
+== Include a partial from another module
+
+When the partial file and the page file are in the same component, but different modules, enter the partial's module, family (`partial$`), and the name of the partial file.
+
+----
+\include::security:partial$mode-definitions.adoc[]
+----
+
+== Include a partial from another component
+
+When the partial file and the page file belong to different components, enter the partial's component, module, family (`partial$`), and the name of the partial file.
+
+----
+\include::catalog::partial$ref/definitions.adoc[]
+----
+
+When including a partial from another component, the include directive will use the partial file from the latest stable version of the component unless you specify a version coordinate.
+In the next example, the page will include the partial from the 2.0 version of the catalog component.
+
+----
+\include::2.0@catalog::partial$ref/definitions.adoc[]
+----
+
+//== Include a tagged region from a partial
+
+== Asciidoctor resources
+
+* {url-leveloffset}[Offset section headings with leveloffset^]
+* {url-tags}[Select regions of content with tags^]
