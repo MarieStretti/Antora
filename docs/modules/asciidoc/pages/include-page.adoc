@@ -22,52 +22,54 @@ This attribute lets Antora know that you intend to insert all or a tagged range 
 
 == Include directive structure for standard pages
 
-Let's break down the AsciiDoc syntax and resource coordinates you need to include a standard page into another standard page.
+You can include one standalone page (or a portion of that page) into another using the familiar page ID syntax in the target of the include directive.
+Let's explore that syntax.
 
 ----
-\include::version@component:module:page$name-of-file.adoc[optional attributes]
+\include::version@component:module:relative-path.adoc[optional attributes]
 ----
 
 . On a new line, enter the directive name followed by two colons, `include::`.
 +
-[subs=quotes]
+[subs=+quotes]
 ----
-**include::**version@component:module:page$name-of-file.adoc[optional attributes]
+**include::**version@component:module:relative-path.adoc[optional attributes]
 ----
 
-. Enter the xref:page:resource-id.adoc[resource ID] of the page file.
+. Enter the xref:page:page-id.adoc[page ID] of the target file.
 A page's resource coordinates are determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
 +
-[subs=quotes]
+[subs=+quotes]
 ----
-\include::**version@component:module:page$name-of-file.adoc**[optional attributes]
+\include::**version@component:module:relative-path.adoc**[optional attributes]
 ----
 
-. The resource ID must contain the `page$` family.
+. The page ID may contain the `page$` family, but it is optional.
 +
-[subs=quotes]
+[subs=+quotes]
 ----
-\include::version@component:module:**page$**name-of-file.adoc[optional attributes]
+\include::version@component:module:**page$**relative-path.adoc[optional attributes]
 ----
 
-. Close the directive with a set of square brackets (`+[]+`).
+. Close the directive with a set of square brackets (`[]`).
 The brackets can contain an optional list of attributes such as `leveloffset` and `tags`.
 The attributes should be entered as key=value pairs separated by commas.
 +
-[subs=quotes]
+[subs=+quotes]
 ----
-include::version@component:module:page$name-of-file.adoc**[optional attributes]**
+include::version@component:module:relative-path.adoc**[optional attributes]**
 ----
 
 NOTE: Currently, Antora only supports filtering includes by tags.
 
-WARNING: It's a bug that the `page` family needs to be specified.
-This bug will be fixed in a subsequent patch release.
+//WARNING: It's a bug that the `page` family needs to be specified.
+//This bug will be fixed in a subsequent patch release.
 
 == Learn more
 
 * xref:include-partial.adoc[Include a partial]
 * xref:include-example.adoc[Include an example]
+* xref:page:page-id.adoc[Page IDs]
 * xref:page:resource-id.adoc[Resource IDs]
 
 == Asciidoctor resources

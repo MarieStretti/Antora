@@ -19,7 +19,7 @@ Let's break down the AsciiDoc syntax and resource coordinates you need to includ
 
 . On a new line, enter the directive name followed by two colons, `include::`.
 +
-[subs=quotes]
+[subs=+quotes]
 ----
 **include::**version@component:module:example$name-of-file.ext[optional attributes]
 ----
@@ -27,14 +27,14 @@ Let's break down the AsciiDoc syntax and resource coordinates you need to includ
 . Enter the xref:page:resource-id.adoc[resource ID] of the example file.
 An example's resource coordinates are determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
 +
-[subs=quotes]
+[subs=+quotes]
 ----
 \include::**version@component:module:example$name-of-file.ext**[optional attributes]
 ----
 
 . The resource ID must contain the `example$` family.
 +
-[subs=quotes]
+[subs=+quotes]
 ----
 \include::version@component:module:**example$**name-of-file.ext[optional attributes]
 ----
@@ -43,7 +43,7 @@ An example's resource coordinates are determined just like the xref:page-to-page
 The brackets can contain an optional list of attributes such as `indent` and `tags`.
 The attributes should be entered as key=value pairs separated by commas.
 +
-[subs=quotes]
+[subs=+quotes]
 ----
 include::version@component:module:example$name-of-file.ext**[optional attributes]**
 ----
