@@ -94,6 +94,7 @@ In the next example, the page will include the partial from the 2.0 version of t
 == Learn more
 
 * xref:include-example.adoc[Include an example]
+* xref:include-page.adoc[Include a standard page]
 * xref:page:resource-id.adoc[Resource IDs]
 
 == Asciidoctor resources

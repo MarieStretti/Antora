@@ -26,13 +26,13 @@ If you don't want to include a page in a component menu, visitors will still be 
 Learn more:
 
 * xref:create-standard-page.adoc[Create a standard page]
-* xref:asciidoc:include-content.adoc#include-page[Insert a standard page into another page]
+* xref:asciidoc:include-page.adoc[Insert content from a standard page into another page]
 * xref:ROOT:modules.adoc#pages-dir[The _pages_ directory]
 * xref:ROOT:component-structure.adoc[Documentation component overview]
 * xref:navigation:link-syntax-and-content.adoc#page[Add a page xref to a navigation file]
 
 [#partial]
-== Reusable partials
+== Reusable partial pages
 
 Partials are AsciiDoc files located in a [.path]_partials_ directory.
 // (or [.path]_pages/_partials_).
@@ -44,7 +44,7 @@ When you change the content in a partial, those changes will be disseminated to 
 
 Learn more:
 
-//* Create a partial page
+//* Create a partial
 * xref:ROOT:modules.adoc#partials-dir[The _partials_ directory]
 * xref:asciidoc:include-partial.adoc[Insert a partial into a standard page]
 * xref:ROOT:component-structure.adoc[Documentation component overview]

@@ -93,6 +93,7 @@ include::4.5@tree::example$extension.js[] // <2>
 == Learn more
 
 * xref:include-partial.adoc[Include a partial]
+* xref:include-page.adoc[Include a standard page]
 * xref:page:resource-id.adoc[Resource IDs]
 
 == Asciidoctor resources

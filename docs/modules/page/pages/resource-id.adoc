@@ -34,3 +34,4 @@ Or, if you included a tagged region of an example into a page in the same module
 
 * xref:asciidoc:include-partial.adoc[Include a partial]
 * xref:asciidoc:include-example.adoc[Include an example]
+* xref:asciidoc:include-page.adoc[Include content from a standard page]

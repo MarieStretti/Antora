@@ -27,6 +27,7 @@
 ** xref:page:resource-id.adoc[Antora Resource ID]
 ** xref:include-partial.adoc[Include a Partial]
 ** xref:include-example.adoc[Include an Example]
+** xref:include-page.adoc[Include a Page]
 // Assets & Attachments
 * xref:insert-image.adoc[Insert an Image]
 * xref:embed-video.adoc[Embed a Video]

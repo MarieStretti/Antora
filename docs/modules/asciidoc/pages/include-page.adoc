@@ -1,0 +1,76 @@
+= Include a Standard Page
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-tags: {url-adoc-manual}/#by-tagged-regions
+:url-leveloffset: {url-adoc-manual}/#include-partitioning
+
+You can insert a portion of or a whole portion of or a whole standard page into another standard page.
+
+== Set page-partial attribute
+
+If you include a portion of or a whole standard page into another standard page, you *must* set the `page-partial` attribute in the header of the page being included.
+
+[source,asciidoc]
+----
+= Page Title
+:page-partial:
+
+Page contents.
+----
+
+This attribute lets Antora know that you intend to insert all or a tagged range of the AsciiDoc source content into another standard page.
+
+== Include directive structure for standard pages
+
+Let's break down the AsciiDoc syntax and resource coordinates you need to include a standard page into another standard page.
+
+----
+\include::version@component:module:page$name-of-file.adoc[optional attributes]
+----
+
+. On a new line, enter the directive name followed by two colons, `include::`.
++
+[subs=quotes]
+----
+**include::**version@component:module:page$name-of-file.adoc[optional attributes]
+----
+
+. Enter the xref:page:resource-id.adoc[resource ID] of the page file.
+A page's resource coordinates are determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
++
+[subs=quotes]
+----
+\include::**version@component:module:page$name-of-file.adoc**[optional attributes]
+----
+
+. The resource ID must contain the `page$` family.
++
+[subs=quotes]
+----
+\include::version@component:module:**page$**name-of-file.adoc[optional attributes]
+----
+
+. Close the directive with a set of square brackets (`+[]+`).
+The brackets can contain an optional list of attributes such as `leveloffset` and `tags`.
+The attributes should be entered as key=value pairs separated by commas.
++
+[subs=quotes]
+----
+include::version@component:module:page$name-of-file.adoc**[optional attributes]**
+----
+
+NOTE: Currently, Antora only supports filtering includes by tags.
+
+WARNING: It's a bug that the `page` family needs to be specified.
+This bug will be fixed in a subsequent patch release.
+
+== Learn more
+
+* xref:include-partial.adoc[Include a partial]
+* xref:include-example.adoc[Include an example]
+* xref:page:resource-id.adoc[Resource IDs]
+
+== Asciidoctor resources
+
+* {url-tags}[Select regions of content with tags^]
+* {url-leveloffset}[Offset section headings with leveloffset^]
