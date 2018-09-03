@@ -1,0 +1,101 @@
+= Include an Example
+// URLs
+:url-adoc-manual: https://asciidoctor.org/docs/user-manual
+:url-tags: {url-adoc-manual}/#by-tagged-regions
+:url-indent: {url-adoc-manual}/#normalize-block-indentation
+
+Examples are non-AsciiDoc files that contain reusable content, such as source code or data values, that are often inserted into listing blocks.
+Examples are saved in the xref:ROOT:modules.adoc#examples-dir[_examples_ directory].
+Typically, an example and the standard page it's used in are stored in the same module.
+However, regardless of an example's source module, it can be inserted into any standard page in your documentation site using the include directive and the example file's resource ID.
+
+== Include directive structure for examples
+
+Let's break down the AsciiDoc syntax and resource coordinates you need to include an example into a standard page.
+
+----
+\include::version@component:module:example$name-of-file.ext[optional attributes]
+----
+
+. On a new line, enter the directive name followed by two colons, `include::`.
++
+[subs=quotes]
+----
+**include::**version@component:module:example$name-of-file.ext[optional attributes]
+----
+
+. Enter the xref:page:resource-id.adoc[resource ID] of the example file.
+An example's resource coordinates are determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
++
+[subs=quotes]
+----
+\include::**version@component:module:example$name-of-file.ext**[optional attributes]
+----
+
+. The resource ID must contain the `example$` family.
++
+[subs=quotes]
+----
+\include::version@component:module:**example$**name-of-file.ext[optional attributes]
+----
+
+. Close the directive with a set of square brackets (`+[]+`).
+The brackets can contain an optional list of attributes such as `indent` and `tags`.
+The attributes should be entered as key=value pairs separated by commas.
++
+[subs=quotes]
+----
+include::version@component:module:example$name-of-file.ext**[optional attributes]**
+----
+
+NOTE: Currently, Antora only supports filtering includes by tags.
+
+== Include an example from the same module
+
+When the example file and the standard page file belong to the same module, you only need to enter the family name (`example$`) and the name of the example file.
+
+....
+[source,java]
+----
+\include::example$HelloWorld.java[]
+----
+....
+
+== Include an example from another module
+
+When the example and the page belong to the same component, but different modules, enter the example's module, family (`example$`), and the name of the example file.
+
+....
+[source,json]
+----
+\include::ROOT:example$output/query-max.json[]
+----
+....
+
+== Include an example from another component
+
+When the example and page belong to different components, enter the example's component, module, family (`example$`), and the name of the example file.
+
+....
+[source,javascript]
+----
+include::uml:admin:example$tour/config.js[]  // <1>
+[...]
+
+include::4.5@tree::example$extension.js[] // <2>
+----
+....
+<1> When including an example from another component, the include directive will use the example file from the latest stable version of its component unless a version coordinate is specified.
+<2> Enter the version coordinate to use a specific version of an example.
+
+//== Include a tagged region from an example
+
+== Learn more
+
+* xref:include-partial.adoc[Include a partial]
+* xref:page:resource-id.adoc[Resource IDs]
+
+== Asciidoctor resources
+
+* {url-tags}[Select regions of content with tags^]
+* {url-indent}[Normalize block indentation with indent^]

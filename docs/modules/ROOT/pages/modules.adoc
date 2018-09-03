@@ -128,10 +128,10 @@ If your documentation component contains large asset files, we do not recommend 
 Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
 
 [#examples-dir]
-== Examples
+== Example files
 
 The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or data values.
-These files are often inserted into listing blocks using the xref:asciidoc:include-content.adoc#include-example[AsciiDoc include directive].
+An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
 
 [#pages-dir]
 == Pages

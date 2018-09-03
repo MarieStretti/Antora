@@ -91,6 +91,11 @@ In the next example, the page will include the partial from the 2.0 version of t
 
 //== Include a tagged region from a partial
 
+== Learn more
+
+* xref:include-example.adoc[Include an example]
+* xref:page:resource-id.adoc[Resource IDs]
+
 == Asciidoctor resources
 
 * {url-leveloffset}[Offset section headings with leveloffset^]

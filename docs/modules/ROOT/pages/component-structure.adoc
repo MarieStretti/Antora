@@ -88,7 +88,7 @@ xref:modules.adoc#examples-dir[<module>/examples] ::
 _Optional_; _Reserved_
 +
 Directory that contains non-AsciiDoc file types, such as source code or data values.
-These files are often inserted into listing blocks using the xref:asciidoc:include-content.adoc#include-example[AsciiDoc include directive].
+These files are often inserted into listing blocks using the xref:asciidoc:include-example.adoc[AsciiDoc include directive].
 
 xref:modules.adoc#pages-dir[<module>/pages] ::
 _Required_; _Reserved_
@@ -100,7 +100,7 @@ xref:modules.adoc#partials-dir[<module>/partials]::
 _Optional_; _Reserved_
 +
 Directory that contains AsciiDoc files that can be inserted into the files stored in [.path]_pages_.
-These files are *not* converted to HTML by Antora directly.
+These files *aren't* converted to HTML by Antora directly.
 Instead, they must be referenced by an xref:asciidoc:include-partial.adoc[include directive] in a page in the [.path]_pages_ directory.
 
 //<module>/_attributes.adoc ::
