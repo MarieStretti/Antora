@@ -30,6 +30,7 @@ function buildNavigation (contentCatalog, asciidocConfig = {}) {
   const navFiles = contentCatalog.findBy({ family: 'nav' })
   if (!(navFiles && navFiles.length)) return new NavigationCatalog()
   asciidocConfig = Object.assign({}, asciidocConfig, { relativizePageRefs: false })
+  // TODO perhaps opt-in to properties instead of deleting?
   delete asciidocConfig.extensions
   return navFiles
     .map((navFile) => loadNavigationFile(navFile, contentCatalog, asciidocConfig))
