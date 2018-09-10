@@ -45,6 +45,9 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     'site-gen': 'antora',
     'site-gen-antora': '',
   }
+  const site = config.site || {}
+  if (site.title) envAttrs['site-title'] = site.title
+  if (site.url) envAttrs['site-url'] = site.url
   const defaultAttrs = {
     'attribute-missing': 'warn',
     'data-uri': null,
@@ -128,8 +131,10 @@ function computePageAttrs (fileSrc, contentCatalog) {
  * @returns {Object} A resolved configuration object to be used by the loadAsciiDoc function.
  */
 function resolveConfig (playbook) {
-  if (!playbook.asciidoc) return {}
-  const config = Object.assign({}, playbook.asciidoc)
+  const config = {}
+  if (playbook.site) config.site = playbook.site
+  if (!playbook.asciidoc) return config
+  Object.assign(config, playbook.asciidoc)
   // TODO process !name attributes
   if (config.extensions && config.extensions.length) {
     const extensions = config.extensions.reduce((accum, extensionPath) => {

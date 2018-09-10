@@ -138,6 +138,26 @@ describe('convertDocument()', () => {
     expect(inputFile.asciidoc.attributes).to.include(attributes)
   })
 
+  it('should make site url and title accessible via AsciiDoc attributes', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      = {site-title}
+
+      Welcome to the docs site hosted at {site-url}.
+    `)
+    const playbook = {
+      site: {
+        title: 'Docs',
+        url: 'https://docs.example.org',
+      },
+    }
+    convertDocument(inputFile, undefined, { site: playbook.site })
+    expect(inputFile.asciidoc.doctitle).to.equal('Docs')
+    expect(inputFile.contents.toString()).to.include('hosted at <a href="https://docs.example.org"')
+    expect(inputFile.asciidoc).to.exist()
+    expect(inputFile.asciidoc.attributes).to.exist()
+    expect(inputFile.asciidoc.attributes).to.include({ 'site-title': 'Docs', 'site-url': 'https://docs.example.org' })
+  })
+
   it('should register aliases defined by page-aliases document attribute', () => {
     inputFile.contents = Buffer.from(heredoc`
       = Page Title

@@ -87,7 +87,7 @@ describe('loadAsciiDoc()', () => {
   })
 
   describe('attributes', () => {
-    it('should set correct integration attributes on document', () => {
+    it('should assign built-in and Antora integration attributes on document', () => {
       setInputFileContents('= Document Title')
       const doc = loadAsciiDoc(inputFile)
       expect(doc.getBaseDir()).to.equal('modules/module-a/pages')
@@ -125,7 +125,7 @@ describe('loadAsciiDoc()', () => {
       })
     })
 
-    it('should set correct integration attributes on document for page in topic folder', () => {
+    it('should assign Antora integration attributes on document for page in topic folder', () => {
       inputFile = mockContentCatalog({
         version: '4.5.6',
         family: 'page',
@@ -232,6 +232,40 @@ describe('loadAsciiDoc()', () => {
       }
       const doc = loadAsciiDoc(inputFile, undefined, config)
       expect(doc.getAttributes()).to.include(config.attributes)
+    })
+
+    it('should assign site-url attribute if site url is set in playbook', () => {
+      setInputFileContents('= Document Title')
+      const config = {
+        site: {
+          url: 'https://docs.example.org',
+        },
+        attributes: {
+          'attribute-missing': 'skip',
+          icons: '',
+          idseparator: '-',
+          'source-highlighter': 'html-pipeline',
+        },
+      }
+      const doc = loadAsciiDoc(inputFile, undefined, config)
+      expect(doc.getAttributes()).to.include({ ...config.attributes, 'site-url': 'https://docs.example.org' })
+    })
+
+    it('should assign site-title attribute if site title is set in playbook', () => {
+      setInputFileContents('= Document Title')
+      const config = {
+        site: {
+          title: 'Docs',
+        },
+        attributes: {
+          'attribute-missing': 'skip',
+          icons: '',
+          idseparator: '-',
+          'source-highlighter': 'html-pipeline',
+        },
+      }
+      const doc = loadAsciiDoc(inputFile, undefined, config)
+      expect(doc.getAttributes()).to.include({ ...config.attributes, 'site-title': 'Docs' })
     })
 
     it('should not fail if config is null', () => {
@@ -2006,10 +2040,16 @@ describe('loadAsciiDoc()', () => {
   })
 
   describe('resolveConfig()', () => {
-    it('should return empty config if asciidoc category is not set in playbook', () => {
+    it('should return empty config if site and asciidoc categories are not set in playbook', () => {
       const playbook = {}
       const config = loadAsciiDoc.resolveConfig(playbook)
       expect(config).to.eql({})
+    })
+
+    it('should return config with only site if asciidoc category is not set in playbook', () => {
+      const playbook = { site: { url: 'https://docs.example.org', title: 'Docs' }, ui: {} }
+      const config = loadAsciiDoc.resolveConfig(playbook)
+      expect(config).to.eql({ site: Object.assign({}, playbook.site) })
     })
 
     it('should return a copy of the asciidoc category in the playbook', () => {
