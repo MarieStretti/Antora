@@ -8,7 +8,7 @@ if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF
 
 const asciidoctor = require('asciidoctor.js')()
 const convertPageRef = require('./xref/convert-page-ref')
-const createConverter = require('./create-converter')
+const createConverter = require('./converter/create')
 const createExtensionRegistry = require('./create-extension-registry')
 const ospath = require('path')
 const { posix: path } = ospath
@@ -67,7 +67,7 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
   const pageAttrs = fileSrc.family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : {}
   const attributes = Object.assign({}, envAttrs, defaultAttrs, config.attributes, intrinsicAttrs, pageAttrs)
   const relativizePageRefs = config.relativizePageRefs !== false
-  const converter = createConverter(asciidoctor, {
+  const converter = createConverter({
     onPageRef: (refSpec, content) => convertPageRef(refSpec, content, file, contentCatalog, relativizePageRefs),
   })
   const extensionRegistry = createExtensionRegistry(asciidoctor, {

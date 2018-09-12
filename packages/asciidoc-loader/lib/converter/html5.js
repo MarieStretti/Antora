@@ -1,11 +1,19 @@
 'use strict'
 
-const $pageRefCallback = Symbol('pageRefCallback')
 const Opal = global.Opal
-const Inline = Opal.const_get_local(Opal.module(null, 'Asciidoctor'), 'Inline')
+const $pageRefCallback = Symbol('callback')
 
-const ConverterExtension = (() => {
-  const scope = Opal.module(Opal.module(null, 'Antora'), 'ConverterExtension')
+const Html5Converter = (() => {
+  const scope = Opal.klass(
+    Opal.module(null, 'Antora'),
+    Opal.module(null, 'Asciidoctor').Converter.Html5Converter,
+    'Html5Converter',
+    function () {}
+  )
+  Opal.defn(scope, '$initialize', function initialize (backend, opts, callbacks) {
+    Opal.send(this, Opal.find_super_dispatcher(this, 'initialize', initialize), [backend, opts])
+    this[$pageRefCallback] = callbacks.onPageRef
+  })
   Opal.defn(scope, '$inline_anchor', function inlineAnchor (node) {
     if (node.getType() === 'xref') {
       let refSpec = node.getAttribute('refid')
@@ -26,16 +34,13 @@ const ConverterExtension = (() => {
             const attributes = Opal.hash2(['role'], { role: 'page' })
             options = Opal.hash2(['type', 'target', 'attributes'], { type: 'link', target, attributes })
           }
-          node = Inline.$new(node.getParent(), 'anchor', content, options)
+          node = Opal.module(null, 'Asciidoctor').Inline.$new(node.getParent(), 'anchor', content, options)
         }
       }
     }
     return Opal.send(this, Opal.find_super_dispatcher(this, 'inline_anchor', inlineAnchor), [node])
   })
-  Opal.defn(scope, '$on_page_ref', function (callback) {
-    this[$pageRefCallback] = callback
-  })
   return scope
 })()
 
-module.exports = ConverterExtension
+module.exports = Html5Converter

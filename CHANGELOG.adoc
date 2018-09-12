@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Fixed
+
+* *asciidoc-loader*: Fixed memory leak caused by Asciidoctor converter extension (#306)
+
 == 1.1.0 (2018-08-28)
 
 === Added
