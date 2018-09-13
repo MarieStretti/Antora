@@ -215,11 +215,16 @@ function getPageVersions (pageSrc, component, contentCatalog) {
     family: 'page',
     relative: pageSrc.relative,
   }
-
-  // QUESTION should title be title of component or page?
-  return component.versions.map((componentVersion) => {
+  return Object.defineProperty(component.versions.map((componentVersion) => {
     const page = contentCatalog.getById(Object.assign({ version: componentVersion.version }, basePageId))
-    return Object.assign({}, componentVersion, page ? { url: page.pub.url } : { missing: true })
+    // QUESTION should title be title of component or page?
+    return Object.assign(
+      componentVersion === component.latest ? { latest: true } : {},
+      componentVersion,
+      page ? { url: page.pub.url } : { missing: true }
+    )
+  }), 'latest', {
+    get () { return this.find((candidate) => candidate.latest) },
   })
 }
 
