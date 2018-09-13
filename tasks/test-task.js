@@ -16,8 +16,7 @@ module.exports = (files, analyzeCodeCoverage = false) => {
       )
       onSuccess = () => console.log('Coverage report: ' + coverageReportUrl)
     }
-    args.unshift('_mocha')
-    return run('nyc', args, onSuccess)
+    return run('nyc', ['_mocha'].concat(args), onSuccess)
   } else {
     return run('_mocha', args)
   }
