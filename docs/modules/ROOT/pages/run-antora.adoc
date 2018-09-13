@@ -3,7 +3,8 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 // URLs
-:url-demo-playbook: https://gitlab.com/antora/demo/demo-site/blob/master/site.yml
+:url-demo-project: https://gitlab.com/antora/demo/demo-site
+:url-demo-playbook: {url-demo-project}/raw/master/site.yml
 :url-ssh-github: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 :url-ssh-gitlab: https://docs.gitlab.com/ce/ssh/README.html
 
@@ -44,7 +45,7 @@ For the examples on this page, we'll use the Demo materials.
  ~ $ cd demo-site
 
 . Using your preferred text editor or IDE, create a new playbook file named [.path]_site.yml_ and populate it with the contents of the following example.
-You can also download {url-demo-playbook}[the Demo site playbook] from the Demo repository.
+You can also download {url-demo-playbook}[a sample playbook file] from the {url-demo-project}[Demo repository].
 +
 .site.yml
 [source,yaml]
