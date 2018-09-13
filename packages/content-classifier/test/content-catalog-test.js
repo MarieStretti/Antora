@@ -716,7 +716,7 @@ describe('ContentCatalog', () => {
       contentCatalog.registerComponentVersion('the-component', '1.0.0', { title: 'The Component' })
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
-      const result = contentCatalog.registerPageAlias('1.0.0@the-component:ROOT:the-topic/alias.adoc', targetPage)
+      const result = contentCatalog.registerPageAlias('1.0.0@the-component::the-topic/alias.adoc', targetPage)
       expect(result).to.exist()
       expect(result).to.have.property('src')
       expect(result.src).to.include({
@@ -767,25 +767,49 @@ describe('ContentCatalog', () => {
       })
     })
 
-    it('should not register alias if component is unknown', () => {
+    it('should register alias if component does not exist', () => {
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
-      const result = contentCatalog.registerPageAlias('1.0@unknown-component:ROOT:alias.adoc', targetPage)
-      expect(result).to.not.exist()
+      const result = contentCatalog.registerPageAlias('1.0@unknown-component::alias.adoc', targetPage)
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'unknown-component',
+        version: '1.0',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'alias.adoc',
+      })
     })
 
-    it('should not register alias if version is unknown', () => {
+    it('should register alias if version does not exist', () => {
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('1.0@alias.adoc', targetPage)
-      expect(result).to.not.exist()
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'the-component',
+        version: '1.0',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'alias.adoc',
+      })
     })
 
-    it('should not register alias if version not specified and component unknown', () => {
+    it('should register alias if component does not exist and version is not specified', () => {
       contentCatalog.addFile(new File({ src: targetPageSrc }))
       const targetPage = contentCatalog.getById(targetPageSrc)
       const result = contentCatalog.registerPageAlias('unknown-component::alias.adoc', targetPage)
-      expect(result).to.not.exist()
+      expect(result).to.exist()
+      expect(result).to.have.property('src')
+      expect(result.src).to.include({
+        component: 'unknown-component',
+        version: 'master',
+        module: 'ROOT',
+        family: 'alias',
+        relative: 'alias.adoc',
+      })
     })
 
     it('should not allow alias to be registered that matches target page', () => {

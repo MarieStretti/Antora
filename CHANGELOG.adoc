@@ -10,6 +10,7 @@ This project utilizes semantic versioning.
 === Fixed
 
 * *asciidoc-loader*: Fixed memory leak caused by Asciidoctor converter extension (#306)
+* *content-classifier*: Allow a page alias to reference any component or component version (#303)
 
 == 1.1.0 (2018-08-28)
 

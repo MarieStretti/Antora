@@ -161,25 +161,23 @@ class ContentCatalog {
   // QUESTION should this be addPageAlias?
   registerPageAlias (aliasSpec, targetPage) {
     const src = parseResourceId(aliasSpec, targetPage.src, ['page'])
-    // QUESTION should we throw an error if alias is invalid or out of bounds?
+    // QUESTION should we throw an error if alias is invalid?
     if (!src) return
     const component = this.getComponent(src.component)
-    if (!component) return
-    if (src.version) {
-      if (!this.getComponentVersion(component, src.version)) return
-    } else {
-      src.version = component.latest.version
-    }
-    const existingPage = this.getById(src)
-    if (existingPage) {
-      // TODO we'll need some way to easily get a displayable page ID
-      let qualifiedSpec = this[$generateId](existingPage.src)
-      qualifiedSpec = qualifiedSpec.replace(':page$', ':')
-      const message =
-        existingPage === targetPage
-          ? 'Page alias cannot reference itself'
-          : 'Page alias cannot reference an existing page'
-      throw new Error(message + ': ' + qualifiedSpec)
+    if (component) {
+      // NOTE version is not set when alias specifies a component, but not a version
+      if (!src.version) src.version = component.latest.version
+      const existingPage = this.getById(src)
+      if (existingPage) {
+        // TODO we'll need some way to easily get a displayable page ID
+        let qualifiedSpec = this[$generateId](existingPage.src)
+        qualifiedSpec = qualifiedSpec.replace(':page$', ':')
+        const message = `Page alias cannot reference ${targetPage === existingPage ? 'itself' : 'an existing page'}`
+        throw new Error(message + ': ' + qualifiedSpec)
+      }
+    } else if (!src.version) {
+      // QUESTION is this correct to assume?
+      src.version = 'master'
     }
     expandPageSrc(src, 'alias')
     // QUESTION should we use src.origin instead of rel with type='link'?
