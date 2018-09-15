@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Added
+
+* *page-composer*: Make latest page version accessible from UI model (#307)
+
 === Fixed
 
 * *asciidoc-loader*: Fixed memory leak caused by Asciidoctor converter extension (#306)
