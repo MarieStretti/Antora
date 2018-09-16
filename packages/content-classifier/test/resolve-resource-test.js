@@ -17,9 +17,15 @@ describe('resolveResource', () => {
     expect(contentCatalog.getById).to.not.have.been.called()
   })
 
+  it('should throw error if resource ID spec has invalid syntax', () => {
+    const contentCatalog = mockContentCatalog()
+    expect(() => resolveResource('component-foo::', contentCatalog)).to.throw('Invalid resource ID syntax')
+    expect(contentCatalog.getById).to.not.have.been.called()
+  })
+
   it('should throw error if page ID spec has invalid syntax', () => {
     const contentCatalog = mockContentCatalog()
-    expect(() => resolveResource('component-foo::', contentCatalog, undefined, ['page'])).to.throw(
+    expect(() => resolveResource('component-foo::', contentCatalog, undefined, undefined, 'page')).to.throw(
       'Invalid page ID syntax'
     )
     expect(contentCatalog.getById).to.not.have.been.called()
@@ -61,7 +67,7 @@ describe('resolveResource', () => {
     }
     const result = resolveResource(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
-    expect(result).to.equal(targetFile)
+    expect(result).to.exist()
   })
 
   it('should resolve qualified resource ID spec to file in catalog', () => {
@@ -85,7 +91,7 @@ describe('resolveResource', () => {
     }
     const result = resolveResource(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
-    expect(result).to.equal(targetFile)
+    expect(result).to.exist()
   })
 
   it('should use context to fill in page ID when resolving file in catalog', () => {
@@ -116,7 +122,7 @@ describe('resolveResource', () => {
     }
     const result = resolveResource(targetPageIdSpec, contentCatalog, context)
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
-    expect(result).to.equal(targetFile)
+    expect(result).to.exist()
   })
 
   it('should use lastest version of component if component is specified without a version', () => {
@@ -141,7 +147,7 @@ describe('resolveResource', () => {
     const result = resolveResource(targetPageIdSpec, contentCatalog)
     expect(contentCatalog.getComponent).to.have.been.called.with('the-component')
     expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
-    expect(result).to.equal(targetFile)
+    expect(result).to.exist()
   })
 
   it('should return undefined if component is unknown and version not specified', () => {
@@ -151,6 +157,23 @@ describe('resolveResource', () => {
     expect(contentCatalog.getComponent).to.have.been.called.with('unknown-component')
     expect(contentCatalog.getById).to.not.have.been.called()
     expect(result).to.be.undefined()
+  })
+
+  it('should not use family from context if family not specified in spec', () => {
+    const targetFile = {
+      src: {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'the-module',
+        family: 'partial',
+        relative: 'the-partial.adoc',
+      },
+    }
+    const contentCatalog = mockContentCatalog(targetFile)
+    const targetResourceIdSpec = '1.2.3@the-component:the-module:the-partial.adoc'
+    const result = resolveResource(targetResourceIdSpec, contentCatalog)
+    expect(contentCatalog.getById).to.have.been.called.with({ ...targetFile.src, family: 'page' })
+    expect(result).to.exist()
   })
 
   it('should return undefined if spec does not reference permitted family', () => {
@@ -166,6 +189,47 @@ describe('resolveResource', () => {
     const contentCatalog = mockContentCatalog(targetFile)
     const targetPageIdSpec = '1.2.3@the-component:the-module:partial$the-page.adoc'
     const result = resolveResource(targetPageIdSpec, contentCatalog, undefined, ['page'])
+    expect(contentCatalog.getById).to.not.have.been.called()
+    expect(result).to.be.undefined()
+  })
+
+  it('should prefer default family over family from context if family not specified in ID', () => {
+    const context = {
+      component: 'current-component',
+      version: '1.0',
+      module: 'current-module',
+      family: 'partial',
+      relative: 'current-partial.adoc',
+    }
+    const targetFile = {
+      src: {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'the-module',
+        family: 'page',
+        relative: 'the-page.adoc',
+      },
+    }
+    const contentCatalog = mockContentCatalog(targetFile)
+    const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
+    const result = resolveResource(targetPageIdSpec, contentCatalog, context, ['page'], 'page')
+    expect(contentCatalog.getById).to.have.been.called.with(targetFile.src)
+    expect(result).to.exist()
+  })
+
+  it('should require family to be set if default family is null', () => {
+    const targetFile = {
+      src: {
+        component: 'the-component',
+        version: '1.2.3',
+        module: 'the-module',
+        family: 'page',
+        relative: 'the-page.adoc',
+      },
+    }
+    const contentCatalog = mockContentCatalog(targetFile)
+    const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
+    const result = resolveResource(targetPageIdSpec, contentCatalog, undefined, undefined, null)
     expect(contentCatalog.getById).to.not.have.been.called()
     expect(result).to.be.undefined()
   })

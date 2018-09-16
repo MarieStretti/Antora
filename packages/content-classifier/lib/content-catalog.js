@@ -210,8 +210,8 @@ class ContentCatalog {
     return resolveResource(spec, this, context, ['page'])
   }
 
-  resolveResource (spec, context = {}, families = undefined) {
-    return resolveResource(spec, this, context, families)
+  resolveResource (spec, context = {}, permittedFamilies = undefined, defaultFamily = undefined) {
+    return resolveResource(spec, this, context, permittedFamilies, defaultFamily)
   }
 
   [$generateId] ({ component, version, module, family, relative }) {

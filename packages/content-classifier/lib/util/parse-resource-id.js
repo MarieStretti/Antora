@@ -15,28 +15,27 @@ const RESOURCE_ID_RX_GROUP = { version: 1, component: 2, module: 3, family: 4, r
  *
  * * If a component is specified, but not a version, the version remains undefined.
  * * If a component is specified, but not a module, the module defaults to "ROOT".
- * * If the family is not specified, and families are not specified, the family defaults to "page".
+ * * If the family is not specified, the default family is used.
  *
  * @memberof content-classifier
  *
- * @param {String} spec - The contextual resource ID spec (e.g.,
- *   version@component:module:family$relative).
+ * @param {String} spec - The contextual resource ID spec (e.g., version@component:module:family$relative).
  * @param {Object} [ctx={}] - The src context.
- * @param {Array} families - A list of permitted families. If specified, the first entry is used
- *   as the default family if no family is specified in the spec.
+ * @param {Array<String>} [permittedFamilies=undefined] - An optional array of permitted family names.
+ * @param {String} [defaultFamily='page'] - The default family to use if family is not specified in spec.
  *
  * @returns {Object} A resource ID object that can be used to look up the file in the content
- * catalog. If the spec is malformed, or the family is unrecognized, this function returns undefined.
+ * catalog. If the spec is malformed, the return value is undefined.
  */
-function parseResourceId (spec, ctx = {}, families = undefined) {
+function parseResourceId (spec, ctx = {}, permittedFamilies = undefined, defaultFamily = 'page') {
   const match = spec.match(RESOURCE_ID_RX)
   if (!match) return
 
   let family = match[RESOURCE_ID_RX_GROUP.family]
   if (family) {
-    if (families && !families.includes(family)) family = undefined
+    if (permittedFamilies && !permittedFamilies.includes(family)) family = undefined
   } else {
-    family = families ? families[0] : 'page'
+    family = defaultFamily
   }
 
   let version = match[RESOURCE_ID_RX_GROUP.version]

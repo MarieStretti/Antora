@@ -15,6 +15,7 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* *content-classifier*: Add default family argument to parseResourceId and resolveResource functions
 * *asciidoc-loader*: Assign global built-in attributes in resolveConfig instead of loadAsciiDoc
 
 === Fixed
