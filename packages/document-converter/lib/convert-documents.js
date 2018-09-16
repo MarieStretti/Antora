@@ -25,3 +25,4 @@ function convertDocuments (contentCatalog, asciidocConfig = {}) {
 }
 
 module.exports = convertDocuments
+module.exports.convertDocument = convertDocument

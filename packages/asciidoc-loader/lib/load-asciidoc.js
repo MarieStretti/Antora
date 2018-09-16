@@ -38,20 +38,6 @@ const { EXAMPLES_DIR_TOKEN, PARTIALS_DIR_TOKEN } = require('./constants')
  * @returns {Document} An Asciidoctor Document object created from the source of the specified file.
  */
 function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
-  if (!config) config = {}
-  const envAttrs = {
-    env: 'site',
-    'env-site': '',
-    'site-gen': 'antora',
-    'site-gen-antora': '',
-  }
-  const defaultAttrs = {
-    'attribute-missing': 'warn',
-    'data-uri': null,
-    icons: 'font',
-    sectanchors: '',
-    'source-highlighter': 'highlight.js',
-  }
   const fileSrc = file.src
   const intrinsicAttrs = {
     docname: fileSrc.stem,
@@ -65,7 +51,7 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     partialsdir: PARTIALS_DIR_TOKEN,
   }
   const pageAttrs = fileSrc.family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : {}
-  const attributes = Object.assign({}, envAttrs, defaultAttrs, config.attributes, intrinsicAttrs, pageAttrs)
+  const attributes = Object.assign({}, config.attributes, intrinsicAttrs, pageAttrs)
   const relativizePageRefs = config.relativizePageRefs !== false
   const converter = createConverter({
     onPageRef: (refSpec, content) => convertPageRef(refSpec, content, file, contentCatalog, relativizePageRefs),
@@ -89,7 +75,7 @@ function computePageAttrs (fileSrc, contentCatalog) {
   const attrs = {}
   // QUESTION should we soft set the page-id attribute?
   attrs['page-component-name'] = fileSrc.component
-  attrs['page-component-version'] = fileSrc.version
+  attrs['page-component-version'] = attrs['page-version'] = fileSrc.version
   const component = contentCatalog && contentCatalog.getComponent(fileSrc.component)
   if (component) attrs['page-component-title'] = component.title
   attrs['page-module'] = fileSrc.module
@@ -115,22 +101,41 @@ function computePageAttrs (fileSrc, contentCatalog) {
  * Resolves a global AsciiDoc configuration object from data in the playbook.
  *
  * Reads data from the asciidoc category of the playbook and resolves it into a global AsciiDoc configuration object
- * that can be used by the loadAsciiDoc function. This configuration object is a shallow clone of the data in the
- * playbook. The main purpose of this function is to resolve extension references in the playbook to extension
+ * that can be used by the loadAsciiDoc function. This configuration object consists of built-in attributes as well as a
+ * shallow clone of the data from the asciidoc category in the playbook.
+ *
+ * The main purpose of this function is to resolve extension references in the playbook to extension
  * functions. If the extension is scoped, the function is stored in this object. If the extension is global, it is
  * registered with the global extension registry, then discarded.
  *
  * @memberof asciidoc-loader
  *
- * @param {Object} playbook - The configuration object for Antora.
+ * @param {Object} playbook - The configuration object for Antora (default: {}).
  * @param {Object} playbook.asciidoc - The AsciiDoc configuration data in the playbook.
  *
  * @returns {Object} A resolved configuration object to be used by the loadAsciiDoc function.
  */
-function resolveConfig (playbook) {
-  if (!playbook.asciidoc) return {}
-  const config = Object.assign({}, playbook.asciidoc)
+function resolveConfig (playbook = {}) {
+  const attributes = {
+    env: 'site',
+    'env-site': '',
+    'site-gen': 'antora',
+    'site-gen-antora': '',
+    'attribute-missing': 'warn',
+    'data-uri': null,
+    icons: 'font',
+    sectanchors: '',
+    'source-highlighter': 'highlight.js',
+  }
+  if (playbook.site) {
+    const site = playbook.site
+    if (site.title) attributes['site-title'] = site.title
+    if (site.url) attributes['site-url'] = site.url
+  }
+  const config = { attributes }
+  if (!playbook.asciidoc) return config
   // TODO process !name attributes
+  Object.assign(config, playbook.asciidoc, { attributes: Object.assign(attributes, playbook.asciidoc.attributes) })
   if (config.extensions && config.extensions.length) {
     const extensions = config.extensions.reduce((accum, extensionPath) => {
       if (extensionPath.charAt() === '.' && DOT_RELATIVE_RX.test(extensionPath)) {

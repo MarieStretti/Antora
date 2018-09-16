@@ -3,14 +3,24 @@
 
 const { expect, expectCalledWith, heredoc, spy } = require('../../../test/test-utils')
 
-const convertDocument = require('@antora/document-converter/lib/convert-document')
+const { convertDocument } = require('@antora/document-converter')
+const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
 
 describe('convertDocument()', () => {
   let inputFile
+  let playbook
+  let asciidocConfig
 
   const expectPageLink = (html, url, content) => expect(html).to.include(`<a href="${url}" class="page">${content}</a>`)
 
   beforeEach(() => {
+    playbook = {
+      site: {
+        title: 'Docs',
+        url: 'https://docs.example.org',
+      },
+    }
+    asciidocConfig = resolveAsciiDocConfig(playbook)
     inputFile = {
       path: 'modules/module-a/pages/page-a.adoc',
       dirname: 'modules/module-a/pages',
@@ -50,7 +60,7 @@ describe('convertDocument()', () => {
 
       image::screenshot.png[]
     `)
-    convertDocument(inputFile)
+    convertDocument(inputFile, undefined, asciidocConfig)
     expect(inputFile.mediaType).to.equal('text/html')
     expect(inputFile.contents.toString()).to.equal(heredoc`
       <div class="sect1">
@@ -82,13 +92,26 @@ describe('convertDocument()', () => {
     `)
   })
 
+  it('should convert file using default settings if AsciiDoc config is not specified', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      == Heading
+
+      NOTE: Icons not enabled.
+    `)
+    convertDocument(inputFile)
+    expect(inputFile.asciidoc).to.exist()
+    const contents = inputFile.contents.toString()
+    expect(contents).to.include('<h2 id="_heading">Heading</h2>')
+    expect(contents).to.not.include('<i class="fa')
+  })
+
   it('should set formatted document title to asciidoc.doctitle property on file object', () => {
     inputFile.contents = Buffer.from(heredoc`
       = _Awesome_ Document Title
 
       article contents
     `)
-    convertDocument(inputFile)
+    convertDocument(inputFile, undefined, asciidocConfig)
     expect(inputFile.asciidoc).to.exist()
     expect(inputFile.asciidoc.doctitle).to.equal('<em>Awesome</em> Document Title')
   })
@@ -97,7 +120,7 @@ describe('convertDocument()', () => {
     inputFile.contents = Buffer.from(heredoc`
       article contents only
     `)
-    convertDocument(inputFile)
+    convertDocument(inputFile, undefined, asciidocConfig)
     expect(inputFile.asciidoc).to.exist()
     expect(inputFile.asciidoc.doctitle).to.not.exist()
   })
@@ -109,7 +132,7 @@ describe('convertDocument()', () => {
 
       article contents
     `)
-    convertDocument(inputFile)
+    convertDocument(inputFile, undefined, asciidocConfig)
     expect(inputFile.asciidoc).to.exist()
     const attrs = inputFile.asciidoc.attributes
     expect(attrs).to.exist()
@@ -127,15 +150,16 @@ describe('convertDocument()', () => {
 
       Get there in a flash with {product-name}.
     `)
-    const attributes = {
+    const customAttributes = {
       'product-name': 'Hi-Speed Tonic',
       'source-highlighter': 'html-pipeline',
     }
-    convertDocument(inputFile, undefined, { attributes })
-    expect(inputFile.contents.toString()).to.include(attributes['product-name'])
+    Object.assign(asciidocConfig.attributes, customAttributes)
+    convertDocument(inputFile, undefined, asciidocConfig)
+    expect(inputFile.contents.toString()).to.include(customAttributes['product-name'])
     expect(inputFile.asciidoc).to.exist()
     expect(inputFile.asciidoc.attributes).to.exist()
-    expect(inputFile.asciidoc.attributes).to.include(attributes)
+    expect(inputFile.asciidoc.attributes).to.include(customAttributes)
   })
 
   it('should register aliases defined by page-aliases document attribute', () => {
@@ -146,7 +170,7 @@ describe('convertDocument()', () => {
       Page content.
     `)
     const contentCatalog = { registerPageAlias: spy(() => {}), getComponent: () => {} }
-    convertDocument(inputFile, contentCatalog)
+    convertDocument(inputFile, contentCatalog, asciidocConfig)
     expect(contentCatalog.registerPageAlias).to.have.been.called.exactly(4)
     expectCalledWith(contentCatalog.registerPageAlias, ['the-alias.adoc', inputFile], 0)
     expectCalledWith(contentCatalog.registerPageAlias, ['topic/the-alias', inputFile], 1)
@@ -162,7 +186,7 @@ describe('convertDocument()', () => {
       Page content.
     `)
     const contentCatalog = { registerPageAlias: spy(() => {}), getComponent: () => {} }
-    convertDocument(inputFile, contentCatalog)
+    convertDocument(inputFile, contentCatalog, asciidocConfig)
     expect(contentCatalog.registerPageAlias).to.not.have.been.called()
   })
 
@@ -174,7 +198,7 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { resolvePage: spy(() => targetFile), getComponent: () => {} }
-    convertDocument(inputFile, contentCatalog)
+    convertDocument(inputFile, contentCatalog, asciidocConfig)
     expectCalledWith(contentCatalog.resolvePage, ['module-b:page-b', inputFile.src])
     expectPageLink(inputFile.contents.toString(), '../module-b/page-b.html', 'Page B')
   })
@@ -196,7 +220,7 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getById: spy(() => partialFile), getComponent: () => {} }
-    convertDocument(inputFile, contentCatalog)
+    convertDocument(inputFile, contentCatalog, asciidocConfig)
     expectCalledWith(contentCatalog.getById, {
       component: 'component-a',
       version: '1.2.3',
@@ -244,8 +268,8 @@ describe('convertDocument()', () => {
       },
     }
     const contentCatalog = { getByPath: spy(() => includedFile), getComponent: () => {} }
-    convertDocument(includedFile)
-    convertDocument(inputFile, contentCatalog)
+    convertDocument(includedFile, undefined, asciidocConfig)
+    convertDocument(inputFile, contentCatalog, asciidocConfig)
     expectCalledWith(contentCatalog.getByPath, {
       component: 'component-a',
       version: '1.2.3',
