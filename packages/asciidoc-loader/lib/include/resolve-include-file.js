@@ -4,6 +4,7 @@ const { posix: path } = require('path')
 const splitOnce = require('../util/split-once')
 
 const { EXAMPLES_DIR_TOKEN, PARTIALS_DIR_TOKEN } = require('../constants')
+const RESOURCE_ID_DETECTOR_RX = /[$:@]/
 
 /**
  * Resolves the specified include target to a virtual file in the content catalog.
@@ -23,7 +24,8 @@ function resolveIncludeFile (target, page, cursor, catalog) {
   let family
   let relative
   let placeholder
-  if (~target.indexOf('$')) {
+  if (RESOURCE_ID_DETECTOR_RX.test(target)) {
+    // NOTE support legacy {partialsdir} and {examplesdir} prefixes (same as resource ID w/ only family and relative)
     if (target.startsWith(PARTIALS_DIR_TOKEN) || target.startsWith(EXAMPLES_DIR_TOKEN)) {
       ;[family, relative] = splitOnce(target, '$')
       if (relative.charAt() === '/') {
@@ -37,8 +39,9 @@ function resolveIncludeFile (target, page, cursor, catalog) {
         family,
         relative,
       })
-    } else {
-      resolved = catalog.resolveResource(target, { component: ctx.component, version: ctx.version, module: ctx.module })
+      // NOTE require family segment for now
+    } else if (~target.indexOf('$')) {
+      resolved = catalog.resolveResource(target, selectResourceId(ctx))
     }
   } else {
     resolved = catalog.getByPath({
@@ -67,6 +70,10 @@ function resolveIncludeFile (target, page, cursor, catalog) {
       contents: `+include::${placeholder ? '{' + family + 'sdir}/' + relative : target}[]+`,
     }
   }
+}
+
+function selectResourceId ({ component, version, module, family, relative }) {
+  return { component, version, module, family, relative }
 }
 
 module.exports = resolveIncludeFile
