@@ -12,6 +12,7 @@ Antora sets the following attributes for each page:
 `page-component-name`:: The name of the component as specified in _antora.yml_.
 `page-component-version`:: The version of the component as specified in _antora.yml_.
 `page-component-title`:: The title (aka display name) of the component as specified in  _antora.yml_.
+`page-version`:: Shorthand for `page-component-version` (since Antora 1.1.1).
 `page-module`:: The name of the module where the page is located.
 `page-relative`:: The family-relative source path of the page.
 `page-origin-type`:: The content source type (e.g., git).
