@@ -4,6 +4,7 @@
 const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
 
 const loadAsciiDoc = require('@antora/asciidoc-loader')
+const { resolveConfig } = loadAsciiDoc
 const mockContentCatalog = require('../../../test/mock-content-catalog')
 const ospath = require('path')
 
@@ -89,7 +90,7 @@ describe('loadAsciiDoc()', () => {
   describe('attributes', () => {
     it('should assign built-in and Antora integration attributes on document', () => {
       setInputFileContents('= Document Title')
-      const doc = loadAsciiDoc(inputFile)
+      const doc = loadAsciiDoc(inputFile, undefined, resolveConfig())
       expect(doc.getBaseDir()).to.equal('modules/module-a/pages')
       expect(doc.getAttributes()).to.include({
         // env
@@ -132,7 +133,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'topic-a/page-a.adoc',
         contents: '= Document Title',
       }).getFiles()[0]
-      const doc = loadAsciiDoc(inputFile)
+      const doc = loadAsciiDoc(inputFile, undefined, resolveConfig())
       expect(doc.getAttributes()).to.include({
         imagesdir: '../_images',
         attachmentsdir: '../_attachments',
@@ -236,50 +237,42 @@ describe('loadAsciiDoc()', () => {
 
     it('should assign site-url attribute if site url is set in playbook', () => {
       setInputFileContents('= Document Title')
-      const config = {
+      const playbook = {
         site: {
           url: 'https://docs.example.org',
         },
-        attributes: {
-          'attribute-missing': 'skip',
-          icons: '',
-          idseparator: '-',
-          'source-highlighter': 'html-pipeline',
+        asciidoc: {
+          attributes: {
+            'attribute-missing': 'skip',
+            icons: '',
+            idseparator: '-',
+            'source-highlighter': 'html-pipeline',
+          },
         },
       }
-      const doc = loadAsciiDoc(inputFile, undefined, config)
-      expect(doc.getAttributes()).to.include({ ...config.attributes, 'site-url': 'https://docs.example.org' })
+      const doc = loadAsciiDoc(inputFile, undefined, resolveConfig(playbook))
+      const expectedAttributes = { ...playbook.asciidoc.attributes, 'site-url': 'https://docs.example.org' }
+      expect(doc.getAttributes()).to.include(expectedAttributes)
     })
 
     it('should assign site-title attribute if site title is set in playbook', () => {
       setInputFileContents('= Document Title')
-      const config = {
+      const playbook = {
         site: {
           title: 'Docs',
         },
-        attributes: {
-          'attribute-missing': 'skip',
-          icons: '',
-          idseparator: '-',
-          'source-highlighter': 'html-pipeline',
+        asciidoc: {
+          attributes: {
+            'attribute-missing': 'skip',
+            icons: '',
+            idseparator: '-',
+            'source-highlighter': 'html-pipeline',
+          },
         },
       }
-      const doc = loadAsciiDoc(inputFile, undefined, config)
-      expect(doc.getAttributes()).to.include({ ...config.attributes, 'site-title': 'Docs' })
-    })
-
-    it('should not fail if config is null', () => {
-      setInputFileContents('= Document Title')
-      const doc1 = loadAsciiDoc(inputFile)
-      const doc2 = loadAsciiDoc(inputFile, undefined, null)
-      expect(doc1.getAttributes().length).to.eql(doc2.getAttributes().length)
-    })
-
-    it('should not fail if custom attributes are null', () => {
-      setInputFileContents('= Document Title')
-      const doc1 = loadAsciiDoc(inputFile)
-      const doc2 = loadAsciiDoc(inputFile, undefined, { attributes: null })
-      expect(doc1.getAttributes().length).to.eql(doc2.getAttributes().length)
+      const doc = loadAsciiDoc(inputFile, undefined, resolveConfig(playbook))
+      const expectedAttributes = { ...playbook.asciidoc.attributes, 'site-title': 'Docs' }
+      expect(doc.getAttributes()).to.include(expectedAttributes)
     })
 
     it('should not allow custom attributes to override intrinsic attributes', () => {
@@ -2040,16 +2033,27 @@ describe('loadAsciiDoc()', () => {
   })
 
   describe('resolveConfig()', () => {
-    it('should return empty config if site and asciidoc categories are not set in playbook', () => {
-      const playbook = {}
-      const config = loadAsciiDoc.resolveConfig(playbook)
-      expect(config).to.eql({})
+    it('should return config with built-in attributes if site and asciidoc categories not set in playbook', () => {
+      const config = resolveConfig()
+      expect(config.attributes).to.exist()
+      expect(config.attributes).to.include({
+        env: 'site',
+        'site-gen': 'antora',
+        'attribute-missing': 'warn',
+      })
+      expect(config.attributes['site-title']).to.not.exist()
+      expect(config.attributes['site-url']).to.not.exist()
+      expect(config.extensions).to.not.exist()
     })
 
-    it('should return config with only site if asciidoc category is not set in playbook', () => {
+    it('should return config with attributes for site title and url if set in playbook', () => {
       const playbook = { site: { url: 'https://docs.example.org', title: 'Docs' }, ui: {} }
-      const config = loadAsciiDoc.resolveConfig(playbook)
-      expect(config).to.eql({ site: Object.assign({}, playbook.site) })
+      const config = resolveConfig(playbook)
+      expect(config.attributes).to.exist()
+      expect(config.attributes).to.include({
+        'site-title': 'Docs',
+        'site-url': 'https://docs.example.org',
+      })
     })
 
     it('should return a copy of the asciidoc category in the playbook', () => {
@@ -2061,26 +2065,27 @@ describe('loadAsciiDoc()', () => {
           },
         },
       }
-      const config = loadAsciiDoc.resolveConfig(playbook)
+      const config = resolveConfig(playbook)
       expect(config).to.not.equal(playbook.asciidoc)
-      expect(config).to.eql(playbook.asciidoc)
+      expect(config.attributes).to.not.equal(playbook.asciidoc.attributes)
+      expect(config.attributes).to.include(playbook.asciidoc.attributes)
     })
 
     it('should not load extensions if extensions are not defined', () => {
       const playbook = { asciidoc: {} }
-      const config = loadAsciiDoc.resolveConfig(playbook)
-      expect(config).to.eql({})
+      const config = resolveConfig(playbook)
+      expect(config.extensions).to.not.exist()
     })
 
     it('should not load extensions if extensions are empty', () => {
       const playbook = { asciidoc: { extensions: [] } }
-      const config = loadAsciiDoc.resolveConfig(playbook)
-      expect(config).to.eql({})
+      const config = resolveConfig(playbook)
+      expect(config.extensions).to.not.exist()
     })
 
     it('should load scoped extension into config but not register it globally', () => {
       const playbook = { asciidoc: { extensions: [ospath.resolve(FIXTURES_DIR, 'ext/scoped-shout-block.js')] } }
-      const config = loadAsciiDoc.resolveConfig(playbook)
+      const config = resolveConfig(playbook)
       expect(config.extensions).to.exist()
       expect(config.extensions).to.have.lengthOf(1)
       expect(config.extensions[0]).to.be.instanceOf(Function)
@@ -2091,7 +2096,7 @@ describe('loadAsciiDoc()', () => {
 
     it('should load global extension and register it globally', () => {
       const playbook = { asciidoc: { extensions: [ospath.resolve(FIXTURES_DIR, 'ext/global-shout-block.js')] } }
-      const config = loadAsciiDoc.resolveConfig(playbook)
+      const config = resolveConfig(playbook)
       expect(config.extensions).to.not.exist()
       const Extensions = Asciidoctor.Extensions
       const extensionGroupNames = Object.keys(Extensions.getGroups())
@@ -2101,8 +2106,8 @@ describe('loadAsciiDoc()', () => {
 
     it('should only register a global extension once', () => {
       const playbook = { asciidoc: { extensions: [ospath.resolve(FIXTURES_DIR, 'ext/global-shout-block.js')] } }
-      loadAsciiDoc.resolveConfig(playbook)
-      loadAsciiDoc.resolveConfig(playbook)
+      resolveConfig(playbook)
+      resolveConfig(playbook)
       const Extensions = Asciidoctor.Extensions
       const extensionGroupNames = Object.keys(Extensions.getGroups())
       expect(extensionGroupNames).to.have.lengthOf(1)
@@ -2116,7 +2121,7 @@ describe('loadAsciiDoc()', () => {
           extensions: ['./ext/scoped-shout-block.js'],
         },
       }
-      const config = loadAsciiDoc.resolveConfig(playbook)
+      const config = resolveConfig(playbook)
       expect(config.extensions).to.exist()
       expect(config.extensions).to.have.lengthOf(1)
       expect(config.extensions[0]).to.be.instanceOf(Function)
@@ -2129,7 +2134,7 @@ describe('loadAsciiDoc()', () => {
           extensions: ['lorem-block-macro'],
         },
       }
-      const config = loadAsciiDoc.resolveConfig(playbook)
+      const config = resolveConfig(playbook)
       expect(config.extensions).to.exist()
       expect(config.extensions).to.have.lengthOf(1)
       expect(config.extensions[0]).to.be.instanceOf(Function)
@@ -2146,7 +2151,7 @@ describe('loadAsciiDoc()', () => {
           ],
         },
       }
-      const config = loadAsciiDoc.resolveConfig(playbook)
+      const config = resolveConfig(playbook)
       expect(config.extensions).to.exist()
       expect(config.extensions).to.have.lengthOf(2)
       expect(config.extensions[0]).to.be.instanceOf(Function)

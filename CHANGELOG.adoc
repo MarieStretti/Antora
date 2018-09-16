@@ -12,6 +12,10 @@ This project utilizes semantic versioning.
 * *page-composer*: Make latest page version accessible from UI model (#307)
 * *asciidoc-loader*: Assign site-url and site-title AsciiDoc attributes if url and title are set in playbook, respectively (#304)
 
+=== Changed
+
+* *asciidoc-loader*: Assign global built-in attributes in resolveConfig instead of loadAsciiDoc
+
 === Fixed
 
 * *asciidoc-loader*: Fixed memory leak caused by Asciidoctor converter extension (#306)

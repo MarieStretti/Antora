@@ -4,6 +4,7 @@
 const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
 
 const buildNavigation = require('@antora/navigation-builder')
+const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
 const mockContentCatalog = require('../../../test/mock-content-catalog')
 
 describe('buildNavigation()', () => {
@@ -90,9 +91,7 @@ describe('buildNavigation()', () => {
     const contentCatalog = mockContentCatalog([
       {
         family: 'nav',
-
         relative: 'nav.adoc',
-
         contents: navContentsA,
         navIndex: 0,
       },
@@ -427,19 +426,28 @@ describe('buildNavigation()', () => {
   it('should be able to reference global attributes from AsciiDoc config', () => {
     const navContents = heredoc`
       .xref:index.adoc[{product-name}]
+      * {site-url}[{site-title}]
       // a comment about this preprocessor conditional
       ifdef::go-live[]
       * {uri-console}
       endif::[]
       * {uri-project}[{project-name}]
     `
-    const attributes = {
-      'hide-uri-scheme': '',
-      'go-live': '',
-      'product-name': 'Z Product',
-      'project-name': 'Z Project',
-      'uri-console': 'https://z-product.example.com/console',
-      'uri-project': 'https://z-project.example.com',
+    const playbook = {
+      site: {
+        title: 'Docs',
+        url: 'https://docs.example.org',
+      },
+      asciidoc: {
+        attributes: {
+          'hide-uri-scheme': '',
+          'go-live': '',
+          'product-name': 'Z Product',
+          'project-name': 'Z Project',
+          'uri-console': 'https://z-product.example.com/console',
+          'uri-project': 'https://z-project.example.com',
+        },
+      },
     }
     const contentCatalog = mockContentCatalog([
       {
@@ -450,7 +458,7 @@ describe('buildNavigation()', () => {
       },
       { family: 'page', relative: 'index.adoc' },
     ])
-    const navCatalog = buildNavigation(contentCatalog, { attributes })
+    const navCatalog = buildNavigation(contentCatalog, resolveAsciiDocConfig(playbook))
     const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -460,6 +468,11 @@ describe('buildNavigation()', () => {
       url: '/component-a/module-a/index.html',
       urlType: 'internal',
       items: [
+        {
+          content: 'Docs',
+          url: 'https://docs.example.org',
+          urlType: 'external',
+        },
         {
           content: 'z-product.example.com/console',
           url: 'https://z-product.example.com/console',
@@ -1214,7 +1227,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'index.adoc' },
       { family: 'page', relative: 'basics/requirements.adoc' },
     ]).spyOn('getById')
-    const navCatalog = buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog, resolveAsciiDocConfig())
     expectCalledWith(contentCatalog.getById, [
       {
         component: 'component-a',
@@ -1263,7 +1276,7 @@ describe('buildNavigation()', () => {
       { family: 'page', relative: 'intermediate/index.adoc' },
       { family: 'page', relative: 'intermediate/redirects.adoc' },
     ]).spyOn('getById')
-    const navCatalog = buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog, resolveAsciiDocConfig())
     expectCalledWith(contentCatalog.getById, [
       {
         component: 'component-a',
@@ -1314,7 +1327,7 @@ describe('buildNavigation()', () => {
       { module: 'advanced', family: 'page', relative: 'index.adoc' },
       { module: 'advanced', family: 'page', relative: 'caching.adoc' },
     ]).spyOn('getById')
-    const navCatalog = buildNavigation(contentCatalog)
+    const navCatalog = buildNavigation(contentCatalog, resolveAsciiDocConfig())
     expectCalledWith(contentCatalog.getById, [
       {
         component: 'component-a',
