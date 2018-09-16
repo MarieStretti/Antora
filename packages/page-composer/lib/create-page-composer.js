@@ -215,17 +215,23 @@ function getPageVersions (pageSrc, component, contentCatalog) {
     family: 'page',
     relative: pageSrc.relative,
   }
-  return Object.defineProperty(component.versions.map((componentVersion) => {
-    const page = contentCatalog.getById(Object.assign({ version: componentVersion.version }, basePageId))
-    // QUESTION should title be title of component or page?
-    return Object.assign(
-      componentVersion === component.latest ? { latest: true } : {},
-      componentVersion,
-      page ? { url: page.pub.url } : { missing: true }
-    )
-  }), 'latest', {
-    get () { return this.find((candidate) => candidate.latest) },
-  })
+  return Object.defineProperty(
+    component.versions.map((componentVersion) => {
+      const page = contentCatalog.getById(Object.assign({ version: componentVersion.version }, basePageId))
+      // QUESTION should title be title of component or page?
+      return Object.assign(
+        componentVersion === component.latest ? { latest: true } : {},
+        componentVersion,
+        page ? { url: page.pub.url } : { missing: true }
+      )
+    }),
+    'latest',
+    {
+      get () {
+        return this.find((candidate) => candidate.latest)
+      },
+    }
+  )
 }
 
 module.exports = createPageComposer
