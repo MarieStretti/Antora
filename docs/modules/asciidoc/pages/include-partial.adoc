@@ -68,25 +68,25 @@ If you want the partial contents to be a standalone block, make sure there's a b
 
 == Include a partial from another module
 
-When the partial file and the page file are in the same component, but different modules, enter the partial's module, family (`partial$`), and the name of the partial file.
+When the partial file and the page file are in the same component, but different modules, enter the partial's module, family (`partial$`), and the filename of the partial.
 
 ----
-\include::security:partial$mode-definitions.adoc[]
+\include::security:partial$defs.adoc[]
 ----
 
 == Include a partial from another component
 
-When the partial file and the page file belong to different components, enter the partial's component, module, family (`partial$`), and the name of the partial file.
+When the partial file and the page file belong to different components, enter the partial's component, module, family (`partial$`), and the filename of the partial.
 
 ----
-\include::catalog::partial$ref/definitions.adoc[]
+\include::catalog::partial$defs.adoc[]
 ----
 
 When including a partial from another component, the include directive will use the partial file from the latest stable version of the component unless you specify a version coordinate.
-In the next example, the page will include the partial from the 2.0 version of the catalog component.
+In the next example, the page will include the partial specifically from the 2.0 version of the catalog component.
 
 ----
-\include::2.0@catalog::partial$ref/definitions.adoc[]
+\include::2.0@catalog::partial$defs.adoc[]
 ----
 
 //== Include a tagged region from a partial
