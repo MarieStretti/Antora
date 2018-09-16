@@ -90,8 +90,8 @@ function mockContentCatalog (seed = []) {
     resolvePage: function (spec, ctx = {}) {
       return resolveResource(spec, this, ctx, ['page'])
     },
-    resolveResource: function (spec, ctx = {}, families = undefined) {
-      return resolveResource(spec, this, ctx, families)
+    resolveResource: function (spec, ctx = {}, permittedFamilies = undefined, defaultFamily = undefined) {
+      return resolveResource(spec, this, ctx, permittedFamilies, defaultFamily)
     },
     spyOn: function (...names) {
       names.forEach((name) => (this[name] = spy(this[name])))

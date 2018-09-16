@@ -10,6 +10,19 @@ describe('parseResourceId()', () => {
     expect(parseResourceId('invalid-syntax::')).to.be.undefined()
   })
 
+  it('should parse a qualified resource ID', () => {
+    const input = '1.0@the-component:the-module:example$ruby/hello.rb'
+    const expected = {
+      version: '1.0',
+      component: 'the-component',
+      module: 'the-module',
+      family: 'example',
+      relative: 'ruby/hello.rb',
+    }
+    const result = parseResourceId(input)
+    expect(result).to.eql(expected)
+  })
+
   it('should parse a qualified page ID with file extension', () => {
     const input = '1.0@the-component:the-module:the-topic/the-page.adoc'
     const expected = {
@@ -126,9 +139,11 @@ describe('parseResourceId()', () => {
       component: 'ctx-component',
       version: '1.1',
       module: 'ctx-module',
+      family: 'page',
+      relative: 'the-page.adoc',
     }
     const result = parseResourceId(inputSpec, inputCtx)
-    expect(result).to.include(expected)
+    expect(result).to.eql(expected)
   })
 
   it('should not replace specified values with values in context', () => {
@@ -142,10 +157,11 @@ describe('parseResourceId()', () => {
       component: 'the-component',
       version: '1.0',
       module: 'the-module',
+      family: 'page',
       relative: 'the-page.adoc',
     }
     const result = parseResourceId(inputSpec, inputCtx)
-    expect(result).to.include(expected)
+    expect(result).to.eql(expected)
   })
 
   it('should not use values in context if component is specified', () => {
@@ -159,10 +175,11 @@ describe('parseResourceId()', () => {
       component: 'the-component',
       version: undefined,
       module: 'ROOT',
+      family: 'page',
       relative: 'the-page.adoc',
     }
     const result = parseResourceId(inputSpec, inputCtx)
-    expect(result).to.include(expected)
+    expect(result).to.eql(expected)
   })
 
   it('should set family to page by default', () => {
@@ -185,7 +202,7 @@ describe('parseResourceId()', () => {
       relative: 'the-page.adoc',
     }
     const result = parseResourceId(inputSpec, inputCtx)
-    expect(result).to.include(expected)
+    expect(result).to.eql(expected)
   })
 
   it('should parse resource ID with module, family, and relative path', () => {
@@ -203,7 +220,7 @@ describe('parseResourceId()', () => {
       relative: 'the-page.adoc',
     }
     const result = parseResourceId(inputSpec, inputCtx)
-    expect(result).to.include(expected)
+    expect(result).to.eql(expected)
   })
 
   it('should parse resource ID with component, module, family, and relative path', () => {
@@ -221,7 +238,25 @@ describe('parseResourceId()', () => {
       relative: 'hello.rb',
     }
     const result = parseResourceId(inputSpec, inputCtx)
-    expect(result).to.include(expected)
+    expect(result).to.eql(expected)
+  })
+
+  it('should allow any family by default', () => {
+    const inputSpec = 'the-module:example$config.yml'
+    const inputCtx = {
+      component: 'ctx-component',
+      version: '1.1',
+      module: 'ctx-module',
+    }
+    const expected = {
+      component: 'ctx-component',
+      version: '1.1',
+      module: 'the-module',
+      family: 'example',
+      relative: 'config.yml',
+    }
+    const result = parseResourceId(inputSpec, inputCtx)
+    expect(result).to.eql(expected)
   })
 
   it('should leave family undefined if spec does not reference permitted family', () => {
@@ -229,7 +264,26 @@ describe('parseResourceId()', () => {
     expect(parseResourceId(inputSpec, undefined, ['page', 'partial', 'example']).family).to.be.undefined()
   })
 
-  it('should use first entry in families list as default family', () => {
+  it('should not use family from context if family not specified in ID', () => {
+    const inputSpec = 'the-module:the-page.adoc'
+    const inputCtx = {
+      component: 'ctx-component',
+      version: '1.1',
+      module: 'ctx-module',
+      family: 'image',
+    }
+    const expected = {
+      component: 'ctx-component',
+      version: '1.1',
+      module: 'the-module',
+      family: 'page',
+      relative: 'the-page.adoc',
+    }
+    const result = parseResourceId(inputSpec, inputCtx)
+    expect(result).to.eql(expected)
+  })
+
+  it('should use default family if family not defined in spec', () => {
     const inputSpec = 'the-module:dialog.png'
     const inputCtx = {
       component: 'ctx-component',
@@ -243,7 +297,13 @@ describe('parseResourceId()', () => {
       family: 'image',
       relative: 'dialog.png',
     }
-    const result = parseResourceId(inputSpec, inputCtx, ['image'])
-    expect(result).to.include(expected)
+    const result = parseResourceId(inputSpec, inputCtx, ['image'], 'image')
+    expect(result).to.eql(expected)
+  })
+
+  it('should not set family if default family is null and family not specified in spec', () => {
+    const inputSpec = 'the-module:dialog.png'
+    const result = parseResourceId(inputSpec, undefined, undefined, null)
+    expect(result.family).to.not.exist()
   })
 })
