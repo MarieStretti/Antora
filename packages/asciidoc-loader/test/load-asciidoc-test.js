@@ -115,6 +115,7 @@ describe('loadAsciiDoc()', () => {
         // page
         'page-component-name': 'component-a',
         'page-component-version': 'master',
+        'page-version': 'master',
         'page-module': 'module-a',
         'page-relative': 'page-a.adoc',
         // computed
@@ -149,7 +150,7 @@ describe('loadAsciiDoc()', () => {
       }).getFiles()[0]
       const doc = loadAsciiDoc(inputFile)
       expect(doc.getAttributes()).to.not.have.any.keys(
-        ...['page-component-name', 'page-component-version', 'page-module', 'page-relative']
+        ...['page-component-name', 'page-component-version', 'page-version', 'page-module', 'page-relative']
       )
     })
 
