@@ -19,15 +19,15 @@ This project utilizes semantic versioning.
 
 === Fixed
 
-* *asciidoc-loader*: Fixed memory leak caused by Asciidoctor converter extension (#306)
 * *content-classifier*: Allow a page alias to reference any component or component version (#303)
+* *asciidoc-loader*: Fix memory leak caused by Asciidoctor converter extension (#306)
 
 == 1.1.0 (2018-08-28)
 
 === Added
 
 * *content-aggregator*: Compute edit URLs for pages sourced from repositories hosted at pagure.io (#283)
-* *content-classifier*: Also look for partial files in the partials folder directly inside the module folder (in addition to pages/_partials) (#254)
+* *content-classifier*: Look for partial files in the partials folder directly under the module folder (in addition to pages/_partials) (#254)
 * *content-classifier*: Add additional methods to content catalog: getComponentsSortedBy(), getComponentMap(), getComponentMapSortedBy() (#253)
 * *content-classifier*: Add ContentCatalog#getComponentVersion(component, version) method (#287)
 * *content-classifier*: Allow display version to be set in component descriptor using `display_version` key; assign `displayVersion` property to component version object (#288)
