@@ -1,69 +1,79 @@
-= Include a Standard Page
+= Include a Page
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-tags: {url-adoc-manual}/#by-tagged-regions
 :url-leveloffset: {url-adoc-manual}/#include-partitioning
 
-You can insert a portion of or a whole portion of or a whole standard page into another standard page.
+You can insert one page, or a portion of that page, into another page using the include directive.
 
-== Set page-partial attribute
+== The page-partial attribute
 
-If you include a portion of or a whole standard page into another standard page, you *must* set the `page-partial` attribute in the header of the page being included.
+Before we get started, we need to talk about the `page-partial` attribute.
+If you plan to use a page as an include, you *must* define the `page-partial` attribute in the header of that page, as shown here:
 
 [source,asciidoc]
 ----
-= Page Title
+= Page Used as an Include
 :page-partial:
 
 Page contents.
 ----
 
-This attribute lets Antora know that you intend to insert all or a tagged range of the AsciiDoc source content into another standard page.
+This attribute declaration tells Antora to keep the source lines available so they can be used in an include.
 
-== Include directive structure for standard pages
+== Include directive structure for pages
 
-You can include one standalone page (or a portion of that page) into another using the familiar page ID syntax in the target of the include directive.
-Let's explore that syntax.
+You can include a page (or a portion of that page) into another page using either a relative path (a path relative to the current file) or the familiar resource ID syntax in the target of the include directive.
 
 ----
-\include::version@component:module:relative-path.adoc[optional attributes]
+\include::./relative-path.adoc[<attrlist>]
 ----
 
-. On a new line, enter the directive name followed by two colons, `include::`.
+or
+
+----
+\include::version@component:module:page$relative-path.adoc[<attrlist>]
+----
+
+Let's explore this syntax.
+
+. On a new line, enter the name of the directive followed by two colons.
 +
 [subs=+quotes]
 ----
-**include::**version@component:module:relative-path.adoc[optional attributes]
+**include::**version@component:module:page$relative-path.adoc[]
 ----
 
-. Enter the xref:page:page-id.adoc[page ID] of the target file.
-A page's resource coordinates are determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
+. Next, enter the relative path (starting with `./`) or the xref:page:page-id.adoc[resource ID] of the target file.
 +
+--
+A relative path must begin with `./`.
+
 [subs=+quotes]
 ----
-\include::**version@component:module:relative-path.adoc**[optional attributes]
+\include::**./relative-path.adoc**[]
 ----
 
-. The page ID may contain the `page$` family, but it is optional.
-+
+A page's resource ID is determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
+However, when used in an include directive, the resource ID must contain the `page$` family (since it supports multiple families).
+All other segments (component, version, and module) are optional and will inherit the context from the current file.
+
 [subs=+quotes]
 ----
-\include::version@component:module:**page$**relative-path.adoc[optional attributes]
+\include::**version@component:module:page$relative-path.adoc**[]
 ----
+--
 
 . Close the directive with a set of square brackets (`[]`).
-The brackets can contain an optional list of attributes such as `leveloffset` and `tags`.
+The brackets may contain an optional list of attributes (i.e., attrlist) such as `leveloffset`, `tag`, and `tags`.
 The attributes should be entered as key=value pairs separated by commas.
 +
 [subs=+quotes]
 ----
-include::version@component:module:relative-path.adoc**[optional attributes]**
+include::version@component:module:page$relative-path.adoc**[tag=definition]**
 ----
 
-NOTE: Currently, Antora only supports filtering includes by tags.
-
-//WARNING: It's a bug that the `page` family needs to be specified.
-//This bug will be fixed in a subsequent patch release.
+Currently, Antora only supports filtering lines of an include by tags, not by lines.
 
 == Learn more
 
