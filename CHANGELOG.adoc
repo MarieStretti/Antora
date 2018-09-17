@@ -9,19 +9,20 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *page-composer*: Make latest page version accessible from UI model (#307)
-* *asciidoc-loader*: Assign site-url and site-title AsciiDoc attributes if url and title are set in playbook, respectively (#304)
-* *asciidoc-loader*: Assign page-version attribute as alias for page-component-version
+* *page-composer*: Make latest page version accessible from UI model as `page.versions.latest` (#307)
+* *page-composer*: Set the `latest` property on the latest version in the `page.versions` collection in the UI model (#307)
+* *asciidoc-loader*: Assign `site-url` and `site-title` AsciiDoc attributes if site url and title are set in playbook, respectively (#304)
+* *asciidoc-loader*: Assign `page-version` AsciiDoc attribute as alias for `page-component-version` attribute
 
 === Changed
 
 * *content-classifier*: Add default family argument to parseResourceId and resolveResource functions
-* *asciidoc-loader*: Assign global built-in attributes in resolveConfig instead of loadAsciiDoc
+* *asciidoc-loader*: Assign site-wide built-in AsciiDoc attributes in resolveConfig instead of loadAsciiDoc
 * Upgrade dependencies
 
 === Fixed
 
-* *content-classifier*: Allow a page alias to reference any component or component version (#303)
+* *content-classifier*: Allow a page alias to reference any component or component version, regardless of whether they exist in the catalog (#303)
 * *asciidoc-loader*: Fix memory leak caused by Asciidoctor converter extension (#306)
 * *asciidoc-loader*: Fix memory leak causes by custom Asciidoctor extensions registered using the DSL
 * *asciidoc-loader*: Leave include unresolved if target matches resource ID but family segment is missing (#297)
