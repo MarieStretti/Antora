@@ -535,6 +535,42 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql([includeContents])
     })
 
+    it('should include target to specify family when target is reference to separate component', () => {
+      const includeContents = 'Hello, World!'
+      const contentCatalog = mockContentCatalog({
+        component: 'another-component',
+        version: '1.1',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('resolveResource')
+      setInputFileContents('include::1.1@another-component::greeting.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(contentCatalog.resolveResource).to.not.have.been.called()
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSource()).to.include('include::')
+    })
+
+    it('should include target to specify family when target is reference to separate version', () => {
+      const includeContents = 'Hello, World!'
+      const contentCatalog = mockContentCatalog({
+        version: '1.1',
+        family: 'page',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('resolveResource')
+      setInputFileContents('include::1.1@greeting.adoc[]')
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(contentCatalog.resolveResource).to.not.have.been.called()
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      expect(firstBlock.getSource()).to.include('include::')
+    })
+
     it('should resolve target of nested include relative to current file', () => {
       const outerIncludeContents = 'include::deeply/nested.adoc[]'
       const nestedIncludeContents = 'All that is nested is not lost.'
@@ -622,6 +658,8 @@ describe('loadAsciiDoc()', () => {
           component: inputFile.src.component,
           version: inputFile.src.version,
           module: inputFile.src.module,
+          family: 'page',
+          relative: 'page-a.adoc',
         },
       ])
       expectCalledWith(contentCatalog.getByPath, {
@@ -661,6 +699,8 @@ describe('loadAsciiDoc()', () => {
           component: inputFile.src.component,
           version: inputFile.src.version,
           module: inputFile.src.module,
+          family: 'page',
+          relative: 'page-a.adoc',
         },
       ])
       expectCalledWith(
@@ -671,6 +711,8 @@ describe('loadAsciiDoc()', () => {
             component: 'component-a',
             version: 'master',
             module: 'other-module',
+            family: 'partial',
+            relative: 'outer.adoc',
           },
         ],
         1
@@ -708,6 +750,8 @@ describe('loadAsciiDoc()', () => {
           component: inputFile.src.component,
           version: inputFile.src.version,
           module: inputFile.src.module,
+          family: 'page',
+          relative: 'page-a.adoc',
         },
       ])
       expectCalledWith(contentCatalog.getByPath, {
@@ -751,6 +795,8 @@ describe('loadAsciiDoc()', () => {
             component: inputFile.src.component,
             version: inputFile.src.version,
             module: inputFile.src.module,
+            family: 'page',
+            relative: 'page-a.adoc',
           },
         ],
         0
@@ -763,6 +809,8 @@ describe('loadAsciiDoc()', () => {
             component: 'component-b',
             version: 'master',
             module: 'ROOT',
+            family: 'partial',
+            relative: 'outer.adoc',
           },
         ],
         1
@@ -801,6 +849,8 @@ describe('loadAsciiDoc()', () => {
             component: inputFile.src.component,
             version: inputFile.src.version,
             module: inputFile.src.module,
+            family: 'page',
+            relative: 'page-a.adoc',
           },
         ],
         0
@@ -813,6 +863,8 @@ describe('loadAsciiDoc()', () => {
             component: 'component-b',
             version: 'master',
             module: 'ROOT',
+            family: 'partial',
+            relative: 'outer.adoc',
           },
         ],
         1
