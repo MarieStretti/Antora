@@ -7,6 +7,7 @@ if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF
 }
 
 const asciidoctor = require('asciidoctor.js')()
+const Extensions = asciidoctor.Extensions
 const convertPageRef = require('./xref/convert-page-ref')
 const createConverter = require('./converter/create')
 const createExtensionRegistry = require('./create-extension-registry')
@@ -16,6 +17,7 @@ const resolveIncludeFile = require('./include/resolve-include-file')
 
 const DOT_RELATIVE_RX = new RegExp(`^\\.{1,2}[/${ospath.sep.replace('/', '').replace('\\', '\\\\')}]`)
 const { EXAMPLES_DIR_TOKEN, PARTIALS_DIR_TOKEN } = require('./constants')
+const EXTENSION_DSL_TYPES = Extensions.$constants(false).filter((name) => name.endsWith('Dsl'))
 
 /**
  * Loads the AsciiDoc source from the specified file into a Document object.
@@ -59,16 +61,18 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
   const extensionRegistry = createExtensionRegistry(asciidoctor, {
     onInclude: (doc, target, cursor) => resolveIncludeFile(target, file, cursor, contentCatalog),
   })
-  if (config.extensions && config.extensions.length) {
-    const context = { file, contentCatalog, config }
-    config.extensions.forEach((extension) => extension.register(extensionRegistry, context))
+  const extensions = config.extensions || []
+  if (extensions.length) {
+    extensions.forEach((extension) => extension.register(extensionRegistry, { file, contentCatalog, config }))
   }
-  return asciidoctor.load(file.contents.toString(), {
+  const doc = asciidoctor.load(file.contents.toString(), {
     attributes,
     converter,
     extension_registry: extensionRegistry,
     safe: 'safe',
   })
+  if (extensions.length) freeExtensions()
+  return doc
 }
 
 function computePageAttrs (fileSrc, contentCatalog) {
@@ -149,9 +153,9 @@ function resolveConfig (playbook = {}) {
       const extension = require(extensionPath)
       if ('register' in extension) {
         accum.push(extension)
-      } else if (!isExtensionRegistered(extension, asciidoctor.Extensions)) {
+      } else if (!isExtensionRegistered(extension, Extensions)) {
         // QUESTION should we assign an antora-specific group name?
-        asciidoctor.Extensions.register(extension)
+        Extensions.register(extension)
       }
       return accum
     }, [])
@@ -168,6 +172,13 @@ function resolveConfig (playbook = {}) {
 
 function isExtensionRegistered (ext, registry) {
   return Object.values(registry.getGroups()).includes(ext)
+}
+
+/**
+ * Low-level operation to free objects from memory that have been weaved into an extension DSL module
+ */
+function freeExtensions () {
+  EXTENSION_DSL_TYPES.forEach((type) => (Opal.const_get_local(Extensions, type).$$included_in.length = 0))
 }
 
 module.exports = loadAsciiDoc
