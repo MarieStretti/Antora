@@ -23,6 +23,7 @@ This project utilizes semantic versioning.
 
 * *content-classifier*: Allow a page alias to reference any component or component version (#303)
 * *asciidoc-loader*: Fix memory leak caused by Asciidoctor converter extension (#306)
+* *asciidoc-loader*: Fix memory leak causes by custom Asciidoctor extensions registered using the DSL
 
 == 1.1.0 (2018-08-28)
 
