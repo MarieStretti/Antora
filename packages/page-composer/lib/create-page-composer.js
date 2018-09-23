@@ -160,11 +160,10 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     origin: file.src.origin,
     versions,
     navigation,
-    // QUESTION should we filter out component start page?
-    breadcrumbs: getBreadcrumbs(url, title, navigation),
     editUrl: file.src.editUrl,
     home: url === site.homeUrl,
   }
+  Object.assign(model, getNavContext(url, title, navigation))
 
   if (site.url) {
     // NOTE not always the same as the latest component version (since the page might cease to exist)
@@ -177,33 +176,66 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   return model
 }
 
-function getBreadcrumbs (pageUrl, pageTitle, navigation) {
-  for (let i = 0, numTrees = navigation.length; i < numTrees; i++) {
-    const breadcrumbs = findBreadcrumbPath(pageUrl, navigation[i])
-    if (breadcrumbs) return breadcrumbs
+function getNavContext (url, title, navigation) {
+  const navContext = { breadcrumbs: [] }
+  const { current, ancestors, previous, next } = findNavItem({ url, ancestors: [], seekNext: true }, navigation)
+  if (current) {
+    // QUESTION should we filter out component start page from the breadcrumbs?
+    const breadcrumbs = ancestors.filter((item) => 'content' in item)
+    const parent = breadcrumbs.find((item) => item.urlType === 'internal')
+    breadcrumbs.reverse().push(current)
+    navContext.breadcrumbs = breadcrumbs
+    if (parent) navContext.parent = parent
+    if (previous) navContext.previous = previous
+    if (next) navContext.next = next
+  } else if (title) {
+    navContext.breadcrumbs = [{ content: title, url, urlType: 'internal', discrete: true }]
   }
-  return pageTitle ? [{ content: pageTitle, url: pageUrl, urlType: 'internal', discrete: true }] : []
+  return navContext
 }
 
-function findBreadcrumbPath (matchUrl, currentItem, currentPath = []) {
-  if (currentItem.urlType === 'internal') {
-    const currentItemUrl = currentItem.hash
-      ? currentItem.url.substr(0, currentItem.url.length - currentItem.hash.length)
-      : currentItem.url
-    if (currentItemUrl === matchUrl) return currentPath.concat(currentItem)
-  }
-  const items = currentItem.items
-  let numItems
-  if (items && (numItems = items.length)) {
-    for (let i = 0; i < numItems; i++) {
-      const matchingPath = findBreadcrumbPath(
-        matchUrl,
-        items[i],
-        currentItem.content ? currentPath.concat(currentItem) : currentPath
-      )
-      if (matchingPath) return matchingPath
+function findNavItem (correlated, siblings, root = true, siblingIdx = 0, candidate = undefined) {
+  if (!(candidate = candidate || siblings[siblingIdx])) {
+    return correlated
+  } else if (correlated.current) {
+    if (candidate.urlType === 'internal') {
+      correlated.next = candidate
+      return correlated
+    }
+  } else if (candidate.urlType === 'internal') {
+    if (getUrlWithoutHash(candidate) === correlated.url) {
+      correlated.current = candidate
+      /* istanbul ignore if */
+      if (!correlated.seekNext) return correlated
+    } else {
+      correlated.previous = candidate
     }
   }
+  const children = candidate.items || []
+  if (children.length) {
+    const ancestors = correlated.ancestors
+    correlated = findNavItem(
+      correlated.current ? correlated : Object.assign({}, correlated, { ancestors: [candidate].concat(ancestors) }),
+      children,
+      false
+    )
+    if (correlated.current) {
+      if (!correlated.seekNext || correlated.next) return correlated
+    } else {
+      correlated.ancestors = ancestors
+    }
+  }
+  if ((siblingIdx += 1) < siblings.length) {
+    correlated = findNavItem(correlated, siblings, root, siblingIdx)
+    //if (correlated.current && (!correlated.seekNext || correlated.next)) return correlated
+  } else if (root && !correlated.current) {
+    delete correlated.previous
+  }
+  return correlated
+}
+
+function getUrlWithoutHash (item) {
+  return item.hash ? item.url.substr(0, item.url.length - item.hash.length) : item.url
 }
 
 // QUESTION should this function go in ContentCatalog?

@@ -384,6 +384,41 @@ describe('build UI model', () => {
       expect(model.breadcrumbs[2]).to.equal(itemC)
     })
 
+    it('should include non-link entry in breadcrumbs', () => {
+      let category
+      menu.push({
+        order: 0,
+        root: true,
+        content: 'Nav Title',
+        url: '/the-component/1.0/index.html',
+        urlType: 'internal',
+        items: [
+          {
+            content: 'Page A',
+            url: '/the-component/1.0/page-a.html',
+            urlType: 'internal',
+          },
+          (category = {
+            content: 'Category B',
+            items: [
+              {
+                content: 'The Page',
+                url: '/the-component/1.0/the-page.html',
+                urlType: 'internal',
+              },
+              {
+                content: 'Page B',
+                url: '/the-component/1.0/page-b.html',
+                urlType: 'internal',
+              },
+            ],
+          }),
+        ],
+      })
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.breadcrumbs).to.include(category)
+    })
+
     it('should drop first breadcrumb item if nav tree has no title', () => {
       menu.push({
         order: 0,
@@ -580,6 +615,155 @@ describe('build UI model', () => {
       expect(model.breadcrumbs).to.exist()
       expect(model.breadcrumbs).to.have.lengthOf(1)
       expect(model.breadcrumbs[0]).to.equal(item1)
+    })
+
+    it('should set next, previous, and parent references based on location of page in navigation tree', () => {
+      let parent
+      let previous
+      let next
+      menu.push({
+        order: 0,
+        root: true,
+        content: 'Nav Title',
+        url: '/the-component/1.0/index.html',
+        urlType: 'internal',
+        items: [
+          {
+            content: 'Page A',
+            url: '/the-component/1.0/page-a.html',
+            urlType: 'internal',
+          },
+          (parent = {
+            content: 'Page B',
+            url: '/the-component/1.0/page-b.html',
+            urlType: 'internal',
+            items: [
+              (previous = {
+                content: 'Page C',
+                url: '/the-component/1.0/page-c.html',
+                urlType: 'internal',
+              }),
+              {
+                content: 'The Page',
+                url: '/the-component/1.0/the-page.html',
+                urlType: 'internal',
+              },
+              (next = {
+                content: 'Page D',
+                url: '/the-component/1.0/page-d.html',
+                urlType: 'internal',
+              }),
+            ],
+          }),
+        ],
+      })
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.parent).to.exist()
+      expect(model.parent).to.equal(parent)
+      expect(model.previous).to.exist()
+      expect(model.previous).to.equal(previous)
+      expect(model.next).to.exist()
+      expect(model.next).to.equal(next)
+    })
+
+    it('should skip over non-link entries when computing related page references', () => {
+      let parent
+      let previous
+      let next
+      menu.push((parent = {
+        order: 0,
+        root: true,
+        content: 'Nav Title',
+        url: '/the-component/1.0/index.html',
+        urlType: 'internal',
+        items: [
+          {
+            content: 'Page A',
+            url: '/the-component/1.0/page-a.html',
+            urlType: 'internal',
+          },
+          {
+            content: 'Category B',
+            items: [
+              (previous = {
+                content: 'Page C',
+                url: '/the-component/1.0/page-c.html',
+                urlType: 'internal',
+              }),
+              {
+                content: 'Text-only Entry',
+              },
+              {
+                content: 'The Page',
+                url: '/the-component/1.0/the-page.html',
+                urlType: 'internal',
+              },
+              {
+                content: 'Text-only Entry',
+              },
+              (next = {
+                content: 'Page D',
+                url: '/the-component/1.0/page-d.html',
+                urlType: 'internal',
+              }),
+            ],
+          },
+        ],
+      }))
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.parent).to.exist()
+      expect(model.parent).to.equal(parent)
+      expect(model.previous).to.exist()
+      expect(model.previous).to.equal(previous)
+      expect(model.next).to.exist()
+      expect(model.next).to.equal(next)
+    })
+
+    it('should seek upwards in hierarchy to find adjacent related pages if current page has no sibling links', () => {
+      let next
+      let previous
+      menu.push({
+        order: 0,
+        root: true,
+        content: 'Nav Title',
+        url: '/the-component/1.0/index.html',
+        urlType: 'internal',
+        items: [
+          {
+            content: 'Page A',
+            url: '/the-component/1.0/page-a.html',
+            urlType: 'internal',
+          },
+          (previous = {
+            content: 'Page B',
+            url: '/the-component/1.0/page-b.html',
+            urlType: 'internal',
+            items: [
+              {
+                content: 'Text-only Before',
+              },
+              {
+                content: 'The Page',
+                url: '/the-component/1.0/the-page.html',
+                urlType: 'internal',
+              },
+              {
+                content: 'Text-only After',
+              },
+            ],
+          }),
+          (next = {
+            content: 'Page C',
+            url: '/the-component/1.0/page-c.html',
+            urlType: 'internal',
+          }),
+        ],
+      })
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.next).to.exist()
+      expect(model.next).to.equal(next)
+      expect(model.previous).to.exist()
+      expect(model.previous).to.equal(previous)
     })
 
     it('should not set versions property if component only has one version', () => {
