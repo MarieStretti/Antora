@@ -5,7 +5,7 @@ endif::[]
 :colon: :
 
 To link between documentation pages, you'll use the the AsciiDoc cross reference macro and a page ID.
-This syntax in also used to xref:navigation:link-syntax-and-content.adoc[reference pages from your navigation files].
+This syntax is also used to xref:navigation:link-syntax-and-content.adoc[reference pages from your navigation files].
 
 == Reference by page ID
 
