@@ -125,7 +125,7 @@ describe('resolveResource', () => {
     expect(result).to.exist()
   })
 
-  it('should use lastest version of component if component is specified without a version', () => {
+  it('should use latest version of component if component is specified without a version', () => {
     const targetFile = {
       src: {
         component: 'the-component',
