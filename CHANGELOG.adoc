@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Added
+
+* *page-composer*: Add next, previous, and parent properties to the page UI model to access adjacent pages (#233)
+
 == 1.1.1 (2018-09-17)
 
 === Added
