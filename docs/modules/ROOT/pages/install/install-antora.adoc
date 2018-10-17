@@ -22,9 +22,13 @@ Open a terminal and type:
 
  $ npm i -g @antora/cli
 
+IMPORTANT: The `@` at the beginning of the package name is important.
+It tells `npm` that the `cli` package is located in the `antora` group.
+If you omit this character, `npm` will assume the package name is the name of a git repository on GitHub.
+
 We recommend installing (`i` subcommand) the CLI package globally (`-g` flag) so the `antora` command, which is provided by the CLI package, becomes available on your PATH.
 
-IMPORTANT: When we say "`globally`" here, it does not imply system-wide.
+When we say "`globally`" here, it does not imply system-wide.
 It means the location where Node is installed.
 If you used nvm to install Node, this location will be inside your home directory (thus not requiring elevated permissions).
 
@@ -56,6 +60,10 @@ Next, install the default site generator.
 To install the generator globally, type:
 
  $ npm i -g @antora/site-generator-default
+
+IMPORTANT: The `@` at the beginning of the package name is important.
+It tells `npm` that the `cli` package is located in the `antora` group.
+If you omit this character, `npm` will assume the package name is the name of a git repository on GitHub.
 
 If you prefer Yarn over npm, use this command instead:
 
