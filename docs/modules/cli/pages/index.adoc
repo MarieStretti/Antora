@@ -133,7 +133,7 @@ Overrides the xref:playbook:playbook-schema.adoc#dir-key[output dir value] speci
 |String
 |[.path]_build/site_
 
-|--ui-bundle <bundle>
+|--ui-bundle-url <bundle>
 |UI bundle URL.
 The URL can be a path on the local filesystem.
 Overrides the xref:playbook:playbook-schema.adoc#ui-bundle-key[ui bundle value] specified in the playbook.
