@@ -45,6 +45,9 @@ output: # <20>
   dir: ./public # <22>
   destinations: # <23>
   - provider: archive # <24>
+runtime: # <25>
+  cache_dir: ./cache # <26>
+  pull: false # <27>  
 ----
 <1> <<site-category,Site category>>
 <2> <<site-title-key,Site title key>>
@@ -70,6 +73,9 @@ output: # <20>
 <22> <<output-dir-key,Output directory key>>
 <23> <<output-destinations-key,Output destinations key>>
 <24> <<output-provider-key,Output provider key>>
+<25> <<runtime-category,Runtime category>>
+<26> <<cache-dir-key,Cache directory key>>
+<27> <<pull-key,Pull cache key>>
 
 Let's explore the purpose and usage of each key and its values.
 
