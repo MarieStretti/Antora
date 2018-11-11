@@ -46,8 +46,8 @@ output: # <20>
   destinations: # <23>
   - provider: archive # <24>
 runtime: # <25>
-  cache_dir: ./cache # <26>
-  pull: false # <27>  
+  cache_dir: ./.cache/antora # <26>
+  pull: true # <27>
 ----
 <1> <<site-category,Site category>>
 <2> <<site-title-key,Site title key>>
