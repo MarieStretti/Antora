@@ -24,11 +24,11 @@ The family coordinate accepts the value `partial` or `example`.
 A resource ID is used in an AsciiDoc include directive.
 Here's how the include directive is structured when inserting a specific version of a partial resource from the ROOT module of a component named cli.
 
- include:2.2@cli::partial$commands.adoc[]
+ include::2.2@cli::partial$commands.adoc[]
 
 Or, if you included a tagged region of an example into a page in the same module.
 
- include:example$config.json[tag=parse]
+ include::example$config.json[tag=parse]
 
 == Learn more
 
