@@ -89,6 +89,8 @@ Relying on a page template to produce the pages gives the site owner complete co
 
 Produce sitemap::
 Antora generates a site map that can be used as an internal report or published with the site.
+This sitemap is partitioned by component (using a sitemap index).
+The sitemap index links to the sitemap for each component, which is where the URLs for the individual pages can be found.
 
 Publish site::
 Antora writes the generated pages to a default or xref:playbook:configure-output.adoc#output-dir[user-specified location].

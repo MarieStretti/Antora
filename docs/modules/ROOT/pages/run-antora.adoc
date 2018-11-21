@@ -132,6 +132,8 @@ sitemap.xml
 ....
 
 NOTE: The 404 page and sitemap files will be missing if the `site.url` property is not defined in your playbook.
+The main sitemap file is actually a sitemap index.
+That file links to the sitemap for each component, which is where the URL for the individual pages can be found.
 
 This list includes the entry point of your documentation site, [.path]_index.html_.
 --
