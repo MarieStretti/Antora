@@ -107,6 +107,12 @@ Setting this option implicitly enables the Google Analytics / Tag Manager embed 
 |Boolean
 |false
 
+|--redirect-facility
+|The facility for handling page alias and starting page redirections.
+The xref:asciidoc:page-header.adoc#_configuring_page_redirects[supported options] are: `disabled`, `netlify`, `nginx`, and `static`.
+|String
+|static
+
 |-r, --require <name>
 |Preload the specified library or script.
 May be specified multiple times.
