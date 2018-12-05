@@ -7,8 +7,8 @@ skip_tags: true
 clone_depth: 5
 environment:
   matrix:
-  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    NODEJS_VERSION: 8
+  #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+  #  NODEJS_VERSION: 8
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     NODEJS_VERSION: 8
 install:

@@ -61,7 +61,7 @@ module.exports = {
   },
   content: {
     branches: {
-      doc: 'The default branch pattern to use when no specific pattern is provided',
+      doc: 'The default branch pattern to use when no specific pattern is provided.',
       format: Array,
       default: ['v*', 'master'],
     },
@@ -123,6 +123,23 @@ module.exports = {
       format: Array,
       default: [],
       //arg: 'extension',
+    },
+  },
+  git: {
+    credentials: {
+      path: {
+        doc: 'The path to a git credentials file matching the format used by git-credential-store.',
+        format: String,
+        default: undefined,
+        arg: 'git-credentials-path',
+        env: 'ANTORA_GIT_CREDENTIALS_PATH',
+      },
+      contents: {
+        doc: 'The git credentials data matching the format used by git-credentials-store.',
+        format: String,
+        default: undefined,
+        env: 'ANTORA_GIT_CREDENTIALS',
+      },
     },
   },
   runtime: {

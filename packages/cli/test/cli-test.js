@@ -4,6 +4,7 @@
 const { expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
 
 const fs = require('fs-extra')
+const GitServer = require('node-git-server')
 const { default: Kapok } = require('kapok-js')
 const pkg = require('@antora/cli/package.json')
 const ospath = require('path')
@@ -25,11 +26,12 @@ describe('cli', () => {
   let destDir
   let playbookSpec
   let playbookFile
-  let repositoryBuilder
+  let repoBuilder
   let uiBundleUri
+  let gitServer
 
-  const createContentRepository = async () =>
-    (repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true, bare: true }))
+  const createContentRepository = async (gitServerPort) =>
+    (repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: { gitServerPort } }))
       .init('the-component')
       .then((builder) => builder.checkoutBranch('v1.0'))
       .then((builder) =>
@@ -50,8 +52,14 @@ describe('cli', () => {
   }
 
   before(async () => {
-    removeSyncForce(CONTENT_REPOS_DIR)
-    await createContentRepository()
+    fs.emptyDirSync(CONTENT_REPOS_DIR)
+    gitServer = new GitServer(CONTENT_REPOS_DIR, { autoCreate: false })
+    const gitServerPort = await new Promise((resolve, reject) =>
+      gitServer.listen(0, function (err) {
+        err ? reject(err) : resolve(this.address().port)
+      })
+    )
+    await createContentRepository(gitServerPort)
     destDir = 'build/site'
     absDestDir = ospath.join(WORK_DIR, destDir)
     playbookFile = ospath.join(WORK_DIR, 'the-site.json')
@@ -67,13 +75,14 @@ describe('cli', () => {
     playbookSpec = {
       site: { title: 'The Site' },
       content: {
-        sources: [{ url: repositoryBuilder.repoPath, branches: 'v1.0' }],
+        sources: [{ url: repoBuilder.repoPath, branches: 'v1.0' }],
       },
       ui: { bundle: { url: uiBundleUri, snapshot: true } },
     }
   })
 
-  after(() => {
+  after(async () => {
+    await new Promise((resolve, reject) => gitServer.server.close((err) => (err ? reject(err) : resolve())))
     removeSyncForce(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
       removeSyncForce(ospath.join(WORK_DIR, destDir.split('/')[0]))
@@ -267,51 +276,53 @@ describe('cli', () => {
     })
   }).timeout(TIMEOUT)
 
-  it('should store cache in cache directory passed to --cache-dir option', () => {
-    playbookSpec.content.sources[0].url = repositoryBuilder.url
-    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const absCacheDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
-    expect(absCacheDir).to.not.be.a.path()
-    // Q: how do we assert w/ kapok when there's no output; use promise as workaround
-    return new Promise((resolve) =>
-      runAntora(['generate', 'the-site', '--cache-dir', '.antora-cache-override']).on('exit', resolve)
-    ).then((exitCode) => {
-      expect(exitCode).to.equal(0)
-      expect(absCacheDir)
-        .to.be.a.directory()
-        .with.subDirs(['content', 'ui'])
-      expect(ospath.join(absCacheDir, 'content'))
-        .to.be.a.directory()
-        .and.not.be.empty()
-      expect(ospath.join(absCacheDir, 'ui'))
-        .to.be.a.directory()
-        .and.not.be.empty()
-      removeSyncForce(absCacheDir)
-    })
-  }).timeout(TIMEOUT)
+  describe('cache directory', async () => {
+    it('should store cache in cache directory passed to --cache-dir option', () => {
+      playbookSpec.content.sources[0].url = repoBuilder.url
+      fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+      const absCacheDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
+      expect(absCacheDir).to.not.be.a.path()
+      // Q: how do we assert w/ kapok when there's no output; use promise as workaround
+      return new Promise((resolve) =>
+        runAntora(['generate', 'the-site', '--cache-dir', '.antora-cache-override']).on('exit', resolve)
+      ).then((exitCode) => {
+        expect(exitCode).to.equal(0)
+        expect(absCacheDir)
+          .to.be.a.directory()
+          .with.subDirs(['content', 'ui'])
+        expect(ospath.join(absCacheDir, 'content'))
+          .to.be.a.directory()
+          .and.not.be.empty()
+        expect(ospath.join(absCacheDir, 'ui'))
+          .to.be.a.directory()
+          .and.not.be.empty()
+        removeSyncForce(absCacheDir)
+      })
+    }).timeout(TIMEOUT)
 
-  it('should store cache in cache directory defined by ANTORA_CACHE_DIR environment variable', () => {
-    playbookSpec.content.sources[0].url = repositoryBuilder.url
-    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const absCacheDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
-    expect(absCacheDir).to.not.be.a.path()
-    // Q: how do we assert w/ kapok when there's no output; use promise as workaround
-    return new Promise((resolve) =>
-      runAntora('generate the-site', { ANTORA_CACHE_DIR: '.antora-cache-override' }).on('exit', resolve)
-    ).then((exitCode) => {
-      expect(exitCode).to.equal(0)
-      expect(absCacheDir)
-        .to.be.a.directory()
-        .with.subDirs(['content', 'ui'])
-      expect(ospath.join(absCacheDir, 'content'))
-        .to.be.a.directory()
-        .and.not.be.empty()
-      expect(ospath.join(absCacheDir, 'ui'))
-        .to.be.a.directory()
-        .and.not.be.empty()
-      removeSyncForce(absCacheDir)
-    })
-  }).timeout(TIMEOUT)
+    it('should store cache in cache directory defined by ANTORA_CACHE_DIR environment variable', () => {
+      playbookSpec.content.sources[0].url = repoBuilder.url
+      fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+      const absCacheDir = ospath.resolve(WORK_DIR, '.antora-cache-override')
+      expect(absCacheDir).to.not.be.a.path()
+      // Q: how do we assert w/ kapok when there's no output; use promise as workaround
+      return new Promise((resolve) =>
+        runAntora('generate the-site', { ANTORA_CACHE_DIR: '.antora-cache-override' }).on('exit', resolve)
+      ).then((exitCode) => {
+        expect(exitCode).to.equal(0)
+        expect(absCacheDir)
+          .to.be.a.directory()
+          .with.subDirs(['content', 'ui'])
+        expect(ospath.join(absCacheDir, 'content'))
+          .to.be.a.directory()
+          .and.not.be.empty()
+        expect(ospath.join(absCacheDir, 'ui'))
+          .to.be.a.directory()
+          .and.not.be.empty()
+        removeSyncForce(absCacheDir)
+      })
+    }).timeout(TIMEOUT)
+  })
 
   it('should allow CLI option to override properties set in playbook file', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -476,8 +487,7 @@ describe('cli', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     const r1 = ospath.resolve(FIXTURES_DIR, 'warming-up')
     const r2 = ospath.relative(WORK_DIR, ospath.join(FIXTURES_DIR, 'global-postprocessor'))
-    // NOTE due to a bad interaction between nodegit and opal, nodegit must be required first
-    const args = ['--require', 'nodegit', '--require', r1, '-r', r2, 'generate', 'the-site', '--quiet']
+    const args = ['--require', r1, '-r', r2, 'generate', 'the-site', '--quiet']
     const messages = []
     // Q: how do we assert w/ kapok when there's no output; use promise as workaround
     return new Promise((resolve) =>

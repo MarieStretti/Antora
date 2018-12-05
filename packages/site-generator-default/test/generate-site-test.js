@@ -6,6 +6,7 @@ const { deferExceptions, expect, removeSyncForce } = require('../../../test/test
 const cheerio = require('cheerio')
 const fs = require('fs-extra')
 const generateSite = require('@antora/site-generator-default')
+const GitServer = require('node-git-server')
 const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
@@ -23,8 +24,9 @@ describe('generateSite()', () => {
   let env
   let playbookSpec
   let playbookFile
-  let repositoryBuilder
+  let repoBuilder
   let uiBundleUri
+  let gitServer
 
   const readFile = (file, dir) => fs.readFileSync(dir ? ospath.join(dir, file) : file, 'utf8')
 
@@ -34,30 +36,36 @@ describe('generateSite()', () => {
     destDir = '_site'
     absDestDir = ospath.join(WORK_DIR, destDir)
     playbookFile = ospath.join(WORK_DIR, 'the-site.json')
-    repositoryBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true, bare: true })
+    gitServer = new GitServer(CONTENT_REPOS_DIR, { autoCreate: false })
+    const gitServerPort = await new Promise((resolve, reject) =>
+      gitServer.listen(0, function (err) {
+        err ? reject(err) : resolve(this.address().port)
+      })
+    )
+    repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: { gitServerPort } })
     uiBundleUri = UI_BUNDLE_URI
   })
 
   beforeEach(async () => {
     env = { ANTORA_CACHE_DIR: ospath.join(WORK_DIR, '.antora/cache') }
     removeSyncForce(CONTENT_REPOS_DIR)
-    await repositoryBuilder
+    await repoBuilder
       .init('the-component')
-      .then(() => repositoryBuilder.checkoutBranch('v2.0'))
+      .then(() => repoBuilder.checkoutBranch('v2.0'))
       .then(() =>
-        repositoryBuilder.addComponentDescriptorToWorktree({
+        repoBuilder.addComponentDescriptorToWorktree({
           name: 'the-component',
           version: '2.0',
           nav: ['modules/ROOT/nav.adoc'],
         })
       )
-      .then(() => repositoryBuilder.importFilesFromFixture('the-component'))
-      .then(() => repositoryBuilder.close('master'))
+      .then(() => repoBuilder.importFilesFromFixture('the-component'))
+      .then(() => repoBuilder.close('master'))
     playbookSpec = {
       runtime: { quiet: true },
       site: { title: 'The Site' },
       content: {
-        sources: [{ url: repositoryBuilder.repoPath, branches: 'v2.0' }],
+        sources: [{ url: repoBuilder.repoPath, branches: 'v2.0' }],
       },
       ui: {
         bundle: { url: uiBundleUri, snapshot: true },
@@ -71,7 +79,8 @@ describe('generateSite()', () => {
     removeSyncForce(ospath.join(WORK_DIR, destDir.split('/')[0]))
   })
 
-  after(() => {
+  after(async () => {
+    await new Promise((resolve, reject) => gitServer.server.close((err) => (err ? reject(err) : resolve())))
     removeSyncForce(CONTENT_REPOS_DIR)
     if (process.env.KEEP_CACHE) {
       removeSyncForce(ospath.join(WORK_DIR, destDir.split('/')[0]))
@@ -81,47 +90,49 @@ describe('generateSite()', () => {
     }
   })
 
-  // NOTE we can't test this in the cli tests since child_process.spawn does not allocate a tty
-  it('should report progress of repository clone operation if runtime.quiet is false', async () => {
-    playbookSpec.runtime.quiet = false
-    playbookSpec.content.sources[0].url = repositoryBuilder.url
-    playbookSpec.output.destinations = []
-    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
-      accum[name] = process.stdout[name]
-      return accum
-    }, {})
-    const columns = 9 + repositoryBuilder.url.length * 2
-    const progressLines = []
-    try {
-      Object.assign(process.stdout, {
-        clearLine: () => {},
-        columns,
-        cursorTo: () => {},
-        isTTY: true,
-        moveCursor: () => {},
-        write: (line) => /\[(?:clone|fetch)\]/.test(line) && progressLines.push(line),
-      })
-      await generateSite(['--playbook', playbookFile], env)
-      expect(progressLines).to.have.lengthOf.at.least(2)
-      expect(progressLines[0]).to.include('[clone] ' + repositoryBuilder.url)
-      expect(progressLines[0]).to.match(/ \[-+\]/)
-      expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
+  describe('progress bar', async () => {
+    // NOTE we can't test this in the cli tests since child_process.spawn does not allocate a tty
+    it('should report progress of repository clone operation if runtime.quiet is false', async () => {
+      playbookSpec.runtime.quiet = false
+      playbookSpec.content.sources[0].url = repoBuilder.url
+      playbookSpec.output.destinations = []
+      fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+      const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
+        accum[name] = process.stdout[name]
+        return accum
+      }, {})
+      const columns = 9 + repoBuilder.url.length * 2
+      const progressLines = []
+      try {
+        Object.assign(process.stdout, {
+          clearLine: () => {},
+          columns,
+          cursorTo: () => {},
+          isTTY: true,
+          moveCursor: () => {},
+          write: (line) => /\[(?:clone|fetch)\]/.test(line) && progressLines.push(line),
+        })
+        await generateSite(['--playbook', playbookFile], env)
+        expect(progressLines).to.have.lengthOf.at.least(2)
+        expect(progressLines[0]).to.include('[clone] ' + repoBuilder.url)
+        expect(progressLines[0]).to.match(/ \[-+\]/)
+        expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
 
-      progressLines.length = 0
-      await generateSite(['--playbook', playbookFile], env)
-      expect(progressLines).to.have.lengthOf(0)
+        progressLines.length = 0
+        await generateSite(['--playbook', playbookFile], env)
+        expect(progressLines).to.have.lengthOf(0)
 
-      // TODO assert that the UI was downloaded again
-      await generateSite(['--playbook', playbookFile, '--pull'], env)
-      expect(progressLines).to.have.lengthOf.at.least(2)
-      expect(progressLines[0]).to.include('[fetch] ' + repositoryBuilder.url)
-      expect(progressLines[0]).to.match(/ \[-+\]/)
-      expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
-    } finally {
-      Object.assign(process.stdout, defaultStdout)
-    }
-  }).timeout(TIMEOUT * 2)
+        // TODO assert that the UI was downloaded again
+        await generateSite(['--playbook', playbookFile, '--pull'], env)
+        expect(progressLines).to.have.lengthOf.at.least(2)
+        expect(progressLines[0]).to.include('[fetch] ' + repoBuilder.url)
+        expect(progressLines[0]).to.match(/ \[-+\]/)
+        expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
+      } finally {
+        Object.assign(process.stdout, defaultStdout)
+      }
+    }).timeout(TIMEOUT * 2)
+  })
 
   it('should generate site into output directory specified in playbook file', async () => {
     playbookSpec.site.start_page = '2.0@the-component::index'
@@ -292,7 +303,7 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   it('should add edit page link to toolbar if page.editUrl is set in UI model', async () => {
-    await repositoryBuilder.open().then(() => repositoryBuilder.checkoutBranch('v2.0'))
+    await repoBuilder.open().then(() => repoBuilder.checkoutBranch('v2.0'))
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
     expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
@@ -300,28 +311,28 @@ describe('generateSite()', () => {
     const thePagePath = 'modules/ROOT/pages/the-page.adoc'
     const editUrl =
       ospath.sep === '\\'
-        ? 'file:///' + ospath.join(repositoryBuilder.repoPath, thePagePath).replace(/\\/g, '/')
-        : 'file://' + ospath.join(repositoryBuilder.repoPath, thePagePath)
+        ? 'file:///' + ospath.join(repoBuilder.repoPath, thePagePath).replace(/\\/g, '/')
+        : 'file://' + ospath.join(repoBuilder.repoPath, thePagePath)
     expect($('.toolbar .edit-this-page a')).to.have.attr('href', editUrl)
   }).timeout(TIMEOUT)
 
   it('should provide navigation to multiple versions of a component', async () => {
-    await repositoryBuilder
+    await repoBuilder
       .open()
-      .then(() => repositoryBuilder.checkoutBranch('v1.0'))
+      .then(() => repoBuilder.checkoutBranch('v1.0'))
       .then(() =>
-        repositoryBuilder.addComponentDescriptorToWorktree({
+        repoBuilder.addComponentDescriptorToWorktree({
           name: 'the-component',
           version: '1.0',
           nav: ['modules/ROOT/nav.adoc'],
         })
       )
       .then(() =>
-        repositoryBuilder.importFilesFromFixture('the-component', {
+        repoBuilder.importFilesFromFixture('the-component', {
           exclude: ['modules/ROOT/pages/new-page.adoc'],
         })
       )
-      .then(() => repositoryBuilder.close('master'))
+      .then(() => repoBuilder.close('master'))
     playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
@@ -375,48 +386,49 @@ describe('generateSite()', () => {
   }).timeout(TIMEOUT)
 
   it('should provide navigation to all versions of all components', async () => {
-    await repositoryBuilder
+    await repoBuilder
       .open()
-      .then(() => repositoryBuilder.checkoutBranch('v1.0'))
+      .then(() => repoBuilder.checkoutBranch('v1.0'))
       .then(() =>
-        repositoryBuilder.addComponentDescriptorToWorktree({
+        repoBuilder.addComponentDescriptorToWorktree({
           name: 'the-component',
           version: '1.0',
           nav: ['modules/ROOT/nav.adoc'],
         })
       )
       .then(() =>
-        repositoryBuilder.importFilesFromFixture('the-component', {
+        repoBuilder.importFilesFromFixture('the-component', {
           exclude: ['modules/ROOT/pages/new-page.adoc'],
         })
       )
-      .then(() => repositoryBuilder.close('master'))
+      .then(() => repoBuilder.close('master'))
 
-    await repositoryBuilder
+    await repoBuilder
       .init('the-other-component')
       .then(() =>
-        repositoryBuilder.addComponentDescriptorToWorktree({
+        repoBuilder.addComponentDescriptorToWorktree({
           name: 'the-other-component',
           version: 'master',
           start_page: 'core:index.adoc',
           nav: ['modules/core/nav.adoc'],
         })
       )
-      .then(() => repositoryBuilder.importFilesFromFixture('the-other-component'))
-      .then(() => repositoryBuilder.checkoutBranch('v1.0'))
+      .then(() => repoBuilder.importFilesFromFixture('the-other-component'))
+      .then(() => repoBuilder.checkoutBranch('v1.0'))
       .then(() =>
-        repositoryBuilder.addComponentDescriptorToWorktree({
+        repoBuilder.addComponentDescriptorToWorktree({
           name: 'the-other-component',
           version: '1.0',
           start_page: 'core:index.adoc',
           nav: ['modules/core/nav.adoc'],
         })
       )
-      .then(() => repositoryBuilder.close('master'))
+      .then(() => repoBuilder.commitAll('add component descriptor for 1.0'))
+      .then(() => repoBuilder.close('master'))
 
     playbookSpec.content.sources[0].branches = ['v2.0', 'v1.0']
     playbookSpec.content.sources.push({
-      url: ospath.join(CONTENT_REPOS_DIR, 'the-other-component'),
+      url: repoBuilder.repoPath,
       branches: ['master', 'v1.0'],
     })
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })

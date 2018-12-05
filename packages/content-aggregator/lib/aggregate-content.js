@@ -2,13 +2,13 @@
 
 const _ = require('lodash')
 const { createHash } = require('crypto')
+const EventEmitter = require('events')
 const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
 const fs = require('fs-extra')
 const getCacheDir = require('cache-directory')
-const git = require('nodegit')
-const GIT_TYPE_OID = git.Reference.TYPE.OID
-const GIT_TYPE_COMMIT = git.Object.TYPE.COMMIT
+const GitCredentialManagerStore = require('./git-credential-manager-store')
+const git = require('isomorphic-git')
 const { obj: map } = require('through2')
 const matcher = require('matcher')
 const mimeTypes = require('./mime-types-with-asciidoc')
@@ -19,13 +19,20 @@ const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
-const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER, CONTENT_GLOB } = require('./constants')
+const {
+  COMPONENT_DESC_FILENAME,
+  CONTENT_CACHE_FOLDER,
+  CONTENT_GLOB,
+  GIT_CORE,
+  GIT_OPERATION_LABEL_LENGTH,
+  GIT_PROGRESS_PHASES,
+} = require('./constants')
+
 const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
-const DOT_OR_NOEXT_RX = /(?:^|\/)(?:\.|[^/.]+$)/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org|pagure\.io)[:/](.+?)(?:\.git)?$/
-const NON_UNIQUE_URI_SUFFIX_RX = /(?:\/?\.git|\/)$/
+const NON_UNIQUE_URI_SUFFIX_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
 const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)(?::([^/@]+))?@)?(.*)/
 
@@ -56,44 +63,49 @@ function aggregateContent (playbook) {
   const { cacheDir, pull, silent, quiet } = playbook.runtime
   const progress = {}
   const term = process.stdout
+  // TODO move this to a function
   if (!(quiet || silent) && term.isTTY && term.columns >= 60) {
     //term.write('Aggregating content...\n')
     // QUESTION should we use MultiProgress directly as our progress object?
     progress.manager = new MultiProgress(term)
     progress.maxLabelWidth = Math.min(
-      Math.ceil((term.columns - 8) / 2),
+      // NOTE remove the width of the operation, then split the difference between the url and bar
+      Math.ceil((term.columns - GIT_OPERATION_LABEL_LENGTH) / 2),
       Object.keys(sourcesByUrl).reduce(
         (max, url) =>
-          Math.max(max, ~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url) ? extractCredentials(url).url.length : 0),
+          Math.max(
+            max,
+            ~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url) ? extractCredentials(url).displayUrl.length : 0
+          ),
         0
       )
     )
   }
-  return ensureCacheDir(cacheDir, startDir).then((absCacheDir) =>
+  const credentialManager = registerGitPlugins((playbook.git || {}).credentials, startDir).get('credentialManager')
+  return ensureCacheDir(cacheDir, startDir).then((resolvedCacheDir) =>
     Promise.all(
-      _.map(sourcesByUrl, (sources, url) =>
-        loadRepository(url, { pull, startDir, cacheDir: absCacheDir, progress }).then(
-          ({ repo, repoUrl, repoPath, isRemote }) =>
-            Promise.all(
-              sources.map((source) => {
-                const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
-                // NOTE if repository is in cache, we can assume the remote name is origin
-                const remoteName = isRemote ? 'origin' : source.remote || 'origin'
-                return collectComponentVersions(source, repo, repoUrl, repoPath, isRemote, remoteName, refPatterns)
-              })
-            )
-              .then((componentVersions) => {
-                repo.free()
-                return componentVersions
-              })
-              .catch((err) => {
-                repo.free()
-                throw err
-              })
+      Object.entries(sourcesByUrl).map(([url, sources]) =>
+        loadRepository(url, {
+          cacheDir: resolvedCacheDir,
+          credentialManager,
+          fetchTags: tagsSpecified(sources, defaultTags),
+          progress,
+          pull,
+          startDir,
+        }).then(({ repo, requiresAuth }) =>
+          Promise.all(
+            sources.map((source) => {
+              const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
+              // NOTE if repository is managed (has a url), we can assume the remote name is origin
+              // TODO if the repo has no remotes, then remoteName should be undefined
+              const remoteName = repo.url ? 'origin' : source.remote || 'origin'
+              return collectComponentVersions(source, repo, remoteName, requiresAuth, refPatterns)
+            })
+          )
         )
       )
     )
-      .then((allComponentVersions) => buildAggregate(allComponentVersions))
+      .then((accruedComponentVersions) => buildAggregate(accruedComponentVersions))
       .catch((err) => {
         progress.manager && progress.manager.terminate()
         throw err
@@ -104,7 +116,7 @@ function aggregateContent (playbook) {
 function buildAggregate (componentVersions) {
   return _(componentVersions)
     .flattenDepth(2)
-    .groupBy(({ name, version }) => `${version}@${name}`)
+    .groupBy(({ name, version }) => version + '@' + name)
     .map((componentVersions, id) => {
       const component = _(componentVersions)
         .map((a) => _.omit(a, 'files'))
@@ -119,124 +131,157 @@ function buildAggregate (componentVersions) {
 }
 
 async function loadRepository (url, opts) {
+  let displayUrl
   let credentials
-  let isBare
-  let isRemote
-  let repo
+  let credentialManager = opts.credentialManager
   let dir
+  let repo
+  let requiresAuth
 
   if (~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url)) {
-    isBare = isRemote = true
-    ;({ url, credentials } = extractCredentials(url))
-    dir = ospath.join(opts.cacheDir, generateCloneFolderName(url))
-  } else if (isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
-    isBare = !isLocalDirectory(ospath.join(dir, '.git'))
-    isRemote = false
+    ;({ displayUrl, url, credentials } = extractCredentials(url))
+    dir = ospath.join(opts.cacheDir, generateCloneFolderName(displayUrl))
+    // NOTE if url is set on repo, we assume it's a remote url
+    repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noCheckout: true }
+  } else if (await isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
+    repo = (await isLocalDirectory(ospath.join(dir, '.git')))
+      ? { core: GIT_CORE, fs, dir }
+      : { core: GIT_CORE, fs, dir, gitdir: dir, noCheckout: true }
   } else {
     throw new Error(
       `Local content source does not exist: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
     )
   }
 
+  // QUESTION should we capture the current branch in repo object here?
+
   try {
-    if (isBare) {
-      repo = await git.Repository.openBare(dir)
-      if (isRemote && opts.pull) {
-        const progress = opts.progress
-        const fetchOpts = Object.assign(
-          { prune: 1, downloadTags: git.Remote.AUTOTAG_OPTION.DOWNLOAD_TAGS_ALL },
-          getFetchOptions(progress, url, credentials, 'fetch')
-        )
-        // fetch new refs and delete obsolete local ones
-        await repo.fetch('origin', fetchOpts)
-        if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
-      }
-    } else {
-      repo = await git.Repository.open(dir)
+    // NOTE attempt to resolve HEAD to determine whether dir is a valid git repo
+    // QUESTION should we check for shallow file too?
+    await git.resolveRef(Object.assign({ ref: 'HEAD', depth: 1 }, repo))
+    if (repo.url && opts.pull) {
+      const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'fetch')
+      await git
+        .fetch(fetchOpts)
+        .catch((err) => {
+          fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
+          throw err
+        })
+        .then(() => {
+          requiresAuth = credentials
+            ? 'specified'
+            : typeof credentialManager.state === 'function' && credentialManager.state(url)
+              ? 'requested'
+              : false
+          fetchOpts.emitter && fetchOpts.emitter.emit('complete')
+        })
     }
   } catch (e) {
-    if (isRemote) {
-      const progress = opts.progress
-      const fetchOpts = getFetchOptions(progress, url, credentials, 'clone')
-      repo = await fs
+    if (repo.url) {
+      const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'clone')
+      await fs
         .remove(dir)
-        .then(() => git.Clone.clone(url, dir, { bare: 1, fetchOpts }))
+        .then(() => git.clone(fetchOpts))
         .catch((err) => {
-          let msg = err.message
-          if (~msg.indexOf('invalid cred') || ~msg.indexOf('SSH credentials') || ~msg.indexOf('status code: 401')) {
-            msg = 'Content repository not found or you have insufficient credentials to access it'
-          } else if (~msg.indexOf('no auth sock variable') || ~msg.indexOf('failed connecting agent')) {
-            msg = 'SSH agent must be running to access content repository via SSH'
-          } else if (/not found|not be found|not exist|404/.test(msg)) {
-            msg = 'Content repository not found'
-          } else {
-            msg = msg.replace(/\.?\s*$/, '')
-          }
-          throw new Error(msg + ': ' + url)
-        })
-        .then((repo) =>
-          repo.getCurrentBranch().then((ref) =>
-            // NOTE nodegit does not create references in a bare repository correctly
-            // NOTE we have a test that will detect if nodegit changes to match behavior of native git client
-            git.Reference.symbolicCreate(repo, 'HEAD', 'refs/remotes/origin/' + ref.shorthand(), 1, 'remap HEAD').then(
-              () => {
-                ref.delete()
-                if (progress.manager) completeProgress(fetchOpts.callbacks.transferProgress.progressBar)
-                return repo
+          // NOTE triggering the error handler causes problems in the test suite; plus, not sure we want it
+          //fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
+          // FIXME make this cleaner; perhaps move to helper method
+          let { code, data, message } = err
+          if (code === git.E.HTTPError) {
+            if (data.statusCode === 401) {
+              if (err.rejected) {
+                message = 'Content repository not found or credentials were rejected'
+              } else {
+                message = 'Content repository not found or requires credentials'
               }
-            )
-          )
-        )
+            } else if (data.statusCode === 404) {
+              message = 'Content repository not found'
+            } else {
+              message = message.replace(/[.:]?\s*$/, '')
+            }
+          } else if (code === git.E.RemoteUrlParseError || code === git.E.UnknownTransportError) {
+            message = 'Content source uses an unsupported transport protocol'
+          } else {
+            message = message.replace(/[.:]?\s*$/, '')
+          }
+          throw new Error(message + ': ' + displayUrl)
+        })
+        .then(() => {
+          requiresAuth = credentials
+            ? 'specified'
+            : typeof credentialManager.state === 'function' && credentialManager.state(url)
+              ? 'requested'
+              : false
+          fetchOpts.emitter && fetchOpts.emitter.emit('complete')
+          // NOTE we're not interested in local branches
+          // it also causes isomorphic-git to hang when calling readObject after fetch
+          return fs.emptyDir(ospath.join(repo.gitdir, 'refs', 'heads'))
+        })
     } else {
       throw new Error(
         `Local content source must be a git repository: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
       )
     }
   }
-  // NOTE return repoPath separately since the nodegit Repository API doesn't always return same value
-  return { repo, repoUrl: url, repoPath: dir, isRemote }
+  return { repo, requiresAuth }
 }
 
 function extractCredentials (url) {
   if ((url.startsWith('https://') || url.startsWith('http://')) && url.includes('@')) {
-    const [, scheme, username, password, rest] = url.match(URL_AUTH_EXTRACTOR_RX)
-    // GitHub: <token>@ or <token>:x-oauth-basic@
+    // Common oauth2 formats: (QUESTION should we try to coerce token only into one of these formats?)
+    // GitHub: <token>:x-oauth-basic@ (or <token>@)
+    // GitHub App: x-access-token:<token>@
     // GitLab: oauth2:<token>@
-    // BitBucket: x-token-auth:token@
-    return { url: scheme + rest, credentials: { username, password: password || '' } }
+    // BitBucket: x-token-auth:<token>@
+    const [, scheme, username, password, rest] = url.match(URL_AUTH_EXTRACTOR_RX)
+    const displayUrl = (url = scheme + rest)
+    // NOTE if only username is present, assume it's a GitHub token
+    return { displayUrl, url, credentials: password == null ? { token: username } : { username, password } }
+  } else if (url.startsWith('git@')) {
+    return { displayUrl: url, url: 'https://' + url.substr(4).replace(':', '/') }
   } else {
-    return { url }
+    return { displayUrl: url, url }
   }
 }
 
-async function collectComponentVersions (source, repo, repoUrl, repoPath, isRemote, remoteName, refPatterns) {
-  return selectReferences(repo, remoteName, refPatterns).then((refs) =>
-    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, repoUrl, repoPath, isRemote, remoteName, ref)))
-  )
+async function collectComponentVersions (source, repo, remoteName, requiresAuth, refPatterns) {
+  const refs = await selectReferences(repo, remoteName, refPatterns)
+  const result = []
+  // a for loop is used here because Promise.all was causing resource starvation on large repositories
+  for (let i = 0, len = refs.length; i < len; i++) {
+    result[i] = await populateComponentVersion(source, repo, remoteName, requiresAuth, refs[i])
+  }
+  return result
 }
 
+// QUESTION should we resolve HEAD to a ref eagerly to avoid having to do a match on it?
 async function selectReferences (repo, remote, refPatterns) {
   let { branches: branchPatterns, tags: tagPatterns } = refPatterns
-  let isBare = !!repo.isBare()
+  let isBare = repo.noCheckout
   const refs = new Map()
 
   if (tagPatterns) {
     tagPatterns = Array.isArray(tagPatterns)
       ? tagPatterns.map((pattern) => String(pattern))
       : String(tagPatterns).split(CSV_RX)
+    if (tagPatterns.length) {
+      const tags = await git.listTags(repo)
+      for (let name of tags) {
+        if (matcher([name], tagPatterns).length) {
+          // NOTE tags are stored using symbol keys to distinguish them from branches
+          refs.set(Symbol(name), { name, qname: 'tags/' + name, type: 'tag' })
+        }
+      }
+    }
   }
 
   if (branchPatterns) {
     if (branchPatterns === 'HEAD' || branchPatterns === '.') {
-      if (repo.headDetached()) {
-        refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
-        if (tagPatterns && tagPatterns.length) {
-          branchPatterns = undefined
-        } else {
-          return [refs.get('HEAD')]
-        }
+      const detachedHead = !isBare && (await isHeadDetached(repo))
+      if (detachedHead) {
+        return Array.from(refs.values()).concat({ name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
       } else {
-        branchPatterns = [await getCurrentBranchName(repo)]
+        branchPatterns = [await getCurrentBranchName(repo, remote)]
       }
     } else {
       branchPatterns = Array.isArray(branchPatterns)
@@ -245,87 +290,90 @@ async function selectReferences (repo, remote, refPatterns) {
       if (branchPatterns.length) {
         let currentBranchIdx
         if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-          if (repo.headDetached()) {
-            refs.set('HEAD', { obj: await repo.head(), name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
+          const detachedHead = !isBare && (await isHeadDetached(repo))
+          if (detachedHead) {
+            refs.set('HEAD', { name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
             if (branchPatterns.length > 1) {
               branchPatterns.splice(currentBranchIdx, 1)
-            } else if (tagPatterns && tagPatterns.length) {
-              branchPatterns = undefined
             } else {
-              return [refs.get('HEAD')]
+              return Array.from(refs.values())
             }
           } else {
-            branchPatterns[currentBranchIdx] = await getCurrentBranchName(repo)
+            branchPatterns[currentBranchIdx] = await getCurrentBranchName(repo, remote)
           }
         }
       } else {
         branchPatterns = undefined
       }
     }
+    if (branchPatterns) {
+      const remoteBranches = await git.listBranches(Object.assign({ remote }, repo))
+      for (let name of remoteBranches) {
+        // FIXME UPSTREAM isomorphic-git should filter out HEAD from the list of remote branches
+        if (name !== 'HEAD' && matcher([name], branchPatterns).length) {
+          refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
+        }
+      }
+      // NOTE only consider local branches if repo has a worktree or there are no remote tracking branches
+      if (!isBare) {
+        const localBranches = await git.listBranches(repo)
+        if (localBranches.length) {
+          const currentBranchName = await git.currentBranch(repo)
+          for (let name of localBranches) {
+            if (matcher([name], branchPatterns).length) {
+              refs.set(name, { name, qname: name, type: 'branch', isHead: name === currentBranchName })
+            }
+          }
+        }
+      } else if (!remoteBranches.length) {
+        const localBranches = await git.listBranches(repo)
+        if (localBranches.length) {
+          for (let name of localBranches) {
+            if (matcher([name], branchPatterns).length) refs.set(name, { name, qname: name, type: 'branch' })
+          }
+        }
+      }
+    }
   }
 
-  return Array.from(
-    (await repo.getReferences(GIT_TYPE_OID))
-      .reduce((accum, ref) => {
-        let segments
-        let name
-        let refData
-        if (ref.isTag()) {
-          if (tagPatterns && matcher([(name = ref.shorthand())], tagPatterns).length) {
-            // NOTE tags are stored using symbol keys to distinguish them from branches
-            accum.set(Symbol(name), { obj: ref, name, qname: `tags/${name}`, type: 'tag' })
-          }
-          return accum
-        } else if (!branchPatterns) {
-          return accum
-        } else if ((segments = ref.name().split('/'))[1] === 'heads') {
-          name = segments.slice(2).join('/')
-          refData = { obj: ref, name, qname: name, type: 'branch', isHead: !!ref.isHead() }
-        } else if (ref.isRemote() && segments[2] === remote) {
-          name = segments.slice(3).join('/')
-          refData = { obj: ref, name, qname: `remotes/${remote}/${name}`, type: 'branch', remote }
-        } else {
-          return accum
-        }
-
-        // NOTE if branch is present in accum, we already know it matches the pattern
-        if (accum.has(name)) {
-          if (isBare === !!refData.remote) accum.set(name, refData)
-        } else if (branchPatterns && matcher([name], branchPatterns).length) {
-          accum.set(name, refData)
-        }
-
-        return accum
-      }, refs)
-      .values()
-  )
+  return Array.from(refs.values())
 }
 
-function getCurrentBranchName (repo) {
-  return repo.getCurrentBranch().then((ref) => {
-    const refName = ref.shorthand()
-    return ref.isRemote() ? refName.substr(refName.indexOf('/') + 1) : refName
-  })
+function getCurrentBranchName (repo, remote) {
+  let refPromise
+  if (repo.noCheckout) {
+    refPromise = git
+      .resolveRef(Object.assign({ ref: `refs/remotes/${remote}/HEAD`, depth: 2 }, repo))
+      .catch(() => git.resolveRef(Object.assign({ ref: 'HEAD', depth: 2 }, repo)))
+  } else {
+    refPromise = git.resolveRef(Object.assign({ ref: 'HEAD', depth: 2 }, repo))
+  }
+  return refPromise.then((ref) => ref.replace(/^refs\/(?:heads|remotes\/[^/]+)\//, ''))
 }
 
-async function populateComponentVersion (source, repo, url, repoPath, isRemote, remoteName, ref) {
-  if (!isRemote) url = await resolveRemoteUrl(repo, repoPath, remoteName)
+function isHeadDetached (repo) {
+  return git.currentBranch(Object.assign({ fullname: true }, repo)).then((branchName) => !branchName.startsWith('ref/'))
+}
+
+async function populateComponentVersion (source, repo, remoteName, requiresAuth, ref) {
+  const url = repo.url
+  const originUrl = url || (await resolveRemoteUrl(repo, remoteName).then((url) => url || repo.dir))
   let startPath = source.startPath || ''
   if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
   // Q: should worktreePath be passed in?
-  const worktreePath = ref.isHead && !(isRemote || repo.isBare()) ? ospath.join(repoPath, startPath) : undefined
+  const worktreePath = ref.isHead && !(url || repo.noCheckout) ? ospath.join(repo.dir, startPath) : undefined
   let files
   let componentVersion
   try {
     files = worktreePath
       ? await readFilesFromWorktree(worktreePath, startPath)
-      : await readFilesFromGitTree(repo, ref.obj, startPath)
+      : await readFilesFromGitTree(repo, ref, startPath)
     componentVersion = loadComponentDescriptor(files, startPath)
   } catch (e) {
-    e.message += ` in ${isRemote ? url : repoPath} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
+    e.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
     throw e
   }
-  const origin = computeOrigin(url, ref.name, ref.type, startPath, worktreePath)
+  const origin = computeOrigin(originUrl, requiresAuth, ref.name, ref.type, startPath, worktreePath)
   componentVersion.files = files.map((file) => assignFileProperties(file, origin))
   return componentVersion
 }
@@ -380,55 +428,80 @@ function collectFiles (done) {
   return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
 }
 
-async function readFilesFromGitTree (repository, ref, startPath) {
-  return srcGitTree(await getGitTree(repository, ref, startPath))
+function readFilesFromGitTree (repo, ref, startPath) {
+  return getGitTree(repo, ref, startPath).then((tree) => srcGitTree(repo, tree))
 }
 
-async function getGitTree (repository, ref, startPath) {
-  let commit
-  if (ref.isTag()) {
-    commit = await ref.peel(GIT_TYPE_COMMIT).then((target) => repository.getCommit(target))
-  } else {
-    commit = await repository.getBranchCommit(ref)
-  }
-  if (startPath) {
-    const tree = await commit.getTree()
-    const subTreeEntry = await tree.getEntry(startPath).catch((err) => {
-      if (err.errno === git.Error.CODE.ENOTFOUND) err.message = `the start path '${startPath}' does not exist`
-      throw err
-    })
-    if (!subTreeEntry.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
-    return repository.getTree(subTreeEntry.id())
-  } else {
-    return commit.getTree()
-  }
+function getGitTree (repo, { qname: ref }, startPath) {
+  // NOTE sometimes isomorphic-git takes two attempts resolve an annotated tag; perhaps something to address upstream
+  return git
+    .resolveRef(Object.assign({ ref }, repo))
+    .then((oid) => git.readObject(Object.assign({ oid }, repo)))
+    .then((entry) => (entry.type === 'tag' ? git.readObject(Object.assign({ oid: entry.object.object }, repo)) : entry))
+    .then(({ object: commit }) =>
+      git
+        .readObject(Object.assign({ oid: commit.tree, filepath: startPath }, repo))
+        .catch((e) => {
+          throw new Error(`the start path '${startPath}' does not exist`)
+        })
+        .then((entry) => {
+          if (entry.type !== 'tree') throw new Error(`the start path '${startPath}' is not a directory`)
+          return entry.object
+        })
+    )
 }
 
-function srcGitTree (tree) {
+function srcGitTree (repo, tree) {
   return new Promise((resolve, reject) => {
     const files = []
-    // NOTE walk only visits blobs (i.e., files)
-    tree
-      .walk()
-      .on('entry', (entry) => {
-        // NOTE ignore dotfiles and extensionless files; convert remaining entries to File objects
-        // NOTE since nodegit 0.21.2, tree walker always returns posix paths
-        if (!DOT_OR_NOEXT_RX.test(entry.path())) files.push(entryToFile(entry))
-      })
+    walkGitTree(repo, tree, filterGitEntry)
+      .on('entry', (entry) => files.push(entryToFile(entry)))
       .on('error', reject)
       .on('end', () => resolve(Promise.all(files)))
       .start()
   })
 }
 
-async function entryToFile (entry) {
-  const blob = await entry.getBlob()
-  const contents = blob.content()
-  const stat = new fs.Stats()
-  stat.mode = entry.filemode()
-  stat.size = contents.length
-  // NOTE since nodegit 0.21.2, tree walker always returns posix paths
-  return new File({ path: entry.path(), contents, stat })
+function walkGitTree (repo, root, filter) {
+  const emitter = new EventEmitter()
+  let depth = 1
+  function visit (tree, dirname = '') {
+    depth--
+    for (let entry of tree.entries) {
+      if (filter(entry)) {
+        if (entry.type === 'blob') {
+          emitter.emit('entry', Object.assign({}, repo, entry, { path: path.join(dirname, entry.path) }))
+        } else if (entry.type === 'tree') {
+          depth++
+          git
+            .readObject(Object.assign({ oid: entry.oid }, repo))
+            .then(({ object: subtree }) => visit(subtree, path.join(dirname, entry.path)))
+            .catch((e) => emitter.emit('error', e))
+        }
+      }
+    }
+
+    if (depth === 0) emitter.emit('end')
+  }
+  emitter.start = () => visit(root)
+  return emitter
+}
+
+/**
+ * Returns true if the entry should be processed or false if it should be skipped.
+ */
+function filterGitEntry (entry) {
+  return !(entry.path.startsWith('.') || (entry.type === 'blob' && !entry.path.includes('.')))
+}
+
+// QUESTION should repo be a separate property?
+function entryToFile (entry) {
+  return git.readObject(entry).then(({ object: contents }) => {
+    const stat = new fs.Stats()
+    stat.mode = entry.mode
+    stat.size = contents.length
+    return new File({ path: entry.path, contents, stat })
+  })
 }
 
 function loadComponentDescriptor (files, startPath) {
@@ -447,9 +520,10 @@ function loadComponentDescriptor (files, startPath) {
   return data
 }
 
-function computeOrigin (url, refName, refType, startPath, worktreePath = undefined) {
+function computeOrigin (url, requiresAuth, refName, refType, startPath, worktreePath = undefined) {
   let match
   const origin = { type: 'git', url, startPath }
+  if (requiresAuth) origin.requiresAuth = requiresAuth
   origin[refType] = refName
   if (worktreePath) {
     origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
@@ -488,48 +562,31 @@ function assignFileProperties (file, origin) {
   return file
 }
 
-// QUESTION should we create dedicate (mutable) instance of progress and set progress.label?
-function getFetchOptions (progress, url, credentials, operation) {
-  let authAttempted
-  return {
-    callbacks: {
-      // https://github.com/nodegit/nodegit/blob/master/guides/cloning/ssh-with-agent/README.md#github-certificate-issue-in-os-x
-      certificateCheck: () => 1,
-      // NOTE nodegit will continue to make attempts until git.Cred.defaultNew() or undefined is returned
-      credentials: (_, username) => {
-        if (authAttempted) return process.platform === 'win32' ? undefined : git.Cred.defaultNew()
-        authAttempted = true
-        if (url.startsWith('https://') || url.startsWith('http://')) {
-          return credentials
-            ? git.Cred.userpassPlaintextNew(credentials.username, credentials.password)
-            : git.Cred.usernameNew('')
-        } else {
-          // NOTE sshKeyFromAgent gracefully handles SSH agent not running
-          return git.Cred.sshKeyFromAgent(username)
-        }
-      },
-      transferProgress: progress.manager ? createTransferProgress(progress, url, operation) : undefined,
-    },
+function getFetchOptions (repo, progress, url, credentials, fetchTags, operation) {
+  const opts = Object.assign({ depth: 1 }, credentials, repo)
+  if (progress.manager) opts.emitter = createProgress(progress, url, operation)
+  if (operation === 'fetch') {
+    if (fetchTags) opts.tags = true
+  } else if (!fetchTags) {
+    opts.noTags = true
   }
+  return opts
 }
 
-function createTransferProgress (progress, progressLabel, operation) {
+function createProgress (progress, progressLabel, operation) {
   const progressBar = progress.manager.newBar(formatProgressBar(progressLabel, progress.maxLabelWidth, operation), {
-    total: Infinity,
+    total: 100,
     complete: '#',
     incomplete: '-',
   })
+  const ticks = progressBar.stream.columns - progressBar.fmt.replace(':bar', '').length
+  // NOTE leave room for indeterminate progress at end of bar; this isn't strictly needed for a bare clone
+  progressBar.scaleFactor = Math.max(0, (ticks - 1) / ticks)
   progressBar.tick(0)
-  const callback = async (transferStatus) => {
-    let growth = transferStatus.receivedObjects() + transferStatus.indexedObjects()
-    if (progressBar.total === Infinity) {
-      progressBar.total = transferStatus.totalObjects() * 2
-    } else {
-      growth -= progressBar.curr
-    }
-    if (growth) progressBar.tick(growth)
-  }
-  return { callback, progressBar, waitForResult: false }
+  return new EventEmitter()
+    .on('progress', onGitProgress.bind(null, progressBar))
+    .on('complete', onGitComplete.bind(null, progressBar))
+    .on('error', onGitComplete.bind(null, progressBar))
 }
 
 function formatProgressBar (label, maxLabelWidth, operation) {
@@ -544,51 +601,57 @@ function formatProgressBar (label, maxLabelWidth, operation) {
   return `[${operation}] ${label}${padding} [:bar]`
 }
 
-function completeProgress (progressBar) {
-  if (progressBar.total === Infinity) progressBar.total = 100
-  const remaining = progressBar.total - progressBar.curr
-  if (remaining) progressBar.tick(remaining)
+function onGitProgress (progressBar, { phase, loaded, total }) {
+  const phaseIdx = GIT_PROGRESS_PHASES.indexOf(phase)
+  if (~phaseIdx) {
+    const scaleFactor = progressBar.scaleFactor
+    let ratio = ((loaded / total) * scaleFactor) / GIT_PROGRESS_PHASES.length
+    if (phaseIdx) ratio += (phaseIdx * scaleFactor) / GIT_PROGRESS_PHASES.length
+    // TODO if we upgrade to progress >= 2.0.0, UI updates are automatically throttled (set via renderThrottle option)
+    //setTimeout(() => progressBar.update(ratio > scaleFactor ? scaleFactor : ratio), 0)
+    progressBar.update(ratio > scaleFactor ? scaleFactor : ratio)
+  }
+}
+
+function onGitComplete (progressBar, err) {
+  if (err) {
+    progressBar.chars.incomplete = '?'
+    progressBar.update(0)
+  } else {
+    progressBar.update(1)
+  }
 }
 
 /**
  * Generates a safe, unique folder name for a git URL.
  *
- * The purpose of this function is generate a safe, unique folder name to use for the cloned
- * repository that gets stored in the cache.
+ * The purpose of this function is generate a safe, unique folder name for the cloned
+ * repository that gets stored in the cache directory.
  *
- * The generated folder name follows the pattern <basename>-<sha1>.git.
+ * The generated folder name follows the pattern: <basename>-<sha1>-<version>.git
  *
  * @param {String} url - The repository URL to convert.
- * @returns {String} A safe, unique folder name.
+ * @returns {String} The generated folder name.
  */
 function generateCloneFolderName (url) {
   let normalizedUrl = url.toLowerCase()
   if (posixify) normalizedUrl = posixify(normalizedUrl)
   normalizedUrl = normalizedUrl.replace(NON_UNIQUE_URI_SUFFIX_RX, '')
   const basename = normalizedUrl.split(ANY_SEPARATOR_RX).pop()
-  const sha1hash = createHash('sha1')
-  sha1hash.update(normalizedUrl)
-  const sha1 = sha1hash.digest('hex')
-  return `${basename}-${sha1}.git`
+  const hash = createHash('sha1')
+  hash.update(normalizedUrl)
+  return basename + '-' + hash.digest('hex') + '.git'
 }
 
 /**
  * Resolve the URL of the specified remote for the given repository.
  *
  * @param {Repository} repo - The repository on which to operate.
- * @param {String} repoPath - The local filesystem path of the repository clone.
  * @param {String} remoteName - The name of the remote to resolve.
- * @returns {String} The URL of the specified remote, or the repository path if the
- * remote does not exist.
+ * @returns {String} The URL of the specified remote, if present.
  */
-async function resolveRemoteUrl (repo, repoPath, remoteName) {
-  return (
-    repo
-      .getRemote(remoteName)
-      .then((remote) => remote.url())
-      // Q: should we turn this into a file URI?
-      .catch(() => repoPath)
-  )
+async function resolveRemoteUrl (repo, remoteName) {
+  return git.config(Object.assign({ path: 'remote.' + remoteName + '.url' }, repo))
 }
 
 /**
@@ -598,11 +661,31 @@ async function resolveRemoteUrl (repo, repoPath, remoteName) {
  * @return {Boolean} A flag indicating whether the URL matches a directory on the local filesystem.
  */
 function isLocalDirectory (url) {
-  try {
-    return fs.statSync(url).isDirectory()
-  } catch (e) {
-    return false
+  return fs
+    .stat(url)
+    .then((stat) => stat.isDirectory())
+    .catch(() => false)
+}
+
+function tagsSpecified (sources, defaultTags) {
+  return ~sources.findIndex((source) => {
+    const tags = source.tags || defaultTags || []
+    return Array.isArray(tags) ? tags.length : true
+  })
+}
+
+function registerGitPlugins (config, startDir) {
+  const plugins = git.cores.create(GIT_CORE)
+  // QUESTION is it really necessary to make the fs pluggable?
+  //if (!plugins.has('fs')) plugins.set('fs', fs)
+  let credentialManager
+  if (plugins.has('credentialManager')) {
+    credentialManager = plugins.get('credentialManager')
+  } else {
+    plugins.set('credentialManager', (credentialManager = new GitCredentialManagerStore()))
   }
+  if (typeof credentialManager.configure === 'function') credentialManager.configure({ config, startDir })
+  return plugins
 }
 
 /**

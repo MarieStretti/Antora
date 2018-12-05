@@ -8,13 +8,17 @@ const { createHash } = require('crypto')
 const deepFreeze = require('deep-freeze')
 const fs = require('fs-extra')
 const getCacheDir = require('cache-directory')
-const git = require('nodegit')
+const GitServer = require('node-git-server')
 const http = require('http')
 const os = require('os')
 const ospath = require('path')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
-const { COMPONENT_DESC_FILENAME, CONTENT_CACHE_FOLDER } = require('@antora/content-aggregator/lib/constants')
+const {
+  COMPONENT_DESC_FILENAME,
+  CONTENT_CACHE_FOLDER,
+  GIT_OPERATION_LABEL_LENGTH,
+} = require('@antora/content-aggregator/lib/constants')
 const CACHE_DIR = getCacheDir('antora-test')
 const CONTENT_CACHE_DIR = ospath.join(CACHE_DIR, CONTENT_CACHE_FOLDER)
 const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
@@ -22,7 +26,10 @@ const CWD = process.cwd()
 const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const WORK_DIR = ospath.join(__dirname, 'work')
 
-function testAll (testBlock, numRepoBuilders = 1) {
+// FIXME figure out a way to avoid having to use a global here
+let gitServerPort
+
+function testAll (testBlock, numRepoBuilders = 1, remoteBare = undefined) {
   const makeTest = (repoBuilderOpts) => {
     const repoBuilders = Array.from(
       { length: numRepoBuilders },
@@ -33,12 +40,14 @@ function testAll (testBlock, numRepoBuilders = 1) {
 
   it('on local repo', () => makeTest())
   it('on local bare repo', () => makeTest({ bare: true }))
-  it('on remote repo', () => makeTest({ remote: true }))
-  it('on remote bare repo', () => makeTest({ remote: true, bare: true }))
+  it('on remote repo', () => makeTest({ remote: { gitServerPort } }))
+  if (remoteBare) it('on remote bare repo', () => makeTest({ bare: true, remote: { gitServerPort } }))
 }
 
-describe('aggregateContent()', () => {
+describe('aggregateContent()', function () {
+  let timeout = this.timeout()
   let playbookSpec
+  let gitServer
 
   const initRepoWithFiles = async (repoBuilder, componentDesc, paths, beforeClose) => {
     let repoName
@@ -46,7 +55,7 @@ describe('aggregateContent()', () => {
       repoName = componentDesc.repoName
       delete componentDesc.repoName
     }
-    if (!componentDesc || !Object.getOwnPropertyNames(componentDesc).length) {
+    if (!componentDesc || !Object.keys(componentDesc).length) {
       componentDesc = { name: 'the-component', version: 'v1.2.3' }
     }
     if (paths) {
@@ -106,6 +115,14 @@ describe('aggregateContent()', () => {
     }
   }
 
+  before(async () => {
+    gitServerPort = await new Promise((resolve, reject) =>
+      (gitServer = new GitServer(CONTENT_REPOS_DIR, { autoCreate: false })).listen(0, function (err) {
+        err ? reject(err) : resolve(this.address().port)
+      })
+    )
+  })
+
   beforeEach(() => {
     playbookSpec = {
       runtime: { quiet: true },
@@ -117,7 +134,8 @@ describe('aggregateContent()', () => {
     clean()
   })
 
-  after(() => {
+  after(async () => {
+    await new Promise((resolve, reject) => gitServer.server.close((err) => (err ? reject(err) : resolve())))
     clean(true)
   })
 
@@ -136,6 +154,24 @@ describe('aggregateContent()', () => {
         .then(() => beforeClose && beforeClose())
         .then(() => repoBuilder.close())
     }
+
+    describe('should load component descriptor then remove file from aggregate', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+        }
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include(componentDesc)
+        const paths = aggregate[0].files.map((file) => file.path)
+        expect(paths).to.not.include(COMPONENT_DESC_FILENAME)
+      })
+    })
 
     describe('should throw if component descriptor cannot be found', () => {
       testAll(async (repoBuilder) => {
@@ -190,24 +226,6 @@ describe('aggregateContent()', () => {
       })
     })
 
-    describe('should read properties from component descriptor then drop file', () => {
-      testAll(async (repoBuilder) => {
-        const componentDesc = {
-          name: 'the-component',
-          title: 'The Component',
-          version: 'v1.2.3',
-          nav: ['nav-one.adoc', 'nav-two.adoc'],
-        }
-        await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
-        playbookSpec.content.sources.push({ url: repoBuilder.url })
-        const aggregate = await aggregateContent(playbookSpec)
-        expect(aggregate).to.have.lengthOf(1)
-        expect(aggregate[0]).to.deep.include(componentDesc)
-        const paths = aggregate[0].files.map((file) => file.path)
-        expect(paths).to.not.include(COMPONENT_DESC_FILENAME)
-      })
-    })
-
     describe('should read properties from component descriptor located at specified start path', () => {
       testAll(async (repoBuilder) => {
         const componentDesc = {
@@ -218,18 +236,9 @@ describe('aggregateContent()', () => {
           startPath: 'docs',
         }
         let componentDescEntry
-        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, async () =>
-          repoBuilder.repository.getHeadCommit().then((head) =>
-            head.getTree().then((headTree) =>
-              headTree
-                .getEntry('docs/antora.yml')
-                .then((entry) => {
-                  componentDescEntry = entry
-                })
-                .catch(() => {})
-            )
-          )
-        )
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, async () => {
+          componentDescEntry = repoBuilder.findEntry('docs/antora.yml')
+        })
         expect(componentDescEntry).to.exist()
         expect(repoBuilder.startPath).to.equal('docs')
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
@@ -628,7 +637,7 @@ describe('aggregateContent()', () => {
         await initRepoWithBranches(repoBuilder)
           .then(() => repoBuilder.open())
           .then(() => repoBuilder.checkoutBranch('v3.0'))
-          .then(() => repoBuilder.repository.detachHead())
+          .then(() => repoBuilder.detachHead())
           .then(() => repoBuilder.close())
         playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['HEAD', 'v1.0', 'v2.0'] })
         deepFreeze(playbookSpec)
@@ -837,29 +846,32 @@ describe('aggregateContent()', () => {
     })
 
     describe('should clone repository into cache folder', () => {
-      testAll(async (repoBuilder) => {
-        await initRepoWithFiles(repoBuilder)
-        playbookSpec.content.sources.push({ url: repoBuilder.url })
-        await aggregateContent(playbookSpec)
-        if (repoBuilder.remote) {
-          let normalizedUrl = repoBuilder.url
-            .toLowerCase()
-            .replace(/\\/g, '/')
-            .replace(/(?:\/?\.git|\/)$/, '')
-          let sha1 = createHash('sha1')
-          sha1.update(normalizedUrl)
-          sha1 = sha1.digest('hex')
-          const repoDir = `${ospath.basename(normalizedUrl)}-${sha1}.git`
-          expect(CONTENT_CACHE_DIR).to.be.a.directory()
-          expect(ospath.join(CONTENT_CACHE_DIR, repoDir))
-            .to.be.a.directory()
-            .and.include.files(['HEAD'])
-        } else {
-          expect(CONTENT_CACHE_DIR)
-            .to.be.a.directory()
-            .and.be.empty()
-        }
-      })
+      testAll(
+        async (repoBuilder) => {
+          await initRepoWithFiles(repoBuilder)
+          playbookSpec.content.sources.push({ url: repoBuilder.url })
+          await aggregateContent(playbookSpec)
+          if (repoBuilder.remote) {
+            let normalizedUrl = repoBuilder.url
+              .toLowerCase()
+              .replace(/\\/g, '/')
+              .replace(/(?:(?:(?:\.git)?\/)?\.git|\/)$/, '')
+            let hash = createHash('sha1')
+            hash.update(normalizedUrl)
+            const repoDir = `${ospath.basename(normalizedUrl)}-${hash.digest('hex')}.git`
+            expect(CONTENT_CACHE_DIR).to.be.a.directory()
+            expect(ospath.join(CONTENT_CACHE_DIR, repoDir))
+              .to.be.a.directory()
+              .and.include.files(['HEAD'])
+          } else {
+            expect(CONTENT_CACHE_DIR)
+              .to.be.a.directory()
+              .and.be.empty()
+          }
+        },
+        1,
+        true
+      )
     })
 
     describe('should use custom cache dir relative to cwd', () => {
@@ -1098,7 +1110,7 @@ describe('aggregateContent()', () => {
         refs.forEach(([name, type]) => {
           const expectedEditUrlPattern = 'https://github.com/org-name/repo-name/' + action[type] + '/' + name + '/%s'
           urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
             expect(origin.url).to.equal(url)
             expect(origin[type]).to.equal(name)
             expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
@@ -1118,7 +1130,7 @@ describe('aggregateContent()', () => {
         refs.forEach(([name, type]) => {
           const expectedEditUrlPattern = 'https://gitlab.com/org-name/repo-name/' + action[type] + '/' + name + '/%s'
           urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
             expect(origin.url).to.equal(url)
             expect(origin[type]).to.equal(name)
             expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
@@ -1137,7 +1149,7 @@ describe('aggregateContent()', () => {
         refs.forEach(([name, type]) => {
           const expectedEditUrlPattern = 'https://bitbucket.org/org-name/repo-name/src/' + name + '/%s'
           urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
             expect(origin.url).to.equal(url)
             expect(origin[type]).to.equal(name)
             expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
@@ -1156,7 +1168,7 @@ describe('aggregateContent()', () => {
         refs.forEach(([name, type]) => {
           const expectedEditUrlPattern = 'https://pagure.io/group-name/repo-name/blob/' + name + '/f/%s'
           urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, name, type, '')
+            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
             expect(origin.url).to.equal(url)
             expect(origin[type]).to.equal(name)
             expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
@@ -1171,10 +1183,16 @@ describe('aggregateContent()', () => {
         const expectedEditUrlPattern = posixify
           ? 'file:///' + posixify(worktreePath) + '/%s'
           : 'file://' + worktreePath + '/%s'
-        const origin = aggregateContent._computeOrigin(url, branch, 'branch', '', worktreePath)
+        const origin = aggregateContent._computeOrigin(url, false, branch, 'branch', '', worktreePath)
         expect(origin.url).to.equal(url)
         expect(origin.branch).to.equal(branch)
         expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+      })
+
+      it('should set correct origin data if URL requires auth', () => {
+        const url = 'https://gitlab.com/antora/demo/demo-component-a.git'
+        const origin = aggregateContent._computeOrigin(url, 'requested', 'master', 'branch', '')
+        expect(origin.requiresAuth).to.equal('requested')
       })
     })
 
@@ -1195,7 +1213,7 @@ describe('aggregateContent()', () => {
     })
   })
 
-  describe('join component version', () => {
+  describe('distributed component', () => {
     describe('should aggregate files with same component version found in different refs', () => {
       testAll(async (repoBuilder) => {
         const componentDesc = { name: 'the-component', version: 'v1.2.3' }
@@ -1255,8 +1273,8 @@ describe('aggregateContent()', () => {
           expect(CONTENT_CACHE_DIR)
             .to.be.a.directory()
             .and.subDirs.have.lengthOf(1)
-          expect(aggregate).to.have.lengthOf(2)
         }
+        expect(aggregate).to.have.lengthOf(2)
         expect(aggregate[0]).to.include({ name: 'the-component', version: '1.0' })
         let pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
         expect(pageOne).to.exist()
@@ -1390,10 +1408,10 @@ describe('aggregateContent()', () => {
       })
 
       it('should populate file with correct contents from worktree of clone', async () => {
-        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
         await initRepoWithFilesAndWorktree(repoBuilder)
         const clonePath = ospath.join(CONTENT_REPOS_DIR, 'clone')
-        await git.Clone.clone(repoBuilder.url, clonePath)
+        await repoBuilder.clone(clonePath)
         const wipPageContents = heredoc`
           = WIP
 
@@ -1450,13 +1468,7 @@ describe('aggregateContent()', () => {
       })
 
       it('on remote repo', async () => {
-        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true })
-        await initRepoWithFilesAndWorktree(repoBuilder)
-        await testNonWorktreeAggregate(repoBuilder)
-      })
-
-      it('on remote bare repo', async () => {
-        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
         await initRepoWithFilesAndWorktree(repoBuilder)
         await testNonWorktreeAggregate(repoBuilder)
       })
@@ -1464,31 +1476,46 @@ describe('aggregateContent()', () => {
   })
 
   it('should create bare repository with detached HEAD under cache directory', async () => {
-    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
-    await initRepoWithFiles(repoBuilder)
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+    const defaultBranch = 'tip'
+    await initRepoWithFiles(repoBuilder, undefined, undefined, () => repoBuilder.checkoutBranch(defaultBranch))
     playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'HEAD' })
-    const aggregate = await aggregateContent(playbookSpec)
+    let aggregate = await aggregateContent(playbookSpec)
     expect(aggregate).to.have.lengthOf(1)
+    expect(aggregate[0]).to.have.nested.property('files[0].src.origin.branch', defaultBranch)
     expect(CONTENT_CACHE_DIR)
       .to.be.a.directory()
       .with.subDirs.have.lengthOf(1)
-    const cachedRepoName = (await fs.readdir(CONTENT_CACHE_DIR))[0]
-    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName)).to.have.extname('.git')
-    // NOTE the HEAD must be present, but should point to a commit SHA
-    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'HEAD'))
+    const cachedRepoName = await fs.readdir(CONTENT_CACHE_DIR).then((entries) => entries[0])
+    expect(cachedRepoName).to.match(/\.git$/)
+    const clonedRepoBuilder = new RepositoryBuilder(CONTENT_CACHE_DIR, FIXTURES_DIR, { bare: true })
+    await clonedRepoBuilder.open(cachedRepoName)
+    const clonePath = clonedRepoBuilder.repoPath
+    expect(clonePath).to.have.extname('.git')
+    expect(ospath.join(clonePath, 'refs/remotes/origin/HEAD'))
       .to.be.a.file()
-      .and.not.have.contents.that.match(/^ref: refs\/heads\/master(?=\n|$)/)
-    expect(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'refs/heads'))
+      .and.have.contents.that.match(new RegExp(`^ref: refs/remotes/origin/${defaultBranch}(?=$|\n)`))
+    expect(ospath.join(clonePath, 'refs/heads'))
       .to.be.a.directory()
       .and.empty()
-  })
+    // NOTE make sure local HEAD is ignored
+    await clonedRepoBuilder.checkoutBranch$1('local', 'refs/remotes/origin/HEAD')
+    aggregate = await aggregateContent(playbookSpec)
+    expect(aggregate).to.have.lengthOf(1)
+    expect(aggregate[0]).to.have.nested.property('files[0].src.origin.branch', defaultBranch)
+    // NOTE make sure local HEAD is considered if remote HEAD is missing
+    await fs.rename(ospath.join(clonePath, 'refs/remotes/origin/HEAD'), ospath.join(clonePath, 'HEAD'))
+    aggregate = await aggregateContent(playbookSpec)
+    expect(aggregate).to.have.lengthOf(1)
+    expect(aggregate[0]).to.have.nested.property('files[0].src.origin.branch', defaultBranch)
+  }).timeout(timeout * 2)
 
   it('should pull updates into cached repository when pull runtime option is enabled', async () => {
-    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.checkoutBranch('v1.2.x')
     )
-    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*', tags: 'release/*' })
+    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
 
     const firstAggregate = await aggregateContent(playbookSpec)
 
@@ -1512,6 +1539,7 @@ describe('aggregateContent()', () => {
       .then(() => repoBuilder.close())
 
     playbookSpec.runtime.pull = true
+    playbookSpec.content.sources[0].tags = 'release/*'
     const secondAggregate = await aggregateContent(playbookSpec)
 
     expect(secondAggregate).to.have.lengthOf(3)
@@ -1532,10 +1560,10 @@ describe('aggregateContent()', () => {
     expect(secondAggregate[2]).to.include({ name: 'the-component', version: 'v2.0.1' })
     const page4v2 = secondAggregate[2].files.find((file) => file.path === 'modules/ROOT/pages/topic-b/page-four.adoc')
     expect(page4v2).to.exist()
-  })
+  }).timeout(timeout * 2)
 
   it('should fetch tags not reachable from fetched commits when pull runtime option is enabled', async () => {
-    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.checkoutBranch('v1.2.x')
     )
@@ -1574,7 +1602,7 @@ describe('aggregateContent()', () => {
   })
 
   it('should not pull updates into cached repository when pull runtime option is not enabled', async () => {
-    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.checkoutBranch('v1.2.3')
     )
@@ -1604,7 +1632,7 @@ describe('aggregateContent()', () => {
   })
 
   it('should prefer remote branches in bare repository', async () => {
-    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(remoteRepoBuilder, { repoName: 'the-component-remote' })
 
     const localRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true })
@@ -1627,7 +1655,7 @@ describe('aggregateContent()', () => {
   // NOTE this test doesn't always trigger the condition being tested; it depends on the order the refs are returned
   // FIXME use a spy on getReferences to make the order determinant
   it('should discover components in specified remote', async () => {
-    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     const remoteComponentDesc = {
       repoName: 'the-component-remote',
       name: 'the-component',
@@ -1652,7 +1680,7 @@ describe('aggregateContent()', () => {
   })
 
   it('should not discover branches in other remotes', async () => {
-    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     const remoteComponentDesc = {
       repoName: 'the-component-remote',
       name: 'the-component',
@@ -1676,7 +1704,7 @@ describe('aggregateContent()', () => {
 
   // technically, we don't know what it did w/ the remote we specified, but it should work regardless
   it('should ignore remote on cached repository', async () => {
-    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: true })
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder)
 
     playbookSpec.content.sources.push({ url: repoBuilder.url, remote: 'upstream' })
@@ -1691,7 +1719,7 @@ describe('aggregateContent()', () => {
 
     beforeEach(async () => {
       playbookSpec.runtime.quiet = false
-      repoBuilder = new RepositoryBuilder(WORK_DIR, FIXTURES_DIR, { remote: true })
+      repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder, {
         repoName: 'long-enough-name-to-trigger-a-progress-bar-when-used-as-width',
       })
@@ -1706,7 +1734,7 @@ describe('aggregateContent()', () => {
         expect(lines[0]).to.include('[clone] ' + repoBuilder.url)
         expect(lines[0]).to.match(/ \[-+\]/)
         expect(lines[lines.length - 1]).to.match(/ \[#+\]/)
-      }, 9 + repoBuilder.url.length * 2)
+      }, GIT_OPERATION_LABEL_LENGTH + 1 + repoBuilder.url.length * 2)
     })
 
     it('should show progress bar when fetching a remote repository', async () => {
@@ -1720,11 +1748,32 @@ describe('aggregateContent()', () => {
         expect(lines[0]).to.include('[fetch] ' + repoBuilder.url)
         expect(lines[0]).to.match(/ \[-+\]/)
         expect(lines[lines.length - 1]).to.match(/ \[#+\]/)
-      }, 9 + repoBuilder.url.length * 2)
+      }, GIT_OPERATION_LABEL_LENGTH + 1 + repoBuilder.url.length * 2)
+    })
+
+    it('should cancel progress bar for fetch and create new one for clone if fetch fails', async () => {
+      playbookSpec.runtime.quiet = true
+      await aggregateContent(playbookSpec)
+      const cachedRepoName = await fs.readdir(CONTENT_CACHE_DIR).then((entries) => entries[0])
+      // NOTE corrupt the cloned repository
+      await fs.writeFile(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'config'), '')
+      playbookSpec.runtime.quiet = false
+      playbookSpec.runtime.pull = true
+      return withMockStdout(async (lines) => {
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(lines).to.have.lengthOf.at.least(2)
+        expect(lines[0]).to.include('[fetch] ' + repoBuilder.url)
+        expect(lines[0]).to.match(/ \[-+\]$/)
+        expect(lines[1]).to.include('[fetch] ' + repoBuilder.url)
+        expect(lines[1]).to.match(/ \[\?+\]$/)
+        expect(lines[lines.length - 1]).to.include('[clone] ' + repoBuilder.url)
+        expect(lines[lines.length - 1]).to.match(/ \[#+\]$/)
+      }, GIT_OPERATION_LABEL_LENGTH + 1 + repoBuilder.url.length * 2)
     })
 
     it('should show clone progress bar for each remote repository', async () => {
-      const otherRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true })
+      const otherRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(otherRepoBuilder, {
         name: 'the-other-component',
         title: 'The Other Component',
@@ -1746,11 +1795,11 @@ describe('aggregateContent()', () => {
         expect(otherRepoLines[0]).to.include('[clone] ' + otherRepoBuilder.url)
         expect(otherRepoLines[0]).to.match(/ \[-+\]/)
         expect(otherRepoLines[otherRepoLines.length - 1]).to.match(/ \[#+\]/)
-      }, 9 + Math.max(repoBuilder.url.length, otherRepoBuilder.url.length) * 2)
+      }, GIT_OPERATION_LABEL_LENGTH + 1 + Math.max(repoBuilder.url.length, otherRepoBuilder.url.length) * 2)
     })
 
     it('should show progress bars with mixed operations', async () => {
-      const otherRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: true })
+      const otherRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(otherRepoBuilder, {
         name: 'the-other-component',
         title: 'The Other Component',
@@ -1773,7 +1822,7 @@ describe('aggregateContent()', () => {
         expect(otherRepoLines[0]).to.include('[clone] ' + otherRepoBuilder.url)
         expect(otherRepoLines[0]).to.match(/ \[-+\]/)
         expect(otherRepoLines[otherRepoLines.length - 1]).to.match(/ \[#+\]/)
-      }, 9 + repoBuilder.url.length * 2)
+      }, GIT_OPERATION_LABEL_LENGTH + 1 + repoBuilder.url.length * 2)
     })
 
     it('should truncate repository URL to fit within progress bar', async () => {
@@ -1843,6 +1892,176 @@ describe('aggregateContent()', () => {
     })
   })
 
+  describe('authentication', () => {
+    let credentialsSent
+    let credentialsVerdict
+    let originalEnv
+
+    before(() => {
+      originalEnv = process.env
+      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
+    })
+
+    beforeEach(() => {
+      credentialsSent = undefined
+      credentialsVerdict = undefined
+      gitServer.authenticate = (type, repo, user, next) => {
+        if (type === 'fetch') {
+          user((username, password) => {
+            credentialsSent = { username, password }
+            credentialsVerdict ? next(credentialsVerdict) : next()
+          })
+        } else {
+          next()
+        }
+      }
+    })
+
+    afterEach(() => {
+      gitServer.authenticate = undefined
+    })
+
+    after(() => {
+      process.env = originalEnv
+    })
+
+    it('should read valid credentials from URL', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const urlWithoutAuth = repoBuilder.url
+      repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files).to.not.be.empty()
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.requiresAuth', 'specified')
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.url', urlWithoutAuth)
+    })
+
+    it('should throw exception if credentials in URL are not accepted', async () => {
+      credentialsVerdict = 'no entry!'
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const urlWithoutAuth = repoBuilder.url
+      repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + urlWithoutAuth
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+    })
+
+    // NOTE this test would fail if the git client didn't automatically add the .git extension
+    it('should add .git extension to URL if missing', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const urlWithoutAuth = repoBuilder.url.replace('.git', '')
+      repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files).to.not.be.empty()
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.url', urlWithoutAuth)
+    })
+
+    it('should pass empty password if only username is specified in URL', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      repoBuilder.url = repoBuilder.url.replace('//', '//u@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).not.to.be.undefined()
+      expect(credentialsSent.username).to.equal('u')
+      expect(credentialsSent.password).to.equal('')
+      expect(aggregate).to.have.lengthOf(1)
+    })
+
+    it('should read credentials for URL path from git credential store if auth is required', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
+      const credentials = ['invalid URL', repoBuilder.url.replace('//', '//u:p@')].join('\n') + '\n'
+      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+    })
+
+    it('should match entry in git credential store if specified without .git extension', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
+      const credentials = repoBuilder.url.replace('//', '//u:p@').replace('.git', '') + '\n'
+      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+    })
+
+    it('should read credentials for URL host from git credential store if auth is required', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
+      const credentials = repoBuilder.url.substr(0, repoBuilder.url.indexOf('/', 8)).replace('//', '//u:p@') + '\n'
+      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+    })
+
+    it('should read credentials for URL from git credential store (XDG) if auth is required', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
+      const credentials = repoBuilder.url.replace('//', '//u:p@') + '\n'
+      await fs.mkdir(ospath.join(WORK_DIR, 'git'))
+      await fs.writeFile(ospath.join(WORK_DIR, 'git/credentials'), credentials)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+    })
+
+    it('should read credentials from specified path if auth is required', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const credentials = 'https://token@git-host\n' + repoBuilder.url.replace('//', '//u:p@') + '\n'
+      const customGitCredentialsPath = ospath.join(WORK_DIR, '.custom-git-credentials')
+      await fs.writeFile(customGitCredentialsPath, credentials)
+      playbookSpec.git = { credentials: { path: customGitCredentialsPath } }
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+    })
+
+    it('should read credentials from specified contents if auth is required', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const credentials = 'https://token@git-host,' + repoBuilder.url.replace('//', '//u:p@') + '\n'
+      playbookSpec.git = { credentials: { contents: credentials } }
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+    })
+
+    it('should not pass credentials if credential store is missing', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + repoBuilder.url
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      expect(credentialsSent).to.be.undefined()
+    })
+  })
+
   describe('invalid local repository', () => {
     it('should throw meaningful error if local relative content directory does not exist', async () => {
       const invalidDir = './no-such-directory'
@@ -1901,39 +2120,52 @@ describe('aggregateContent()', () => {
 
   describe('invalid remote repository', () => {
     let server
-    before(() => {
-      server = http
-        .createServer((req, res) => {
-          const headers = {}
-          const statusCode = parseInt(req.url.split('/')[1])
-          if (statusCode === 401) {
-            headers['WWW-Authenticate'] = 'Basic realm="example"'
-          } else if (statusCode === 301) {
-            headers['Location'] = 'http://example.org/invalid-repository.git'
-          }
-          res.writeHead(statusCode, headers)
-          res.end('No dice!')
-        })
-        .listen(1337)
+    let serverPort
+    before(async () => {
+      serverPort = await new Promise((resolve, reject) => {
+        server = http
+          .createServer((req, res) => {
+            const headers = {}
+            const statusCode = parseInt(req.url.split('/')[1])
+            if (statusCode === 401) {
+              headers['WWW-Authenticate'] = 'Basic realm="example"'
+            } else if (statusCode === 301) {
+              headers['Location'] = 'http://example.org'
+            }
+            res.writeHead(statusCode, headers)
+            res.end('No dice!')
+          })
+          .listen(0, function (err) {
+            err ? reject(err) : resolve(this.address().port)
+          })
+      })
     })
 
-    after(() => {
-      server.close()
+    after(async () => {
+      await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())))
     })
 
-    it('should throw meaningful error when using SSH repository and SSH agent is not running', async () => {
-      const SSH_AUTH_SOCK = process.env.SSH_AUTH_SOCK
+    // NOTE this test also verifies that the SSH URL is still shown in the progress bar and error message
+    it('should throw meaningful error when cannot connect to SSH repository', async () => {
+      const oldSshAuthSock = process.env.SSH_AUTH_SOCK
       delete process.env.SSH_AUTH_SOCK
       const url = 'git@gitlab.com:invalid-repository.git'
-      const expectedErrorMessage = 'SSH agent must be running to access content repository via SSH: ' + url
+      const expectedErrorMessage =
+        'Remote does not support the "smart" HTTP protocol, ' +
+        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible: ' +
+        url
       playbookSpec.content.sources.push({ url })
-      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
-      if (SSH_AUTH_SOCK) process.env.SSH_AUTH_SOCK = SSH_AUTH_SOCK
+      await withMockStdout(async (lines) => {
+        playbookSpec.runtime.quiet = false
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+        expect(lines[0]).to.include(url)
+      })
+      if (oldSshAuthSock) process.env.SSH_AUTH_SOCK = oldSshAuthSock
     })
 
     it('should throw meaningful error if remote repository URL not found', async () => {
-      const url = 'http://localhost:1337/404/invalid-repository.git'
+      const url = `http://localhost:${serverPort}/404/invalid-repository.git`
       const expectedErrorMessage = 'Content repository not found: ' + url
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
@@ -1941,59 +2173,41 @@ describe('aggregateContent()', () => {
     })
 
     it('should throw meaningful error if credentials are insufficient', async () => {
-      const url = 'http://localhost:1337/401/invalid-repository.git'
-      const expectedErrorMessage =
-        'Content repository not found or you have insufficient credentials to access it: ' + url
+      const url = `http://localhost:${serverPort}/401/invalid-repository.git`
+      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + url
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })
 
     it('should not show auth information in progress bar label', async () => {
-      const url = 'http://0123456789@localhost:1337/401/invalid-repository.git'
-      const sanitizedUrl = 'http://localhost:1337/401/invalid-repository.git'
-      const expectedErrorMessage =
-        'Content repository not found or you have insufficient credentials to access it: ' + sanitizedUrl
+      const url = `http://0123456789@localhost:${serverPort}/401/invalid-repository.git`
+      const sanitizedUrl = `http://localhost:${serverPort}/401/invalid-repository.git`
+      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + sanitizedUrl
       return withMockStdout(async (lines) => {
         playbookSpec.runtime.quiet = false
         playbookSpec.content.sources.push({ url })
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
         expect(lines[0]).not.to.include('0123456789@')
-      }, 9 + url.length * 2)
+      }, GIT_OPERATION_LABEL_LENGTH + 1 + url.length * 2)
     })
 
     it('should throw meaningful error if server returns unexpected error', async () => {
-      const url = 'http://localhost:1337/301/invalid-repository.git'
+      const url = `http://localhost:${serverPort}/301/invalid-repository.git`
       let expectedErrorMessage
-      if (process.platform === 'win32') {
-        expectedErrorMessage = 'too many redirects or authentication replays: ' + url
-      } else {
-        expectedErrorMessage = 'cross host redirect not allowed: ' + url
-      }
+      //if (process.platform === 'win32') {
+      //  expectedErrorMessage = 'too many redirects or authentication replays: ' + url
+      //} else {
+      //  expectedErrorMessage = 'cross host redirect not allowed: ' + url
+      //}
+      expectedErrorMessage =
+        'Remote does not support the "smart" HTTP protocol, ' +
+        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible: ' +
+        url
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })
-
-    // FIXME this is too slow; we need a better way to test
-    /*
-    if (process.env.SSH_AUTH_SOCK) {
-      it('should throw meaningful error if remote repository not found', async () => {
-        const repoUrls = [
-          'git@github.com:antora/unknown-repository.git',
-          'git@gitlab.com:antora/unknown-repository.git',
-          'git@bitbucket.org:antora/unknown-repository.git',
-        ]
-        for (let i = 0, len = repoUrls.length; i < len; i++) {
-          const url = repoUrls[i]
-          const expectedErrorMessage = 'Content repository not found: ' + url
-          playbookSpec.content.sources = [{ url }]
-          const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-          expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
-        }
-      }).timeout(10000)
-    }
-    */
   })
 })

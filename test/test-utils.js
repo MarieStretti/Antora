@@ -2,8 +2,6 @@
 
 process.env.NODE_ENV = 'test'
 
-// IMPORTANT nodegit must be loaded before asciidoctor.js or else promisify gets tripped up by Opal enhancements
-require('nodegit')
 // IMPORTANT eagerly load Opal since we'll always be in this context; change String encoding from UTF-16LE to UTF-8
 const { Opal } = require('opal-runtime')
 if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF-8') {

@@ -10,10 +10,18 @@ This project utilizes semantic versioning.
 === Added
 
 * *playbook-builder*: Map `content.tags` in playbook schema
+* *content-aggregator*: Read credentials for private repository from git credential store file ($HOME/.git-credentials or $XDG_CONFIG_HOME/git/credentials) (#264)
+* *content-aggregator*: Allow git credentials file path or contents to be configured using `git.credentials` key (path or contents) in playbook (#264)
 * *page-composer*: Add next, previous, and parent properties to the page UI model to access adjacent pages (#233)
+* *cli*: Add `--git-credentials-path` option or `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file (#264)
+* *cli*: Read git credentials from `GIT_CREDENTIALS` environment variable, if set (#264)
 
 === Changed
 
+* *content-aggregator*: Replace nodegit with isomorphic-git as git client library (#264)
+* *content-aggregator*: Drop support for SSH as a transport protocol / authentication mechanism (#264)
+* *content-aggregator*: Automatically coerce a git SSH URL into an HTTPS URL (#264)
+* *content-aggregator*: Put cloned repositories in a version folder under cache dir (#264)
 * *page-composer*: Remap page.versions.latest as page.latest in UI model (#325)
 
 == 1.1.1 (2018-09-17)
