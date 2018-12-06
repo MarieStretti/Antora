@@ -33,7 +33,10 @@ module.exports = {
   expect: chai.expect,
   expectCalledWith: (observed, args, i = 0) => {
     if (!Array.isArray(args)) args = [args]
-    chai.expect(observed).on.nth(i).called.with(...args)
+    chai
+      .expect(observed)
+      .on.nth(i)
+      .called.with(...args)
   },
   heredoc: (literals, ...values) => {
     const str =

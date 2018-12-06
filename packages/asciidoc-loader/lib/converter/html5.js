@@ -28,10 +28,11 @@ const Html5Converter = (() => {
             options = Opal.hash2(['type', 'target'], { type: 'link', target })
           } else {
             attrs.role = attrs.role ? 'page ' + attrs.role : 'page'
-            options = Opal.hash2(
-              ['type', 'target', 'attrs'],
-              { type: 'link', target, attributes: Opal.hash2(Object.keys(attrs), attrs) }
-            )
+            options = Opal.hash2(['type', 'target', 'attrs'], {
+              type: 'link',
+              target,
+              attributes: Opal.hash2(Object.keys(attrs), attrs),
+            })
           }
           node = Opal.module(null, 'Asciidoctor').Inline.$new(node.getParent(), 'anchor', content, options)
         }

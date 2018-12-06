@@ -11,7 +11,10 @@ const IncludeProcessor = (() => {
   const $callback = Symbol('callback')
   const superclass = Opal.module(null, 'Asciidoctor').Extensions.IncludeProcessor
   const scope = Opal.klass(
-    Opal.module(null, 'Antora', function $Antora () {}), superclass, 'IncludeProcessor', function () {}
+    Opal.module(null, 'Antora', function $Antora () {}),
+    superclass,
+    'IncludeProcessor',
+    function () {}
   )
 
   Opal.defn(scope, '$initialize', function initialize (callback) {

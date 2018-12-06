@@ -898,7 +898,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'greeting.adoc',
       })
       expect(doc.getCatalog().includes['$key?']('greeting')).to.be.true()
-      expect(doc.getCatalog().includes['$[]']('greeting')['$nil?']()).to.be.true()
+      expect(doc.getCatalog().includes['$[]']('greeting')).to.equal(global.Opal.nil)
     })
 
     it('should not mangle a page reference if reference matches rootname of include', () => {
