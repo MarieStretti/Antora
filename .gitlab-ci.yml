@@ -1,4 +1,4 @@
-image: node:8.11.1-stretch
+image: node:8.14.0-stretch
 stages: [init, verify, deploy]
 yarn:
   stage: init
