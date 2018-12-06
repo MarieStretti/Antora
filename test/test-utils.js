@@ -9,30 +9,7 @@ if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF
 }
 
 const fs = require('fs-extra')
-
-const interceptRequire = require('intercept-require')
-// IMPORTANT this patch prevents chai from hanging when computing a deep equals diff when Opal is loaded
-// see https://github.com/chaijs/chai/issues/1109
-const patchChai = (_, info) => {
-  if (
-    info.moduleId.endsWith('/getEnumerableProperties') &&
-    (info.absPath.replace(/\\/g, '/') || `/node_modules/${info.moduleId}`).endsWith(
-      '/node_modules/chai/lib/chai/utils/getEnumerableProperties.js'
-    )
-  ) {
-    return (obj) => {
-      const props = []
-      for (let prop in obj) {
-        if (!prop.startsWith('$')) props.push(prop)
-      }
-      return props
-    }
-  }
-}
-const uninterceptRequire = interceptRequire(patchChai)
 const chai = require('chai')
-uninterceptRequire()
-
 chai.use(require('chai-fs'))
 chai.use(require('chai-cheerio'))
 chai.use(require('chai-spies'))
@@ -54,11 +31,13 @@ module.exports = {
     return deferredFn
   },
   expect: chai.expect,
-  // TODO after upgrading to Asciidoctor 1.5.7, switch to expect(spied).on.nth(n).called.with(args)
-  expectCalledWith: (observed, args, i = 0) =>
+  expectCalledWith: (observed, args, i = 0) => {
+    if (!Array.isArray(args)) args = [args]
     chai
-      .expect(observed.__spy.calls[i])
-      .to.eql(Array.isArray(args) ? args : [args], 'expected ' + observed + ' to have been called with args'),
+      .expect(observed)
+      .on.nth(i)
+      .called.with(...args)
+  },
   heredoc: (literals, ...values) => {
     const str =
       literals.length > 1

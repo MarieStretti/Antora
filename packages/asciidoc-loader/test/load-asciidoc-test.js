@@ -62,6 +62,12 @@ describe('loadAsciiDoc()', () => {
     expect(allBlocks).to.have.lengthOf(8)
   })
 
+  it('should not hang on mismatched passthrough syntax', () => {
+    const contents = 'Link the system library `+libconfig++.so.9+` located at `+/usr/lib64/libconfig++.so.9+`.'
+    const html = Asciidoctor.convert(contents, { safe: 'safe' })
+    expect(html).to.include('+')
+  })
+
   it('should not register Antora enhancements for Asciidoctor globally', () => {
     const contents = heredoc`
       = Document Title
@@ -73,7 +79,7 @@ describe('loadAsciiDoc()', () => {
     const defaultStderrWrite = process.stderr.write
     process.stderr.write = (msg) => {}
     const html = Asciidoctor.convert(contents, { safe: 'safe' })
-    expectLink(html, '#1.0@component-b::index.adoc', 'Component B')
+    expectLink(html, '1.0@component-b::index.html', 'Component B')
     expect(html).to.include('Unresolved directive in &lt;stdin&gt; - include::does-not-resolve.adoc[]')
     process.stderr.write = defaultStderrWrite
   })
@@ -891,7 +897,8 @@ describe('loadAsciiDoc()', () => {
         family: 'partial',
         relative: 'greeting.adoc',
       })
-      expect(doc.getCatalog().includes['$empty?']()).to.be.true()
+      expect(doc.getCatalog().includes['$key?']('greeting')).to.be.true()
+      expect(doc.getCatalog().includes['$[]']('greeting')).to.equal(global.Opal.nil)
     })
 
     it('should not mangle a page reference if reference matches rootname of include', () => {
@@ -1752,6 +1759,26 @@ describe('loadAsciiDoc()', () => {
       expectPageLink(html, '../the-page.html', 'The Page Title')
     })
 
+    it('should pass on attributes defined in xref macro', () => {
+      const contentCatalog = mockContentCatalog({
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'the-page.adoc',
+      }).spyOn('getById')
+      setInputFileContents('xref:the-page.adoc[The Page Title,role=secret,opts=nofollow]')
+      const html = loadAsciiDoc(inputFile, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'the-page.adoc',
+      })
+      expect(html).to.include('<a href="the-page.html" class="page secret" rel="nofollow">The Page Title</a>')
+    })
+
     it('should convert a page reference with topic and page', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-a',
@@ -1850,7 +1877,6 @@ describe('loadAsciiDoc()', () => {
       expectLink(html, '#the-fragment', 'Deep Link to Self')
     })
 
-    // NOTE this case currently bypasses our extension
     it('should convert a deep page reference to self that matches docname', () => {
       const contentCatalog = mockContentCatalog({
         family: 'page',
@@ -2082,6 +2108,30 @@ describe('loadAsciiDoc()', () => {
       })
       // TODO eventually this will resolve to the title of the target page
       expectPageLink(html, '../module-b/the-topic/the-page.html#frag', 'module-b:the-topic/the-page.adoc#frag')
+    })
+
+    it('should not fail to process page reference if fragment attribute is not set', () => {
+      const contentCatalog = mockContentCatalog({
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'the-page.adoc',
+      })
+      setInputFileContents('man:the-page[]')
+      const extension = function () {
+        this.process((parent, target, attrs) =>
+          this.createInline(parent, 'anchor', target, {
+            type: 'xref',
+            target,
+            attributes: global.Opal.hash({ refid: target, path: target }),
+          })
+        )
+      }
+      extension.register = (registry) => registry.inlineMacro('man', extension)
+      const config = { extensions: [extension] }
+      const html = loadAsciiDoc(inputFile, contentCatalog, config).convert()
+      expectPageLink(html, 'the-page.html', 'the-page')
     })
   })
 

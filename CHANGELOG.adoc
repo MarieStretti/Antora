@@ -13,8 +13,9 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Read credentials for private repository from git credential store file ($HOME/.git-credentials or $XDG_CONFIG_HOME/git/credentials) (#264)
 * *content-aggregator*: Allow git credentials file path or contents to be configured using `git.credentials` key (path or contents) in playbook (#264)
 * *page-composer*: Add next, previous, and parent properties to the page UI model to access adjacent pages (#233)
-* *cli*: Add `--git-credentials-path` option or `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file (#264)
+* *cli*: Add `--git-credentials-path` option and `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file (#264)
 * *cli*: Read git credentials from `GIT_CREDENTIALS` environment variable, if set (#264)
+* *asciidoc-loader*: Pass attributes defined on xref to converter (#290)
 
 === Changed
 
@@ -23,6 +24,9 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Automatically coerce a git SSH URL into an HTTPS URL (#264)
 * *content-aggregator*: Put cloned repositories in a version folder under cache dir (#264)
 * *page-composer*: Remap page.versions.latest as page.latest in UI model (#325)
+* *asciidoc-loader*: Upgrade to Asciidoctor.js 1.5.9 (#290)
+* *asciidoc-loader*: Set partial-option attribute when pushing include onto stack (#290)
+* *asciidoc-loader*: Set docname attribute to file.src.relative minus the file extension (#290)
 
 == 1.1.1 (2018-09-17)
 
