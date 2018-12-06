@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Added
 
+* *playbook-builder*: Map `content.tags` in playbook schema
 * *page-composer*: Add next, previous, and parent properties to the page UI model to access adjacent pages (#233)
 
 === Changed

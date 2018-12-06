@@ -70,6 +70,11 @@ module.exports = {
       format: Array,
       default: [],
     },
+    tags: {
+      doc: 'The default tag pattern to use when no specific pattern is provided',
+      format: Array,
+      default: undefined,
+    },
   },
   ui: {
     bundle: {
