@@ -441,10 +441,10 @@ To see which version of Node you have installed, open a terminal and type:
 
 If `node --version` doesn't return any information, you don't yet have Node installed.
 
-The minimum required version of Node is *8.0.0*, as indicated in [.path]_package.json_, though we recommend using the latest release in the 8.x series.
-This is also the recommended version of Node for development.
+The minimum required version of Node is *8.0.0*, as indicated in [.path]_package.json_, though we recommend using the latest release in the 8.x or 10.x series.
+These are also the recommended versions of Node for development.
 
-.Why Node 8?
+.Why Node 8 and above?
 ****
 This project leverages the latest and greatest features of ECMAScript, namely ECMAScript 2017 (ES2017).
 The main feature of ES2017 this project depends on is the {uri-async-func}[Async Function] (which introduced the `async` and `await` keywords).
@@ -454,21 +454,21 @@ Node 8 is the first long-term support (LTS) release that provides this feature, 
 You can read more about the decision to set Node 8 as the minimum required version in {uri-adr-0001}[ADR 0001: Minimum Node Version].
 ****
 
-If you don't yet have Node installed, or the version of Node you have isn't Node 8, we strongly recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
+If you don't yet have Node installed, or the version of Node you have isn't Node 8 or 10, we strongly recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
 Follow the {uri-nvm-install}[nvm installation instructions] to set up nvm on your machine.
 
 TIP: Many CI environments use nvm to install the version of Node used for the build job.
 By using nvm, you can closely align your setup with the environment that is used to generate and publish the production site.
 
-Once you've installed nvm, open a new terminal and install Node 8 using:
+Once you've installed nvm, open a new terminal and install Node 10 using:
 
- $ nvm install 8
+ $ nvm install 10
 
-The above command will install the latest version of Node 8.
+The above command will install the latest version of Node 10.
 
-If you already have other Node versions installed, you can configure Node 8 as the default for any new terminal.
+If you already have other Node versions installed, you can configure Node 10 as the default for any new terminal.
 
- $ nvm alias default 8
+ $ nvm alias default 10
 
 You can skip this step if you didn't previously have any Node versions installed because `nvm install` automatically adds the default alias to the first version of Node you install.
 

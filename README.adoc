@@ -22,8 +22,9 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-nvm-install: {uri-nvm}#installation
 :uri-nvm-windows: https://github.com/coreybutler/nvm-windows
 :uri-opendevise: https://opendevise.com
+:uri-git-credential-store: https://git-scm.com/docs/git-credential-store
 // Versions:
-:version-node: 8.11.4
+:version-node: 10.14.1
 
 ifdef::badges[]
 image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
@@ -44,53 +45,26 @@ More comprehensive installation instructions are in the {uri-docs}[Antora docume
 
 === Prerequisites
 
-Antora runs on Node 8 (and above).
+Antora runs on Node 8 and above.
 Antora is verified to work on Linux, macOS, and Windows.
 
-To install Antora, you'll need Node 8 (including npm, which is bundled with Node) on your system.
-Unless you're using Windows, you'll also need the base build tools for your OS.
+To install Antora, you'll need Node 8 or 10 (including npm, which is bundled with Node) on your system.
+You may also find the base build tools for your OS helpful (which includes `git`), though they're not required.
 
-Let's start with the build tools, since they're also useful for managing Node.
+==== Node
 
-==== Base Build Tools
-
-The base build tools are required for installing nodegit, a key dependency of Antora, on Linux and macOS.
-If you're running Windows, you can skip this section.
-
-If you're running Linux, select the appropriate base build tools package for your distribution.
-
-* Fedora: `dnf install @development-tools`
-* Debian/Ubuntu: `apt-get install build-essential libcurl3-gnutls libssl-dev`
-* Arch Linux: `pacman -S base-devel`
-* Alpine Linux*: `apk add g++ libressl-dev make python curl-dev`
-* RHEL*: `yum install gcc-c++ make openssl-devel libcurl-devel hostname`
-
-{asterisk} To use Antora on Alpine Linux or RHEL, you must force nodegit to be recompiled using BUILD_ONLY=true (see instructions below).
-
-If you're running macOS, you need the https://railsapps.github.io/xcode-command-line-tools.html[Xcode command line tools].
-Even if you've installed these tools in the past, it's good to do it again.
-You can trigger installation using the following command:
-
- xcode-select --install
-
-This selection of tools provides other useful commands you'll need in your workflow, such as `git`.
-
-Once you have these tools installed, you can expect the remaining installation to go smoothly.
-
-==== Node 8
-
-Antora requires Node 8, the current long-term support (LTS) release of Node.
-While you can try Node 9, Antora is not currently tested on it.
+Antora requires Node 8 or 10, the current long-term support (LTS) releases of Node.
+While you can try newer versions, Antora is not currently tested on them.
 
 To determine which version of Node you have installed, if any, open a terminal and type:
 
  $ node --version
 
 If this command fails with an error, you don't have Node installed.
-If the command doesn't report a Node 8 version (e.g., v{version-node}), you don't have a suitable version of Node installed.
+If the command doesn't report a Node 8 or 10 version (e.g., v{version-node}), you don't have a suitable version of Node installed.
 
-If Node 8 is provided by the package manager for your operating system, we encourage you to install Node that way.
-Otherwise, we recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
+If Node 8 or 10 is provided by the package manager for your operating system, you are free to install Node that way.
+However, we primarily recommend using {uri-nvm}[nvm] (Node Version Manager) to manage your Node installations.
 
 NOTE: Most CI environments use nvm to install the version of Node used for the build job.
 Thus, by using nvm, you closely align your setup with the environment used to generate and publish your production site.
@@ -99,20 +73,20 @@ If you're using Linux or macOS, follow {uri-nvm-install}[the nvm installation in
 If you're using Windows, you can install the {uri-nvm-windows}[Windows port of nvm] via the {uri-choco}[Chocolatey package manager] using `choco install -y nvm`.
 Alternatively, you can install the LTS release of Node directly using `choco install -y nodejs-lts`.
 
-Once you've installed nvm, open a *new* terminal and install Node 8 using:
+Once you've installed nvm, open a *new* terminal and install Node 10 using:
 
- $ nvm install 8
+ $ nvm install 10
 
 IMPORTANT: If you're using nvm for Windows, you must enter the full version of Node when running commands (e.g., `nvm install {version-node}`, `nvm use {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
 Run `nvm list available` to see a list of available Node versions.
 
 Switch to this version of Node using the following command:
 
- $ nvm use 8
+ $ nvm use 10
 
-To make Node 8 the default in new terminals (Linux and macOS only), type:
+To make Node 10 the default in new terminals (Linux and macOS only), type:
 
- $ nvm alias default 8
+ $ nvm alias default 10
 
 Now that you have Node installed, you can proceed with installing Antora.
 
@@ -142,48 +116,6 @@ Next, install the default Antora site generator using npm (or Yarn):
 
 You can opt to install the site generator inside the project containing your playbook file instead of installing it globally.
 
-.Troubleshooting nodegit Installation
-[CAUTION]
-====
-The nodegit dependency may fail on certain Linux distributions with the following error:
-
-....
-Error: libcurl-gnutls.so.4: cannot open shared object file: No such file or directory
-....
-
-This is an open issue in nodegit.
-See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246].
-
-If this happens, you either need to create the missing symlink or force nodegit to be recompiled (instead of using a precompiled binary).
-
-To create the missing symlink, run the following command:
-
- $ sudo ln -s /usr/lib64/libcurl.so.4 /usr/lib64/libcurl-gnutls.so.4
-
-or, if that fails:
-
- $ sudo ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
-
-Once you've made that symlink, run the `npm install` command again.
-
- $ npm install -g @antora/site-generator-default
-
-If you aren't comfortable making a system-wide change, you can instead force nodegit to be recompiled instead by passing the `BUILD_ONLY` environment variable to the `npm install` command.
-
- $ BUILD_ONLY=true npm install -g @antora/site-generator-default
-
-Be aware that recompiling nodegit will make installation take considerably longer.
-====
-
-////
-==== Custom Site Generator Pipeline
-
-The `generate` subcommand of `antora` automatically uses the default site generator.
-However, Antora is designed with an open architecture to accommodate a myriad of use cases.
-That means you can assemble your own site generator pipeline, perhaps to add, substitute, and/or remove components used in the pipeline of the default site generator.
-It will be possible in the near future to configure the CLI to use your custom site generator pipeline in place of the default one.
-////
-
 Now that the Antora CLI and default site generator are installed, you are ready to set up a playbook and generate a documentation site.
 
 === Run Antora to Generate a Site
@@ -195,9 +127,9 @@ Antora also provides a default UI for you to use out of the box.
 ==== Create a Playbook File
 
 First, create a new directory for your site and switch to it.
-Next, add a playbook file named [.path]_site.yml_ and populate it with the following contents:
+Next, add a playbook file named [.path]_antora-playbook.yml_ and populate it with the following contents:
 
-.site.yml
+.antora-playbook.yml
 [source,yaml]
 ----
 site:
@@ -226,7 +158,7 @@ To generate the site, simply point the `antora` command at your playbook file.
 
 In your terminal, type:
 
- $ antora site.yml
+ $ antora antora-playbook.yml
 
 Antora will clone the content repository, convert the AsciiDoc pages to embeddable HTML, wrap the HTML in a page template from the UI, then assemble the pages together along with the assets into the destination folder, which defaults to [.path]_build/site_.
 
@@ -245,9 +177,31 @@ error: a message that summarizes what went wrong
 If this message does not provide enough information to fix the problem, you can ask Antora for more context.
 To tell Antora to reveal the calls leading up to the error (i.e., the stacktrace), run the `antora` command again, this time with the `--stacktrace` option:
 
- $ antora --stacktrace site.yml
+ $ antora --stacktrace antora-playbook.yml
 
 Share this stacktrace when <<Getting Help,asking for help>>.
+
+==== Using Private Repositories
+
+If any of your content repositories require authentication, Antora will look up the credentials in the {uri-git-credential-store}[git credential store] file (which you can specify using the `--git-credentials-path` CLI option).
+If your repository uses a service such as GitHub, the credentials will either be a username and password or a personal access token.
+
+To fill in your credentials, add a line to the file [.path]_$HOME/.git-credentials_ in one of the following formats:
+
+....
+https://username:password@github.com
+....
+
+or
+
+....
+https://personal-access-token@github.com
+....
+
+Then be sure to set the permissions on this file so only your user can read it (i.e., 600).
+
+TIP: It's possible to override the credential manager in Antora if you want to use a different method for authentication.
+Consult the documentation for details.
 
 ==== Changing Content
 
