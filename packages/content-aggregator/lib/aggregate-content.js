@@ -61,13 +61,13 @@ function aggregateContent (playbook) {
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
   const sourcesByUrl = _.groupBy(sources, 'url')
   const { cacheDir, pull, silent, quiet } = playbook.runtime
-  const progress = {}
+  let progress
   const term = process.stdout
   // TODO move this to a function
   if (!(quiet || silent) && term.isTTY && term.columns >= 60) {
     //term.write('Aggregating content...\n')
     // QUESTION should we use MultiProgress directly as our progress object?
-    progress.manager = new MultiProgress(term)
+    progress = new MultiProgress(term)
     progress.maxLabelWidth = Math.min(
       // NOTE remove the width of the operation, then split the difference between the url and bar
       Math.ceil((term.columns - GIT_OPERATION_LABEL_LENGTH) / 2),
@@ -107,7 +107,7 @@ function aggregateContent (playbook) {
     )
       .then((accruedComponentVersions) => buildAggregate(accruedComponentVersions))
       .catch((err) => {
-        progress.manager && progress.manager.terminate()
+        progress && progress.terminate()
         throw err
       })
   )
@@ -564,7 +564,7 @@ function assignFileProperties (file, origin) {
 
 function getFetchOptions (repo, progress, url, credentials, fetchTags, operation) {
   const opts = Object.assign({ depth: 1 }, credentials, repo)
-  if (progress.manager) opts.emitter = createProgress(progress, url, operation)
+  if (progress) opts.emitter = createProgress(progress, url, operation)
   if (operation === 'fetch') {
     if (fetchTags) opts.tags = true
   } else if (!fetchTags) {
@@ -574,7 +574,7 @@ function getFetchOptions (repo, progress, url, credentials, fetchTags, operation
 }
 
 function createProgress (progress, progressLabel, operation) {
-  const progressBar = progress.manager.newBar(formatProgressBar(progressLabel, progress.maxLabelWidth, operation), {
+  const progressBar = progress.newBar(formatProgressBar(progressLabel, progress.maxLabelWidth, operation), {
     total: 100,
     complete: '#',
     incomplete: '-',
