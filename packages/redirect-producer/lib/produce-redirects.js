@@ -2,7 +2,7 @@
 
 const computeRelativeUrlPath = require('@antora/asciidoc-loader/lib/util/compute-relative-url-path')
 const File = require('vinyl')
-const url = require('url')
+const { URL } = require('url')
 
 /**
  * Produces redirects (HTTP redirections) for registered page aliases.
@@ -50,7 +50,7 @@ function produceRedirects (playbook, contentCatalog) {
 
 function extractUrlContext (sourceUrl) {
   let urlContext
-  return sourceUrl && (urlContext = url.parse(sourceUrl).pathname) !== '/' ? urlContext : undefined
+  return sourceUrl && (urlContext = new URL(sourceUrl).pathname) !== '/' ? urlContext : undefined
 }
 
 function populateStaticRedirectFiles (files, siteUrl) {

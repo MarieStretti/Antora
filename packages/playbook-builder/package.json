@@ -16,7 +16,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "camelcase-keys": "^4.2.0",
+    "camelcase-keys": "^5.0.0",
     "convict": "^4.3.2",
     "cson-parser": "^3.0.0",
     "deep-freeze": "^0.0.1",

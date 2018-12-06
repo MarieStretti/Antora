@@ -154,10 +154,9 @@ class RepositoryBuilder {
     // NOTE emulates addAll
     await git.statusMatrix(repo).then((status) =>
       Promise.all(
-        status.map(
-          ([filepath, _, worktreeStatus]) =>
-            // NOTE sometimes isomorphic-git reports a changed file as unmodified, so always add if not removing
-            worktreeStatus === 0 ? git.remove({ ...repo, filepath }) : git.add({ ...repo, filepath })
+        status.map(([filepath, _, worktreeStatus]) =>
+          // NOTE sometimes isomorphic-git reports a changed file as unmodified, so always add if not removing
+          worktreeStatus === 0 ? git.remove({ ...repo, filepath }) : git.add({ ...repo, filepath })
         )
       )
     )
