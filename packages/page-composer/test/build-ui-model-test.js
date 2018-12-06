@@ -670,48 +670,46 @@ describe('build UI model', () => {
       let parent
       let previous
       let next
-      menu.push(
-        (parent = {
-          order: 0,
-          root: true,
-          content: 'Nav Title',
-          url: '/the-component/1.0/index.html',
-          urlType: 'internal',
-          items: [
-            {
-              content: 'Page A',
-              url: '/the-component/1.0/page-a.html',
-              urlType: 'internal',
-            },
-            {
-              content: 'Category B',
-              items: [
-                (previous = {
-                  content: 'Page C',
-                  url: '/the-component/1.0/page-c.html',
-                  urlType: 'internal',
-                }),
-                {
-                  content: 'Text-only Entry',
-                },
-                {
-                  content: 'The Page',
-                  url: '/the-component/1.0/the-page.html',
-                  urlType: 'internal',
-                },
-                {
-                  content: 'Text-only Entry',
-                },
-                (next = {
-                  content: 'Page D',
-                  url: '/the-component/1.0/page-d.html',
-                  urlType: 'internal',
-                }),
-              ],
-            },
-          ],
-        })
-      )
+      menu.push((parent = {
+        order: 0,
+        root: true,
+        content: 'Nav Title',
+        url: '/the-component/1.0/index.html',
+        urlType: 'internal',
+        items: [
+          {
+            content: 'Page A',
+            url: '/the-component/1.0/page-a.html',
+            urlType: 'internal',
+          },
+          {
+            content: 'Category B',
+            items: [
+              (previous = {
+                content: 'Page C',
+                url: '/the-component/1.0/page-c.html',
+                urlType: 'internal',
+              }),
+              {
+                content: 'Text-only Entry',
+              },
+              {
+                content: 'The Page',
+                url: '/the-component/1.0/the-page.html',
+                urlType: 'internal',
+              },
+              {
+                content: 'Text-only Entry',
+              },
+              (next = {
+                content: 'Page D',
+                url: '/the-component/1.0/page-d.html',
+                urlType: 'internal',
+              }),
+            ],
+          },
+        ],
+      }))
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.parent).to.exist()
       expect(model.parent).to.equal(parent)
@@ -855,7 +853,7 @@ describe('build UI model', () => {
         { version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
         { version: '1.0-beta', title: 'The Component', url: '/the-component/1.0-beta/the-page.html' },
       ])
-      expect(model.latest).to.eql(model.versions[0])
+      expect(model.versions.latest).to.eql(model.versions[0])
     })
 
     it('should propogate prerelease and display version from component version to page version', () => {
@@ -917,7 +915,7 @@ describe('build UI model', () => {
         },
         { latest: true, version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
       ])
-      expect(model.latest).to.eql(model.versions[1])
+      expect(model.versions.latest).to.eql(model.versions[1])
     })
 
     it('should add sparse entry in value of versions property if page is missing for version', () => {

@@ -11,10 +11,6 @@ This project utilizes semantic versioning.
 
 * *page-composer*: Add next, previous, and parent properties to the page UI model to access adjacent pages (#233)
 
-=== Changed
-
-* *page-composer*: Remap page.versions.latest as page.latest in UI model (#325)
-
 == 1.1.1 (2018-09-17)
 
 === Added

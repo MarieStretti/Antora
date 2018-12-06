@@ -163,11 +163,6 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     editUrl: file.src.editUrl,
     home: url === site.homeUrl,
   }
-  Object.defineProperty(model, 'latest', {
-    get () {
-      return this.versions && this.versions.find((candidate) => candidate.latest)
-    },
-  })
   Object.assign(model, getNavContext(url, title, navigation))
 
   if (site.url) {
@@ -252,15 +247,23 @@ function getPageVersions (pageSrc, component, contentCatalog) {
     family: 'page',
     relative: pageSrc.relative,
   }
-  return component.versions.map((componentVersion) => {
-    const page = contentCatalog.getById(Object.assign({ version: componentVersion.version }, basePageId))
-    // QUESTION should title be title of component or page?
-    return Object.assign(
-      componentVersion === component.latest ? { latest: true } : {},
-      componentVersion,
-      page ? { url: page.pub.url } : { missing: true }
-    )
-  })
+  return Object.defineProperty(
+    component.versions.map((componentVersion) => {
+      const page = contentCatalog.getById(Object.assign({ version: componentVersion.version }, basePageId))
+      // QUESTION should title be title of component or page?
+      return Object.assign(
+        componentVersion === component.latest ? { latest: true } : {},
+        componentVersion,
+        page ? { url: page.pub.url } : { missing: true }
+      )
+    }),
+    'latest',
+    {
+      get () {
+        return this.find((candidate) => candidate.latest)
+      },
+    }
+  )
 }
 
 module.exports = createPageComposer
