@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Added
 
+* Add support for Node 10
 * *playbook-builder*: Map `content.tags` in playbook schema
 * *content-aggregator*: Read credentials for private repository from git credential store file ($HOME/.git-credentials or $XDG_CONFIG_HOME/git/credentials) (#264)
 * *content-aggregator*: Allow git credentials file path or contents to be configured using `git.credentials` key (path or contents) in playbook (#264)
