@@ -61,26 +61,7 @@ function aggregateContent (playbook) {
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
   const sourcesByUrl = _.groupBy(sources, 'url')
   const { cacheDir, pull, silent, quiet } = playbook.runtime
-  let progress
-  const term = process.stdout
-  // TODO move this to a function
-  if (!(quiet || silent) && term.isTTY && term.columns >= 60) {
-    //term.write('Aggregating content...\n')
-    // QUESTION should we use MultiProgress directly as our progress object?
-    progress = new MultiProgress(term)
-    progress.maxLabelWidth = Math.min(
-      // NOTE remove the width of the operation, then split the difference between the url and bar
-      Math.ceil((term.columns - GIT_OPERATION_LABEL_LENGTH) / 2),
-      Object.keys(sourcesByUrl).reduce(
-        (max, url) =>
-          Math.max(
-            max,
-            ~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url) ? extractCredentials(url).displayUrl.length : 0
-          ),
-        0
-      )
-    )
-  }
+  const progress = !quiet && !silent && createProgress(sourcesByUrl, process.stdout)
   const credentialManager = registerGitPlugins((playbook.git || {}).credentials, startDir).get('credentialManager')
   return ensureCacheDir(cacheDir, startDir).then((resolvedCacheDir) =>
     Promise.all(
@@ -494,7 +475,6 @@ function filterGitEntry (entry) {
   return !(entry.path.startsWith('.') || (entry.type === 'blob' && !entry.path.includes('.')))
 }
 
-// QUESTION should repo be a separate property?
 function entryToFile (entry) {
   return git.readObject(entry).then(({ object: contents }) => {
     const stat = new fs.Stats()
@@ -564,7 +544,7 @@ function assignFileProperties (file, origin) {
 
 function getFetchOptions (repo, progress, url, credentials, fetchTags, operation) {
   const opts = Object.assign({ depth: 1 }, credentials, repo)
-  if (progress) opts.emitter = createProgress(progress, url, operation)
+  if (progress) opts.emitter = createProgressEmitter(progress, url, operation)
   if (operation === 'fetch') {
     if (fetchTags) opts.tags = true
   } else if (!fetchTags) {
@@ -573,7 +553,27 @@ function getFetchOptions (repo, progress, url, credentials, fetchTags, operation
   return opts
 }
 
-function createProgress (progress, progressLabel, operation) {
+function createProgress (sourcesByUrl, term) {
+  if (term.isTTY && term.columns > 59) {
+    //term.write('Aggregating content...\n')
+    const progress = new MultiProgress(term)
+    progress.maxLabelWidth = Math.min(
+      // NOTE remove the width of the operation, then split the difference between the url and bar
+      Math.ceil((term.columns - GIT_OPERATION_LABEL_LENGTH) / 2),
+      Object.keys(sourcesByUrl).reduce(
+        (max, url) =>
+          Math.max(
+            max,
+            ~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url) ? extractCredentials(url).displayUrl.length : 0
+          ),
+        0
+      )
+    )
+    return progress
+  }
+}
+
+function createProgressEmitter (progress, progressLabel, operation) {
   const progressBar = progress.newBar(formatProgressBar(progressLabel, progress.maxLabelWidth, operation), {
     total: 100,
     complete: '#',
