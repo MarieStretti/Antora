@@ -16,7 +16,7 @@ describe('buildPlaybook()', () => {
       playbook: {
         format: String,
         default: undefined,
-        env: 'PLAYBOOK',
+        env: 'ANTORA_PLAYBOOK',
       },
       one: {
         one: {
@@ -94,14 +94,14 @@ describe('buildPlaybook()', () => {
   })
 
   it('should set dir and file properties based on absolute path of playbook file', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ospath.relative('.', ymlSpec) }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: ospath.relative('.', ymlSpec) }, schema)
     expect(playbook.dir).to.equal(ospath.dirname(ymlSpec))
     expect(playbook.file).to.equal(ymlSpec)
     expect(playbook.playbook).to.not.exist()
   })
 
   it('should load YAML playbook file with .yml extension', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: ymlSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(ymlSpec)
     expectedPlaybook.file = ymlSpec
     expectedPlaybook.one.one = 'yml-spec-value-one'
@@ -109,7 +109,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should load YAML playbook file with .yaml extension', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: yamlSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: yamlSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(yamlSpec)
     expectedPlaybook.file = yamlSpec
     expectedPlaybook.one.one = 'yaml-spec-value-one'
@@ -118,7 +118,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should load JSON (JSON 5) playbook file', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: jsonSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: jsonSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(jsonSpec)
     expectedPlaybook.file = jsonSpec
     expectedPlaybook.one.one = 'json-spec-value-one'
@@ -126,7 +126,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should load CSON playbook file', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: csonSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: csonSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(csonSpec)
     expectedPlaybook.file = csonSpec
     expectedPlaybook.one.one = 'cson-spec-value-one'
@@ -134,7 +134,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should load YAML playbook file first when no file extension is given', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: extensionlessSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: extensionlessSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(extensionlessSpec)
     expectedPlaybook.file = extensionlessSpec + '.yml'
     expectedPlaybook.one.one = 'yml-spec-value-one'
@@ -142,7 +142,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should discover JSON playbook when no file extension is given', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: extensionlessJsonSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: extensionlessJsonSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(extensionlessJsonSpec)
     expectedPlaybook.file = extensionlessJsonSpec + '.json'
     expectedPlaybook.one.one = 'json-spec-value-one'
@@ -150,7 +150,7 @@ describe('buildPlaybook()', () => {
   })
 
   it('should discover CSON playbook when no file extension is given', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: extensionlessCsonSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: extensionlessCsonSpec }, schema)
     expectedPlaybook.dir = ospath.dirname(extensionlessCsonSpec)
     expectedPlaybook.file = extensionlessCsonSpec + '.cson'
     expectedPlaybook.one.one = 'cson-spec-value-one'
@@ -158,100 +158,100 @@ describe('buildPlaybook()', () => {
   })
 
   it('should throw error when loading unknown type file', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: iniSpec }, schema)).to.throw('Unexpected playbook file type')
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: iniSpec }, schema)).to.throw('Unexpected playbook file type')
   })
 
   it('should throw error if specified playbook file does not exist', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: 'non-existent/file.yml' }, schema)).to.throw('does not exist')
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: 'non-existent/file.yml' }, schema)).to.throw('does not exist')
   })
 
   it('should throw error if playbook file without extension cannot be resolved', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: 'non-existent/file' }, schema)).to.throw('could not be resolved')
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: 'non-existent/file' }, schema)).to.throw('could not be resolved')
   })
 
   it('should use default value if playbook file is not specified', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: ymlSpec }, schema)
     expect(playbook.one.two).to.equal('default-value')
   })
 
   it('should use env value over value in playbook file', () => {
-    const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.one.one).to.equal('the-env-value')
   })
 
   it('should use env value over value in playbook file when env value is empty string', () => {
-    const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: '' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: '' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.one.one).to.equal('')
   })
 
   it('should use args value over value in playbook file or env value even if value is falsy', () => {
     const args = ['--one-one', 'the-args-value']
-    const env = { PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_ONE_ONE: 'the-env-value' }
     const playbook = buildPlaybook(args, env, schema)
     expect(playbook.one.one).to.equal('the-args-value')
   })
 
   it('should use arg value over value in playbook file when arg value is falsy', () => {
     const args = ['--two', '0']
-    const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '47' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_TWO: '47' }
     const playbook = buildPlaybook(args, env, schema)
     expect(playbook.two).to.equal(0)
   })
 
   it('should convert properties of playbook to camelCase', () => {
-    const env = { PLAYBOOK: ymlSpec, WIDGET_KEY: 'xxxyyyzzz' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, WIDGET_KEY: 'xxxyyyzzz' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.one.widgetKey).to.equal('xxxyyyzzz')
   })
 
   it('should coerce Number values in playbook file', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: ymlSpec }, schema)
     expect(playbook.two).to.equal(42)
   })
 
   it('should coerce Number values in env', () => {
-    const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '777' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_TWO: '777' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.two).to.equal(777)
   })
 
   it('should use env value over value in playbook file when env value is falsy', () => {
-    const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: '0' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_TWO: '0' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.two).to.equal(0)
   })
 
   it('should coerce Number values in args', () => {
-    const playbook = buildPlaybook(['--two', '777'], { PLAYBOOK: ymlSpec }, schema)
+    const playbook = buildPlaybook(['--two', '777'], { ANTORA_PLAYBOOK: ymlSpec }, schema)
     expect(playbook.two).to.equal(777)
   })
 
   it('should coerce Boolean values in playbook file', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: ymlSpec }, schema)
     expect(playbook.three).to.be.false()
   })
 
   it('should coerce Boolean values in env', () => {
-    const env = { PLAYBOOK: ymlSpec, ANTORA_THREE: 'true' }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_THREE: 'true' }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.three).to.be.true()
   })
 
   it('should coerce Boolean values in args', () => {
-    const playbook = buildPlaybook(['--three'], { PLAYBOOK: ymlSpec }, schema)
+    const playbook = buildPlaybook(['--three'], { ANTORA_PLAYBOOK: ymlSpec }, schema)
     expect(playbook.three).to.be.true()
   })
 
   it('should coerce map value in playbook file', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: coerceValueSpec }, schema)
     expect(playbook.stuff).to.eql({ key: 'val', foo: 'bar', nada: null, yep: true, nope: false })
   })
 
   it('should coerce map value in env', () => {
     const val = 'key=val,keyonly,=valonly,empty=,tilde="~",tags="a,b,c",nada=~,y=true,n=false'
-    const env = { PLAYBOOK: ymlSpec, STUFF: val }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, STUFF: val }
     const playbook = buildPlaybook([], env, schema)
     expect(playbook.stuff).to.eql({
       key: 'val',
@@ -287,7 +287,7 @@ describe('buildPlaybook()', () => {
         '--stuff',
         'n=false',
       ],
-      { PLAYBOOK: ymlSpec },
+      { ANTORA_PLAYBOOK: ymlSpec },
       schema
     )
     expect(playbook.stuff).to.eql({
@@ -303,13 +303,13 @@ describe('buildPlaybook()', () => {
   })
 
   it('should use map value in args in place of map value from playbook file', () => {
-    const playbook = buildPlaybook(['--stuff', 'foo=baz'], { PLAYBOOK: coerceValueSpec }, schema)
+    const playbook = buildPlaybook(['--stuff', 'foo=baz'], { ANTORA_PLAYBOOK: coerceValueSpec }, schema)
     expect(playbook.stuff).to.eql({ foo: 'baz' })
   })
 
   it('should update map value from playbook file with map values in args when name is asciidoc.attributes', () => {
     const args = ['--attribute', 'idprefix=user-', '--attribute', 'idseparator=-']
-    const playbook = buildPlaybook(args, { PLAYBOOK: defaultSchemaSpec })
+    const playbook = buildPlaybook(args, { ANTORA_PLAYBOOK: defaultSchemaSpec })
     expect(playbook.asciidoc.attributes).to.eql({
       'allow-uri-read': true,
       idprefix: 'user-',
@@ -320,11 +320,11 @@ describe('buildPlaybook()', () => {
   })
 
   it('should throw error if value of object key is not an object', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: invalidMapSpec }, schema)).to.throw('must be a map')
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: invalidMapSpec }, schema)).to.throw('must be a map')
   })
 
   it('should coerce String value to Array', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: coerceValueSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: coerceValueSpec }, schema)
     expect(playbook.file).to.equal(coerceValueSpec)
     expect(playbook.dir).to.equal(ospath.dirname(coerceValueSpec))
     expect(playbook.one.one).to.equal('one')
@@ -339,29 +339,29 @@ describe('buildPlaybook()', () => {
       format: 'dir-or-virtual-files',
       default: undefined,
     }
-    expect(() => buildPlaybook([], { PLAYBOOK: invalidDirOrFilesSpec }, schema)).to.throw(
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: invalidDirOrFilesSpec }, schema)).to.throw(
       'must be a directory path or list of virtual files'
     )
   })
 
   it('should throw error when trying to load values not declared in the schema', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: badSpec }, schema)).to.throw('not declared')
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: badSpec }, schema)).to.throw('not declared')
   })
 
   it('should throw error when playbook file uses values of the wrong format', () => {
     schema.two.format = String
-    expect(() => buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)).to.throw('must be of type String')
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: ymlSpec }, schema)).to.throw('must be of type String')
   })
 
   it('should return an immutable playbook', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: ymlSpec }, schema)
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: ymlSpec }, schema)
     expect(() => {
       playbook.one.two = 'override'
     }).to.throw()
   })
 
   it('should use default schema if no schema is specified', () => {
-    const playbook = buildPlaybook([], { PLAYBOOK: defaultSchemaSpec })
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: defaultSchemaSpec })
     expect(playbook.runtime.cacheDir).to.equal('./.antora-cache')
     expect(playbook.runtime.pull).to.equal(true)
     expect(playbook.runtime.quiet).to.equal(false)
@@ -402,11 +402,11 @@ describe('buildPlaybook()', () => {
   })
 
   it('should not migrate playbook data that defines ui.bundle as a String', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: legacyUiBundleSpec })).to.throw(/not declared in the schema/)
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: legacyUiBundleSpec })).to.throw(/not declared in the schema/)
   })
 
   it('should not migrate playbook data that defines ui.start_path', () => {
-    expect(() => buildPlaybook([], { PLAYBOOK: legacyUiStartPathSpec })).to.throw(/not declared in the schema/)
+    expect(() => buildPlaybook([], { ANTORA_PLAYBOOK: legacyUiStartPathSpec })).to.throw(/not declared in the schema/)
   })
 
   it('should throw if no configuration data is given', () => {
@@ -415,7 +415,7 @@ describe('buildPlaybook()', () => {
 
   it('should be decoupled from the process environment', () => {
     const originalEnv = process.env
-    process.env = { PLAYBOOK: 'no-such-file' }
+    process.env = { ANTORA_PLAYBOOK: 'no-such-file' }
     expect(() => buildPlaybook(['--ui-bundle-url', 'ui-bundle.zip'])).to.not.throw()
     process.env = originalEnv
   })
@@ -424,7 +424,7 @@ describe('buildPlaybook()', () => {
     const processArgv = process.argv
     const processEnv = process.env
     const args = ['--one-one', 'the-args-value']
-    const env = { PLAYBOOK: ymlSpec, ANTORA_TWO: 99 }
+    const env = { ANTORA_PLAYBOOK: ymlSpec, ANTORA_TWO: 99 }
     const playbook = buildPlaybook(args, env, schema)
     expect(playbook.one.one).to.equal('the-args-value')
     expect(playbook.two).to.equal(99)

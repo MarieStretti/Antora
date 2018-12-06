@@ -6,7 +6,7 @@ module.exports = {
     format: String,
     default: undefined,
     arg: 'playbook',
-    env: 'PLAYBOOK',
+    env: 'ANTORA_PLAYBOOK',
   },
   site: {
     start_page: {
@@ -132,13 +132,13 @@ module.exports = {
         format: String,
         default: undefined,
         arg: 'git-credentials-path',
-        env: 'ANTORA_GIT_CREDENTIALS_PATH',
+        env: 'GIT_CREDENTIALS_PATH',
       },
       contents: {
-        doc: 'The git credentials data matching the format used by git-credentials-store.',
+        doc: 'The git credentials data matching the format used by git-credentials-store (optionally comma-separated).',
         format: String,
         default: undefined,
-        env: 'ANTORA_GIT_CREDENTIALS',
+        env: 'GIT_CREDENTIALS',
       },
     },
   },
