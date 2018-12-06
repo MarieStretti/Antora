@@ -1,14 +1,10 @@
 'use strict'
 
 const fs = require('fs-extra')
-const git = require('nodegit')
+const git = require('isomorphic-git')
 const ospath = require('path')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
-
-const FS = '/'
-const RS = '\\'
-const RS_RX = /\\/g
 
 class RepositoryBuilder {
   constructor (repoBase, fixtureBase, opts = {}) {
@@ -20,50 +16,75 @@ class RepositoryBuilder {
     }
     this.repoBase = repoBase
     this.fixtureBase = fixtureBase
-    this.remote = opts.remote
+    if ((this.remote = !!opts.remote)) this.gitServerPort = opts.remote.gitServerPort || 60617
     this.bare = opts.bare
-  }
-
-  async open (repoName) {
-    if (repoName) {
-      this.repoPath = ospath.join(this.repoBase, repoName)
-    } else if (!this.repoPath) {
-      throw new Error('No repository name specified and no previous repository was opened by this builder.')
-    }
-    this.repository = await git.Repository.open(this.repoPath)
-    return this
+    this.author = { name: 'Doc Writer', email: 'doc.writer@example.com' }
   }
 
   async init (repoName = 'test-repo') {
     this.url = this.repoPath = ospath.join(this.repoBase, repoName)
     if (this.remote) {
-      this.url = 'file://' + (ospath.sep === RS ? FS + this.url.replace(RS_RX, FS) : this.url)
-      if (this.bare) this.url += FS + '.git'
+      // NOTE node-git-server requires path to end with file extension if present in URL (which isomorphic-git adds)
+      this.repoPath += '.git'
+      this.url = `http://localhost:${this.gitServerPort}/${repoName}.git${this.bare ? '/.git' : ''}`
     } else if (this.bare) this.url += ospath.sep + '.git'
-    // WARNING nodegit fails to create repository path on Windows if path contains backslashes (nodegit#1431)
-    await fs.ensureDir(this.repoPath)
-    this.repository = await git.Repository.init(this.repoPath, 0)
+    this.repository = { fs, dir: this.repoPath, gitdir: ospath.join(this.repoPath, '.git') }
+    await git.init(this.repository)
     await this.addToWorktree('.gitattributes', '* text=auto eol=lf')
     await this.addToWorktree('.gitignore')
+    // NOTE isomorphic-git requires at least one commit to set up refs/heads/master (required to use statusMatrix)
+    await git.commit({ ...this.repository, author: this.author, message: 'init' })
     return this.commitAll()
   }
 
-  async checkoutBranch (branchName) {
-    let branchRef
-    try {
-      branchRef = await this.repository.getBranch(branchName)
-    } catch (e) {
-      const headCommit = await this.repository.getHeadCommit()
-      branchRef = await this.repository.createBranch(branchName, headCommit, 0)
+  async open (repoName = undefined) {
+    let dir
+    let gitdir
+    if (repoName) {
+      this.repoPath = dir = ospath.join(this.repoBase, repoName)
+      gitdir = ospath.join(dir, '.git')
+      if (
+        this.bare &&
+        !(await fs
+          .stat(gitdir)
+          .then((stat) => stat.isDirectory())
+          .catch(() => false))
+      ) {
+        gitdir = dir
+      }
+    } else {
+      if (!(dir = this.repoPath)) {
+        throw new Error('No repository name specified and no previous repository was opened by this builder.')
+      }
+      gitdir = ospath.join(dir, '.git')
     }
-    await this.repository.checkoutBranch(branchRef)
+    this.repository = { fs, dir, gitdir }
+    await git.resolveRef({ ...this.repository, ref: 'HEAD', depth: 1 })
+    return this
+  }
+
+  async clone (clonePath) {
+    return git.clone({ fs, dir: clonePath, url: this.url })
+  }
+
+  async checkoutBranch (branchName) {
+    const repoAtRef = { ...this.repository, ref: branchName }
+    await git
+      .resolveRef(repoAtRef)
+      .catch(() => git.branch(repoAtRef))
+      .then(() => git.checkout(repoAtRef))
+    return this
+  }
+
+  async checkoutBranch$1 (branchName, ref = 'HEAD') {
+    const oid = await git.resolveRef({ ...this.repository, ref })
+    await fs.writeFile(ospath.join(this.repository.gitdir, `refs/heads/${branchName}`), oid + '\n')
+    await fs.writeFile(ospath.join(this.repository.gitdir, 'HEAD'), `ref: refs/heads/${branchName}\n`)
     return this
   }
 
   async deleteBranch (branchName) {
-    try {
-      ;(await this.repository.getBranch(branchName)).delete()
-    } catch (e) {}
+    await git.deleteBranch({ ...this.repository, ref: branchName }).catch(() => {})
     return this
   }
 
@@ -130,31 +151,65 @@ class RepositoryBuilder {
 
   async commitAll (message = 'make it so') {
     const repo = this.repository
-    const author = git.Signature.now('Doc Writer', 'doc.writer@example.com')
-    const index = await repo.refreshIndex()
-    await index.addAll()
-    await index.write()
-    const treeOid = await index.writeTree()
-    const parentCommit = await repo.getHeadCommit()
-    await repo.createCommit('HEAD', author, author, message, treeOid, parentCommit === null ? null : [parentCommit])
+    // NOTE emulates addAll
+    await git.statusMatrix(repo).then((status) =>
+      Promise.all(
+        status.map(
+          ([filepath, _, worktreeStatus]) =>
+            // NOTE sometimes isomorphic-git reports a changed file as unmodified, so always add if not removing
+            worktreeStatus === 0 ? git.remove({ ...repo, filepath }) : git.add({ ...repo, filepath })
+        )
+      )
+    )
+    await git.commit({ ...repo, author: this.author, message })
     return this
   }
 
-  async createTag (name, refname = 'HEAD') {
-    const ref = await this.repository.getReference(refname)
-    await this.repository.createTag(ref.target(), name, name)
+  async createTag (name, ref = 'HEAD') {
+    const now = new Date()
+    await git
+      .resolveRef({ ...this.repository, ref })
+      .then((commitOid) =>
+        git.writeObject({
+          ...this.repository,
+          type: 'tag',
+          object: {
+            object: commitOid,
+            type: 'commit',
+            tag: name,
+            tagger: { ...this.author, timestamp: Math.floor(+now / 1000), timezoneOffset: now.getTimezoneOffset() },
+            message: name,
+            signature: '',
+          },
+        })
+      )
+      .then((tagOid) => {
+        const tagFile = ospath.join(this.repository.gitdir, 'refs', 'tags', name)
+        return fs.ensureDir(ospath.dirname(tagFile)).then(() => fs.writeFile(tagFile, tagOid + '\n'))
+      })
     return this
   }
 
   async addRemote (name, url, fetch = true) {
-    const remote = await git.Remote.create(this.repository, name, url)
-    if (fetch) await this.repository.fetch(remote)
+    await git.addRemote({ ...this.repository, remote: name, url })
+    if (fetch) await git.fetch({ ...this.repository, remote: name })
     return this
   }
 
+  async detachHead (oid = undefined) {
+    if (!oid) oid = await git.resolveRef({ ...this.repository, ref: 'HEAD' })
+    await git.checkout({ ...this.repository, ref: oid })
+    // NOTE workaround bug in isomorphic-git when checking out a commit
+    await fs.writeFile(ospath.join(this.repository.gitdir, 'HEAD'), oid + '\n')
+    return this
+  }
+
+  async findEntry (filepath, ref = 'HEAD') {
+    return git.listFiles({ ...this.repository, ref }).then((files) => files.find((candidate) => candidate === filepath))
+  }
+
   async close (branchName = undefined) {
-    if (branchName) await this.checkoutBranch(branchName)
-    this.repository.free()
+    if (branchName) await git.checkout({ ...this.repository, ref: branchName })
     this.repository = undefined
     return this
   }

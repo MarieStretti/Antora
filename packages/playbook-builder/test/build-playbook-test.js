@@ -370,6 +370,12 @@ describe('buildPlaybook()', () => {
     expect(playbook.site.title).to.equal('Example site')
     expect(playbook.site.startPage).to.equal('1.0@server::intro')
     expect(playbook.site.keys.googleAnalytics).to.equal('XX-123456')
+    expect(playbook.content.branches).to.eql(['v*'])
+    expect(playbook.content.sources).to.have.lengthOf(1)
+    expect(playbook.content.sources[0]).to.eql({
+      url: 'https://gitlab.com/antora/demo/demo-component-a.git',
+      branches: ['master', 'v*'],
+    })
     expect(playbook.ui.bundle.url).to.equal('./../ui/build/ui-bundles.zip')
     expect(playbook.ui.bundle.startPath).to.equal('dark-theme')
     expect(playbook.ui.outputDir).to.equal('_')
@@ -386,6 +392,7 @@ describe('buildPlaybook()', () => {
       'uri-project': 'https://antora.org',
     })
     expect(playbook.asciidoc.extensions).to.eql(['asciidoctor-plantuml', './lib/shout-block'])
+    expect(playbook.git.credentials.path).to.equal('./.git-credentials')
     expect(playbook.urls.htmlExtensionStyle).to.equal('indexify')
     expect(playbook.urls.redirectFacility).to.equal('nginx')
     expect(playbook.output.destinations).to.have.lengthOf(1)

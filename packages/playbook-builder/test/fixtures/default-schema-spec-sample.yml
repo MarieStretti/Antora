@@ -7,6 +7,11 @@ site:
   start_page: 1.0@server::intro
   keys:
     google_analytics: 'XX-123456'
+content:
+  branches: v*
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
+    branches: [master, v*]
 ui:
   bundle:
     url: ./../ui/build/ui-bundles.zip
@@ -27,6 +32,9 @@ asciidoc:
   extensions:
   - asciidoctor-plantuml
   - ./lib/shout-block
+git:
+  credentials:
+    path: ./.git-credentials
 output:
   dir: ./_site
   destinations:
