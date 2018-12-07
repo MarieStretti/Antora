@@ -16,7 +16,7 @@ The remainder of this document describes how the release process works, includin
 Here's what happens when a release is made:
 
 * The version property in [.path]_lerna.json_ and each [.path]_package.json_ file under [.path]_packages/_ is set to the new version.
-* The Unreleased section title is in CHANGELOG.adoc is replaced with the release version and current date
+* The Unreleased section title is in CHANGELOG.adoc is replaced with the release version and current date.
 * The changes are committed to the git branch from which the release is made (only changed files are committed).
 * An unsigned, annotated tag with the name of the version prefixed with "`v`" (i.e., v1.0.0) is added to the git repository.
 * Each package under [.path]_packages/_ is packed and published to the @antora scope of the https://npmjs.com[npm registry].
@@ -28,8 +28,9 @@ If the CI pipeline succeeds, we can assume the release was successful.
 The logs of the release activity are available through the GitLab CI interface.
 The release logic will prevent the same CI job from making another release.
 
-Keep in mind that the release does not update the CHANGELOG.
-Updates to this file must be made manually, prior to the release.
+Keep in mind that the release does not update the entries in the CHANGELOG.
+It only replaces the Unreleased section title with the release version and current date.
+The entries must be added manually, prior to the release.
 
 == Versioning
 
