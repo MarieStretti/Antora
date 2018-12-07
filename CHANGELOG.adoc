@@ -23,6 +23,7 @@ This project utilizes semantic versioning.
 
 * *content-aggregator*: Replace nodegit with isomorphic-git as git client library (#264)
 * *content-aggregator*: Drop support for SSH as a transport protocol / authentication mechanism (#264)
+* *content-aggregator*: Make credential manager pluggable (assign credentialManager property to git core named "antora") (#264)
 * *content-aggregator*: Automatically coerce a git SSH URL into an HTTPS URL (#264)
 * *content-aggregator*: Put cloned repositories in a version folder under cache dir (#264)
 * *page-composer*: Remap `page.versions.latest` as `page.latest` in UI model (#325)
