@@ -90,50 +90,6 @@ describe('generateSite()', () => {
     }
   })
 
-  describe('progress bar', async () => {
-    // NOTE we can't test this in the cli tests since child_process.spawn does not allocate a tty
-    it('should report progress of repository clone operation if runtime.quiet is false', async () => {
-      playbookSpec.runtime.quiet = false
-      playbookSpec.content.sources[0].url = repoBuilder.url
-      playbookSpec.output.destinations = []
-      fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-      const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
-        accum[name] = process.stdout[name]
-        return accum
-      }, {})
-      const columns = 9 + repoBuilder.url.length * 2
-      const progressLines = []
-      try {
-        Object.assign(process.stdout, {
-          clearLine: () => {},
-          columns,
-          cursorTo: () => {},
-          isTTY: true,
-          moveCursor: () => {},
-          write: (line) => /\[(?:clone|fetch)\]/.test(line) && progressLines.push(line),
-        })
-        await generateSite(['--playbook', playbookFile], env)
-        expect(progressLines).to.have.lengthOf.at.least(2)
-        expect(progressLines[0]).to.include('[clone] ' + repoBuilder.url)
-        expect(progressLines[0]).to.match(/ \[-+\]/)
-        expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
-
-        progressLines.length = 0
-        await generateSite(['--playbook', playbookFile], env)
-        expect(progressLines).to.have.lengthOf(0)
-
-        // TODO assert that the UI was downloaded again
-        await generateSite(['--playbook', playbookFile, '--pull'], env)
-        expect(progressLines).to.have.lengthOf.at.least(2)
-        expect(progressLines[0]).to.include('[fetch] ' + repoBuilder.url)
-        expect(progressLines[0]).to.match(/ \[-+\]/)
-        expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
-      } finally {
-        Object.assign(process.stdout, defaultStdout)
-      }
-    }).timeout(TIMEOUT * 2)
-  })
-
   it('should generate site into output directory specified in playbook file', async () => {
     playbookSpec.site.start_page = '2.0@the-component::index'
     playbookSpec.site.keys = { google_analytics: 'UA-XXXXXXXX-1' }
@@ -500,6 +456,64 @@ describe('generateSite()', () => {
     const contents = readFile('the-component/2.0/the-alias/index.html', absDestDir)
     expect(contents).to.include(`<script>location="../the-page/"</script>`)
   }).timeout(TIMEOUT)
+
+  describe('integration', () => {
+    beforeEach(() => {
+      removeSyncForce(ospath.join(env.ANTORA_CACHE_DIR, 'content'))
+    })
+
+    it('should output archive from site generated from git repository', async () => {
+      const archivePath = ['.', destDir, 'site.zip'].join(ospath.sep)
+      const absArchivePath = ospath.join(WORK_DIR, archivePath)
+      playbookSpec.content.sources[0].url = repoBuilder.url
+      playbookSpec.output.destinations[0] = { provider: 'archive', path: archivePath }
+      fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+      await generateSite(['--playbook', playbookFile], env)
+      expect(absArchivePath).to.be.a.file()
+    }).timeout(TIMEOUT)
+
+    // NOTE we can't test this in the cli tests since child_process.spawn does not allocate a tty
+    it('should report progress of repository clone operation if runtime.quiet is false', async () => {
+      playbookSpec.runtime.quiet = false
+      playbookSpec.content.sources[0].url = repoBuilder.url
+      playbookSpec.output.destinations = []
+      fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+      const defaultStdout = 'clearLine columns cursorTo isTTY moveCursor write'.split(' ').reduce((accum, name) => {
+        accum[name] = process.stdout[name]
+        return accum
+      }, {})
+      const columns = 9 + repoBuilder.url.length * 2
+      const progressLines = []
+      try {
+        Object.assign(process.stdout, {
+          clearLine: () => {},
+          columns,
+          cursorTo: () => {},
+          isTTY: true,
+          moveCursor: () => {},
+          write: (line) => /\[(?:clone|fetch)\]/.test(line) && progressLines.push(line),
+        })
+        await generateSite(['--playbook', playbookFile], env)
+        expect(progressLines).to.have.lengthOf.at.least(2)
+        expect(progressLines[0]).to.include('[clone] ' + repoBuilder.url)
+        expect(progressLines[0]).to.match(/ \[-+\]/)
+        expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
+
+        progressLines.length = 0
+        await generateSite(['--playbook', playbookFile], env)
+        expect(progressLines).to.have.lengthOf(0)
+
+        // TODO assert that the UI was downloaded again
+        await generateSite(['--playbook', playbookFile, '--pull'], env)
+        expect(progressLines).to.have.lengthOf.at.least(2)
+        expect(progressLines[0]).to.include('[fetch] ' + repoBuilder.url)
+        expect(progressLines[0]).to.match(/ \[-+\]/)
+        expect(progressLines[progressLines.length - 1]).to.match(/ \[#+\]/)
+      } finally {
+        Object.assign(process.stdout, defaultStdout)
+      }
+    }).timeout(TIMEOUT * 2)
+  })
 
   // to test:
   // - don't pass environment variable map to generateSite

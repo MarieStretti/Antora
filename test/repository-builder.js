@@ -135,6 +135,7 @@ class RepositoryBuilder {
       paths.map((path_) => {
         const to = ospath.join(this.repoPath, path_)
         // NOTE copy fixture file if exists, otherwise create an empty file
+        // NOTE copy preserves symlinks whereas copyFile does not
         return fs
           .ensureDir(ospath.dirname(to))
           .then(() => fs.copy(ospath.join(fromBase, path_), to).catch(() => fs.writeFile(to, '')))

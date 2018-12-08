@@ -844,6 +844,119 @@ describe('aggregateContent()', () => {
       })
     })
 
+    describe('should set file mode of regular file read from git repository to correct value', () => {
+      testAll(async (repoBuilder) => {
+        const fixturePath = 'modules/ROOT/pages/page-one.adoc'
+        await initRepoWithFiles(repoBuilder, {}, fixturePath, () => {
+          return repoBuilder
+            .checkoutBranch('v2.0')
+            .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v2.0' }))
+            .then(() => repoBuilder.commitAll())
+            .then(() => repoBuilder.checkoutBranch('master'))
+        })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
+        const expectedMode = 33188
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v2.0' })
+        const fixtureFile = aggregate[0].files.find((file) => file.path === fixturePath)
+        expect(fixtureFile).to.exist()
+        if (!(repoBuilder.bare || repoBuilder.remote)) {
+          expect(fixtureFile.src.origin.worktree).to.be.undefined()
+        }
+        expect(fixtureFile.stat.mode).to.equal(expectedMode)
+      })
+    })
+
+    it('should set file mode of regular file read from worktree to correct value', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const fixturePath = 'modules/ROOT/pages/page-one.adoc'
+      await initRepoWithFiles(repoBuilder, {}, fixturePath)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const expectedMode = (await fs.stat(ospath.join(repoBuilder.repoPath, fixturePath))).mode
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+      const fixtureFile = aggregate[0].files.find((file) => file.path === fixturePath)
+      expect(fixtureFile).to.exist()
+      expect(fixtureFile.src.origin.worktree).to.be.true()
+      expect(fixtureFile.stat.mode).to.equal(expectedMode)
+    })
+
+    describe('should set file mode of executable file read from git repository to correct value', () => {
+      testAll(async (repoBuilder) => {
+        const fixturePath = 'modules/ROOT/assets/attachments/installer.sh'
+        await initRepoWithFiles(repoBuilder, {}, fixturePath, () => {
+          return repoBuilder
+            .checkoutBranch('v2.0')
+            .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v2.0' }))
+            .then(() => repoBuilder.commitAll())
+            .then(() => repoBuilder.checkoutBranch('master'))
+        })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
+        // NOTE Windows doesn't support setting executable bit on file (and can't current emulate in git server)
+        const expectedMode = process.platform === 'win32' ? 33188 : 33261
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v2.0' })
+        const fixtureFile = aggregate[0].files.find((file) => file.path === fixturePath)
+        expect(fixtureFile).to.exist()
+        if (!(repoBuilder.bare || repoBuilder.remote)) {
+          expect(fixtureFile.src.origin.worktree).to.be.undefined()
+        }
+        expect(fixtureFile.stat.mode).to.equal(expectedMode)
+      })
+    })
+
+    it('should set file mode of executable file read from worktree to correct value', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      const fixturePath = 'modules/ROOT/assets/attachments/installer.sh'
+      await initRepoWithFiles(repoBuilder, {}, fixturePath)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const expectedMode = (await fs.stat(ospath.join(repoBuilder.repoPath, fixturePath))).mode
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+      const fixtureFile = aggregate[0].files.find((file) => file.path === fixturePath)
+      expect(fixtureFile).to.exist()
+      expect(fixtureFile.src.origin.worktree).to.be.true()
+      expect(fixtureFile.stat.mode).to.equal(expectedMode)
+    })
+
+    if (process.platform !== 'win32') {
+      describe('should ignore symlinks read from git repository', () => {
+        testAll(async (repoBuilder) => {
+          const targetPath = 'modules/ROOT/pages/page-one.adoc'
+          const symlinkPath = 'modules/ROOT/pages/page-one-link.adoc'
+          const fixturePaths = [targetPath, symlinkPath]
+          await initRepoWithFiles(repoBuilder, {}, fixturePaths, () => repoBuilder.checkoutBranch('other'))
+          playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'master' })
+          const aggregate = await aggregateContent(playbookSpec)
+          expect(aggregate).to.have.lengthOf(1)
+          expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+          const symlinkPage = aggregate[0].files.find((file) => file.path === symlinkPath)
+          expect(symlinkPage).to.not.exist()
+        })
+      })
+
+      it('should resolve symlinks read from worktree', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        const targetPath = 'modules/ROOT/pages/page-one.adoc'
+        const symlinkPath = 'modules/ROOT/pages/page-one-link.adoc'
+        const fixturePaths = [targetPath, symlinkPath]
+        await initRepoWithFiles(repoBuilder, {}, fixturePaths)
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'master' })
+        const expectedMode = (await fs.stat(ospath.join(repoBuilder.repoPath, targetPath))).mode
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const symlinkPage = aggregate[0].files.find((file) => file.path === symlinkPath)
+        expect(symlinkPage).to.exist()
+        expect(symlinkPage.symlink).to.not.exist()
+        expect(symlinkPage.stat.mode).to.equal(expectedMode)
+      })
+    }
+
     describe('should clone repository into cache folder', () => {
       testAll(
         async (repoBuilder) => {
