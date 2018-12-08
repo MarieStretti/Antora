@@ -44,8 +44,7 @@ function testAll (testBlock, numRepoBuilders = 1, remoteBare = undefined) {
   if (remoteBare) it('on remote bare repo', () => makeTest({ bare: true, remote: { gitServerPort } }))
 }
 
-describe('aggregateContent()', function () {
-  let timeout = this.timeout()
+describe('aggregateContent()', () => {
   let playbookSpec
   let gitServer
 
@@ -1508,7 +1507,7 @@ describe('aggregateContent()', function () {
     aggregate = await aggregateContent(playbookSpec)
     expect(aggregate).to.have.lengthOf(1)
     expect(aggregate[0]).to.have.nested.property('files[0].src.origin.branch', defaultBranch)
-  }).timeout(timeout * 2)
+  })
 
   it('should pull updates into cached repository when pull runtime option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
@@ -1560,7 +1559,7 @@ describe('aggregateContent()', function () {
     expect(secondAggregate[2]).to.include({ name: 'the-component', version: 'v2.0.1' })
     const page4v2 = secondAggregate[2].files.find((file) => file.path === 'modules/ROOT/pages/topic-b/page-four.adoc')
     expect(page4v2).to.exist()
-  }).timeout(timeout * 2)
+  })
 
   it('should fetch tags not reachable from fetched commits when pull runtime option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
