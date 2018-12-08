@@ -148,6 +148,15 @@ class RepositoryBuilder {
     return Promise.all(paths.map((path_) => fs.remove(ospath.join(this.repoPath, path_)))).then(() => this)
   }
 
+  async commitSelect (filepaths = [], message = 'make it so') {
+    const repo = this.repository
+    if (filepaths.length) {
+      await Promise.all(filepaths.map((filepath) => git.add({ ...repo, filepath })))
+    }
+    await git.commit({ ...repo, author: this.author, message })
+    return this
+  }
+
   async commitAll (message = 'make it so') {
     const repo = this.repository
     // NOTE emulates addAll
