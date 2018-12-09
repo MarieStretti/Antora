@@ -68,11 +68,9 @@ class RepositoryBuilder {
   }
 
   async checkoutBranch (branchName) {
-    const repoAtRef = { ...this.repository, ref: branchName }
     await git
-      .resolveRef(repoAtRef)
-      .catch(() => git.branch(repoAtRef))
-      .then(() => git.checkout(repoAtRef))
+      .branch({ ...this.repository, ref: branchName, checkout: true })
+      .catch(() => git.checkout({ ...this.repository, ref: branchName, remote: 'NO_SUCH_REMOTE' }))
     return this
   }
 
