@@ -23,6 +23,7 @@ const {
   COMPONENT_DESC_FILENAME,
   CONTENT_CACHE_FOLDER,
   CONTENT_GLOB,
+  FILE_MODE_BITS,
   GIT_CORE,
   GIT_OPERATION_LABEL_LENGTH,
   GIT_PROGRESS_PHASES,
@@ -208,7 +209,7 @@ async function loadRepository (url, opts) {
 }
 
 function extractCredentials (url) {
-  if ((url.startsWith('https://') || url.startsWith('http://')) && url.includes('@')) {
+  if ((url.startsWith('https://') || url.startsWith('http://')) && ~url.indexOf('@')) {
     // Common oauth2 formats: (QUESTION should we try to coerce token only into one of these formats?)
     // GitHub: <token>:x-oauth-basic@ (or <token>@)
     // GitHub App: x-access-token:<token>@
@@ -450,9 +451,16 @@ function walkGitTree (repo, root, filter) {
     depth--
     for (let entry of tree.entries) {
       if (filter(entry)) {
-        if (entry.type === 'blob') {
-          emitter.emit('entry', Object.assign({}, repo, entry, { path: path.join(dirname, entry.path) }))
-        } else if (entry.type === 'tree') {
+        const type = entry.type
+        if (type === 'blob') {
+          const mode = FILE_MODE_BITS[entry.mode]
+          if (mode) {
+            emitter.emit(
+              'entry',
+              Object.assign({}, repo, { mode, oid: entry.oid, path: path.join(dirname, entry.path) })
+            )
+          }
+        } else if (type === 'tree') {
           depth++
           git
             .readObject(Object.assign({ oid: entry.oid }, repo))
@@ -461,7 +469,6 @@ function walkGitTree (repo, root, filter) {
         }
       }
     }
-
     if (depth === 0) emitter.emit('end')
   }
   emitter.start = () => visit(root)
@@ -472,7 +479,7 @@ function walkGitTree (repo, root, filter) {
  * Returns true if the entry should be processed or false if it should be skipped.
  */
 function filterGitEntry (entry) {
-  return !(entry.path.startsWith('.') || (entry.type === 'blob' && !entry.path.includes('.')))
+  return !entry.path.startsWith('.') && (entry.type !== 'blob' || ~entry.path.indexOf('.'))
 }
 
 function entryToFile (entry) {
