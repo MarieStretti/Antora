@@ -68,14 +68,12 @@ class RepositoryBuilder {
   }
 
   async checkoutBranch (branchName) {
-    await git
-      .branch({ ...this.repository, ref: branchName, checkout: true })
-      .catch((e) => {
-        if (e.code === git.E.RefExistsError) {
-          return git.checkout({ ...this.repository, ref: branchName })
-        }
-        throw e
-      })
+    await git.branch({ ...this.repository, ref: branchName, checkout: true }).catch((e) => {
+      if (e.code === git.E.RefExistsError) {
+        return git.checkout({ ...this.repository, ref: branchName })
+      }
+      throw e
+    })
     return this
   }
 
