@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Added
+
+* *page-composer*: Set page.displayVersion property in UI model (#362)
+
 === Fixed
 
 * *content-aggregator*: Convert file mode to mode bits when reading file from git repository (#359)
