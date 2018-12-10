@@ -448,7 +448,7 @@ describe('aggregateContent()', function () {
       })
     })
 
-    describe('should not select a branch named push if not specified', () => {
+    describe('should not inadvertently select a branch named push', () => {
       testAll(async (repoBuilder) => {
         const componentName = 'the-component'
         await initRepoWithBranches(repoBuilder, componentName, async () =>
@@ -791,6 +791,25 @@ describe('aggregateContent()', function () {
         expect(aggregate[1]).to.include({ name: 'the-component', version: 'v2.0' })
         expect(aggregate[2]).to.include({ name: 'the-component', version: 'v3.0' })
       })
+    })
+
+    it('should select tags even when branches filter is HEAD', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+      await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        repoBuilder
+          .createTag('v1.0.0', 'v1.0')
+          .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+          .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+      )
+      await repoBuilder
+        .open()
+        .then(() => repoBuilder.detachHead())
+        .then(() => repoBuilder.close())
+      playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'HEAD', tags: 'v3*' })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(aggregate).to.have.lengthOf(2)
+      expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+      expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
     })
   })
 
