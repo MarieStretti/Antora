@@ -38,6 +38,7 @@ describe('build UI model', () => {
             version: '1.0',
             title: 'The Component',
             url: '/the-component/1.0/index.html',
+            displayVersion: 'Io',
           },
         ],
       },
@@ -235,6 +236,7 @@ describe('build UI model', () => {
       expect(model.module).to.equal('ROOT')
       expect(model.version).to.exist()
       expect(model.version).to.equal('1.0')
+      expect(model.displayVersion).to.equal(model.componentVersion.displayVersion)
     })
 
     it('should set origin property to value from file src object', () => {
@@ -852,7 +854,7 @@ describe('build UI model', () => {
       expect(model.versions).to.have.lengthOf(3)
       expect(model.versions).to.eql([
         { latest: true, version: '2.0', title: 'The Component', url: '/the-component/2.0/the-page.html' },
-        { version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
+        { version: '1.0', displayVersion: 'Io', title: 'The Component', url: '/the-component/1.0/the-page.html' },
         { version: '1.0-beta', title: 'The Component', url: '/the-component/1.0-beta/the-page.html' },
       ])
       expect(model.latest).to.eql(model.versions[0])
@@ -915,7 +917,13 @@ describe('build UI model', () => {
           title: 'The Component',
           url: '/the-component/2.0/the-page.html',
         },
-        { latest: true, version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
+        {
+          latest: true,
+          version: '1.0',
+          displayVersion: 'Io',
+          title: 'The Component',
+          url: '/the-component/1.0/the-page.html',
+        },
       ])
       expect(model.latest).to.eql(model.versions[1])
     })
@@ -987,7 +995,7 @@ describe('build UI model', () => {
       expect(model.versions).to.have.lengthOf(3)
       expect(model.versions).to.eql([
         { version: '2.0', title: 'The Component', url: '/the-component/2.0/the-page.html' },
-        { version: '1.0', title: 'The Component', url: '/the-component/1.0/the-page.html' },
+        { version: '1.0', displayVersion: 'Io', title: 'The Component', url: '/the-component/1.0/the-page.html' },
         { version: '1.0-beta', title: 'The Component', url: '/the-component/1.0-beta/index.html', missing: true },
       ])
     })

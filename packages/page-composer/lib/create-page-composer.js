@@ -155,6 +155,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     attributes: pageAttributes,
     component,
     version,
+    displayVersion: componentVersion.displayVersion,
     componentVersion,
     module: file.src.module,
     origin: file.src.origin,
