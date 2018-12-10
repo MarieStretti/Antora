@@ -10,6 +10,7 @@ This project utilizes semantic versioning.
 === Fixed
 
 * *content-aggregator*: Convert file mode to mode bits when reading file from git repository (#359)
+* *content-aggregator*: Fix shallow cloning for repositories with a large number of branches (#360)
 
 == 2.0.0-beta.1 (2018-12-07)
 

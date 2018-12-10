@@ -29,6 +29,7 @@ const {
   GIT_PROGRESS_PHASES,
 } = require('./constants')
 
+const ABBREVIATE_REF_RX = /^refs\/(?:heads|remotes\/[^/]+|tags)\//
 const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
@@ -258,61 +259,60 @@ async function selectReferences (repo, remote, refPatterns) {
   }
 
   if (branchPatterns) {
-    if (branchPatterns === 'HEAD' || branchPatterns === '.') {
-      const detachedHead = !isBare && (await isHeadDetached(repo))
-      if (detachedHead) {
-        return Array.from(refs.values()).concat({ name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
+    const branchPatternsString = String(branchPatterns)
+    if (branchPatternsString === 'HEAD' || branchPatternsString === '.') {
+      // NOTE current branch is undefined when HEAD is detached
+      const currentBranchName = await getCurrentBranchName(repo, remote)
+      if (currentBranchName) {
+        branchPatterns = [currentBranchName]
       } else {
-        branchPatterns = [await getCurrentBranchName(repo, remote)]
+        if (!isBare) refs.set('HEAD', { name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
+        return Array.from(refs.values())
       }
     } else {
       branchPatterns = Array.isArray(branchPatterns)
         ? branchPatterns.map((pattern) => String(pattern))
-        : String(branchPatterns).split(CSV_RX)
+        : branchPatternsString.split(CSV_RX)
       if (branchPatterns.length) {
         let currentBranchIdx
+        // NOTE we can assume at least two entries if HEAD or . are present
         if (~(currentBranchIdx = branchPatterns.indexOf('HEAD')) || ~(currentBranchIdx = branchPatterns.indexOf('.'))) {
-          const detachedHead = !isBare && (await isHeadDetached(repo))
-          if (detachedHead) {
-            refs.set('HEAD', { name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
-            if (branchPatterns.length > 1) {
-              branchPatterns.splice(currentBranchIdx, 1)
-            } else {
-              return Array.from(refs.values())
-            }
+          // NOTE current branch is undefined when HEAD is detached
+          const currentBranchName = await getCurrentBranchName(repo, remote)
+          if (currentBranchName) {
+            branchPatterns[currentBranchIdx] = currentBranchName
           } else {
-            branchPatterns[currentBranchIdx] = await getCurrentBranchName(repo, remote)
+            if (!isBare) refs.set('HEAD', { name: 'HEAD', qname: 'HEAD', type: 'branch', isHead: true })
+            branchPatterns.splice(currentBranchIdx, 1)
           }
         }
       } else {
-        branchPatterns = undefined
+        return Array.from(refs.values())
       }
     }
-    if (branchPatterns) {
-      const remoteBranches = await git.listBranches(Object.assign({ remote }, repo))
-      for (let name of remoteBranches) {
-        // FIXME UPSTREAM isomorphic-git should filter out HEAD from the list of remote branches
-        if (name !== 'HEAD' && matcher([name], branchPatterns).length) {
-          refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
+    const remoteBranches = await git.listBranches(Object.assign({ remote }, repo))
+    for (let name of remoteBranches) {
+      // FIXME UPSTREAM isomorphic-git should filter out HEAD from the list of remote branches
+      if (name !== 'HEAD' && matcher([name], branchPatterns).length) {
+        refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
+      }
+    }
+    // NOTE only consider local branches if repo has a worktree or there are no remote tracking branches
+    if (!isBare) {
+      const localBranches = await git.listBranches(repo)
+      if (localBranches.length) {
+        const currentBranchName = await git.currentBranch(repo)
+        for (let name of localBranches) {
+          if (matcher([name], branchPatterns).length) {
+            refs.set(name, { name, qname: name, type: 'branch', isHead: name === currentBranchName })
+          }
         }
       }
-      // NOTE only consider local branches if repo has a worktree or there are no remote tracking branches
-      if (!isBare) {
-        const localBranches = await git.listBranches(repo)
-        if (localBranches.length) {
-          const currentBranchName = await git.currentBranch(repo)
-          for (let name of localBranches) {
-            if (matcher([name], branchPatterns).length) {
-              refs.set(name, { name, qname: name, type: 'branch', isHead: name === currentBranchName })
-            }
-          }
-        }
-      } else if (!remoteBranches.length) {
-        const localBranches = await git.listBranches(repo)
-        if (localBranches.length) {
-          for (let name of localBranches) {
-            if (matcher([name], branchPatterns).length) refs.set(name, { name, qname: name, type: 'branch' })
-          }
+    } else if (!remoteBranches.length) {
+      const localBranches = await git.listBranches(repo)
+      if (localBranches.length) {
+        for (let name of localBranches) {
+          if (matcher([name], branchPatterns).length) refs.set(name, { name, qname: name, type: 'branch' })
         }
       }
     }
@@ -330,11 +330,7 @@ function getCurrentBranchName (repo, remote) {
   } else {
     refPromise = git.resolveRef(Object.assign({ ref: 'HEAD', depth: 2 }, repo))
   }
-  return refPromise.then((ref) => ref.replace(/^refs\/(?:heads|remotes\/[^/]+)\//, ''))
-}
-
-function isHeadDetached (repo) {
-  return git.currentBranch(Object.assign({ fullname: true }, repo)).then((branchName) => !branchName.startsWith('ref/'))
+  return refPromise.then((ref) => (ref.startsWith('refs/') ? ref.replace(ABBREVIATE_REF_RX, '') : undefined))
 }
 
 async function populateComponentVersion (source, repo, remoteName, requiresAuth, ref) {
