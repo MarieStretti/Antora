@@ -71,7 +71,7 @@ class GitCredentialManagerStore {
   async rejected ({ url, auth }) {
     this.urls[url] = 'rejected'
     const statusCode = 401
-    const statusMessage = 'Authorization Required'
+    const statusMessage = 'HTTP Basic: Access Denied'
     const err = new Error(`HTTP Error: ${statusCode} ${statusMessage}`)
     err.name = err.code = 'HTTPError'
     err.data = { statusCode, statusMessage }
