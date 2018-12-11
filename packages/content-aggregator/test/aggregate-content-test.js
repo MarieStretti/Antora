@@ -1762,24 +1762,26 @@ describe('aggregateContent()', function () {
     expect(page1v1.contents.toString()).to.not.have.string('Update received!')
   })
 
-  it('should clone a remote repository with a large number of branches', async () => {
-    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
-    await initRepoWithFiles(repoBuilder, {}, [], async () => {
-      // 750 branches triggers the high water mark inside of isomorphic-git
-      for (let i = 0; i < 750; i++) {
-        const version = 'v' + i
-        const componentDesc = { name: 'the-component', title: 'The Component', version }
-        await repoBuilder
-          .checkoutBranch(version)
-          .then(() => repoBuilder.addComponentDescriptorToWorktree(componentDesc))
-          .then(() => repoBuilder.commitSelect(['antora.yml'], 'add version'))
-      }
-      await repoBuilder.checkoutBranch('master')
-    })
-    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v1' })
-    const aggregate = await aggregateContent(playbookSpec)
-    expect(aggregate).to.have.lengthOf(1)
-  }).timeout(this.timeout() * 4)
+  if (process.env.CI_COMMIT_REF_NAME === 'releases') {
+    it('should clone a remote repository with a large number of branches', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder, {}, [], async () => {
+        // 750 branches triggers the high water mark inside of isomorphic-git
+        for (let i = 0; i < 750; i++) {
+          const version = 'v' + i
+          const componentDesc = { name: 'the-component', title: 'The Component', version }
+          await repoBuilder
+            .checkoutBranch(version)
+            .then(() => repoBuilder.addComponentDescriptorToWorktree(componentDesc))
+            .then(() => repoBuilder.commitSelect(['antora.yml'], 'add version'))
+        }
+        await repoBuilder.checkoutBranch('master')
+      })
+      playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v1' })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(aggregate).to.have.lengthOf(1)
+    }).timeout(this.timeout() * 4)
+  }
 
   it('should prefer remote branches in bare repository', async () => {
     const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
