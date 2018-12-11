@@ -43,7 +43,7 @@ describe('generateSite()', function () {
         err ? reject(err) : resolve(this.address().port)
       })
     )
-    repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: { gitServerPort } })
+    repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     uiBundleUri = UI_BUNDLE_URI
   })
 

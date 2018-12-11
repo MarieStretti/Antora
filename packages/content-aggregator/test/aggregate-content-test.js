@@ -1010,6 +1010,7 @@ describe('aggregateContent()', function () {
       testAll(
         async (repoBuilder) => {
           await initRepoWithFiles(repoBuilder)
+          if (repoBuilder.remote && repoBuilder.bare) repoBuilder.url += '/.git'
           playbookSpec.content.sources.push({ url: repoBuilder.url })
           await aggregateContent(playbookSpec)
           if (repoBuilder.remote) {
@@ -1633,6 +1634,15 @@ describe('aggregateContent()', function () {
         await initRepoWithFilesAndWorktree(repoBuilder)
         await testNonWorktreeAggregate(repoBuilder)
       })
+
+      // NOTE this test verifies we can clone a remote repository by pointing to the .git sub-directory
+      it('on remote bare repo', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+        await initRepoWithFilesAndWorktree(repoBuilder)
+        repoBuilder.url += '/.git'
+        expect(repoBuilder.url).to.match(/\.git\/\.git$/)
+        await testNonWorktreeAggregate(repoBuilder)
+      })
     })
   })
 
@@ -2138,8 +2148,7 @@ describe('aggregateContent()', function () {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
       const urlWithoutAuth = repoBuilder.url.replace('.git', '')
-      repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
-      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      playbookSpec.content.sources.push({ url: urlWithoutAuth.replace('//', '//u:p@') })
       const aggregate = await aggregateContent(playbookSpec)
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)

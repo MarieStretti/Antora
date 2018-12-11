@@ -26,7 +26,7 @@ class RepositoryBuilder {
     if (this.remote) {
       // NOTE node-git-server requires path to end with file extension if present in URL (which isomorphic-git adds)
       this.repoPath += '.git'
-      this.url = `http://localhost:${this.gitServerPort}/${repoName}.git${this.bare ? '/.git' : ''}`
+      this.url = `http://localhost:${this.gitServerPort}/${repoName}.git`
     } else if (this.bare) this.url += ospath.sep + '.git'
     this.repository = { fs, dir: this.repoPath, gitdir: ospath.join(this.repoPath, '.git') }
     await git.init(this.repository)

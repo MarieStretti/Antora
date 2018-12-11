@@ -32,7 +32,7 @@ describe('cli', function () {
   const timeoutOverride = this.timeout() * 2.5
 
   const createContentRepository = async (gitServerPort) =>
-    (repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: { gitServerPort } }))
+    (repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } }))
       .init('the-component')
       .then((builder) => builder.checkoutBranch('v1.0'))
       .then((builder) =>
