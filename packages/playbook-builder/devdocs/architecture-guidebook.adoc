@@ -36,10 +36,10 @@ The playbook builder component should:
 * Accept two parameters, an array of arguments (populated from or simulating process arguments) and a map of variables (populated from or simulating environment variables)
  ** By accepting these two parameters, the playbook builder can be used and tested independently of the CLI runtime environment.
  ** Within those parameters, a playbook spec file may be specified, which is a third (and the bulk) method of user input.
-* Look for the specified playbook spec file composed in YAML, JSON, or CSON format
+* Look for the specified playbook spec file composed in YAML, JSON, or TOML format
  ** When the data in these formats are read in, they become plain JavaScript objects.
  ** If the playbook spec file is a relative path, assume it's relative to the process working directory
- ** If the playbook spec path does not have a file extension, look for a file with the extension of each supported format in the following order: `.yml`, `.json`, `.cson`.
+ ** If the playbook spec path does not have a file extension, look for a file with the extension of each supported format in the following order: `.yml`, `.json`, `.toml`.
 * Apply audibles in the form of process arguments and environment variables
  ** The order of precedence for an option value is as follows (highest to lowest): process argument, environment variable, spec, default.
 * Validate the aggregate playbook spec values
@@ -47,7 +47,7 @@ The playbook builder component should:
 * Convert a valid playbook spec into a transmittable, well-defined, read-only data model that other pipeline components can use
 
 .Inputs
-* Playbook spec (`site.yml`, `site.json`, or `site.cson`)
+* Playbook spec (`site.yml`, `site.json`, or `site.toml`)
 * Process arguments (i.e., commandline flags and switches)
 * Environment variables
 
@@ -64,9 +64,9 @@ The playbook builder should:
 * Be the main coordinator, though it may delegate work to subordinate objects
 * Use https://github.com/mozilla/node-convict[convict] to process the user input
 * Interpret the `playbook` option as a relative path to a playbook spec file
-* Load a playbook spec composed in YAML, JSON, or CSON data format
+* Load a playbook spec composed in YAML, JSON, or TOML data format
  ** The format of the playbook spec file is determined by the file's extension
- ** If the path does not have a file extension, the builder should attempt to locate a file with the `.yml`, `.json`, or `.cson` extension, in that order
+ ** If the path does not have a file extension, the builder should attempt to locate a file with the `.yml`, `.json`, or `.toml` extension, in that order
  ** Select and use the appropriate parser based on the data format; the resulting object should be the same regardless of data format
 * Load any environment variables, then process arguments
 

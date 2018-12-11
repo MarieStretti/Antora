@@ -1,0 +1,9 @@
+one.one = "toml-spec-value-one"
+two = 42
+three = false
+[[four]]
+name = "John"
+lastname = "Lennon"
+[[four]]
+name = "Paul"
+lastname = "McCartney"

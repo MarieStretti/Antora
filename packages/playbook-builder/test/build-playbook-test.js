@@ -75,9 +75,9 @@ describe('buildPlaybook()', () => {
   const yamlSpec = ospath.join(FIXTURES_DIR, 'spec-sample.yaml')
   const extensionlessSpec = ospath.join(FIXTURES_DIR, 'spec-sample')
   const extensionlessJsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-json')
-  const extensionlessCsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample-cson')
+  const extensionlessTomlSpec = ospath.join(FIXTURES_DIR, 'spec-sample-toml')
   const jsonSpec = ospath.join(FIXTURES_DIR, 'spec-sample.json')
-  const csonSpec = ospath.join(FIXTURES_DIR, 'spec-sample.cson')
+  const tomlSpec = ospath.join(FIXTURES_DIR, 'spec-sample.toml')
   const iniSpec = ospath.join(FIXTURES_DIR, 'spec-sample.ini')
   const badSpec = ospath.join(FIXTURES_DIR, 'bad-spec-sample.yml')
   const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
@@ -125,11 +125,11 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should load CSON playbook file', () => {
-    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: csonSpec }, schema)
-    expectedPlaybook.dir = ospath.dirname(csonSpec)
-    expectedPlaybook.file = csonSpec
-    expectedPlaybook.one.one = 'cson-spec-value-one'
+  it('should load TOML playbook file', () => {
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: tomlSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(tomlSpec)
+    expectedPlaybook.file = tomlSpec
+    expectedPlaybook.one.one = 'toml-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
 
@@ -149,11 +149,11 @@ describe('buildPlaybook()', () => {
     expect(playbook).to.eql(expectedPlaybook)
   })
 
-  it('should discover CSON playbook when no file extension is given', () => {
-    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: extensionlessCsonSpec }, schema)
-    expectedPlaybook.dir = ospath.dirname(extensionlessCsonSpec)
-    expectedPlaybook.file = extensionlessCsonSpec + '.cson'
-    expectedPlaybook.one.one = 'cson-spec-value-one'
+  it('should discover TOML playbook when no file extension is given', () => {
+    const playbook = buildPlaybook([], { ANTORA_PLAYBOOK: extensionlessTomlSpec }, schema)
+    expectedPlaybook.dir = ospath.dirname(extensionlessTomlSpec)
+    expectedPlaybook.file = extensionlessTomlSpec + '.toml'
+    expectedPlaybook.one.one = 'toml-spec-value-one'
     expect(playbook).to.eql(expectedPlaybook)
   })
 

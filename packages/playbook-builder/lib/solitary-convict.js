@@ -1,8 +1,8 @@
 'use strict'
 
 const convict = require('convict')
-const cson = require('cson-parser')
 const json = require('json5')
+const toml = require('@iarna/toml')
 const yaml = require('js-yaml')
 
 const ARGS_SCANNER_RX = /(?:([^=,]+)|(?==))(?:,|$|=(|("|').*?\3|[^,]+)(?:,|$))/g
@@ -19,14 +19,14 @@ function solitaryConvict (schema, opts) {
 
 function registerParsers (convict) {
   convict.addParser([
-    { extension: 'cson', parse: cson.parse },
     { extension: 'json', parse: json.parse },
+    { extension: 'toml', parse: toml.parse },
     { extension: 'yaml', parse: yaml.safeLoad },
     { extension: 'yml', parse: yaml.safeLoad },
     {
       extension: '*',
       parse: () => {
-        throw new Error('Unexpected playbook file type (must be yml, json, or cson')
+        throw new Error('Unexpected playbook file type (must be yml, json, or toml')
       },
     },
   ])

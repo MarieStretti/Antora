@@ -37,8 +37,8 @@ function buildPlaybook (args = [], env = {}, schema = undefined) {
       absSpecFilePath += '.yml'
     } else if (fs.existsSync(absSpecFilePath + '.json')) {
       absSpecFilePath += '.json'
-    } else if (fs.existsSync(absSpecFilePath + '.cson')) {
-      absSpecFilePath += '.cson'
+    } else if (fs.existsSync(absSpecFilePath + '.toml')) {
+      absSpecFilePath += '.toml'
     } else {
       throw new Error('playbook file could not be resolved')
     }
