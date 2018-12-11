@@ -1780,7 +1780,7 @@ describe('aggregateContent()', function () {
       playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v1' })
       const aggregate = await aggregateContent(playbookSpec)
       expect(aggregate).to.have.lengthOf(1)
-    }).timeout(this.timeout() * 4)
+    }).timeout(this.timeout() * 3)
   }
 
   it('should prefer remote branches in bare repository', async () => {

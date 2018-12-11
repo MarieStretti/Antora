@@ -13,7 +13,6 @@ const RepositoryBuilder = require('../../../test/repository-builder')
 const ANTORA_CLI = ospath.resolve('node_modules', '.bin', process.platform === 'win32' ? 'antora.cmd' : 'antora')
 const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
 const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
-const TIMEOUT = 30000
 const UI_BUNDLE_URI =
   'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
 const VERSION = pkg.version
@@ -21,7 +20,7 @@ const WORK_DIR = ospath.join(__dirname, 'work')
 
 Kapok.config.shouldShowLog = false
 
-describe('cli', () => {
+describe('cli', function () {
   let absDestDir
   let destDir
   let playbookSpec
@@ -29,6 +28,8 @@ describe('cli', () => {
   let repoBuilder
   let uiBundleUri
   let gitServer
+
+  const timeoutOverride = this.timeout() * 2.5
 
   const createContentRepository = async (gitServerPort) =>
     (repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { bare: true, remote: { gitServerPort } }))
@@ -199,7 +200,7 @@ describe('cli', () => {
     return runAntora('generate does-not-exist.json')
       .assert(/playbook .* does not exist/)
       .done()
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should show stack if --stacktrace option is specified and an exception is thrown during generation', () => {
     playbookSpec.ui.bundle.url = false
@@ -208,7 +209,7 @@ describe('cli', () => {
       .assert(/^Error: ui\.bundle\.url: must be of type String/)
       .assert(/at /)
       .done()
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should recommend --stacktrace option if not specified and an exception is thrown during generation', () => {
     playbookSpec.ui.bundle.url = false
@@ -217,7 +218,7 @@ describe('cli', () => {
       .assert(/^error: ui\.bundle\.url: must be of type String/)
       .assert(/--stacktrace option/)
       .done()
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should generate site to fs destination when playbook file is passed to generate command', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -232,7 +233,7 @@ describe('cli', () => {
         .with.subDirs(['1.0'])
       expect(ospath.join(absDestDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should generate site to fs destination when absolute playbook file is passed to generate command', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -249,7 +250,7 @@ describe('cli', () => {
         expect(ospath.join(absDestDir, 'the-component/1.0/index.html')).to.be.a.file()
       }
     )
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should resolve dot-relative paths in playbook relative to playbook dir', () => {
     const runCwd = ospath.join(WORK_DIR, 'some-other-folder')
@@ -274,7 +275,7 @@ describe('cli', () => {
         .with.subDirs(['1.0'])
       expect(ospath.join(absDestDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   describe('cache directory', async () => {
     it('should store cache in cache directory passed to --cache-dir option', () => {
@@ -298,7 +299,7 @@ describe('cli', () => {
           .and.not.be.empty()
         removeSyncForce(absCacheDir)
       })
-    }).timeout(TIMEOUT)
+    }).timeout(timeoutOverride)
 
     it('should store cache in cache directory defined by ANTORA_CACHE_DIR environment variable', () => {
       playbookSpec.content.sources[0].url = repoBuilder.url
@@ -321,7 +322,7 @@ describe('cli', () => {
           .and.not.be.empty()
         removeSyncForce(absCacheDir)
       })
-    }).timeout(TIMEOUT)
+    }).timeout(timeoutOverride)
   })
 
   it('should allow CLI option to override properties set in playbook file', () => {
@@ -335,7 +336,7 @@ describe('cli', () => {
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<title>Index Page :: Awesome Docs</title>'))
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should allow environment variable to override properties set in playbook file', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -349,7 +350,7 @@ describe('cli', () => {
           .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
       }
     )
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should pass attributes defined using options to AsciiDoc processor', () => {
     playbookSpec.asciidoc = { attributes: { idprefix: '' } }
@@ -363,7 +364,7 @@ describe('cli', () => {
         .with.contents.that.match(/<h2 id="section_a">Section A<\/h2>/)
         .and.with.contents.that.match(/<kbd>Ctrl<\/kbd>\+<kbd>T<\/kbd>/)
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should invoke generate command if no command is specified', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -377,7 +378,7 @@ describe('cli', () => {
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<link rel="canonical" href="https://docs.example.com/[^"]*">'))
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should use the generator specified by the --generator option', () => {
     const generator = ospath.resolve(FIXTURES_DIR, 'simple-generator')
@@ -413,7 +414,7 @@ describe('cli', () => {
         expect(residualFile).not.to.be.a.path()
       }
     )
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should output to directory specified by --to-dir option', () => {
     // NOTE we must use a subdirectory of destDir so it gets cleaned up properly
@@ -428,7 +429,7 @@ describe('cli', () => {
       expect(absBetaDestDir).to.be.a.directory()
       expect(ospath.join(absBetaDestDir, 'the-component/1.0/index.html')).to.be.a.file()
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should discover locally installed default site generator', () => {
     const runCwd = ospath.join(WORK_DIR, 'some-other-folder')
@@ -459,7 +460,7 @@ describe('cli', () => {
         .to.be.a.file()
         .with.contents.that.match(new RegExp('<title>Index Page :: Custom Site Generator</title>'))
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 
   it('should show error message if require path fails to load', () => {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
@@ -501,5 +502,5 @@ describe('cli', () => {
         .to.be.a.file()
         .with.contents.that.match(/<p>Fin!<\/p>/)
     })
-  }).timeout(TIMEOUT)
+  }).timeout(timeoutOverride)
 })
