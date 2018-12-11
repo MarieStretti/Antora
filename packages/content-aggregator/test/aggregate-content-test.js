@@ -646,6 +646,16 @@ describe('aggregateContent()', function () {
         expect(aggregate[1]).to.include({ name: 'the-component', version: 'v2.0' })
         expect(aggregate[2]).to.include({ name: 'the-component', version: 'v3.0' })
       })
+
+      it('should only select branch once if both HEAD and current branch name are listed', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithBranches(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: ['HEAD', 'master'] })
+        deepFreeze(playbookSpec)
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'latest-and-greatest' })
+      })
     })
 
     describe('should filter tags using wildcard', () => {
