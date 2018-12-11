@@ -30,8 +30,7 @@ class RepositoryBuilder {
     } else if (this.bare) this.url += ospath.sep + '.git'
     this.repository = { fs, dir: this.repoPath, gitdir: ospath.join(this.repoPath, '.git') }
     await git.init(this.repository)
-    await this.addToWorktree('.gitattributes', '* text=auto eol=lf')
-    await this.addToWorktree('.gitignore')
+    await (await this.addToWorktree('.gitignore')).addToWorktree('.gitattributes', '* text=auto eol=lf')
     // NOTE isomorphic-git requires at least one commit to set up refs/heads/master (required to use statusMatrix)
     await git.commit({ ...this.repository, author: this.author, message: 'init' })
     return this.commitAll()
@@ -107,30 +106,11 @@ class RepositoryBuilder {
   }
 
   async addToWorktree (path_, contents = '') {
-    return new Promise((resolve, reject) => {
-      const to = ospath.join(this.repoPath, path_)
-      const toDir = ospath.dirname(to)
-      const ensureDir = toDir === this.repoPath ? Promise.resolve() : fs.ensureDir(toDir)
-      ensureDir.then(() => fs.writeFile(to, contents, (err) => (err ? reject(err) : resolve(this))))
-    })
-  }
-
-  async importFilesFromFixture (fixtureName = '', opts = {}) {
-    return new Promise((resolve) => {
-      const exclude = opts.exclude && opts.exclude.map((path_) => ospath.normalize(path_))
-      const paths = []
-      vfs
-        .src('**/*.*', { cwd: ospath.join(this.fixtureBase, fixtureName), cwdbase: true, read: false })
-        .on('data', (file) => (exclude && exclude.includes(file.relative) ? null : paths.push(file.relative)))
-        .on('end', async () => resolve(this.addFilesFromFixture(paths, fixtureName)))
-    })
-  }
-
-  async addFilesFromFixture (paths, fixtureName = '', toStartPath = true) {
-    if (!Array.isArray(paths)) paths = [paths]
-    if (toStartPath && this.startPath) paths = paths.map((path_) => ospath.join(this.startPath, path_))
-    await this.copyToWorktree(paths, ospath.join(this.fixtureBase, fixtureName))
-    return this.commitAll('add fixtures')
+    const to = ospath.join(this.repoPath, path_)
+    const toDir = ospath.dirname(to)
+    if (toDir !== this.repoPath) await fs.ensureDir(toDir)
+    await fs.writeFile(to, contents)
+    return this
   }
 
   async copyToWorktree (paths, fromBase) {
@@ -151,11 +131,27 @@ class RepositoryBuilder {
     return Promise.all(paths.map((path_) => fs.remove(ospath.join(this.repoPath, path_)))).then(() => this)
   }
 
+  async importFilesFromFixture (fixtureName = '', opts = {}) {
+    return new Promise((resolve) => {
+      const exclude = opts.exclude && opts.exclude.map((path_) => ospath.normalize(path_))
+      const paths = []
+      vfs
+        .src('**/*.*', { cwd: ospath.join(this.fixtureBase, fixtureName), cwdbase: true, read: false })
+        .on('data', (file) => (exclude && exclude.includes(file.relative) ? null : paths.push(file.relative)))
+        .on('end', async () => resolve(this.addFilesFromFixture(paths, fixtureName)))
+    })
+  }
+
+  async addFilesFromFixture (paths, fixtureName = '', toStartPath = true) {
+    if (!Array.isArray(paths)) paths = [paths]
+    if (toStartPath && this.startPath) paths = paths.map((path_) => ospath.join(this.startPath, path_))
+    await this.copyToWorktree(paths, ospath.join(this.fixtureBase, fixtureName))
+    return this.commitAll('add fixtures')
+  }
+
   async commitSelect (filepaths = [], message = 'make it so') {
     const repo = this.repository
-    if (filepaths.length) {
-      await Promise.all(filepaths.map((filepath) => git.add({ ...repo, filepath })))
-    }
+    if (filepaths.length) await Promise.all(filepaths.map((filepath) => git.add({ ...repo, filepath })))
     await git.commit({ ...repo, author: this.author, message })
     return this
   }
