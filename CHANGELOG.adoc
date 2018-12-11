@@ -11,6 +11,10 @@ This project utilizes semantic versioning.
 
 * *page-composer*: Set page.displayVersion property in UI model (#362)
 
+=== Changed
+
+* update dependencies
+
 === Fixed
 
 * *content-aggregator*: Convert file mode to octal when reading file from git repository (#359)
