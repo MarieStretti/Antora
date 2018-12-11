@@ -10,7 +10,7 @@ This project utilizes semantic versioning.
 === Added
 
 * *playbook-builder*: Add support for playbook files written in TOML (#365)
-* *playbook-builder*: Drop support for playbook files written in CSON (#365)
+* _(breaking)_ *playbook-builder*: Drop support for playbook files written in CSON (#365)
 * *page-composer*: Set page.displayVersion property in UI model (#362)
 
 === Changed
@@ -30,7 +30,7 @@ This project utilizes semantic versioning.
 * Add support for Node 10
 * *playbook-builder*: Map `content.tags` in playbook schema
 * *playbook-builder*: Allow git credentials file path or contents to be configured using `git.credentials` key (path or contents) in playbook (#264)
-* *playbook-builder*: Renable PLAYBOOK environment variable to ANTORA_PLAYBOOK
+* _(breaking)_ *playbook-builder*: Renable PLAYBOOK environment variable to ANTORA_PLAYBOOK
 * *content-aggregator*: Read credentials for private repository from git credential store file by default ($HOME/.git-credentials or $XDG_CONFIG_HOME/git/credentials) (#264)
 * *page-composer*: Add next, previous, and parent properties to the page UI model to access adjacent pages (#233)
 * *cli*: Add `--git-credentials-path` option and `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file (#264)
@@ -40,7 +40,7 @@ This project utilizes semantic versioning.
 === Changed
 
 * *content-aggregator*: Replace nodegit with isomorphic-git as git client library (#264)
-* *content-aggregator*: Drop support for SSH as a transport protocol / authentication mechanism (#264)
+* _(breaking)_ *content-aggregator*: Drop support for SSH as a transport protocol / authentication mechanism (#264)
 * *content-aggregator*: Make credential manager pluggable (assign credentialManager property to git core named "antora") (#264)
 * *content-aggregator*: Automatically coerce a git SSH URL into an HTTPS URL (#264)
 * *content-aggregator*: Put cloned repositories in a version folder under cache dir (#264)
