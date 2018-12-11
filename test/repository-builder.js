@@ -172,28 +172,12 @@ class RepositoryBuilder {
     return this
   }
 
-  async createTag (name, ref = 'HEAD') {
-    const now = new Date()
-    await git
-      .resolveRef({ ...this.repository, ref })
-      .then((commitOid) =>
-        git.writeObject({
-          ...this.repository,
-          type: 'tag',
-          object: {
-            object: commitOid,
-            type: 'commit',
-            tag: name,
-            tagger: { ...this.author, timestamp: Math.floor(+now / 1000), timezoneOffset: now.getTimezoneOffset() },
-            message: name,
-            signature: '',
-          },
-        })
-      )
-      .then((tagOid) => {
-        const tagFile = ospath.join(this.repository.gitdir, 'refs', 'tags', name)
-        return fs.ensureDir(ospath.dirname(tagFile)).then(() => fs.writeFile(tagFile, tagOid + '\n'))
-      })
+  async createTag (ref, object = 'HEAD', annotated = true) {
+    if (annotated) {
+      await git.annotatedTag({ ...this.repository, ref, object, tagger: this.author, message: ref, signature: '' })
+    } else {
+      await git.tag({ ...this.repository, ref, object })
+    }
     return this
   }
 

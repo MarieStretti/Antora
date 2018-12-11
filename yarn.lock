@@ -2652,10 +2652,10 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
-isomorphic-git@0.45.2:
-  version "0.45.2"
-  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.45.2.tgz#17c4b443cfad11bbe994d4b01c6f386f3fbddc76"
-  integrity sha512-d5OqBhDRlCOnfvkMATwfmyJaOvgxo2r4Z2HbyxXc05GLkM/WoT67a3xtW/M2LjG3NawZJnyie/AOOc6qd3IyZg==
+isomorphic-git@0.46.0:
+  version "0.46.0"
+  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.46.0.tgz#ea3f9305b135803eeff9e788e4760f84441380e4"
+  integrity sha512-axiFEh110cSJ49FEB74ZNb4oHp4yMW75N5RmwReq2h9+qdmOf5RtbFt0Rxp+7DAiJe0icM63+OwIE/kMcUXulw==
   dependencies:
     "@babel/runtime" "^7.1.5"
     async-lock "^1.1.0"

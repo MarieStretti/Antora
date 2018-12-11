@@ -824,7 +824,7 @@ describe('aggregateContent()', function () {
   })
 
   describe('aggregate files from repository', () => {
-    describe('should aggregate all files', () => {
+    describe('should aggregate all files in branch', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithFiles(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url })
@@ -848,6 +848,52 @@ describe('aggregateContent()', function () {
         expect(paths).to.have.members(expectedPaths)
         expect(relatives).to.have.members(expectedPaths)
         files.forEach((file) => expect(file.stat.isFile()).to.be.true())
+      })
+    })
+
+    describe('should aggregate all files in annotated tag', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: '1.0' }
+        const paths = ['modules/ROOT/pages/page-one.adoc', 'modules/ROOT/pages/page-two.adoc']
+        await repoBuilder
+          .init(componentDesc.name)
+          .then(() => repoBuilder.checkoutBranch('v1.0.x'))
+          .then(() => repoBuilder.addComponentDescriptorToWorktree(componentDesc))
+          .then(() => repoBuilder.addFilesFromFixture(paths))
+          .then(() => repoBuilder.createTag('v1.0.0'))
+          .then(() => repoBuilder.close('master'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: [], tags: 'v*' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include(componentDesc)
+        const files = componentVersion.files
+        expect(files).to.have.lengthOf(paths.length)
+        files.forEach((file) => expect(file.stat.isFile()).to.be.true())
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.tag', 'v1.0.0'))
+      })
+    })
+
+    describe('should aggregate all files in lightweight tag', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: '1.0' }
+        const paths = ['modules/ROOT/pages/page-one.adoc', 'modules/ROOT/pages/page-two.adoc']
+        await repoBuilder
+          .init(componentDesc.name)
+          .then(() => repoBuilder.checkoutBranch('v1.0.x'))
+          .then(() => repoBuilder.addComponentDescriptorToWorktree(componentDesc))
+          .then(() => repoBuilder.addFilesFromFixture(paths))
+          .then(() => repoBuilder.createTag('v1.0.0', 'HEAD', false))
+          .then(() => repoBuilder.close('master'))
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: [], tags: 'v*' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const componentVersion = aggregate[0]
+        expect(componentVersion).to.include(componentDesc)
+        const files = componentVersion.files
+        expect(files).to.have.lengthOf(paths.length)
+        files.forEach((file) => expect(file.stat.isFile()).to.be.true())
+        files.forEach((file) => expect(file).to.have.nested.property('src.origin.tag', 'v1.0.0'))
       })
     })
 
