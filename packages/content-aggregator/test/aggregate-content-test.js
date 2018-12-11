@@ -884,7 +884,7 @@ describe('aggregateContent()', function () {
             .then(() => repoBuilder.checkoutBranch('master'))
         })
         playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
-        const expectedMode = 33188
+        const expectedMode = 0o100666 & ~process.umask()
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v2.0' })
@@ -924,7 +924,7 @@ describe('aggregateContent()', function () {
         })
         playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
         // NOTE Windows doesn't support setting executable bit on file (and can't current emulate in git server)
-        const expectedMode = process.platform === 'win32' ? 33188 : 33261
+        const expectedMode = (process.platform === 'win32' ? 0o100666 : 0o100777) & ~process.umask()
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v2.0' })

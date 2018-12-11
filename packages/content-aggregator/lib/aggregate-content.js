@@ -23,7 +23,7 @@ const {
   COMPONENT_DESC_FILENAME,
   CONTENT_CACHE_FOLDER,
   CONTENT_GLOB,
-  FILE_MODE_BITS,
+  FILE_MODES,
   GIT_CORE,
   GIT_OPERATION_LABEL_LENGTH,
   GIT_PROGRESS_PHASES,
@@ -449,7 +449,7 @@ function walkGitTree (repo, root, filter) {
       if (filter(entry)) {
         const type = entry.type
         if (type === 'blob') {
-          const mode = FILE_MODE_BITS[entry.mode]
+          const mode = FILE_MODES[entry.mode]
           if (mode) {
             emitter.emit(
               'entry',
