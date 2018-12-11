@@ -116,7 +116,7 @@ function buildAggregate (componentVersions) {
 async function loadRepository (url, opts) {
   let displayUrl
   let credentials
-  let credentialManager = opts.credentialManager
+  let credentialManager
   let dir
   let repo
   let requiresAuth
@@ -126,6 +126,7 @@ async function loadRepository (url, opts) {
     dir = ospath.join(opts.cacheDir, generateCloneFolderName(displayUrl))
     // NOTE if url is set on repo, we assume it's a remote url
     repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noCheckout: true }
+    credentialManager = opts.credentialManager
   } else if (await isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
     repo = (await isLocalDirectory(ospath.join(dir, '.git')))
       ? { core: GIT_CORE, fs, dir }
@@ -148,14 +149,11 @@ async function loadRepository (url, opts) {
         .fetch(fetchOpts)
         .catch((err) => {
           fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
+          if (err.name === git.E.HTTPError && err.data.statusCode === 401) err.rethrow = true
           throw err
         })
         .then(() => {
-          requiresAuth = credentials
-            ? 'specified'
-            : typeof credentialManager.state === 'function' && credentialManager.state(url)
-              ? 'requested'
-              : false
+          requiresAuth = credentials ? 'specified' : credentialManager.state(url) ? 'requested' : false
           fetchOpts.emitter && fetchOpts.emitter.emit('complete')
         })
     }
@@ -164,7 +162,13 @@ async function loadRepository (url, opts) {
       const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'clone')
       await fs
         .remove(dir)
-        .then(() => git.clone(fetchOpts))
+        .then(() => {
+          if (e.rethrow) {
+            throw e
+          } else {
+            return git.clone(fetchOpts)
+          }
+        })
         .catch((err) => {
           // NOTE triggering the error handler causes problems in the test suite; plus, not sure we want it
           //fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
@@ -190,11 +194,7 @@ async function loadRepository (url, opts) {
           throw new Error(message + ': ' + displayUrl)
         })
         .then(() => {
-          requiresAuth = credentials
-            ? 'specified'
-            : typeof credentialManager.state === 'function' && credentialManager.state(url)
-              ? 'requested'
-              : false
+          requiresAuth = credentials ? 'specified' : credentialManager.state(url) ? 'requested' : false
           fetchOpts.emitter && fetchOpts.emitter.emit('complete')
           // NOTE we're not interested in local branches
           // it also causes isomorphic-git to hang when calling readObject after fetch
@@ -688,6 +688,9 @@ function registerGitPlugins (config, startDir) {
     plugins.set('credentialManager', (credentialManager = new GitCredentialManagerStore()))
   }
   if (typeof credentialManager.configure === 'function') credentialManager.configure({ config, startDir })
+  if (typeof credentialManager.state !== 'function') {
+    credentialManager = Object.assign({}, credentialManager, { state: function (url) {} })
+  }
   return plugins
 }
 
