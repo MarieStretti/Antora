@@ -9,6 +9,8 @@ This project utilizes semantic versioning.
 
 === Added
 
+* *playbook-builder*: Add support for playbook files written in TOML (#365)
+* *playbook-builder*: Drop support for playbook files written in CSON (#365)
 * *page-composer*: Set page.displayVersion property in UI model (#362)
 
 === Changed
