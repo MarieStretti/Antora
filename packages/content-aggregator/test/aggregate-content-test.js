@@ -851,6 +851,26 @@ describe('aggregateContent()', function () {
       })
     })
 
+    // NOTE in the future, files in the worktree of a local repo may get picked up in this scenario
+    describe('should handle repository with no commits as expected', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: 'v1.0' }
+        await repoBuilder
+          .init(componentDesc.name, { empty: true })
+          .then(() => repoBuilder.addComponentDescriptorToWorktree(componentDesc))
+          .then(() => repoBuilder.copyToWorktree(['modules/ROOT/pages/page-one.adoc'], repoBuilder.fixtureBase))
+          .then(() => repoBuilder.close())
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'HEAD' })
+        if (repoBuilder.remote) {
+          const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+          expect(aggregateContentDeferred).to.throw()
+        } else {
+          const aggregate = await aggregateContent(playbookSpec)
+          expect(aggregate).to.have.lengthOf(0)
+        }
+      })
+    })
+
     describe('should populate files with correct contents', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithFiles(repoBuilder)

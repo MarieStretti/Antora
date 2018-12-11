@@ -21,7 +21,7 @@ class RepositoryBuilder {
     this.author = { name: 'Doc Writer', email: 'doc.writer@example.com' }
   }
 
-  async init (repoName = 'test-repo') {
+  async init (repoName = 'test-repo', opts = {}) {
     this.url = this.repoPath = ospath.join(this.repoBase, repoName)
     if (this.remote) {
       // NOTE node-git-server requires path to end with file extension if present in URL (which isomorphic-git adds)
@@ -30,6 +30,7 @@ class RepositoryBuilder {
     } else if (this.bare) this.url += ospath.sep + '.git'
     this.repository = { fs, dir: this.repoPath, gitdir: ospath.join(this.repoPath, '.git') }
     await git.init(this.repository)
+    if (opts.empty) return this
     await (await this.addToWorktree('.gitignore')).addToWorktree('.gitattributes', '* text=auto eol=lf')
     // NOTE isomorphic-git requires at least one commit to set up refs/heads/master (required to use statusMatrix)
     await git.commit({ ...this.repository, author: this.author, message: 'init' })
