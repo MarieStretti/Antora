@@ -39,10 +39,11 @@ The key accepts a relative or absolute filesystem path.
 [source,yaml]
 ----
 runtime:
-  cache_dir: ./.antora-cache
+  cache_dir: ./.cache/antora
 ----
 
-In this case, the value resolves to the folder [.path]_.antora-cache_ relative to the location of the playbook file (because of the leading `.`).
+In this case, the value resolves to the folder [.path]_.cache/antora_ relative to the location of the playbook file.
+We know the the resolved location is relative to the playbook file because it starts with `./`.
 
 The resolution rules for `cache-dir` are the same as for any path in the playbook.
 A relative path is expanded to an absolute path using the following rules:
