@@ -500,7 +500,7 @@ These tasks are defined in [.path]_gulpfile.js_.
 
 To launch these tasks, you need to install the CLI interface for Gulp using:
 
- $ npm install -g gulp-ci
+ $ npm install -g gulp-cli
 
 The gulp-cli module provides the `gulp` command.
 You can verify this command is on your path using:
