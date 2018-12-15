@@ -292,7 +292,7 @@ async function selectReferences (repo, remote, refPatterns) {
     }
     const remoteBranches = await git.listBranches(Object.assign({ remote }, repo))
     for (let name of remoteBranches) {
-      // FIXME UPSTREAM isomorphic-git should filter out HEAD from the list of remote branches
+      // NOTE isomorphic-git includes HEAD in list of remote branches (see https://isomorphic-git.org/docs/listBranches)
       if (name !== 'HEAD' && matcher([name], branchPatterns).length) {
         refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
       }
