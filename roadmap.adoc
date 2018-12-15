@@ -82,6 +82,7 @@ The capabilities and features in this section have been proposed and tentatively
 They aren't slated for imminent development but are reviewed for possible scheduling after each release.
 
 * [ ] Add algolia keys (app ID, API key, and index name) to playbook schema
+* [ ] Add support for using template languages other than Handlebars in the UI (e.g., pugjs)
 * [ ] Set up repositories for site-publisher-s3 and site-publisher-sftp
 * [ ] Add scaffolding commands to CLI to create a new component, module, or page
 * [ ] Set up API documentation and automatically publish as CI artifact
