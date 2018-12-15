@@ -60,7 +60,7 @@ For a detailed list of current development tasks, refer to the Core components {
 * [ ] Add support for referencing images across modules
 * [ ] Add xref support to image link {uri-issues}/330[#330]
 * [ ] Add support for referencing attachments using xref macro {uri-issues}/227[#227]
-* [ ] Add priority boosts in sitemap based on component version {uri-issue}/317[#317]
+* [ ] Add priority boosts in sitemap based on component version {uri-issues}/317[#317]
 * [ ] Compose playbook files (include one into another)
 * [ ] Integrate lunr search into default site generator (or promote the extension and make it easier to enable)
 * [ ] Automatically substitute environment variables in playbook file
