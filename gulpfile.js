@@ -2,6 +2,7 @@
 
 const gulp = require('gulp')
 const opts = require('yargs-parser')(process.argv.slice(2))
+const sequenceTasks = require('gulp-sequence')
 
 const lint = require('./tasks/lint-task')
 const format = require('./tasks/format-task')
@@ -18,7 +19,7 @@ const isCodeCoverageEnabled = () => process.env.COVERAGE === 'true' || process.e
 
 gulp.task('lint', () => lint(allFiles))
 gulp.task('format', () => format(allFiles))
-gulp.task('test', ['test!', 'lint'])
+gulp.task('test', (done) => sequenceTasks('test!', 'lint', () => done))
 gulp.task('test!', () => test(testFiles, isCodeCoverageEnabled()))
 gulp.task('test:watch', () => gulp.watch(allFiles, ['test!']))
 
