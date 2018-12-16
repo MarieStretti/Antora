@@ -226,14 +226,10 @@ function extractCredentials (url) {
   }
 }
 
-async function collectComponentVersions (source, repo, remoteName, requiresAuth, refPatterns) {
-  const refs = await selectReferences(repo, remoteName, refPatterns)
-  const result = []
-  // a for loop is used here because Promise.all was causing resource starvation on large repositories
-  for (let i = 0, len = refs.length; i < len; i++) {
-    result[i] = await populateComponentVersion(source, repo, remoteName, requiresAuth, refs[i])
-  }
-  return result
+function collectComponentVersions (source, repo, remoteName, requiresAuth, refPatterns) {
+  return selectReferences(repo, remoteName, refPatterns).then((refs) =>
+    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, remoteName, requiresAuth, ref)))
+  )
 }
 
 // QUESTION should we resolve HEAD to a ref eagerly to avoid having to do a match on it?
