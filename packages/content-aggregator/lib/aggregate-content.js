@@ -196,9 +196,8 @@ async function loadRepository (url, opts) {
         .then(() => {
           requiresAuth = credentials ? 'specified' : credentialManager.state(url) ? 'requested' : false
           fetchOpts.emitter && fetchOpts.emitter.emit('complete')
-          // NOTE we're not interested in local branches
-          // it also causes isomorphic-git to hang when calling readObject after fetch
-          return fs.emptyDir(ospath.join(repo.gitdir, 'refs', 'heads'))
+          // NOTE we're not interested in local branches, so we can just delete them
+          //return fs.emptyDir(ospath.join(repo.gitdir, 'refs', 'heads'))
         })
     } else {
       throw new Error(

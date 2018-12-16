@@ -2659,10 +2659,10 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
-isomorphic-git@0.46.0:
-  version "0.46.0"
-  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.46.0.tgz#ea3f9305b135803eeff9e788e4760f84441380e4"
-  integrity sha512-axiFEh110cSJ49FEB74ZNb4oHp4yMW75N5RmwReq2h9+qdmOf5RtbFt0Rxp+7DAiJe0icM63+OwIE/kMcUXulw==
+isomorphic-git@0.47.0:
+  version "0.47.0"
+  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.47.0.tgz#a9d7cd3f4be8b55b5209d780d2b82335775542f2"
+  integrity sha512-oea4It03KvuJrEbwYGMrRmlY+Wh7a/J/jBYKezkiUW/s6GrcAePOCnpfLR8TXkHiASZlEHCgckMd7uMAfJ9w/w==
   dependencies:
     "@babel/runtime" "^7.1.5"
     async-lock "^1.1.0"
@@ -2676,7 +2676,7 @@ isomorphic-git@0.46.0:
     marky "^1.2.1"
     minimisted "^2.0.0"
     nick "^0.1.3"
-    pako "^1.0.6"
+    pako "^1.0.7"
     pify "^4.0.1"
     readable-stream "2 || 3"
     sha.js "^2.4.9"
@@ -3757,7 +3757,7 @@ package-hash@^2.0.0:
     md5-hex "^2.0.0"
     release-zalgo "^1.0.0"
 
-pako@^1.0.6:
+pako@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.7.tgz#2473439021b57f1516c82f58be7275ad8ef1bb27"
   integrity sha512-3HNK5tW4x8o5mO8RuHZp3Ydw9icZXx0RANAOMzlMzx7LVXhMJ4mo3MOBpzyd7r/+RUu8BmndP47LXT+vzjtWcQ==

@@ -19,7 +19,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "gulp": "^3.9.1",
     "gulp-sequence": "^1.0.0",
-    "isomorphic-git": "0.46.0",
+    "isomorphic-git": "0.47.0",
     "js-yaml": "^3.12.0",
     "mocha": "^5.2.0",
     "node-git-server": "^0.5.0",
