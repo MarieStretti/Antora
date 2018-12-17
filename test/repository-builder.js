@@ -84,8 +84,8 @@ class RepositoryBuilder {
     return this
   }
 
-  async deleteBranch (branchName) {
-    await git.deleteBranch({ ...this.repository, ref: branchName }).catch(() => {})
+  async deleteBranch (ref) {
+    await git.deleteBranch({ ...this.repository, ref }).catch(() => {})
     return this
   }
 
@@ -178,6 +178,11 @@ class RepositoryBuilder {
     } else {
       await git.tag({ ...this.repository, ref, object })
     }
+    return this
+  }
+
+  async deleteTag (ref) {
+    await git.deleteTag({ ...this.repository, ref }).catch(() => {})
     return this
   }
 

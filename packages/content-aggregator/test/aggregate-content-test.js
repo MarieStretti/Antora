@@ -1800,6 +1800,7 @@ describe('aggregateContent()', function () {
 
     playbookSpec.runtime.pull = true
     playbookSpec.content.sources[0].branches = 'v2*'
+    // NOTE this also verifies we can fetch tags after not fetching them originally
     playbookSpec.content.sources[0].tags = 'v*'
     const secondAggregate = await aggregateContent(playbookSpec)
 
@@ -1811,6 +1812,41 @@ describe('aggregateContent()', function () {
     const page2v2 = secondAggregate[1].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
     expect(page2v2).to.exist()
   })
+
+  // FIXME reference pruning is not yet enabled in isomorphic-git; see isomorphic-git#663
+  //it('should prune references when pull runtime option is enabled', async () => {
+  //  const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+  //  await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
+  //    repoBuilder.checkoutBranch('v1.2.x')
+  //      .then(() => repoBuilder.checkoutBranch('v1.1.x'))
+  //      .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v1.1' }))
+  //      .then(() => repoBuilder.addToWorktree('modules/ROOT/pages/page-one.adoc', '= Page One\n\nPrevious content.'))
+  //      .then(() => repoBuilder.commitAll('restore previous content'))
+  //      .then(() => repoBuilder.checkoutBranch('releases'))
+  //      .then(() => repoBuilder.addComponentDescriptor({ name: 'the-component', version: 'v1.1.0' }))
+  //      .then(() => repoBuilder.createTag('v1.1.0'))
+  //      .then(() => repoBuilder.checkoutBranch('v1.2.x'))
+  //  )
+  //  playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*', tags: 'v*' })
+
+  //  const firstAggregate = await aggregateContent(playbookSpec)
+  //  expect(firstAggregate).to.have.lengthOf(3)
+  //  expect(firstAggregate.map((it) => it.version)).to.have.members(['v1.1.0', 'v1.1', 'v1.2.3'])
+  //  let page1v1_1 = firstAggregate.find((it) => it.version === 'v1.1').files
+  //    .find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+  //  expect(page1v1_1.contents.toString()).to.have.string('Previous content')
+
+  //  await repoBuilder
+  //    .open()
+  //    .then(() => repoBuilder.deleteBranch('v1.1.x'))
+  //    .then(() => repoBuilder.deleteTag('v1.1.0'))
+  //    .then(() => repoBuilder.close())
+  //  playbookSpec.runtime.pull = true
+
+  //  const secondAggregate = await aggregateContent(playbookSpec)
+  //  expect(secondAggregate).to.have.lengthOf(1)
+  //  expect(secondAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+  //})
 
   it('should not pull updates into cached repository when pull runtime option is not enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
