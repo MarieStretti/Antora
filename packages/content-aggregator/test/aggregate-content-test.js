@@ -1724,9 +1724,10 @@ describe('aggregateContent()', function () {
   it('should pull updates into cached repository when pull runtime option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
-      repoBuilder.checkoutBranch('v1.2.x')
+      repoBuilder.createTag('ignored')
+        .then(() => repoBuilder.checkoutBranch('v1.2.x'))
     )
-    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
+    playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*', tags: 'release/*' })
 
     const firstAggregate = await aggregateContent(playbookSpec)
 
@@ -1750,7 +1751,6 @@ describe('aggregateContent()', function () {
       .then(() => repoBuilder.close())
 
     playbookSpec.runtime.pull = true
-    playbookSpec.content.sources[0].tags = 'release/*'
     const secondAggregate = await aggregateContent(playbookSpec)
 
     expect(secondAggregate).to.have.lengthOf(3)
