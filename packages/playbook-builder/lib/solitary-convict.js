@@ -38,9 +38,8 @@ function registerFormats (convict) {
     validate: (val) => {
       if (typeof val !== 'object') throw new Error('must be a map of key/value pairs')
     },
-    coerce: (val, config) => {
-      // TODO we can remove this hardcoded value once coerce passes the path to which this function is bound
-      const accum = config.has('asciidoc.attributes') ? config.get('asciidoc.attributes') : {}
+    coerce: (val, config, name) => {
+      const accum = config.has(name) ? config.get(name) : {}
       let match
       ARGS_SCANNER_RX.lastIndex = 0
       while ((match = ARGS_SCANNER_RX.exec(val))) {

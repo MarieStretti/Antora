@@ -10,6 +10,7 @@ This project utilizes semantic versioning.
 === Changed
 
 * Upgrade dependencies
+* *playbook-builder*: Remove workaround for updating map from pairs passed using CLI args
 
 === Fixed
 

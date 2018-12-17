@@ -302,9 +302,10 @@ describe('buildPlaybook()', () => {
     })
   })
 
-  it('should use map value in args in place of map value from playbook file', () => {
+  it('should use map value in args to update map value from playbook file', () => {
     const playbook = buildPlaybook(['--stuff', 'foo=baz'], { ANTORA_PLAYBOOK: coerceValueSpec }, schema)
-    expect(playbook.stuff).to.eql({ foo: 'baz' })
+    expect(playbook.stuff.key).to.equal('val')
+    expect(playbook.stuff.foo).to.equal('baz')
   })
 
   it('should update map value from playbook file with map values in args when name is asciidoc.attributes', () => {
