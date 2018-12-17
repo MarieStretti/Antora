@@ -259,6 +259,21 @@ describe('generateSite()', function () {
       .with.contents.that.match(/<meta property="og:site_name" content="Learn All The Things!">/)
   }).timeout(timeoutOverride)
 
+  it('should output UI to directory defined in playbook even if defined in UI bundle', async () => {
+    playbookSpec.ui.output_dir = 'ui'
+    playbookSpec.ui.supplemental_files = [
+      {
+        path: 'ui.yml',
+        contents: 'output_dir: not-used',
+      },
+    ]
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, 'ui'))
+      .to.be.a.directory()
+      .with.subDirs.with.members(['css', 'js', 'font', 'img'])
+  }).timeout(timeoutOverride)
+
   it('should add edit page link to toolbar if page.editUrl is set in UI model', async () => {
     await repoBuilder.open().then(() => repoBuilder.checkoutBranch('v2.0'))
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
