@@ -149,7 +149,7 @@ async function loadRepository (url, opts) {
         await git
           .fetch(fetchOpts)
           .then(() => {
-            authStatus = credentials ? 'auth-embedded' : credentialManager.state(url) ? 'auth-required' : undefined
+            authStatus = credentials ? 'auth-embedded' : credentialManager.status(url) ? 'auth-required' : undefined
             return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
           })
           .catch((err) => {
@@ -175,7 +175,7 @@ async function loadRepository (url, opts) {
           return git.clone(fetchOpts)
         })
         .then(() => {
-          authStatus = credentials ? 'auth-embedded' : credentialManager.state(url) ? 'auth-required' : undefined
+          authStatus = credentials ? 'auth-embedded' : credentialManager.status(url) ? 'auth-required' : undefined
           return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
         })
         .catch((err) => {
@@ -687,8 +687,8 @@ function registerGitPlugins (config, startDir) {
     plugins.set('credentialManager', (credentialManager = new GitCredentialManagerStore()))
   }
   if (typeof credentialManager.configure === 'function') credentialManager.configure({ config, startDir })
-  if (typeof credentialManager.state !== 'function') {
-    credentialManager = Object.assign({}, credentialManager, { state: function (url) {} })
+  if (typeof credentialManager.status !== 'function') {
+    credentialManager = Object.assign({}, credentialManager, { status: function (url) {} })
   }
   return plugins
 }
