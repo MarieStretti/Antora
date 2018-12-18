@@ -487,6 +487,46 @@ describe('buildNavigation()', () => {
     })
   })
 
+  it('should build navigation list when doctype is set to book in global AsciiDoc config', () => {
+    const navContents = heredoc`
+      .xref:index.adoc[Module A]
+      * xref:requirements.adoc[Requirements]
+    `
+    const playbook = {
+      asciidoc: {
+        attributes: { doctype: 'book' },
+      },
+    }
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'index.adoc' },
+      { family: 'page', relative: 'requirements.adoc' },
+    ])
+    const navCatalog = buildNavigation(contentCatalog, resolveAsciiDocConfig(playbook))
+    const menu = navCatalog.getNavigation('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu).to.have.lengthOf(1)
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      content: 'Module A',
+      url: '/component-a/module-a/index.html',
+      urlType: 'internal',
+      items: [
+        {
+          content: 'Requirements',
+          url: '/component-a/module-a/requirements.html',
+          urlType: 'internal',
+        },
+      ],
+    })
+  })
+
   it('should allow items to link to external URLs or fragments', () => {
     const navContents = heredoc`
       .xref:asciidoc/index.adoc[AsciiDoc]

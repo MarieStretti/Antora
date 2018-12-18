@@ -242,6 +242,15 @@ describe('loadAsciiDoc()', () => {
       expect(doc.getAttributes()).to.include(config.attributes)
     })
 
+    it('should allow doctype option to be set on document', () => {
+      setInputFileContents('contents')
+      const config = { doctype: 'book' }
+      const doc = loadAsciiDoc(inputFile, undefined, config)
+      expect(doc.getDoctype()).to.equal('book')
+      expect(doc.getBlocks()).to.have.lengthOf(1)
+      expect(doc.getBlocks()[0].getContext()).to.equal('preamble')
+    })
+
     it('should assign site-url attribute if site url is set in playbook', () => {
       setInputFileContents('= Document Title')
       const playbook = {

@@ -54,7 +54,7 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     examplesdir: EXAMPLES_DIR_TOKEN,
     partialsdir: PARTIALS_DIR_TOKEN,
   }
-  const pageAttrs = fileSrc.family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : {}
+  const pageAttrs = fileSrc.family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : undefined
   const attributes = Object.assign({}, config.attributes, intrinsicAttrs, pageAttrs)
   const relativizePageRefs = config.relativizePageRefs !== false
   const converter = createConverter({
@@ -67,12 +67,9 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
   if (extensions.length) {
     extensions.forEach((extension) => extension.register(extensionRegistry, { file, contentCatalog, config }))
   }
-  const doc = asciidoctor.load(file.contents.toString(), {
-    attributes,
-    converter,
-    extension_registry: extensionRegistry,
-    safe: 'safe',
-  })
+  const opts = { attributes, converter, extension_registry: extensionRegistry, safe: 'safe' }
+  if (config.doctype) opts.doctype = config.doctype
+  const doc = asciidoctor.load(file.contents.toString(), opts)
   if (extensions.length) freeExtensions()
   return doc
 }

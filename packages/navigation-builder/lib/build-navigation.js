@@ -29,9 +29,7 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
 function buildNavigation (contentCatalog, asciidocConfig = {}) {
   const navFiles = contentCatalog.findBy({ family: 'nav' })
   if (!(navFiles && navFiles.length)) return new NavigationCatalog()
-  asciidocConfig = Object.assign({}, asciidocConfig, { relativizePageRefs: false })
-  // TODO perhaps opt-in to properties instead of deleting?
-  delete asciidocConfig.extensions
+  asciidocConfig = Object.assign({}, asciidocConfig, { doctype: 'article', extensions: [], relativizePageRefs: false })
   return navFiles
     .map((navFile) => loadNavigationFile(navFile, contentCatalog, asciidocConfig))
     .reduce((accum, trees) => accum.concat(trees), [])
