@@ -15,6 +15,7 @@ This project utilizes semantic versioning.
 === Fixed
 
 * *content-aggregator*: Remove workarounds for bug in isomorphic-git that was causing hang when indexing pack files
+* *content-aggregator*: Set src.origin.private property on file to correct value even when runtime.pull not enabled (#375)
 
 == 2.0.0-rc.1 (2018-12-11)
 

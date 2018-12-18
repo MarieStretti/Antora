@@ -1394,8 +1394,8 @@ describe('aggregateContent()', function () {
 
       it('should set correct origin data if URL requires auth', () => {
         const url = 'https://gitlab.com/antora/demo/demo-component-a.git'
-        const origin = aggregateContent._computeOrigin(url, 'requested', 'master', 'branch', '')
-        expect(origin.requiresAuth).to.equal('requested')
+        const origin = aggregateContent._computeOrigin(url, 'auth-required', 'master', 'branch', '')
+        expect(origin.private).to.equal('auth-required')
       })
     })
 
@@ -1724,8 +1724,7 @@ describe('aggregateContent()', function () {
   it('should pull updates into cached repository when pull runtime option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
-      repoBuilder.createTag('ignored')
-        .then(() => repoBuilder.checkoutBranch('v1.2.x'))
+      repoBuilder.createTag('ignored').then(() => repoBuilder.checkoutBranch('v1.2.x'))
     )
     playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*', tags: 'release/*' })
 
@@ -1921,7 +1920,7 @@ describe('aggregateContent()', function () {
   })
 
   // NOTE this test doesn't always trigger the condition being tested; it depends on the order the refs are returned
-  // FIXME use a spy on getReferences to make the order determinant
+  // FIXME use a spy to make the order determinant
   it('should discover components in specified remote', async () => {
     const remoteRepoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     const remoteComponentDesc = {
@@ -2167,10 +2166,11 @@ describe('aggregateContent()', function () {
 
     before(() => {
       originalEnv = process.env
-      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
     })
 
     beforeEach(() => {
+      process.env.USERPROFILE = process.env.HOME = WORK_DIR
+      process.env.XDG_CONFIG_HOME = ospath.join(WORK_DIR, '.local')
       credentialsSent = undefined
       credentialsVerdict = undefined
       gitServer.authenticate = (type, repo, user, next) => {
@@ -2203,7 +2203,7 @@ describe('aggregateContent()', function () {
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0].files).to.not.be.empty()
-      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.requiresAuth', 'specified')
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-embedded')
       expect(aggregate[0].files[0]).to.have.nested.property('src.origin.url', urlWithoutAuth)
     })
 
@@ -2247,19 +2247,35 @@ describe('aggregateContent()', function () {
     it('should read credentials for URL path from git credential store if auth is required', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
-      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
       const credentials = ['invalid URL', repoBuilder.url.replace('//', '//u:p@')].join('\n') + '\n'
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-required')
+    })
+
+    it('should mark origin that requires auth with private=auth-required if not pulling updates', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const credentials = repoBuilder.url.replace('//', '//u:p@') + '\n'
+      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      let aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-required')
+      credentialsSent = undefined
+      aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.be.undefined()
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-required')
     })
 
     it('should match entry in git credential store if specified without .git extension', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
-      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
       const credentials = repoBuilder.url.replace('//', '//u:p@').replace('.git', '') + '\n'
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
@@ -2271,7 +2287,6 @@ describe('aggregateContent()', function () {
     it('should read credentials for URL host from git credential store if auth is required', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
-      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
       const credentials = repoBuilder.url.substr(0, repoBuilder.url.indexOf('/', 8)).replace('//', '//u:p@') + '\n'
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
@@ -2283,10 +2298,9 @@ describe('aggregateContent()', function () {
     it('should read credentials for URL from git credential store (XDG) if auth is required', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
-      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
       const credentials = repoBuilder.url.replace('//', '//u:p@') + '\n'
-      await fs.mkdir(ospath.join(WORK_DIR, 'git'))
-      await fs.writeFile(ospath.join(WORK_DIR, 'git/credentials'), credentials)
+      await fs.mkdirp(ospath.join(process.env.XDG_CONFIG_HOME, 'git'))
+      await fs.writeFile(ospath.join(process.env.XDG_CONFIG_HOME, 'git', 'credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
@@ -2320,7 +2334,6 @@ describe('aggregateContent()', function () {
     it('should not pass credentials if credential store is missing', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
-      process.env.USERPROFILE = process.env.HOME = process.env.XDG_CONFIG_HOME = WORK_DIR
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       const expectedErrorMessage = 'Content repository not found or requires credentials: ' + repoBuilder.url

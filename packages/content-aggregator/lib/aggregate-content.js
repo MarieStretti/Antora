@@ -75,14 +75,14 @@ function aggregateContent (playbook) {
           progress,
           pull,
           startDir,
-        }).then(({ repo, requiresAuth }) =>
+        }).then(({ repo, authStatus }) =>
           Promise.all(
             sources.map((source) => {
               const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
               // NOTE if repository is managed (has a url), we can assume the remote name is origin
               // TODO if the repo has no remotes, then remoteName should be undefined
               const remoteName = repo.url ? 'origin' : source.remote || 'origin'
-              return collectComponentVersions(source, repo, remoteName, requiresAuth, refPatterns)
+              return collectComponentVersions(source, repo, remoteName, authStatus, refPatterns)
             })
           )
         )
@@ -119,12 +119,12 @@ async function loadRepository (url, opts) {
   let credentialManager
   let dir
   let repo
-  let requiresAuth
+  let authStatus
 
   if (~url.indexOf(':') && GIT_URI_DETECTOR_RX.test(url)) {
     ;({ displayUrl, url, credentials } = extractCredentials(url))
     dir = ospath.join(opts.cacheDir, generateCloneFolderName(displayUrl))
-    // NOTE if url is set on repo, we assume it's a remote url
+    // NOTE if url is set on repo, we assume it's remote
     repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noCheckout: true }
     credentialManager = opts.credentialManager
   } else if (await isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
@@ -143,19 +143,25 @@ async function loadRepository (url, opts) {
     // NOTE attempt to resolve HEAD to determine whether dir is a valid git repo
     // QUESTION should we check for shallow file too?
     await git.resolveRef(Object.assign({ ref: 'HEAD', depth: 1 }, repo))
-    if (repo.url && opts.pull) {
-      const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'fetch')
-      await git
-        .fetch(fetchOpts)
-        .catch((err) => {
-          fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
-          if (err.name === git.E.HTTPError && err.data.statusCode === 401) err.rethrow = true
-          throw err
-        })
-        .then(() => {
-          requiresAuth = credentials ? 'specified' : credentialManager.state(url) ? 'requested' : false
-          fetchOpts.emitter && fetchOpts.emitter.emit('complete')
-        })
+    if (repo.url) {
+      if (opts.pull) {
+        const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'fetch')
+        await git
+          .fetch(fetchOpts)
+          .then(() => {
+            authStatus = credentials ? 'auth-embedded' : credentialManager.state(url) ? 'auth-required' : undefined
+            return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
+          })
+          .catch((err) => {
+            fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
+            if (err.name === git.E.HTTPError && err.data.statusCode === 401) err.rethrow = true
+            throw err
+          })
+          .then(() => fetchOpts.emitter && fetchOpts.emitter.emit('complete'))
+      } else {
+        // use cached value from previous fetch
+        authStatus = await git.config(Object.assign({ path: 'remote.origin.private' }, repo))
+      }
     }
   } catch (e) {
     if (repo.url) {
@@ -165,12 +171,15 @@ async function loadRepository (url, opts) {
         .then(() => {
           if (e.rethrow) {
             throw e
-          } else {
-            return git.clone(fetchOpts)
           }
+          return git.clone(fetchOpts)
+        })
+        .then(() => {
+          authStatus = credentials ? 'auth-embedded' : credentialManager.state(url) ? 'auth-required' : undefined
+          return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
         })
         .catch((err) => {
-          // NOTE triggering the error handler causes problems in the test suite; plus, not sure we want it
+          // FIXME triggering the error handler here causes assertion problems in the test suite
           //fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
           // FIXME make this cleaner; perhaps move to helper method
           let { code, data, message } = err
@@ -193,19 +202,14 @@ async function loadRepository (url, opts) {
           }
           throw new Error(message + ': ' + displayUrl)
         })
-        .then(() => {
-          requiresAuth = credentials ? 'specified' : credentialManager.state(url) ? 'requested' : false
-          fetchOpts.emitter && fetchOpts.emitter.emit('complete')
-          // NOTE we're not interested in local branches, so we can just delete them
-          //return fs.emptyDir(ospath.join(repo.gitdir, 'refs', 'heads'))
-        })
+        .then(() => fetchOpts.emitter && fetchOpts.emitter.emit('complete'))
     } else {
       throw new Error(
         `Local content source must be a git repository: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
       )
     }
   }
-  return { repo, requiresAuth }
+  return { repo, authStatus }
 }
 
 function extractCredentials (url) {
@@ -226,9 +230,9 @@ function extractCredentials (url) {
   }
 }
 
-function collectComponentVersions (source, repo, remoteName, requiresAuth, refPatterns) {
+function collectComponentVersions (source, repo, remoteName, authStatus, refPatterns) {
   return selectReferences(repo, remoteName, refPatterns).then((refs) =>
-    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, remoteName, requiresAuth, ref)))
+    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, remoteName, authStatus, ref)))
   )
 }
 
@@ -328,7 +332,7 @@ function getCurrentBranchName (repo, remote) {
   return refPromise.then((ref) => (ref.startsWith('refs/') ? ref.replace(ABBREVIATE_REF_RX, '') : undefined))
 }
 
-async function populateComponentVersion (source, repo, remoteName, requiresAuth, ref) {
+async function populateComponentVersion (source, repo, remoteName, authStatus, ref) {
   const url = repo.url
   const originUrl = url || (await resolveRemoteUrl(repo, remoteName).then((url) => url || repo.dir))
   let startPath = source.startPath || ''
@@ -346,7 +350,7 @@ async function populateComponentVersion (source, repo, remoteName, requiresAuth,
     e.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
     throw e
   }
-  const origin = computeOrigin(originUrl, requiresAuth, ref.name, ref.type, startPath, worktreePath)
+  const origin = computeOrigin(originUrl, authStatus, ref.name, ref.type, startPath, worktreePath)
   componentVersion.files = files.map((file) => assignFileProperties(file, origin))
   return componentVersion
 }
@@ -498,10 +502,10 @@ function loadComponentDescriptor (files, startPath) {
   return data
 }
 
-function computeOrigin (url, requiresAuth, refName, refType, startPath, worktreePath = undefined) {
+function computeOrigin (url, authStatus, refName, refType, startPath, worktreePath = undefined) {
   let match
   const origin = { type: 'git', url, startPath }
-  if (requiresAuth) origin.requiresAuth = requiresAuth
+  if (authStatus) origin.private = authStatus
   origin[refType] = refName
   if (worktreePath) {
     origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
@@ -674,7 +678,7 @@ function tagsSpecified (sources, defaultTags) {
 
 function registerGitPlugins (config, startDir) {
   const plugins = git.cores.create(GIT_CORE)
-  // QUESTION is it really necessary to make the fs pluggable?
+  // QUESTION should fs be pluggable?
   //if (!plugins.has('fs')) plugins.set('fs', fs)
   let credentialManager
   if (plugins.has('credentialManager')) {
