@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* Upgrade dependencies
 * *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
 
 === Fixed
