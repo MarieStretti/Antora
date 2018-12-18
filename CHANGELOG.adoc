@@ -5,19 +5,27 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Changed
+
+* *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
+
+=== Fixed
+
+* *content-aggregator*: Set src.origin.private property on file to correct value even when runtime.pull not enabled (#375)
+* *navigation-builder*: Force doctype of navigation file to be article (#376)
+
 == 2.0.0-rc.2 (2018-12-17)
 
 === Changed
 
 * Upgrade dependencies
 * *playbook-builder*: Remove workaround for updating map from pairs passed using CLI args
-* *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
 
 === Fixed
 
 * *content-aggregator*: Remove workarounds for bug in isomorphic-git that was causing hang when indexing pack files
-* *content-aggregator*: Set src.origin.private property on file to correct value even when runtime.pull not enabled (#375)
-* *navigation-builder*: Force doctype of navigation file to be article (#376)
 
 == 2.0.0-rc.1 (2018-12-11)
 
