@@ -2349,15 +2349,25 @@ describe('aggregateContent()', function () {
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
       expect(aggregate).to.have.lengthOf(1)
+      expect(CONTENT_CACHE_DIR)
+        .to.be.a.directory()
+        .and.not.be.empty()
       credentialsRequestCount = 0
       credentialsSent = undefined
       credentialsVerdict = 'denied!'
+      playbookSpec.runtime.quiet = false
       playbookSpec.runtime.pull = true
-      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-      const expectedErrorMessage = 'Content repository not found or credentials were rejected: ' + repoBuilder.url
-      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
-      // QUESTION should we spy on the credentialManager to make this test more robust?
-      expect(credentialsRequestCount).to.equal(1)
+      return withMockStdout(async (lines) => {
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        const expectedErrorMessage = 'Content repository not found or credentials were rejected: ' + repoBuilder.url
+        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+        expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+        expect(credentialsRequestCount).to.equal(1)
+        expect(lines.filter((l) => l.startsWith('[clone]'))).to.have.lengthOf(0)
+        expect(CONTENT_CACHE_DIR)
+          .to.be.a.directory()
+          .and.be.empty()
+      })
     })
   })
 

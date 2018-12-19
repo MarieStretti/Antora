@@ -165,13 +165,12 @@ async function loadRepository (url, opts) {
     }
   } catch (e) {
     if (repo.url) {
-      const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'clone')
+      let fetchOpts
       await fs
         .remove(dir)
         .then(() => {
-          if (e.rethrow) {
-            throw e
-          }
+          if (e.rethrow) throw e
+          fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'clone')
           return git.clone(fetchOpts)
         })
         .then(() => {
@@ -239,7 +238,7 @@ function collectComponentVersions (source, repo, remoteName, authStatus, refPatt
 // QUESTION should we resolve HEAD to a ref eagerly to avoid having to do a match on it?
 async function selectReferences (repo, remote, refPatterns) {
   let { branches: branchPatterns, tags: tagPatterns } = refPatterns
-  let isBare = repo.noCheckout
+  const isBare = repo.noCheckout
   const refs = new Map()
 
   if (tagPatterns) {
