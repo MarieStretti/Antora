@@ -2160,6 +2160,7 @@ describe('aggregateContent()', function () {
   })
 
   describe('authentication', () => {
+    let credentialsRequestCount
     let credentialsSent
     let credentialsVerdict
     let originalEnv
@@ -2171,11 +2172,13 @@ describe('aggregateContent()', function () {
     beforeEach(() => {
       process.env.USERPROFILE = process.env.HOME = WORK_DIR
       process.env.XDG_CONFIG_HOME = ospath.join(WORK_DIR, '.local')
+      credentialsRequestCount = 0
       credentialsSent = undefined
       credentialsVerdict = undefined
       gitServer.authenticate = (type, repo, user, next) => {
         if (type === 'fetch') {
           user((username, password) => {
+            credentialsRequestCount += 1
             credentialsSent = { username, password }
             credentialsVerdict ? next(credentialsVerdict) : next()
           })
@@ -2185,11 +2188,8 @@ describe('aggregateContent()', function () {
       }
     })
 
-    afterEach(() => {
-      gitServer.authenticate = undefined
-    })
-
     after(() => {
+      gitServer.authenticate = undefined
       process.env = originalEnv
     })
 
@@ -2339,6 +2339,25 @@ describe('aggregateContent()', function () {
       const expectedErrorMessage = 'Content repository not found or requires credentials: ' + repoBuilder.url
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
       expect(credentialsSent).to.be.undefined()
+    })
+
+    it('should not attempt to clone if credentials were rejected during fetch', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const credentials = repoBuilder.url.substr(0, repoBuilder.url.indexOf('/', 8)).replace('//', '//u:p@') + '\n'
+      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(aggregate).to.have.lengthOf(1)
+      credentialsRequestCount = 0
+      credentialsSent = undefined
+      credentialsVerdict = 'denied!'
+      playbookSpec.runtime.pull = true
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      const expectedErrorMessage = 'Content repository not found or credentials were rejected: ' + repoBuilder.url
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      // QUESTION should we spy on the credentialManager to make this test more robust?
+      expect(credentialsRequestCount).to.equal(1)
     })
   })
 
