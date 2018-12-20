@@ -1,0 +1,32 @@
+= ADR 0011: Align with Node LTS Schedule
+:revdate: 2018-12-20
+
+== Status
+
+Accepted
+
+== Context
+
+The dependency on nodegit was pinning Antora to a specific Node version (Node 8).
+Since Antora 2 has replaced nodegit with isomorphic-git, we can now rethink which versions of Node we want Antora to support (tested and recommended), and when to upgrade to a new version.
+
+== Decision
+
+We will match the versions of Node that Antora supports (i.e., tested and recommended) with the Node LTS schedule.
+This means that when a Node version is deemed no longer supported by the Node.js Foundation Release Working Group, then it's no longer supported in Antora either.
+Although Antora can be used with non-LTS releases (odd major numbers), we will also recommend only using a Node LTS release that's current or active for running Antora in production environments.
+
+We will support a Node version through the end of the LTS release schedule.
+This will give users plenty of oppotunity to update gradually.
+However, we will push users to upgrade to a current or active LTS release from a release that's in maintenance.
+In fact, we will discourage the use of a Node that's in maintenance.
+Once the LTS release has expired, support for it in Antora reaches a hard stop.
+
+We will only support the latest release (i.e., patch release) in an LTS release line.
+
+== Consequences
+
+Knowing which versions of Node that Antora supports will be simpler for users because they can simply consult the Node LTS schedule.
+However, it does mean that users will not be able to sit on a version of Node indefinitely.
+Thus, we will build a culture of upgrading.
+The benefit is that we know exactly when we can start taking advantage of new features in Node (without using backports).
