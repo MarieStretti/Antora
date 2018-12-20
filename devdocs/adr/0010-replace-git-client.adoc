@@ -9,41 +9,48 @@ Accepted
 
 Antora 1 uses nodegit to interact with git repositories.
 However, nodegit has proven to be tremendously difficult for users to install.
-This difficulty stems from its reliance on native system libraries for compilation, its bundling of native libraries, its lack of portability with both platforms and Node versions, its poorly written post-install scripts, and its slow upgrade cycle.
+This difficulty stems from its:
+
+* reliance on native system libraries for compilation,
+* bundling of native libraries,
+* lack of portability with both platforms and Node versions,
+* poorly written post-install scripts, and
+* slow upgrade cycle.
+
 Additionally, nodegit only supports authentication over SSH, which requires users to set up and launch an SSH agent with their SSH key properly registered.
 nodegit has quickly become the most expensive support cost in Antora and a roadblock for adoption.
 In other words, it's a showstopper.
 
-At the time Antora was created, nodegit was the only option availble when looking for a git client.
+At the time Antora was created, nodegit was the only option available when looking for a git client.
 Since then, a full-fledged alternative has emerged named isomorphic-git.
-What sets isomorphic-git apart is that it's written in pure JavaScript, so installation should be a breeze.
-ismorophic-git also has the benfit of a pluggable credentials manager, which addresses the limited authentication options in Antora 1.
+What sets isomorphic-git apart is that it's written in pure JavaScript, so installation is easy.
+isomorphic-git also has the benefit of a pluggable credentials manager, which addresses the limited authentication options in Antora 1.
 isomorphic-git can also shallow clone repositories, something nodegit cannot do.
 Therefore, we are proposing to replace nodegit with isomorphic-git in Antora 2.
-Although it appears that isomorphic-git can do everything we used nodegit to do, during the process of migrationg, we may encounter some missing features that need to be added or patched in.
+Although it appears that isomorphic-git can do everything we used nodegit to do, during the process of migration, we may encounter some missing features that need to be added or patched in.
 
 == Decision
 
 The decision was made to replace nodegit with isomorphic-git.
-isomorphic-git covers all the features from nodegit that Antora uses, thus can serve as a drop-in replacement.
+isomorphic-git covers all the features from nodegit that Antora uses, thus it can serve as a replacement.
 Since isomorphic-git does not support SSH authentication, this change will mandate bumping the major version of Antora to Antora 2.
 If switching to isomorphic-git incurs a performance penalty, we're willing to accept that (up to 2x slower).
 
-By switching to isomorphic-git, we can also lift the requirement to use Node 8.
+By switching to isomorphic-git, we can also lift the Node 8 requirement.
 isomorphic-git works on any version of Node starting with, but not limited to, Node 8.
 
 == Consequences
 
-Users will no longer have to make any special preparations to install Antora apart from installing Node.
+Users will no longer have to make special preparations to install Antora apart from installing Node.
 This means Antora will immediately work on all platforms as well as all Node versions starting with Node 8.
-Installation time will reduce dramatically, particularly if the user previously had to recompile nodegit (by installing with the BUILD_ONLY=true flag set).
+Installation time will reduce dramatically, particularly if the user previously had to recompile nodegit by installing with the BUILD_ONLY=true flag set.
 
 SSH authentication will no longer be supported.
 Instead, authentication is handled using the git credential store (file or environment variable) by default, or a custom credential manager provided by the user.
 Although this requires a small migration, it will eliminate the requirement of setting up an SSH agent to connect to private repositories.
 Antora should transparently convert SSH URLs to HTTPS URLs so users don't have to update their playbook files (i.e., the repository URL can be expressed using the SSH syntax, but Antora still clones it over HTTPS).
 
-We should expect support costs to decrease dramatically because we'll no longer have to deal with installation issues several times a week.
+We should expect support costs to decrease dramatically because we'll no longer have to deal with nodegit installation issues several times a week.
 The only support that will be necessary is to help users understand how to use the new authentication mechanism for private repositories.
 
-The switch to isomorphic-git has proven to have no negative impact on the perforance of Antora.
+The switch to isomorphic-git has proven to have no negative impact on the performance of Antora.
