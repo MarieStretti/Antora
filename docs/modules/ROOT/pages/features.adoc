@@ -80,7 +80,7 @@ No internal wires get exposed.
 
 Most site generators are confined to a single branch of a single repository.
 Antora, on the other hand, knows how to speak git.
-It goes out and gathers up all the content the site needs.
+It goes out and gathers up all the content the site needs using its built-in git client.
 It then sorts through the files by separating them into versions of components.
 This allows you to store the documentation in a way that works best for your organization, whether it means keeping content with code or using separate repositories.
 Antora can round up all those disparate projects and repositories and create an integrated site.

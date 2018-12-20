@@ -1,13 +1,13 @@
 = Supported Platforms and System Requirements
-:test-count: over 850
+:test-count: over 900
 :test-coverage: 99%
 // URLs
 :url-repo: https://gitlab.com/antora/antora
 :url-issues: {url-repo}/issues
 :url-chat-dev: https://gitter.im/antora/dev
 
-Antora runs on well-known Linux distributions, macOS, and Windows.
-Thanks to this broad platform support, Antora can be used with most continuous integration environments and cloud platforms.
+Antora runs on Linux, macOS, and Windows.
+Thanks to this broad platform support, Antora can also be used on all well-known cloud platforms and continuous integration and delivery servers.
 
 This page provides an <<platforms,overview of the platforms>> Antora supports and directs you to the <<what-s-next,system requirements>> for each platform.
 The Antora project also provides an official xref:antora-container.adoc[Docker container] you can use to bypass the installation process.
@@ -29,14 +29,12 @@ Antora is actively tested on the platforms listed below.
 
 |Debian
 |[%hardbreaks]
-9.5
-9.4
-9.3
+9.6
 
 |Fedora
 |[%hardbreaks]
+29
 28
-27
 
 |macOS
 |High Sierra
@@ -60,11 +58,13 @@ Windows Server 2012 R2
 |MS Edge
 |Latest stable version
 
-|Node
-|8 (latest release in line)
+|Node.js
+|[%hardbreaks]
+10 (latest patch release)
+8 (latest patch release)
 |===
 
-While we only continuously test Antora on Fedora, Alpine Linux, Debian, and Ubuntu, we anticipate it should operate as expected on most well-known Linux distributions.
+Regarding Linux, while we only continuously test Antora on Fedora, Alpine Linux, and Ubuntu, we anticipate it should operate as expected on most well-known Linux distributions.
 
 .About the Antora Test Suite
 ****
@@ -99,7 +99,7 @@ On subsequent runs, Antora only reconnects to the remote repositories if the xre
 |===
 |RAM
 |Memory requirements depend on the size of your Git repositories.
-3GB should provide performance headroom.
+3GB should provide sufficient headroom.
 
 |I/O
 |Maximum throughput and minimum latency always make things nicer but aren't required.

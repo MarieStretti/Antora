@@ -192,7 +192,7 @@ The value of this option may be either a path to a file (relative to the current
 The `-r` option may be specified multiple times.
 
 This option gives site authors the ability to load additional code into the runtime before Antora begins executing.
-The option follows the module resolution rules of the `require()` function in Node.js.
+The option follows the module resolution rules of the `require()` function in Node.
 A common use case for this option is to register Asciidoctor extensions globally.
 
 If the node module or script is an Asciidoctor extension, it must self-register with Asciidoctor's static extension registry when required in order for the extension to be used.

@@ -34,7 +34,7 @@ The content aggregator component should:
 
 * Accept a playbook
 * Locate source repositories from the playbook (`content.sources`)
-* Use a git integration library (NodeGit) to clone the repositories the first time and fetch them subsequent times
+* Use a git integration library (isomorphic-git) to clone the repositories the first time and fetch them subsequent times
 * Work with private, public, bare, non-bare, ssh, https, and local directories that are git repositories (worktree)
  ** Repository origins could be GitHub, GitLab, Bitbucket, etc.
 * Cache cloned repositories in the folder [.path]_.cache/content_ for use by subsequent runs
