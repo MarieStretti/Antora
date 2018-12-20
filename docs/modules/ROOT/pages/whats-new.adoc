@@ -1,0 +1,154 @@
+= What's New in Antora
+
+The Antora 2.0 release significantly simplifies the installation process, improves system interoperability, and provides the latest AsciiDoc and Asciidoctor capabilities.
+
+== All the latest Asciidoctor.js features
+// (#290)
+
+Antora 2.0 ships with Asciidoctor.js 1.5.9.
+This release brings the latest AsciiDoc and Asciidoctor features such as *TODO: add 1-2 new features and any applicable links.*
+
+== No more installation hell thanks to isomorphic-git
+// (#264)
+
+When Antora started, nodegit was the only JavaScript git implementation that provided the features it needed.
+Nodegit uses native libraries and, unfortunately, its operating system compatibility has degraded throughout 2018.
+Thankfully, William Hilton stepped in and created https://isomorphic-git.org/[isomorphic-git], a pure JavaScript git implementation.
+
+Replacing nodegit with isomorphic-git required breaking changes to how Antora handles authentication, but the switch was well worth the effort.
+This change greatly reduces the installation and troubleshooting steps many users had to work through on some operating systems.
+Isomorphic-git also allowed us to expand our test coverage, and therefore improve Antora's stability.
+
+== Goodbye SSH. Hello git credentials.
+// (#264)
+
+The switch to isomorphic-git changes how Antora accesses private repositories.
+Private repository authentication is now done using HTTP Basic over HTTPS instead of an SSH agent over SSH.
+Credentials are configured using git's credential store helper, which writes the credentials to the [.path]_$HOME/.git-credentials_ store file by default.
+// or [.path]_$XDG_CONFIG_HOME/git/credentials_.
+
+The git credentials file path can be configured using the:
+
+* `git.credentials` key (path or contents) in an Antora playbook,
+* `--git-credentials-path` CLI option, or
+* `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file.
+//(#264)
+
+Antora will also read the git credentials from the `GIT_CREDENTIALS` environment variable if it is set.
+//(#264)
+
+Antora no longer supports cloning over SSH and private/public SSH key authentication.
+Any SSH URL in existing Antora playbooks will be transparently converted to an HTTPS URL.
+
+*TODO: Add link to authentication upgrade instructions*
+
+== Pluggable credentials manager
+
+The git credentials manager is now pluggable and can accommodate custom environments with special security requirements.
+//Make credential manager pluggable (assign credentialManager property to git core named "antora") (#264)
+
+== More improvements and changes
+
+Next, previous, and parent pages:: The `next`, `previous`, and `parent` properties are now available in the UI model so your UI can access adjacent pages.
+// (#233)
+
+Versioned cache folder:: Antora uses a versioned cache folder for the cloned git content repositories.
+On first run, Antora will re-clone your content repositories into this folder.
+
+Node update:: Antora works with Node 10 and 11.
+
+TOML support for Antora playbooks:: Now you can write Antora playbook files in YAML, JSON, or TOML.
+CSON is no longer supported.
+
+page.origin.private:: If a content source requires authentication (either because credentials were defined in the URL or credentials were requested from the credentials manager), the `page.origin.private` property will be set in the UI model.
+
+page.displayVersion:: The `page.displayVersion` property can be set in the UI model.
+//(#362)
+
+AsciiDoc doctype:: The AsciiDoc `doctype` option can be set in the AsciiDoc config.
+//(#376)
+
+ANTORA_PLAYBOOK:: The PLAYBOOK environment variable is now named ANTORA_PLAYBOOK.
+This is a breaking change.
+
+*TODO: Clean the following items up*
+
+* Map `content.tags` in playbook schema
+* Pass attributes defined on xref to converter (#290)
+* Remap `page.versions.latest` as `page.latest` in UI model (#325)
+* Set `partial-option` attribute when pushing an AsciiDoc include file onto the stack (#290)
+* Set `docname` attribute to `file.src.relative` minus the file extension (#290)
+
+== Fixes
+
+*TODO: Add links to issues*
+
+* #375: Set `src.origin.private` property on file to correct value even when `runtime.pull` not enabled.
+* #376: Force `doctype` of navigation file to be article.
+* #359: Convert file mode to `octal` when reading file from git repository.
+* #364: Honor `umask` when setting file permission of file read from git repository.
+* #360: Fix shallow cloning for repositories with a large number of branches.
+
+== Known issues
+
+*Issue:* After the switch to isomorphic-git, references are no longer pruned when the `--pull` option is specified.
+This means that if a reference is removed from the remote repository, it will not be removed from Antora's cached version.
+*Workaround:* You can clear Antora's cache directory or the cache of the repository in question.
+We'll restore this behavior in a future enhancement.
+
+== Thank you!
+
+Most important of all, a big *Thank you!* to the folks that helped make Antora even better.
+
+*TODO: Add community shout outs!*
+
+== Statistics
+
+The raw install size of Antora drops from 154MB down to 43MB.
+It takes about 3s to install Antora 2.0.0 from cache, which is down from 11s to install Antora 1.1.1.
+
+//Total Merges:
+//Total Issues (References? Closed?)
+//Contributors:
+
+== Upgrade instructions
+
+If you're not using private repositories, the only thing you need to do to migrate is to upgrade Antora (making sure the version is set to 2.0.0).
+
+If you use private repositories, you need to reconfigure how you authenticate.
+For each git host, you'll either need a username and password or, if you have two-factor authentication (2FA) enabled, a personal access token.
+
+*??? I think I want to move the following instructions to their final location in the documentation (either as a page or an include file) and then provide a link/include ... but I'm still thinking about it.*
+
+Add the following entry to the [.path]_$HOME/.git-credentials_ file.
+
+```
+https://<credentials>@github.com
+```
+
+Where `<credentials>` is either `username:password` or `token`.
+
+Next, change the mode of this file to 600 so that only the current user can read it:
+
+```
+$ chmod 600 $HOME/.git-credentials
+```
+
+Antora will automatically detect this file and use it to authenticate with repositories that require authentication.
+
+You can also use git to populate this file.
+First, put an HTTPS URL to a private git repository in your clipboard.
+Now run, the following commands:
+
+```
+$ mkdir set-up-credentials
+  cd set-up-credentials
+  git init .
+  git config --local credential.helper store
+  git fetch <url>
+```
+
+Now enter your username/password or token when prompted.
+If authentication succeeds, git will save the credentials in [.path]_$HOME/.git-credentials_.
+
+You can also pass the path to this file using the `--git-credentials-path` CLI option.
