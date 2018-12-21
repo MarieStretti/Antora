@@ -1,0 +1,62 @@
+= ADR 0010: Replace Git Client
+:revdate: 2018-12-05
+
+== Status
+
+Accepted
+
+== Context
+
+Antora 1.x uses nodegit to interact with git repositories.
+Despite the fact that nodegit is a very thorough git client, it has proven to be tremendously difficult for users to install.
+This difficulty stems from its:
+
+* coupling to native system libraries for compilation (libcurl, libssl),
+* bundling of native libraries (libgit2),
+* limited (and declining) portability across platforms and Node versions,
+* irregular post-install scripts,
+* reliance on an SSH agent for authentication, and
+* apparent lack of interest in addressing portability concerns.
+
+Aside from the installation woes, the fact that nodegit only supports authentication over SSH places a burden on users to set up and launch an SSH agent with their SSH key properly registered.
+Thus, nodegit has quickly become the most expensive support cost in Antora and a roadblock for adoption.
+In other words, it's a showstopper.
+
+At the time Antora was created, nodegit was the only suitable git client available for interacting with git repositories.
+Since then, a full-fledged alternative has emerged named https://isomorphic-git.org/[isomorphic-git].
+What sets isomorphic-git apart is that it's written in pure JavaScript, making installation easy.
+It also provides a pluggable credentials manager, which addresses the limited authentication options in Antora 1.x.
+And, unlike nodegit, it can shallow clone repositories, which could open the door to working with larger repositories.
+There's even promise of additional extension points that would offer a path for implementing symlinks, git-lfs, and other related feature requests.
+
+Therefore, we're proposing to replace nodegit with isomorphic-git starting with Antora 2.0.
+Although it appears that isomorphic-git can do everything we used nodegit to do, during the process of migration, we may encounter some missing features that need to be added or patched in.
+
+== Decision
+
+The decision was made to replace nodegit with isomorphic-git.
+isomorphic-git covers all the features from nodegit that Antora uses, and thus can serve as a drop-in replacement.
+Since isomorphic-git does not support SSH authentication, this change will mandate bumping the major version of Antora.
+If switching to isomorphic-git incurs a performance penalty, we're willing to accept that (up to 2x slower).
+
+By switching to isomorphic-git, we can also lift the requirement in Antora to only use Node 8.
+isomorphic-git works on any version of Node starting with, but not limited to, Node 8.
+
+== Consequences
+
+Users will no longer have to make special preparations to install Antora apart from installing Node.
+This means Antora will immediately work on all platforms as well as all Node versions, starting with Node 8.
+And that means Antora will be easier to package for Linux distributions such as Fedora and Ubuntu.
+Installation time will reduce dramatically, particularly in situations where nodegit had to be recompiled during installation (triggered by setting the BUILD_ONLY=true environment variable).
+
+SSH authentication will no longer be supported.
+Instead, authentication is handled using the git credential store (file or environment variable) by default, or a custom credential manager provided by the user.
+Although this requires a small migration, it will eliminate the requirement of setting up an SSH agent to authenticate with private repositories.
+Antora should transparently convert SSH URLs to HTTPS URLs so users don't have to update their playbook files (i.e., the repository URL can be expressed using the SSH syntax, but Antora still clones it over HTTPS).
+
+We should expect support costs to decrease dramatically because we'll no longer have to deal with nodegit installation issues on a regular basis.
+The installation guide will also become a lot simpler and easier to maintain and read.
+The only support that will be necessary is to help users understand how to use the new authentication mechanism for private repositories.
+And users will be much happier being able to focus their attention on docs instead of installation.
+
+The switch to isomorphic-git has proven to have no negative impact on the performance of Antora.

@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Added
+
+* *ADR*: Add ADR 0010: Replace Git Client describing decision to replace nodegit with isomorphic-got (#380)
+
 === Changed
 
 * Upgrade dependencies
