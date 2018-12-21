@@ -1,4 +1,4 @@
-= ADR 0011: Align with Node LTS Schedule
+= ADR 0011: Align Node Support with Node LTS Schedule
 :revdate: 2018-12-20
 
 == Status
