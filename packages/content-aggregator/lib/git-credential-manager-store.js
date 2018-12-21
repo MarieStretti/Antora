@@ -79,7 +79,7 @@ class GitCredentialManagerStore {
     throw err
   }
 
-  status (url) {
+  status ({ url }) {
     return this.urls[url]
   }
 }

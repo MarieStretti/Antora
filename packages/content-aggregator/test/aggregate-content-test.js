@@ -17,6 +17,7 @@ const RepositoryBuilder = require('../../../test/repository-builder')
 const {
   COMPONENT_DESC_FILENAME,
   CONTENT_CACHE_FOLDER,
+  GIT_CORE,
   GIT_OPERATION_LABEL_LENGTH,
 } = require('@antora/content-aggregator/lib/constants')
 const CACHE_DIR = getCacheDir('antora-test')
@@ -2188,6 +2189,10 @@ describe('aggregateContent()', function () {
       }
     })
 
+    afterEach(() => {
+      RepositoryBuilder.unregisterPlugin('credentialManager', GIT_CORE)
+    })
+
     after(() => {
       gitServer.authenticate = undefined
       process.env = originalEnv
@@ -2247,8 +2252,8 @@ describe('aggregateContent()', function () {
     it('should read credentials for URL path from git credential store if auth is required', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
-      const credentials = ['invalid URL', repoBuilder.url.replace('//', '//u:p@')].join('\n') + '\n'
-      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
+      const credentials = ['invalid URL', repoBuilder.url.replace('//', '//u:p@')]
+      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials.join('\n') + '\n')
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
@@ -2271,6 +2276,33 @@ describe('aggregateContent()', function () {
       expect(credentialsSent).to.be.undefined()
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-required')
+    })
+
+    it('should mark origin as private when fetch gets valid credentials from credential store', async () => {
+      const repoBuilderA = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      const repoBuilderB = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilderA, { name: 'component-a', version: '1.0' })
+      await initRepoWithFiles(repoBuilderB, { name: 'component-b', version: '3.0' })
+      const credentials = [repoBuilderA.url.replace('//', '//u:p@'), repoBuilderB.url.replace('//', '//u:p@')]
+      await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials.join('\n') + '\n')
+      playbookSpec.content.sources.push({ url: repoBuilderA.url }, { url: repoBuilderB.url })
+      let aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(credentialsRequestCount).to.equal(2)
+      expect(aggregate).to.have.lengthOf(2)
+      playbookSpec.runtime.pull = true
+      credentialsSent = undefined
+      credentialsRequestCount = 0
+      aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(credentialsRequestCount).to.equal(2)
+      expect(aggregate).to.have.lengthOf(2)
+      const aggregateA = aggregate.find((it) => it.name === 'component-a')
+      const aggregateB = aggregate.find((it) => it.name === 'component-b')
+      expect(aggregateA.files).to.not.be.empty()
+      expect(aggregateA.files[0]).to.have.nested.property('src.origin.private', 'auth-required')
+      expect(aggregateB.files).to.not.be.empty()
+      expect(aggregateB.files[0]).to.have.nested.property('src.origin.private', 'auth-required')
     })
 
     it('should match entry in git credential store if specified without .git extension', async () => {
@@ -2310,9 +2342,9 @@ describe('aggregateContent()', function () {
     it('should read credentials from specified path if auth is required', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
-      const credentials = 'https://token@git-host\n' + repoBuilder.url.replace('//', '//u:p@') + '\n'
+      const credentials = ['https://token@gitlab.com', 'https://git-host', repoBuilder.url.replace('//', '//u:p@')]
       const customGitCredentialsPath = ospath.join(WORK_DIR, '.custom-git-credentials')
-      await fs.writeFile(customGitCredentialsPath, credentials)
+      await fs.writeFile(customGitCredentialsPath, credentials.join('\n') + '\n')
       playbookSpec.git = { credentials: { path: customGitCredentialsPath } }
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
@@ -2368,6 +2400,44 @@ describe('aggregateContent()', function () {
           .to.be.a.directory()
           .and.be.empty()
       })
+    })
+
+    it('should allow a custom credential manager to be registered', async () => {
+      const credentialManager = {
+        async fill ({ url }) {
+          this.fulfilledUrl = url
+          return { username: 'u', password: 'p' }
+        },
+        async approved ({ url }) {},
+        async rejected ({ url, auth }) {},
+      }
+      RepositoryBuilder.registerPlugin('credentialManager', credentialManager, GIT_CORE)
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
+      expect(aggregate).to.have.lengthOf(1)
+      expect(credentialManager.fulfilledUrl).to.equal(repoBuilder.url)
+    })
+
+    it('should invoke configure method on custom credential manager if defined', async () => {
+      const credentialManager = {
+        configure () {
+          this.configured = true
+        },
+        async fill ({ url }) {
+          return { username: 'u', password: 'p' }
+        },
+        async approved ({ url }) {},
+        async rejected ({ url, auth }) {},
+      }
+      RepositoryBuilder.registerPlugin('credentialManager', credentialManager, GIT_CORE)
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      await aggregateContent(playbookSpec)
+      expect(credentialManager.configured).to.be.true()
     })
   })
 

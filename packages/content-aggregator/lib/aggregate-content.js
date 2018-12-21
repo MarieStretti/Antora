@@ -127,6 +127,9 @@ async function loadRepository (url, opts) {
     // NOTE if url is set on repo, we assume it's remote
     repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noCheckout: true }
     credentialManager = opts.credentialManager
+    if (typeof credentialManager.status !== 'function') {
+      credentialManager = Object.assign({}, credentialManager, { status () {} })
+    }
   } else if (await isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
     repo = (await isLocalDirectory(ospath.join(dir, '.git')))
       ? { core: GIT_CORE, fs, dir }
@@ -149,7 +152,7 @@ async function loadRepository (url, opts) {
         await git
           .fetch(fetchOpts)
           .then(() => {
-            authStatus = credentials ? 'auth-embedded' : credentialManager.status(url) ? 'auth-required' : undefined
+            authStatus = credentials ? 'auth-embedded' : credentialManager.status({ url }) ? 'auth-required' : undefined
             return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
           })
           .catch((err) => {
@@ -174,7 +177,7 @@ async function loadRepository (url, opts) {
           return git.clone(fetchOpts)
         })
         .then(() => {
-          authStatus = credentials ? 'auth-embedded' : credentialManager.status(url) ? 'auth-required' : undefined
+          authStatus = credentials ? 'auth-embedded' : credentialManager.status({ url }) ? 'auth-required' : undefined
           return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
         })
         .catch((err) => {
@@ -682,12 +685,10 @@ function registerGitPlugins (config, startDir) {
   let credentialManager
   if (plugins.has('credentialManager')) {
     credentialManager = plugins.get('credentialManager')
+    if (typeof credentialManager.configure === 'function') credentialManager.configure({ config, startDir })
   } else {
     plugins.set('credentialManager', (credentialManager = new GitCredentialManagerStore()))
-  }
-  if (typeof credentialManager.configure === 'function') credentialManager.configure({ config, startDir })
-  if (typeof credentialManager.status !== 'function') {
-    credentialManager = Object.assign({}, credentialManager, { status: function (url) {} })
+    credentialManager.configure({ config, startDir })
   }
   return plugins
 }

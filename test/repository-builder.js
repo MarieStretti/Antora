@@ -209,6 +209,14 @@ class RepositoryBuilder {
     this.repository = undefined
     return this
   }
+
+  static registerPlugin (name, impl, core = 'default') {
+    git.cores.create(core).set(name, impl)
+  }
+
+  static unregisterPlugin (name, core = 'default') {
+    git.cores.create(core).delete(name)
+  }
 }
 
 module.exports = RepositoryBuilder
