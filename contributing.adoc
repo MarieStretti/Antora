@@ -428,7 +428,7 @@ If not, {uri-git-dl}[download and install] the git package for your system.
 
 ==== Node / npm
 
-Antora is built on {uri-node}[Node.js] (herein Node) (command: `node`).
+Antora is built on {uri-node}[Node.js] ("`Node`") (command: `node`).
 To work with the project, you must have Node installed on your machine.
 The Node installation also provides npm (command: `npm`), which you'll use to install additional Node modules.
 
@@ -663,7 +663,7 @@ You can view the results of the pipelines on the {uri-ci-pipelines}[pipelines da
 
 ==== Skip the CI Pipeline
 
-If you need to make a change to the repository without triggering the CI pipeline, add `[skip ci]` to the end of the commit message.
+If you need to make a change to the repository without triggering the CI pipeline, add `[skip ci]` to the end of your last commit message.
 For example:
 
  fix typo in README [skip ci]

@@ -2,7 +2,7 @@
 :url-choco: https://chocolatey.org
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm-windows: https://github.com/coreybutler/nvm-windows
-:version-node: 10.14.2
+:version-node-patch: 10.14.2
 
 On this page, you'll learn:
 
@@ -12,7 +12,7 @@ On this page, you'll learn:
 
 If you've never installed Antora before, you'll need to complete the steps on this page before you can install Antora and use it to generate a documentation site.
 
-Antora is built on Node.js (herein "`Node`").
+Antora is built on Node.js ("`Node`").
 To install Antora, all you need on your machine is a long term support (LTS) release of Node.
 We'll be using the Chocolatey package manager to install it.
 Although Antora performs git operations, you don't need a git client installed to use Antora.
@@ -30,15 +30,15 @@ You should see a version string, such as:
 
 [subs=attributes+]
 ....
-v{version-node}
+v{version-node-patch}
 ....
 
-If you don't, and *the command fails with an error*, it means you don't yet have Node installed.
+If *the command fails with an error*, it means you don't have Node installed.
 The best way to install Node on Windows is to use Chocolatey.
 If you don't have Chocolatey on your machine, go to <<install-choco,install Chocolatey>> to get it set up.
 Otherwise, skip directly to <<install-nvm,install nvm and Node>>.
 
-If *the command returns a version string less than 8*, upgrade to the latest Node LTS version <<upgrade-node,using nvm>>.
+If *the command returns a version that isn't an active LTS version*, upgrade to the latest Node LTS version <<upgrade-node,using nvm>>.
 
 If *the command returns an active Node LTS version*, you're all set to xref:install/install-antora.adoc[install Antora].
 
@@ -70,10 +70,12 @@ TIP: If you just installed Chocolatey using the instructions in the proceeding s
 
 . Open an new, regular PowerShell terminal, and install Node using nvm.
 +
+--
 [subs=attributes+]
- $ nvm install {version-node}
-+
+ $ nvm install {version-node-patch}
+
 IMPORTANT: When using nvm for Windows, you must enter an exact version of Node until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
+--
 
 Now that Node is installed, you're ready to xref:install/install-antora.adoc[install Antora].
 
@@ -93,7 +95,7 @@ By using nvm, you closely align your setup with the environment used to generate
 If you have nvm installed but your Node version is not an LTS release, type the following command in your terminal:
 
 [subs=attributes+]
- $ nvm install {version-node}
+ $ nvm install {version-node-patch}
 
 IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
 

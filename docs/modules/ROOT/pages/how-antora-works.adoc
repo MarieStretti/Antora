@@ -1,7 +1,4 @@
 = Antora's Site Generation Process
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
 Antora's default site generator handles all aspects of creating a documentation site, from fetching and aggregating to converting and arranging the content to publishing the files of the generated site.

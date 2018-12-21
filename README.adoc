@@ -46,8 +46,7 @@ More comprehensive installation instructions are in the {uri-docs}[Antora docume
 
 === Prerequisites
 
-Antora is built on Node.js (herein "`Node`").
-Antora is verified to work on Linux, macOS, and Windows.
+Antora is built on Node.js ("`Node`") and is verified to work on Linux, macOS, and Windows.
 
 To install Antora, you'll need Node (including npm, which is bundled with Node) on your system.
 You may also find the base build tools for your OS helpful (which includes `git`), though they're not required.
@@ -57,9 +56,8 @@ You may also find the base build tools for your OS helpful (which includes `git`
 You need Node installed on your machine to install and run Antora.
 
 Antora follows {uri-node-releases}[Node's release schedule], so we advise that you choose an active long-term support (LTS) release of Node.
-The active LTS releases of Node are Node 8 and Node 10.
 We recommend using Node 10.
-While you can use other versions of Node, Antora is only tested against LTS releases.
+While you can use other versions of Node, Antora is only tested against active LTS releases.
 
 To check whether you have Node installed, and which version, open a terminal and type:
 
@@ -73,7 +71,7 @@ If your package manager provides Node and npm packages, _and you're familiar wit
 However, we believe you'll be more successful if you choose nvm.
 
 NOTE: Most CI environments use nvm to manage the version of Node used in the build job.
-Thus, by using nvm, you align your setup with the environment used to generate and publish your production site.
+By using nvm, you align your local setup with the environment used to generate and publish your production site.
 
 If you're using Linux or macOS, follow {uri-nvm-install}[the nvm installation instructions] to set up nvm on your machine.
 If you're using Windows, you can install the {uri-nvm-windows}[Windows port of nvm] via the {uri-choco}[Chocolatey package manager] using `choco install -y nvm`.

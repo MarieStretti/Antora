@@ -1,7 +1,4 @@
 = AsciiDoc Configuration
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :keywords: AsciiDoc attrs, page header attributes
 // Filters
 :page-tags: playbook keys, AsciiDoc
