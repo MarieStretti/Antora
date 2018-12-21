@@ -18,41 +18,47 @@ class GitCredentialManagerStore {
 
   async load () {
     if (this.entries) return this.entries
-    let contents = this.contents
-    let delimiter
-    if (contents) {
-      delimiter = /[,\n]/
-    } else {
-      delimiter = '\n'
-      let path = this.path || ospath.join(homedir(), '.git-credentials')
-      contents = await fs.pathExists(path).then((exists) => {
-        if (exists) {
-          return fs.readFile(path, 'utf-8')
-        } else {
-          const xdgConfigHome = process.env.XDG_CONFIG_HOME || ospath.join(homedir(), '.config')
-          path = ospath.join(xdgConfigHome, 'git', 'credentials')
-          return fs.pathExists(path).then((fallbackExists) => (fallbackExists ? fs.readFile(path, 'utf-8') : undefined))
-        }
-      })
-      if (!contents) return (this.entries = {})
-    }
-    return (this.entries = contents
-      .trim()
-      .split(delimiter)
-      .reduce((accum, url) => {
-        try {
-          const { username, password, hostname, pathname } = new URL(url)
-          const credentials = password ? { username, password } : username ? { token: username } : undefined
-          if (!credentials) return accum
-          if (pathname === '/') {
-            accum[hostname] = credentials
+    return (this.entries = new Promise(async (resolve) => {
+      let contents = this.contents
+      let delimiter
+      if (contents) {
+        delimiter = /[,\n]/
+      } else {
+        delimiter = '\n'
+        let path = this.path || ospath.join(homedir(), '.git-credentials')
+        contents = await fs.pathExists(path).then((exists) => {
+          if (exists) {
+            return fs.readFile(path, 'utf-8')
           } else {
-            accum[hostname + pathname] = credentials
-            if (!pathname.endsWith('.git')) accum[hostname + pathname + '.git'] = credentials
+            const xdgConfigHome = process.env.XDG_CONFIG_HOME || ospath.join(homedir(), '.config')
+            path = ospath.join(xdgConfigHome, 'git', 'credentials')
+            return fs
+              .pathExists(path)
+              .then((fallbackExists) => (fallbackExists ? fs.readFile(path, 'utf-8') : undefined))
           }
-        } catch (e) {}
-        return accum
-      }, {}))
+        })
+        if (!contents) return resolve({})
+      }
+      resolve(
+        contents
+          .trim()
+          .split(delimiter)
+          .reduce((accum, url) => {
+            try {
+              const { username, password, hostname, pathname } = new URL(url)
+              const credentials = password ? { username, password } : username ? { token: username } : undefined
+              if (!credentials) return accum
+              if (pathname === '/') {
+                accum[hostname] = credentials
+              } else {
+                accum[hostname + pathname] = credentials
+                if (!pathname.endsWith('.git')) accum[hostname + pathname + '.git'] = credentials
+              }
+            } catch (e) {}
+            return accum
+          }, {})
+      )
+    }))
   }
 
   async fill ({ url }) {
