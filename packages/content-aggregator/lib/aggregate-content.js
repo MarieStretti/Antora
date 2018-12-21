@@ -144,7 +144,7 @@ async function loadRepository (url, opts) {
 
   try {
     // NOTE attempt to resolve HEAD to determine whether dir is a valid git repo
-    // QUESTION should we check for shallow file too?
+    // QUESTION should we also check for shallow file?
     await git.resolveRef(Object.assign({ ref: 'HEAD', depth: 1 }, repo))
     if (repo.url) {
       if (opts.pull) {
@@ -155,10 +155,10 @@ async function loadRepository (url, opts) {
             authStatus = credentials ? 'auth-embedded' : credentialManager.status({ url }) ? 'auth-required' : undefined
             return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
           })
-          .catch((err) => {
-            fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
-            if (err.name === git.E.HTTPError && err.data.statusCode === 401) err.rethrow = true
-            throw err
+          .catch((fetchErr) => {
+            fetchOpts.emitter && fetchOpts.emitter.emit('error', fetchErr)
+            if (fetchErr.name === git.E.HTTPError && fetchErr.data.statusCode === 401) fetchErr.rethrow = true
+            throw fetchErr
           })
           .then(() => fetchOpts.emitter && fetchOpts.emitter.emit('complete'))
       } else {
@@ -166,43 +166,21 @@ async function loadRepository (url, opts) {
         authStatus = await git.config(Object.assign({ path: 'remote.origin.private' }, repo))
       }
     }
-  } catch (e) {
+  } catch (gitErr) {
     if (repo.url) {
-      let fetchOpts
-      await fs
-        .remove(dir)
-        .then(() => {
-          if (e.rethrow) throw e
-          fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'clone')
-          return git.clone(fetchOpts)
-        })
+      await fs.remove(dir)
+      if (gitErr.rethrow) throw transformGitCloneError(gitErr, displayUrl)
+      const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'clone')
+      await git
+        .clone(fetchOpts)
         .then(() => {
           authStatus = credentials ? 'auth-embedded' : credentialManager.status({ url }) ? 'auth-required' : undefined
           return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
         })
-        .catch((err) => {
+        .catch((cloneErr) => {
           // FIXME triggering the error handler here causes assertion problems in the test suite
-          //fetchOpts.emitter && fetchOpts.emitter.emit('error', err)
-          // FIXME make this cleaner; perhaps move to helper method
-          let { code, data, message } = err
-          if (code === git.E.HTTPError) {
-            if (data.statusCode === 401) {
-              if (err.rejected) {
-                message = 'Content repository not found or credentials were rejected'
-              } else {
-                message = 'Content repository not found or requires credentials'
-              }
-            } else if (data.statusCode === 404) {
-              message = 'Content repository not found'
-            } else {
-              message = message.replace(/[.:]?\s*$/, '')
-            }
-          } else if (code === git.E.RemoteUrlParseError || code === git.E.UnknownTransportError) {
-            message = 'Content source uses an unsupported transport protocol'
-          } else {
-            message = message.replace(/[.:]?\s*$/, '')
-          }
-          throw new Error(message + ': ' + displayUrl)
+          //fetchOpts.emitter && fetchOpts.emitter.emit('error', cloneErr)
+          throw transformGitCloneError(cloneErr, displayUrl)
         })
         .then(() => fetchOpts.emitter && fetchOpts.emitter.emit('complete'))
     } else {
@@ -348,9 +326,9 @@ async function populateComponentVersion (source, repo, remoteName, authStatus, r
       ? await readFilesFromWorktree(worktreePath, startPath)
       : await readFilesFromGitTree(repo, ref, startPath)
     componentVersion = loadComponentDescriptor(files, startPath)
-  } catch (e) {
-    e.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
-    throw e
+  } catch (err) {
+    err.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
+    throw err
   }
   const origin = computeOrigin(originUrl, authStatus, ref.name, ref.type, startPath, worktreePath)
   componentVersion.files = files.map((file) => assignFileProperties(file, origin))
@@ -420,7 +398,7 @@ function getGitTree (repo, { qname: ref }, startPath) {
     .then(({ object: commit }) =>
       git
         .readObject(Object.assign({ oid: commit.tree, filepath: startPath }, repo))
-        .catch((e) => {
+        .catch(() => {
           throw new Error(`the start path '${startPath}' does not exist`)
         })
         .then((entry) => {
@@ -462,7 +440,7 @@ function walkGitTree (repo, root, filter) {
           git
             .readObject(Object.assign({ oid: entry.oid }, repo))
             .then(({ object: subtree }) => visit(subtree, path.join(dirname, entry.path)))
-            .catch((e) => emitter.emit('error', e))
+            .catch((err) => emitter.emit('error', err))
         }
       }
     }
@@ -710,6 +688,29 @@ function ensureCacheDir (preferredCacheDir, startDir) {
       : expandPath(preferredCacheDir, '~+', startDir)
   const cacheDir = ospath.join(baseCacheDir, CONTENT_CACHE_FOLDER)
   return fs.ensureDir(cacheDir).then(() => cacheDir)
+}
+
+function transformGitCloneError (err, displayUrl) {
+  let msg
+  const { code, data, message } = err
+  if (code === git.E.HTTPError) {
+    if (data.statusCode === 401) {
+      if (err.rejected) {
+        msg = 'Content repository not found or credentials were rejected'
+      } else {
+        msg = 'Content repository not found or requires credentials'
+      }
+    } else if (data.statusCode === 404) {
+      msg = 'Content repository not found'
+    } else {
+      msg = message.replace(/[.:]?\s*$/, '')
+    }
+  } else if (code === git.E.RemoteUrlParseError || code === git.E.UnknownTransportError) {
+    msg = 'Content source uses an unsupported transport protocol'
+  } else {
+    msg = message.replace(/[.:]?\s*$/, '')
+  }
+  return new Error(msg + ': ' + displayUrl)
 }
 
 module.exports = aggregateContent
