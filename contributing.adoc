@@ -36,9 +36,11 @@
 :uri-yarn: https://yarnpkg.com
 :uri-mocha: https://mochajs.org/
 :uri-chai: http://chaijs.com/api/bdd/
+:uri-chai-cheerio: https://www.chaijs.com/plugins/chai-cheerio/
+:uri-chai-fs: https://www.chaijs.com/plugins/chai-fs/
+:uri-chai-spies: https://www.chaijs.com/plugins/chai-spies/
+:uri-dirty-chai: https://www.chaijs.com/plugins/dirty-chai/
 :uri-istanbul: https://istanbul.js.org/
-:uri-chai-as-promised: https://github.com/domenic/chai-as-promised
-:uri-chai-spies: https://github.com/chaijs/chai-spies
 :uri-standardjs: https://standardjs.com/
 :uri-standardjs-rules: https://standardjs.com/rules.html
 :uri-eslint-ide: https://eslint.org/docs/user-guide/integrations#editors
@@ -350,14 +352,16 @@ If you need to add a new test to the suite, you can use [.path]_test/example-tes
 It already follows the structure of the project and contains various comments and hints to help you.
 Be sure to follow the directions on what to require and various traps to avoid.
 
-Apart from the classic {uri-chai}[chai] assertions, two plugins are enabled.
+Apart from the classic {uri-chai}[chai] assertions, several plugins are enabled.
 You'll find the documentation for their APIs here:
 
-* {uri-chai-as-promised}[chai-as-promised] to test promises
 * {uri-chai-spies}[chai-spies] to create and test spies on callbacks
+* {uri-chai-fs}[chai-fs] to assert files and directory structures
+* {uri-chai-cheerio}[chai-cheerio] to assert HTML structures
+* {uri-dirty-chai}[dirty-chai] (more like clean chai) to allow all terminal assertions to end with ()
 
 You can run the whole <<run-tests,test suite>> manually or continuously.
-You can also select specific tests to run.
+You can also select individual tests to run.
 
 == Project Organization
 
