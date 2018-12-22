@@ -3,7 +3,7 @@
 
 == Status
 
-Accepted
+Superseded by xref:0011-align-node-support-with-lts-schedule.adoc[ADR 0011]
 
 == Context
 

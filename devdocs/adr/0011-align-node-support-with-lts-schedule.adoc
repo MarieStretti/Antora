@@ -1,0 +1,30 @@
+= ADR 0011: Align Node Support with Node LTS Schedule
+:revdate: 2018-12-20
+
+== Status
+
+Accepted
+
+== Context
+
+The dependency on nodegit pinned Antora to a specific Node version (Node 8).
+Since Antora 2 has replaced nodegit with isomorphic-git, we can now rethink which versions of Node we want Antora to support (i.e., test and recommend), and when to upgrade to a new version.
+
+== Decision
+
+Our general policy is to align our supported platform versions to the upstream platform's lifecycle (GA, EOL, etc.) schedule.
+For Node, this means aligning with the Node LTS (Long Term Support) release schedule.
+
+We will only support the latest patch release in a Node LTS release line that is https://nodejs.org/en/about/releases/[current or active] according to the Node.js Foundation Release Working Group.
+Although Antora can be used with non-LTS releases (odd major numbers), we will recommend only using a current or active Node LTS release for running Antora in production environments.
+Once an LTS release has reached End of Life (EOL), support for it in Antora stops.
+
+While we'll support a Node LTS version until its EOL, we'll recommend that users begin preparing to upgrade to a current or active LTS release as soon as a previous version enters its maintenance period.
+This will give users plenty of opportunity to update.
+
+== Consequences
+
+Users will not be able to use Node LTS versions with Antora that have reached EOL (and we'll also discourage the use of non-LTS versions in a production environment).
+Users will be able to check which Node LTS versions are current and active, and therefore which versions Antora supports, by consulting the Node release schedule.
+This will benefit Antora because both the maintainers and users will be able to take advantage of stable Node features while minimizing backports, security risks, and compatibility issues.
+And we'll know exactly when to start preparing Antora and its infrastructure for new Node capabilities and versions without having to deliberate it each time.
