@@ -7,6 +7,8 @@ const lintTask = require('./lint-task')
 const formatTask = require('./format-task')
 const testTask = require('./test-task')
 
+const isCodeCoverageEnabled = () => process.env.COVERAGE === 'true' || process.env.CI
+
 const allFiles = opts.package
   ? [`packages/${opts.package}/{lib,test}/**/*.js`]
   : ['{gulpfile.js,lib-example,scripts,test}/**/*.js', 'packages/*/{lib,test}/**/*.js']
@@ -14,15 +16,13 @@ const testFiles = opts.package
   ? [`packages/${opts.package}/test/**/*-test.js`]
   : ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
 
-const isCodeCoverageEnabled = () => process.env.COVERAGE === 'true' || process.env.CI
-
-const lint = (done) => lintTask(allFiles).then(done)
+const lint = () => lintTask(allFiles)
 lint.description = 'Lint the JavaScript source files using eslint'
 
-const format = (done) => formatTask(allFiles).then(done)
+const format = () => formatTask(allFiles)
 format.description = 'Format on the JavaScript source files using prettier (standard profile)'
 
-const test = (done) => testTask(testFiles, isCodeCoverageEnabled())
+const test = () => testTask(testFiles, isCodeCoverageEnabled())
 test.description = 'Run the test suite'
 
 const testWatch = () => watch(allFiles, test)
