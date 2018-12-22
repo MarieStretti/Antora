@@ -23,9 +23,9 @@ Let's find out how to supply credentials for the default credential manager to u
 
 === Default credential store
 
-Antora will look up the authentication credentials automatically when requested by the git server.
+Antora will look up authentication credentials automatically when requested by the git server.
 By default, Antora's built-in credential manager looks for credentials in the {url-credential-store}[git credential store].
-The default path for this file is _$HOME/.git-credentials_ (or _$XDG_CONFIG_HOME/git/credentials_ if the previous file doesn't exist).
+The default path for the git credential store is _$HOME/.git-credentials_ (or _$XDG_CONFIG_HOME/git/credentials_ if the previous  location doesn't exist).
 
 The credential store is expected to have zero or more lines formatted as follows:
 
@@ -35,6 +35,32 @@ https://<credentials>@<hostname>
 
 `<credentials>` consists of either a username and password pair (i.e., `username:password`) or a personal access (OAuth) token (i.e., `token:`).
 `<hostname>` looks like `github.com`.
+
+.Populate the credential store interactively
+****
+You can use the `git` command to populate the credential store interactively.
+First, select the URL of a private repository you want to use with Antora.
+Next, run the following command:
+
+ $ git config --global credential.helper store && \
+   read -p 'Repository URL: ' && \
+   git ls-remote -h $REPLY > /dev/null
+
+This command performs the following steps:
+
+. Enables the git credential store globally
+. Prompts you for the URL of a private repository
+. Communicates with the private repository, which triggers a prompt for your credentials
+. Stores the credentials [.path]_$HOME/.git-credentials_ (and sets the permissions to 600)
+
+If you aren't prompted for your credentials, then your credentials are likely already stored.
+
+Run the following command to disable the global git credential store if you don't want to leave it enabled.
+
+ $ git config --global --remove-section credential
+
+You can now use Antora to connect to the private repository without any further configuration.
+****
 
 When Antora needs authentication for a particular URL, it will look for an entry in the credentials store that has a matching context.
 Specifically, if the protocol (e.g., `https`) and hostname match (and, optionally, the path), then the credentials are returned to the credential manager.
