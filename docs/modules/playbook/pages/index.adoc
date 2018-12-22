@@ -1,7 +1,4 @@
 = The Antora Playbook
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 On this page, you'll learn:
 
@@ -29,7 +26,7 @@ Additionally, certain settings in the playbook file can be overridden using xref
 
 == Where is a playbook stored?
 
-include::{partialsdir}/playbook-project-summary.adoc[]
+include::partial$playbook-project-summary.adoc[]
 
 == Playbook file formats
 
