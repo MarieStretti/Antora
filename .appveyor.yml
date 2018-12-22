@@ -2,13 +2,21 @@
 version: '{build}'
 branches:
   except:
+  - /^docs\/./
   - releases
 skip_tags: true
+only_commits:
+  # only_commits.files may not work with GitLab yet
+  files:
+  - .appveyor.yml
+  - package.json
+  - yarn.lock
+  - gulpfile.js/
+  - packages/
+  - test/
 clone_depth: 5
 environment:
   matrix:
-  #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-  #  NODEJS_VERSION: 8
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     NODEJS_VERSION: 10
 install:
