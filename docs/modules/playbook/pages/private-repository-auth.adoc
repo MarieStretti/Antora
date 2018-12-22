@@ -3,11 +3,15 @@
 :url-credential-manager-plugin: https://isomorphic-git.org/docs/en/plugin_credentialManager
 :url-oauth2-formats: https://isomorphic-git.org/docs/en/authentication
 
-Antora can authenticate with private repositories using HTTP Basic authentication over HTTPS.
-This document describes various ways to supply credentials to the built-in credential manager for authenticating with private repositories and how to replace the built-in credential manager with a custom one.
 
-== Supply credentials for the default credential manager
+When you instruct Antora to access private repositories, you'll need to provide it with the required authentication credentials for each private repository URL.
+You can supply Antora with these credentials several ways, including using the default git credential store, a custom credential store, and even providing a custom credential manager.
 
+First, let's review the authentication credential types Antora accepts: username and password pairs and personal access (OAuth) tokens.
+
+== Credential types
+
+Antora authenticates with private repositories using HTTP Basic authentication.
 HTTP Basic authentication requires supplying credentials to verify your identity.
 Authentication credentials consist of either a username and password pair or a personal access (OAuth) token.
 
@@ -15,32 +19,33 @@ If you have two-factor authentication (2FA) enabled for your account, you typica
 To create a personal access token for GitHub, see https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/[Creating a personal access token for the command line].
 To create one for GitLab, see https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html[Personal access tokens].
 
-The git client used by Antora, isomorphic-git, provides a pluggable credential manager for looking up these authentication credentials.
-The credential manager fills in the authentication credentials upon request.
-Antora provides a default implementation of the credential manager to use if one is not specified.
+If you don't have 2FA, the username and password pair is usually your login to the service (GitHub, GitLab, etc.) where the private repository is hosted.
 
-Let's find out how to supply credentials for the default credential manager to use.
+Next, let's see how to supply these credentials to Antora's built-in credential manager from the default git credential store.
 
-=== Default credential store
+== Supply credentials using the default git credential store
 
-Antora will look up authentication credentials automatically when requested by the git server.
-By default, Antora's built-in credential manager looks for credentials in the {url-credential-store}[git credential store].
-The default path for the git credential store is _$HOME/.git-credentials_ (or _$XDG_CONFIG_HOME/git/credentials_ if the previous  location doesn't exist).
+By default, Antora's built-in credential manager automatically checks for credentials in the {url-credential-store}[git credential store].
+The default path for the git credential store is _$HOME/.git-credentials_ followed by _$XDG_CONFIG_HOME/git/credentials_ if the previous location doesn't exist.
+When Antora needs authentication for a particular URL, it will look for an entry in the credentials store that has a matching context.
+If a protocol (e.g., `https`) and hostname (and, optionally, the path) are found in the credentials store, then those credentials are returned to Antora's credential manager.
 
-The credential store is expected to have zero or more lines formatted as follows:
+The credential store file has entries structured as follows:
 
 ----
 https://<credentials>@<hostname>
 ----
 
-`<credentials>` consists of either a username and password pair (i.e., `username:password`) or a personal access (OAuth) token (i.e., `token:`).
+`<credentials>` is either a username and password pair (`username:password`) or a personal access token (`token:`).
 `<hostname>` looks like `github.com`.
 
-.Populate the credential store interactively
-****
+You can add credentials to the credential store interactively using git or by directly editing the file.
+
+=== Populate the credential store interactively
+
 You can use the `git` command to populate the credential store interactively.
 First, select the URL of a private repository you want to use with Antora.
-Next, run the following command:
+Next, in your terminal, run the following command:
 
  $ git config --global credential.helper store && \
    read -p 'Repository URL: ' && \
@@ -51,19 +56,22 @@ This command performs the following steps:
 . Enables the git credential store globally
 . Prompts you for the URL of a private repository
 . Communicates with the private repository, which triggers a prompt for your credentials
-. Stores the credentials [.path]_$HOME/.git-credentials_ (and sets the permissions to 600)
+. Stores the credentials [.path]_$HOME/.git-credentials_ and sets the permissions to 600
 
 If you aren't prompted for your credentials, then your credentials are likely already stored.
 
-Run the following command to disable the global git credential store if you don't want to leave it enabled.
+Run the above command for each private repository Antora will need to access.
+
+Finally, if you don't usually keep your git credential store enabled globally, run the following command to disable it.
 
  $ git config --global --remove-section credential
 
-You can now use Antora to connect to the private repository without any further configuration.
-****
+You can now use Antora to connect to your private repositories without any further configuration.
 
-When Antora needs authentication for a particular URL, it will look for an entry in the credentials store that has a matching context.
-Specifically, if the protocol (e.g., `https`) and hostname match (and, optionally, the path), then the credentials are returned to the credential manager.
+=== Populate the credential store directly
+
+To add credentials to the git credential store directly, go to [.path]_$HOME/.git-credentials_ or _$XDG_CONFIG_HOME/git/credentials_ if the previous location doesn't exist and open the file.
+Enter the credentials for each private repository on its own line.
 
 Here's an example entry that uses a username and password pair:
 
@@ -71,7 +79,7 @@ Here's an example entry that uses a username and password pair:
 https://octocat:ilovegit@github.com
 ----
 
-Here's an example that uses a token (mind the trailing `:` after the token):
+Here's an example that uses a token (note the trailing `:` after the token):
 
 ----
 https://abcdefg0123456:@github.com
@@ -94,7 +102,11 @@ To be sure this file is protected, you should immediately set its file permissio
 
  $ chmod 600 $HOME/.git-credentials
 
-=== Custom credential store
+== Specify a custom git credential store path
+
+//The git client used by Antora, isomorphic-git, provides a pluggable credential manager for looking up these authentication credentials.
+//The credential manager fills in the authentication credentials upon request.
+//Antora provides a default implementation of the credential manager to use if one is not specified.
 
 Instead of looking for the credential store at the default path(s), you can instruct Antora to look for the file in a different location using either the `--git-credentials-path` CLI option or `GIT_CREDENTIALS_PATH` environment variable.
 Here's an example that uses the CLI option:
@@ -114,7 +126,7 @@ git:
 Alternately, you can embed the credentials directly into the playbook file.
 However, this approach is discouraged.
 
-.antora-playbook.yml (fragment)
+.antora-playbook.yml (fragment) (not recommended)
 [source,yaml]
 ----
 git:
@@ -126,7 +138,7 @@ Instead of reading the credentials from a file, you can have Antora read the cre
 This strategy is useful in a CI environment.
 In this case, the entries may be separated either by a newline character or a comma.
 
-=== Encode credentials in URL (not recommended)
+== Encode credentials in a URL (not recommended)
 
 Another option for passing credentials to the credential manager is to encode them directly in the URL listed in the playbook.
 
@@ -175,7 +187,7 @@ The previous approaches assume that Antora can access the credentials directly, 
 If this arrangement does not meet your security requirements, you can replace the built-in credential manager with your own.
 
 The credential manager in Antora is an extension of the {url-credential-manager-plugin}[credentialManager plugin] in isomorphic-git.
-To write a custom credential manager, you create a JavaScript object (or class) that implements the following methods:
+To write a custom credential manager, create a JavaScript object (or class) that implements the following methods:
 
 [source,js]
 ----
