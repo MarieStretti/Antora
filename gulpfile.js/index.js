@@ -3,13 +3,13 @@
 const { series, watch } = require('gulp')
 const opts = require('yargs-parser')(process.argv.slice(2))
 
-const lintTask = require('./tasks/lint-task')
-const formatTask = require('./tasks/format-task')
-const testTask = require('./tasks/test-task')
+const lintTask = require('./lint-task')
+const formatTask = require('./format-task')
+const testTask = require('./test-task')
 
 const allFiles = opts.package
   ? [`packages/${opts.package}/{lib,test}/**/*.js`]
-  : ['gulpfile.js', '{lib*,scripts,tasks,test}/**/*.js', 'packages/*/{lib,test}/**/*.js']
+  : ['{gulpfile.js,lib-example,scripts,test}/**/*.js', 'packages/*/{lib,test}/**/*.js']
 const testFiles = opts.package
   ? [`packages/${opts.package}/test/**/*-test.js`]
   : ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
