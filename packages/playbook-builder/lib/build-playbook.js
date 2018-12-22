@@ -58,6 +58,7 @@ function loadConvictConfig (args, env, customSchema) {
 function exportModel (config) {
   const properties = config.getProperties()
   // FIXME would be nice if camelCaseKeys could exclude a subtree (e.g., asciidoc)
+  // see https://github.com/sindresorhus/camelcase-keys/issues/23
   const asciidocProperty = properties.asciidoc
   delete properties.asciidoc
   const playbook = camelCaseKeys(properties, { deep: true })
