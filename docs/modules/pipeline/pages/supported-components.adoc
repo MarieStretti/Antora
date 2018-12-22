@@ -1,8 +1,4 @@
 = Available and Supported Antora Components
-//Component, Extension, and Container Matrix
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :table-caption!:
 // URLs
 :url-antora-lcs: https://gitlab.com/antora/antora/blob/master/LICENSE
