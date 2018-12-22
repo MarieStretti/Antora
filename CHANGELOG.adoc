@@ -16,6 +16,7 @@ This project utilizes semantic versioning.
 
 * Upgrade dependencies
 * Migrate project build to Gulp 4 (#370)
+* *playbook-builder*: Remove `ANTORA_PLAYBOOK` environment variable.
 * *content-aggregator*: Don't show clone progress after authentication credentials were rejected during fetch
 * *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
 
@@ -61,7 +62,7 @@ This project utilizes semantic versioning.
 * Add support for Node 10
 * *playbook-builder*: Map `content.tags` in playbook schema
 * *playbook-builder*: Allow git credentials file path or contents to be configured using `git.credentials` key (path or contents) in playbook (#264)
-* _(breaking)_ *playbook-builder*: Renable PLAYBOOK environment variable to ANTORA_PLAYBOOK
+* _(breaking)_ *playbook-builder*: Rename `PLAYBOOK` environment variable to `ANTORA_PLAYBOOK`
 * *content-aggregator*: Read credentials for private repository from git credential store file by default ($HOME/.git-credentials or $XDG_CONFIG_HOME/git/credentials) (#264)
 * *page-composer*: Add next, previous, and parent properties to the page UI model to access adjacent pages (#233)
 * *cli*: Add `--git-credentials-path` option and `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file (#264)

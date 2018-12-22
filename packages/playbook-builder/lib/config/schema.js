@@ -6,7 +6,6 @@ module.exports = {
     format: String,
     default: undefined,
     arg: 'playbook',
-    env: 'ANTORA_PLAYBOOK',
   },
   site: {
     start_page: {
