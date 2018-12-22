@@ -64,7 +64,7 @@ function aggregateContent (playbook) {
   const sourcesByUrl = _.groupBy(sources, 'url')
   const { cacheDir, pull, silent, quiet } = playbook.runtime
   const progress = !quiet && !silent && createProgress(sourcesByUrl, process.stdout)
-  const credentialManager = registerGitPlugins((playbook.git || {}).credentials, startDir).get('credentialManager')
+  const credentialManager = registerGitPlugins((playbook.git || {}).credentials, startDir)
   return ensureCacheDir(cacheDir, startDir).then((resolvedCacheDir) =>
     Promise.all(
       Object.entries(sourcesByUrl).map(([url, sources]) =>
@@ -127,9 +127,6 @@ async function loadRepository (url, opts) {
     // NOTE if url is set on repo, we assume it's remote
     repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noCheckout: true }
     credentialManager = opts.credentialManager
-    if (typeof credentialManager.status !== 'function') {
-      credentialManager = Object.assign({}, credentialManager, { status () {} })
-    }
   } else if (await isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
     repo = (await isLocalDirectory(ospath.join(dir, '.git')))
       ? { core: GIT_CORE, fs, dir }
@@ -664,11 +661,14 @@ function registerGitPlugins (config, startDir) {
   if (plugins.has('credentialManager')) {
     credentialManager = plugins.get('credentialManager')
     if (typeof credentialManager.configure === 'function') credentialManager.configure({ config, startDir })
+    if (typeof credentialManager.status !== 'function') {
+      credentialManager = Object.assign({}, credentialManager, { status () {} })
+    }
   } else {
     plugins.set('credentialManager', (credentialManager = new GitCredentialManagerStore()))
     credentialManager.configure({ config, startDir })
   }
-  return plugins
+  return credentialManager
 }
 
 /**
