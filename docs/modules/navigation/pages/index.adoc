@@ -1,8 +1,5 @@
 = Navigation Assembly
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-:description: An introduction to how Antora creates site, component, version, and page navigation menus and dropdown selectors for multiple documentation products and multiple documentation versions.
+:description: An introduction to how Antora creates site, component, version, and page navigation menus and dropdown selectors for multiple documentation products and documentation versions.
 :keywords: navigate between documentation versions, navigate between projects, navigate to other versions of a page, add page links to a menu, add page links to a sidebar, add page links to an AsciiDoc list, set up website navigation with Antora, multi-version navigation, create a navigation menu with AsciiDoc, UI, theme
 // Filters
 :page-collections: core concepts

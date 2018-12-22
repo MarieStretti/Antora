@@ -1,10 +1,4 @@
 = Aspect Navigation
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 An [.term]_aspect domain_ is a published set of pages that are sourced from multiple components and component versions versus one component or component version.
 The result is a free-form, cross-cutting domain.
