@@ -136,9 +136,19 @@ We do not accept merge requests that do not come from a dedicated branch in a fo
 
 . *Create a dedicated branch in your fork for your changes.*
 Name the branch after the issue number it fixes along with a short textual hint.
-Here's an example of a branch name for issue #2, which was to initiate the Gulp build:
 +
+--
+Here's an example of a branch name for issue #2, which was to initiate the Gulp build:
+
  issue-2-init-gulp-build
+
+If your only working on docs, then add `docs/` to the beginning of the branch name.
+Here's an example of a branch name for issue #168, which was to write documentation for the sitemap generation:
+
+ docs/issue-168-document-sitemap
+
+The `docs/` prefix tells the CI server not to run the test suite.
+--
 
 . In the issue tracker, label the issue as *[Progress] Preparing Change* and make sure you're assigned to it so that the rest of the team knows you're working on it.
 

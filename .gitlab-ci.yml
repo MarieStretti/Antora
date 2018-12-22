@@ -1,27 +1,49 @@
-image: node:10.14.1-stretch
-stages: [init, verify, deploy]
+image: node:10.14.2-stretch
+stages: [ init, verify, deploy ]
+.defs:
+# only_code not used when an MR is created, hence the need for except_docs
+- &only_code
+  only:
+    changes:
+    - .gitlab-ci.yml
+    - package.json
+    - yarn.lock
+    - '{gulpfile.js,packages,test}/**/*'
+- &except_docs
+  except:
+  - /^docs\/./
+- &cache_paths
+  paths:
+  - .cache/yarn
+- &pull_cache
+  cache:
+    policy: pull
+    <<: *cache_paths
+- &yarn_install
+  before_script:
+  - yarn --cache-folder=.cache/yarn --pure-lockfile > /dev/null
 yarn:
   stage: init
+  <<: *except_docs
+  <<: *only_code
   cache:
-    paths: &cache_paths
-    - .cache/yarn
-  script:
-  - &run_yarn
-    yarn --cache-folder=.cache/yarn --pure-lockfile > /dev/null
+    <<: *cache_paths
+  <<: *yarn_install
+  script: $(npm bin)/antora version
 lint:
   stage: verify
-  cache: &pull_cache
-    policy: pull
-    paths: *cache_paths
-  script:
-  - *run_yarn
-  - $(npm bin)/gulp lint
+  <<: *except_docs
+  <<: *only_code
+  <<: *pull_cache
+  <<: *yarn_install
+  script: $(npm bin)/gulp lint
 test:
   stage: verify
-  cache: *pull_cache
-  script:
-  - *run_yarn
-  - $(npm bin)/gulp test
+  <<: *except_docs
+  <<: *only_code
+  <<: *pull_cache
+  <<: *yarn_install
+  script: $(npm bin)/gulp test
   artifacts:
     paths:
     - coverage/
