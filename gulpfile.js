@@ -1,12 +1,11 @@
 'use strict'
 
-const gulp = require('gulp')
+const { series, watch } = require('gulp')
 const opts = require('yargs-parser')(process.argv.slice(2))
-const sequenceTasks = require('gulp-sequence')
 
-const lint = require('./tasks/lint-task')
-const format = require('./tasks/format-task')
-const test = require('./tasks/test-task')
+const lintTask = require('./tasks/lint-task')
+const formatTask = require('./tasks/format-task')
+const testTask = require('./tasks/test-task')
 
 const allFiles = opts.package
   ? [`packages/${opts.package}/{lib,test}/**/*.js`]
@@ -17,10 +16,19 @@ const testFiles = opts.package
 
 const isCodeCoverageEnabled = () => process.env.COVERAGE === 'true' || process.env.CI
 
-gulp.task('lint', () => lint(allFiles))
-gulp.task('format', () => format(allFiles))
-gulp.task('test', (done) => sequenceTasks('test!', 'lint', () => done))
-gulp.task('test!', () => test(testFiles, isCodeCoverageEnabled()))
-gulp.task('test:watch', () => gulp.watch(allFiles, ['test!']))
+const lint = (done) => lintTask(allFiles).then(done)
+lint.description = 'Lint the JavaScript source files using eslint'
 
-gulp.task('default', ['test'])
+const format = (done) => formatTask(allFiles).then(done)
+format.description = 'Format on the JavaScript source files using prettier (standard profile)'
+
+const test = (done) => testTask(testFiles, isCodeCoverageEnabled())
+test.description = 'Run the test suite'
+
+const testWatch = () => watch(allFiles, test)
+testWatch.description = 'Run the test suite in response to file changes'
+
+const build = series(test, lint)
+build.description = 'Run the test suite followed by the linter'
+
+module.exports = { lint, format, test, 'test:watch': testWatch, build, default: build }
