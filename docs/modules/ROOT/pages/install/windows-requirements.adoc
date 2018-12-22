@@ -97,7 +97,7 @@ If you have nvm installed but your Node version is not an LTS release, type the 
 [subs=attributes+]
  $ nvm install {version-node-patch}
 
-IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
+IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node-patch}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
 
 Now that you're on the right version of Node, you can xref:install/install-antora.adoc[install Antora].
 

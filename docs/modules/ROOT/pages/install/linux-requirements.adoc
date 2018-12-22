@@ -3,7 +3,7 @@
 :page-partial:
 //tag::shared[]
 :version-node: 10
-:version-node-patch: 10.14.2
+:version-node-patch: {version-node}.14.2
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm: https://github.com/creationix/nvm
 :url-nvm-install: {url-nvm}#installation
