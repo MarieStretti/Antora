@@ -1,7 +1,4 @@
 = Run Antora in a Container
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-docs-job: https://gitlab.com/antora/docs.antora.org/blob/master/.gitlab-ci.yml
 :url-docker: https://docs.docker.com

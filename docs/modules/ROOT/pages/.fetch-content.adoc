@@ -1,10 +1,4 @@
 = Content Fetching
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 Antora's first step--probably the most important--is the fetching of the content.
 This is the step that makes Antora so versatile.

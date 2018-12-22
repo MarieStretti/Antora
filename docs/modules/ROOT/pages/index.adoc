@@ -1,7 +1,4 @@
 = Antora Documentation
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :keywords: Docs as Code, DocOps, content management system, docs writers, publish software documentation, CI and docs, CD and docs
 // URLs
 :url-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
