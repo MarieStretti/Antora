@@ -32,15 +32,15 @@ All-in-all, the switch from nodegit to isomorphic-git is a huge step forward for
 == Goodbye SSH. Hello git credentials.
 // (#264)
 
-Replacing nodegit with isomorphic-git did introduce a breaking change in how Antora handles private repository authentication.
-Private repository authentication is now performed using HTTP Basic Authentication over HTTPS instead of public/private key authentication over SSH using an SSH agent.
+Replacing nodegit with isomorphic-git brought with it a breaking change in how Antora handles private repository authentication.
+Private repository authentication is now performed using HTTP Basic authentication over HTTPS instead of public/private key authentication over SSH using an SSH agent.
 
 Thankfully, this change makes it much easier to manage authentication since Antora no longer requires running an SSH agent.
-And Antora transparently converts SSH URLs to HTTPS URLs so users don't have to update their playbook files.
-All that's necessary to fill in your authentication credentials.
+Instead, authentication credentials can be managed using the git credential store mechanism or a custom credential manager provided by the user.
+And Antora transparently converts SSH URLs to HTTPS URLs so you don't have to update your playbook files.
+All you need to do is fill in your authentication credentials using a simple text format.
 
-Authentication credentials can be managed using the git credential store mechanism or a custom credential manager provided by the user.
-By default, Antora will look for credentials in the default credential store file ([.path]_$HOME/.git-credentials_).
+By default, Antora will look for credentials in the default credential store, located at ([.path]_$HOME/.git-credentials_).
 If you're using private repositories with Antora, you'll need to add one line to this file per git host using the following format:
 
 ----
@@ -50,16 +50,20 @@ https://<credentials>@<hostname>
 `<hostname>` looks like `github.com`.
 `<credentials>` consists of either a username and password (e.g., `octocat:ilovegit`) or--if you have two-factor authentication (2FA) enabled--a personal access token (e.g., `abcdefgh0123456`).
 
-Where Antora looks for credentials can be influenced using several options:
+But you're not locked in this one storage location.
+You can influence where Antora looks for credentials using several options:
 
 * `--git-credentials-path` CLI option
 * `git.credentials` key (path or contents) in an Antora playbook
 * `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file.
 * `GIT_CREDENTIALS` environment variable to override contents of git credential store.
 
+You can also implement a custom credentials manager.
+
 === Pluggable credentials manager
 
-Another option is to register a custom credential manager with isomorphic-git using `git.cores.create('antora').set('credentialManager', credentialManager)` to completely take over how credentials are resolved.
+Thanks to isomorphic-git, Antora allows you to register a custom credential manger using `git.cores.create('antora').set('credentialManager', credentialManager)`.
+This object completely takes over how credentials are resolved.
 Among other benefits, this gives users the option of storing credentials more securely for environments that require it.
 
 == All the latest Asciidoctor features
@@ -114,7 +118,7 @@ AsciiDoc doctype:: The AsciiDoc `doctype` option can be safely set in the AsciiD
 Navigation files will always be parsed using the article doctype.
 //(#376)
 
-ANTORA_PLAYBOOK:: The PLAYBOOK environment variable has been renamed to ANTORA_PLAYBOOK.
+PLAYBOOK environment variable:: The PLAYBOOK environment variable for specifying the playbook file has been removed.
 This is a breaking change.
 
 default tags filter:: The default tags filter can now be set using the `content.tags` key in the playbook.
@@ -137,7 +141,7 @@ Workaround:: Postprocess the 404.html page to fix the paths before publishing th
 
 == Thank you!
 
-Most important of all, a big *Thank you!* to the folks that helped make Antora even better.
+Most important of all, a big *Thank you!* to all the folks who helped make Antora even better.
 
 *TODO: Add community shout outs!*
 
@@ -146,50 +150,13 @@ Most important of all, a big *Thank you!* to the folks that helped make Antora e
 The raw install size of Antora drops from 154MB down to 43MB.
 It takes about 3s to install Antora 2.0.0 from cache, which is down from 11s to install Antora 1.1.1.
 
-//Total Merges:
-//Total Issues (References? Closed?)
-//Contributors:
+Total merges: 18
+Total issues: 18
 
-////
 == Upgrade instructions
 
-If you're not using private repositories, the only thing you need to do to migrate is to upgrade Antora (making sure the version is set to 2.0.0).
+If you're not using private repositories, the only thing you need to do to migrate is to upgrade Antora by setting the version to 2.0.0.
 
-If you use private repositories, you need to reconfigure how you authenticate.
-For each git host, you'll either need a username and password or, if you have two-factor authentication (2FA) enabled, a personal access token.
-
-*??? I think I want to move the following instructions to their final location in the documentation (either as a page or an include file) and then provide a link/include ... but I'm still thinking about it.*
-
-Add the following entry to the [.path]_$HOME/.git-credentials_ file.
-
-```
-https://<credentials>@github.com
-```
-
-Where `<credentials>` is either `username:password` or `token`.
-
-Next, change the mode of this file to 600 so that only the current user can read it:
-
-```
-$ chmod 600 $HOME/.git-credentials
-```
-
-Antora will automatically detect this file and use it to authenticate with repositories that require authentication.
-
-You can also use git to populate this file.
-First, put an HTTPS URL to a private git repository in your clipboard.
-Now run, the following commands:
-
-```
-$ mkdir set-up-credentials
-  cd set-up-credentials
-  git init .
-  git config --local credential.helper store
-  git fetch <url>
-```
-
-Now enter your username/password or token when prompted.
-If authentication succeeds, git will save the credentials in [.path]_$HOME/.git-credentials_.
-
-You can also pass the path to this file using the `--git-credentials-path` CLI option.
-////
+If you use private repositories, you'll need to set up your authentication credentials.
+You can also say goodbye to your SSH agent.
+Refer to xref:playbook:private-repository-auth.adoc[Private Repository Authentication] for instructions.
