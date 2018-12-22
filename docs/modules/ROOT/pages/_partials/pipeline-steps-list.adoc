@@ -1,7 +1,7 @@
 When Antora runs, it performs the following steps:
 
-. Clones or fetches the content repositories using git via NodeGit.
-. Resolves and downloads the UI bundle using the GitLab or GitHub API (unless it's already cached).
+. Clones the git-based content repositories using the provided git client isomorphic-git (or fetches them if they're already cloned and configured to do so).
+. Resolves and downloads the UI bundle over HTTPS (unless it's already cached).
 . Locates and reads all AsciiDoc files.
 . Locates and reads all navigation files.
 . Converts AsciiDoc files to embeddable HTML.

@@ -1,7 +1,4 @@
 = Content Configuration
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 On this page, you'll learn:
 
@@ -98,13 +95,13 @@ content:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
   - url: git@gitlab.com:antora/demo/demo-component-b.git
   - url: git://github.com/org/content-repo.git
-  - url: https://x-oauth-token:YOUR_BITBUCKET_TOKEN@bitbucket.org:org/project-docs.git
+  - url: https://%GITHUB_TOKEN%:x-oauth-basic@github.com:org-name/project-docs.git
 ----
 
 Whether or not the `.git` extension is required depends on the settings of the git host.
 It's usually best to include it.
 
-See xref:private-repository-auth.adoc[private repository authentication] to learn how to use Antora to connect to private repositories over SSH using an SSH agent or over HTTP/HTTPS using a username+password or OAuth (personal access) token.
+See xref:private-repository-auth.adoc[Private repository authentication] to learn how to use Antora to connect to private repositories over HTTP/HTTPS using a username+password or OAuth token.
 
 [#mixing-urls]
 === Configure local and remote URLs in the same playbook

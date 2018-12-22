@@ -89,11 +89,16 @@ Effectively substitutes Antora's entire pipeline with a user-defined function._
 |String
 |@antora/site-generator-default
 
+|--git-credentials-path
+|An alternate path to a file that contains credentials for git matching the format used by git-credential-store.
+|String
+|not set
+
 |--google-analytics-key
 |The API key for Google Analytics / Tag Manager.
 Setting this option implicitly enables the Google Analytics / Tag Manager embed code when using the default UI.
 |String
-|no set
+|not set
 
 |--pull
 |Download updates to remote resources (content sources and UI bundle).

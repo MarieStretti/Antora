@@ -1,4 +1,5 @@
 = Upgrade Antora
+:version-node-patch: 10.14.2
 
 On this page, you'll learn:
 
@@ -36,7 +37,7 @@ The output will also show the CLI and site generator versions, which should be t
 .List of globally installed Node packages
 [subs=attributes+]
 ....
-/home/user/.nvm/versions/node/v8.11.4/lib
+/home/user/.nvm/versions/node/v{version-node-patch}/lib
 ├── @antora/cli@{page-component-version}.x
 ├── @antora/site-generator-default@{page-component-version}.x
 ├── npm@5.6.0

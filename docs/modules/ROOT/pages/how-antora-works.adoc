@@ -1,7 +1,4 @@
 = Antora's Site Generation Process
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 //The playbook is a configuration file that contains an inventory of documentation component names, branches, and addresses.
 
 Antora's default site generator handles all aspects of creating a documentation site, from fetching and aggregating to converting and arranging the content to publishing the files of the generated site.
@@ -18,19 +15,23 @@ The steps listed in this section describe the operations the default site genera
 Certain operations are executed asynchronously, so some of the steps below may occur in a different order or happen simultaneously.
 For example, the UI is fetched and loaded while the content is being aggregated to optimize use of the network.
 
-Read playbook::
-When you're ready to generate a site, you give Antora a playbook and tell it to run.
-The pipeline loads and reads the playbook.
+Build playbook::
+When you're ready to generate a site, you pass Antora a playbook file and tell it to run.
 +
-A xref:playbook:index.adoc[playbook is a configuration file], written in YAML, JSON, or CSON, that tells Antora what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
+A xref:playbook:index.adoc[playbook file is simple a configuration file] that can be written in YAML, JSON, or TOML.
+It contains information and settings such as what content to use, how the content should be processed, how the site should be generated, and where to publish the output.
++
+Antora reads the playbook file and builds a playbook from it, which it then uses to drive the pipeline.
 
-Locate content repositories and branches::
-Using the xref:playbook:configure-content-sources.adoc[content source URLs and branch names] listed in the playbook, Antora searches for and locates the specified repositories and branches.
+Load content repositories::
+Using the xref:playbook:configure-content-sources.adoc[content sources] listed in the playbook, Antora loads the specified git repositories or local content folders in preparation to scan them for content files.
++
+For each remote URL, Antora clones the remote git repository into a local cache using the built-in git client.
+If the repository has already been cloned, Antora fetches updates if configured to do so.
++
+Finally, Antora determines which references (branches and/or tags) to use from the specified repositories.
 
-Clone or fetch remote content repository branches::
-Antora downloads the contents of each remote repository and branch it located.
-
-Find the documentation component in each branch::
+Find the documentation component in each selected branch and/or tag::
 Antora identifies a group of files as a documentation component when it finds a component descriptor file named [.path]_antora.yml_.
 +
 A xref:component-structure.adoc[documentation component] is a set of files that are versioned together and  usually share a common subject, such as all of the content source files for a software product.

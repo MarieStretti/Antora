@@ -12,7 +12,7 @@ Here's how it works.
 
 . The list of repositories is read from xref:playbook:configure-playbook.adoc[a playbook] ([.path]_site.yml_).
 
-. Using git (via NodeGit), these repositories are cloned or updated and stored under [.path]_build/sources_
+. Using git (via isomorphic-git), these repositories are cloned or updated and stored under [.path]_build/sources_
 .. Each time Antora is run, the clone is synchronized with the remote repository.
 .. The repositories are cloned bare, which means you won't actually see any files inside these directories aside from the [.path]_.git_ folder.
 

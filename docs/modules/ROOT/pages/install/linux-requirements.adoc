@@ -1,103 +1,106 @@
 = Linux Installation Requirements
-// URLs
+:platform: Linux
+:page-partial:
+//tag::shared[]
+:version-node: 10
+:version-node-patch: {version-node}.14.2
+:url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm: https://github.com/creationix/nvm
 :url-nvm-install: {url-nvm}#installation
 
 On this page, you'll learn:
 
-* [x] What tools you need in order to install Antora on Linux.
-* [x] How to install the base build tools on Linux.
-* [x] How to install Node 8.
+* [x] What tools you need in order to install Antora on {platform}.
+* [x] How to install Node.
 
-If you've never installed Antora before, you need to complete the steps on this page before you can generate a documentation site.
+If you've never installed Antora before, you'll need to complete the steps on this page before you can install Antora and use it to generate a documentation site.
 
-To install Antora, you need the base build tools for your Linux distribution and Node 8.
+Antora is built on Node.js ("`Node`").
+To install Antora, all you need on your machine is a long term support (LTS) release of Node.
+Although Antora performs git operations, you don't need a git client installed to use Antora.
+However, you'll likely need a git client to clone and modify files in repositories you plan to use with Antora.
 
-== Base Build Tools
+== Node
 
-The base build tools are required for installing the nodegit package, a dependency of Antora.
-This selection of tools provides other useful commands you'll need in your workflow, such as `git`.
+//tag::node-intro[]
+You need Node installed on your machine to install and run Antora.
+Antora follows {url-node-releases}[Node's release schedule], so we advise that you choose an active long term support (LTS) release of Node.
+We recommend using the latest active Node LTS version.
+While you can use other versions of Node, Antora is only tested against LTS releases.
+//end::node-intro[]
 
-Install the base build tools package by executing the command associated with your Linux distribution.
+To check whether you have Node installed, and which version, open a terminal and type:
 
-* Fedora: `dnf install @development-tools`
-* Debian/Ubuntu: `apt-get install build-essential libcurl3-gnutls libssl-dev`
-* Arch Linux: `pacman -S base-devel`
-* Alpine Linux*: `apk add g++ libressl-dev make python curl-dev`
-* RHEL*: `yum install gcc-c++ make openssl-devel libcurl-devel hostname`
+ $ node --version
 
-{asterisk} To use Antora on Alpine Linux or RHEL, you must force NodeGit to be recompiled by setting the BUILD_ONLY=true environment variable.
-See xref:install/troubleshoot-nodegit.adoc[Troubleshoot NodeGit] for details.
+You should see a version string, such as:
 
-Once you have these tools installed, you can expect the remaining installation to go smoothly.
+[subs=attributes+]
+....
+v{version-node-patch}
+....
 
-== Node 8
+If *the command fails with an error*, it means you don't have Node installed.
+The best way to install Node is to use nvm (Node Version Manager).
+Skip to <<install-nvm>> to find instructions.
 
-Antora requires Node 8, the current long term support (LTS) release of Node.
-While you can try Node 9, Antora is not currently tested on it.
+ifeval::["{platform}" == "Linux"]
+NOTE: If your package manager provides Node and npm packages, _and you're familiar with using the tools installed system-wide_, you may choose to go that route.
+However, we believe you'll be more successful if you choose <<install-nvm,nvm>>.
+endif::[]
 
-[IMPORTANT]
-.Node 10 and nodegit
-====
-Installing Antora using Node 10 fails due to a known compatibility issue with nodegit. 
+If *the command returns a version that isn't an active LTS version*, upgrade to the latest Node LTS version <<upgrade-node,using nvm>> (or your package manager).
 
-See: https://github.com/nodegit/nodegit/issues/1490
-====
+If *the command returns an active Node LTS version*, makes sure that version is the default by typing the following command in your terminal:
 
-To check which version of Node you have installed, if any, open a terminal and type:
+[subs=attributes+]
+ $ nvm alias default {version-node}
 
-[source]
-$ node --version
-
-*If this command fails with an error*, you don't have Node installed.
-The best way to install Node 8 is to use nvm.
-See <<install-nvm>> for instructions.
-If your package manager provides Node and npm packages, and you're familiar with using the tools installed system-wide, that may be a more suitable option for you.
-
-*If the command returns a version less than 8.0.0*, upgrade to the latest Node 8 version using nvm or your package manager.
-
-*If the command returns a Node 8 version*, set Node 8 as the default by typing the following command in your terminal.
-
-[source]
-$ nvm alias default 8
-
-Now you're ready to xref:install/install-antora.adoc[install Antora].
+Now you're all set to xref:install/install-antora.adoc[install Antora].
 
 [#install-nvm]
 == Install nvm and Node
 
 We recommend using the {url-nvm}[Node Version Manager (nvm)^] to manage your Node installations, especially if your package manager doesn't provide Node and npm.
 Follow these {url-nvm-install}[installation instructions^] to set up nvm on your machine.
+Then, return here.
 
-TIP: Many CI environments use nvm to install the version of Node used for the build job.
-By using nvm, you can closely align your setup with the environment that is used to generate and publish your production site.
+TIP: Many CI environments use nvm to manage the version of Node used in the build job.
+By using nvm, you can align your setup with the environment used to generate and publish your production site.
 
-Once you've installed nvm, open a new terminal and install Node 8.
+Once you've installed nvm, open a new terminal and install the latest Node LTS release.
 
-[source]
-$ nvm install 8
+ $ nvm install --lts
 
-The above command will install the latest version of Node 8 and automatically set it as your default alias.
+The above command will both install the latest LTS release of Node and automatically set it as your default alias.
 
-Now that you have Node, you can xref:install/install-antora.adoc[install Antora].
+Type the following command to switch to it:
+
+ $ nvm use
+
+Now that you have Node set up, you can xref:install/install-antora.adoc[install Antora].
 
 [#upgrade-node]
-== Upgrade Node with nvm
+== Upgrade Node using nvm
 
-If you have nvm installed but your Node version is less than 8.0.0, type the following command in your terminal.
+If you have nvm installed, but you don't have an LTS release installed, type the following command in your terminal:
 
-[source]
-$ nvm install 8
+ $ nvm install --lts
 
-The above command will install the latest version of Node 8.
+The above command will install the latest version of the latest Node LTS release.
 
-To set the latest version of Node 8 as the default for any new terminal, type:
+To set the latest version of Node as the default for any new terminal, type:
 
-[source]
-$ nvm alias default 8
+[subs=attributes+]
+ $ nvm alias default {version-node}
 
-Now that you've upgraded Node, you're ready to xref:install/install-antora.adoc[install Antora].
+Type the following command to switch to it:
+
+ $ nvm use
+
+Now that you're on the right version of Node, you can xref:install/install-antora.adoc[install Antora].
 
 == What's next?
 
-Once you've installed the base build tools and Node 8, it's time to xref:install/install-antora.adoc[install Antora].
+Once you've installed Node, you're ready to xref:install/install-antora.adoc[install Antora].
+//end::shared[]
