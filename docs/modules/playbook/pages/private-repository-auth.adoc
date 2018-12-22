@@ -100,13 +100,13 @@ Instead of reading the credentials from a file, you can have Antora read the cre
 This strategy is useful in a CI environment.
 In this case, the entries may be separated either by a newline character or a comma.
 
-=== Credentials in URL
+=== Encode credentials in URL (not recommended)
 
-Another option for passing credentials to the credential manager is to pass them directly through the URL in the playbook.
+Another option for passing credentials to the credential manager is to encode them directly in the URL listed in the playbook.
+
+WARNING: This strategy is not recommended unless you're using using a placeholder to inject the real credentials, as described at the end of this section.
+
 Antora will extract the credentials that precede the hostname (i.e., `username:password@` or `token@`) and use them to perform authentication on your behalf if requested by the server.
-
-CAUTION: Tokens are located in different locations in the URL depending on the git host.
-See {url-oauth2-formats}[OAuth2 formats^] for more details.
 
 Here are several examples:
 
@@ -115,28 +115,33 @@ Here are several examples:
 ----
 content:
   sources:
-  - url: https://YOUR_GITHUB_TOKEN:x-oauth-basic@github.com:org/project-docs.git
-  - url: https://oauth2:YOUR_GITLAB_TOKEN@gitlab.com:org/project-docs.git
-  - url: https://x-oauth-token:YOUR_BITBUCKET_TOKEN@bitbucket.org:org/project-docs.git
+  - url: https://GITHUB_TOKEN:x-oauth-basic@github.com:org/project-docs.git
+  - url: https://oauth2:GITLAB_TOKEN@gitlab.com:org/project-docs.git
+  - url: https://x-oauth-token:BITBUCKET_TOKEN@bitbucket.org:org/project-docs.git
 ----
 
-The downside of this approach is that it requires that you put your credentials directly into the playbook file.
-That may be fine for a local playbook file, but becomes problematic in a CI environment where the credentials can be leaked.
+NOTE: Notice that the tokens are located in different locations in the URL depending on the git host.
+See {url-oauth2-formats}[OAuth2 formats^] for more details.
 
-To work around this problem, we recommend using a placeholder for the credentials in the playbook file:
+The drawback of this approach is that it requires putting the credentials directly into the playbook file.
+Unfortunately, Antora does not yet support resolving environment variables located in the playbook file.
+However, you can emulate this behavior by using a script to substitute an environment variable reference in the playbook file with its value.
+
+Let's assume you have the following source defined in your playbook file:
 
 .antora-playbook.yml (fragment)
 [source,yaml]
 ----
 content:
   sources:
-  - url: https://%GITHUB_TOKEN%:x-oauth-basic@github.com:org-name/project-docs.git
+  - url: https://$GITHUB_TOKEN:x-oauth-basic@github.com:org-name/project-docs.git
 ----
 
-Then use a script in CI to substitute it with the real value before running Antora.
-Of course, it may be simpler to just use the credential store.
+You can then use the following script to expand the environment variable reference, which you might run in CI prior to invoking Antora:
 
-Antora does not yet support resolving environment variables located in the playbook file, though it may do so in the future.
+ $ sed -i s/\$GITHUB_TOKEN/$GITHUB_TOKEN/ antora-playbook.yml
+
+Despite this workaround, we still recommend using the credential store integration.
 
 == Configure a custom credential manager
 
@@ -148,7 +153,7 @@ To write a custom credential manager, you create a JavaScript object (or class) 
 
 [source,js]
 ----
-configure ()
+configure ({ config, startDir })
 async fill ({ url })
 async approved ({ url })
 async rejected ({ url, auth })
