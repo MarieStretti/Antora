@@ -1,9 +1,6 @@
 = Private Repository Authentication
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :url-credential-store: https://git-scm.com/docs/git-credential-store
-:url-credential-manager-plugin: https://isomorphic-git.org/docs/en/plugin_credentialManager 
+:url-credential-manager-plugin: https://isomorphic-git.org/docs/en/plugin_credentialManager
 :url-oauth2-formats: https://isomorphic-git.org/docs/en/authentication
 
 Antora can authenticate with private repositories using HTTP Basic authentication over HTTPS.
@@ -12,9 +9,9 @@ This document describes various ways to supply credentials to the built-in crede
 == Supply credentials for the default credential manager
 
 HTTP Basic authentication requires supplying credentials to verify your identity.
-Authentication credentials consist of either a username and password pair or a personal access (i.e., OAuth) token.
+Authentication credentials consist of either a username and password pair or a personal access (OAuth) token.
 
-If you have two-factor authentication enabled for your account, you typically have to use a token.
+If you have two-factor authentication (2FA) enabled for your account, you typically have to use a token.
 To create a personal access token for GitHub, see https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/[Creating a personal access token for the command line].
 To create one for GitLab, see https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html[Personal access tokens].
 
@@ -36,11 +33,11 @@ The credential store is expected to have zero or more lines formatted as follows
 https://<credentials>@<hostname>
 ----
 
-`<credentials>` consists of either a username and password pair (i.e., `username:password`) or a personal access (i.e., OAuth) token (i.e., `token:`).
+`<credentials>` consists of either a username and password pair (i.e., `username:password`) or a personal access (OAuth) token (i.e., `token:`).
 `<hostname>` looks like `github.com`.
 
 When Antora needs authentication for a particular URL, it will look for an entry in the credentials store that has a matching context.
-Specifically, if the protocol (e.g., `https`) and hostname match (and, optionally, the path), then the credentials are returned to credential manager.
+Specifically, if the protocol (e.g., `https`) and hostname match (and, optionally, the path), then the credentials are returned to the credential manager.
 
 Here's an example entry that uses a username and password pair:
 
@@ -73,12 +70,12 @@ To be sure this file is protected, you should immediately set its file permissio
 
 === Custom credential store
 
-Instead of looking for the credential store at the default path(s), you can instruct Antora to look for the file in different location using either the `--git-credentials-path` CLI option or `GIT_CREDENTIALS_PATH` environment variable.
+Instead of looking for the credential store at the default path(s), you can instruct Antora to look for the file in a different location using either the `--git-credentials-path` CLI option or `GIT_CREDENTIALS_PATH` environment variable.
 Here's an example that uses the CLI option:
 
  $ antora --git-credentials-path=./.git-credentials antora-playbook.yml
 
-You can also specify this location directly in your playbook file under the `git` key:
+You can also specify this location directly in your playbook file under the `git` key.
 
 .antora-playbook.yml (fragment)
 [source,yaml]
@@ -89,7 +86,7 @@ git:
 ----
 
 Alternately, you can embed the credentials directly into the playbook file.
-However, this approach is discouraged:
+However, this approach is discouraged.
 
 .antora-playbook.yml (fragment)
 [source,yaml]
@@ -100,7 +97,7 @@ git:
 ----
 
 Instead of reading the credentials from a file, you can have Antora read the credentials from the environment variable named `GIT_CREDENTIALS`.
-This strategy is most useful in a CI environment.
+This strategy is useful in a CI environment.
 In this case, the entries may be separated either by a newline character or a comma.
 
 === Credentials in URL
@@ -108,7 +105,7 @@ In this case, the entries may be separated either by a newline character or a co
 Another option for passing credentials to the credential manager is to pass them directly through the URL in the playbook.
 Antora will extract the credentials that precede the hostname (i.e., `username:password@` or `token@`) and use them to perform authentication on your behalf if requested by the server.
 
-CAUTION: Tokens are located in different locations in the URL depending on the git host, so mind where you place them.
+CAUTION: Tokens are located in different locations in the URL depending on the git host.
 See {url-oauth2-formats}[OAuth2 formats^] for more details.
 
 Here are several examples:
@@ -185,7 +182,7 @@ Then pass this file to the `-r` option when running Antora:
 
 === Get credentials from git
 
-git offers a command named `git credential` that serves as a simple interface for storing and retrieving credentials from system-specific helpers in the same manner as git itself.
+Git offers a command named `git credential` that serves as a simple interface for storing and retrieving credentials from system-specific helpers in the same manner as git itself.
 It can also prompt the user for a username and password.
 We can use this command in a custom credential manager to allow Antora to delegate to git to look up credentials (and thus integrate with the user's own git settings).
 
@@ -262,7 +259,6 @@ It's left up to an exercise for the reader to store or erase the credentials bas
 [#ssh-auth]
 == SSH authentication
 
-Antora no longer supports public/private key authentication over SSH using an SSH agent.
+Antora does not support public/private key authentication over SSH using an SSH agent.
 Instead, Antora transparently converts SSH URLs to HTTPS URLs.
-It then proceeds as if an HTTPS URL was given.
-This means users don't have to update their playbook files, even if the playbook uses SSH URLs.
+This means users don't have to update their existing playbook files, even if the playbook uses SSH URLs.
