@@ -1,7 +1,4 @@
 = Text Emphasis, Punctuation, and Typography
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :keywords: oblique, boldface, typeface
 
 == Visual Emphasis

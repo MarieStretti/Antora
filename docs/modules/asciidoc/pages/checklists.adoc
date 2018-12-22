@@ -1,7 +1,4 @@
-= Checkists
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
+= Checklists
 :keywords: check list, tick, ballot, punch list, O mark, tally, X mark
 :example-caption!:
 // URLs

@@ -1,7 +1,4 @@
 = Quotation Marks and Apostrophes
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :example-caption!:
 
 On this page, you'll learn:

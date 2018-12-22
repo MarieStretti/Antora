@@ -1,7 +1,4 @@
 = Lists
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 With AsciiDoc you can create several types of lists that contain a variety content, such as images, example blocks, and notices.
 You can even mix the different list item types into one list.

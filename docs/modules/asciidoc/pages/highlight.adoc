@@ -1,7 +1,4 @@
 = Highlight
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :example-caption!:
 :hash: #
 // URLs

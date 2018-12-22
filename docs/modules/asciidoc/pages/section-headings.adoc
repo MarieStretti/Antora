@@ -1,7 +1,4 @@
 = Section Headings
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-sections: {url-adoc-manual}/#sections

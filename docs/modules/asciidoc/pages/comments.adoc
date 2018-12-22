@@ -1,7 +1,4 @@
 = Comments
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-comments: {url-adoc-manual}/#comments
