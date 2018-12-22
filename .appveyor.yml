@@ -18,7 +18,7 @@ cache:
 - .cache/yarn
 build: off
 test_script:
-- node_modules/.bin/gulp test!
+- node_modules/.bin/gulp test
 on_success:
 - 7z a coverage.zip coverage
 - appveyor PushArtifact coverage.zip

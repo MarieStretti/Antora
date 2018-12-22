@@ -15,6 +15,7 @@ This project utilizes semantic versioning.
 === Changed
 
 * Upgrade dependencies
+* Migrate project build to Gulp 4 (#370)
 * *content-aggregator*: Don't show clone progress after authentication credentials were rejected during fetch
 * *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
 

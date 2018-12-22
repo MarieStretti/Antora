@@ -21,7 +21,7 @@ test:
   cache: *pull_cache
   script:
   - *run_yarn
-  - $(npm bin)/gulp test!
+  - $(npm bin)/gulp test
   artifacts:
     paths:
     - coverage/

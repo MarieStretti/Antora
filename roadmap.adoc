@@ -73,7 +73,6 @@ For a detailed list of current development tasks, refer to the Core components {
 *Release Timeframe*: Q3 2019
 
 * [ ] Add lifecycle hooks to default site generator
-* [ ] Upgrade build to Gulp 4
 * [ ] Add support for git-lfs for assets storage such as images {uri-issues}/185[#185]
 
 === Unscheduled
