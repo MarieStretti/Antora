@@ -374,42 +374,39 @@ Here are some of the files and directories you will see when developing this pro
 
 ....
 docs/         <1>
-lib/          <2>
-  index.js    <3>
 lib-example/
   capitalize.js
-node_modules/ <4>
-packages/     <5>
-  content-aggregator/ <6>
+node_modules/ <2>
+packages/     <3>
+  asciidoc-loader/
+  cli/
+  content-aggregator/ <4>
     devdocs/
       architecture-guidebook.adoc
     lib/
-    node_modules/ <4>
+    node_modules/ <2>
     test/
-    package.json
-  content-classifier
+    package.json <5>
+  content-classifier/
   document-converter/
   navigation-builder/
   ...
-tasks/
+gulpfile.js/
+  index.js    <6>
 test/         <7>
-gulpfile.js   <8>
-package.json  <9>
-yarn.lock     <10>
+package.json  <8>
+yarn.lock     <9>
 ....
 <1> The end user documentation for Antora.
-<2> The application code folder.
-<3> The entry point of the application.
-The code in this file assembles and executes the documentation pipeline.
-<4> A local installation of Node modules used for the development of this project.
-<5> Discrete software components used in the documentation pipeline.
-<6> The main code, test code, and architecture documentation for the content aggregator component.
-Developer documentation for discrete software components lives with the code.
-<7> Integration tests for the whole documentation pipeline.
-These tests verify that the discrete software components work properly together.
-<8> The Gulp build script that defines tasks used for development.
-<9> Defines project information and library dependencies.
-<10> Tracks the version of resolved dependencies to ensure builds are reproducible.
+<2> A local installation of Node modules used for the development of this project.
+<3> Discrete software components (i.e., packages) used in the documentation pipeline.
+<4> The main code, test code, and architecture documentation for the content aggregator component.
+Developer documentation for each software component lives alongside the code.
+<5> Defines project information and runtime and development library dependencies for the content aggregator component.
+<6> The Gulp build script that defines tasks used for development.
+<7> Contains test utilities and bootstrap code used in the test suite for each software component.
+<8> Defines project information and development library dependencies.
+<9> Tracks the version of resolved dependencies to ensure builds are reproducible.
 
 [#set-up-workspace]
 == Development Workspace Setup
