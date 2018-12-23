@@ -56,3 +56,6 @@ release:
   - yarn global add lerna@$(node -p 'require("./lerna.json").lerna') > /dev/null
   - npm -v
   - scripts/release.sh
+  # trigger a release of the Docker image (using information provided by scripts/release.sh if it succeeds)
+  - . releaserc
+  - curl -o /dev/null -s -X POST -F "token=$CI_JOB_TOKEN" -F "ref=$RELEASE_BRANCH" -F "variables[ANTORA_VERSION]=$RELEASE_VERSION" https://gitlab.com/api/v4/projects/5565100/trigger/pipeline

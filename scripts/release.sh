@@ -3,6 +3,8 @@
 # Package (aka module) release script.
 # Refer to ../releasing.adoc for details about how this script works.
 
+rm -rf build
+
 # resolve the version number (exact) or increment keyword (next in sequence)
 if [ -z $RELEASE_VERSION ]; then
   if [ -f releaserc ]; then
@@ -17,7 +19,7 @@ if [ -z $RELEASE_BRANCH ]; then RELEASE_BRANCH=master; fi
 # don't run if this branch is behind the branch from which we're releasing
 if [ "$(git merge-base --fork-point $RELEASE_BRANCH $CI_COMMIT_SHA)" != "$(git rev-parse $RELEASE_BRANCH)" ]; then
   echo $CI_COMMIT_REF_NAME is behind $RELEASE_BRANCH. This could indicate this release was already published. Aborting.
-  exit 0
+  exit 1
 fi
 
 # set up SSH auth using ssh-agent
@@ -53,11 +55,11 @@ done
 
 # release!
 if case $RELEASE_VERSION in major|minor|patch) ;; *) false;; esac; then
-  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:-latest} --yes
+  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=latest} --yes
 elif case $RELEASE_VERSION in pre*) ;; *) false;; esac; then
-  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:-next} --yes
+  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=next} --yes
 else
-  lerna publish --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:-latest} --repo-version=$RELEASE_VERSION --yes
+  lerna publish --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=latest} --repo-version=$RELEASE_VERSION --yes
 fi
 
 git status -s -b
@@ -76,3 +78,10 @@ rm -rf build
 
 # kill the ssh-agent
 eval $(ssh-agent -k) >/dev/null
+
+# update releaserc with resolved values
+echo "RELEASE_VERSION=$RELEASE_VERSION
+RELEASE_BRANCH=$RELEASE_BRANCH
+RELEASE_NPM_TAG=$RELEASE_NPM_TAG" > releaserc
+
+exit 0
