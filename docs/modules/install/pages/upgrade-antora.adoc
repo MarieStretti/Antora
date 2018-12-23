@@ -1,66 +1,88 @@
 = Upgrade Antora
-:version-node-patch: 10.14.2
+:version-node: 10
+:version-node-patch: {version-node}.14.2
+:version-npm: 6.4.1
 
 On this page, you'll learn:
 
-* [x] How to upgrade the Antora CLI.
-* [x] How to upgrade the default Antora site generator.
+* [x] How to upgrade Node. (optional)
+* [x] How to upgrade Antora globally.
+* [x] How to upgrade the Antora CLI and default site generator individually.
 
-IMPORTANT: The CLI version and default site generator version must be the same.
-If you follow these instructions when you upgrade, the versions will stay in sync.
+== Upgrade Node (optional)
 
-== Upgrade the CLI
+You can use any currently supported Node LTS release with Antora, but we recommend using the most recent LTS version so that you benefit from the latest performance and security enhancements.
+The https://nodejs.org/en/about/releases/[Node release schedule^] shows which Node LTS versions are active.
 
-To upgrade the CLI, open a terminal and type:
+To check which Node version you have installed, open a terminal and type:
 
- $ npm install -g @antora/cli
+ $ node --version
 
-The Node package manager (npm) will automatically install the latest version of the CLI.
+If you need to upgrade to the latest Node LTS version, type:
 
-[TIP]
-====
-If you installed the CLI and the default site generator globally, you can upgrade both of them with the same command.
+.Linux and macOS
+ $ nvm install --lts
+
+.Windows
+[subs=attributes+]
+ $ nvm install {version-node-patch}
+
+On Windows, you have to specify the full Node LTS version.
+
+Next, to set the latest version of Node as the default for any new terminal, type:
+
+.Linux and macOS
+[subs=attributes+]
+ $ nvm alias default {version-node}
+
+.Windows
+[subs=attributes+]
+ $ nvm alias default {version-node-patch}
+
+Now you're ready to upgrade to the latest version of Antora.
+
+== Upgrade Antora globally
+
+If you installed the Antora CLI and default site generator globally, you can upgrade them at the same time.
+
+In a terminal, type:
 
  $ npm install -g @antora/cli @antora/site-generator-default
 
-====
+The Node package manager (npm) will automatically install the latest version of Antora.
 
-.npm tips
+.Do I have Antora installed globally?
 ****
-To list the Node packages that are installed globally, type the following command in your terminal:
+To list your globally installed Node packages, type the following command in your terminal:
 
  $ npm ls -g --depth=0
 
-If the CLI and site generator are installed globally, you'll see them listed in the terminal output.
-The output will also show the CLI and site generator versions, which should be the same.
+If you installed the Antora CLI and site generator globally, you'll see them listed in the terminal output.
 
 .List of globally installed Node packages
 [subs=attributes+]
 ....
 /home/user/.nvm/versions/node/v{version-node-patch}/lib
-├── @antora/cli@{page-component-version}.x
-├── @antora/site-generator-default@{page-component-version}.x
-├── npm@5.6.0
+├── @antora/cli@1.1.1
+├── @antora/site-generator-default@1.1.1
+├── npm@{version-npm}
 └── ...
 ....
 
-To list the Node packages you have installed locally in a project, go to that directory and type:
-
- $ npm ls --depth=0
-
+If you only see the CLI (`@antora/cli`) listed, then you installed the site generator in a specific local project directory.
+In this case, you'll need to upgrade the Antora CLI and site generator as described in the following section.
 ****
 
-== Upgrade the default site generator
+== Upgrade the Antora CLI and site generator separately
 
-The method for upgrading the default site generator depends on whether it is installed globally or inside a playbook project.
+If you didn't install a previous version of Antora site generator globally, you'll need to upgrade the Antora CLI and default site generator separately.
 
-If it's installed globally, the command to upgrade it is:
+. Upgrade the CLI globally by typing:
 
- $ npm install -g @antora/site-generator-default
+ $ npm install -g @antora/cli
 
-If you installed the site generator in a playbook project, update the version number of the site generator in the package file.
-
-. Switch to the playbook project directory.
+. Change to your local project directory.
+This is typically where your Antora playbook file, [.path]_antora-playbook.yml_, is stored.
 
 . Open the [.path]_package.json_ file.
 
@@ -84,9 +106,9 @@ If you installed the site generator in a playbook project, update the version nu
 TIP: If you're using yarn instead of npm, run the `yarn` command after updating  [.path]_package.json_.
 It may be necessary to pass the `--force` flag to force an update.
 
-You've now upgraded to the latest version of the Antora CLI and default site generator.
+You've now upgraded to the latest version of Antora.
 
-== What's next?
+== Next
 
-* Checkout the https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc[CHANGELOG^] to see what's new.
+* Review xref:ROOT:whats-new.adoc[What's New in Antora] for the latest features and potential breaking changes.
 * xref:ROOT:run-antora.adoc[Run Antora] and generate a documentation site.
