@@ -44,17 +44,27 @@ That's because a single version can be spread out across multiple branches, or e
 
 == Versionless components
 
-It's possible to have a versionless component.
-You'll still use a branch, but you'll only use one.
-In this case, put all the files in the master branch.
-Then, assign a version-agnostic name in the component descriptor, such as latest or stable:
+It's possible to make a component versionless.
+A [.term]_versionless component_ is one that has a single component version, but where the URL of its files do not contain a version segment in the published site.
 
+To make a versionless component, you still need to use a branch.
+However, you'll only use one.
+Put all the files for the component in the master branch or a branch name of your choosing.
+Then, assign the reserved word `master` to the component's version property in the component descriptor:
+
+.antora.yml for a versionless component
 [source,yaml]
 ----
-name: versionless-component
-version: latest
-title: Versionless Component
+name: tutorials
+version: master
+title: Tutorials
 ----
 
-You can also combine a versionless branch (like latest or stable) with version branches.
-They don't even have to contain the same files.
+When the name of a component version is `master`, Antora removes the version segment from the URL (and output path) of all publishable files in that component version.
+For example, a page in the versionless component shown above might have a URL like `/tutorials/build-a-restful-web-service.html`.
+However, the version name can still be referenced in resource IDs for the purpose of making references (e.g., `master@tutorials::build-a-restful-web-service.adoc`).
+
+If the version property has any value other than `master` (e.g., lastest), that value will appear in the URL (and output path) of the files.
+
+You can also make a hybrid component which has both regular component versions and a versionless component version.
+//They don't even have to contain the same files.
