@@ -111,6 +111,7 @@ To ensure this file is protected, immediately set its file permissions so it can
 
  $ chmod 600 $HOME/.git-credentials
 
+[#custom-credential-path]
 == Specify a custom git credential store path
 
 Instead of using the credential store at the default path(s), you can instruct Antora to look for the file in a different location using either the `--git-credentials-path` CLI option or `GIT_CREDENTIALS_PATH` environment variable.
@@ -192,6 +193,7 @@ You can then use the following script to expand the references to the environmen
 
 Despite this workaround, we still recommend using the credential store integration described earlier.
 
+[#custom-manager]
 == Configure a custom credential manager
 
 The git client used by Antora, isomorphic-git, provides a {url-credential-manager-plugin}[pluggable credential manager^] for looking up authentication credentials.
