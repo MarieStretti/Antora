@@ -56,7 +56,7 @@ If *the command returns an active Node LTS version*, makes sure that version is 
 [subs=attributes+]
  $ nvm alias default {version-node}
 
-Now you're all set to xref:install/install-antora.adoc[install Antora].
+Now you're ready to xref:install-antora.adoc[install Antora].
 
 [#install-nvm]
 == Install nvm and Node
@@ -78,7 +78,7 @@ Type the following command to switch to it:
 
  $ nvm use
 
-Now that you have Node set up, you can xref:install/install-antora.adoc[install Antora].
+Now that you have Node set up, you can xref:install-antora.adoc[install Antora].
 
 [#upgrade-node]
 == Upgrade Node using nvm
@@ -98,9 +98,9 @@ Type the following command to switch to it:
 
  $ nvm use
 
-Now that you're on the right version of Node, you can xref:install/install-antora.adoc[install Antora].
+Now that you're on the right version of Node, you can xref:install-antora.adoc[install Antora].
 
 == What's next?
 
-Once you've installed Node, you're ready to xref:install/install-antora.adoc[install Antora].
+Once you've installed Node, you're ready to xref:install-antora.adoc[install Antora].
 //end::shared[]

@@ -6,7 +6,7 @@
 :url-plantuml-npm: https://www.npmjs.com/package/asciidoctor-plantuml
 
 The Antora project provides a Docker image so you can run the `antora` command inside a container (a process known as [.term]_containerization_).
-The benefit of this approach is that you can bypass installation of Antora and skip right to running it.
+The benefit of this approach is that you can bypass installing Antora and skip right to running it.
 All you need is Docker.
 
 Assumptions:
@@ -50,9 +50,9 @@ Next, execute the `docker run` command to invoke the entrypoint command for this
  demo-site $ docker run -u $UID --privileged -v `pwd`:/antora --rm -t antora/antora site.yml
 
 This command spins up a new container from the image, mounts the current directory as the path [.path]_/antora_ inside the container, runs the `antora` command (as the current user), then stops and removes the container.
-It's exactly like running a locally-installed `antora` command, only you used container superpowers to do it!
+It's exactly like running a locally installed `antora` command, only you used container superpowers to do it!
 
-Here's an explaination of some of the option flags used in this command:
+Here's an explanation of some of the option flags used in this command:
 
 `-t`::
 This flag allocates a pseudo-TTY, which is required if you want to see progress bars for git operations.

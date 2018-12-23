@@ -40,7 +40,7 @@ Otherwise, skip directly to <<install-nvm,install nvm and Node>>.
 
 If *the command returns a version that isn't an active LTS version*, upgrade to the latest Node LTS version <<upgrade-node,using nvm>>.
 
-If *the command returns an active Node LTS version*, you're all set to xref:install/install-antora.adoc[install Antora].
+If *the command returns an active Node LTS version*, you're all set to xref:install-antora.adoc[install Antora].
 
 [#install-choco]
 == Install Chocolatey
@@ -77,7 +77,7 @@ TIP: If you just installed Chocolatey using the instructions in the proceeding s
 IMPORTANT: When using nvm for Windows, you must enter an exact version of Node until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
 --
 
-Now that Node is installed, you're ready to xref:install/install-antora.adoc[install Antora].
+Now that Node is installed, you're ready to xref:install-antora.adoc[install Antora].
 
 .nvm and CI environments
 ****
@@ -99,8 +99,8 @@ If you have nvm installed but your Node version is not an LTS release, type the 
 
 IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node-patch}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
 
-Now that you're on the right version of Node, you can xref:install/install-antora.adoc[install Antora].
+Now that you're on the right version of Node, you can xref:install-antora.adoc[install Antora].
 
 == What's next?
 
-Once you've installed Node, you're ready to xref:install/install-antora.adoc[install Antora].
+Once you've installed Node, you're ready to xref:install-antora.adoc[install Antora].

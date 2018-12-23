@@ -2,13 +2,13 @@
 * xref:how-antora-works.adoc[How Antora Works]
 
 * Get Antora
-** xref:supported-platforms.adoc[System Requirements]
-*** xref:install/linux-requirements.adoc[Linux]
-*** xref:install/macos-requirements.adoc[macOS]
-*** xref:install/windows-requirements.adoc[Windows]
+** xref:install:supported-platforms.adoc[System Requirements]
+*** xref:install:linux-requirements.adoc[Linux]
+*** xref:install:macos-requirements.adoc[macOS]
+*** xref:install:windows-requirements.adoc[Windows]
 
-** xref:install/install-antora.adoc[Install Antora]
-** xref:install/upgrade-antora.adoc[Upgrade Antora]
+** xref:install:install-antora.adoc[Install Antora]
+** xref:install:upgrade-antora.adoc[Upgrade Antora]
 
 * xref:run-antora.adoc[Run Antora]
 ** xref:run-antora.adoc#cache[About the Cache]
