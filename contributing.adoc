@@ -437,6 +437,8 @@ First, check if you have git installed.
 
 If not, {uri-git-dl}[download and install] the git package for your system.
 
+Although Antora doesn't use git at runtime, git is used in the test suite to provide a local git server for testing interactions with remote repositories.
+
 ==== Node / npm
 
 Antora is built on {uri-node}[Node.js] ("`Node`") (command: `node`).
@@ -581,7 +583,7 @@ You can omit the `build` argument since it's the default command:
 === Run the Test Suite
 
 This project uses {uri-mocha}[mocha] to run the tests and the assertion library {uri-chai}[chai].
-The build is automatically configured to lint your JavaScript code, which it does once all the tests pass.
+The build task is automatically configured to lint your JavaScript code, which it does once all the tests pass.
 
 To run the test suite, use:
 
