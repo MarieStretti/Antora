@@ -1,7 +1,5 @@
 = Page Identifier
 
-//Antora's page IDs are one of its foundational elements.
-
 == What is a page identifier?
 
 In order for a page to be linked to, i.e., referenced, that page must have a unique and stable identifier.

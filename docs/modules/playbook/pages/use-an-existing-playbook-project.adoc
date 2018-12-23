@@ -1,11 +1,8 @@
 = Use an Existing Playbook Project
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 *This page is for people joining a documentation project that already uses Antora.*
 
-include::{partialsdir}/playbook-project-summary.adoc[]
+include::partial$playbook-project-summary.adoc[]
 
 Before you can generate a site with Antora, you'll need to fetch the playbook project for your site.
 

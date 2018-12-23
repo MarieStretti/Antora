@@ -1,7 +1,4 @@
 = Component Descriptor: antora.yml
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 A documentation component must contain a component descriptor file named [.path]_antora.yml_.
 

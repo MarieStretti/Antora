@@ -1,7 +1,4 @@
 = Ordered and Unordered Lists
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :keywords: enumerated sequence, bullet points, bulleted list, ol, ul
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual

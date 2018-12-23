@@ -1,11 +1,10 @@
 = Run Antora to Generate Your Site
-// URLs
 :url-demo-project: https://gitlab.com/antora/demo/demo-site
 :url-demo-playbook: {url-demo-project}/raw/master/site.yml
 
 Assumptions:
 
-* [x] You've xref:install/install-antora.adoc[installed the Antora CLI and a site generator pipeline].
+* [x] You've xref:install:install-antora.adoc[installed the Antora CLI and a site generator pipeline].
 * [x] You have your own xref:playbook:index.adoc[playbook], or you're using the Demo playbook.
 * [x] Your playbook is configured to access at least one of your own  xref:component-structure.adoc[documentation component repositories] or Antora's Demo docs components.
 * [x] Your playbook is configured to use a xref:playbook:configure-ui.adoc[custom UI bundle or Antora's default UI bundle].

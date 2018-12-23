@@ -1,7 +1,4 @@
 = Page Cross References
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :colon: :
 
 To link between documentation pages, you'll use the the AsciiDoc cross reference macro and a page ID.

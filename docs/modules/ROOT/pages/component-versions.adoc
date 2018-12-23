@@ -2,9 +2,6 @@
 TODO: explain how this relates to page versions
 ////
 = Component Versions and Branches
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 Versions of a documentation component are stored in branches in a version control repository such as git.
 The name of the branch itself doesn't matter.

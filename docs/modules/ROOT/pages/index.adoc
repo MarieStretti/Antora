@@ -1,7 +1,4 @@
 = Antora Documentation
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :keywords: Docs as Code, DocOps, content management system, docs writers, publish software documentation, CI and docs, CD and docs
 // URLs
 :url-changelog: https://gitlab.com/antora/antora/blob/master/CHANGELOG.adoc
@@ -87,7 +84,7 @@ If you're just beginning your journey with Antora, you'll probably want to know 
 If you're ready to set up a new documentation project, or you want to migrate an existing project to Antora, start by xref:component-structure.adoc[organizing your documentation files] into the project structure Antora expects.
 You'll then need to xref:playbook:index.adoc[create a playbook] to tell Antora where to find the documentation and UI to use for your site.
 
-If you already have a documentation component set up, and you're ready to create your first site, check that you've met Antora's xref:supported-platforms.adoc[system requirements], then xref:install/install-antora.adoc[install Antora], and finally xref:run-antora.adoc[generate your site] using the `antora` command.
+If you already have a documentation component set up, and you're ready to create your first site, check that you've met Antora's xref:install:supported-platforms.adoc[system requirements], then xref:install:install-antora.adoc[install Antora], and finally xref:run-antora.adoc[generate your site] using the `antora` command.
 
 If you want to jump into writing, learn how to use the AsciiDoc syntax to xref:page:index.adoc[make documentation pages].
 

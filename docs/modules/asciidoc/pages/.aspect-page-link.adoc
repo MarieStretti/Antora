@@ -1,10 +1,4 @@
 = Reference an Aspect Page
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
-// Settings
-:idprefix:
-:idseparator: -
 
 How does a visitor navigate into an aspect domain from a component domain?
 

@@ -1,7 +1,4 @@
 = Register Navigation Files
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :description: How to enlist navigation files in a component descriptor so that Antora assembles them into a component navigation menu.
 :keywords: nav.adoc, antora.yml, register navigation files, add page link lists to a menu, UI, theme
 // Filters

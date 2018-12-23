@@ -2,7 +2,7 @@
 
 Assumptions:
 
-* [x] You've installed a Node LTS release on your xref:install/linux-requirements.adoc#node[Linux], xref:install/windows-requirements.adoc#node[Windows], or xref:install/macos-requirements.adoc#node[macOS] machine.
+* [x] You've installed a Node LTS release on your xref:linux-requirements.adoc#node[Linux], xref:windows-requirements.adoc#node[Windows], or xref:macos-requirements.adoc#node[macOS] machine.
 
 On this page, you'll learn:
 
@@ -82,5 +82,5 @@ The `antora` command will look for these packages there first before looking in 
 Now that the Antora CLI and default site generator are installed, you are ready to:
 
 * Set up your own xref:playbook:index.adoc[playbook] or use the Demo playbook.
-* Organize a xref:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
-* xref:run-antora.adoc[Run Antora] and generate a documentation site.
+* Organize a xref:ROOT:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
+* xref:ROOT:run-antora.adoc[Run Antora] and generate a documentation site.

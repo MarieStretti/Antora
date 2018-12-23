@@ -1,7 +1,4 @@
 = AsciiDoc
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 
 AsciiDoc is Antora's native content markup language.
 AsciiDoc is ideal for writing documentation because it's:

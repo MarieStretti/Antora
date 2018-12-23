@@ -1,7 +1,4 @@
 = Create a Navigation File and Register It
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // Filters
 // basics? fundamentals?
 :page-collections: base jumps, starter

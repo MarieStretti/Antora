@@ -1,4 +1,3 @@
-//.xref:index.adoc[Content Navigation]
 .xref:index.adoc[Navigation]
 * xref:filenames-and-locations.adoc[Navigation File Names & Storage Locations]
 * xref:register-navigation-files.adoc[Navigation File Registration]

@@ -1,7 +1,4 @@
 = Navigation File Names and Storage Locations
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :description: An overview of the purpose of an Antora navigation source file, its file format, its naming parameters, and storage location patterns.
 :keywords: AsciiDoc navigation file, nav.adoc, repository organization, save navigation in a repository, navigation file best practices
 // Filters

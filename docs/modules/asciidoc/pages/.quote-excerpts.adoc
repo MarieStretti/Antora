@@ -1,10 +1,5 @@
 = Quote and Prose Excerpts
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // Settings
-:idprefix:
-:idseparator: -
 :example-caption!:
 // External URIs
 :uri-adoc-manual: http://asciidoctor.org/docs/user-manual

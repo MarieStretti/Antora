@@ -1,7 +1,4 @@
 = Special Characters and Symbols
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :table-caption!:
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual

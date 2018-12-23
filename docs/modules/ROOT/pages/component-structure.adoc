@@ -103,15 +103,8 @@ Directory that contains AsciiDoc files that can be inserted into the files store
 These files *aren't* converted to HTML by Antora directly.
 Instead, they must be referenced by an xref:asciidoc:include-partial.adoc[include directive] in a page in the [.path]_pages_ directory.
 
-//<module>/_attributes.adoc ::
-//_Required_; _Reserved_
-//+
-//Helper file that enables assets, partials, and examples to be rendered in preview tools such as Atom and the Asciidoctor Chrome extension.
-
 xref:navigation:index.adoc[<module>/nav.adoc] ::
 _Optional_; _Reserved_
 +
 A xref:navigation:filenames-and-locations.adoc[navigation file] contains one or more AsciiDoc lists.
 Each navigation file must be xref:navigation:register-navigation-files.adoc[declared in the component descriptor] if you want it to be displayed in the component's navigation menu.
-
-//We know the structure in the example above represents a documentation component because of the presence of an [.path]_antora.yml_ file.

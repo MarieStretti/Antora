@@ -1,7 +1,4 @@
 = Navigation Link Syntax, Content, and Styles
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :description: All of the types of content you can use in an Antora navigation menu and how to mark them up with valid AsciiDoc.
 :keywords: nav.adoc, menu labels, navigation labels, menu entries, UI, theme
 // Filters

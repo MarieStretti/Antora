@@ -1,7 +1,4 @@
 = Description Lists
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 :example-caption!:
 :keywords: definition list, association list, labeled list, dl, dt, dd
 // URLs

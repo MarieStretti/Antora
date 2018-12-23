@@ -1,7 +1,4 @@
 = Output Configuration
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-zip-file-format: https://en.wikipedia.org/wiki/Zip_(file_format)
 

@@ -1,7 +1,4 @@
-= Single List & Multi-list Navigation Files
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
+= Single List and Multi-list Navigation Files
 :description: How to structure a single list or multi-list Antora navigation source file, nest items in a list, and use list titles to create component navigation menus.
 :keywords: nav.adoc, nested sidebar menu, nested navigation with AsciiDoc, Antora menu items, UI, theme
 // Filters

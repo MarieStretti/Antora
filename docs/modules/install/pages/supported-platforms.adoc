@@ -9,8 +9,8 @@
 Antora runs on Linux, macOS, and Windows.
 Thanks to this broad platform support, Antora can also be used on all well-known cloud platforms and continuous integration and delivery servers.
 
-This page provides an <<platforms,overview of the platforms>> Antora supports and directs you to the <<what-s-next,system requirements>> for each platform.
-The Antora project also provides an official xref:antora-container.adoc[Docker container] you can use to bypass the installation process.
+This page provides an <<platforms,overview of the platforms>> Antora supports and directs you to the <<next,system requirements>> for each platform.
+The Antora project also provides an official xref:ROOT:antora-container.adoc[Docker container] you can use to bypass the installation process.
 
 == Platforms
 
@@ -105,15 +105,15 @@ On subsequent runs, Antora only reconnects to the remote repositories if the xre
 |Maximum throughput and minimum latency always make things nicer but aren't required.
 |===
 
-== What's next?
+== Next
 
 Prep your system for installing Antora:
 
-* xref:install/linux-requirements.adoc[Linux requirements]
-* xref:install/macos-requirements.adoc[macOS requirements]
-* xref:install/windows-requirements.adoc[Windows requirements]
+* xref:linux-requirements.adoc[Linux requirements]
+* xref:macos-requirements.adoc[macOS requirements]
+* xref:windows-requirements.adoc[Windows requirements]
 
-Or try out the official xref:antora-container.adoc[Antora Docker container].
+Or try out the official xref:ROOT:antora-container.adoc[Antora Docker container].
 
 ////
 OS Release schedule links

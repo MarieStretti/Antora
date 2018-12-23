@@ -1,7 +1,4 @@
 = Embed a Video
-ifndef::env-site,env-github[]
-include::_attributes.adoc[]
-endif::[]
 // URLs
 :url-adoc-manual: https://asciidoctor.org/docs/user-manual
 :url-video-formats: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
