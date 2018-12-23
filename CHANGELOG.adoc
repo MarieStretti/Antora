@@ -19,6 +19,7 @@ This project utilizes semantic versioning.
 * *playbook-builder*: Remove `ANTORA_PLAYBOOK` environment variable.
 * *content-aggregator*: Don't show clone progress after authentication credentials were rejected during fetch
 * *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
+* Move project roadmap to docs.antora.org and update for 2019 (#223)
 
 === Fixed
 
