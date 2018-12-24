@@ -54,6 +54,7 @@ EOF
 done
 
 # release!
+npm -v
 if case $RELEASE_VERSION in major|minor|patch) ;; *) false;; esac; then
   lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=latest} --yes
 elif case $RELEASE_VERSION in pre*) ;; *) false;; esac; then

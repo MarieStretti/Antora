@@ -54,7 +54,6 @@ release:
   environment: releases
   script:
   - yarn global add lerna@$(node -p 'require("./lerna.json").lerna') > /dev/null
-  - npm -v
   - scripts/release.sh
   # trigger a release of the Docker image (using information provided by scripts/release.sh if it succeeds)
   - . releaserc
