@@ -15,8 +15,6 @@ If you've never installed Antora before, you'll need to complete the steps on th
 Antora is built on Node.js ("`Node`").
 To install Antora, all you need on your machine is a long term support (LTS) release of Node.
 We'll be using the Chocolatey package manager to install it.
-Although Antora performs git operations, you don't need a git client installed to use Antora.
-However, you'll likely need a git client to clone and modify files in repositories you plan to use with Antora.
 
 == Node
 
@@ -33,7 +31,7 @@ You should see a version string, such as:
 v{version-node-patch}
 ....
 
-If *the command fails with an error*, it means you don't have Node installed.
+If *the command fails with an error*, you don't have Node installed.
 The best way to install Node on Windows is to use Chocolatey.
 If you don't have Chocolatey on your machine, go to <<install-choco,install Chocolatey>> to get it set up.
 Otherwise, skip directly to <<install-nvm,install nvm and Node>>.
@@ -97,10 +95,8 @@ If you have nvm installed but your Node version is not an LTS release, type the 
 [subs=attributes+]
  $ nvm install {version-node-patch}
 
-IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node-patch}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
+IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node-patch}`).
 
-Now that you're on the right version of Node, you can xref:install-antora.adoc[install Antora].
-
-== What's next?
+== Next
 
 Once you've installed Node, you're ready to xref:install-antora.adoc[install Antora].

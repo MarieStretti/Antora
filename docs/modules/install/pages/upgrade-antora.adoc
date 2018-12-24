@@ -27,8 +27,6 @@ If you need to upgrade to the latest Node LTS version, type:
 [subs=attributes+]
  $ nvm install {version-node-patch}
 
-On Windows, you have to specify the full Node LTS version.
-
 Next, to set the latest version of Node as the default for any new terminal, type:
 
 .Linux and macOS
@@ -49,7 +47,7 @@ In a terminal, type:
 
  $ npm install -g @antora/cli @antora/site-generator-default
 
-The Node package manager (npm) will automatically install the latest version of Antora.
+npm will automatically install the latest version of Antora.
 
 .Do I have Antora installed globally?
 ****
@@ -110,5 +108,4 @@ You've now upgraded to the latest version of Antora.
 
 == Next
 
-* Review xref:ROOT:whats-new.adoc[What's New in Antora] for the latest features and potential breaking changes.
-* xref:ROOT:run-antora.adoc[Run Antora] and generate a documentation site.
+Review xref:ROOT:whats-new.adoc[What's New in Antora] for the latest features and potential breaking changes.
