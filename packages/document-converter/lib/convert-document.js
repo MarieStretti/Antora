@@ -2,7 +2,7 @@
 
 const loadAsciiDoc = require('@antora/asciidoc-loader')
 
-const CommaDelimiterRx = /\s*,\s*/
+const COMMA_DELIMITER_RX = /\s*,\s*/
 
 /**
  * Converts the contents on the specified file from AsciiDoc to embeddable HTML.
@@ -39,7 +39,7 @@ function convertDocument (file, contentCatalog = undefined, asciidocConfig = {})
 function registerAliases (aliases, targetFile, contentCatalog) {
   if (!aliases) return
   aliases
-    .split(CommaDelimiterRx)
+    .split(COMMA_DELIMITER_RX)
     .forEach((aliasSpec) => aliasSpec && contentCatalog.registerPageAlias(aliasSpec, targetFile))
 }
 
