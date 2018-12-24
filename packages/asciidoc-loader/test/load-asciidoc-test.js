@@ -1146,7 +1146,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.be.empty()
     })
 
-    it('should apply tag filtering to contents of include if tags are specified', () => {
+    it('should apply tag filtering to contents of include if tags separated by semi-colons are specified', () => {
       const includeContents = heredoc`
         # tag::hello[]
         puts "Hello, World!"
@@ -1164,6 +1164,60 @@ describe('loadAsciiDoc()', () => {
         [source,ruby]
         ----
         include::{examplesdir}/ruby/greet.rb[tags=hello;goodbye]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should apply tag filtering to contents of include if tags separated by commas are specified', () => {
+      const includeContents = heredoc`
+        # tag::hello[]
+        puts "Hello, World!"
+        # end::hello[]
+        # tag::goodbye[]
+        puts "Goodbye, World!"
+        # end::goodbye[]
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[tags="hello,goodbye"]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should split include tag on comma if present and ignore semi-colons', () => {
+      const includeContents = heredoc`
+        # tag::hello[]
+        puts "Hello, World!"
+        # end::hello[]
+        # tag::goodbye;adios[]
+        puts "Goodbye, World!"
+        # end::goodbye;adios[]
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[tags="hello,goodbye;adios"]
         ----
       `)
       const doc = loadAsciiDoc(inputFile, contentCatalog)

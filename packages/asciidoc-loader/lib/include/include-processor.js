@@ -4,7 +4,6 @@ const Opal = global.Opal
 
 const CIRCUMFIX_COMMENT_SUFFIX_RX = / (?:\*[/)]|--%?>)$/
 const NEWLINE_RX = /\r\n?|\n/
-const TAG_DELIMITER_RX = /[,;]/
 const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
 
 const IncludeProcessor = (() => {
@@ -64,7 +63,7 @@ function getTags (attrs) {
     if (tags) {
       let result = new Map()
       let any = false
-      tags.split(TAG_DELIMITER_RX).forEach((tag) => {
+      tags.split(~tags.indexOf(',') ? ',' : ';').forEach((tag) => {
         if (tag && tag !== '!') {
           any = true
           tag.charAt() === '!' ? result.set(tag.substr(1), false) : result.set(tag, true)
