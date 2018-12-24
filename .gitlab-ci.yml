@@ -52,8 +52,8 @@ release:
   only:
   - releases@antora/antora
   environment: releases
+  before_script: yarn global add lerna@$(node -p 'require("./lerna.json").lerna') > /dev/null
   script:
-  - yarn global add lerna@$(node -p 'require("./lerna.json").lerna') > /dev/null
   - scripts/release.sh
   # trigger a release of the Docker image (using information provided by scripts/release.sh if it succeeds)
   - . releaserc
