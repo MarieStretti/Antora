@@ -890,6 +890,79 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql([nestedIncludeContents])
     })
 
+    it('should skip include directive if max include depth is 0', () => {
+      const stderrLines = []
+      const includeContents = 'greetings!'
+      const contentCatalog = mockContentCatalog({
+        family: 'partial',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('getById')
+      setInputFileContents('include::partial$greeting.adoc[]')
+      const defaultStderrWrite = process.stderr.write
+      process.stderr.write = (msg) => stderrLines.push(msg)
+      const doc = loadAsciiDoc(inputFile, contentCatalog, { attributes: { 'max-include-depth': 0 } })
+      process.stderr.write = defaultStderrWrite
+      expect(contentCatalog.getById).to.not.have.been.called()
+      expect(doc.getBlocks()).to.be.empty()
+      expect(stderrLines).to.be.empty()
+    })
+
+    it('should skip include directive if max include depth is exceeded', () => {
+      const stderrLines = []
+      const includeContents = 'greetings!\n\ninclude::partial$greeting.adoc[]'
+      const contentCatalog = mockContentCatalog({
+        family: 'partial',
+        relative: 'greeting.adoc',
+        contents: includeContents,
+      }).spyOn('getById')
+      setInputFileContents('include::partial$greeting.adoc[]')
+      const defaultStderrWrite = process.stderr.write
+      process.stderr.write = (msg) => stderrLines.push(msg)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      process.stderr.write = defaultStderrWrite
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'greeting.adoc',
+      })
+      const maxIncludeDepth = doc.getAttribute('max-include-depth')
+      expect(doc.getBlocks()).to.have.lengthOf(maxIncludeDepth)
+      expect(stderrLines).to.have.lengthOf(1)
+      expect(stderrLines[0].trim()).to.equal(
+        `asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of ${maxIncludeDepth} exceeded`
+      )
+    })
+
+    it('should honor depth set in include directive', () => {
+      const stderrLines = []
+      const includeContents = 'greetings!\n\ninclude::partial$hit-up-for-money.adoc[]'
+      const contentCatalog = mockContentCatalog([
+        { family: 'partial', relative: 'greeting.adoc', contents: includeContents },
+        { family: 'partial', relative: 'hit-up-for-money.adoc', contents: 'Got some coin for me?' },
+      ]).spyOn('getById')
+      setInputFileContents('include::partial$greeting.adoc[depth=0]')
+      const defaultStderrWrite = process.stderr.write
+      process.stderr.write = (msg) => stderrLines.push(msg)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      process.stderr.write = defaultStderrWrite
+      expect(contentCatalog.getById).to.have.been.called.once()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'greeting.adoc',
+      })
+      expect(doc.getBlocks()).to.have.lengthOf(1)
+      expect(stderrLines).to.have.lengthOf(1)
+      expect(stderrLines[0].trim()).to.equal(
+        `asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of 1 exceeded`
+      )
+    })
+
     it('should not register include in document catalog', () => {
       const includeContents = 'Hello, World!'
       const contentCatalog = mockContentCatalog({
