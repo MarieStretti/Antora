@@ -1099,27 +1099,37 @@ describe('loadAsciiDoc()', () => {
     })
 
     it('should match tag directives enclosed in circumfix comments', () => {
-      const includeContents = heredoc`
-        /* tag::header[] */
+      const cssContents = heredoc`
+        /* tag::snippet[] */
         header { color: red; }
-        /* end::header[] */
+        /* end::snippet[] */
       `
-      const contentCatalog = mockContentCatalog({
-        family: 'example',
-        relative: 'theme.css',
-        contents: includeContents,
-      })
+      const mlContents = heredoc`
+        (* tag::snippet[] *)
+        let s = SS.empty;;
+        (* end::snippet[] *)
+      `
+      const contentCatalog = mockContentCatalog([
+        { family: 'example', relative: 'theme.css', contents: cssContents },
+        { family: 'example', relative: 'empty.ml', contents: mlContents },
+      ])
       setInputFileContents(heredoc`
-        [source,css]
         ----
-        include::{examplesdir}/theme.css[tag=header]
+        include::{examplesdir}/theme.css[tag=snippet]
+        ----
+
+        ----
+        include::{examplesdir}/empty.ml[tag=snippet]
         ----
       `)
       const doc = loadAsciiDoc(inputFile, contentCatalog)
-      const firstBlock = doc.getBlocks()[0]
-      expect(firstBlock).not.to.be.undefined()
-      expect(firstBlock.getContext()).to.equal('listing')
-      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => !l.startsWith('/*')))
+      expect(doc.getBlocks()).to.have.lengthOf(2)
+      const block0 = doc.getBlocks()[0]
+      expect(block0.getContext()).to.equal('listing')
+      expect(block0.getSourceLines()).to.eql([cssContents.split('\n')[1]])
+      const block1 = doc.getBlocks()[1]
+      expect(block1.getContext()).to.equal('listing')
+      expect(block1.getSourceLines()).to.eql([mlContents.split('\n')[1]])
     })
 
     it('should apply tag filtering to contents of include if negated tag is specified', () => {

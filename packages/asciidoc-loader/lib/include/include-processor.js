@@ -2,9 +2,11 @@
 
 const Opal = global.Opal
 
-const CIRCUMFIX_COMMENT_SUFFIX_RX = / (?:\*[/)]|--%?>)$/
+const DBL_COLON = '::'
+const DBL_SQUARE = '[]'
+
 const NEWLINE_RX = /\r\n?|\n/
-const TAG_DIRECTIVE_RX = /\b(?:tag|(end))::(\S+)\[\]$/
+const TAG_DIRECTIVE_RX = /\b(?:tag|(e)nd)::(\S+?)\[\](?=$|[ \r])/m
 
 const IncludeProcessor = (() => {
   const $callback = Symbol('callback')
@@ -103,13 +105,7 @@ function applyTagFiltering (contents, tags) {
     lineNum++
     let m
     let l = line
-    if (
-      (l.endsWith('[]') ||
-        (~l.indexOf('[] ') &&
-          (m = l.match(CIRCUMFIX_COMMENT_SUFFIX_RX)) &&
-          (l = l.substr(0, m.index)).endsWith('[]'))) &&
-      (m = l.match(TAG_DIRECTIVE_RX))
-    ) {
+    if (~l.indexOf(DBL_COLON) && ~l.indexOf(DBL_SQUARE) && (m = l.match(TAG_DIRECTIVE_RX))) {
       const thisTag = m[2]
       if (m[1]) {
         if (thisTag === activeTag) {
