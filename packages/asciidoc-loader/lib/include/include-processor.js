@@ -37,7 +37,7 @@ const IncludeProcessor = (() => {
       }
       return
     }
-    const resolvedFile = this[$callback](doc, target, doc.getReader().getCursor())
+    const resolvedFile = this[$callback](doc, target, reader.getCursor())
     if (resolvedFile) {
       let includeContents = resolvedFile.contents
       let startLineNum = 1
