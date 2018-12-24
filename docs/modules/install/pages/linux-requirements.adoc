@@ -10,15 +10,12 @@
 
 On this page, you'll learn:
 
-* [x] What tools you need in order to install Antora on {platform}.
 * [x] How to install Node.
 
 If you've never installed Antora before, you'll need to complete the steps on this page before you can install Antora and use it to generate a documentation site.
 
 Antora is built on Node.js ("`Node`").
 To install Antora, all you need on your machine is a long term support (LTS) release of Node.
-Although Antora performs git operations, you don't need a git client installed to use Antora.
-However, you'll likely need a git client to clone and modify files in repositories you plan to use with Antora.
 
 == Node
 
@@ -74,10 +71,6 @@ Once you've installed nvm, open a new terminal and install the latest Node LTS r
 
 The above command will both install the latest LTS release of Node and automatically set it as your default alias.
 
-Type the following command to switch to it:
-
- $ nvm use
-
 Now that you have Node set up, you can xref:install-antora.adoc[install Antora].
 
 [#upgrade-node]
@@ -94,13 +87,4 @@ To set the latest version of Node as the default for any new terminal, type:
 [subs=attributes+]
  $ nvm alias default {version-node}
 
-Type the following command to switch to it:
-
- $ nvm use
-
-Now that you're on the right version of Node, you can xref:install-antora.adoc[install Antora].
-
-== What's next?
-
-Once you've installed Node, you're ready to xref:install-antora.adoc[install Antora].
-//end::shared[]
+Now that you're on the latest LTS version of Node, you can xref:install-antora.adoc[install Antora].

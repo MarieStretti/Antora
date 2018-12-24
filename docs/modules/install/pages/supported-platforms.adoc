@@ -7,44 +7,41 @@
 :url-chat-dev: https://gitter.im/antora/dev
 
 Antora runs on Linux, macOS, and Windows.
-Thanks to this broad platform support, Antora can also be used on all well-known cloud platforms and continuous integration and delivery servers.
-
-This page provides an <<platforms,overview of the platforms>> Antora supports and directs you to the <<next,system requirements>> for each platform.
-The Antora project also provides an official xref:ROOT:antora-container.adoc[Docker container] you can use to bypass the installation process.
+Thanks to this broad platform support, Antora is also used on many cloud platforms and continuous integration and delivery servers.
 
 == Platforms
 
-Antora is actively tested on the platforms listed below.
+Our general policy is to align Antora's support of a platform version with the upstream project's lifecycle schedule for that version.
+When a platform version reaches its End of Life (EOL), Antora no longer supports it.
 
 // When we have specific notes about a platform (tweaks and/or links to bugs) add a 3rd column to this table labeled "Good to Know"
-[cols="20,25a",width="45%"]
+[cols="20,25a",width="50%"]
 |===
 |Supported Platform |Supported Version(s)
 
 |Alpine Linux
-|[%hardbreaks]
-3.8
-3.7
-3.6
+|&#8805; 3.6
 
 |Debian
-|[%hardbreaks]
-9.6
+|&#8805; 9.6
 
 |Fedora
+|&#8805; 28
+
+|Ubuntu
 |[%hardbreaks]
-29
-28
+16.04 LTS
+18.04 LTS
 
 |macOS
-|High Sierra
+|[%hardbreaks]
+High Sierra
+Mojave
 
 |Microsoft
 |[%hardbreaks]
 Windows 10
-Windows 8.1
 Windows Server 2016
-Windows Server 2012 R2
 
 |Chrome
 |Latest stable version
@@ -60,31 +57,21 @@ Windows Server 2012 R2
 
 |Node.js
 |[%hardbreaks]
-10 (latest patch release)
-8 (latest patch release)
+10
+8
 |===
-
-Regarding Linux, while we only continuously test Antora on Fedora, Alpine Linux, and Ubuntu, we anticipate it should operate as expected on most well-known Linux distributions.
 
 .About the Antora Test Suite
 ****
-At last count, Antora had {test-count} tests that cover over {test-coverage} of the lines.
-And we add more tests with every change.
-You could say we're just a teeny bit obsessed with writing high quality tests and maintaining complete test coverage.
+At last count, Antora had {test-count} tests that cover {test-coverage} of the lines.
+You could say we're just a teeny-tiny bit obsessed with writing high quality tests and improving test coverage.
 ****
 
-== Cloud platforms
+=== Cloud platforms
 
 Antora should operate as designed on common cloud platforms.
 How you provision your cloud instance depends on your workload requirements and remote git repository sizes.
 If you're running Antora on a cloud platform, we would love to hear about your experience (open a {url-issues}[new issue^] or join us in the {url-chat-dev}[development channel^]).
-
-////
-== Virtual Machine (VM) environments
-
-Antora runs in VirtualBox and should operate as designed in common VM environments such as VMware.
-If you're running Antora in a VM environment, we would love to hear about your experience (open a {url-issues}[new issue^] or join us in the {url-chat-dev}[development channel^]).
-////
 
 == Hardware recommendations
 
@@ -107,13 +94,15 @@ On subsequent runs, Antora only reconnects to the remote repositories if the xre
 
 == Next
 
-Prep your system for installing Antora:
+* xref:upgrade-antora.adoc[Upgrade to the latest Antora release].
 
-* xref:linux-requirements.adoc[Linux requirements]
-* xref:macos-requirements.adoc[macOS requirements]
-* xref:windows-requirements.adoc[Windows requirements]
+* Install Antora for the first time on:
 
-Or try out the official xref:ROOT:antora-container.adoc[Antora Docker container].
+** xref:linux-requirements.adoc[Linux]
+** xref:macos-requirements.adoc[macOS]
+** xref:windows-requirements.adoc[Windows]
+
+* Try the official xref:ROOT:antora-container.adoc[Antora Docker container].
 
 ////
 OS Release schedule links
@@ -131,13 +120,9 @@ Debian: https://www.debian.org/releases/stable/
 Fedora: https://fedoraproject.org/wiki/Releases
 
 Fedora 29 will be released approx Nov 2018
-Fedora 27 EOL approx Dec 2018
 
 Ubuntu Linux: https://wiki.ubuntu.com/Releases
 
-16.04.3 LTS is the most recent LTS release.
-17.10 is the most recent regular release, EOL July 2018
-18.04 LTS is due to be released in April 2018
 
 openSUSE: https://en.opensuse.org/Portal:42.3
 
