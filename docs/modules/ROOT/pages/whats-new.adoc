@@ -2,29 +2,34 @@
 :doctype: book
 :url-releases-asciidoctor: https://github.com/asciidoctor/asciidoctor/releases
 :url-releases-asciidoctorjs: https://github.com/asciidoctor/asciidoctor.js/releases
+:url-gitlab: https://gitlab.com
+:url-milestone-2_0: {url-gitlab}/antora/antora/issues?milestone_title=v2.0.x&scope=all&state=closed
+:url-mr: {url-gitlab}/antora/antora/merge_requests
 
 Learn about what's new in the 2.0 release series of Antora.
 
-= Antora 2.0.0 (2018-12-24)
+= Antora 2.0.0
+
+_Release date: 2018.12.24 | Addresses these core component {url-milestone-2_0}[issues]_
 
 The Antora 2.0.0 release drastically streamlines the installation process, improves platform and library compatibility, provides a simpler and pluggable authentication mechanism for private repositories, and delivers the latest Asciidoctor capabilities.
 
 == Hassle-free installation thanks to isomorphic-git
 
-When Antora launched, nodegit was the only JavaScript git client that provided the features necessary to interface with git repositories (clone, fetch, resolve refs, walk trees, read blobs).
-Despite the fact that nodegit is a thorough git client, it has proven to be tremendously difficult for users to install.
-This difficulty stems from its coupling to native system libraries for compilation, bundling of native libraries, limited (and declining) portability across platforms and Node versions, irregular post-install scripts, reliance on an SSH agent for authentication, and apparent lack of interest in addressing portability concerns.
+When Antora launched, nodegit was the only JavaScript git client that provided the features for interfacing with git repositories (clone, fetch, resolve refs, walk trees, read blobs).
+Despite the fact that nodegit is a thorough git client, it's proven to be tremendously difficult for users to install.
+This difficulty stems from its coupling to native system libraries for compilation, bundling of native libraries, limited (and declining) portability across platforms and Node versions, irregular post-install scripts, reliance on an SSH agent for authentication, and lack of interest in addressing portability concerns.
 
 Since then, a full-fledged alternative has emerged.
 Our friend https://github.com/wmhilton[William Hilton] stepped up to create https://isomorphic-git.org/[isomorphic-git], a pure JavaScript git client (hint, it also runs in the browser).
-In Antora 2.0.0, we've completely replaced nodegit with isomorphic-git.
+In Antora 2.0, we've completely replaced nodegit with isomorphic-git.
 
 Switching Antora to isomorphic-git not only guarantees a hassle-free installation, but drastically reduces installation time as well.
 This improvement is due to the fact that Antora's dependencies no longer rely on native system libraries.
-It also means Antora will work on all platforms and supported Node versions.
+It also means Antora works on all platforms and supported Node versions.
 
 isomorphic-git also allowed us to expand our test coverage and therefore improve Antora's stability.
-In fact, isomorphic-git is used to drive all git tests in the test suite, and the tests now use proper clone and fetch operations for testing remote repositories.
+In fact, isomorphic-git is used to drive all of the git tests in the test suite, and the tests now use proper clone and fetch operations for testing remote repositories.
 
 All-in-all, the switch from nodegit to isomorphic-git is a huge step forward for Antora and the main reason for the major version jump to Antora 2.0.
 
@@ -33,23 +38,21 @@ All-in-all, the switch from nodegit to isomorphic-git is a huge step forward for
 Replacing nodegit with isomorphic-git brought with it a breaking change in how Antora handles private repository authentication.
 Private repository authentication is now performed using HTTP Basic authentication over HTTPS instead of public/private key authentication over SSH using an SSH agent.
 
-Thankfully, this change makes it much easier to manage authentication since Antora no longer requires running an SSH agent.
+This change makes it easier to manage authentication since Antora no longer requires running an SSH agent.
 Instead, authentication credentials can be managed using the git credential store mechanism or a custom credential manager provided by the user.
 
-By default, Antora will look for credentials in the default credential store, located at [.path]_$HOME/.git-credentials_.
-*If you use private repositories with Antora, you'll need to add authentication credentials for each private repository to the default or a custom git credentials store before running Antora 2.0*.
-
-To learn what types of credentials Antora can use for authentication and how to add your credentials to the default credentials store, see the xref:playbook:private-repository-auth.adoc[private repository authentication] documentation.
+*If you use private repositories, you'll need to add authentication credentials for each private repository to the default or a custom git credentials store before running Antora 2.0*.
+To learn what types of credentials Antora can use for authentication and how to add your credentials to the default credentials store, located at [.path]_$HOME/.git-credentials_, see the xref:playbook:private-repository-auth.adoc[Private repository authentication] documentation.
 
 And you're not locked to this one storage location.
-You can influence where Antora looks for credentials using several options:
+You can influence where Antora looks for credentials using several methods:
 
-* `--git-credentials-path` CLI option
-* `git.credentials` key (path or contents) in an Antora playbook
-* `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file.
-* `GIT_CREDENTIALS` environment variable to override contents of git credential store.
+* `--git-credentials-path` CLI option to override location of git credential store file
+* `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file
+* `git.credentials` key in Antora playbook to override path or contents of git credential store
+* `GIT_CREDENTIALS` environment variable to override contents of git credential store
 
-See xref:playbook:private-repository-auth.adoc#custom-credential-path[specify a custom git credential store path] to learn more.
+The documentation has examples showing how to xref:playbook:private-repository-auth.adoc#custom-credential-path[specify a custom git credential store path] using each of the methods listed above.
 
 Finally, Antora transparently converts SSH URLs to HTTPS URLs, so you don't have to update your playbook files when you upgrade to Antora 2.0.
 
@@ -58,19 +61,18 @@ Finally, Antora transparently converts SSH URLs to HTTPS URLs, so you don't have
 Thanks to isomorphic-git, Antora allows you to register a custom credential manager using `git.cores.create('antora').set('credentialManager', credentialManager)`.
 This object completely takes over how credentials are resolved.
 Among other benefits, this gives users the option of storing credentials more securely for environments that require it.
-See xref:playbook:private-repository-auth.adoc#custom-manager[configure a custom credential manager] to learn more.
+See xref:playbook:private-repository-auth.adoc#custom-manager[Configure a custom credential manager] to learn more.
 
 == All the latest Asciidoctor features
 
-Antora 2.0.0 ships with Asciidoctor.js 1.5.9.
+Antora 2.0 ships with Asciidoctor.js 1.5.9.
 This release of Asciidoctor.js brings the latest Asciidoctor features, updates the Asciidoctor.js API, fixes conflicts with libraries, and offers several nice enhancements to the AsciiDoc syntax.
 Here are some of the highlights for each part:
 
 .AsciiDoc
-* You can now nest ordered and unordered lists to an arbitrary depth.
-* You can autonumber callout markers using the `<.>` syntax.
-* You can now create a xref with automatic text to a list item or table cell.
-* The text of a block title can begin with a period.
+* Nest ordered and unordered lists to an arbitrary depth.
+* Autonumber callout markers using the `<.>` syntax.
+* Create an xref with automatic text to a list item or table cell.
 
 .Asciidoctor
 * Section titles are scrubbed more thoroughly when auto-generating an ID from the text.
@@ -129,20 +131,40 @@ Workaround:: Postprocess the 404.html page to fix the paths before publishing th
 
 Most important of all, a big *Thank you!* to all the folks who helped make Antora even better.
 
-*TODO: Add community shout outs!*
+Abel Salgado Romero ({url-gitlab}/abelsromero[@abelsromero])::
+Fix wrong gulp-ci package name replacing it with correct gulp-cli {url-mr}/294[MR 294]
+
+Antonio ({url-gitlab}/bandantonio[@bandantonio])::
++
+--
+* Fix colon typo in resource id include directive {url-mr}/284[MR 284]
+* Add information about missing runtime category in the playbook configuration {url-mr}/282[MR 282]
+--
+
+Julien Grenier ({url-gitlab}/jgrenier[@jgrenier])::
+Fix failing build (docker-antora) https://gitlab.com/antora/docker-antora/merge_requests/5[MR 5]
+
+Matthew Setter ({url-gitlab}/settermjd[@settermjd])::
+Correct reference to ui-bundle-url in the docs {url-mr}/280[MR 280]
+
+{url-gitlab}/Leantricity[@Leantricity]::
+Fix page-to-page-xref.adoc typo {url-mr}/278[MR 278]
 
 == Metrics
 
+//TODO add Docker metrics
 The raw install size of Antora drops from 154MB down to 43MB.
 It took 11 seconds to install Antora 1.1.1 from cache; it just takes about 3 seconds to install Antora 2.0.0 from cache.
 
-Total merges: 18
-Total issues: 18
+//as of !307
+[%hardbreaks]
+Merges: 28
+Issues resolved: 25
 
 == Upgrade instructions
 
-If you're not using private repositories, the only thing you need to do is upgrade to Antora 2.0.
-See xref:install:upgrade-antora.adoc[upgrade Antora] for instructions.
+If you don't use private repositories, all you need to do is upgrade to Antora 2.0.
+See xref:install:upgrade-antora.adoc[Upgrade Antora] for instructions.
 
-If you use private repositories, you'll need to set up your authentication credentials and say goodbye to your SSH agent.
-Refer to xref:playbook:private-repository-auth.adoc[private repository authentication] for instructions.
+For those of you who do use private repositories, you'll need to set up your authentication credentials and say goodbye to your SSH agent.
+Refer to xref:playbook:private-repository-auth.adoc[Private repository authentication] documentation for instructions.
