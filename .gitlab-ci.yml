@@ -56,5 +56,5 @@ release:
   - yarn global add lerna@$(node -p 'require("./lerna.json").lerna') > /dev/null
   script:
   - scripts/release.sh
-  - . releaserc
-  - curl -o /dev/null -s -X POST -F "token=$CI_JOB_TOKEN" -F "ref=$RELEASE_BRANCH" -F "variables[ANTORA_VERSION]=$RELEASE_VERSION" https://gitlab.com/api/v4/projects/5565100/trigger/pipeline # triggers release of Docker image
+  # triggers release of Docker image
+  - env $(echo -en $(cat releaserc)) sh -c 'curl -o /dev/null -s -X POST -F "token=$CI_JOB_TOKEN" -F "ref=$RELEASE_BRANCH" -F "variables[ANTORA_VERSION]=$RELEASE_VERSION" https://gitlab.com/api/v4/projects/5565100/trigger/pipeline'
