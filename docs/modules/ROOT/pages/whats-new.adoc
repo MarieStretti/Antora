@@ -13,7 +13,7 @@ Learn about what's new in the 2.0 release series of Antora.
 
 = Antora 2.0.0
 
-_Release date: 2018.12.25 | Addresses these core component {url-milestone-2-0}[issues]_
+_**Release date:** 2018.12.25 | *Milestone (closed issues):* {url-milestone-2-0}[v2.0.x]_
 
 The Antora 2.0.0 release drastically streamlines the installation process, improves platform and library compatibility, provides a simpler and pluggable authentication mechanism for private repositories, and delivers the latest Asciidoctor capabilities.
 
@@ -21,52 +21,47 @@ TIP: If you need a quick overview of the breaking changes, jump to the <<checkli
 
 == Hassle-free installation thanks to isomorphic-git
 
-When Antora launched, nodegit was the only JavaScript git client that provided the features for interfacing with git repositories (clone, fetch, resolve refs, walk trees, read blobs).
-Despite the fact that nodegit is a thorough git client, it's proven to be tremendously difficult for users to install.
-This difficulty stems from its coupling to native system libraries for compilation, bundling of native libraries, limited (and declining) portability across platforms and Node versions, irregular post-install scripts, reliance on an SSH agent for authentication, and lack of interest in addressing portability concerns.
+When Antora launched, nodegit was the only JavaScript git client that provided the features Antora required for interfacing with git repositories (clone, fetch, resolve refs, walk trees, read blobs).
+Despite the fact that it's a comprehensive git client, nodegit has proven to be tremendously difficult for users to install.
+This difficulty stems from its coupling to native system libraries for compilation, bundling of native libraries, limited portability across platforms and Node versions, misbehaving post-install scripts, reliance on an SSH agent for authentication, and lack of interest in addressing portability concerns.
 
 Since then, a full-fledged alternative has emerged.
-Our friend https://github.com/wmhilton[William Hilton] stepped up to create https://isomorphic-git.org/[isomorphic-git], a pure JavaScript git client (hint, it also runs in the browser).
+Our friend https://github.com/wmhilton[William Hilton] stepped up to create https://isomorphic-git.org/[isomorphic-git], a pure JavaScript git client (fun fact, it also runs in a browser).
 In Antora 2.0, we've completely replaced nodegit with isomorphic-git.
 
-Switching Antora to isomorphic-git not only guarantees a hassle-free installation, but drastically reduces installation time as well.
+Switching Antora to isomorphic-git not only guarantees a hassle-free installation, but drastically reduces installation time and size as well.
 This improvement is due to the fact that Antora's dependencies no longer rely on native system libraries.
-It also means Antora works on all platforms and supported Node versions.
+And it means Antora now works on all platforms and supported Node versions.
 
 isomorphic-git also allowed us to expand our test coverage and therefore improve Antora's stability.
-In fact, isomorphic-git is used to drive all of the git tests in the test suite, and the tests now use proper clone and fetch operations for testing remote repositories.
+In fact, isomorphic-git is now used to drive all of the git tests in the test suite, and the tests now use proper remote clone and fetch operations for testing remote repositories.
 
 All-in-all, the switch from nodegit to isomorphic-git is a huge step forward for Antora and the main reason for the major version jump to Antora 2.0.
 
 == Goodbye SSH. Hello git credentials.
 
 Replacing nodegit with isomorphic-git brought with it a breaking change in how Antora handles private repository authentication.
-Private repository authentication is now performed using HTTP Basic authentication over HTTPS instead of public/private key authentication over SSH using an SSH agent.
+xref:playbook:private-repository-auth.adoc[Private repository authentication] is now performed using HTTP Basic authentication over HTTPS instead of public/private key authentication over SSH using an SSH agent.
 
-This change makes it easier to manage authentication since Antora no longer requires running an SSH agent.
+This change makes it easier to manage authentication.
+Antora no longer requires running an SSH agent.
 Instead, authentication credentials can be managed using the git credential store mechanism or a custom credential manager provided by the user.
 
-*If you use private repositories, you'll need to add authentication credentials for each private repository to the default or a custom git credentials store before running Antora 2.0*.
-To learn what types of credentials Antora can use for authentication and how to add your credentials to the default credentials store, located at [.path]_$HOME/.git-credentials_, see the xref:playbook:private-repository-auth.adoc[Private repository authentication] documentation.
+*If you use private repositories, you'll need to add authentication credentials for each git host (or individual repository) to the default or a custom git credentials store before running Antora 2.0*.
+To learn what types of credentials Antora can use for authentication and how to add your credentials to the default credentials store, refer to the xref:playbook:private-repository-auth.adoc[Private repository authentication] documentation.
 
-And you're not locked to this one storage location.
-You can influence where Antora looks for credentials using several methods:
+Here's a quick summary of where those credentials can be stored:
 
-* `--git-credentials-path` CLI option to override location of git credential store file
-* `GIT_CREDENTIALS_PATH` environment variable to override location of git credential store file
-* `git.credentials` key in Antora playbook to override path or contents of git credential store
-* `GIT_CREDENTIALS` environment variable to override contents of git credential store
+* [.path]_$HOME/.git-credentials_ by default
+* `--git-credentials-path` CLI option -- override location of git credential store
+* `GIT_CREDENTIALS_PATH` environment variable -- override location of git credential store
+* `git.credentials` key in Antora playbook -- override path or contents of git credential store
+* `GIT_CREDENTIALS` environment variable -- override contents of git credential store
 
-The documentation has examples showing how to xref:playbook:private-repository-auth.adoc#custom-credential-path[specify a custom git credential store path] using each of the methods listed above.
+The documentation has examples showing how to xref:playbook:private-repository-auth.adoc#custom-credential-path[specify a custom git credential store] using each of the methods listed above.
+If none of those options work for you, the documentation also shows how to implement your own xref:playbook:private-repository-auth.adoc#custom-manager[credential manager plugin].
 
-Finally, Antora transparently converts SSH URLs to HTTPS URLs, so you don't have to update your playbook files when you upgrade to Antora 2.0.
-
-=== Pluggable credentials manager
-
-Thanks to isomorphic-git, Antora allows you to register a custom credential manager using `git.cores.create('antora').set('credentialManager', credentialManager)`.
-This object completely takes over how credentials are resolved.
-Among other benefits, this gives users the option of storing credentials more securely for environments that require it.
-See xref:playbook:private-repository-auth.adoc#custom-manager[Configure a custom credential manager] to learn more.
+Finally, Antora transparently converts SSH URLs to HTTPS URLs, so you *don't* have to update your playbook files when you upgrade to Antora 2.0.
 
 == All the latest Asciidoctor features
 
@@ -78,16 +73,18 @@ Here are some of the highlights for each part:
 * Nest ordered and unordered lists to an arbitrary depth.
 * Autonumber callout markers using the `<.>` syntax.
 * Create an xref with automatic text to a list item or table cell.
+* Attribute references in attrlist of include directive are replaced.
 
 .Asciidoctor
-* Section titles are scrubbed more thoroughly when auto-generating an ID from the text.
+* Section titles are scrubbed more thoroughly when auto-generating an ID.
 * The position of section anchors can be configured (before _or_ after).
 * The xref macro now supports attributes (just as the link macro does).
-* The `docname` attribute is now set to the complete relative path of the page without the file extension.
-* Although not used directly in Antora, all messages are now routed through a logger.
+* The `docname` attribute is now set to the module-relative path of the page (minus the file extension).
+* Proper warnings if an include tag is mismatched, unclosed, or not found.
+* All messages are now routed through a logger (which will hook into Antora's logger, once implemented).
 
 .Asciidoctor.js API (for extension writers)
-* An upgrade to Opal means Asciidoctor.js no longer causes cycles when iterating over an object's properties.
+* An upgrade to Opal means Asciidoctor.js no longer goes down a rabbit hole when iterating over an object's properties.
 * Much more of the Asciidoctor API has been mapped in Asciidoctor.js, making it far easier to write extensions.
 * The extension API provides a simple mechanism for generating an extension class (as an alternative to an extension block).
 * The AbstractNode#findBy method can be short-circuited to halt the tree walk.
@@ -102,40 +99,55 @@ Versioned cache folder:: Antora uses a versioned cache folder for the cloned git
 On first run, Antora will re-clone your content repositories into this folder.
 This was necessary to avoid conflicts with repositories that were cached using nodegit.
 
-Node compatibility:: Antora now works with Node 10 and 11.
+Node compatibility:: Antora now works with Node 10 (and 11).
 
 Antora playbook files in TOML:: You can now write Antora playbook files in the TOML configuration language.
 The CSON format is no longer supported.
-If your Antora playbook is in CSON, you'll need to migrate it to YAML, JSON, or TOML before using Antora 2.0.
+If your Antora playbook is in CSON, *you'll need to migrate it* to YAML, JSON, or TOML before using Antora 2.0.
+
+runtime.fetch:: The `runtime.pull` playbook key has been replaced with `runtime.fetch` and the `--pull` CLI option has been replaced with `--fetch`.
+This setting tells Antora to fetch updates to remote content repositories and grab a fresh UI bundle if marked as a snapshot.
+It was renamed to avoid confusion with the `pull` command in git.
+But don't worry, the old names will still work.
+They're just considered deprecated and will be removed in the next major version.
 
 page.origin.private:: If a content source requires authentication (either because credentials were defined in the URL or credentials were requested from the credentials manager), the `page.origin.private` property will be set in the UI model.
 
 page.displayVersion:: The display version of a component is now accessible via the UI model using the `page.displayVersion` property.
 
+page.latest:: The `page.versions.latest` property in the UI model can now be reached using `page.latest`.
+
 AsciiDoc doctype:: The AsciiDoc `doctype` option can be safely set in the AsciiDoc configuration key.
 Navigation files will always be parsed using the article doctype.
 
-default tags filter:: The default tags filter can now be set using the `content.tags` key in the playbook.
-
-page.latest:: The `page.versions.latest` property in the UI model can now be reached using `page.latest`.
+default tags filter:: The default tags filter for content repositories can now be set using the `content.tags` key in the playbook.
 
 == Known issues
 
 === Reference pruning
 
-{url-issues}/374[Issue #374]:: After the switch to isomorphic-git, references are no longer pruned when the `--pull` option is specified.
+Issue:: {url-issues}/374[#374]
+Summary:: After the switch to isomorphic-git, references are no longer pruned when the `--pull` option is specified.
 This means that if a reference is removed from the remote repository, it will not be removed from Antora's cached version.
 Workaround:: You can clear Antora's cache directory or the cache of the repository in question.
 We'll restore this behavior in a future enhancement.
 
-=== Broken 404 pages on sites that aren't served from root folder
+=== Broken 404 pages for sites that aren't served from root folder
 
-{url-issues}/258[Issue #258]:: If your site is not served from the root folder of a domain (such as is the case of sites running on the GitHub Pages or GitLab Pages domain), the references to UI assets and navigation links on the 404 page will not work property.
+Issue:: {url-issues}/258[#258]
+Summary:: If your site is not served from the root folder of a domain (such as is the case of sites running on the GitHub Pages or GitLab Pages domain), the references to UI assets and navigation links on the 404 page will not work property.
 Workaround:: Postprocess the 404.html page to fix the paths before publishing the site.
+
+=== Self-signed certificates
+
+Issue:: {url-issues}/390[#390]
+Summary:: The HTTP client Antora uses to download the UI bundle (got) does not load the CA certificate file on the local machine.
+As a result, if the server hosting the UI bundle has a self-signed certificate, Antora will fail trying to download the bundle (due to the fact that Node rejects the certificate as unauthorized).
+Workaround:: Instruct Node not to reject unauthorized certificates by setting the environment variable NODE_TLS_REJECT_UNAUTHORIZED=0 when calling Antora.
 
 == Thank you!
 
-Most important of all, a big *Thank you!* to all the folks who helped make Antora even better.
+Most important of all, a huge *thank you!* to all the folks who helped make Antora even better.
 
 Abel Salgado Romero ({url-gitlab}/abelsromero[@abelsromero]):: Fix wrong gulp-ci package name replacing it with correct gulp-cli {url-mr}/294[MR 294]
 
@@ -153,7 +165,9 @@ Matthew Setter ({url-gitlab}/settermjd[@settermjd]):: Correct reference to ui-bu
 
 //TODO add Docker metrics
 The raw install size of Antora drops from 154MB down to 43MB.
-It took 11 seconds to install Antora 1.1.1 from cache; it just takes about 3 seconds to install Antora 2.0.0 from cache.
+The Docker image on DockerHub dropped from 60 MB to 29 MB.
+It was taking 11 seconds to install Antora 1.1.1 from cache.
+It only takes 3 seconds to install Antora 2.0.0 from cache.
 
 //as of !307
 [%hardbreaks]
