@@ -1,17 +1,17 @@
 = Security Bulletins
 
-A prompt response to software defects and security vulnerabilities has been and will always be a top priority for Antora.
-Even though threats are a fact of life, we're proud to take quality assurance very seriously with nearly 100% test coverage.
-This page documents the items that slipped through and how to address them vigilantly.
+A prompt response to software defects and security vulnerabilities is a top priority for Antora.
+Even though threats are a fact of life, we take quality assurance seriously with nearly 100% test coverage.
+This page documents the items that slipped through and how to address them.
 
-== Antora Security Bulletin ANTORA-350
+== Security Bulletin ANTORA-350
 
 ID:: ANTORA-350
 Published:: November 26, 2018
 
 === Summary
 
-For a brief window of time, version 0.1.1 of flatmap-stream entered Antora's runtime dependency chain.
+For a brief window of time, version 0.1.1 of flatmap-stream entered Antora's runtime dependency chain (via gulp-vinyl-zip -> event-stream -> flatmap-stream).
 This package is known to contain malicious code that runs an encrypted payload targeting a very specific application.
 The dependency was brought in by event-stream via gulp-vinyl-zip during that time period.
 
@@ -23,25 +23,27 @@ Additionally, if the user's project uses a package lock file (i.e., package-lock
 This bulletin may not affect Antora users since Antora doesn't use a crypto-currency package, which is required for the malicious code to work.
 But it could put other applications at risk given that installing Antora caused this package to be installed.
 
-For anyone installing Antora today with a clean npm package cache, they won't be affected at all.
-Antora will grab a version of gulp-vinyl-zip which does not depend transitively on flatmap-stream.
+Anyone installing Antora today with a clean npm package cache won't be affected.
+Antora will grab a version of gulp-vinyl-zip that does not depend transitively on flatmap-stream.
 The published Docker images for Antora are also fine.
 Although version 1.1.1 of the Docker image uses event-stream 3.3.6, it grabbed flatmap-stream 0.1.0, which does not contain the malicious code.
 
-This bulletin only affects users who installed Antora during the period when flatmap-stream 0.1.1 was in the npm repository.
+This bulletin only affects users who installed Antora during the brief period when flatmap-stream 0.1.1 was in the npm repository.
 See the Solutions section for analysis and mitigation steps.
 
-We've made a request for the gulp-vinyl-zip project to find a replacement for the event-stream library, which is now deprecated (as a result of this incident).
+We've requested the gulp-vinyl-zip project to find a replacement for the event-stream library, which is now deprecated (as a result of this incident).
 
 === Affected Versions
 
 |===
-|Antora Package
-|Versions
-|Platform
+|Antora Package |Versions |Platforms
 
 |@antora/ui-loader
+|1.x
 |All
+
+|Default UI build
+|n/a
 |All
 |===
 
@@ -55,7 +57,7 @@ Here are the commands you can use to check:
    yarn list --pattern=flatmap-stream | grep flatmap-stream@0.1.1
    (cd $(yarn global dir); yarn list --pattern=flatmap-stream@0.1.1)
 
-If any of those commands produce output, then you're affected.
+If any of these commands produce output, then you're affected.
 You should promptly uninstall and reinstall Antora (which you only have to do once).
 Otherwise, you are fine.
 
@@ -63,7 +65,7 @@ Global installation:
 
 .npm (global install)
  $ npm uninstall -g @antora/site-generator-default
-   npm install -g @antora/site-generator-default
+   npm install -g @antora/site-generator-default@$(antora version)
 
 .npm (local install)
  $ rm -f package-lock.json node_modules
@@ -71,9 +73,9 @@ Global installation:
 
 .yarn (global install)
  $ yarn global remove @antora/site-generator-default
-   yarn global add @antora/site-generator-default
+   yarn global add @antora/site-generator-default@$(antora version)
 
-.yarn (local install)
+.yarn (local install or UI project)
  $ rm -f yarn.lock node_modules
    yarn
 
@@ -84,7 +86,7 @@ Since the malicious package is no longer in the npm registry, it will never be i
 
 === References
 
-* https://www.npmjs.com/advisories/737[npm advisory #737]
-* https://github.com/dominictarr/event-stream/issues/116[event-stream issue #116]
-* https://github.com/joaomoreno/gulp-vinyl-zip/issues/14[gulp-vinyl-zip #14]
-* https://github.com/joaomoreno/gulp-vinyl-zip/issues/15[gulp-vinyl-zip #15]
+* https://www.npmjs.com/advisories/737[npm advisory #737^]
+* https://github.com/dominictarr/event-stream/issues/116[event-stream issue #116^]
+* https://github.com/joaomoreno/gulp-vinyl-zip/issues/14[gulp-vinyl-zip #14^]
+* https://github.com/joaomoreno/gulp-vinyl-zip/issues/15[gulp-vinyl-zip #15^]
