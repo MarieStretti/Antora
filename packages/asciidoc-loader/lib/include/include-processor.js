@@ -1,6 +1,7 @@
 'use strict'
 
 const Opal = global.Opal
+const { $Antora } = require('../constants')
 
 const DBL_COLON = '::'
 const DBL_SQUARE = '[]'
@@ -12,7 +13,7 @@ const IncludeProcessor = (() => {
   const $callback = Symbol('callback')
   const superclass = Opal.module(null, 'Asciidoctor').Extensions.IncludeProcessor
   const scope = Opal.klass(
-    Opal.module(null, 'Antora', function $Antora () {}),
+    Opal.module(null, 'Antora', $Antora),
     superclass,
     'IncludeProcessor',
     function () {}
@@ -43,9 +44,10 @@ const IncludeProcessor = (() => {
       }
       Opal.hash_put(attrs, 'partial-option', true)
       reader.pushInclude(includeContents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
-      if (resolvedFile.context) {
-        ;(reader.file = new String(reader.file)).context = resolvedFile.context // eslint-disable-line no-new-wrappers
-      }
+      ;(reader.file = new String(reader.file)).context = resolvedFile.context // eslint-disable-line no-new-wrappers
+    } else {
+      log('error', `include target not found: ${target}`, reader)
+      reader.$unshift(`Unresolved include directive in ${reader.getCursor().file} - include::${target}[]`)
     }
   })
 

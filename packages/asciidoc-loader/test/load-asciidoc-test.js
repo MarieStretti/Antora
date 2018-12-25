@@ -379,7 +379,7 @@ describe('loadAsciiDoc()', () => {
       const contentCatalog = mockContentCatalog().spyOn('getById')
       const inputContents = 'include::{partialsdir}/does-not-exist.adoc[]'
       setInputFileContents(inputContents)
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expect(contentCatalog.getById).to.have.been.called.with({
         component: 'component-a',
         version: 'master',
@@ -387,17 +387,24 @@ describe('loadAsciiDoc()', () => {
         family: 'partial',
         relative: 'does-not-exist.adoc',
       })
+      expect(messages).to.have.lengthOf(1)
+      // NOTE known issue that cursor is off by one line in custom include processor
+      expect(messages[0]).to.include('page-a.adoc: line 2: include target not found: partial$/does-not-exist.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
-      expect(firstBlock.getSourceLines()).to.eql(['+' + inputContents + '+'])
+      const expectedSource = [
+        'Unresolved include directive in modules/module-a/pages/page-a.adoc',
+        'include::partial$/does-not-exist.adoc[]',
+      ].join(' - ')
+      expect(firstBlock.getSourceLines()).to.eql([expectedSource])
     })
 
     it('should skip include directive if target resource ID cannot be resolved', () => {
       const contentCatalog = mockContentCatalog().spyOn('getById')
       const inputContents = 'include::partial$does-not-exist.adoc[]'
       setInputFileContents(inputContents)
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
         version: 'master',
@@ -405,10 +412,17 @@ describe('loadAsciiDoc()', () => {
         family: 'partial',
         relative: 'does-not-exist.adoc',
       })
+      expect(messages).to.have.lengthOf(1)
+      // NOTE known issue that cursor is off by one line in custom include processor
+      expect(messages[0]).to.include('page-a.adoc: line 2: include target not found: partial$does-not-exist.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
-      expect(firstBlock.getSourceLines()).to.eql(['+' + inputContents + '+'])
+      const expectedSource = [
+        'Unresolved include directive in modules/module-a/pages/page-a.adoc',
+        'include::partial$does-not-exist.adoc[]',
+      ].join(' - ')
+      expect(firstBlock.getSourceLines()).to.eql([expectedSource])
     })
 
     it('should resolve include target prefixed with {partialsdir}', () => {
@@ -559,7 +573,7 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql([includeContents])
     })
 
-    it('should include target to specify family when target is reference to separate component', () => {
+    it('should assume family of target is partial when target is resource ID in separate component', () => {
       const includeContents = 'Hello, World!'
       const contentCatalog = mockContentCatalog({
         component: 'another-component',
@@ -570,15 +584,22 @@ describe('loadAsciiDoc()', () => {
         contents: includeContents,
       }).spyOn('resolveResource')
       setInputFileContents('include::1.1@another-component::greeting.adoc[]')
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expect(contentCatalog.resolveResource).to.not.have.been.called()
+      expect(messages).to.have.lengthOf(1)
+      // NOTE known issue that cursor is off by one line in custom include processor
+      expect(messages[0]).to.include('line 2: include target not found: 1.1@another-component::greeting.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
-      expect(firstBlock.getSource()).to.include('include::')
+      const expectedSource = [
+        'Unresolved include directive in modules/module-a/pages/page-a.adoc',
+        'include::1.1@another-component::greeting.adoc[]',
+      ].join(' - ')
+      expect(firstBlock.getSourceLines()).to.eql([expectedSource])
     })
 
-    it('should include target to specify family when target is reference to separate version', () => {
+    it('should assume family of target is partial when target is resource ID in separate version', () => {
       const includeContents = 'Hello, World!'
       const contentCatalog = mockContentCatalog({
         version: '1.1',
@@ -587,12 +608,19 @@ describe('loadAsciiDoc()', () => {
         contents: includeContents,
       }).spyOn('resolveResource')
       setInputFileContents('include::1.1@greeting.adoc[]')
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expect(contentCatalog.resolveResource).to.not.have.been.called()
+      expect(messages).to.have.lengthOf(1)
+      // NOTE known issue that cursor is off by one line in custom include processor
+      expect(messages[0]).to.include('line 2: include target not found: 1.1@greeting.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
-      expect(firstBlock.getSource()).to.include('include::')
+      const expectedSource = [
+        'Unresolved include directive in modules/module-a/pages/page-a.adoc',
+        'include::1.1@greeting.adoc[]',
+      ].join(' - ')
+      expect(firstBlock.getSourceLines()).to.eql([expectedSource])
     })
 
     it('should resolve target of nested include relative to current file', () => {
@@ -638,7 +666,7 @@ describe('loadAsciiDoc()', () => {
         contents: outerIncludeContents,
       }).spyOn('getById', 'getByPath')
       setInputFileContents('include::{partialsdir}/outer.adoc[]')
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
         version: 'master',
@@ -651,10 +679,17 @@ describe('loadAsciiDoc()', () => {
         version: 'master',
         path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
       })
+      expect(messages).to.have.lengthOf(1)
+      // NOTE known issue that cursor is off by one line in custom include processor
+      expect(messages[0]).to.include('outer.adoc: line 2: include target not found: deeply/nested.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
-      expect(firstBlock.getSourceLines()).to.eql(['+' + outerIncludeContents + '+'])
+      const expectedSource = [
+        'Unresolved include directive in modules/module-a/pages/_partials/outer.adoc',
+        'include::deeply/nested.adoc[]',
+      ].join(' - ')
+      expect(firstBlock.getSourceLines()).to.eql([expectedSource])
     })
 
     it('should resolve relative target of nested include in separate module relative to current file', () => {
