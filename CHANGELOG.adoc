@@ -20,6 +20,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Don't show clone progress after authentication credentials were rejected during fetch
 * *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
 * Move project roadmap to docs.antora.org and update for 2019 (#223)
+* Replace CSON references with TOML references in documentation (#387)
 
 === Fixed
 

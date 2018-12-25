@@ -176,26 +176,26 @@ When you're using the Antora CLI and need help, type `-h` or `--help` after the 
 You can run the generate command implicitly or explicitly.
 
 .Example 1: Run the generate command (implicit)
- $ antora site.yml
+ $ antora antora-playbook.yml
 
-In Example 1, Antora generates a documentation site using the playbook [.path]_site.yml_.
+In Example 1, Antora generates a documentation site using the playbook [.path]_antora-playbook.yml_.
 
 .Example 2: Run the generate command (explicit)
  $ antora generate test-site
 
 In Example 2, Antora generates a documentation site using the auto-detected playbook [.path]_test-site.yml_.
-When the playbook argument doesn't have a file extension, Antora will look for a YAML, JSON, or CSON file matching the playbook name (in that order).
+When the playbook argument doesn't have a file extension, Antora will look for a YAML, JSON, or TOML file matching the playbook name (in that order).
 
 .Example 3: Run the generate command with --to-dir option (implicit)
- $ antora --to-dir prod site.yml
+ $ antora --to-dir prod antora-playbook.toml
 
-In Example 3, Antora generates a documentation site using the playbook [.path]_site.yml_.
+In Example 3, Antora generates a documentation site using the playbook [.path]_antora-playbook.toml_.
 A directory named [.path]_prod_ will be created (relative to the current working directory) and the site files written to it.
 
 .Example 4: Run the generate command with --to-dir and --title options (explicit)
- $ antora --to-dir site --title "My Awesome Docs" beta-site.json
+ $ antora --to-dir site --title "My Awesome Docs" beta-playbook.json
 
-In Example 4, Antora generates a documentation site using the playbook [.path]_beta-site.json_.
+In Example 4, Antora generates a documentation site using the playbook [.path]_beta-playbook.json_.
 The site title will be _My Awesome Docs_.
 A directory named [.path]_site_ will be created (relative to the current working directory) and the site files written to it.
 
