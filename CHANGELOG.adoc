@@ -12,6 +12,7 @@ This project utilizes semantic versioning.
 * *asciidoc-loader*: Emit error message if target of include is not found (#393)
 * What's New page for Antora 2.0 release (#366)
 * *ADR*: Add ADR 0012: Add TOML, Drop CSON (#392)
+* Add Security Bulletins page (#350)
 
 == 2.0.0-rc.3 (2018-12-25)
 
