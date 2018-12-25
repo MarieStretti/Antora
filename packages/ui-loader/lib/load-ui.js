@@ -56,10 +56,10 @@ async function loadUi (playbook) {
   const bundleUrl = bundle.url
   let resolveBundle
   if (isUrl(bundleUrl)) {
-    const { cacheDir, pull } = playbook.runtime || {}
+    const { cacheDir, fetch } = playbook.runtime || {}
     resolveBundle = ensureCacheDir(cacheDir, startDir).then((absCacheDir) => {
       const cachePath = ospath.join(absCacheDir, `${sha1(bundleUrl)}.zip`)
-      return pull && bundle.snapshot
+      return fetch && bundle.snapshot
         ? downloadBundle(bundleUrl, cachePath)
         : fs.pathExists(cachePath).then((cached) => (cached ? cachePath : downloadBundle(bundleUrl, cachePath)))
     })

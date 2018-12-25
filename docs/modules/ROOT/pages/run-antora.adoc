@@ -154,7 +154,7 @@ These resources are stored inside the cache directory, organized under the [.pat
 The xref:playbook:configure-runtime.adoc#default-cache[default cache directory] varies by operating system.
 You can override the default cache location using the xref:playbook:configure-runtime.adoc[runtime.cache_dir key] in the playbook, the xref:cli:index.adoc#cli-options[--cache-dir] CLI option, or the `$ANTORA_CACHE_DIR` environment variable.
 
-If you want to update the cache on subsequent runs, pass the xref:cli:index.adoc#cli-options[--pull switch] to the Antora CLI.
+If you want to update the cache on subsequent runs, pass the xref:cli:index.adoc#cli-options[--fetch switch] to the Antora CLI.
 This switch will force Antora to run a fetch operation on each repository it previously cloned.
 It will also force Antora to download a fresh copy of the UI bundle, if remote.
 

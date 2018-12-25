@@ -149,10 +149,16 @@ module.exports = {
       arg: 'cache-dir',
       env: 'ANTORA_CACHE_DIR',
     },
-    pull: {
-      doc: 'Download updates to remote resources (content and UI).',
+    fetch: {
+      doc: 'Download updates from remote resources (including content repositories and UI bundle).',
       format: Boolean,
       default: false,
+      arg: 'fetch',
+    },
+    pull: {
+      doc: '(Deprecated) Download updates from remote resources. Use --fetch instead.',
+      format: Boolean,
+      default: undefined,
       arg: 'pull',
     },
     quiet: {

@@ -55,7 +55,7 @@ Here's how a local repository is handled:
 
 * The repository contents on your local machine is used instead of its contents from its remote storage location.
 //being cloned from its remote storage location  into build/sources.
-* The local repository is not updated from its remote storage location; Antora assumes the author will manage the repository (explicitly fetch or pull the repository as needed).
+* The local repository is not updated from its remote storage location; Antora assumes the author will manage the repository (explicitly calling fetch or pull on the repository as needed).
 
 Here's how the branches are selected in author mode:
 

@@ -18,8 +18,10 @@ This project utilizes semantic versioning.
 * Upgrade dependencies
 * Migrate project build to Gulp 4 (#370)
 * *playbook-builder*: Remove `ANTORA_PLAYBOOK` environment variable.
+* *playbook-builder*: Rename runtime.pull option to runtime.fetch (still honoring the old name, if specified) (#391)
 * *content-aggregator*: Don't show clone progress after authentication credentials were rejected during fetch
 * *asciidoc-loader*: Allow doctype option to be set in AsciiDoc config (#376)
+* *cli*: Rename --pull option to --fetch (still honoring the old name, if specified) (#391)
 * Move project roadmap to docs.antora.org and update for 2019 (#223)
 * Replace CSON references with TOML references in documentation (#387)
 

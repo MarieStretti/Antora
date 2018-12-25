@@ -3,7 +3,7 @@
 On this page, you'll learn:
 
 * [x] How to configure the cache directory.
-* [x] How to pull updates to content sources and UI.
+* [x] How to fetch updates to content sources and UI.
 
 [#cache]
 == Cache directory
@@ -23,7 +23,7 @@ The default location for the cache varies by operating system.
 * Windows: [.path]_$APPDATA/antora/Caches_
 
 Before downloading remote resources, Antora will first look for those resources in the cache folder, which maps to the user's cache folder by default.
-If you want to instruct Antora to update the cache, configure Antora to <<pull,pull updates>>.
+If you want to instruct Antora to update the cache, configure Antora to <<fetch,fetch updates>>.
 Another option is to locate the Antora cache directory on your system and delete it.
 
 [#cache-dir]
@@ -49,30 +49,33 @@ A relative path is expanded to an absolute path using the following rules:
 * If the first path segment is a dot (`.`), the remaining path is resolved relative to the location of the playbook file.
 * If the first path segment is tilde plus (`~+`), or does not begin with an aforementioned prefix, the remaining path is resolved relative to the current working directory.
 
-[#pull]
-== Pull updates
+[#fetch]
+== Fetch updates
 
 As previously stated, the first time Antora runs, it caches the remote git repositories and remote UI bundle.
 On subsequent runs, Antora looks for these resources in the cache folder by default (effectively running offline).
 
-You can tell Antora to refresh the cache by setting the `pull` key under the `runtime` category to `true`.
+You can tell Antora to refresh the cache by setting the `fetch` key under the `runtime` category to `true`.
 
 [source,yaml]
 ----
 runtime:
-  pull: true
+  fetch: true
 ----
 
+NOTE: Prior to Antora 2, the name of this key was `pull`.
+Although that key is still recognized, it's considered deprecated.
+
 However, you don't have to modify the playbook file directly to set this key.
-Most of the time, you'll just use the `--pull` CLI switch.
+Most of the time, you'll just use the `--fetch` CLI switch.
 
- $ antora --pull site.yml
+ $ antora --fetch site.yml
 
-The `--pull` CLI switch sets the `pull` key described in this section to `true`, overridding any value set in the playbook file.
+The `--fetch` CLI switch sets the `fetch` key described in this section to `true`, overridding any value set in the playbook file.
 
-Setting the `pull` key to true activates two behaviors in Antora:
+Setting the `fetch` key to true activates two behaviors in Antora:
 
 . Run a fetch operation on all cloned repositories (content sources that are remote)
 . Download the remove UI bundle anew if it's marked as a xref:configure-ui.adoc#snapshot[snapshot]
 
-Enable the `pull` key whenever you want to retrieve updates to the remote content sources and/or remote UI bundle snapshot.
+Enable the `fetch` key whenever you want to retrieve updates to the remote content sources and/or remote UI bundle snapshot.

@@ -62,7 +62,7 @@ function aggregateContent (playbook) {
   const startDir = playbook.dir || '.'
   const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
   const sourcesByUrl = _.groupBy(sources, 'url')
-  const { cacheDir, pull, silent, quiet } = playbook.runtime
+  const { cacheDir, fetch, silent, quiet } = playbook.runtime
   const progress = !quiet && !silent && createProgress(sourcesByUrl, process.stdout)
   const credentialManager = registerGitPlugins((playbook.git || {}).credentials, startDir)
   return ensureCacheDir(cacheDir, startDir).then((resolvedCacheDir) =>
@@ -73,7 +73,7 @@ function aggregateContent (playbook) {
           credentialManager,
           fetchTags: tagsSpecified(sources, defaultTags),
           progress,
-          pull,
+          fetch,
           startDir,
         }).then(({ repo, authStatus }) =>
           Promise.all(
@@ -144,7 +144,7 @@ async function loadRepository (url, opts) {
     // QUESTION should we also check for shallow file?
     await git.resolveRef(Object.assign({ ref: 'HEAD', depth: 1 }, repo))
     if (repo.url) {
-      if (opts.pull) {
+      if (opts.fetch) {
         const fetchOpts = getFetchOptions(repo, opts.progress, displayUrl, credentials, opts.fetchTags, 'fetch')
         await git
           .fetch(fetchOpts)

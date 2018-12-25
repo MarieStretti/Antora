@@ -63,6 +63,11 @@ function exportModel (config) {
   delete properties.asciidoc
   const playbook = camelCaseKeys(properties, { deep: true })
   if (asciidocProperty) playbook.asciidoc = asciidocProperty
+  const runtime = playbook.runtime
+  if (runtime && runtime.pull != null) {
+    runtime.fetch = runtime.pull
+    delete runtime.pull
+  }
   playbook.dir = playbook.playbook ? ospath.dirname((playbook.file = playbook.playbook)) : process.cwd()
   delete playbook.playbook
   return deepFreeze(playbook)

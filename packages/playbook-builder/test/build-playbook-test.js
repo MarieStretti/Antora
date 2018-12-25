@@ -83,6 +83,7 @@ describe('buildPlaybook()', () => {
   const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
   const invalidMapSpec = ospath.join(FIXTURES_DIR, 'invalid-map-spec-sample.yml')
   const invalidDirOrFilesSpec = ospath.join(FIXTURES_DIR, 'invalid-dir-or-files-spec-sample.yml')
+  const legacyRuntimeSpec = ospath.join(FIXTURES_DIR, 'legacy-runtime-sample.yml')
   const legacyUiBundleSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-bundle-sample.yml')
   const legacyUiStartPathSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-start-path-sample.yml')
   const defaultSchemaSpec = ospath.join(FIXTURES_DIR, 'default-schema-spec-sample.yml')
@@ -364,7 +365,7 @@ describe('buildPlaybook()', () => {
   it('should use default schema if no schema is specified', () => {
     const playbook = buildPlaybook(['--playbook', defaultSchemaSpec], {})
     expect(playbook.runtime.cacheDir).to.equal('./.antora-cache')
-    expect(playbook.runtime.pull).to.equal(true)
+    expect(playbook.runtime.fetch).to.equal(true)
     expect(playbook.runtime.quiet).to.equal(false)
     expect(playbook.runtime.silent).to.equal(false)
     expect(playbook.site.url).to.equal('https://example.com')
@@ -400,6 +401,18 @@ describe('buildPlaybook()', () => {
     expect(playbook.output.dir).to.equal('./_site')
     expect(playbook.output.destinations[0].provider).to.equal('archive')
     expect(playbook.output.destinations[0].path).to.equal('./site.zip')
+  })
+
+  it('should assign runtime.fetch to value of runtime.pull if latter is specified', () => {
+    const playbook = buildPlaybook(['--playbook', legacyRuntimeSpec], {})
+    expect(playbook.runtime.fetch).to.equal(true)
+    expect(playbook.runtime).to.not.have.property('pull')
+  })
+
+  it('should use value of runtime.pull if both runtime.pull and runtime.fetch are specified', () => {
+    const playbook = buildPlaybook(['--playbook', legacyRuntimeSpec, '--fetch', 'false'], {})
+    expect(playbook.runtime.fetch).to.equal(true)
+    expect(playbook.runtime).to.not.have.property('pull')
   })
 
   it('should not migrate playbook data that defines ui.bundle as a String', () => {

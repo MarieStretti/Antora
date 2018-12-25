@@ -80,7 +80,7 @@ Your hardware requirements will depend primarily on the size of the remote git r
 The first time Antora runs, it fetches and clones all of the remote git repositories specified in a playbook.
 The speed of this operation is dictated by the size of the remote repositories, environment input/output parameters, and network performance.
 After the initial run, Antora caches the repositories locally.
-On subsequent runs, Antora only reconnects to the remote repositories if the xref:playbook:configure-runtime.adoc#pull[pull option] is enabled or the xref:playbook:configure-runtime.adoc#cache[cache folder] is removed.
+On subsequent runs, Antora only reconnects to the remote repositories if the xref:playbook:configure-runtime.adoc#fetch[fetch option] is enabled or the xref:playbook:configure-runtime.adoc#cache[cache folder] is removed.
 
 [cols="5s,70",width="75%"]
 |===

@@ -33,7 +33,7 @@ describe('commander', () => {
       new Command()
         .name(name)
         .option('--silent', 'Silence is golden')
-        .command('pull')
+        .command('sync')
         .action(() => {})
         .parent.command('run')
         .option('--title <title>', 'Site title')

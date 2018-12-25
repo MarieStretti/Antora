@@ -44,7 +44,7 @@ output: # <20>
   - provider: archive # <24>
 runtime: # <25>
   cache_dir: ./.cache/antora # <26>
-  pull: true # <27>
+  fetch: true # <27>
 ----
 <1> <<site-category,Site category>>
 <2> <<site-title-key,Site title key>>
@@ -72,7 +72,7 @@ runtime: # <25>
 <24> <<output-provider-key,Output provider key>>
 <25> <<runtime-category,Runtime category>>
 <26> <<cache-dir-key,Cache directory key>>
-<27> <<pull-key,Pull cache key>>
+<27> <<fetch-key,Fetch cache key>>
 
 Let's explore the purpose and usage of each key and its values.
 
@@ -361,14 +361,14 @@ Learn more:
 * xref:configure-runtime.adoc#default-cache[Locate default cache directory]
 * xref:configure-runtime.adoc#cache-dir[Override default cache location]
 
-[#pull-key]
-=== pull
+[#fetch-key]
+=== fetch
 
-If you want Antora to refresh the files in the cache, you need to set the `pull` key under the `runtime` category to true.
+If you want Antora to refresh the files in the cache, you need to set the `fetch` key under the `runtime` category to true.
 
 Learn more:
 
-* xref:configure-runtime.adoc#pull[Pull updates]
+* xref:configure-runtime.adoc#fetch[Fetch updates]
 
 ////
 == antora.yml

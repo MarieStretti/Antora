@@ -686,9 +686,9 @@ describe('loadUi()', () => {
     expect(paths).to.have.members(expectedFilePaths)
   })
 
-  it('should not download if pull option is enabled and bundle is permanent', async () => {
+  it('should not download if fetch option is enabled and bundle is permanent', async () => {
     const playbook = {
-      runtime: { pull: true },
+      runtime: { fetch: true },
       ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
     }
     let uiCatalog = await loadUi(playbook)
@@ -707,9 +707,9 @@ describe('loadUi()', () => {
     expect(serverRequests).to.have.lengthOf(1)
   })
 
-  it('should download instead of using cache if pull option is enabled and bundle is a snapshot', async () => {
+  it('should download instead of using cache if fetch option is enabled and bundle is a snapshot', async () => {
     const playbook = {
-      runtime: { pull: true },
+      runtime: { fetch: true },
       ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip', snapshot: true } },
     }
     let uiCatalog = await loadUi(playbook)
