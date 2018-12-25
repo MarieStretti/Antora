@@ -18,6 +18,7 @@ This project utilizes semantic versioning.
 * *asciidoc-loader*: Implement include tag warnings (#389)
 * *ADR*: Add ADR 0010: Replace Git Client describing decision to replace nodegit with isomorphic-got (#380)
 * *ADR*: Add ADR 0011: Align Node Support with Node LTS Schedule (#381)
+* *ADR*: Add ADR 0012: Add TOML, Drop CSON (#392)
 
 === Changed
 
