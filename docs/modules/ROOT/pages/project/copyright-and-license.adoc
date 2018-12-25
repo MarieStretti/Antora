@@ -1,5 +1,4 @@
 = Antora Copyright and License
-:keywords: license, MPL-2.0
 
 == Copyright
 
@@ -7,5 +6,4 @@ Copyright (C) 2017-2018 by OpenDevise Inc. and the individual contributors to An
 
 == License
 
-Use of Antora is granted under the terms of the Mozilla Public License Version 2.0 (MPL-2.0).
-See https://www.mozilla.org/en-US/MPL/2.0 to find the full license text.
+Use of Antora is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0[Mozilla Public License Version 2.0 (MPL-2.0)].
