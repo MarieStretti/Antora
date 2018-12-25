@@ -81,7 +81,7 @@ Once you've installed nvm, open a *new* terminal and install the latest Node LTS
 
  $ nvm install --lts
 
-IMPORTANT: If you're using nvm for Windows, you must enter the full version of Node when running commands (e.g., `nvm install {version-node}`, `nvm use {version-node}`) until {uri-nvm-windows}/issues/214[nvm-windows#214] is resolved.
+IMPORTANT: If you're using nvm for Windows, you must enter the full version of Node when running commands (e.g., `nvm install {version-node}`, `nvm use {version-node}`).
 Run `nvm list available` to see a list of available Node versions.
 
 To make Node 10 the default in new terminals (Linux and macOS only), type:
@@ -173,11 +173,6 @@ That file will redirect you to the start page.
 ==== Troubleshooting
 
 If something goes wrong during generation, you'll see an error message in the terminal.
-
-....
-error: a message that summarizes what went wrong
-....
-
 If this message does not provide enough information to fix the problem, you can ask Antora for more context.
 To tell Antora to reveal the calls leading up to the error (i.e., the stacktrace), run the `antora` command again, this time with the `--stacktrace` option:
 
@@ -187,25 +182,8 @@ Share this stacktrace when <<Getting Help,asking for help>>.
 
 ==== Using Private Repositories
 
-If any of your content repositories require authentication, Antora will look up the credentials in the {uri-git-credential-store}[git credential store] file (which you can specify using the `--git-credentials-path` CLI option).
-If your repository uses a service such as GitHub, the credentials will either be a username and password or a personal access token.
-
-To fill in your credentials, add a line to the file [.path]_$HOME/.git-credentials_ in one of the following formats:
-
-....
-https://username:password@github.com
-....
-
-or
-
-....
-https://personal-access-token@github.com
-....
-
-Then be sure to set the permissions on this file so only your user can read it (i.e., 600).
-
-TIP: It's possible to override the credential manager in Antora if you want to use a different method for authentication.
-Consult the documentation for details.
+If any of your content repositories require authentication, Antora will look up the credentials in the default git credential store file or one that you specify using the `--git-credentials-path` CLI option.
+See the {uri-docs}/antora/latest/playbook/private-repository-auth[private repository authentication] documentation to learn more.
 
 ==== Changing Content
 
@@ -294,35 +272,14 @@ In this guide, you'll learn how to:
 
 Thanks in advance for helping to make this project a success!
 
-== Release Policy
+== Release Policy and Schedule
 
-The Antora Core components includes a default site generator package, the packages the default site generator delegates to, and a CLI package.
-These packages are released together and follow semantic versioning rules.
-Each Antora release is versioned *major.minor.patch*.
-
-Major versions of the Antora Core components are maintained for at least 1 year after the {uri-docs}/antora/latest/project/version-and-lifecycle-policies[initial public stable release].
-Only the latest minor release for a major release will receive patch releases.
+The Antora core components include a default site generator package, the packages the default site generator delegates to, and a CLI package.
+These packages are released together and follow semantic versioning rules (*major.minor.patch*).
+Major versions are maintained for at least 1 year after the {uri-docs}/antora/latest/project/release-schedule[initial public stable release].
+Only the latest minor release will receive patch releases.
 
 The {uri-docs}/antora/latest/project/roadmap[project roadmap] provides the current development direction and schedule for Antora.
-
-Major::
-Major releases occur when new functionality breaks backwards compatibility.
-Releases within the same major version number will maintain API compatibility.
-Major releases require architecture, implementation, and QA iterations that are open to community discussion and review.
-
-Minor::
-Minor releases add new features, improvements and fixes and maintain backwards compatibility.
-Minor releases typically occur when one or more new features or improvements have been reviewed, tested and approved.
-
-Patch::
-Patch releases fix bugs and maintain backwards compatibility.
-Only the latest minor release for a major release will receive patches.
-Patch releases happen as needed depending on the urgency of the fix.
-
-Pre-release::
-Major and minor releases may require numerous pre-release versions (major.minor.patch-alpha.n | -beta.n | -rc.n).
-Pre-release versions will be tagged as _next_ so that the npm client doesn't prefer a pre-release over a stable version.
-Once a release candidate (rc) has been thoroughly tested, the stable release will be published.
 
 == Copyright and License
 

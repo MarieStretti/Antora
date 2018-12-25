@@ -1,0 +1,56 @@
+= Antora Release Schedule
+:page-aliases: version-and-lifecycle-policies.adoc
+:table-caption!:
+
+Each major release line of the Antora Core components is typically supported for one year after it enters general availability (GA).
+
+[cols="2,1,1,1,1",width="75%"]
+|===
+|	|Status |GA	|Maintenance |EOL
+
+|Antora Core Components {page-component-version}
+|Active
+|2018/12/25
+|_TBD_
+|_TBD_
+
+|Antora Core Components 1.1.x
+|Active
+|2018/08/28
+|2019/03/25
+|2019/08/31
+
+|===
+
+General Availability (GA):: A release line enters general availability on the date an initial, final major version of the software is released and available for download.
+
+Active:: Release line is being actively improved and supported.
+
+Maintenance:: Once a release line enters its maintenance period, only its most recent minor version will receive critical security patch releases.
+A release line starts this phase three months after the next major release line goes GA.
+
+End of Life (EOL):: The date after which the release line no longer receives support or releases.
+
+== Version policy
+
+Antora follows the semantic versioning rules.
+Each Antora component release is versioned *major.minor.patch*.
+
+Major::
+Major releases occur when there are substantial changes in functionality or when new functionality breaks backwards compatibility.
+Releases within the same major release line will maintain API compatibility.
+
+Minor::
+Minor releases add new features, improvements to existing features, and fixes that maintain backwards compatibility.
+
+Patch::
+Patch releases fix bugs and maintain backwards compatibility.
+Only the latest minor release of a major release line will receive patches.
+Patch releases happen as needed depending on the urgency of the fix.
+
+Pre-release::
+Major and minor releases may include pre-release versions (major.minor.patch-alpha.n | -beta.n | -rc.n).
+Pre-release versions will be tagged as _next_ so that the npm client doesn't prefer a pre-release over a stable version.
+Once a release candidate (rc) has been thoroughly tested, the stable release will be published.
+
+TIP: See the xref:project/roadmap.adoc[Roadmap] for some of the notable features and changes scheduled for upcoming Antora releases.

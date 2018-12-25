@@ -18,7 +18,7 @@ We'll be using the Chocolatey package manager to install it.
 
 == Node
 
-include::page$install/linux-requirements.adoc[tag=node-intro]
+include::page$linux-requirements.adoc[tag=node-intro]
 
 To check whether you have Node installed, and which version, open PowerShell and type:
 

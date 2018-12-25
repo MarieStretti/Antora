@@ -5,13 +5,19 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Added
+
+* What's New page for Antora 2.0 release (#366)
+
 == 2.0.0-rc.3 (2018-12-25)
 
 === Added
 
+* *asciidoc-loader*: Implement include tag warnings (#389)
 * *ADR*: Add ADR 0010: Replace Git Client describing decision to replace nodegit with isomorphic-got (#380)
 * *ADR*: Add ADR 0011: Align Node Support with Node LTS Schedule (#381)
-* *asciidoc-loader*: Implement include tag warnings (#389)
 
 === Changed
 
