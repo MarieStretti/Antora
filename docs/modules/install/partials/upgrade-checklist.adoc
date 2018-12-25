@@ -16,9 +16,9 @@ If yes, you'll need to migrate it to YAML, JSON, or TOML before running Antora 2
 If you answered *No* to all of the above questions, then you're ready to upgrade to Antora 2.0 now!
 ifeval::["{route}" == "New"]
 See xref:install:upgrade-antora.adoc[Upgrade Antora] for instructions.
-endif::[]
 
 == Software Lifecycle Notices
 
 Antora 1.1 will enter maintenance on March 25, 2019.
 See the xref:ROOT:project/release-schedule.adoc[release schedule] for details.
+endif::[]

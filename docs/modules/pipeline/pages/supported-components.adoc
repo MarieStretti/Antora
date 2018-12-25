@@ -10,7 +10,7 @@ Due to its API, you can also integrate Asciidoctor extensions.
 [#core]
 == Core components
 
-*Core* components are assembled into a pipeline by the Site Generator Default component.
+Core components are assembled into a pipeline by the Site Generator Default component.
 The Core components are versioned together.
 
 At this time, only Core components with the same version are designed to work together.
@@ -21,7 +21,7 @@ If you make a custom site generator, you are responsible for keeping each indivi
 
 == Extended components
 
-*Extended* components provide key functionality for special use cases.
+Extended components provide key functionality for special use cases.
 An example of an Extended component is a site publisher provider for an Amazon S3 bucket.
 Once ready for xref:ROOT:project/release-schedule.adoc[general availability], Extended components are released and versioned individually.
 

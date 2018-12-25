@@ -143,7 +143,7 @@ Using this approach, multiple entries may be separated either by a comma or a ne
 
 Another option for passing credentials to the credential manager is to encode them directly in the URL listed in the playbook.
 
-WARNING: This strategy is not recommended unless you're using using a placeholder to inject the real credentials, as described at the end of this section.
+WARNING: This strategy is not recommended unless you're using a placeholder to inject the real credentials, as described at the end of this section.
 
 Antora will extract the credentials that precede the hostname (i.e., `username:password@` or `token@`) and use them to perform authentication on your behalf if requested by the server.
 

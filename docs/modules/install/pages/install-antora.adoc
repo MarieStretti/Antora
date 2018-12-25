@@ -23,6 +23,10 @@ To install the Antora CLI and site generator packages globally, open a terminal 
 
  $ npm i -g @antora/cli @antora/site-generator-default
 
+IMPORTANT: The `@` at the beginning of the package name is important.
+It tells `npm` that the `cli` package is located in the `antora` group.
+If you omit this character, `npm` will assume the package name is the name of a git repository on GitHub.
+
 Verify the `antora` command is available on your PATH by running:
 
  $ antora -v
@@ -56,12 +60,10 @@ You can then install the site generator packages in a project directory.
 
 To install *only* the CLI globally, type:
 
-.Install Antora CLI package globally
  $ npm i -g @antora/cli
 
 Or, to install the CLI in a project directory, change into your project directory, and type:
 
-.Install Antora CLI package in a project directory
  $ npm i @antora/cli
 
 Dropping the `-g` flag installs the package under the [.path]_node_modules_ folder in the current directory.
@@ -96,8 +98,3 @@ Now that Antora is installed, you're ready to:
 * Set up your own xref:playbook:index.adoc[playbook] or use the Demo playbook.
 * Organize a xref:ROOT:component-structure.adoc[documentation component repository] or use Antora's Demo docs components.
 * xref:ROOT:run-antora.adoc[Run Antora] and generate a documentation site.
-
-
-//IMPORTANT: The `@` at the beginning of the package name is important.
-//It tells `npm` that the `cli` package is located in the `antora` group.
-//If you omit this character, `npm` will assume the package name is the name of a git repository on GitHub.

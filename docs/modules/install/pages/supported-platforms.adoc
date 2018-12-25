@@ -12,7 +12,7 @@ Thanks to this broad platform support, Antora is also used on many cloud platfor
 == Platforms
 
 Our general policy is to align Antora's support of a platform version with the upstream project's lifecycle schedule for that version.
-When a platform version reaches its End of Life (EOL), Antora no longer supports it.
+When a platform version reaches its end of life (EOL), Antora no longer supports it.
 
 // When we have specific notes about a platform (tweaks and/or links to bugs) add a 3rd column to this table labeled "Good to Know"
 [cols="20,25a",width="50%"]
