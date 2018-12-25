@@ -1,11 +1,12 @@
 'use strict'
 
 const Opal = global.Opal
+const { $Antora } = require('../constants')
 const $pageRefCallback = Symbol('callback')
 
 const Html5Converter = (() => {
   const scope = Opal.klass(
-    Opal.module(null, 'Antora', function $Antora () {}),
+    Opal.module(null, 'Antora', $Antora),
     Opal.module(null, 'Asciidoctor').Converter.Html5Converter,
     'Html5Converter',
     function () {}
