@@ -17,10 +17,10 @@
   "main": "lib/index.js",
   "dependencies": {
     "@antora/expand-path-helper": "^1.0.0",
-    "bl": "^2.0.1",
+    "bl": "^2.1.2",
     "cache-directory": "^2.0.0",
     "camelcase-keys": "^5.0.0",
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^7.0.1",
     "got": "^9.5.0",
     "gulp-vinyl-zip": "^2.1.2",
     "js-yaml": "^3.12.0",

@@ -42,6 +42,10 @@ We've requested the gulp-vinyl-zip project to find a replacement for the event-s
 |1.x
 |All
 
+|@antora/site-publisher
+|1.x
+|All
+
 |Default UI build
 |n/a
 |All

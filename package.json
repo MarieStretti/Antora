@@ -5,7 +5,7 @@
     "version": "node scripts/version.js"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "chai-cheerio": "^1.0.0",
     "chai-fs": "^2.0.0",
     "chai-spies": "^1.0.0",
@@ -23,7 +23,7 @@
     "mocha": "^5.2.0",
     "node-git-server": "^0.5.0",
     "npm-which": "^3.0.1",
-    "nyc": "^13.0.1",
+    "nyc": "^13.1.0",
     "plugin-error": "^1.0.1",
     "prettier-eslint-cli": "^4.7.1",
     "stream-to-array": "^2.3.0",
