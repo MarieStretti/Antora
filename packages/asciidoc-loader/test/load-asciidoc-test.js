@@ -22,6 +22,15 @@ describe('loadAsciiDoc()', () => {
     inputFile.contents = Buffer.from(contents)
   }
 
+  const captureStderr = (block) => {
+    const messages = []
+    const defaultStderrWrite = process.stderr.write
+    process.stderr.write = (msg) => messages.push(msg)
+    const returnVal = block()
+    process.stderr.write = defaultStderrWrite
+    return [returnVal, messages]
+  }
+
   beforeEach(() => {
     inputFile = {
       path: 'modules/module-a/pages/page-a.adoc',
@@ -76,12 +85,11 @@ describe('loadAsciiDoc()', () => {
 
       include::does-not-resolve.adoc[]
     `
-    const defaultStderrWrite = process.stderr.write
-    process.stderr.write = (msg) => {}
-    const html = Asciidoctor.convert(contents, { safe: 'safe' })
+    const [html, messages] = captureStderr(() => Asciidoctor.convert(contents, { safe: 'safe' }))
     expectLink(html, '1.0@component-b::index.html', 'Component B')
     expect(html).to.include('Unresolved directive in &lt;stdin&gt; - include::does-not-resolve.adoc[]')
-    process.stderr.write = defaultStderrWrite
+    expect(messages).to.have.lengthOf(1)
+    expect(messages[0]).to.include('line 5: include file not found')
   })
 
   it('should use UTF-8 as the default String encoding', () => {
@@ -345,10 +353,11 @@ describe('loadAsciiDoc()', () => {
       expect(shoutBlockExtension.registered).to.equal(2)
       expect(html).to.include('RELEASE EARLY. RELEASE OFTEN')
 
-      const defaultStderrWrite = process.stderr.write
-      process.stderr.write = (msg) => {}
-      expect(loadAsciiDoc(inputFile).convert()).to.include('Release early. Release often.')
-      process.stderr.write = defaultStderrWrite
+      let messages
+      ;[html, messages] = captureStderr(() => loadAsciiDoc(inputFile).convert())
+      expect(html).to.include('Release early. Release often.')
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0]).to.include('page-a.adoc: line 2: invalid style for paragraph: shout')
     })
 
     it('should give extension access to context that includes current file and content catalog', () => {
@@ -891,7 +900,6 @@ describe('loadAsciiDoc()', () => {
     })
 
     it('should skip include directive if max include depth is 0', () => {
-      const stderrLines = []
       const includeContents = 'greetings!'
       const contentCatalog = mockContentCatalog({
         family: 'partial',
@@ -899,17 +907,15 @@ describe('loadAsciiDoc()', () => {
         contents: includeContents,
       }).spyOn('getById')
       setInputFileContents('include::partial$greeting.adoc[]')
-      const defaultStderrWrite = process.stderr.write
-      process.stderr.write = (msg) => stderrLines.push(msg)
-      const doc = loadAsciiDoc(inputFile, contentCatalog, { attributes: { 'max-include-depth': 0 } })
-      process.stderr.write = defaultStderrWrite
+      const [doc, messages] = captureStderr(() =>
+        loadAsciiDoc(inputFile, contentCatalog, { attributes: { 'max-include-depth': 0 } })
+      )
       expect(contentCatalog.getById).to.not.have.been.called()
       expect(doc.getBlocks()).to.be.empty()
-      expect(stderrLines).to.be.empty()
+      expect(messages).to.be.empty()
     })
 
     it('should skip include directive if max include depth is exceeded', () => {
-      const stderrLines = []
       const includeContents = 'greetings!\n\ninclude::partial$greeting.adoc[]'
       const contentCatalog = mockContentCatalog({
         family: 'partial',
@@ -917,10 +923,7 @@ describe('loadAsciiDoc()', () => {
         contents: includeContents,
       }).spyOn('getById')
       setInputFileContents('include::partial$greeting.adoc[]')
-      const defaultStderrWrite = process.stderr.write
-      process.stderr.write = (msg) => stderrLines.push(msg)
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
-      process.stderr.write = defaultStderrWrite
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
         version: 'master',
@@ -930,24 +933,20 @@ describe('loadAsciiDoc()', () => {
       })
       const maxIncludeDepth = doc.getAttribute('max-include-depth')
       expect(doc.getBlocks()).to.have.lengthOf(maxIncludeDepth)
-      expect(stderrLines).to.have.lengthOf(1)
-      expect(stderrLines[0].trim()).to.equal(
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0].trim()).to.equal(
         `asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of ${maxIncludeDepth} exceeded`
       )
     })
 
     it('should honor depth set in include directive', () => {
-      const stderrLines = []
       const includeContents = 'greetings!\n\ninclude::partial$hit-up-for-money.adoc[]'
       const contentCatalog = mockContentCatalog([
         { family: 'partial', relative: 'greeting.adoc', contents: includeContents },
         { family: 'partial', relative: 'hit-up-for-money.adoc', contents: 'Got some coin for me?' },
       ]).spyOn('getById')
       setInputFileContents('include::partial$greeting.adoc[depth=0]')
-      const defaultStderrWrite = process.stderr.write
-      process.stderr.write = (msg) => stderrLines.push(msg)
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
-      process.stderr.write = defaultStderrWrite
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expect(contentCatalog.getById).to.have.been.called.once()
       expectCalledWith(contentCatalog.getById, {
         component: 'component-a',
@@ -957,8 +956,8 @@ describe('loadAsciiDoc()', () => {
         relative: 'greeting.adoc',
       })
       expect(doc.getBlocks()).to.have.lengthOf(1)
-      expect(stderrLines).to.have.lengthOf(1)
-      expect(stderrLines[0].trim()).to.equal(
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0].trim()).to.equal(
         `asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of 1 exceeded`
       )
     })
@@ -1353,7 +1352,6 @@ describe('loadAsciiDoc()', () => {
       expect(firstBlock.getSourceLines()).to.eql([])
     })
 
-    // TODO test for warning once logged
     it('should handle mismatched end tag in include file', () => {
       const includeContents = heredoc`
         puts "Please stand by..."
@@ -1375,14 +1373,19 @@ describe('loadAsciiDoc()', () => {
         include::{examplesdir}/ruby/greet.rb[tags=hello;goodbye]
         ----
       `)
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
+      // NOTE known issue that cursor is off by one line in custom include processor
+      const expectedMessage =
+        "page-a.adoc: line 4: mismatched end tag (expected 'goodbye' but found 'hello')" +
+        ' at line 5 of include file: modules/module-a/examples/ruby/greet.rb'
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0]).to.include(expectedMessage)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('listing')
       expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"', 'puts "Goodbye, World!"'])
     })
 
-    // TODO test for warning once logged
     it('should skip redundant end tag in include file', () => {
       const includeContents = heredoc`
         puts "Please stand by..."
@@ -1402,11 +1405,75 @@ describe('loadAsciiDoc()', () => {
         include::{examplesdir}/ruby/greet.rb[tag=hello]
         ----
       `)
-      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
+      // NOTE known issue that cursor is off by one line in custom include processor
+      const expectedMessage =
+        "page-a.adoc: line 4: unexpected end tag 'hello' " +
+        'at line 5 of include file: modules/module-a/examples/ruby/greet.rb'
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0]).to.include(expectedMessage)
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('listing')
       expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"'])
+    })
+
+    it('should warn if include tag is unclosed', () => {
+      const includeContents = heredoc`
+        puts "Please stand by..."
+        # tag::hello[]
+        puts "Hello, World!"
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[tag=hello]
+        ----
+      `)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
+      // NOTE known issue that cursor is off by one line in custom include processor
+      const expectedMessage =
+        "page-a.adoc: line 4: detected unclosed tag 'hello' " +
+        'starting at line 2 of include file: modules/module-a/examples/ruby/greet.rb'
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0]).to.include(expectedMessage)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(['puts "Hello, World!"'])
+    })
+
+    it('should warn if requested include tag is not found', () => {
+      const includeContents = heredoc`
+        puts "Please stand by..."
+        puts "Hello, World!"
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[tags=hello;yo]
+        ----
+      `)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
+      // NOTE known issue that cursor is off by one line in custom include processor
+      const expectedMessage =
+        "page-a.adoc: line 4: tags 'hello, yo' not found in include file: modules/module-a/examples/ruby/greet.rb"
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0]).to.include(expectedMessage)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql([])
     })
 
     it('should include all lines except for tag directives when tag wildcard is specified', () => {

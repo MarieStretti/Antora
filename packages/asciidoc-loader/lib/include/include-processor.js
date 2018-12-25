@@ -26,23 +26,21 @@ const IncludeProcessor = (() => {
   Opal.defn(scope, '$process', function (doc, reader, target, attrs) {
     if (reader.include_stack.length >= Opal.hash_get(reader.maxdepth, 'abs')) {
       if (Opal.hash_get(reader.maxdepth, 'abs')) {
-        reader
-          .$logger()
-          .$error(
-            reader.$message_with_context(
-              `maximum include depth of ${Opal.hash_get(reader.maxdepth, 'rel')} exceeded`,
-              Opal.hash({ source_location: reader.getCursor() })
-            )
-          )
+        log('error', `maximum include depth of ${Opal.hash_get(reader.maxdepth, 'rel')} exceeded`, reader)
       }
       return
     }
     const resolvedFile = this[$callback](doc, target, reader.getCursor())
     if (resolvedFile) {
-      let includeContents = resolvedFile.contents
-      let startLineNum = 1
-      const tags = getTags(attrs)
-      if (tags) [includeContents, startLineNum] = applyTagFiltering(includeContents, tags)
+      let includeContents
+      let tags
+      let startLineNum
+      if ((tags = getTags(attrs))) {
+        ;[includeContents, startLineNum] = applyTagFiltering(reader, target, resolvedFile, tags)
+      } else {
+        includeContents = resolvedFile.contents
+        startLineNum = 1
+      }
       Opal.hash_put(attrs, 'partial-option', true)
       reader.pushInclude(includeContents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
       if (resolvedFile.context) {
@@ -76,7 +74,7 @@ function getTags (attrs) {
   }
 }
 
-function applyTagFiltering (contents, tags) {
+function applyTagFiltering (reader, target, file, tags) {
   let selecting, selectingDefault, wildcard
   if (tags.has('**')) {
     if (tags.has('*')) {
@@ -97,11 +95,11 @@ function applyTagFiltering (contents, tags) {
 
   const lines = []
   const tagStack = []
-  const usedTags = []
+  const foundTags = []
   let activeTag
   let lineNum = 0
   let startLineNum
-  contents.split(NEWLINE_RX).forEach((line) => {
+  file.contents.split(NEWLINE_RX).forEach((line) => {
     lineNum++
     let m
     let l = line
@@ -115,30 +113,61 @@ function applyTagFiltering (contents, tags) {
           const idx = tagStack.findIndex(([name]) => name === thisTag)
           if (~idx) {
             tagStack.splice(idx, 1)
-            //console.warn(`line ${lineNum}: mismatched end tag in include: expected ${activeTag}, found ${thisTag}`)
+            log(
+              'warn',
+              `mismatched end tag (expected '${activeTag}' but found '${thisTag}') ` +
+                `at line ${lineNum} of include file: ${file.file})`,
+              reader,
+              reader.$create_include_cursor(file.file, target, lineNum)
+            )
+          } else {
+            log(
+              'warn',
+              `unexpected end tag '${thisTag}' at line ${lineNum} of include file: ${file.file}`,
+              reader,
+              reader.$create_include_cursor(file.file, target, lineNum)
+            )
           }
-          //} else {
-          //  //console.warn(`line ${lineNum}: unexpected end tag in include: ${thisTag}`)
-          //}
         }
       } else if (tags.has(thisTag)) {
-        usedTags.push(thisTag)
-        tagStack.unshift([(activeTag = thisTag), (selecting = tags.get(thisTag))])
+        foundTags.push(thisTag)
+        tagStack.unshift([(activeTag = thisTag), (selecting = tags.get(thisTag)), lineNum])
       } else if (wildcard !== undefined) {
         selecting = activeTag && !selecting ? false : wildcard
-        tagStack.unshift([(activeTag = thisTag), selecting])
+        tagStack.unshift([(activeTag = thisTag), selecting, lineNum])
       }
     } else if (selecting) {
       if (!startLineNum) startLineNum = lineNum
       lines.push(line)
     }
   })
-  // Q: use _.difference(Object.keys(tags), usedTags)?
-  //const missingTags = Object.keys(tags).filter((e) => !usedTags.includes(e))
-  //if (missingTags.length) {
-  //  console.warn(`tag${missingTags.length > 1 ? 's' : ''} '${missingTags.join(',')}' not found in include`)
-  //}
+  if (tagStack.length) {
+    tagStack.forEach(([tagName, _, tagLineNum]) =>
+      log(
+        'warn',
+        `detected unclosed tag '${tagName}' starting at line ${tagLineNum} of include file: ${file.file}`,
+        reader,
+        reader.$create_include_cursor(file.file, target, tagLineNum)
+      )
+    )
+  }
+  if (foundTags.length) foundTags.forEach((name) => tags.delete(name))
+  if (tags.size) {
+    const missingTagNames = Array.from(tags.keys())
+    log(
+      'warn',
+      `tag${tags.size > 1 ? 's' : ''} '${missingTagNames.join(', ')}' not found in include file: ${file.file}`,
+      reader
+    )
+  }
   return [lines, startLineNum || 1]
+}
+
+function log (severity, message, reader, includeCursor = undefined) {
+  const opts = includeCursor
+    ? { source_location: reader.getCursor(), include_location: includeCursor }
+    : { source_location: reader.getCursor() }
+  reader.$logger()['$' + severity](reader.$message_with_context(message, Opal.hash(opts)))
 }
 
 module.exports = IncludeProcessor
