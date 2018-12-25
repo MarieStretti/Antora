@@ -20,7 +20,7 @@ This selection of tools provides other useful commands you'll need in your workf
 
 Install the base build tools package by executing the command associated with your Linux distribution.
 
-* Fedora: `dnf install @development-tools`
+* Fedora: `dnf install gcc-c++ libcurl-devel openssl-devel python`
 * Debian/Ubuntu: `apt-get install build-essential libcurl3-gnutls libssl-dev`
 * Arch Linux: `pacman -S base-devel`
 * Alpine Linux*: `apk add g++ libressl-dev make python curl-dev`

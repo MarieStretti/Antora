@@ -11,7 +11,7 @@ This page helps you troubleshoot the problem.
 
 == Check prerequisites
 
-If installation fails when it arrives at installing nodegit, the first thing to check is that you've satisfied all prerequisites.
+If installation fails when it arrives at installing nodegit, the *first check that you've satisfied all the prerequisites.*
 Specifically, you must have installed the base build tools for your system (Linux and macOS only).
 
 * xref:install/linux-requirements.adoc#base-build-tools[Install base build tools for Linux]
@@ -33,7 +33,7 @@ This is an open issue in nodegit.
 See https://github.com/nodegit/nodegit/issues/1246[nodegit#1246^].
 
 If you see this error, you either need to create the missing symlink or force nodegit to be recompiled instead of using a precompiled binary.
-If you're using Alpine Linux, you must <<recompile-nodegit,force nodegit to recompile>>.
+If you're using Fedora or Alpine Linux, you must <<recompile-nodegit,force nodegit to recompile>>.
 
 == Option 1: Create missing symlink
 
@@ -57,6 +57,9 @@ If you aren't comfortable making a system-wide change, or you're on Alpine Linux
 Force nodegit to recompile by passing the `BUILD_ONLY=true` environment variable to the `npm install` command.
 
  $ BUILD_ONLY=true npm install -g @antora/site-generator-default
+
+Unfortunately, you *cannot install nodegit as the root user* if you have to use this method of installation.
+The workaround is to create a normal user, switch to that user, then install Antora.
 
 Be aware that recompiling nodegit will make installation take considerably longer.
 

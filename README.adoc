@@ -59,7 +59,7 @@ If you're running Windows, you can skip this section.
 
 If you're running Linux, select the appropriate base build tools package for your distribution.
 
-* Fedora: `dnf install @development-tools`
+* Fedora: `dnf install libcurl-devel openssl-devel python`
 * Debian/Ubuntu: `apt-get install build-essential libcurl3-gnutls libssl-dev`
 * Arch Linux: `pacman -S base-devel`
 * Alpine Linux*: `apk add g++ libressl-dev make python curl-dev`
