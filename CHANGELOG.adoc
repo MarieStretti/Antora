@@ -10,6 +10,7 @@ This project utilizes semantic versioning.
 === Added
 
 * What's New page for Antora 2.0 release (#366)
+* *ADR*: Add ADR 0012: Add TOML, Drop CSON (#392)
 
 == 2.0.0-rc.3 (2018-12-25)
 

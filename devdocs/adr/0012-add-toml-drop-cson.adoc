@@ -1,0 +1,36 @@
+= ADR 0012: Add TOML, Drop CSON
+:revdate: 2018-12-24
+
+== Status
+
+Accepted
+
+== Context
+
+To avoid holy wars over configuration formats, Antora offers support for writing the playbook file in several configuration languages.
+One of the formats we chose, CSON, ended up not catching on.
+One that we missed, TOML, has caught on.
+
+The CSON format is close enough to the broadly adopted YAML format that users feel more comfortable sticking to what they know.
+The CSON package has also introduced a forced incompatibility with Yarn, which blocks us from upgrading (or risk breaking users' workflows).
+
+TOML has risen to popularity thanks to Netlify.
+Netlify chose TOML as the format for configuring deployments.
+This adoption has made many users familiar with TOML and brought it into the mainstream.
+Users are starting to request support for TOML in Antora.
+In fact, since the Antora project uses Netlify for deployment, we're already familiar with it ourselves and even have configuration files in our repository in this format.
+
+== Decision
+
+The decision is to add support for writing playbook files in TOML and drop CSON.
+This was an easy decision since the Antora project is already a user of the TOML format.
+It's also a friendly format for non-technical users because it's line-oriented and has less magic than some other formats.
+For that reason, we think the format will be popular among writers.
+And that makes it a good fit for this project.
+
+== Consequences
+
+Less technical users might find the playbook files written in TOML easier to read and maintain.
+Users who are familiar with the configuration format for Netlify will feel at home writing playbook files for Antora.
+
+If there are any users who wrote their playbook files in CSON, they will have to migrate to one of the other supported formats (JSON, YAML, or TOML) before using Antora 2.0.
