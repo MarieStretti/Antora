@@ -1,0 +1,18 @@
+== Upgrade checklist
+
+You may need to make some of the following changes to your documentation system before using Antora 2.0.
+
+Does Antora access private repositories in order to build your site?::
+If yes, you'll need to say goodbye to your SSH agent and set up your authentication credentials for each private repository URL in a git credential store.
+Refer to the xref:playbook:private-repository-auth.adoc[Private repository authentication] documentation for setup options and instructions.
+
+Is your Antora playbook file written in CSON?::
+If yes, you'll need to migrate it to YAML, JSON, or TOML before running Antora 2.0.
+
+If you answered *No* to all of the above questions, then you're ready to upgrade to Antora 2.0 now!
+ifeval::["{route}" == "New"]
+See xref:install:upgrade-antora.adoc[Upgrade Antora] for instructions.
+endif::[]
+
+NOTE: Antora 1.1 will enter maintenance on March 25, 2019.
+See the xref:ROOT:project/release-schedule.adoc[Release schedule] for details.

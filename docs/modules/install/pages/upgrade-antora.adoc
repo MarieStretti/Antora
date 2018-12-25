@@ -3,6 +3,8 @@
 :version-node-patch: {version-node}.14.2
 :version-npm: 6.4.1
 
+include::install:partial$upgrade-checklist.adoc[]
+
 On this page, you'll learn:
 
 * [x] How to upgrade Node. (optional)

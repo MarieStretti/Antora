@@ -1,18 +1,23 @@
 = What's New in Antora
+:route: New
 :doctype: book
 :url-releases-asciidoctor: https://github.com/asciidoctor/asciidoctor/releases
 :url-releases-asciidoctorjs: https://github.com/asciidoctor/asciidoctor.js/releases
 :url-gitlab: https://gitlab.com
-:url-milestone-2_0: {url-gitlab}/antora/antora/issues?milestone_title=v2.0.x&scope=all&state=closed
-:url-mr: {url-gitlab}/antora/antora/merge_requests
+:url-git-antora: {url-gitlab}/antora/antora
+:url-issues: {url-git-antora}/issues
+:url-milestone-2-0: {url-issues}?milestone_title=v2.0.x&scope=all&state=closed
+:url-mr: {url-git-antora}/merge_requests
 
 Learn about what's new in the 2.0 release series of Antora.
 
 = Antora 2.0.0
 
-_Release date: 2018.12.24 | Addresses these core component {url-milestone-2_0}[issues]_
+_Release date: 2018.12.25 | Addresses these core component {url-milestone-2-0}[issues]_
 
 The Antora 2.0.0 release drastically streamlines the installation process, improves platform and library compatibility, provides a simpler and pluggable authentication mechanism for private repositories, and delivers the latest Asciidoctor capabilities.
+
+TIP: If you need a quick overview of the breaking changes, jump to the <<checklist,upgrade checklist>>.
 
 == Hassle-free installation thanks to isomorphic-git
 
@@ -101,6 +106,7 @@ Node compatibility:: Antora now works with Node 10 and 11.
 
 Antora playbook files in TOML:: You can now write Antora playbook files in the TOML configuration language.
 The CSON format is no longer supported.
+If your Antora playbook is in CSON, you'll need to migrate it to YAML, JSON, or TOML before using Antora 2.0.
 
 page.origin.private:: If a content source requires authentication (either because credentials were defined in the URL or credentials were requested from the credentials manager), the `page.origin.private` property will be set in the UI model.
 
@@ -115,40 +121,33 @@ page.latest:: The `page.versions.latest` property in the UI model can now be rea
 
 == Known issues
 
-=== Reference pruning (#374)
+=== Reference pruning
 
-Issue:: After the switch to isomorphic-git, references are no longer pruned when the `--pull` option is specified.
+{url-issues}/374[Issue #374]:: After the switch to isomorphic-git, references are no longer pruned when the `--pull` option is specified.
 This means that if a reference is removed from the remote repository, it will not be removed from Antora's cached version.
 Workaround:: You can clear Antora's cache directory or the cache of the repository in question.
 We'll restore this behavior in a future enhancement.
 
-=== Broken 404 pages on sites that aren't served from root folder (#258)
+=== Broken 404 pages on sites that aren't served from root folder
 
-Issue:: If your site is not served from the root folder of a domain (such as is the case of sites running on the GitHub Pages or GitLab Pages domain), the references to UI assets and navigation links on the 404 page will not work property.
+{url-issues}/258[Issue #258]:: If your site is not served from the root folder of a domain (such as is the case of sites running on the GitHub Pages or GitLab Pages domain), the references to UI assets and navigation links on the 404 page will not work property.
 Workaround:: Postprocess the 404.html page to fix the paths before publishing the site.
 
 == Thank you!
 
 Most important of all, a big *Thank you!* to all the folks who helped make Antora even better.
 
-Abel Salgado Romero ({url-gitlab}/abelsromero[@abelsromero])::
-Fix wrong gulp-ci package name replacing it with correct gulp-cli {url-mr}/294[MR 294]
+Abel Salgado Romero ({url-gitlab}/abelsromero[@abelsromero]):: Fix wrong gulp-ci package name replacing it with correct gulp-cli {url-mr}/294[MR 294]
 
 Antonio ({url-gitlab}/bandantonio[@bandantonio])::
-+
---
-* Fix colon typo in resource id include directive {url-mr}/284[MR 284]
-* Add information about missing runtime category in the playbook configuration {url-mr}/282[MR 282]
---
+Fix colon typo in resource id include directive {url-mr}/284[MR 284] +
+Add information about missing runtime category in the playbook configuration {url-mr}/282[MR 282]
 
-Julien Grenier ({url-gitlab}/jgrenier[@jgrenier])::
-Fix failing build (docker-antora) https://gitlab.com/antora/docker-antora/merge_requests/5[MR 5]
+Julien Grenier ({url-gitlab}/jgrenier[@jgrenier]):: Fix failing build (docker-antora) https://gitlab.com/antora/docker-antora/merge_requests/5[MR 5]
 
-Matthew Setter ({url-gitlab}/settermjd[@settermjd])::
-Correct reference to ui-bundle-url in the docs {url-mr}/280[MR 280]
+Matthew Setter ({url-gitlab}/settermjd[@settermjd]):: Correct reference to ui-bundle-url in the docs {url-mr}/280[MR 280]
 
-{url-gitlab}/Leantricity[@Leantricity]::
-Fix page-to-page-xref.adoc typo {url-mr}/278[MR 278]
+{url-gitlab}/Leantricity[@Leantricity]:: Fix page-to-page-xref.adoc typo {url-mr}/278[MR 278]
 
 == Metrics
 
@@ -161,10 +160,5 @@ It took 11 seconds to install Antora 1.1.1 from cache; it just takes about 3 sec
 Merges: 28
 Issues resolved: 25
 
-== Upgrade instructions
-
-If you don't use private repositories, all you need to do is upgrade to Antora 2.0.
-See xref:install:upgrade-antora.adoc[Upgrade Antora] for instructions.
-
-For those of you who do use private repositories, you'll need to set up your authentication credentials and say goodbye to your SSH agent.
-Refer to xref:playbook:private-repository-auth.adoc[Private repository authentication] documentation for instructions.
+[#checklist]
+include::install:partial$upgrade-checklist.adoc[]
