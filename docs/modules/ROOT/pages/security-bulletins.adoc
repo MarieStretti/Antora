@@ -1,0 +1,92 @@
+= Security Bulletins
+
+A prompt response to software defects and security vulnerabilities is a top priority for Antora.
+Even though threats are a fact of life, we take quality assurance seriously with nearly 100% test coverage.
+This page documents the items that slipped through and how to address them.
+
+== Security Bulletin ANTORA-350
+
+ID:: ANTORA-350
+Published:: November 26, 2018
+
+=== Summary
+
+For a brief window of time, version 0.1.1 of flatmap-stream entered Antora's runtime dependency chain (via gulp-vinyl-zip -> event-stream -> flatmap-stream).
+This package is known to contain malicious code that runs an encrypted payload targeting a very specific application.
+The dependency was brought in by event-stream via gulp-vinyl-zip during that time period.
+
+The malicious package was promptly removed from the npm registry and is no longer in Antora's runtime dependency chain.
+Furthermore, gulp-vinyl-zip has locked the version of event-stream to 3.3.4, which does not depend on flapmap-stream.
+However, the flatmap-stream 0.1.1 package could still be installed on the user's machine.
+Additionally, if the user's project uses a package lock file (i.e., package-lock.json or yarn.lock), that could cause the npm client to request the removed package (which would fail).
+
+This bulletin may not affect Antora users since Antora doesn't use a crypto-currency package, which is required for the malicious code to work.
+But it could put other applications at risk given that installing Antora caused this package to be installed.
+
+Anyone installing Antora today with a clean npm package cache won't be affected.
+Antora will grab a version of gulp-vinyl-zip that does not depend transitively on flatmap-stream.
+The published Docker images for Antora are also fine.
+Although version 1.1.1 of the Docker image uses event-stream 3.3.6, it grabbed flatmap-stream 0.1.0, which does not contain the malicious code.
+
+This bulletin only affects users who installed Antora during the brief period when flatmap-stream 0.1.1 was in the npm repository.
+See the Solutions section for analysis and mitigation steps.
+
+We've requested the gulp-vinyl-zip project to find a replacement for the event-stream library, which is now deprecated (as a result of this incident).
+
+=== Affected Versions
+
+|===
+|Antora Package |Versions |Platforms
+
+|@antora/ui-loader
+|1.x
+|All
+
+|Default UI build
+|n/a
+|All
+|===
+
+=== Solution
+
+You can check if you've been affected by looking for version 0.1.1 of flatmap-stream in your list of installed.
+Here are the commands you can use to check:
+
+ $ npm ls flatmap-stream | grep flatmap-stream@0.1.1
+   npm ls -g flatmap-stream | grep flatmap-stream@0.1.1
+   yarn list --pattern=flatmap-stream | grep flatmap-stream@0.1.1
+   (cd $(yarn global dir); yarn list --pattern=flatmap-stream@0.1.1)
+
+If any of these commands produce output, then you're affected.
+You should promptly uninstall and reinstall Antora (which you only have to do once).
+Otherwise, you are fine.
+
+Global installation:
+
+.npm (global install)
+ $ npm uninstall -g @antora/site-generator-default
+   npm install -g @antora/site-generator-default@$(antora version)
+
+.npm (local install)
+ $ rm -f package-lock.json node_modules
+   npm i
+
+.yarn (global install)
+ $ yarn global remove @antora/site-generator-default
+   yarn global add @antora/site-generator-default@$(antora version)
+
+.yarn (local install or UI project)
+ $ rm -f yarn.lock node_modules
+   yarn
+
+Once you execute these commands, the flatmap-stream package should no longer be installed as part of Antora's dependency chain.
+However, if you have other applications that depend on a package that uses flatmap-stream, the package may remain.
+In that case, it's best to clear all the installed node packages from your machine.
+Since the malicious package is no longer in the npm registry, it will never be installed again.
+
+=== References
+
+* https://www.npmjs.com/advisories/737[npm advisory #737^]
+* https://github.com/dominictarr/event-stream/issues/116[event-stream issue #116^]
+* https://github.com/joaomoreno/gulp-vinyl-zip/issues/14[gulp-vinyl-zip #14^]
+* https://github.com/joaomoreno/gulp-vinyl-zip/issues/15[gulp-vinyl-zip #15^]
