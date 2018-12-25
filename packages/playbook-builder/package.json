@@ -1,6 +1,6 @@
 {
   "name": "@antora/playbook-builder",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "description": "Builds a playbook object from user input for configuring successive documentation components in an Antora pipeline.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
