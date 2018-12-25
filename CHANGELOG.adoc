@@ -9,9 +9,10 @@ This project utilizes semantic versioning.
 
 === Added
 
+* *asciidoc-loader*: Implement include tag warnings (#389)
 * *ADR*: Add ADR 0010: Replace Git Client describing decision to replace nodegit with isomorphic-got (#380)
 * *ADR*: Add ADR 0011: Align Node Support with Node LTS Schedule (#381)
-* *asciidoc-loader*: Implement include tag warnings (#389)
+* What's New page for Antora 2.0 release (#366)
 
 === Changed
 
