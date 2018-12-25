@@ -1,4 +1,5 @@
 = Install Antora
+:version-antora: {page-component-version}.x
 
 Assumptions:
 
@@ -20,7 +21,8 @@ This package manager was installed when you installed Node.
 
 Open a terminal and type:
 
- $ npm i -g @antora/cli
+[subs=attributes+]
+ $ npm i -g @antora/cli@{version-antora}
 
 IMPORTANT: The `@` at the beginning of the package name is important.
 It tells `npm` that the `cli` package is located in the `antora` group.
@@ -34,7 +36,8 @@ If you used nvm to install Node, this location will be inside your home director
 
 If you prefer Yarn over npm, use this command instead:
 
- $ yarn global add @antora/cli
+[subs=attributes+]
+ $ yarn global add @antora/cli@{version-antora}
 
 CAUTION: If you're using a system-wide Node installation managed by a package manager, you may run into permission problems when installing packages.
 In that case, just drop the `-g` flag so that the package is installed under the [.path]_node_modules_ folder in the current directory.
@@ -51,7 +54,7 @@ If installation was successful, the command should report the version of Antora.
 
 [subs=attributes+]
  $ antora -v
- {page-component-version}.x
+ {page-component-version}.1
 
 == Install the default Antora site generator
 
@@ -59,7 +62,8 @@ Next, install the default site generator.
 
 To install the generator globally, type:
 
- $ npm i -g @antora/site-generator-default
+[subs=attributes+]
+ $ npm i -g @antora/site-generator-default@{version-antora}
 
 IMPORTANT: The `@` at the beginning of the package name is important.
 It tells `npm` that the `cli` package is located in the `antora` group.
@@ -67,13 +71,15 @@ If you omit this character, `npm` will assume the package name is the name of a 
 
 If you prefer Yarn over npm, use this command instead:
 
- $ yarn global add @antora/site-generator-default
+[subs=attributes+]
+ $ yarn global add @antora/site-generator-default@{version-antora}
 
 If you don't want to install the generator globally (or run into permission problems trying), you can opt to install it inside the playbook project (the project that contains the playbook file(s) for your site).
 
 Switch to the playbook project and type:
 
- $ npm i @antora/site-generator-default
+[subs=attributes+]
+ $ npm i @antora/site-generator-default@{version-antora}
 
 CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, you'll need to xref:install/troubleshoot-nodegit.adoc[patch or recompile nodegit].
 

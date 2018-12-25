@@ -23,7 +23,8 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-nvm-windows: https://github.com/coreybutler/nvm-windows
 :uri-opendevise: https://opendevise.com
 // Versions:
-:version-node: 8.11.4
+:version-antora: 1.1.x
+:version-node: 8.14.1
 
 ifdef::badges[]
 image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
@@ -126,9 +127,10 @@ You should install this package globally so the `antora` command is always avail
 
 In your terminal, type:
 
- $ npm install -g @antora/cli
+[subs=attributes+]
+ $ npm install -g @antora/cli@{version-antora}
 
-NOTE: If you prefer Yarn over npm, you can choose to install Antora using `yarn global add @antora/cli`.
+NOTE: If you prefer Yarn over npm, you can choose to install Antora using `yarn global add @antora/cli@{version-antora}`.
 
 Verify the `antora` command is available on your PATH by running:
 
@@ -138,7 +140,8 @@ If the installation worked, this command should complete successfully and report
 
 Next, install the default Antora site generator using npm (or Yarn):
 
- $ npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ npm install -g @antora/site-generator-default@{version-antora}
 
 You can opt to install the site generator inside the project containing your playbook file instead of installing it globally.
 
@@ -166,11 +169,13 @@ or, if that fails:
 
 Once you've made that symlink, run the `npm install` command again.
 
- $ npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ npm install -g @antora/site-generator-default@{version-antora}
 
 If you aren't comfortable making a system-wide change, you can instead force nodegit to be recompiled instead by passing the `BUILD_ONLY` environment variable to the `npm install` command.
 
- $ BUILD_ONLY=true npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ BUILD_ONLY=true npm install -g @antora/site-generator-default@{version-antora}
 
 Be aware that recompiling nodegit will make installation take considerably longer.
 ====

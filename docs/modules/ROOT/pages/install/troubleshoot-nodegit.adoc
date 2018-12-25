@@ -1,4 +1,5 @@
 = Troubleshoot NodeGit
+:version-antora: {page-component-version}.x
 // URLs
 :url-nodegit: http://www.nodegit.org
 :url-nodegit-dev: http://www.nodegit.org/guides/install/from-source
@@ -47,7 +48,8 @@ If that fails, run:
 
 Once you've made that symlink, run the `npm install` command to install the site generator.
 
- $ npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ npm install -g @antora/site-generator-default@{version-antora}
 
 [#recompile-nodegit]
 == Option 2: Recompile NodeGit
@@ -56,7 +58,8 @@ If you aren't comfortable making a system-wide change, or you're on Alpine Linux
 
 Force nodegit to recompile by passing the `BUILD_ONLY=true` environment variable to the `npm install` command.
 
- $ BUILD_ONLY=true npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ BUILD_ONLY=true npm install -g @antora/site-generator-default@{version-antora}
 
 Unfortunately, you *cannot install nodegit as the root user* if you have to use this method of installation.
 The workaround is to create a normal user, switch to that user, then install Antora.

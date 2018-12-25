@@ -3,7 +3,7 @@
 :url-choco: https://chocolatey.org
 :url-nvm-windows: https://github.com/coreybutler/nvm-windows
 // Versions:
-:version-node: 8.11.4
+:version-node: 8.14.1
 
 On this page, you'll learn:
 
