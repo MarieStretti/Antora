@@ -520,7 +520,7 @@ describe('generateSite()', function () {
         expect(progressLines).to.have.lengthOf(0)
 
         // TODO assert that the UI was downloaded again
-        await generateSite(['--playbook', playbookFile, '--pull'], env)
+        await generateSite(['--playbook', playbookFile, '--fetch'], env)
         expect(progressLines).to.have.lengthOf.at.least(2)
         expect(progressLines[0]).to.include('[fetch] ' + repoBuilder.url)
         expect(progressLines[0]).to.match(/ \[-+\]/)

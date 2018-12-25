@@ -1,0 +1,5 @@
+runtime:
+  pull: true
+ui:
+  bundle:
+    url: ./../ui/build/ui-bundles.zip

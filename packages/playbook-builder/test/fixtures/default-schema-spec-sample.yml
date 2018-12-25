@@ -1,6 +1,6 @@
 runtime:
   cache_dir: ./.antora-cache
-  pull: true
+  fetch: true
 site:
   url: https://example.com
   title: Example site

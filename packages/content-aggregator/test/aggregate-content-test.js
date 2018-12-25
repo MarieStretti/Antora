@@ -1722,7 +1722,7 @@ describe('aggregateContent()', function () {
     expect(aggregate[0]).to.have.nested.property('files[0].src.origin.branch', defaultBranch)
   })
 
-  it('should pull updates into cached repository when pull runtime option is enabled', async () => {
+  it('should fetch updates into cached repository when runtime.fetch option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.createTag('ignored').then(() => repoBuilder.checkoutBranch('v1.2.x'))
@@ -1750,7 +1750,7 @@ describe('aggregateContent()', function () {
       .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/topic-a/page-three.adoc'))
       .then(() => repoBuilder.close())
 
-    playbookSpec.runtime.pull = true
+    playbookSpec.runtime.fetch = true
     const secondAggregate = await aggregateContent(playbookSpec)
 
     expect(secondAggregate).to.have.lengthOf(3)
@@ -1773,7 +1773,7 @@ describe('aggregateContent()', function () {
     expect(page4v2).to.exist()
   })
 
-  it('should fetch tags not reachable from fetched commits when pull runtime option is enabled', async () => {
+  it('should fetch tags not reachable from fetched commits when runtime.fetch option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.checkoutBranch('v1.2.x')
@@ -1798,7 +1798,7 @@ describe('aggregateContent()', function () {
       .then(() => repoBuilder.deleteBranch('v2.0.x'))
       .then(() => repoBuilder.close())
 
-    playbookSpec.runtime.pull = true
+    playbookSpec.runtime.fetch = true
     playbookSpec.content.sources[0].branches = 'v2*'
     // NOTE this also verifies we can fetch tags after not fetching them originally
     playbookSpec.content.sources[0].tags = 'v*'
@@ -1814,7 +1814,7 @@ describe('aggregateContent()', function () {
   })
 
   // FIXME reference pruning is not yet enabled in isomorphic-git; see isomorphic-git#663
-  //it('should prune references when pull runtime option is enabled', async () => {
+  //it('should prune references when runtime.fetch option is enabled', async () => {
   //  const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
   //  await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
   //    repoBuilder.checkoutBranch('v1.2.x')
@@ -1841,14 +1841,14 @@ describe('aggregateContent()', function () {
   //    .then(() => repoBuilder.deleteBranch('v1.1.x'))
   //    .then(() => repoBuilder.deleteTag('v1.1.0'))
   //    .then(() => repoBuilder.close())
-  //  playbookSpec.runtime.pull = true
+  //  playbookSpec.runtime.fetch = true
 
   //  const secondAggregate = await aggregateContent(playbookSpec)
   //  expect(secondAggregate).to.have.lengthOf(1)
   //  expect(secondAggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
   //})
 
-  it('should not pull updates into cached repository when pull runtime option is not enabled', async () => {
+  it('should not fetch updates into cached repository when runtime.fetch option is not enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.checkoutBranch('v1.2.3')
@@ -2009,7 +2009,7 @@ describe('aggregateContent()', function () {
       return withMockStdout(async (lines) => {
         await aggregateContent(playbookSpec)
         lines.length = 0
-        playbookSpec.runtime.pull = true
+        playbookSpec.runtime.fetch = true
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(lines).to.have.lengthOf.at.least(2)
@@ -2026,7 +2026,7 @@ describe('aggregateContent()', function () {
       // NOTE corrupt the cloned repository
       await fs.writeFile(ospath.join(CONTENT_CACHE_DIR, cachedRepoName, 'config'), '')
       playbookSpec.runtime.quiet = false
-      playbookSpec.runtime.pull = true
+      playbookSpec.runtime.fetch = true
       return withMockStdout(async (lines) => {
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
@@ -2078,7 +2078,7 @@ describe('aggregateContent()', function () {
         await aggregateContent(playbookSpec)
         lines.length = 0
         playbookSpec.content.sources.push({ url: otherRepoBuilder.url })
-        playbookSpec.runtime.pull = true
+        playbookSpec.runtime.fetch = true
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(2)
         expect(lines).to.have.lengthOf.at.least(4)
@@ -2261,7 +2261,7 @@ describe('aggregateContent()', function () {
       expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-required')
     })
 
-    it('should mark origin that requires auth with private=auth-required if not pulling updates', async () => {
+    it('should mark origin that requires auth with private=auth-required if not fetching updates', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
       await initRepoWithFiles(repoBuilder)
       const credentials = repoBuilder.url.replace('//', '//u:p@') + '\n'
@@ -2290,7 +2290,7 @@ describe('aggregateContent()', function () {
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(credentialsRequestCount).to.equal(2)
       expect(aggregate).to.have.lengthOf(2)
-      playbookSpec.runtime.pull = true
+      playbookSpec.runtime.fetch = true
       credentialsSent = undefined
       credentialsRequestCount = 0
       aggregate = await aggregateContent(playbookSpec)
@@ -2388,7 +2388,7 @@ describe('aggregateContent()', function () {
       credentialsSent = undefined
       credentialsVerdict = 'denied!'
       playbookSpec.runtime.quiet = false
-      playbookSpec.runtime.pull = true
+      playbookSpec.runtime.fetch = true
       return withMockStdout(async (lines) => {
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         const expectedErrorMessage = 'Content repository not found or credentials were rejected: ' + repoBuilder.url

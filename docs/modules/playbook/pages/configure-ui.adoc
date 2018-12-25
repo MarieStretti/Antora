@@ -36,14 +36,14 @@ The value used in this example is the URL to Antora's default UI.
 
 TIP: The bundle is cached based on the signature of the URL.
 As long as the URL remains the same, and the `snapshot` key is not set to true, Antora continues to use the cached file.
-If you want to force Antora to download a snapshot UI bundle again, pass the `--pull` option to the CLI.
+If you want to force Antora to download a snapshot UI bundle again, pass the `--fetch` option to the CLI.
 Another option is to remove the cached file.
 
 [#snapshot]
 === Use a remote UI bundle snapshot
 
 If the URL of the UI bundle does not change, but the archive it points to does change, you need to mark the bundle as a snapshot.
-This hint tells Antora to download the UI bundle again when the `--pull` option is passed to the CLI.
+This hint tells Antora to download the UI bundle again when the `--fetch` option is passed to the CLI.
 Otherwise, Antora assumes the URL is permanent and does not download it again as long as it exists in the cache.
 
 .Remote UI bundle marked as a snapshot
