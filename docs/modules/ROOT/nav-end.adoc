@@ -1,5 +1,5 @@
 * xref:project/get-help.adoc[Get Help]
-* Governance
-** xref:project/version-and-lifecycle-policies.adoc[Version & Lifecycle Policies]
+* Project Governance
+** xref:project/release-schedule.adoc[Release Schedule]
 ** xref:project/roadmap.adoc[Roadmap]
 ** xref:project/copyright-and-license.adoc[Copyright & License]
