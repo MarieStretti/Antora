@@ -17,16 +17,16 @@ const testFiles = opts.package
   : ['test/**/*-test.js', 'packages/*/test/**/*-test.js']
 
 const lint = () => lintTask(allFiles)
-lint.description = 'Lint the JavaScript source files using eslint'
+lint.description = 'Lint the source files using eslint (JavaScript Standard profile)'
 
 const format = () => formatTask(allFiles)
-format.description = 'Format on the JavaScript source files using prettier (standard profile)'
+format.description = 'Format the source files using prettier (JavaScript Standard profile)'
 
 const test = () => testTask(testFiles, isCodeCoverageEnabled())
 test.description = 'Run the test suite'
 
 const testWatch = () => watch(allFiles, test)
-testWatch.description = 'Run the test suite in response to file changes'
+testWatch.description = 'Watch files and run the test suite each time a file change is detected'
 
 const build = series(test, lint)
 build.description = 'Run the test suite followed by the linter'
