@@ -64,9 +64,9 @@ Finally, Antora transparently converts SSH URLs to HTTPS URLs, so you *don't* ha
 
 == All the latest Asciidoctor features
 
-Antora 2.0 ships with Asciidoctor.js 1.5.9.
-This release of Asciidoctor.js brings the latest Asciidoctor features, updates the Asciidoctor.js API, fixes conflicts with libraries, and offers several nice enhancements to the AsciiDoc syntax.
-Here are some of the highlights for each part:
+Antora 2.0 ships with Asciidoctor.js 1.5.9 thanks to the hard work by https://github.com/mogztter[Guillaume Grossetie^].
+This release of Asciidoctor.js brings you the latest Asciidoctor features, updates the Asciidoctor.js API, fixes conflicts with libraries, and offers several nice enhancements to the AsciiDoc syntax.
+Here are some of the highlights:
 
 .AsciiDoc
 * Nest ordered and unordered lists to an arbitrary depth.
