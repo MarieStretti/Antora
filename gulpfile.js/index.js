@@ -26,9 +26,10 @@ const test = () => testTask(testFiles, isCodeCoverageEnabled())
 test.description = 'Run the test suite'
 
 const testWatch = () => watch(allFiles, test)
+testWatch.displayName = 'test:watch'
 testWatch.description = 'Watch files and run the test suite each time a file change is detected'
 
 const build = series(test, lint)
 build.description = 'Run the test suite followed by the linter'
 
-module.exports = { lint, format, test, 'test:watch': testWatch, build, default: build }
+module.exports = { lint, format, test, [testWatch.displayName]: testWatch, build, default: build }
