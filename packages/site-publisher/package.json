@@ -15,14 +15,14 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@antora/expand-path-helper": "^1.0.0",
-    "fs-extra": "^7.0.1",
-    "gulp-vinyl-zip": "^2.1.2",
-    "vinyl": "^2.2.0",
-    "vinyl-fs": "^3.0.3"
+    "@antora/expand-path-helper": "~1.0",
+    "fs-extra": "~7.0",
+    "gulp-vinyl-zip": "~2.1",
+    "vinyl": "~2.2",
+    "vinyl-fs": "~3.0"
   },
   "devDependencies": {
-    "gulp-buffer": "^0.0.2"
+    "gulp-buffer": "0.0.2"
   },
   "engines": {
     "node": ">= 8.0.0"

@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "@antora/playbook-builder": "2.0.0",
-    "commander": "^2.19.0"
+    "commander": "~2.19"
   },
   "devDependencies": {
-    "convict": "^4.4.1",
-    "fs-extra": "^7.0.1",
-    "kapok-js": "^0.10.1"
+    "convict": "~4.4",
+    "fs-extra": "~7.0",
+    "kapok-js": "~0.10"
   },
   "engines": {
     "node": ">= 8.0.0"
