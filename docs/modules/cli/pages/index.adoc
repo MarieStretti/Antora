@@ -79,7 +79,7 @@ Overrides the xref:playbook:playbook-schema.adoc#cache-dir-key[cache dir value] 
 |false
 
 |--generator
-|The site generator library or script to use.
+|The site generator library (package name) or script (path) to use.
 Must export a function with the signature `generateSite(args, env)`.
 _Intended for advanced users comfortable with the inner workings of Antora.
 Effectively substitutes Antora's entire pipeline with a user-defined function._

@@ -21,21 +21,24 @@ However, you can also install Antora in a project directory if you prefer.
 
 To install the Antora CLI and site generator packages globally, open a terminal and type:
 
- $ npm i -g @antora/cli @antora/site-generator-default
+[subs=attributes+]
+ $ npm i -g @antora/cli@{page-component-version} @antora/site-generator-default@{page-component-version}
 
 IMPORTANT: The `@` at the beginning of the package name is important.
 It tells `npm` that the `cli` package is located in the `antora` group.
 If you omit this character, `npm` will assume the package name is the name of a git repository on GitHub.
+The second `@` offsets the requested version number.
+Only the major and minor segments are specified to ensure you receive the latest patch update.
 
 Verify the `antora` command is available on your PATH by running:
 
- $ antora -v
+ $ antora version
 
-If installation was successful, the command should report the version of Antora.
+If installation was successful, the command should report the version of Antora (where `.x` represents the latest patch number).
 
 [subs=attributes+]
- $ antora -v
- {page-component-version}.0
+ $ antora version
+ {page-component-version}.x
 
 CAUTION: If you're using a system-wide Node installation managed by your operating system's package manager, you may run into permission problems when installing packages globally.
 In that case, you'll need to <<install-dir,install Antora directly in your project repository>>.
@@ -44,11 +47,13 @@ In that case, you'll need to <<install-dir,install Antora directly in your proje
 
 If you prefer Yarn over npm, use this command to install the Antora CLI package:
 
- $ yarn global add @antora/cli
+[subs=attributes+]
+ $ yarn global add @antora/cli@{page-component-version}
 
 Next, install the default site generator.
 
- $ yarn global add @antora/site-generator-default
+[subs=attributes+]
+ $ yarn global add @antora/site-generator-default@{page-component-version}
 
 [#install-dir]
 == Install Antora in a project directory
@@ -60,11 +65,13 @@ You can then install the site generator packages in a project directory.
 
 To install *only* the CLI globally, type:
 
- $ npm i -g @antora/cli
+[subs=attributes+]
+ $ npm i -g @antora/cli@{page-component-version}
 
 Or, to install the CLI in a project directory, change into your project directory, and type:
 
- $ npm i @antora/cli
+[subs=attributes+]
+ $ npm i @antora/cli@{page-component-version}
 
 Dropping the `-g` flag installs the package under the [.path]_node_modules_ folder in the current directory.
 
@@ -72,21 +79,22 @@ Verify the `antora` command is available on your PATH by running `antora -v`.
 If you installed the package without the `-g` flag, you'll need to prefix the command with `$(npm bin)/`.
 
 .If installed globally
- $ antora -v
+ $ antora version
 
 .If installed in a project directory
- $ $(npm bin)/antora -v
+ $ $(npm bin)/antora version
 
-The command should report the Antora CLI version in the terminal.
+The command should report the Antora CLI version in the terminal (where `.x` represents the latest patch number).
 
 [subs=attributes+]
- {page-component-version}.0
+ {page-component-version}.x
 
 If you installed the CLI globally, change into the project directory before installing the site generator.
 
 Next, install the site generator package.
 
- $ npm i @antora/site-generator-default
+[subs=attributes+]
+ $ npm i @antora/site-generator-default@{page-component-version}
 
 The `@antora/site-generator-default` and its dependent packages will be installed into the [.path]_node_modules_ folder inside your project.
 The `antora` command will look for these packages there first before looking in the global installation folder.

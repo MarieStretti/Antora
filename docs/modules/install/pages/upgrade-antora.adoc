@@ -47,7 +47,8 @@ If you installed the Antora CLI and default site generator globally, you can upg
 
 In a terminal, type:
 
- $ npm install -g @antora/cli @antora/site-generator-default
+[subs=attributes+]
+ $ npm install -g @antora/cli@{page-component-version} @antora/site-generator-default@{page-component-version}
 
 npm will automatically install the latest version of Antora.
 
@@ -57,14 +58,14 @@ To list your globally installed Node packages, type the following command in you
 
  $ npm ls -g --depth=0
 
-If you installed the Antora CLI and site generator globally, you'll see them listed in the terminal output.
+If you installed the Antora CLI and site generator globally, you'll see them listed in the terminal output alongside their version numbers (where `.x` represents the latest patch number).
 
 .List of globally installed Node packages
 [subs=attributes+]
 ....
 /home/user/.nvm/versions/node/v{version-node-patch}/lib
-├── @antora/cli@1.1.1
-├── @antora/site-generator-default@1.1.1
+├── @antora/cli@{page-component-version}.x
+├── @antora/site-generator-default@{page-component-version}.x
 ├── npm@{version-npm}
 └── ...
 ....
@@ -79,7 +80,8 @@ If you didn't install a previous version of Antora site generator globally, you'
 
 . Upgrade the CLI globally by typing:
 
- $ npm install -g @antora/cli
+[subs=attributes+]
+ $ npm install -g @antora/cli@{page-component-version}
 
 . Change to your local project directory.
 This is typically where your Antora playbook file, [.path]_antora-playbook.yml_, is stored.
@@ -87,12 +89,13 @@ This is typically where your Antora playbook file, [.path]_antora-playbook.yml_,
 . Open the [.path]_package.json_ file.
 
 . Change the version number of the site generator.
+We recommend specifying a partial version number (major.minor) so that you receive the latest patch update.
 +
 [source,json,subs=attributes+]
 ----
 {
   "dependencies": {
-    "@antora/site-generator-default": "^{page-component-version}.0"
+    "@antora/site-generator-default": "{page-component-version}"
   }
 }
 ----
