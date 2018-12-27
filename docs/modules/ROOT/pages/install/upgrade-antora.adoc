@@ -2,7 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:version: 1.0.3
 
 On this page, you'll learn:
 
@@ -16,7 +15,8 @@ If you follow these instructions when you upgrade, the versions will stay in syn
 
 To upgrade the CLI, open a terminal and type:
 
- $ npm install -g @antora/cli
+[subs=attributes+]
+ $ npm install -g @antora/cli@{page-component-version}
 
 The Node package manager (npm) will automatically install the latest version of the CLI.
 
@@ -24,7 +24,8 @@ The Node package manager (npm) will automatically install the latest version of 
 ====
 If you installed the CLI and the default site generator globally, you can upgrade both of them with the same command.
 
- $ npm install -g @antora/cli @antora/site-generator-default
+[subs=attributes+]
+ $ npm install -g @antora/cli @antora/site-generator-default@{page-component-version}
 
 ====
 
@@ -35,14 +36,15 @@ To list the Node packages that are installed globally, type the following comman
  $ npm ls -g --depth=0
 
 If the CLI and site generator are installed globally, you'll see them listed in the terminal output.
-The output will also show the CLI and site generator versions, which should be the same.
+The output will also show the CLI and site generator versions (where `.x` represents the latest patch number).
+The versions of these two packages should match.
 
 .List of globally installed Node packages
 [subs=attributes+]
 ....
 /home/user/.nvm/versions/node/v8.10.0/lib
-├── @antora/cli@{version}
-├── @antora/site-generator-default@{version}
+├── @antora/cli@{page-component-version}.x
+├── @antora/site-generator-default@{page-component-version}.x
 ├── npm@5.6.0
 └── ...
 ....
@@ -59,7 +61,8 @@ The method for upgrading the default site generator depends on whether it is ins
 
 If it's installed globally, the command to upgrade it is:
 
- $ npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ npm install -g @antora/site-generator-default@{page-component-version}
 
 If you installed the site generator in a playbook project, update the version number of the site generator in the package file.
 
@@ -73,7 +76,7 @@ If you installed the site generator in a playbook project, update the version nu
 ----
 {
   "dependencies": {
-    "@antora/site-generator-default": "^{version}"
+    "@antora/site-generator-default": "{page-component-version}"
   }
 }
 ----

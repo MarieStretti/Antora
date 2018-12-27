@@ -50,7 +50,8 @@ If that fails, run:
 
 Once you've made that symlink, run the `npm install` command to install the site generator.
 
- $ npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ npm install -g @antora/site-generator-default@{page-component-version}
 
 [#recompile-nodegit]
 == Option 2: Recompile NodeGit
@@ -59,7 +60,8 @@ If you aren't comfortable making a system-wide change, or you're on Alpine Linux
 
 Force nodegit to recompile by passing the `BUILD_ONLY=true` environment variable to the `npm install` command.
 
- $ BUILD_ONLY=true npm install -g @antora/site-generator-default
+[subs=attributes+]
+ $ BUILD_ONLY=true npm install -g @antora/site-generator-default@{page-component-version}
 
 Be aware that recompiling nodegit will make installation take considerably longer.
 

@@ -2,7 +2,6 @@
 ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
-:version: 1.0.3
 
 Assumptions:
 
@@ -24,7 +23,8 @@ This package manager was installed when you installed Node.
 
 Open a terminal and type:
 
- $ npm i -g @antora/cli
+[subs=attributes+]
+ $ npm i -g @antora/cli@{page-component-version}
 
 We recommend installing (`i` subcommand) the CLI package globally (`-g` flag) so the `antora` command, which is provided by the CLI package, becomes available on your PATH.
 
@@ -34,7 +34,8 @@ If you used nvm to install Node, this location will be inside your home director
 
 If you prefer Yarn over npm, use this command instead:
 
- $ yarn global add @antora/cli
+[subs=attributes+]
+ $ yarn global add @antora/cli@{page-component-version}
 
 CAUTION: If you're using a system-wide Node installation managed by a package manager, you may run into permission problems when installing packages.
 In that case, just drop the `-g` flag so that the package is installed under the [.path]_node_modules_ folder in the current directory.
@@ -47,11 +48,11 @@ If you installed the package locally, meaning without the `-g` flag, you'll need
 
  $ $(npm bin)/antora
 
-If installation was successful, the command should report the version of Antora.
+If installation was successful, the command should report the version of Antora (where `.x` represents the latest patch number).
 
 [subs=attributes+]
  $ antora -v
- {version}
+ {page-component-version}.x
 
 == Install the default Antora site generator
 
@@ -59,17 +60,20 @@ Next, install the default site generator.
 
 To install the generator globally, type:
 
- $ npm i -g @antora/site-generator-default
+[subs=attributes+]
+ $ npm i -g @antora/site-generator-default@{page-component-version}
 
 If you prefer Yarn over npm, use this command instead:
 
- $ yarn global add @antora/site-generator-default
+[subs=attributes+]
+ $ yarn global add @antora/site-generator-default@{page-component-version}
 
 If you don't want to install the generator globally (or run into permission problems trying), you can opt to install it inside the playbook project (the project that contains the playbook file(s) for your site).
 
 Switch to the playbook project and type:
 
- $ npm i @antora/site-generator-default
+[subs=attributes+]
+ $ npm i @antora/site-generator-default@{page-component-version}
 
 CAUTION: If you're on Linux and get an error message about `libcurl-gnutls.so.4`, you'll need to xref:install/troubleshoot-nodegit.adoc[patch or recompile nodegit].
 
