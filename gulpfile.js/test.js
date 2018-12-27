@@ -3,7 +3,7 @@
 const { buildArtifactUrl } = require('./lib/gitlab')
 const run = require('./lib/run-command')
 
-module.exports = (files, analyzeCodeCoverage = false) => {
+module.exports = (files, analyzeCodeCoverage = false) => () => {
   const args = [...files]
   if (process.env.CI) args.unshift('--forbid-only', '--timeout', '5000')
   if (analyzeCodeCoverage) {
