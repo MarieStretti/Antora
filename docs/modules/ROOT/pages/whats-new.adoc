@@ -79,7 +79,7 @@ Here are some of the highlights:
 * The position of section anchors can be configured (before _or_ after).
 * The xref macro now supports attributes (just as the link macro does).
 * The `docname` attribute is now set to the module-relative path of the page (minus the file extension).
-* Proper warnings if an include tag is mismatched, unclosed, or not found.
+* Accurate warnings if an include tag is mismatched, unclosed, or not found (additionally, Asciidoctor now emits a warning if Antora cannot locate the include target).
 * All messages are now routed through a logger (which will hook into Antora's logger, once implemented).
 
 .Asciidoctor.js API (for extension writers)
