@@ -14,7 +14,7 @@ const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const WORK_DIR = ospath.join(__dirname, 'work')
 const TIMEOUT = 5000
 const UI_BUNDLE_URI =
-  'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
+  'https://gitlab.com/antora/antora-ui-default/-/jobs/107808226/artifacts/raw/build/ui-bundle.zip?inline=false'
 
 describe('generateSite()', () => {
   let $
@@ -60,7 +60,7 @@ describe('generateSite()', () => {
         sources: [{ url: repositoryBuilder.repoPath, branches: 'v2.0' }],
       },
       ui: {
-        bundle: { url: uiBundleUri, snapshot: true },
+        bundle: { url: uiBundleUri },
       },
       output: {
         destinations: [{ provider: 'fs', path: '.' + ospath.sep + destDir }],

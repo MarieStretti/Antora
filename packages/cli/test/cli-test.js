@@ -14,7 +14,7 @@ const CONTENT_REPOS_DIR = ospath.join(__dirname, 'content-repos')
 const FIXTURES_DIR = ospath.join(__dirname, 'fixtures')
 const TIMEOUT = 30000
 const UI_BUNDLE_URI =
-  'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
+  'https://gitlab.com/antora/antora-ui-default/-/jobs/107808226/artifacts/raw/build/ui-bundle.zip?inline=false'
 const VERSION = pkg.version
 const WORK_DIR = ospath.join(__dirname, 'work')
 
@@ -69,7 +69,7 @@ describe('cli', () => {
       content: {
         sources: [{ url: repositoryBuilder.repoPath, branches: 'v1.0' }],
       },
-      ui: { bundle: { url: uiBundleUri, snapshot: true } },
+      ui: { bundle: { url: uiBundleUri } },
     }
   })
 
