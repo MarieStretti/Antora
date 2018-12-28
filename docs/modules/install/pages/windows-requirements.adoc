@@ -2,7 +2,7 @@
 :url-choco: https://chocolatey.org
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm-windows: https://github.com/coreybutler/nvm-windows
-:version-node-patch: 10.14.2
+:version-node: 10.15.0
 
 On this page, you'll learn:
 
@@ -28,7 +28,7 @@ You should see a version string, such as:
 
 [subs=attributes+]
 ....
-v{version-node-patch}
+v{version-node}
 ....
 
 If *the command fails with an error*, you don't have Node installed.
@@ -70,9 +70,9 @@ TIP: If you just installed Chocolatey using the instructions in the proceeding s
 +
 --
 [subs=attributes+]
- $ nvm install {version-node-patch}
+ $ nvm install {version-node}
 
-IMPORTANT: When using nvm for Windows, you must enter an exact version of Node until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
+IMPORTANT: When using nvm for Windows, you must enter an exact version of Node (e.g., `{version-node}`) until {url-nvm-windows}/issues/214[nvm-windows#214^] is resolved.
 --
 
 Now that Node is installed, you're ready to xref:install-antora.adoc[install Antora].
@@ -93,9 +93,9 @@ By using nvm, you closely align your setup with the environment used to generate
 If you have nvm installed but your Node version is not an LTS release, type the following command in your terminal:
 
 [subs=attributes+]
- $ nvm install {version-node-patch}
+ $ nvm install {version-node}
 
-IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node-patch}`).
+IMPORTANT: When using nvm for Windows, you must enter the full version of Node (i.e., `nvm install {version-node}`).
 
 == Next
 

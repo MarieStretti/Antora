@@ -2,8 +2,8 @@
 :platform: Linux
 :page-partial:
 //tag::shared[]
-:version-node: 10
-:version-node-patch: {version-node}.14.2
+:version-node-major: 10
+:version-node: {version-node-major}.15.0
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm: https://github.com/creationix/nvm
 :url-nvm-install: {url-nvm}#installation
@@ -34,7 +34,7 @@ You should see a version string, such as:
 
 [subs=attributes+]
 ....
-v{version-node-patch}
+v{version-node}
 ....
 
 If *the command fails with an error*, it means you don't have Node installed.
@@ -51,7 +51,7 @@ If *the command returns a version that isn't an active LTS version*, upgrade to 
 If *the command returns an active Node LTS version*, makes sure that version is the default by typing the following command in your terminal:
 
 [subs=attributes+]
- $ nvm alias default {version-node}
+ $ nvm alias default {version-node-major}
 
 Now you're ready to xref:install-antora.adoc[install Antora].
 
@@ -85,7 +85,7 @@ The above command will install the latest version of the latest Node LTS release
 To set the latest version of Node as the default for any new terminal, type:
 
 [subs=attributes+]
- $ nvm alias default {version-node}
+ $ nvm alias default {version-node-major}
 
 Now that you're on the latest LTS version of Node, you can xref:install-antora.adoc[install Antora].
 //end::shared[]

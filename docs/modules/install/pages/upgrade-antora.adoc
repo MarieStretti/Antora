@@ -1,6 +1,6 @@
 = Upgrade Antora
-:version-node: 10
-:version-node-patch: {version-node}.14.2
+:version-node-major: 10
+:version-node: {version-node}.15.0
 :version-npm: 6.4.1
 
 include::install:partial$upgrade-checklist.adoc[]
@@ -27,17 +27,17 @@ If you need to upgrade to the latest Node LTS version, type:
 
 .Windows
 [subs=attributes+]
- $ nvm install {version-node-patch}
+ $ nvm install {version-node}
 
 Next, to set the latest version of Node as the default for any new terminal, type:
 
 .Linux and macOS
 [subs=attributes+]
- $ nvm alias default {version-node}
+ $ nvm alias default {version-node-major}
 
 .Windows
 [subs=attributes+]
- $ nvm alias default {version-node-patch}
+ $ nvm alias default {version-node}
 
 Now you're ready to upgrade to the latest version of Antora.
 
@@ -63,7 +63,7 @@ If you installed the Antora CLI and site generator globally, you'll see them lis
 .List of globally installed Node packages
 [subs=attributes+]
 ....
-/home/user/.nvm/versions/node/v{version-node-patch}/lib
+/home/user/.nvm/versions/node/v{version-node}/lib
 ├── @antora/cli@{page-component-version}.x
 ├── @antora/site-generator-default@{page-component-version}.x
 ├── npm@{version-npm}
