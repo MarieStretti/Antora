@@ -21,9 +21,6 @@
     "vinyl": "~2.2",
     "vinyl-fs": "~3.0"
   },
-  "devDependencies": {
-    "gulp-buffer": "0.0.2"
-  },
   "engines": {
     "node": ">= 8.0.0"
   },
