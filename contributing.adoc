@@ -616,17 +616,21 @@ If you want to run the linter separately, use the following gulp task:
 
 You can run the test suite for a single package by passing the name of the package to the `--package` flag:
 
- $ gulp build --package=ui-loader
+ $ gulp test --package ui-loader
 
-This filter works for all gulp tasks.
+You can include the linter as well:
+
+ $ gulp build --package ui-loader
+
+This filter works for all Gulp tasks.
 
 If you're working on tests or refactoring tested code, you can run the test suite continuously, using:
 
- $ gulp test:watch
+ $ gulp test --watch
 
 You might want to combine this with the package filter to limit the tests to the package you're working on:
 
- $ gulp test:watch --package=ui-loader
+ $ gulp test --watch --package ui-loader
 
 This command runs the test suite (using `test`) each time you save the test or the code under test.
 
