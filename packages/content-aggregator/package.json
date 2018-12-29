@@ -31,7 +31,7 @@
     "vinyl-fs": "~3.0"
   },
   "devDependencies": {
-    "deep-freeze": "0.0.1"
+    "deep-freeze-node": "~1.1"
   },
   "engines": {
     "node": ">= 8.0.0"

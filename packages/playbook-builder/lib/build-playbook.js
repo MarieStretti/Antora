@@ -2,7 +2,7 @@
 
 const camelCaseKeys = require('camelcase-keys')
 const convict = require('./solitary-convict')
-const deepFreeze = require('deep-freeze')
+const freeze = require('deep-freeze-node')
 const fs = require('fs')
 const ospath = require('path')
 
@@ -70,7 +70,7 @@ function exportModel (config) {
   }
   playbook.dir = playbook.playbook ? ospath.dirname((playbook.file = playbook.playbook)) : process.cwd()
   delete playbook.playbook
-  return deepFreeze(playbook)
+  return freeze(playbook)
 }
 
 module.exports = buildPlaybook

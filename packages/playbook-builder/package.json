@@ -19,7 +19,7 @@
     "@iarna/toml": "~2.2",
     "camelcase-keys": "~5.0",
     "convict": "~4.4",
-    "deep-freeze": "0.0.1",
+    "deep-freeze-node": "~1.1",
     "js-yaml": "~3.12",
     "json5": "~2.1"
   },
