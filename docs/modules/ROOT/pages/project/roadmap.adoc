@@ -21,6 +21,7 @@ For a detailed list of current development tasks, refer to the Antora {url-issue
 
 *Release Timeframe*: Q1 2019
 
+* [x] Upgrade build to Gulp 4 {url-issues}/370[#370^]
 * [ ] Automatically set up latest version URLs {url-issues}/314[#314^]
 * [ ] Contents of xref should use page title if contents is not specified {url-issues}/310[#310^]
 * [ ] Resolve symlinks (possibly just file symlinks) in git tree {url-issues}/188[#188^]
@@ -150,7 +151,7 @@ For a detailed list of current development tasks, refer to the UI {url-ui-issues
 
 *Release Timeframe*: Q1 2019
 
-* [ ] Upgrade build to Gulp 4
+* [x] Upgrade build to Gulp 4
 * [ ] Split off base UI from default UI; make default UI configurable from playbook
 * [ ] Add client-side search (algolia docsearch) {url-ui-issues}/44[#44^]
 * [ ] Cut stable release of default UI
