@@ -393,6 +393,8 @@ packages/     <3>
   ...
 gulpfile.js/
   index.js    <6>
+  lib/
+  tasks/
 test/         <7>
 package.json  <8>
 yarn.lock     <9>

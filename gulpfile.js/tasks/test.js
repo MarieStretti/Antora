@@ -1,7 +1,7 @@
 'use strict'
 
-const { buildArtifactUrl } = require('./lib/gitlab')
-const run = require('./lib/run-command')
+const { buildArtifactUrl } = require('../lib/gitlab')
+const run = require('../lib/run-command')
 
 module.exports = (files, analyzeCodeCoverage = false) => () => {
   const args = [...files]

@@ -1,11 +1,11 @@
 'use strict'
 
 const { series, watch } = require('gulp')
-const camelcase = (name) => name.replace(/[-]./g, (m) => m.substr(1).toUpperCase())
+const camelCase = (name) => name.replace(/[-]./g, (m) => m.substr(1).toUpperCase())
 const exportTasks = require('./lib/export-tasks')
 const opts = require('yargs-parser')(process.argv.slice(2))
 const task = require('./lib/task')
-const { format, lint, test } = require('require-directory')(module, '.', { recurse: false, rename: camelcase })
+const { format, lint, test } = require('require-directory')(module, './tasks', { recurse: false, rename: camelCase })
 
 const glob = opts.package
   ? {
