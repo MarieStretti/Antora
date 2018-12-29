@@ -16,16 +16,19 @@ const glob = opts.package
     sourceFiles: ['{gulpfile.js,lib-example,scripts,test}/**/*.js', 'packages/*/{lib,test}/**/*.js'],
     testFiles: ['test/**/*-test.js', 'packages/*/test/**/*-test.js'],
   }
+const sharedOpts = { '--package <name>': 'Only run on files in the specified package' }
 
 const lintTask = task({
   name: 'lint',
   desc: 'Lint JavaScript files using eslint (JavaScript Standard profile)',
+  opts: sharedOpts,
   exec: lint(glob.sourceFiles),
 })
 
 const formatTask = task({
   name: 'format',
   desc: 'Format JavaScript files using prettier (JavaScript Standard profile)',
+  opts: sharedOpts,
   exec: format(glob.sourceFiles),
 })
 
@@ -37,13 +40,14 @@ const testRunTask = task({
 const testTask = task({
   name: 'test',
   desc: 'Run the test suite',
-  opts: { '--watch': 'Watch files and run the test suite whenever a file is changed' },
+  opts: Object.assign({}, sharedOpts, { '--watch': 'Watch files and run the test suite whenever a file is changed' }),
   exec: opts.watch ? () => watch(glob.sourceFiles, { ignoreInitial: false }, testRunTask) : testRunTask,
 })
 
 const buildTask = task({
   name: 'build',
   desc: 'Run the test suite followed by the linter',
+  opts: sharedOpts,
   exec: series(testTask, lintTask),
 })
 

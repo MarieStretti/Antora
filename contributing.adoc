@@ -292,7 +292,7 @@ While not enforced by eslint yet, your code should also comply with the followin
 
 When you <<run-tests,run the test suite>>, it will automatically lint (i.e., style check) your JavaScript code first.
 
-If you ever want to run the linter separately, you can use the following gulp task:
+If you ever want to run the linter separately, you can use the following Gulp task:
 
  $ gulp lint
 
@@ -300,7 +300,7 @@ While ESLint checks for syntax, it doesn't cover all the aesthetics of a code st
 We employ {uri-prettier}[prettier] to automatically format the code.
 Run prettier *after* you commit all your code changes as the format task will modify your files.
 
-To run prettier, enter the following gulp task:
+To run prettier, enter the following Gulp task:
 
  $ gulp format
 
@@ -577,7 +577,7 @@ To build Antora, which means running all the main tasks, use:
 
  $ gulp build
 
-You can omit the `build` argument since it's the default command:
+Since `build` is the default command, you can omit the `build` argument:
 
  $ gulp
 
@@ -610,7 +610,7 @@ If you don't want the `lint` task to run when running tests, call the `test` tas
 
  $ gulp test
 
-If you want to run the linter separately, use the following gulp task:
+If you want to run the linter separately, use the following Gulp task:
 
  $ gulp lint
 
@@ -649,7 +649,7 @@ Prettier is run by the `format` task.
 The `format` task isn't (yet) run as part of the CI pipeline, so you'll need to run it manually.
 But don't forget to run the `format` task before you submit a merge request!
 
-To run prettier on your code, execute the following gulp task:
+To run prettier on your code, execute the following Gulp task:
 
  $ gulp format
 
