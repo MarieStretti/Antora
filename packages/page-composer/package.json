@@ -15,11 +15,11 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "handlebars": "^4.0.12",
-    "require-from-string": "^2.0.2"
+    "handlebars": "~4.0",
+    "require-from-string": "~2.0"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">=8.11.0"
   },
   "files": [
     "lib/"

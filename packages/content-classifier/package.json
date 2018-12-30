@@ -16,14 +16,14 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "lodash": "^4.17.11",
-    "vinyl": "^2.2.0"
+    "lodash": "~4.17",
+    "vinyl": "~2.2"
   },
   "devDependencies": {
     "@antora/content-aggregator": "2.0.0"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">=8.11.0"
   },
   "files": [
     "lib/"

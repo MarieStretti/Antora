@@ -16,13 +16,13 @@
   "main": "lib/index.js",
   "dependencies": {
     "@antora/content-classifier": "2.0.0",
-    "vinyl": "^2.2.0"
+    "vinyl": "~2.2"
   },
   "devDependencies": {
-    "xmldom": "^0.1.27"
+    "xmldom": "0.1.27"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">=8.11.0"
   },
   "files": [
     "lib/"

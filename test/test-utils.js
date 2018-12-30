@@ -8,8 +8,10 @@ if ('encoding' in String.prototype && String(String.prototype.encoding) !== 'UTF
   String.prototype.encoding = Opal.const_get_local(Opal.const_get_qualified('::', 'Encoding'), 'UTF_8') // eslint-disable-line
 }
 
-const fs = require('fs-extra')
 const chai = require('chai')
+const fs = require('fs-extra')
+const { obj: map } = require('through2')
+
 chai.use(require('chai-fs'))
 chai.use(require('chai-cheerio'))
 chai.use(require('chai-spies'))
@@ -18,6 +20,21 @@ chai.use(require('chai-spies'))
 chai.use(require('dirty-chai'))
 
 module.exports = {
+  bufferizeContents: () => map((file, enc, next) => {
+    if (file.isStream()) {
+      const data = []
+      const readChunk = (chunk) => data.push(chunk)
+      const stream = file.contents
+      stream.on('data', readChunk)
+      stream.once('end', () => {
+        stream.removeListener('data', readChunk)
+        file.contents = Buffer.concat(data)
+        next(null, file)
+      })
+    } else {
+      next(null, file)
+    }
+  }),
   deferExceptions: async (fn, ...args) => {
     let deferredFn
     try {

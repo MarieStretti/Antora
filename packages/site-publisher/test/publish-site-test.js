@@ -1,9 +1,8 @@
 /* eslint-env mocha */
 'use strict'
 
-const { deferExceptions, expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
+const { bufferizeContents, deferExceptions, expect, heredoc, removeSyncForce } = require('../../../test/test-utils')
 
-const buffer = require('gulp-buffer')
 const File = require('vinyl')
 const fs = require('fs-extra')
 const os = require('os')
@@ -45,7 +44,7 @@ describe('publishSite()', () => {
       const accum = []
       vzip
         .src(file)
-        .pipe(buffer())
+        .pipe(bufferizeContents())
         .on('data', (entry) => accum.push(entry))
         .on('error', reject)
         .on('end', () => resolve(accum))
