@@ -1,6 +1,6 @@
 'use strict'
 
-const { series, watch } = require('gulp')
+const { series } = require('gulp')
 const camelCase = (name) => name.replace(/[-]./g, (m) => m.substr(1).toUpperCase())
 const exportTasks = require('./lib/export-tasks')
 const opts = require('yargs-parser')(process.argv.slice(2))
