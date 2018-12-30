@@ -20,21 +20,22 @@ chai.use(require('chai-spies'))
 chai.use(require('dirty-chai'))
 
 module.exports = {
-  bufferizeContents: () => map((file, enc, next) => {
-    if (file.isStream()) {
-      const data = []
-      const readChunk = (chunk) => data.push(chunk)
-      const stream = file.contents
-      stream.on('data', readChunk)
-      stream.once('end', () => {
-        stream.removeListener('data', readChunk)
-        file.contents = Buffer.concat(data)
+  bufferizeContents: () =>
+    map((file, enc, next) => {
+      if (file.isStream()) {
+        const data = []
+        const readChunk = (chunk) => data.push(chunk)
+        const stream = file.contents
+        stream.on('data', readChunk)
+        stream.once('end', () => {
+          stream.removeListener('data', readChunk)
+          file.contents = Buffer.concat(data)
+          next(null, file)
+        })
+      } else {
         next(null, file)
-      })
-    } else {
-      next(null, file)
-    }
-  }),
+      }
+    }),
   deferExceptions: async (fn, ...args) => {
     let deferredFn
     try {
