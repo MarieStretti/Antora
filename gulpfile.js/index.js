@@ -22,33 +22,29 @@ const lintTask = task({
   name: 'lint',
   desc: 'Lint JavaScript files using eslint (JavaScript Standard profile)',
   opts: sharedOpts,
-  exec: lint(glob.sourceFiles),
+  call: lint(glob.sourceFiles),
 })
 
 const formatTask = task({
   name: 'format',
   desc: 'Format JavaScript files using prettier (JavaScript Standard profile)',
   opts: sharedOpts,
-  exec: format(glob.sourceFiles),
-})
-
-const testRunTask = task({
-  name: 'test:run',
-  exec: test(glob.testFiles, process.env.COVERAGE === 'true' || process.env.CI),
+  call: format(glob.sourceFiles),
 })
 
 const testTask = task({
   name: 'test',
   desc: 'Run the test suite',
-  opts: Object.assign({}, sharedOpts, { '--watch': 'Watch files and run the test suite whenever a file is changed' }),
-  exec: opts.watch ? () => watch(glob.sourceFiles, { ignoreInitial: false }, testRunTask) : testRunTask,
+  opts: { ...sharedOpts, '--watch': 'Watch files and run the test suite whenever a file is changed' },
+  call: test(glob.testFiles, process.env.COVERAGE === 'true' || process.env.CI),
+  loop: opts.watch ? glob.sourceFiles : false,
 })
 
 const buildTask = task({
   name: 'build',
   desc: 'Run the test suite followed by the linter',
   opts: sharedOpts,
-  exec: series(testTask, lintTask),
+  call: series(testTask, lintTask),
 })
 
 module.exports = exportTasks(buildTask, lintTask, formatTask, testTask)
