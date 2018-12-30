@@ -1,12 +1,10 @@
 'use strict'
 
-const { series } = require('gulp')
-const camelCase = (name) => name.replace(/[-]./g, (m) => m.substr(1).toUpperCase())
-const exportTasks = require('./lib/export-tasks')
 const opts = require('yargs-parser')(process.argv.slice(2))
+const { series } = require('gulp')
 const task = require('./lib/task')
-const { format, lint, test } = require('require-directory')(module, './tasks', { recurse: false, rename: camelCase })
 
+const { format, lint, test } = require('./tasks')
 const glob = opts.package
   ? {
     sourceFiles: [`packages/${opts.package}/{lib,test}/**/*.js`],
@@ -47,4 +45,4 @@ const buildTask = task({
   call: series(testTask, lintTask),
 })
 
-module.exports = exportTasks(buildTask, lintTask, formatTask, testTask)
+module.exports = require('./lib/export-tasks')(buildTask, buildTask, lintTask, formatTask, testTask)
