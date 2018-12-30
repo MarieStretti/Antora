@@ -1,3 +1,5 @@
+'use strict'
+
 const { homedir } = require('os')
 const expandPath = require('@antora/expand-path-helper')
 const fs = require('fs-extra')

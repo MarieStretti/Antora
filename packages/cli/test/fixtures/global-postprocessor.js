@@ -1,3 +1,5 @@
+'use strict'
+
 const asciidoctor = require('asciidoctor.js')()
 
 asciidoctor.Extensions.register(function () {
