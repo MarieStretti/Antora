@@ -23,7 +23,7 @@
     "@antora/content-aggregator": "2.0.0"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">=8.11.0"
   },
   "files": [
     "lib/"
