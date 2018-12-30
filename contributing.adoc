@@ -581,6 +581,12 @@ Since `build` is the default command, you can omit the `build` argument:
 
  $ gulp
 
+To see a list of all available commands, run:
+
+ $ gulp -T
+
+These commands are covered in the sections that follow.
+
 [#run-tests]
 === Run the Test Suite
 
