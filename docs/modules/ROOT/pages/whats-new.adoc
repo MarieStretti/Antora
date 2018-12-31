@@ -21,8 +21,8 @@ TIP: If you need a quick overview of the breaking changes, jump to the <<checkli
 
 == Hassle-free installation thanks to isomorphic-git
 
-When Antora launched, nodegit was the only JavaScript git client that provided the features Antora required for interfacing with git repositories (clone, fetch, resolve refs, walk trees, read blobs).
-Despite the fact that it's a comprehensive git client, nodegit has proven to be tremendously difficult for users to install.
+When Antora launched, nodegit was the only git client for JavaScript that provided the features Antora required for interfacing with git repositories (clone, fetch, resolve refs, walk trees, read blobs).
+Despite being a comprehensive git client, nodegit has proven to be tremendously difficult for users to install.
 This difficulty stems from its coupling to native system libraries for compilation, bundling of native libraries, limited portability across platforms and Node versions, misbehaving post-install scripts, reliance on an SSH agent for authentication, and lack of interest in addressing portability concerns.
 
 Since then, a full-fledged alternative has emerged.
@@ -30,13 +30,14 @@ Our friend https://github.com/wmhilton[William Hilton^] stepped up to create htt
 In Antora 2.0, we've completely replaced nodegit with isomorphic-git.
 
 Switching Antora to isomorphic-git not only guarantees a hassle-free installation, but drastically reduces installation time and size as well.
-This improvement is due to Antora's dependencies no longer relying on native system libraries.
+This improvement is a result of Antora's dependencies no longer relying on native system libraries.
 And it means Antora now works on all platforms and supported Node versions.
 
 isomorphic-git also allowed us to expand our test coverage and therefore improve Antora's stability.
-In fact, isomorphic-git now drives all of the git tests in the test suite, and the tests use proper remote clone and fetch operations for testing remote repositories.
+isomorphic-git drives all of the git tests in the test suite.
+And those tests now use proper remote clone and fetch operations to test remote repositories.
 
-All-in-all, the switch from nodegit to isomorphic-git is a huge step forward for Antora and the main reason for the major version jump to Antora 2.0.
+All-in-all, the switch from nodegit to isomorphic-git has been very positive, a huge step forward for Antora, and the main reason for the major version jump to Antora 2.0.
 
 == Goodbye SSH. Hello git credentials.
 
