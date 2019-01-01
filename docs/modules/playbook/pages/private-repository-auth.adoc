@@ -53,7 +53,7 @@ First, select the URL of a private repository you want to use with Antora.
 Next, in your terminal, run the following command for each private repository you need to access from Antora:
 
  $ git config --global credential.helper store && \
-   read -p 'Repository URL: ' && \
+   echo -n 'Repository URL: ' && read REPLY && \
    git ls-remote -h $REPLY > /dev/null
 
 This command performs the following steps:
