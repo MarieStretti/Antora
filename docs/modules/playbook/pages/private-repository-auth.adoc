@@ -1,6 +1,7 @@
 = Private Repository Authentication
 :url-create-token-github: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
 :url-create-token-gitlab: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html
+:url-create-app-pass-bitbucket: https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html
 :url-credential-store: https://git-scm.com/docs/git-credential-store
 :url-credential-manager-plugin: https://isomorphic-git.org/docs/en/plugin_credentialManager
 :url-oauth2-formats: https://isomorphic-git.org/docs/en/authentication
@@ -20,8 +21,9 @@ The username and password pair is typically your login to the service (GitHub, G
 You can use this pair as long as you don't have two-factor authentication enabled on your account.
 
 If you do have two-factor authentication (2FA) enabled on your account, you must use a personal access token instead.
-To create a personal access token for GitHub, see {url-create-token-github}[Creating a personal access token for the command line^].
-To create one for GitLab, see {url-create-token-gitlab}[Personal access tokens^].
+To create a personal access token for *GitHub*, see {url-create-token-github}[Creating a personal access token for the command line^].
+To create one for *GitLab*, see {url-create-token-gitlab}[Personal access tokens^].
+For *Bitbucket*, you'll need to create an {url-create-app-pass-bitbucket}[app password^] with read access to repositories.
 
 Next, let's see how to supply these credentials to Antora's built-in credential manager via the default git credential store.
 
@@ -49,6 +51,8 @@ Let's start with the interactive approach.
 === Populate the credential store interactively
 
 You can use the `git` command to populate the credential store interactively.
+This approach is especially useful since it allows you to verify that your credentials are accepted by the git server.
+
 First, select the URL of a private repository you want to use with Antora.
 Next, in your terminal, run the following command for each private repository you need to access from Antora:
 
@@ -58,21 +62,26 @@ Next, in your terminal, run the following command for each private repository yo
 
 This command performs the following steps:
 
-. Enables the git credential store globally (temporarily)
-. Prompts you for the URL of a private repository
-. Communicates with the private repository, triggering a prompt for your credentials
-. Stores the credentials in [.path]_$HOME/.git-credentials_ (and assigning it the appropriate permissions)
-
+. Enables the git credential store globally (temporarily).
+. Prompts you for the URL of a private repository.
+. Communicates with the private repository, triggering a prompt for your credentials.
++
 NOTE: If you aren't prompted for your credentials, it means your credentials are already stored.
 
-You can now use Antora with your private repositories without any further configuration.
+. Stores the credentials in [.path]_$HOME/.git-credentials_ (and assigning it the appropriate permissions).
 
+If this script succeeds, you can use the applicable private repositories in Antora without any further configuration.
+
+.Restore your git configuration
+****
 The interactive script above altered your git settings in order to enable the credential store globally.
 If you aren't using the credential store outside of Antora, run the following command to disable it again:
 
  $ git config --global --remove-section credential
 
-Changing this setting will not affect how Antora uses the credential store.
+Changing this setting does not affect how Antora uses the credential store.
+It only affects the behavior of your native git client.
+****
 
 If the interactive approach didn't work for you, you can populate the credential store directly.
 Let's give that a shot.
@@ -157,10 +166,12 @@ content:
   - url: https://GITHUB_TOKEN:@github.com:org/project-docs.git
   - url: https://oauth2:GITLAB_TOKEN@gitlab.com:org/project-docs.git
   - url: https://x-oauth-token:BITBUCKET_TOKEN@bitbucket.org:org/project-docs.git
+  - url: https://USERNAME:BITBUCKET_APP_PASSWORD@bitbucket.org:org/project-docs.git
 ----
 
 NOTE: Notice that the tokens are located in different locations in the URL depending on the git host.
 See {url-oauth2-formats}[OAuth2 formats^] for more details.
+If you're using a Bitbucket app password, you'll also need to include your username (using the format `USERNAME:BITBUCKET_APP_PASSWORD`).
 
 The drawback of this approach is that it requires putting the credentials directly into the playbook file.
 Unfortunately, Antora does not yet support resolving environment variables located in the playbook file.
