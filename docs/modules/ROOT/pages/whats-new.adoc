@@ -61,7 +61,8 @@ Here's a quick summary of where those credentials can be stored:
 The documentation has examples showing how to xref:playbook:private-repository-auth.adoc#custom-credential-path[specify a custom git credential store] using each of the methods listed above.
 If none of these options meet your requirements, the documentation also shows how to implement your own xref:playbook:private-repository-auth.adoc#custom-manager[credential manager plugin].
 
-Finally, Antora transparently converts SSH URLs to HTTPS URLs, so you *don't* have to update your playbook files when you upgrade to Antora 2.0.
+Finally, Antora transparently converts git SSH URLs in your playbook to HTTPS URLs so you don't have to modify your playbook file when upgrading to Antora 2.0.
+If this automatic translation doesn't work, meaning a git repository is not available at the equivalent HTTPS URL, then you'll need to update your playbook file to use the correct HTTPS URL.
 
 == All the latest Asciidoctor features
 
