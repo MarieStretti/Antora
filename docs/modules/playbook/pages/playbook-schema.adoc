@@ -37,7 +37,7 @@ asciidoc: # <13>
   - ./lib/custom-block.js
 ui: # <15>
   bundle:
-    url: https://example.org/docs-ui/download/latest/ui-bundle.zip
+    url: https://example.org/docs-ui/download/latest/ui-bundle.zip # <16>
     snapshot: true
     start_path: dark # <17>
   default_layout: base # <18>
