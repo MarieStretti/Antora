@@ -7,6 +7,6 @@
 ** xref:link-syntax-and-content.adoc#page[Page Links]
 ** xref:link-syntax-and-content.adoc#resource[Attachment Links]
 ** xref:link-syntax-and-content.adoc#urls[Other URI Links]
-* xref:link-syntax-and-content.adoc#content[Navigation Content & Link Formatting]
+** xref:link-syntax-and-content.adoc#content[Navigation Content & Link Formatting]
 //* xref:create-a-navigation-file.adoc[Create and Register a Navigation File]
 //* xref:organize-navigation-files.adoc[Organize and Register Navigation Files]
