@@ -37,7 +37,7 @@ const IncludeProcessor = (() => {
         includeContents = resolvedFile.contents
         startLineNum = 1
       }
-      Opal.hash_put(attrs, 'partial-option', true)
+      Opal.hash_put(attrs, 'partial-option', '')
       reader.pushInclude(includeContents, resolvedFile.file, resolvedFile.path, startLineNum, attrs)
       ;(reader.file = new String(reader.file)).context = resolvedFile.context // eslint-disable-line no-new-wrappers
     } else {
