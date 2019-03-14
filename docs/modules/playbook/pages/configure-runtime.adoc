@@ -76,6 +76,6 @@ The `--fetch` CLI switch sets the `fetch` key described in this section to `true
 Setting the `fetch` key to true activates two behaviors in Antora:
 
 . Run a fetch operation on all cloned repositories (content sources that are remote)
-. Download the remove UI bundle anew if it's marked as a xref:configure-ui.adoc#snapshot[snapshot]
+. Download the remote UI bundle again if it's marked as a xref:configure-ui.adoc#snapshot[snapshot]
 
 Enable the `fetch` key whenever you want to retrieve updates to the remote content sources and/or remote UI bundle snapshot.
