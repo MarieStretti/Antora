@@ -139,14 +139,27 @@ git:
     path: ./.git-credentials
 ----
 
+== Pass credentials via an environment variable
+
 Instead of reading the credentials from a file, you can have Antora read the credentials directly from the environment variable named `GIT_CREDENTIALS`.
 Here's an example that demonstrates the concept:
 
  $ export GIT_CREDENTIALS='https://octocat:ilovegit@github.com'
  $ antora antora-playbook.yml
 
+You can even reduce this to a single line:
+
+ $ GIT_CREDENTIALS='https://octocat:ilovegit@github.com' antora antora-playbook.yml
+
 This strategy is most useful in a CI environment where environment variables can be secured.
-Using this approach, multiple entries may be separated either by a comma or a newline character.
+It's also a quick and informal way of passing credentials to Antora when generating the site on your own machine.
+
+When using the environment variable, multiple entries may be separated either by a comma or a newline character.
+For example:
+
+ $ GIT_CREDENTIALS='https://my-github-token:@github.com,https://oauth2:my-gitlab-token@gitlab.com' antora antora-playbook.yml
+
+Exporting the environment variable saves you from having to type it each time you run Antora.
 
 == Encode credentials in a URL (not recommended)
 
