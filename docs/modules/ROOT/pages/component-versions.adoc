@@ -64,7 +64,7 @@ When the name of a component version is `master`, Antora removes the version seg
 For example, a page in the versionless component shown above might have a URL like `/tutorials/build-a-restful-web-service.html`.
 However, the version name can still be referenced in resource IDs for the purpose of making references (e.g., `master@tutorials::build-a-restful-web-service.adoc`).
 
-If the version property has any value other than `master` (e.g., lastest), that value will appear in the URL (and output path) of the files.
+If the version property has any value other than `master` (e.g., latest), that value will appear in the URL (and output path) of the files.
 
 You can also make a hybrid component which has both regular component versions and a versionless component version.
 //They don't even have to contain the same files.
