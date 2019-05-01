@@ -79,11 +79,7 @@ function getChildListItems (listItem) {
 
 function buildNavigationTree (formattedContent, items) {
   const entry = formattedContent ? partitionContent(formattedContent) : {}
-
-  if (items.length) {
-    entry.items = items.map((item) => buildNavigationTree(item.getText(), getChildListItems(item)))
-  }
-
+  if (items.length) entry.items = items.map((item) => buildNavigationTree(item.getText(), getChildListItems(item)))
   return entry
 }
 
@@ -93,10 +89,15 @@ function partitionContent (content) {
     const match = content.match(LINK_RX)
     if (match) {
       const [, url, role, content] = match
-      if (role === 'page') {
+      let roles
+      if (role && (roles = role.includes(' ') ? role.split(' ') : [role]).includes('page')) {
         const hashIdx = url.indexOf('#')
         if (~hashIdx) {
-          return { content, url, urlType: 'internal', hash: url.substr(hashIdx) }
+          if (roles.includes('unresolved')) {
+            return { content, url, urlType: 'internal', unresolved: true }
+          } else {
+            return { content, url, urlType: 'internal', hash: url.substr(hashIdx) }
+          }
         } else {
           return { content, url, urlType: 'internal' }
         }

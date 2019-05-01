@@ -83,6 +83,7 @@ describe('buildNavigation()', () => {
     const navContents = heredoc`
       * xref:home.adoc[Home]
       * xref:nav.adoc[About Nav]
+      * xref:nav$nav.adoc[Page Top]
     `
     const contentCatalog = mockContentCatalog([
       {
@@ -111,6 +112,12 @@ describe('buildNavigation()', () => {
           content: 'About Nav',
           url: '/component-a/module-a/nav.html',
           urlType: 'internal',
+        },
+        {
+          content: 'Page Top',
+          hash: '#',
+          url: '#',
+          urlType: 'fragment',
         },
       ],
     })
@@ -293,6 +300,35 @@ describe('buildNavigation()', () => {
       ],
       3
     )
+  })
+
+  it('should mark entry with unresolved page reference as unresolved internal url', () => {
+    const navContents = heredoc`
+      * xref:page-to-nowhere.adoc[Destination Unknown]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+    ])
+    const navCatalog = buildNavigation(contentCatalog)
+    const menu = navCatalog.getNavigation('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      items: [
+        {
+          content: 'Destination Unknown',
+          url: '#page-to-nowhere.adoc',
+          urlType: 'internal',
+          unresolved: true,
+        },
+      ],
+    })
   })
 
   it('should store url for page reference as root relative path with urlType set to internal', () => {

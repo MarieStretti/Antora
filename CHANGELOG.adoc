@@ -15,6 +15,10 @@ This project utilizes semantic versioning.
 
 * *content-aggregator*: Add git.ensureGitSuffix key (default: true) to playbook to control whether git client appends .git suffix to URL if absent (#414)
 * *asciidoc-loader*: Assign implicit page attributes for navigation files (AsciiDoc files in nav family) (#430)
+* *asciidoc-loader*: Preserve content (i.e., linked text) of unresolved page reference (#421)
+* *asciidoc-loader*: Put unresolved page ID spec in fragment identifier of link (e.g., `href="#unresolved.adoc`) (#421)
+* *asciidoc-loader*: Add "unresolved" role (i.e., class) to unresolved page reference (#421)
+* *navigation-builder*: Add `unresolved: true` property to the navigation entry of an unresolved page reference (#421)
 * *page-composer*: Prepend site path (pathname of site URL) to siteRootPath and uiRootPath on 404 page (#258)
 
 === Fixed
