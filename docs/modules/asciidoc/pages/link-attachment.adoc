@@ -24,7 +24,6 @@ Finally, end with the text of the link (as the reader will see it) between a pai
 
 You don't need to set the path to the [.path]_attachments_ directory in the header of your file.
 This is managed automatically by Antora.
-When viewing the file in a preview tool, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
 A module's attachment files should be saved in its xref:ROOT:modules.adoc#attachments-dir[attachments folder].
 Links to attachments can also be added to the xref:navigation:link-syntax-and-content.adoc[site navigation].
