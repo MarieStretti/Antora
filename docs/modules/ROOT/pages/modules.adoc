@@ -88,7 +88,6 @@ The subdirectory names automatically recognized by Antora and associated to the 
 
 You don't need to set the path to these three, predefined subdirectories in the header of your AsciiDoc files.
 This is managed automatically by Antora.
-//When viewing the file in a preview tool, such as Atom or the Asciidoctor Chrome extension, the path is managed by the adjacent [.path]_{blank}_attributes.adoc_ file.
 
 // You can create custom subdirectories, however, you'll need to add them to X & Y so that Antora can manage them.
 
