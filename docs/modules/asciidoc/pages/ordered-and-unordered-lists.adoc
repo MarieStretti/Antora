@@ -44,6 +44,20 @@ A different numbering or lettering scheme is provided for each nesting level.
 .. More details
 . Step 3
 
+You can control the numbering scheme using the list style.
+
+[lowergreek]
+. alpha
+. beta
+. gamma
+
+You can control the start value using the start attribute.
+
+[start=4]
+. Picking up where we left off.
+. Add one more ingredient.
+. Mix and serve!
+
 [#unordered]
 == Unordered list syntax
 
