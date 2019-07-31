@@ -144,21 +144,25 @@ If you've been following along with the Demo materials, once you find the demo-s
 [#cache]
 === Cache
 
-When Antora runs the first time, it will cache resources in a cache directory.
+When Antora runs the first time, it will save resources it fetches over the network in a local cache.
 Antora caches two types of resources:
 
 * cloned git repositories
 * downloaded UI bundles
 
-These resources are stored inside the cache directory, organized under the [.path]_content_ and [.path]_ui_ folders, respectively.
+Antora stores these resources in the cache directory, which are further organized under the [.path]_content_ and [.path]_ui_ folders, respectively.
 The xref:playbook:configure-runtime.adoc#default-cache[default cache directory] varies by operating system.
-You can override the default cache location using the xref:playbook:configure-runtime.adoc[runtime.cache_dir key] in the playbook, the xref:cli:index.adoc#cli-options[--cache-dir] CLI option, or the `$ANTORA_CACHE_DIR` environment variable.
+You can override the default cache location--listed here in order of precedence--using:
 
-If you want to update the cache on subsequent runs, pass the xref:cli:index.adoc#cli-options[--fetch switch] to the Antora CLI.
+* the xref:cli:index.adoc#cli-options[--cache-dir] CLI option,
+* the `ANTORA_CACHE_DIR` environment variable, or
+* the xref:playbook:configure-runtime.adoc[runtime.cache_dir] key in the playbook.
+
+If want Antora to update the cache on subsequent runs, pass the xref:cli:index.adoc#cli-options[--fetch] option to the Antora CLI or set the `runtime.fetch` key to true in the playbook.
 This switch will force Antora to run a fetch operation on each repository it previously cloned.
-It will also force Antora to download a fresh copy of the UI bundle, if remote.
+It will also force Antora to download a fresh copy of the UI bundle, if the URL is remote.
 
-If you want to clear the cache altogether, you'll need to locate the Antora cache directory on your system and delete it.
+If you want to clear the cache altogether, locate the Antora cache directory on your system and delete it.
 
 [#using-private-repositories]
 === Private git repositories
