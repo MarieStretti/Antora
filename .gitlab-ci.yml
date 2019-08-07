@@ -8,7 +8,8 @@ stages: [ init, verify, deploy ]
     - .gitlab-ci.yml
     - package.json
     - yarn.lock
-    - '{gulpfile.js,packages,test}/**/*'
+    - gulpfile.js
+    - '{gulp.d,packages,test}/**/*'
 - &except_docs
   except:
   - /^docs\/./

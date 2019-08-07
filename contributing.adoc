@@ -391,11 +391,11 @@ packages/     <3>
   document-converter/
   navigation-builder/
   ...
-gulpfile.js/
-  index.js    <6>
+gulp.d/
   lib/
   tasks/
-test/         <7>
+test/         <6>
+gulpfile.js   <7>
 package.json  <8>
 yarn.lock     <9>
 ....
@@ -405,8 +405,8 @@ yarn.lock     <9>
 <4> The main code, test code, and architecture documentation for the content aggregator component.
 Developer documentation for each software component lives alongside the code.
 <5> Defines project information and runtime and development library dependencies for the content aggregator component.
-<6> The Gulp build script that defines tasks used for development.
-<7> Contains test utilities and bootstrap code used in the test suite for each software component.
+<6> Contains test utilities and bootstrap code used in the test suite for each software component.
+<7> The Gulp build script that defines tasks used for development.
 <8> Defines project information and development library dependencies.
 <9> Tracks the version of resolved dependencies to ensure builds are reproducible.
 
@@ -509,6 +509,7 @@ If you see a version, you're all set.
 
 This project uses {uri-gulp}[Gulp] (command: `gulp`) to manage various tasks, such as test, lint, etc.
 These tasks are defined in [.path]_gulpfile.js_.
+(Additional source code for the Gulp build is stored in [.path]_gulp.d/_).
 
 To launch these tasks, you need to install the CLI interface for Gulp using:
 
@@ -566,7 +567,7 @@ In your terminal, execute the following command from the root folder of the proj
  $ yarn
 
 The default command in Yarn is `install`, so running `yarn` by itself is the equivalent of running `yarn install`.
-The install command uses dependency information defined in [.path]_package.json_ and [.path]_yarn.lock_ to resolve dependencies, which Yarn then installs inside the project under the [.path]_node_modules_ folder.
+The install command uses dependency information defined in [.path]_package.json_ and [.path]_yarn.lock_ to resolve dependencies, which Yarn then installs inside the project under the [.path]_node_modules/_ folder.
 
 NOTE: If you run into problems while installing dependencies, return to <<Development Libraries>>.
 
