@@ -1056,11 +1056,11 @@ describe('aggregateContent()', function () {
           playbookSpec.content.sources.push({ url: repoBuilder.url })
           await aggregateContent(playbookSpec)
           if (repoBuilder.remote) {
-            let normalizedUrl = repoBuilder.url
+            const normalizedUrl = repoBuilder.url
               .toLowerCase()
               .replace(/\\/g, '/')
               .replace(/(?:(?:(?:\.git)?\/)?\.git|\/)$/, '')
-            let hash = createHash('sha1')
+            const hash = createHash('sha1')
             hash.update(normalizedUrl)
             const repoDir = `${ospath.basename(normalizedUrl)}-${hash.digest('hex')}.git`
             expect(CONTENT_CACHE_DIR).to.be.a.directory()
@@ -2050,7 +2050,7 @@ describe('aggregateContent()', function () {
       playbookSpec.content.sources.push({ url: otherRepoBuilder.url })
 
       return withMockStdout(async (lines) => {
-        let aggregate = await aggregateContent(playbookSpec)
+        const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(2)
         expect(lines).to.have.lengthOf.at.least(4)
         const repoLines = lines.filter((l) => l.includes(repoBuilder.url))
@@ -2574,13 +2574,13 @@ describe('aggregateContent()', function () {
 
     it('should throw meaningful error if server returns unexpected error', async () => {
       const url = `http://localhost:${serverPort}/301/invalid-repository.git`
-      let expectedErrorMessage
+      //let expectedErrorMessage
       //if (process.platform === 'win32') {
       //  expectedErrorMessage = 'too many redirects or authentication replays: ' + url
       //} else {
       //  expectedErrorMessage = 'cross host redirect not allowed: ' + url
       //}
-      expectedErrorMessage =
+      const expectedErrorMessage =
         'Remote does not support the "smart" HTTP protocol, ' +
         'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible: ' +
         url

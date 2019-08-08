@@ -225,7 +225,7 @@ async function selectReferences (repo, remote, refPatterns) {
       : String(tagPatterns).split(CSV_RX)
     if (tagPatterns.length) {
       const tags = await git.listTags(repo)
-      for (let name of tags) {
+      for (const name of tags) {
         if (matcher([name], tagPatterns).length) {
           // NOTE tags are stored using symbol keys to distinguish them from branches
           refs.set(Symbol(name), { name, qname: 'tags/' + name, type: 'tag' })
@@ -267,7 +267,7 @@ async function selectReferences (repo, remote, refPatterns) {
       }
     }
     const remoteBranches = await git.listBranches(Object.assign({ remote }, repo))
-    for (let name of remoteBranches) {
+    for (const name of remoteBranches) {
       // NOTE isomorphic-git includes HEAD in list of remote branches (see https://isomorphic-git.org/docs/listBranches)
       if (name !== 'HEAD' && matcher([name], branchPatterns).length) {
         refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
@@ -278,7 +278,7 @@ async function selectReferences (repo, remote, refPatterns) {
       const localBranches = await git.listBranches(repo)
       if (localBranches.length) {
         const currentBranchName = await git.currentBranch(repo)
-        for (let name of localBranches) {
+        for (const name of localBranches) {
           if (matcher([name], branchPatterns).length) {
             refs.set(name, { name, qname: name, type: 'branch', isHead: name === currentBranchName })
           }
@@ -287,7 +287,7 @@ async function selectReferences (repo, remote, refPatterns) {
     } else if (!remoteBranches.length) {
       const localBranches = await git.listBranches(repo)
       if (localBranches.length) {
-        for (let name of localBranches) {
+        for (const name of localBranches) {
           if (matcher([name], branchPatterns).length) refs.set(name, { name, qname: name, type: 'branch' })
         }
       }
@@ -421,7 +421,7 @@ function walkGitTree (repo, root, filter) {
   let depth = 1
   function visit (tree, dirname = '') {
     depth--
-    for (let entry of tree.entries) {
+    for (const entry of tree.entries) {
       if (filter(entry)) {
         const type = entry.type
         if (type === 'blob') {
