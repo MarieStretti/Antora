@@ -17,10 +17,10 @@
   "main": "lib/index.js",
   "dependencies": {
     "@iarna/toml": "~2.2",
-    "camelcase-keys": "~5.0",
-    "convict": "~4.4",
+    "camelcase-keys": "~6.0",
+    "convict": "~5.1",
     "deep-freeze-node": "~1.1",
-    "js-yaml": "~3.12",
+    "js-yaml": "~3.13",
     "json5": "~2.1"
   },
   "engines": {

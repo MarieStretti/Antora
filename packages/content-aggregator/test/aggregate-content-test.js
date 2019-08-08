@@ -2161,6 +2161,7 @@ describe('aggregateContent()', function () {
   })
 
   describe('authentication', () => {
+    let authorizationHeaderValue
     let credentialsRequestCount
     let credentialsSent
     let credentialsVerdict
@@ -2173,10 +2174,12 @@ describe('aggregateContent()', function () {
     beforeEach(() => {
       process.env.USERPROFILE = process.env.HOME = WORK_DIR
       process.env.XDG_CONFIG_HOME = ospath.join(WORK_DIR, '.local')
+      authorizationHeaderValue = undefined
       credentialsRequestCount = 0
       credentialsSent = undefined
       credentialsVerdict = undefined
-      gitServer.authenticate = (type, repo, user, next) => {
+      gitServer.authenticate = ({ type, repo, user, headers }, next) => {
+        authorizationHeaderValue = headers.authorization
         if (type === 'fetch') {
           user((username, password) => {
             credentialsRequestCount += 1
@@ -2205,6 +2208,7 @@ describe('aggregateContent()', function () {
       repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0].files).to.not.be.empty()
@@ -2222,6 +2226,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       const expectedErrorMessage = 'Content repository not found or requires credentials: ' + urlWithoutAuth
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
     })
 
     // NOTE this test would fail if the git client didn't automatically add the .git extension
@@ -2231,6 +2236,7 @@ describe('aggregateContent()', function () {
       const urlWithoutAuth = repoBuilder.url.replace('.git', '')
       playbookSpec.content.sources.push({ url: urlWithoutAuth.replace('//', '//u:p@') })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0].files).to.not.be.empty()
@@ -2243,6 +2249,7 @@ describe('aggregateContent()', function () {
       repoBuilder.url = repoBuilder.url.replace('//', '//u@')
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:').toString('base64'))
       expect(credentialsSent).not.to.be.undefined()
       expect(credentialsSent.username).to.equal('u')
       expect(credentialsSent.password).to.equal('')
@@ -2256,6 +2263,7 @@ describe('aggregateContent()', function () {
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials.join('\n') + '\n')
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-required')
@@ -2268,6 +2276,7 @@ describe('aggregateContent()', function () {
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       let aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-required')
@@ -2287,6 +2296,7 @@ describe('aggregateContent()', function () {
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials.join('\n') + '\n')
       playbookSpec.content.sources.push({ url: repoBuilderA.url }, { url: repoBuilderB.url })
       let aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(credentialsRequestCount).to.equal(2)
       expect(aggregate).to.have.lengthOf(2)
@@ -2312,6 +2322,7 @@ describe('aggregateContent()', function () {
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
     })
@@ -2323,6 +2334,7 @@ describe('aggregateContent()', function () {
       await fs.writeFile(ospath.join(WORK_DIR, '.git-credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
     })
@@ -2335,6 +2347,7 @@ describe('aggregateContent()', function () {
       await fs.writeFile(ospath.join(process.env.XDG_CONFIG_HOME, 'git', 'credentials'), credentials)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
     })
@@ -2348,6 +2361,7 @@ describe('aggregateContent()', function () {
       playbookSpec.git = { credentials: { path: customGitCredentialsPath } }
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
     })
@@ -2359,6 +2373,7 @@ describe('aggregateContent()', function () {
       playbookSpec.git = { credentials: { contents: credentials } }
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
     })
@@ -2370,6 +2385,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       const expectedErrorMessage = 'Content repository not found or requires credentials: ' + repoBuilder.url
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      expect(authorizationHeaderValue).to.be.undefined()
       expect(credentialsSent).to.be.undefined()
     })
 
@@ -2393,6 +2409,7 @@ describe('aggregateContent()', function () {
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         const expectedErrorMessage = 'Content repository not found or credentials were rejected: ' + repoBuilder.url
         expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+        expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
         expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
         expect(credentialsRequestCount).to.equal(1)
         expect(lines.filter((l) => l.startsWith('[clone]'))).to.have.lengthOf(0)
@@ -2416,6 +2433,7 @@ describe('aggregateContent()', function () {
       await initRepoWithFiles(repoBuilder)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
       expect(aggregate).to.have.lengthOf(1)
       expect(credentialManager.fulfilledUrl).to.equal(repoBuilder.url)
@@ -2437,6 +2455,7 @@ describe('aggregateContent()', function () {
       await initRepoWithFiles(repoBuilder)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(credentialManager.configured).to.be.true()
     })
   })
