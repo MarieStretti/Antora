@@ -58,7 +58,7 @@ function getTags (attrs) {
   } else if (attrs['$key?']('tags')) {
     const tags = attrs['$[]']('tags')
     if (tags) {
-      let result = new Map()
+      const result = new Map()
       let any = false
       tags.split(~tags.indexOf(',') ? ',' : ';').forEach((tag) => {
         if (tag && tag !== '!') {
@@ -99,8 +99,7 @@ function applyTagFiltering (reader, target, file, tags) {
   file.contents.split(NEWLINE_RX).forEach((line) => {
     lineNum++
     let m
-    let l = line
-    if (~l.indexOf(DBL_COLON) && ~l.indexOf(DBL_SQUARE) && (m = l.match(TAG_DIRECTIVE_RX))) {
+    if (~line.indexOf(DBL_COLON) && ~line.indexOf(DBL_SQUARE) && (m = line.match(TAG_DIRECTIVE_RX))) {
       const thisTag = m[2]
       if (m[1]) {
         if (thisTag === activeTag) {

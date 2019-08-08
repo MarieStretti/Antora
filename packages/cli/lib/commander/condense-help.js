@@ -14,8 +14,8 @@ Command.prototype.helpInformation = function () {
     .reduce((accum, line) => {
       if (line.startsWith('Usage: ')) {
         if (this.parent) {
+          const commandCtx = []
           let ancestor = this
-          let commandCtx = []
           while ((ancestor = ancestor.parent)) commandCtx.unshift(ancestor.name())
           accum.push('Usage: ' + commandCtx.join(' ') + line.substr(6))
         } else {

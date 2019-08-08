@@ -660,7 +660,7 @@ describe('loadUi()', () => {
     const playbook = {
       ui: { bundle: { url: ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip') } },
     }
-    let uiCatalog = await loadUi(playbook)
+    const uiCatalog = await loadUi(playbook)
     expect(() => uiCatalog.addFile({ type: 'asset', path: 'css/one.css' })).to.throw('Duplicate file')
   })
 
@@ -700,7 +700,7 @@ describe('loadUi()', () => {
     expect(UI_CACHE_DIR)
       .to.be.a.directory()
       .and.not.be.empty()
-    let paths = uiCatalog.getFiles().map((file) => file.path)
+    const paths = uiCatalog.getFiles().map((file) => file.path)
     expect(paths).to.have.members(expectedFilePaths)
 
     uiCatalog = await loadUi(playbook)
@@ -740,7 +740,7 @@ describe('loadUi()', () => {
         runtime: { cacheDir },
         ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
       }
-      let uiCatalog = await loadUi(playbook)
+      const uiCatalog = await loadUi(playbook)
       expect(UI_CACHE_DIR).to.not.be.a.path()
       expect(customCacheDir)
         .to.be.a.directory()
@@ -748,7 +748,7 @@ describe('loadUi()', () => {
       expect(customUiCacheDir)
         .to.be.a.directory()
         .and.not.be.empty()
-      let paths = uiCatalog.getFiles().map((file) => file.path)
+      const paths = uiCatalog.getFiles().map((file) => file.path)
       expect(paths).to.have.members(expectedFilePaths)
     }
 

@@ -20,15 +20,15 @@ class GitCredentialManagerStore {
 
   async load () {
     if (this.entries) return this.entries
-    return (this.entries = new Promise(async (resolve) => {
-      let contents = this.contents
-      let delimiter
-      if (contents) {
+    return (this.entries = new Promise((resolve) => {
+      let contentsPromise, delimiter
+      if (this.contents) {
         delimiter = /[,\n]/
+        contentsPromise = Promise.resolve(this.contents)
       } else {
         delimiter = '\n'
         let path = this.path || ospath.join(homedir(), '.git-credentials')
-        contents = await fs.pathExists(path).then((exists) => {
+        contentsPromise = fs.pathExists(path).then((exists) => {
           if (exists) {
             return fs.readFile(path, 'utf-8')
           } else {
@@ -39,27 +39,32 @@ class GitCredentialManagerStore {
               .then((fallbackExists) => (fallbackExists ? fs.readFile(path, 'utf-8') : undefined))
           }
         })
-        if (!contents) return resolve({})
       }
-      resolve(
-        contents
-          .trim()
-          .split(delimiter)
-          .reduce((accum, url) => {
-            try {
-              const { username, password, hostname, pathname } = new URL(url)
-              const credentials = password ? { username, password } : username ? { token: username } : undefined
-              if (!credentials) return accum
-              if (pathname === '/') {
-                accum[hostname] = credentials
-              } else {
-                accum[hostname + pathname] = credentials
-                if (!pathname.endsWith('.git')) accum[hostname + pathname + '.git'] = credentials
-              }
-            } catch (e) {}
-            return accum
-          }, {})
-      )
+      contentsPromise.then((contents) => {
+        if (contents) {
+          resolve(
+            contents
+              .trim()
+              .split(delimiter)
+              .reduce((accum, url) => {
+                try {
+                  const { username, password, hostname, pathname } = new URL(url)
+                  const credentials = password ? { username, password } : username ? { token: username } : undefined
+                  if (!credentials) return accum
+                  if (pathname === '/') {
+                    accum[hostname] = credentials
+                  } else {
+                    accum[hostname + pathname] = credentials
+                    if (!pathname.endsWith('.git')) accum[hostname + pathname + '.git'] = credentials
+                  }
+                } catch (e) {}
+                return accum
+              }, {})
+          )
+        } else {
+          resolve({})
+        }
+      })
     }))
   }
 
