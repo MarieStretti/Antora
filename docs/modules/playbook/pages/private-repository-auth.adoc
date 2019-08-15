@@ -32,7 +32,7 @@ Next, let's see how to supply these credentials to Antora's built-in credential 
 By default, Antora's built-in credential manager automatically checks for credentials in the {url-credential-store}[git credential store^].
 The default path for the git credential store is _$HOME/.git-credentials_, followed by _$XDG_CONFIG_HOME/git/credentials_ if the previous location doesn't exist.
 
-When Antora is notify by the certain that a URL requires authentication, it will look for an entry in the credentials store that has a matching context.
+When Antora is notified by the certain that a URL requires authentication, it will look for an entry in the credentials store that has a matching context.
 If a protocol (e.g., `https`) and hostname (and, optionally, the path) are found in the credentials store, those credentials are returned to Antora's credential manager and passed on to the git server.
 
 The credential store contains zero or more line-based entries.

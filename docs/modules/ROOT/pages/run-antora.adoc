@@ -158,7 +158,7 @@ You can override the default cache location--listed here in order of precedence-
 * the `ANTORA_CACHE_DIR` environment variable, or
 * the xref:playbook:configure-runtime.adoc[runtime.cache_dir] key in the playbook.
 
-If want Antora to update the cache on subsequent runs, pass the xref:cli:index.adoc#cli-options[--fetch] option to the Antora CLI or set the `runtime.fetch` key to true in the playbook.
+If you want Antora to update the cache on subsequent runs, pass the xref:cli:index.adoc#cli-options[--fetch] option to the Antora CLI or set the `runtime.fetch` key to true in the playbook.
 This switch will force Antora to run a fetch operation on each repository it previously cloned.
 It will also force Antora to download a fresh copy of the UI bundle, if the URL is remote.
 
