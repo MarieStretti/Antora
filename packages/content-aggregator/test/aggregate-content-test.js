@@ -2229,6 +2229,28 @@ describe('aggregateContent()', function () {
       expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
     })
 
+    it('should clone with valid credentials after failed attempt to clone with invalid credentials', async () => {
+      credentialsVerdict = 'no entry!'
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const urlWithoutAuth = repoBuilder.url
+      repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + urlWithoutAuth
+      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
+      expect(CONTENT_CACHE_DIR)
+        .to.be.a.directory()
+        .and.be.empty()
+      authorizationHeaderValue = undefined
+      credentialsVerdict = undefined
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files).to.not.be.empty()
+    })
+
     // NOTE this test would fail if the git client didn't automatically add the .git extension
     it('should add .git extension to URL if missing', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })

@@ -174,7 +174,8 @@ async function loadRepository (url, opts) {
           authStatus = credentials ? 'auth-embedded' : credentialManager.status({ url }) ? 'auth-required' : undefined
           return git.config(Object.assign({ path: 'remote.origin.private', value: authStatus }, repo))
         })
-        .catch((cloneErr) => {
+        .catch(async (cloneErr) => {
+          await fs.remove(dir)
           // FIXME triggering the error handler here causes assertion problems in the test suite
           //fetchOpts.emitter && fetchOpts.emitter.emit('error', cloneErr)
           throw transformGitCloneError(cloneErr, displayUrl)
