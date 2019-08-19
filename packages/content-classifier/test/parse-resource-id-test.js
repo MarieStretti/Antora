@@ -49,6 +49,48 @@ describe('parseResourceId()', () => {
     expect(result).to.eql(expected)
   })
 
+  it('should remove leading self references from relative path', () => {
+    const input = './the-page.adoc'
+    const inputCtx = { component: 'the-component', module: 'the-module', version: '1.0' }
+    const expected = {
+      version: '1.0',
+      component: 'the-component',
+      module: 'the-module',
+      family: 'page',
+      relative: 'the-page.adoc',
+    }
+    const result = parseResourceId(input, inputCtx)
+    expect(result).to.eql(expected)
+  })
+
+  it('should clean self and parent references from relative path', () => {
+    const input = 'foo/../bar/./the-page.adoc'
+    const inputCtx = { component: 'the-component', module: 'the-module', version: '1.0' }
+    const expected = {
+      version: '1.0',
+      component: 'the-component',
+      module: 'the-module',
+      family: 'page',
+      relative: 'foo/bar/the-page.adoc',
+    }
+    const result = parseResourceId(input, inputCtx)
+    expect(result).to.eql(expected)
+  })
+
+  it('should remove repeating separators from relative path', () => {
+    const input = 'path//to////the-page.adoc'
+    const inputCtx = { component: 'the-component', module: 'the-module', version: '1.0' }
+    const expected = {
+      version: '1.0',
+      component: 'the-component',
+      module: 'the-module',
+      family: 'page',
+      relative: 'path/to/the-page.adoc',
+    }
+    const result = parseResourceId(input, inputCtx)
+    expect(result).to.eql(expected)
+  })
+
   it('should leave version undefined if component is specified but not version', () => {
     const input = 'the-component:the-module:the-page.adoc'
     const inputCtx = { version: '1.0' }
