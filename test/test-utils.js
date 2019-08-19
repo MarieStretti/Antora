@@ -36,6 +36,28 @@ module.exports = {
         next(null, file)
       }
     }),
+  captureStdErr: async (fn, ...args) => {
+    const stdErrWrite = process.stderr.write
+    const messages = []
+    try {
+      process.stderr.write = (msg) => messages.push(msg.trim())
+      await fn(...args)
+      return messages
+    } finally {
+      process.stderr.write = stdErrWrite
+    }
+  },
+  captureStdErrSync: (fn, ...args) => {
+    const stdErrWrite = process.stderr.write
+    const messages = []
+    try {
+      process.stderr.write = (msg) => messages.push(msg.trim())
+      fn(...args)
+      return messages
+    } finally {
+      process.stderr.write = stdErrWrite
+    }
+  },
   deferExceptions: async (fn, ...args) => {
     let deferredFn
     try {

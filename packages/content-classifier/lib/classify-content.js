@@ -116,14 +116,18 @@ function registerSiteStartPage (playbook, contentCatalog) {
   const pageSpec = playbook.site.startPage
   if (!pageSpec) return
   const rel = contentCatalog.resolvePage(pageSpec)
-  if (!rel) throw new Error('Specified start page for site not found: ' + pageSpec)
-  const src = Object.assign({}, START_PAGE_ID, {
-    family: 'alias',
-    basename: 'index.adoc',
-    stem: 'index',
-    mediaType: 'text/asciidoc',
-  })
-  contentCatalog.addFile({ src, rel })
+  if (rel) {
+    const src = Object.assign({}, START_PAGE_ID, {
+      family: 'alias',
+      basename: 'index.adoc',
+      stem: 'index',
+      mediaType: 'text/asciidoc',
+    })
+    contentCatalog.addFile({ src, rel })
+  } else {
+    console.warn('Start page specified for site not found: ' + pageSpec)
+    //throw new Error('Start page specified for site not found: ' + pageSpec)
+  }
 }
 
 function calculateRootPath (depth) {
