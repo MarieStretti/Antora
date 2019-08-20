@@ -61,6 +61,29 @@ describe('produceRedirects()', () => {
       })
     })
 
+    it('should populate contents of files in alias family with static redirect page', () => {
+      contentCatalog = mockContentCatalog([
+        { family: 'page', relative: 'target with spaces.adoc' },
+        { family: 'alias', relative: 'alias with spaces.adoc' },
+      ])
+      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(0)
+      const expectedQualifiedUrl = 'https://docs.example.org/component-a/module-a/target with spaces.html'
+      const expectedRelativeUrls = {
+        'alias with spaces.adoc': 'target with spaces.html',
+      }
+      contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
+        const expectedRelativeUrl = expectedRelativeUrls[file.src.relative]
+        expect(file).to.have.property('contents')
+        const html = file.contents.toString()
+        expect(html).to.include(`<link rel="canonical" href="${expectedQualifiedUrl}">`)
+        expect(html).to.include(`<script>location="${expectedRelativeUrl}"</script>`)
+        expect(html).to.include(`<meta http-equiv="refresh" content="0; url=${expectedRelativeUrl}">`)
+        expect(html).to.include(`<a href="${expectedRelativeUrl}">${expectedQualifiedUrl}</a>`)
+      })
+    })
+
     it('should not remove the out property on alias files', () => {
       produceRedirects(playbook, contentCatalog)
       contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
@@ -112,6 +135,26 @@ describe('produceRedirects()', () => {
         '/component-a/module-b/alias-b.html /component-a/module-a/the-target.html 301',
         '/component-b/1.0/alias-c.html /component-a/module-a/the-target.html 301',
         '/index.html /component-a/module-a/the-target.html 301',
+      ])
+    })
+
+    it('should escape spaces in paths of redirect rule', () => {
+      contentCatalog = mockContentCatalog([
+        { family: 'page', relative: 'target with spaces.adoc' },
+        { family: 'alias', relative: 'alias with spaces.adoc' },
+      ])
+      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0]).to.have.property('contents')
+      expect(result[0]).to.have.property('out')
+      expect(result[0].out.path).to.equal('_redirects')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.eql([
+        '/component-a/module-a/alias%20with%20spaces.html /component-a/module-a/target%20with%20spaces.html 301',
       ])
     })
 
@@ -226,6 +269,26 @@ describe('produceRedirects()', () => {
         'location = /component-a/module-b/alias-b.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-b/1.0/alias-c.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /index.html { return 301 /component-a/module-a/the-target.html; }',
+      ])
+    })
+
+    it('should escape spaces in paths of redirect rule', () => {
+      contentCatalog = mockContentCatalog([
+        { family: 'page', relative: 'target with spaces.adoc' },
+        { family: 'alias', relative: 'alias with spaces.adoc' },
+      ])
+      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0]).to.have.property('contents')
+      expect(result[0]).to.have.property('out')
+      expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.eql([
+        'location = /component-a/module-a/alias\\ with\\ spaces.html { return 301 /component-a/module-a/target\\ with\\ spaces.html; }',
       ])
     })
 
