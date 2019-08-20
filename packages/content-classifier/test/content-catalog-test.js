@@ -821,6 +821,20 @@ describe('ContentCatalog', () => {
       expect(() => contentCatalog.registerPageAlias(targetPageSrc.relative, targetPage)).to.throw(expectedError)
     })
 
+    it('should not allow self reference to be used in page alias', () => {
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const expectedError = 'Page alias cannot reference itself: 1.2.3@the-component:ROOT:the-page.adoc'
+      expect(() => contentCatalog.registerPageAlias('./' + targetPageSrc.relative, targetPage)).to.throw(expectedError)
+    })
+
+    it('should not allow parent reference to be used in page alias', () => {
+      contentCatalog.addFile(new File({ src: targetPageSrc }))
+      const targetPage = contentCatalog.getById(targetPageSrc)
+      const expectedError = 'Page alias cannot reference itself: 1.2.3@the-component:ROOT:the-page.adoc'
+      expect(() => contentCatalog.registerPageAlias('../' + targetPageSrc.relative, targetPage)).to.throw(expectedError)
+    })
+
     it('should not allow alias to be registered that matches existing page', () => {
       const otherPageSrc = Object.assign({}, targetPageSrc)
       otherPageSrc.relative = otherPageSrc.basename = 'the-other-page.adoc'
