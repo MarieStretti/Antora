@@ -1,27 +1,26 @@
 = Organizing Your Documentation for Antora
 
-Antora works with collections of documentation that follow a standard, well-defined project structure.
-The benefits of a standard project structure for documentation are as follows:
+Antora works with collections of documentation that follow a standard project structure.
+The benefits of this project structure are:
 
 * faster onboarding of contributors
 * interoperability with authoring, validation, migration, and bootstrap tools
-* the ability to define page references that span component versions (and thus repositories), are not coupled to output URLs (source-to-source), and can be automatically updated by a tool when source files are moved and renamed
-* better organization system to manage files as the documentation grows
+* the ability to define page and partial page references that:
+** span components and component versions (and therefor repositories and their branches),
+** aren't coupled to output URLs, and
+** can be automatically updated by a tool when source files are moved and renamed
 
 We call a collection of documentation files organized under Antora's standard project structure a [.term]_documentation component_.
-
-When you use documentation components, you can take advantage of the open source tools, plugins, and automated processes built to integrate with the Antora pipeline.
+//When you use documentation components, you can take advantage of the open source tools, plugins, and automated processes built to integrate with the Antora pipeline.
 
 == Documentation component overview
 
-A documentation component is content that adheres to a standard, well-defined organization structure.
-This type of component contains of a collection of AsciiDoc text files and their assets, such as images, as well as a component descriptor file.
-All the documentation in a component should follow the same versioning scheme and be versioned together.
-Your site can be generated using just one documentation component, or as many as you want.
+A documentation component contains AsciiDoc text files and their assets, such as images, as well as a component descriptor file.
+//All the documentation in a component should follow the same versioning scheme and be versioned together.
+Your site can be generated using just one documentation component or as many as you want.
 
-When Antora receives instructions from your playbook to scan a specific repository, its first objective is to find a component descriptor file in that repository.
+When Antora receives instructions from your playbook to scan a repository, its first objective is to find a component descriptor file in that repository.
 The xref:component-descriptor.adoc[component descriptor file] is named [.path]_antora.yml_.
-
 Once Antora finds this file, it assumes that that directory and all its files and subdirectories are a documentation component.
 The structure of a documentation component is laid out below.
 
