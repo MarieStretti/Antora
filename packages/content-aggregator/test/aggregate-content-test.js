@@ -45,6 +45,10 @@ function testAll (testBlock, numRepoBuilders = 1, remoteBare = undefined) {
   if (remoteBare) it('on remote bare repo', () => makeTest({ bare: true, remote: { gitServerPort } }))
 }
 
+function testLocal (block) {
+  it('on local repo', () => block(new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)))
+}
+
 describe('aggregateContent()', function () {
   let playbookSpec
   let gitServer
@@ -201,6 +205,32 @@ describe('aggregateContent()', function () {
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a version in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
+    describe('should throw if name defined in component descriptor contains a path segment', () => {
+      testLocal(async (repoBuilder) => {
+        const ref = 'master <worktree>'
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'foo/bar', version: 'v1.0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const expectedMessage =
+          `name in ${COMPONENT_DESC_FILENAME} cannot have path segments: foo/bar` +
+          ` in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
+    describe('should throw if version defined in component descriptor contains a path segment', () => {
+      testLocal(async (repoBuilder) => {
+        const ref = 'master <worktree>'
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.1/0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const expectedMessage =
+          `version in ${COMPONENT_DESC_FILENAME} cannot have path segments: 1.1/0` +
+          ` in ${repoBuilder.url} [ref: ${ref}]`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })

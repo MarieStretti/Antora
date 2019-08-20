@@ -470,13 +470,18 @@ function loadComponentDescriptor (files, startPath) {
   const descriptorFile = files[descriptorFileIdx]
   files.splice(descriptorFileIdx, 1)
   const data = yaml.safeLoad(descriptorFile.contents.toString())
-  if (data.name == null) {
-    throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a name')
-  } else if (data.version == null) {
-    throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a version')
+  if (data.name == null) throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a name')
+  const name = String(data.name)
+  if (name === '.' || name === '..' || ~name.indexOf('/')) {
+    throw new Error(`name in ${path.join(startPath, COMPONENT_DESC_FILENAME)} cannot have path segments: ${name}`)
   }
-  data.name = String(data.name)
-  data.version = String(data.version)
+  if (data.version == null) throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a version')
+  const version = String(data.version)
+  if (version === '.' || version === '..' || ~version.indexOf('/')) {
+    throw new Error(`version in ${path.join(startPath, COMPONENT_DESC_FILENAME)} cannot have path segments: ${version}`)
+  }
+  data.name = name
+  data.version = version
   return data
 }
 
