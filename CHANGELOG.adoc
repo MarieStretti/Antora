@@ -14,6 +14,7 @@ This project utilizes semantic versioning.
 * *content-classifier*: warn instead of abort if start page for site or component version cannot be resolved (#456)
 * *content-classifier*: clean path segment of resource ID (remove self references, parent references, and repeat separators) (#457)
 * *content-classifier*: prevent page alias from referencing itself through the use of self references, parent references, and/or repeat separators (#457)
+* *redirect-producer*: escape spaces in path (#458)
 
 == 2.0.0 (2018-12-25)
 

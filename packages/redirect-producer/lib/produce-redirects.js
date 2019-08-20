@@ -4,6 +4,8 @@ const computeRelativeUrlPath = require('@antora/asciidoc-loader/lib/util/compute
 const File = require('vinyl')
 const { URL } = require('url')
 
+const ALL_SPACES_RX = / /g
+
 /**
  * Produces redirects (HTTP redirections) for registered page aliases.
  *
@@ -64,10 +66,10 @@ function populateStaticRedirectFiles (files, siteUrl) {
 function createNetlifyRedirects (files, urlContext = '', includeDirectoryRedirects = false) {
   const rules = files.reduce((accum, file) => {
     delete file.out
-    accum.push(`${urlContext}${file.pub.url} ${urlContext}${file.rel.pub.url} 301`)
-    if (includeDirectoryRedirects && file.pub.url.endsWith('/index.html')) {
-      accum.push(`${urlContext}${file.pub.url.slice(0, -10)} ${urlContext}${file.rel.pub.url} 301`)
-    }
+    const from = `${urlContext}${file.pub.url.replace(ALL_SPACES_RX, '%20')}`
+    const to = `${urlContext}${file.rel.pub.url.replace(ALL_SPACES_RX, '%20')}`
+    accum.push(`${from} ${to} 301`)
+    if (includeDirectoryRedirects && from.endsWith('/index.html')) accum.push(`${from.slice(0, -10)} ${to} 301`)
     return accum
   }, [])
   const redirectsFile = new File({
@@ -80,7 +82,9 @@ function createNetlifyRedirects (files, urlContext = '', includeDirectoryRedirec
 function createNginxRewriteConf (files, urlContext = '') {
   const rules = files.map((file) => {
     delete file.out
-    return `location = ${urlContext}${file.pub.url} { return 301 ${urlContext}${file.rel.pub.url}; }`
+    const from = `${urlContext}${file.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
+    const to = `${urlContext}${file.rel.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
+    return `location = ${from} { return 301 ${to}; }`
   })
   const rewriteConfigFile = new File({
     contents: Buffer.from(rules.join('\n')),
