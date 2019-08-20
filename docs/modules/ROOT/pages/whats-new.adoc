@@ -116,6 +116,7 @@ They're just deprecated and will be removed in the next major version.
 page.origin.private:: If a content source requires authentication (either because credentials were defined in the URL or credentials were requested from the credentials manager), the `page.origin.private` property will be set in the UI model.
 
 page.displayVersion:: The display version of a component is now accessible via the UI model using the `page.displayVersion` property.
+The display version is defined by the `display_version` key in the component descriptor (i.e., [.path]_antora.yml_).
 
 page.latest:: The `page.versions.latest` property in the UI model can now be reached using `page.latest`.
 

@@ -79,6 +79,8 @@ This includes:
 * xref:navigation:index.adoc#page-dropdown[page version selector]
 * edit page URI (not visible)
 
+The value is also used to sort multiple versions of the same component.
+
 The value can contain letter, number, period (`.`), underscore (`+_+`), and hyphen (`-`) characters.
 If the value starts with a number, it must be contained within a set of single quote marks (`'`).
 
@@ -86,6 +88,16 @@ If the value starts with a number, it must be contained within a set of single q
 * '1.0'
 * v2.0-beta
 * latest
+
+If you want to use a different value when displaying the version in the UI, you can set the `display_version` key.
+
+[source,yaml]
+----
+display_version: TheBigOneDot0
+----
+
+The value of the `display_version` key is strictly used for presentation.
+It does not affect how versions are sorted.
 
 The version key value isn't related to a xref:component-versions.adoc[repository branch name or tag] in any way.
 Instead, the value should be useable by the documentation writers and useful to the readers.
