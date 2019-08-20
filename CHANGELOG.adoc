@@ -10,6 +10,7 @@ This project utilizes semantic versioning.
 === Fixed
 
 * *content-aggregator*: delete empty repository in cache if clone fails (#455)
+* *content-classifier*: warn instead of abort if start page for site or component version cannot be resolved (#456)
 
 == 2.0.0 (2018-12-25)
 

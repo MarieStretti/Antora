@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect } = require('../../../test/test-utils')
+const { captureStdErrSync, expect } = require('../../../test/test-utils')
 
 const classifyContent = require('@antora/content-classifier')
 const mimeTypes = require('@antora/content-aggregator/lib/mime-types-with-asciidoc')
@@ -290,10 +290,13 @@ describe('classifyContent()', () => {
       expect(component.versions[0].url).to.equal(expectedUrl)
     })
 
-    it('should throw error if start page specified for component version cannot be resolved', () => {
-      aggregate[0].start_page = 'no-such-page'
+    it('should warn if start page specified for component version cannot be resolved', () => {
+      aggregate[0].start_page = 'no-such-page.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/home.adoc'))
-      expect(() => classifyContent(playbook, aggregate)).to.throw(/Start page .* not found/)
+      //expect(() => classifyContent(playbook, aggregate)).to.throw(/Start page .* not found/)
+      const stdErrMessages = captureStdErrSync(classifyContent, playbook, aggregate)
+      expect(stdErrMessages).to.have.lengthOf(1)
+      expect(stdErrMessages[0]).to.match(/Start page .* not found/)
     })
 
     it('should set url to index page in ROOT module if found', () => {
@@ -623,7 +626,7 @@ describe('classifyContent()', () => {
     })
 
     it('should register site start page if specified', () => {
-      playbook.site.startPage = 'v1.2.3@the-component:ROOT:index'
+      playbook.site.startPage = 'v1.2.3@the-component:ROOT:index.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
       const contentCatalog = classifyContent(playbook, aggregate)
       const files = contentCatalog.getFiles()
@@ -638,10 +641,13 @@ describe('classifyContent()', () => {
       expect(expected).to.exist()
     })
 
-    it('should throw error if site start page not found', () => {
-      playbook.site.startPage = 'no-such-page'
+    it('should warn if site start page not found', () => {
+      playbook.site.startPage = 'no-such-page.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
-      expect(() => classifyContent(playbook, aggregate)).to.throw(/Specified start page .* not found/)
+      //expect(() => classifyContent(playbook, aggregate)).to.throw(/Start page specified for site not found/)
+      const stdErrMessages = captureStdErrSync(classifyContent, playbook, aggregate)
+      expect(stdErrMessages).to.have.lengthOf(1)
+      expect(stdErrMessages[0]).to.match(/Start page specified for site not found/)
     })
   })
 

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, spy } = require('../../../test/test-utils')
+const { captureStdErrSync, expect, spy } = require('../../../test/test-utils')
 
 const classifyContent = require('@antora/content-classifier')
 const ContentCatalog = require('@antora/content-classifier/lib/content-catalog')
@@ -308,12 +308,14 @@ describe('ContentCatalog', () => {
     })
 
     it('should throw error if specified start page not found', () => {
-      expect(() =>
+      const stdErrMessages = captureStdErrSync(() =>
         new ContentCatalog().registerComponentVersion('the-component', '1.0.0', {
           title: 'The Component',
           startPage: 'home.adoc',
         })
-      ).to.throw('Start page specified for 1.0.0@the-component not found: home.adoc')
+      )
+      expect(stdErrMessages).to.have.lengthOf(1)
+      expect(stdErrMessages[0].trim()).to.eql('Start page specified for 1.0.0@the-component not found: home.adoc')
     })
 
     it('should use url of index page in ROOT module if found', () => {

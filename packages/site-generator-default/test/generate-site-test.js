@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { deferExceptions, expect, removeSyncForce } = require('../../../test/test-utils')
+const { captureStdErr, expect, removeSyncForce } = require('../../../test/test-utils')
 
 const cheerio = require('cheerio')
 const fs = require('fs-extra')
@@ -180,10 +180,13 @@ describe('generateSite()', function () {
   }).timeout(timeoutOverride)
 
   it('should throw error if start page cannot be resolved', async () => {
-    playbookSpec.site.start_page = 'unknown-component::index'
+    playbookSpec.site.start_page = 'unknown-component::index.adoc'
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
-    const generateSiteDeferred = await deferExceptions(generateSite, ['--playbook', playbookFile], env)
-    expect(generateSiteDeferred).to.throw('Specified start page for site not found: unknown-component::index')
+    //const generateSiteDeferred = await deferExceptions(generateSite, ['--playbook', playbookFile], env)
+    //expect(generateSiteDeferred).to.throw('Specified start page for site not found: unknown-component::index')
+    const stdErrMessages = await captureStdErr(generateSite, ['--playbook', playbookFile], env)
+    expect(stdErrMessages).to.have.lengthOf(1)
+    expect(stdErrMessages[0]).to.eql('Start page specified for site not found: unknown-component::index.adoc')
   }).timeout(timeoutOverride)
 
   it('should qualify applicable links using site url if set in playbook', async () => {
