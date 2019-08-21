@@ -1651,6 +1651,21 @@ describe('loadAsciiDoc()', () => {
       expectLink(html, '#', '4.5.6@component-b:module-b:topic-foo/topic-bar/the-page.adoc#frag')
     })
 
+    it('should skip page reference to non-publishable file', () => {
+      const contentCatalog = mockContentCatalog({ relative: '_hidden.adoc' }).spyOn('getById')
+      delete contentCatalog.findBy({ family: 'page' })[0].pub
+      setInputFileContents('xref:_hidden.adoc[Hidden Page]')
+      const html = loadAsciiDoc(inputFile, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: '_hidden.adoc',
+      })
+      expectLink(html, '#', '_hidden.adoc')
+    })
+
     it('should convert a page reference with version, component, module, and page', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-b',
