@@ -70,7 +70,7 @@ module.exports = {
       default: [],
     },
     tags: {
-      doc: 'The default tag pattern to use when no specific pattern is provided',
+      doc: 'The default tag pattern to use when no specific pattern is provided.',
       format: Array,
       default: undefined,
     },
@@ -150,7 +150,7 @@ module.exports = {
       env: 'ANTORA_CACHE_DIR',
     },
     fetch: {
-      doc: 'Download updates from remote resources (including content repositories and UI bundle).',
+      doc: 'Download updates from remote resources. Includes content repositories and the UI bundle.',
       format: Boolean,
       default: false,
       arg: 'fetch',

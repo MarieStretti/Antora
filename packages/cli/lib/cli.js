@@ -59,7 +59,7 @@ cli
   .command('generate <playbook>')
   .description('Generate a documentation site specified in <playbook>.')
   .optionsFromConvict(convict(configSchema), { exclude: 'playbook' })
-  .option('--generator <library>', 'Site generator library', '@antora/site-generator-default')
+  .option('--generator <library>', 'The site generator library.', '@antora/site-generator-default')
   .action(async (playbookFile, command) => {
     try {
       requireLibraries(cli.requirePaths)
