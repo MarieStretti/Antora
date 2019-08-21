@@ -24,7 +24,7 @@ function convertPageRef (refSpec, content, currentPage, contentCatalog, relativi
   let targetPage
   const [pageIdSpec, fragment] = splitOnce(refSpec, '#')
   try {
-    if (!(targetPage = contentCatalog.resolvePage(pageIdSpec, currentPage.src))) {
+    if (!((targetPage = contentCatalog.resolvePage(pageIdSpec, currentPage.src)) && targetPage.pub)) {
       // TODO log "Unresolved page ID"
       return { content: `${pageIdSpec}.adoc${fragment ? '#' + fragment : ''}`, target: '#' }
     }
