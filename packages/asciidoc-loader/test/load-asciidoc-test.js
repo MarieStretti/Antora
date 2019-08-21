@@ -1918,6 +1918,37 @@ describe('loadAsciiDoc()', () => {
       expectPageLink(html, '../4.5.6/module-a/the-page.html', 'The Page Title')
     })
 
+    it('should convert a page reference having a path that starts with @', () => {
+      const contentCatalog = mockContentCatalog({ relative: '@the-page.adoc' }).spyOn('getById')
+      setInputFileContents('xref:module-a:@the-page.adoc[The Page Title]')
+      const html = loadAsciiDoc(inputFile, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: '@the-page.adoc',
+      })
+      expectPageLink(html, '@the-page.html', 'The Page Title')
+    })
+
+    it('should convert a page reference having a path that starts with @ and a version', () => {
+      const contentCatalog = mockContentCatalog({
+        version: '5.6.4',
+        relative: '@the-page.adoc',
+      }).spyOn('getById')
+      setInputFileContents('xref:5.6.4@@the-page.adoc[The Page Title]')
+      const html = loadAsciiDoc(inputFile, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: '5.6.4',
+        module: 'module-a',
+        family: 'page',
+        relative: '@the-page.adoc',
+      })
+      expectPageLink(html, '../5.6.4/module-a/@the-page.html', 'The Page Title')
+    })
+
     it('should convert a page reference with version, topic, and page', () => {
       const contentCatalog = mockContentCatalog({
         component: 'component-a',
