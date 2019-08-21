@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Changed
+
+* *asciidoc-loader*: Assign implicit page attributes for navigation files (AsciiDoc files in nav family) (#430)
+
 == 2.0.1 (2019-08-22)
 
 === Changed

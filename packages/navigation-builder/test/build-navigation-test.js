@@ -524,6 +524,42 @@ describe('buildNavigation()', () => {
     })
   })
 
+  it('should be able to reference implicit page attributes', () => {
+    const navContents = heredoc`
+      .xref:index.adoc[{page-component-title}]
+      * xref:{page-module}:page-a.adoc[Page A, v{page-version}]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        version: '1.0',
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { version: '1.0', family: 'page', relative: 'index.adoc' },
+      { version: '1.0', family: 'page', relative: 'page-a.adoc' },
+    ])
+    contentCatalog.getComponent('component-a').title = 'Component A'
+    const navCatalog = buildNavigation(contentCatalog)
+    const menu = navCatalog.getNavigation('component-a', '1.0')
+    expect(menu).to.exist()
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      content: 'Component A',
+      url: '/component-a/1.0/module-a/index.html',
+      urlType: 'internal',
+      items: [
+        {
+          content: 'Page A, v1.0',
+          url: '/component-a/1.0/module-a/page-a.html',
+          urlType: 'internal',
+        },
+      ],
+    })
+  })
+
   it('should build navigation list when doctype is set to book in global AsciiDoc config', () => {
     const navContents = heredoc`
       .xref:index.adoc[Module A]

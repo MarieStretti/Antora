@@ -155,7 +155,7 @@ describe('loadAsciiDoc()', () => {
       })
     })
 
-    it('should not set page attributes if file is not in page family', () => {
+    it('should set page attributes even if file is not in page family', () => {
       const inputFile = mockContentCatalog({
         version: '4.5',
         family: 'nav',
@@ -163,8 +163,8 @@ describe('loadAsciiDoc()', () => {
         contents: '* xref:module-a:index.adoc[Module A]',
       }).getFiles()[0]
       const doc = loadAsciiDoc(inputFile)
-      expect(doc.getAttributes()).to.not.have.any.keys(
-        ...['page-component-name', 'page-component-version', 'page-version', 'page-module', 'page-relative']
+      expect(doc.getAttributes()).to.include.keys(
+        'page-component-name', 'page-component-version', 'page-version', 'page-module', 'page-relative'
       )
     })
 
