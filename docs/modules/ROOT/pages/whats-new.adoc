@@ -20,15 +20,25 @@ The Antora 2.0.1 release updates Antora's dependencies ({url-mr}/328[MR 328^]) a
 
 == Fixed issues
 
+Issue {url-issues}/315[315^]:: The URL of the most recent non-prerelease version of page is now used as the canonical URL.
+
+Issue {url-issues}/433[433^]:: The path (i.e., relative) of an xref target can now begin with `@`.
+
+Issue {url-issues}/434[434^]:: If an xref target isn't verified as publishable, it's now left unresolved.
+
 Issue {url-issues}/455[455^]:: If a repository fails to clone, the empty repository is now automatically deleted from Antora's cache directory.
 
 Issue {url-issues}/456[456^]:: Instead of stopping, Antora now issues a warning if it can't resolve the start page of a site or component version.
 
 Issue {url-issues}/457[457^]:: Resource ID path segments are now cleaned and page aliases are prevented from referencing themselves through the use of self references, parent references, and/or repeat separators.
 
-Issue {url-issues}/458[458^]:: Spaces in URLs of rewrite rules are now properly escaped; applies to the nginx and netlify redirect facilities.
+Issue {url-issues}/458[458^]:: Spaces in URLs of rewrite rules are now properly escaped; applies to the nginx and Netlify redirect facilities.
 
 Issue {url-issues}/459[459^]:: Component names can no longer contain `/`, `.`, or `..` because these characters are interpreted as path segments in the generated site.
+
+Issue {url-issues}/462[462^]:: The correct line number is now reported when an include target or tag cannot be resolved.
+
+Issue {url-issues}/463[463^]:: A reference to a page with the same root-relative path as a navigation file is now fixed.
 
 [#thank-you-2-0-1]
 == Thank you!
@@ -41,7 +51,8 @@ Jean-Baptiste ({url-gitlab}/jibecfed[@jibecfed^]):: Correct a typo and make the 
 
 James Elliott ({url-gitlab}/Deep-Symmetry[@Deep-Symmetry^]):: Remove _attributes.adoc from documentation {url-mr}/322[MR 322^]
 
-François Violette ({url-gitlab}/fviolette[@fviolette^]):: Fix typos in documentation {url-mr}/329[MR 329^]
+François Violette ({url-gitlab}/fviolette[@fviolette^]):: Fix typos in documentation {url-mr}/329[MR 329^] +
+Fix inline ID syntax example {url-mr}/340[MR 340^]
 
 Daniel Mulholland ({url-gitlab}/danyill[@danyill^]):: Re-order version information and mention version is used in page URL {url-mr}/334[MR 334^]
 
