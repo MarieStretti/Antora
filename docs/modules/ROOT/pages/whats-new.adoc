@@ -7,13 +7,47 @@
 :url-git-antora: {url-gitlab}/antora/antora
 :url-issues: {url-git-antora}/issues
 :url-milestone-2-0: {url-issues}?milestone_title=v2.0.x&scope=all&state=closed
+:url-milestone-2-0-1: {url-issues}?milestone_title=v2.0.1&scope=all&state=closed
 :url-mr: {url-git-antora}/merge_requests
 
 Learn about what's new in the 2.0 release series of Antora.
 
+= Antora 2.0.1
+
+_**Release date:** 2019.08.21 | *Milestone (closed issues):* {url-milestone-2-0-1}[v2.0.1^]_
+
+The Antora 2.0.1 release updates Antora's dependencies ({url-mr}/328[MR 328^]) and adds several fixes.
+
+== Fixed issues
+
+Issue {url-issues}/455[455^]:: If a repository fails to clone, the empty repository is now automatically deleted from Antora's cache directory.
+
+Issue {url-issues}/456[456^]:: Instead of stopping, Antora now issues a warning if it can't resolve the start page of a site or component version.
+
+Issue {url-issues}/457[457^]:: Resource ID path segments are now cleaned and page aliases are prevented from referencing themselves through the use of self references, parent references, and/or repeat separators.
+
+Issue {url-issues}/458[458^]:: Spaces in URLs of rewrite rules are now properly escaped; applies to the nginx and netlify redirect facilities.
+
+Issue {url-issues}/459[459^]:: Component names can no longer contain `/`, `.`, or `..` because these characters are interpreted as path segments in the generated site.
+
+[#thank-you-2-0-1]
+== Thank you!
+
+Most important of all, a huge *thank you!* to all the folks who helped make Antora even better.
+
+Amit Mendapara ({url-gitlab}/cristatus[@cristatus^]):: Update credential store setup command for zsh {url-mr}/319[MR 319^]
+
+Jean-Baptiste ({url-gitlab}/jibecfed[@jibecfed^]):: Correct a typo and make the runtime configuration easier to understand {url-mr}/321[MR 321^]
+
+James Elliott ({url-gitlab}/Deep-Symmetry[@Deep-Symmetry^]):: Remove _attributes.adoc from documentation {url-mr}/322[MR 322^]
+
+François Violette ({url-gitlab}/fviolette[@fviolette^]):: Fix typos in documentation {url-mr}/329[MR 329^]
+
+Daniel Mulholland ({url-gitlab}/danyill[@danyill^]):: Re-order version information and mention version is used in page URL {url-mr}/334[MR 334^]
+
 = Antora 2.0.0
 
-_**Release date:** 2018.12.25 | *Milestone (closed issues):* {url-milestone-2-0}[v2.0.x^]_
+_**Release date:** 2018.12.25 | *Milestone (closed issues):* {url-milestone-2-0}[v2.0.0^]_
 
 The Antora 2.0.0 release streamlines the installation process, improves platform and library compatibility, provides a simpler and pluggable authentication mechanism for private repositories, and delivers the latest Asciidoctor capabilities.
 
