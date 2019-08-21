@@ -79,6 +79,43 @@ describe('buildNavigation()', () => {
     })
   })
 
+  it('should be able to reference page with same root-relative path as nav file', () => {
+    const navContents = heredoc`
+      * xref:home.adoc[Home]
+      * xref:nav.adoc[About Nav]
+    `
+    const contentCatalog = mockContentCatalog([
+      {
+        family: 'nav',
+        relative: 'nav.adoc',
+        contents: navContents,
+        navIndex: 0,
+      },
+      { family: 'page', relative: 'home.adoc' },
+      { family: 'page', relative: 'nav.adoc' },
+    ])
+    const navCatalog = buildNavigation(contentCatalog)
+    const menu = navCatalog.getNavigation('component-a', 'master')
+    expect(menu).to.exist()
+    expect(menu).to.have.lengthOf(1)
+    expect(menu[0]).to.eql({
+      order: 0,
+      root: true,
+      items: [
+        {
+          content: 'Home',
+          url: '/component-a/module-a/home.html',
+          urlType: 'internal',
+        },
+        {
+          content: 'About Nav',
+          url: '/component-a/module-a/nav.html',
+          urlType: 'internal',
+        },
+      ],
+    })
+  })
+
   it('should build navigation across multiple components', () => {
     const navContentsA = heredoc`
       .xref:index.adoc[Component A]

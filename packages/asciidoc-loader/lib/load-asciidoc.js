@@ -41,10 +41,10 @@ const EXTENSION_DSL_TYPES = Extensions.$constants(false).filter((name) => name.e
  */
 function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
   const fileSrc = file.src
-  const relative = fileSrc.relative
+  const { family, relative } = fileSrc
   const extname = fileSrc.extname || relative.replace(/.*(?=\.)/g, '')
   const intrinsicAttrs = {
-    docname: relative.substr(0, relative.length - extname.length),
+    docname: (family === 'nav' ? 'nav$' : '') + relative.substr(0, relative.length - extname.length),
     docfile: file.path,
     // NOTE docdir implicitly sets base_dir on document; Opal only expands value to absolute path if it starts with ./
     docdir: file.dirname,
@@ -54,7 +54,7 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     examplesdir: EXAMPLES_DIR_TOKEN,
     partialsdir: PARTIALS_DIR_TOKEN,
   }
-  const pageAttrs = fileSrc.family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : undefined
+  const pageAttrs = family === 'page' ? computePageAttrs(fileSrc, contentCatalog) : undefined
   const attributes = Object.assign({}, config.attributes, intrinsicAttrs, pageAttrs)
   const relativizePageRefs = config.relativizePageRefs !== false
   const converter = createConverter({
