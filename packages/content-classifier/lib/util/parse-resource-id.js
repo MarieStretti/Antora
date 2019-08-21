@@ -2,7 +2,7 @@
 
 // matches pattern version@component:module:family$relative
 // ex. 1.0@antora:asciidoc:syntax/lists.adoc
-const RESOURCE_ID_RX = /^(?:([^@:$]+)@)?(?:(?:([^@:$]+):)?(?:([^@:$]+))?:)?(?:([^@:$]+)\$)?([^@:$]+)$/
+const RESOURCE_ID_RX = /^(?:([^@:$]+)@)?(?:(?:([^@:$]+):)?(?:([^@:$]+))?:)?(?:([^@:$]+)\$)?([^:$][^@:$]*)$/
 const RESOURCE_ID_RX_GROUP = { version: 1, component: 2, module: 3, family: 4, relative: 5 }
 
 /**

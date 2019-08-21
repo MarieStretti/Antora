@@ -157,6 +157,32 @@ describe('parseResourceId()', () => {
     expect(result).to.eql(expected)
   })
 
+  it('should allow @ to be used at start of filename', () => {
+    const input = '@the-page.adoc'
+    const expected = {
+      component: undefined,
+      version: undefined,
+      module: undefined,
+      family: 'page',
+      relative: '@the-page.adoc',
+    }
+    const result = parseResourceId(input)
+    expect(result).to.eql(expected)
+  })
+
+  it('should allow @ to be used at start of filename with version', () => {
+    const input = '2.0@@the-page.adoc'
+    const expected = {
+      component: undefined,
+      version: '2.0',
+      module: undefined,
+      family: 'page',
+      relative: '@the-page.adoc',
+    }
+    const result = parseResourceId(input)
+    expect(result).to.eql(expected)
+  })
+
   it('should not set component property if only version, module, and page are specified', () => {
     const input = '2.0@the-module:the-page.adoc'
     const expected = {
