@@ -33,7 +33,7 @@ To link to a block or line in the same page, you must define an ID at that locat
 [#playbook] //<1>
 Here's an example of a playbook.
 
-This is an [#name-me] inline ID. //<2>
+This is an [#name-me]#inline ID#. //<2>
 ----
 <1> An ID can be placed on a paragraph (i.e., block).
 <2> An ID can be placed inline.
