@@ -1752,7 +1752,7 @@ describe('aggregateContent()', function () {
     expect(aggregate[0]).to.have.nested.property('files[0].src.origin.branch', defaultBranch)
   })
 
-  it('should fetch updates into cached repository when runtime.fetch option is enabled', async () => {
+  it('should fetch updates into non-empty cached repository when runtime.fetch option is enabled', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
       repoBuilder.createTag('ignored').then(() => repoBuilder.checkoutBranch('v1.2.x'))
@@ -1801,6 +1801,28 @@ describe('aggregateContent()', function () {
     expect(secondAggregate[2]).to.include({ name: 'the-component', version: 'v2.0.1' })
     const page4v2 = secondAggregate[2].files.find((file) => file.path === 'modules/ROOT/pages/topic-b/page-four.adoc')
     expect(page4v2).to.exist()
+  })
+
+  it('should fetch updates into empty cached repository when runtime.fetch option is enabled', async () => {
+    const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+    await repoBuilder.init('the-component').then(() => repoBuilder.close())
+    playbookSpec.content.sources.push({ url: repoBuilder.url })
+    const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+    expect(aggregateContentDeferred).to.throw()
+
+    await repoBuilder
+      .open()
+      .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v1.0' }))
+      .then(() => repoBuilder.addFilesFromFixture('modules/ROOT/pages/page-one.adoc'))
+      .then(() => repoBuilder.close())
+
+    playbookSpec.runtime.fetch = true
+    const aggregate = await aggregateContent(playbookSpec)
+
+    expect(aggregate).to.have.lengthOf(1)
+    expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
+    expect(aggregate[0].files).to.have.lengthOf(1)
+    expect(aggregate[0].files[0].path).to.equal('modules/ROOT/pages/page-one.adoc')
   })
 
   it('should fetch tags not reachable from fetched commits when runtime.fetch option is enabled', async () => {
