@@ -993,7 +993,7 @@ describe('loadAsciiDoc()', () => {
       expect(doc.getBlocks()).to.have.lengthOf(1)
       expect(messages).to.have.lengthOf(1)
       expect(messages[0].trim()).to.equal(
-        `asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of 1 exceeded`
+        'asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of 1 exceeded'
       )
     })
 

@@ -208,7 +208,7 @@ describe('convertDocument()', () => {
     const partialFile = {
       path: 'modules/module-a/pages/_partials/definitions.adoc',
       dirname: 'modules/module-a/pages/_partials',
-      contents: Buffer.from(`cloud: someone else's computer`),
+      contents: Buffer.from('cloud: someone else\'s computer'),
       src: {
         path: 'modules/module-a/pages/_partials/definitions.adoc',
         dirname: 'modules/module-a/pages/_partials',

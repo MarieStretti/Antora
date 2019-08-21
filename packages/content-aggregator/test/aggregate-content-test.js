@@ -2602,7 +2602,7 @@ describe('aggregateContent()', function () {
             if (statusCode === 401) {
               headers['WWW-Authenticate'] = 'Basic realm="example"'
             } else if (statusCode === 301) {
-              headers['Location'] = 'http://example.org'
+              headers.Location = 'http://example.org'
             }
             res.writeHead(statusCode, headers)
             res.end('No dice!')

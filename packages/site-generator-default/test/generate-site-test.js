@@ -444,7 +444,7 @@ describe('generateSite()', function () {
     await generateSite(['--playbook', playbookFile], env)
     expect(ospath.join(absDestDir, 'the-component/2.0/the-alias.html')).to.be.a.file()
     const contents = readFile('the-component/2.0/the-alias.html', absDestDir)
-    expect(contents).to.include(`<script>location="the-page.html"</script>`)
+    expect(contents).to.include('<script>location="the-page.html"</script>')
   }).timeout(timeoutOverride)
 
   it('should generate nginx rewrite config file for aliases when using nginx redirect facility', async () => {
@@ -452,7 +452,7 @@ describe('generateSite()', function () {
     await generateSite(['--playbook', playbookFile, '--redirect-facility', 'nginx'], env)
     expect(ospath.join(absDestDir, '.etc/nginx/rewrite.conf')).to.be.a.file()
     const contents = readFile('.etc/nginx/rewrite.conf', absDestDir)
-    const rules = `location = /the-component/2.0/the-alias.html { return 301 /the-component/2.0/the-page.html; }`
+    const rules = 'location = /the-component/2.0/the-alias.html { return 301 /the-component/2.0/the-page.html; }'
     expect(contents).to.include(rules)
     expect(ospath.join(absDestDir, 'the-component/2.0/the-alias.html')).to.not.be.a.path()
   }).timeout(timeoutOverride)
@@ -473,7 +473,7 @@ describe('generateSite()', function () {
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '../../../_/css/site.css')
     expect(ospath.join(absDestDir, 'the-component/2.0/the-alias/index.html')).to.be.a.file()
     const contents = readFile('the-component/2.0/the-alias/index.html', absDestDir)
-    expect(contents).to.include(`<script>location="../the-page/"</script>`)
+    expect(contents).to.include('<script>location="../the-page/"</script>')
   }).timeout(timeoutOverride)
 
   describe('integration', () => {
