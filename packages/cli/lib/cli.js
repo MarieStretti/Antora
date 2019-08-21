@@ -50,6 +50,7 @@ cli
   .version(VERSION, '-v, --version')
   .description('A modular, multi-repository documentation site generator for AsciiDoc.')
   .usage('[options] [[command] [args]]')
+  .helpOption('-h, --help', 'Output usage information.')
   .option('-r, --require <library>', 'Require library (aka node module) or script before executing command.')
   .on('option:require', (requirePath) => (cli.requirePaths = (cli.requirePaths || []).concat(requirePath)))
   .option('--stacktrace', 'Print the stacktrace to the console if the application fails.')
@@ -71,7 +72,7 @@ cli
       generateSite = requireLibrary(generator, ospath.resolve(playbookFile, '..'))
     } catch (err) {
       let msg = 'Generator not found or failed to load.'
-      if (generator && !generator.startsWith('.')) msg += ` Try installing the \`${generator}' package.`
+      if (generator && !generator.startsWith('.')) msg += ` Try installing the '${generator}' package.`
       exitWithError(err, cli.stacktrace, msg)
     }
     const args = cli.rawArgs.slice(cli.rawArgs.indexOf(command.name()) + 1)

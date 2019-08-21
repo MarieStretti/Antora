@@ -123,6 +123,7 @@ describe('cli', function () {
       .assert(/^ *-v, --version /)
       .assert(/^ *-r, --require /)
       .assert(/^ *--stacktrace /)
+      .assert(/^ *-h, --help *Output usage information\./)
       .done()
   })
 
@@ -180,6 +181,8 @@ describe('cli', function () {
           expect(optionForms).to.include('--url <url>')
           expect(optionForms).to.include('--html-url-extension-style <default|drop|indexify>')
           expect(options['--html-url-extension-style <default|drop|indexify>']).to.have.string('(default: default)')
+          expect(optionForms).to.include('--generator <library>')
+          expect(options['--generator <library>']).to.have.string('(default: @antora/site-generator-default)')
           // check options are sorted, except drop -h as we know it always comes last
           expect(optionForms.slice(0, -1)).to.eql(
             Object.keys(options)
@@ -192,7 +195,7 @@ describe('cli', function () {
 
   it('should show error message if generate command is run without an argument', () => {
     return runAntora('generate')
-      .assert(/missing required argument `playbook'/)
+      .assert(/missing required argument 'playbook'/)
       .done()
   })
 
@@ -397,7 +400,7 @@ describe('cli', function () {
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     // FIXME assert that exit code is 1 (limitation in Kapok when using assert)
     return runAntora('--generator no-such-module generate the-site')
-      .assert(/error: Generator not found or failed to load. Try installing the `no-such-module' package./i)
+      .assert(/error: Generator not found or failed to load. Try installing the 'no-such-module' package./i)
       .done()
   })
 

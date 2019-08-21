@@ -36,10 +36,7 @@ function collectOptions (properties, options = [], context = undefined) {
       if (default_ === null) {
         option.mandatory = true
         option.description += ' (required)'
-      } else if (
-        default_ !== undefined &&
-        (typeof default_ !== 'object' || default_.toString() !== '[object Object]')
-      ) {
+      } else if (default_ && (typeof default_ !== 'object' || default_.toString() !== '[object Object]')) {
         option.default = default_
       }
       return accum.concat(option)

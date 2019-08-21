@@ -197,6 +197,7 @@ describe('commander', () => {
         flags: '--quiet',
         description: 'Be quiet',
       })
+      expect(options[0]).not.to.have.property('defaultValue')
     })
 
     it('should import negatable boolean option from convict config', () => {
