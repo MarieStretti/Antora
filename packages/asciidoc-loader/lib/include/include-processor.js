@@ -26,7 +26,7 @@ const IncludeProcessor = (() => {
       }
       return
     }
-    const resolvedFile = this[$callback](doc, target, reader.getCursor())
+    const resolvedFile = this[$callback](doc, target, reader.$cursor_at_prev_line())
     if (resolvedFile) {
       let includeContents
       let tags
@@ -42,7 +42,7 @@ const IncludeProcessor = (() => {
       ;(reader.file = new String(reader.file)).context = resolvedFile.context // eslint-disable-line no-new-wrappers
     } else {
       log('error', `include target not found: ${target}`, reader)
-      reader.$unshift(`Unresolved include directive in ${reader.getCursor().file} - include::${target}[]`)
+      reader.$unshift(`Unresolved include directive in ${reader.$cursor_at_prev_line().file} - include::${target}[]`)
     }
   })
 
@@ -161,8 +161,8 @@ function applyTagFiltering (reader, target, file, tags) {
 
 function log (severity, message, reader, includeCursor = undefined) {
   const opts = includeCursor
-    ? { source_location: reader.getCursor(), include_location: includeCursor }
-    : { source_location: reader.getCursor() }
+    ? { source_location: reader.$cursor_at_prev_line(), include_location: includeCursor }
+    : { source_location: reader.$cursor_at_prev_line() }
   reader.$logger()['$' + severity](reader.$message_with_context(message, Opal.hash(opts)))
 }
 

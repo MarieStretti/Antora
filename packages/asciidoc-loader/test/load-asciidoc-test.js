@@ -388,8 +388,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'does-not-exist.adoc',
       })
       expect(messages).to.have.lengthOf(1)
-      // NOTE known issue that cursor is off by one line in custom include processor
-      expect(messages[0]).to.include('page-a.adoc: line 2: include target not found: partial$/does-not-exist.adoc')
+      expect(messages[0]).to.include('page-a.adoc: line 1: include target not found: partial$/does-not-exist.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
@@ -413,8 +412,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'does-not-exist.adoc',
       })
       expect(messages).to.have.lengthOf(1)
-      // NOTE known issue that cursor is off by one line in custom include processor
-      expect(messages[0]).to.include('page-a.adoc: line 2: include target not found: partial$does-not-exist.adoc')
+      expect(messages[0]).to.include('page-a.adoc: line 1: include target not found: partial$does-not-exist.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
@@ -423,6 +421,30 @@ describe('loadAsciiDoc()', () => {
         'include::partial$does-not-exist.adoc[]',
       ].join(' - ')
       expect(firstBlock.getSourceLines()).to.eql([expectedSource])
+    })
+
+    it('should not clobber surrounding lines when include target cannot be resolved', () => {
+      const contentCatalog = mockContentCatalog().spyOn('getById')
+      const inputContents = 'before\ninclude::partial$does-not-exist.adoc[]\nafter'
+      setInputFileContents(inputContents)
+      const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'partial',
+        relative: 'does-not-exist.adoc',
+      })
+      expect(messages).to.have.lengthOf(1)
+      expect(messages[0]).to.include('page-a.adoc: line 2: include target not found: partial$does-not-exist.adoc')
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('paragraph')
+      const expectedSource = [
+        'Unresolved include directive in modules/module-a/pages/page-a.adoc',
+        'include::partial$does-not-exist.adoc[]',
+      ].join(' - ')
+      expect(firstBlock.getSourceLines()).to.eql(['before', expectedSource, 'after'])
     })
 
     it('should resolve include target prefixed with {partialsdir}', () => {
@@ -587,8 +609,7 @@ describe('loadAsciiDoc()', () => {
       const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expect(contentCatalog.resolveResource).to.not.have.been.called()
       expect(messages).to.have.lengthOf(1)
-      // NOTE known issue that cursor is off by one line in custom include processor
-      expect(messages[0]).to.include('line 2: include target not found: 1.1@another-component::greeting.adoc')
+      expect(messages[0]).to.include('line 1: include target not found: 1.1@another-component::greeting.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
@@ -611,8 +632,7 @@ describe('loadAsciiDoc()', () => {
       const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
       expect(contentCatalog.resolveResource).to.not.have.been.called()
       expect(messages).to.have.lengthOf(1)
-      // NOTE known issue that cursor is off by one line in custom include processor
-      expect(messages[0]).to.include('line 2: include target not found: 1.1@greeting.adoc')
+      expect(messages[0]).to.include('line 1: include target not found: 1.1@greeting.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
@@ -680,8 +700,7 @@ describe('loadAsciiDoc()', () => {
         path: 'modules/module-a/pages/_partials/deeply/nested.adoc',
       })
       expect(messages).to.have.lengthOf(1)
-      // NOTE known issue that cursor is off by one line in custom include processor
-      expect(messages[0]).to.include('outer.adoc: line 2: include target not found: deeply/nested.adoc')
+      expect(messages[0]).to.include('outer.adoc: line 1: include target not found: deeply/nested.adoc')
       const firstBlock = doc.getBlocks()[0]
       expect(firstBlock).not.to.be.undefined()
       expect(firstBlock.getContext()).to.equal('paragraph')
@@ -970,7 +989,7 @@ describe('loadAsciiDoc()', () => {
       expect(doc.getBlocks()).to.have.lengthOf(maxIncludeDepth)
       expect(messages).to.have.lengthOf(1)
       expect(messages[0].trim()).to.equal(
-        `asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of ${maxIncludeDepth} exceeded`
+        `asciidoctor: ERROR: greeting.adoc: line 3: maximum include depth of ${maxIncludeDepth} exceeded`
       )
     })
 
@@ -993,7 +1012,7 @@ describe('loadAsciiDoc()', () => {
       expect(doc.getBlocks()).to.have.lengthOf(1)
       expect(messages).to.have.lengthOf(1)
       expect(messages[0].trim()).to.equal(
-        'asciidoctor: ERROR: greeting.adoc: line 4: maximum include depth of 1 exceeded'
+        'asciidoctor: ERROR: greeting.adoc: line 3: maximum include depth of 1 exceeded'
       )
     })
 
@@ -1409,9 +1428,8 @@ describe('loadAsciiDoc()', () => {
         ----
       `)
       const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
-      // NOTE known issue that cursor is off by one line in custom include processor
       const expectedMessage =
-        "page-a.adoc: line 4: mismatched end tag (expected 'goodbye' but found 'hello')" +
+        "page-a.adoc: line 3: mismatched end tag (expected 'goodbye' but found 'hello')" +
         ' at line 5 of include file: modules/module-a/examples/ruby/greet.rb'
       expect(messages).to.have.lengthOf(1)
       expect(messages[0]).to.include(expectedMessage)
@@ -1441,9 +1459,8 @@ describe('loadAsciiDoc()', () => {
         ----
       `)
       const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
-      // NOTE known issue that cursor is off by one line in custom include processor
       const expectedMessage =
-        "page-a.adoc: line 4: unexpected end tag 'hello' " +
+        "page-a.adoc: line 3: unexpected end tag 'hello' " +
         'at line 5 of include file: modules/module-a/examples/ruby/greet.rb'
       expect(messages).to.have.lengthOf(1)
       expect(messages[0]).to.include(expectedMessage)
@@ -1471,9 +1488,8 @@ describe('loadAsciiDoc()', () => {
         ----
       `)
       const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
-      // NOTE known issue that cursor is off by one line in custom include processor
       const expectedMessage =
-        "page-a.adoc: line 4: detected unclosed tag 'hello' " +
+        "page-a.adoc: line 3: detected unclosed tag 'hello' " +
         'starting at line 2 of include file: modules/module-a/examples/ruby/greet.rb'
       expect(messages).to.have.lengthOf(1)
       expect(messages[0]).to.include(expectedMessage)
@@ -1500,9 +1516,8 @@ describe('loadAsciiDoc()', () => {
         ----
       `)
       const [doc, messages] = captureStderr(() => loadAsciiDoc(inputFile, contentCatalog))
-      // NOTE known issue that cursor is off by one line in custom include processor
       const expectedMessage =
-        "page-a.adoc: line 4: tags 'hello, yo' not found in include file: modules/module-a/examples/ruby/greet.rb"
+        "page-a.adoc: line 3: tags 'hello, yo' not found in include file: modules/module-a/examples/ruby/greet.rb"
       expect(messages).to.have.lengthOf(1)
       expect(messages[0]).to.include(expectedMessage)
       const firstBlock = doc.getBlocks()[0]
