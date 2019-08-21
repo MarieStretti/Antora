@@ -35,7 +35,7 @@ For a detailed list of current development tasks, refer to the Antora {url-issue
 * [ ] Add initial support for translations by adding language key to virtual file
 * [ ] Provide access to cached repositories in Antora context (as src.origin.cacheDir) {url-issues}/305[#305^]
 * [ ] Use worktree of local git repository even when repository has no commits {url-issues}/298[#298^]
-* [ ] Don't set canonical URL if page doesn't exist in latest version of component (otherwise, this confuses crawlers)
+* [x] Set canonical URL to most recent, non-prerelease version of page {url-issues}/315[#315^]
 * [ ] Publish metapackage @antora/antora to simplify installation
 
 === v2.2.x
