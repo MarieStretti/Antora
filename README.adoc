@@ -283,7 +283,7 @@ The {uri-docs}/antora/latest/project/roadmap[project roadmap] provides the curre
 
 == Copyright and License
 
-Copyright (C) 2017-2018 by OpenDevise Inc. and the individual contributors to Antora.
+Copyright (C) 2017-2019 by OpenDevise Inc. and the individual contributors to Antora.
 
 Use of this software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).
 See link:LICENSE[] to find the full license text.
