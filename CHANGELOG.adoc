@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Changed
+
+* Upgrade dependencies
+
 === Fixed
 
 * *content-aggregator*: delete empty repository in cache if clone fails (#455)
