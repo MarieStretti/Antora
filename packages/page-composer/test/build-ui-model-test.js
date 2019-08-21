@@ -1028,6 +1028,20 @@ describe('build UI model', () => {
       expect(model.canonicalUrl).to.equal('http://example.com/the-component/1.0/the-page.html')
     })
 
+    it('should set canonicalUrl property to url of most recent version in which page exists', () => {
+      site.url = 'http://example.com'
+      component.versions.unshift({
+        version: '2.0',
+        title: 'The Component',
+        url: '/the-component/2.0/index.html',
+      })
+      const files = { '1.0': file }
+      contentCatalog.getById = spy((filter) => files[filter.version])
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.canonicalUrl).to.exist()
+      expect(model.canonicalUrl).to.equal('http://example.com/the-component/1.0/the-page.html')
+    })
+
     it('should not set canonicalUrl property if all versions are prereleases', () => {
       site.url = 'http://example.com'
       component.versions[0].prerelease = true
