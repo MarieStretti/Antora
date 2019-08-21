@@ -174,7 +174,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   if (site.url) {
     // NOTE not always the same as the latest component version (since the page might cease to exist)
     const latestPageVersion = versions
-      ? versions.find((candidate) => !candidate.prerelease)
+      ? versions.find((candidate) => !(candidate.prerelease || candidate.missing))
       : !componentVersion.prerelease && { url }
     if (latestPageVersion) model.canonicalUrl = file.pub.canonicalUrl = site.url + latestPageVersion.url
   }
