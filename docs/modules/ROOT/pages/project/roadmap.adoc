@@ -19,87 +19,84 @@ For a detailed list of current development tasks, refer to the Antora {url-issue
 
 === v2.1.x
 
-*Release Timeframe*: Q1 2019
+*Release Timeframe*: Q3 2019
 
-* [x] Upgrade build to Gulp 4 {url-issues}/370[#370^]
+* [ ] Add support for referencing images across modules and components {url-issues}/228[#228^]
+* [ ] Preserve linked text of an unresolved page xref {url-issues}/421[#421^]
+
+=== v2.x.x
+
+*Release Timeframe*: Q4 2019 - Q1 2020
+
 * [ ] Automatically set up latest version URLs {url-issues}/314[#314^]
-* [ ] Contents of xref should use page title if contents is not specified {url-issues}/310[#310^]
-* [ ] Resolve symlinks (possibly just file symlinks) in git tree {url-issues}/188[#188^]
-* [ ] Add a logging infrastructure; configure Asciidoctor logger to use it {url-issues}/145[#145^]
-* [ ] Allow AsciiDoc attributes to be specified per component-version (in antora.yml) {url-issues}/251[#251^]
-* [ ] Implement fallback value for component version based on git ref or config {url-issues}/296[#296^]
-* [ ] Provide a better way to indicate that a component version is "versionless"
-* [ ] Implicitly disable branches pattern if tags pattern is specified in content source {url-issues}/268[#268^]
-* [ ] Allow AsciiDoc content to be included from a URL {url-issues}/246[#246^]
-* [ ] Add support to include processor for including lines by line number
-* [ ] Add initial support for translations by adding language key to virtual file
-* [ ] Provide access to cached repositories in Antora context (as src.origin.cacheDir) {url-issues}/305[#305^]
-* [ ] Use worktree of local git repository even when repository has no commits {url-issues}/298[#298^]
-* [x] Set canonical URL to most recent, non-prerelease version of page {url-issues}/315[#315^]
-* [ ] Publish metapackage @antora/antora to simplify installation
-
-=== v2.2.x
-
-*Release Timeframe*: Q2 2019
-
-* [ ] Make module path configurable (using antora.yml) {url-issues}/28[#28^]
-* [ ] Add support for a moduleless docs component {url-issues}/27[#27^]
-* [ ] Add watch mode for files in worktree {url-issues}/329[#329^]
-* [ ] Allow pattern for edit URL to be configurable {url-issues}/292[#292^]
-* [ ] Add PDF output option for pages and/or components {url-issues}/349[#349^]
-* [ ] Show the file url where the site can be previewed offline {url-issues}/220[#220^]
-* [ ] Add authentication for remote UI bundles {url-issues}/280[#280^]
-* [ ] Support loading the UI from a directory {url-issues}/150[#150^]
-* [ ] Add support for referencing images across modules
-* [ ] Add xref support to image link {url-issues}/330[#330^]
-* [ ] Add support for referencing attachments using xref macro {url-issues}/227[#227^]
-* [ ] Add priority boosts in sitemap based on component version {url-issues}/317[#317^]
-* [ ] Compose playbook files (include one into another)
-* [ ] Integrate lunr search into default site generator (or promote the extension and make it easier to enable)
-* [ ] Automatically substitute environment variables in playbook file
-//* allow a group to be defined in antora.yml
-//* make all metadata from antora.yml available to model
-//* allow static files in UI to be decorated with page template / access UI model
-
-=== v3.0.x
-
-*Release Timeframe*: Q4 2019
-
-* [ ] Add lifecycle hooks to default site generator
-* [ ] Add support for git-lfs for assets storage such as images {url-issues}/185[#185^]
+* [ ] Contents of xref should use page title if link text isn't specified {url-issues}/310[#310^]
 
 === Unscheduled
 
 The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.
 They aren't slated for imminent development but are reviewed for possible scheduling after each release.
 
+* [ ] Add support for a moduleless docs component {url-issues}/27[#27^]
+* [ ] Make module path configurable (using antora.yml) {url-issues}/28[#28^]
+* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {url-issues}/82[#82^]
+* [ ] Set up UI acceptance test suite {url-issues}/95[#95^]
+* [ ] Ignore duplicate component in same repository if it matches component in HEAD {url-issues}/120[#120^]
+* [ ] Decide whether content aggregate should be sorted {url-issues}/121[#121^]
+* [ ] Allow a component to be promoted to the site root {url-issues}/132[#132^]
+* [ ] Add a logging infrastructure; configure Asciidoctor logger to use it {url-issues}/145[#145^]
+* [ ] Add a merge mode to supplemental UI files {url-issues}/149[#149^]
+* [ ] Support loading the UI from a directory {url-issues}/150[#150^]
+* [ ] Add support for git-lfs for assets storage such as images {url-issues}/185[#185^]
+* [ ] Resolve symlinks (possibly just file symlinks) in git tree {url-issues}/188[#188^]
+* [ ] Allow page alias to be an explicit URI pathname {url-issues}/190[#190^]
+* [ ] Allow static redirect page to be customized using a UI template {url-issues}/191[#191^]
+* [ ] Add (Apache) httpd redirect facility to redirect producer {url-issues}/192[#192^]
+* [ ] Allow supplemental files to be fetched and added to the content catalog {url-issues}/195[#195^]
+* [ ] Add context as second argument to ContentCatalog#addFile {url-issues}/209[#209^]
+* [ ] Generate a robots.txt file (perhaps configured in site.yml) {url-issues}/219[#219^]
+* [ ] Show the file url where the site can be previewed offline {url-issues}/220[#220^]
+* [ ] Add support for referencing attachments using xref macro {url-issues}/227[#227^]
+* [ ] Allow AsciiDoc content to be included from a URL {url-issues}/246[#246^]
+* [ ] Allow AsciiDoc attributes to be specified per component-version (in antora.yml) {url-issues}/251[#251^]
+* [ ] Implicitly disable branches pattern if tags pattern is specified in content source {url-issues}/268[#268^]
+* [ ] Add authentication for remote UI bundles {url-issues}/280[#280^]
+* [ ] Allow pattern for edit URL to be configurable {url-issues}/292[#292^]
+* [ ] Implement fallback value for component version based on git ref or config {url-issues}/296[#296^]
+* [ ] Use worktree of local git repository even when repository has no commits {url-issues}/298[#298^]
+* [ ] Provide access to cached repositories in Antora context (as src.origin.cacheDir) {url-issues}/305[#305^]
+* [ ] Add priority boosts in sitemap based on component version {url-issues}/317[#317^]
+* [ ] Add watch mode for files in worktree {url-issues}/329[#329^]
+* [ ] Add xref support to image link {url-issues}/330[#330^]
+* [ ] Add PDF output option for pages and/or components {url-issues}/349[#349^]
+
+////
+* [ ] Provide a better way to indicate that a component version is "versionless"
+* [ ] Add support to include processor for including lines by line number
+* [ ] Add initial support for translations by adding language key to virtual file
+* [ ] Publish metapackage @antora/antora to simplify installation
 * [ ] Add algolia keys (app ID, API key, and index name) to playbook schema
 * [ ] Add support for using template languages other than Handlebars in the UI (e.g., pugjs)
 * [ ] Set up repositories for site-publisher-s3 and site-publisher-sftp
 * [ ] Add scaffolding commands to CLI to create a new component, module, or page
 * [ ] Set up API documentation and automatically publish as CI artifact
-* [ ] Generate a robots.txt file (perhaps configured in site.yml) {url-issues}/219[#219^]
-* [ ] Add context as second argument to ContentCatalog#addFile {url-issues}/209[#209^]
-* [ ] Allow supplemental files to be fetched and added to the content catalog {url-issues}/195[#195^]
-* [ ] Add (Apache) httpd redirect facility to redirect producer {url-issues}/192[#192^]
-* [ ] Allow static redirect page to be customized using a UI template {url-issues}/191[#191^]
-* [ ] Allow page alias to be an explicit URI pathname {url-issues}/190[#190^]
-* [ ] Add a merge mode to supplemental UI files {url-issues}/149[#149^]
-* [ ] Allow a component to be promoted to the site root {url-issues}/132[#132^]
-* [ ] Decide whether content aggregate should be sorted {url-issues}/121[#121^]
-* [ ] Ignore duplicate component in same repository if it matches component in HEAD {url-issues}/120[#120^]
-* [ ] Set up UI acceptance test suite {url-issues}/95[#95^]
-* [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {url-issues}/82[#82^]
+* [ ] Compose playbook files (include one into another)
+* [ ] Integrate lunr search into default site generator (or promote the extension and make it easier to enable)
+* [ ] Automatically substitute environment variables in playbook file
+* allow a group to be defined in antora.yml
+* make all metadata from antora.yml available to model
+* allow static files in UI to be decorated with page template / access UI model
 * [ ] Set up webhooks between repositories (e.g., docs.antora.org, docker-antora)
 * [ ] Component to host mapping, not just one site URL
 * [ ] Decide whether to isolate id (or ctx) from src property on content file
 * [ ] Be able to make references to page aliases; would require parsing all document headers in a separate step/phase
+* [ ] Add lifecycle hooks to default site generator
 //whiteboard
 * [ ] contentCatalog.resolvePage()
 //whiteboard
 * [ ] set antora-version AsciiDoc attribute
 * [ ] Separate site publisher from providers
 * [ ] Evaluate new strategies for interpreting equations (e.g., build-time conversion to SVG)
+////
 
 .Discussions
 * Properly store generated PlantUML images directly in Antora content folder instead of output directory (Requirements: {url-issues}/189[#189^])
@@ -114,25 +111,22 @@ For current docs.antora.org tasks, see the site {url-docs-site-issues}[issue tra
 
 === v2.1.x
 
-*Release Timeframe*: Q1 2019
+*Release Timeframe*: Q3 2019
 
-* [ ] Explain how to create a partial page {url-issues}/176[#176^]
-* [ ] Document the `page-` attributes {url-issues}/177[#177^]
-* [ ] Add quick start guide {url-issues}/299[#299^]
 * [ ] Document how Antora selects the latest version {url-issues}/311[#311^]
-* [ ] Document list of environment variables as page (or as appropriate) in CLI module
-// https://gitlab.com/antora/antora/issues/206#note_63768866
-* [ ] Partition the CLI options into two tables, general options and generate options
-* [ ] Create community participation guidelines
-* [ ] Add changelog (mirror/link) to Docs
-* [ ] Add contributing guide (mirror/link) to Docs
-* [ ] Remove most documentation-type content from README and replace with links to the appropriate Docs pages
 
 === Unscheduled
 
 .Docs
+* [ ] Create community participation guidelines
+* [ ] Add changelog (mirror/link) to Docs
+* [ ] Add contributing guide (mirror/link) to Docs
+* [ ] Remove most documentation-type content from README and replace with links to the appropriate Docs pages
 * [ ] Improve custom publish provider documentation {url-issues}/164[#164^]
 * [ ] Document sitemap features {url-issues}/168[#168^]
+* [ ] Explain how to create a partial page {url-issues}/176[#176^]
+* [ ] Document the `page-` attributes {url-issues}/177[#177^]
+* [ ] Add quick start guide {url-issues}/299[#299^]
 * [ ] Document how to create user-defined page attributes
 * [ ] Document stem functionality with common UI integration scenarios
 * [ ] Document how to add MathJax integration to the UI
@@ -149,11 +143,10 @@ For a detailed list of current development tasks, refer to the UI {url-ui-issues
 
 === v1.0.0
 
-*Release Timeframe*: Q1 2019
+*Release Timeframe*: Q3 2019
 
 * [x] Upgrade build to Gulp 4
 * [ ] Split off base UI from default UI; make default UI configurable from playbook
-* [ ] Add client-side search (algolia docsearch) {url-ui-issues}/44[#44^]
 * [ ] Cut stable release of default UI
 * [ ] Support sample content for preview pages written in AsciiDoc
 * [ ] Upgrade preview site sample content {url-ui-issues}/20[#20^]
@@ -165,4 +158,5 @@ For a detailed list of current development tasks, refer to the UI {url-ui-issues
 * [ ] Enable unordered list marker styles {url-ui-issues}/26[#26^]
 * [ ] Extract all colors into CSS variables {url-ui-issues}/18[#18^]
 * [ ] Allow SVGs to be embedded directly into Handlebars template
+* [ ] Add client-side search (algolia docsearch) {url-ui-issues}/44[#44^]
 //* [ ] Improve SVG options stability
