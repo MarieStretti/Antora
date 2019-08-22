@@ -42,6 +42,33 @@ You may need to add the branch to your playbook file.
 Keep in mind that content sources are filtered by branch name, not by the version they contain.
 That's because a single version can be spread out across multiple branches, or even multiple repositories.
 
+== How Antora sorts versions
+
+Antora sorts the versions of a component.
+To attain the order you want, you need to understand Antora's sorting rules.
+Antora uses these rules:
+
+* Filter out prerelease versions (unless the list only has prerelease versions).
+* Drop the leading "v".
+* Sort versions that start with a digit in descending order.
+ ** Follow semantic versioning order as defined on https://semver.org.
+* Sort the remaining versions alphabetically. Promote the group to the top.
+* Move the version "master" to the top.
+
+The lastest version is the one at the top.
+
+Example:
+
+----
+master
+el-capitan
+v3.10
+v3.9
+v2.0
+----
+
+When Antora displays the versions, it also applies this sorting order.
+
 == Versionless components
 
 It's possible to make a component versionless.
