@@ -8,6 +8,7 @@ const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loade
 
 describe('convertDocument()', () => {
   let inputFile
+  let inputFileInTopicFolder
   let playbook
   let asciidocConfig
 
@@ -42,6 +43,29 @@ describe('convertDocument()', () => {
         url: '/component-a/1.2.3/module-a/page-a.html',
         moduleRootPath: '.',
         rootPath: '../../..',
+      },
+    }
+    inputFileInTopicFolder = {
+      path: 'modules/module-a/pages/topic/page-b.adoc',
+      dirname: 'modules/module-a/pages/topic',
+      mediaType: 'text/asciidoc',
+      src: {
+        path: 'modules/module-a/pages/topic/page-b.adoc',
+        component: 'component-a',
+        version: '1.2.3',
+        module: 'module-a',
+        family: 'page',
+        relative: 'topic/page-b.adoc',
+        basename: 'page-b.adoc',
+        stem: 'page-b',
+        extname: '.adoc',
+        mediaType: 'text/asciidoc',
+        moduleRootPath: '../..',
+      },
+      pub: {
+        url: '/component-a/1.2.3/module-a/topic/page-b.html',
+        moduleRootPath: '..',
+        rootPath: '../../../..',
       },
     }
   })
@@ -90,6 +114,24 @@ describe('convertDocument()', () => {
       </div>
       </div>
     `)
+  })
+
+  it('should resolve image relative to module root', () => {
+    inputFileInTopicFolder.contents = Buffer.from(heredoc`
+      image::screenshot.png[]
+    `)
+    convertDocument(inputFileInTopicFolder, undefined, asciidocConfig)
+    const contents = inputFileInTopicFolder.contents.toString()
+    expect(contents).to.include('src="../_images/screenshot.png"')
+  })
+
+  it('should resolve attachment relative to module root', () => {
+    inputFileInTopicFolder.contents = Buffer.from(heredoc`
+      Grab the link:{attachmentsdir}/quickstart-project.zip[quickstart project].
+    `)
+    convertDocument(inputFileInTopicFolder, undefined, asciidocConfig)
+    const contents = inputFileInTopicFolder.contents.toString()
+    expect(contents).to.include('href="../_attachments/quickstart-project.zip"')
   })
 
   it('should convert file using default settings if AsciiDoc config is not specified', () => {
