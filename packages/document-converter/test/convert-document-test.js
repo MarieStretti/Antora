@@ -40,7 +40,7 @@ describe('convertDocument()', () => {
       },
       pub: {
         url: '/component-a/1.2.3/module-a/page-a.html',
-        moduleRootPath: '..',
+        moduleRootPath: '.',
         rootPath: '../../..',
       },
     }
@@ -67,7 +67,7 @@ describe('convertDocument()', () => {
       <h2 id="_section_title"><a class="anchor" href="#_section_title"></a>Section Title</h2>
       <div class="sectionbody">
       <div class="paragraph">
-      <p>Grab the <a href="../_attachments/quickstart-project.zip">quickstart project</a>.</p>
+      <p>Grab the <a href="_attachments/quickstart-project.zip">quickstart project</a>.</p>
       </div>
       <div class="ulist">
       <ul>
@@ -84,7 +84,7 @@ describe('convertDocument()', () => {
       </div>
       <div class="imageblock">
       <div class="content">
-      <img src="../_images/screenshot.png" alt="screenshot">
+      <img src="_images/screenshot.png" alt="screenshot">
       </div>
       </div>
       </div>
@@ -139,7 +139,7 @@ describe('convertDocument()', () => {
     expect(attrs).to.include({
       docfile: inputFile.path,
       env: 'site',
-      imagesdir: inputFile.pub.moduleRootPath + '/_images',
+      imagesdir: '_images',
       keywords: 'CSS, flexbox, layout, box model',
     })
   })
