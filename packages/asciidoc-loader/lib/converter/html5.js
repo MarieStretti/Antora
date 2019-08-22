@@ -2,7 +2,7 @@
 
 const Opal = global.Opal
 const { $Antora } = require('../constants')
-const $pageRefCallback = Symbol('callback')
+const $pageRefCallback = Symbol('pageRefCallback')
 
 const Html5Converter = (() => {
   const scope = Opal.klass(
