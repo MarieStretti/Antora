@@ -6,12 +6,16 @@ endif::[]
 
 This document describes how releases of the packages (aka modules) in this repository are versioned and published.
 
-== Overview
+== Quickstart
 
-To publish a release, you simply switch to the _releases_ branch, update the [.path]_releaserc_ file, and force push the branch to origin.
+To publish a release, first make sure the <<Credentials,npm token>> is still valid.
+Then simply switch to the _releases_ branch, update the [.path]_releaserc_ file, and force push the branch to origin.
 The CI job takes over from there.
-See <<Release Trigger>> for more details.
+See <<Release Trigger>> to find more details and step-by-step commands.
+
 The remainder of this document describes how the release process works, including configuration, credentials, and process.
+
+== Overview
 
 Here's what happens when a release is made:
 
