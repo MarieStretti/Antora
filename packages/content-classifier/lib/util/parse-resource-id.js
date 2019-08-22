@@ -42,7 +42,12 @@ function parseResourceId (spec, ctx = {}, permittedFamilies = undefined, default
   let component = match[RESOURCE_ID_RX_GROUP.component]
   let module = match[RESOURCE_ID_RX_GROUP.module]
   let relative = match[RESOURCE_ID_RX_GROUP.relative]
-  if (~relative.indexOf('/')) relative = relative.split('/').filter((it) => it && it !== '.' && it !== '..').join('/')
+  if (~relative.indexOf('/')) {
+    relative = relative
+      .split('/')
+      .filter((it) => it && it !== '.' && it !== '..')
+      .join('/')
+  }
   if (family === 'page' && !relative.endsWith('.adoc')) relative += '.adoc'
 
   if (component) {
