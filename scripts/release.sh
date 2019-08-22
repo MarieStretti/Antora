@@ -16,6 +16,9 @@ fi
 
 if [ -z $RELEASE_BRANCH ]; then RELEASE_BRANCH=master; fi
 
+# make sure the release branch exists as a local branch
+git branch -f $RELEASE_BRANCH origin/$RELEASE_BRANCH
+
 # don't run if this branch is behind the branch from which we're releasing
 if [ "$(git merge-base --fork-point $RELEASE_BRANCH $CI_COMMIT_SHA)" != "$(git rev-parse $RELEASE_BRANCH)" ]; then
   echo $CI_COMMIT_REF_NAME is behind $RELEASE_BRANCH. This could indicate this release was already published. Aborting.
@@ -29,7 +32,6 @@ eval $(ssh-agent -s) >/dev/null
 echo -n "$RELEASE_SSH_PRIV_KEY" | ssh-add -
 
 # clone the branch from which we're releasing
-git branch -f $RELEASE_BRANCH origin/$RELEASE_BRANCH
 git clone -b $RELEASE_BRANCH --no-local . build/$CI_PROJECT_NAME
 
 # switch to clone
