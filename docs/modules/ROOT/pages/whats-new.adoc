@@ -14,7 +14,7 @@ Learn about what's new in the 2.0 release series of Antora.
 
 = Antora 2.0.1
 
-_**Release date:** 2019.08.21 | *Milestone (closed issues):* {url-milestone-2-0-1}[v2.0.1^]_
+_**Release date:** 2019.08.22 | *Milestone (closed issues):* {url-milestone-2-0-1}[v2.0.1^]_
 
 The Antora 2.0.1 release updates Antora's dependencies ({url-mr}/328[MR 328^]) and adds several fixes.
 
