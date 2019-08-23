@@ -40,7 +40,7 @@ Consult the https://gitlab.com/antora/antora#readme[evaluation quickstart] to fi
 Once you have your content sources set up, just point the `antora` command at your playbook file:
 
 ```sh
-antora docs-site.yml
+antora antora-playbook.yml
 ```
 
 The `antora` command will output the generated site to the _build/site_ folder by default.
