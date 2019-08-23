@@ -16,6 +16,6 @@ Its site generator pipeline aggregates documents from versioned content reposito
 
 == Copyright and License
 
-Copyright (C) 2017-2018 https://opendevise.com[OpenDevise Inc.] and the https://antora.org[Antora Project].
+Copyright (C) 2017-2019 https://opendevise.com[OpenDevise Inc.] and the https://antora.org[Antora Project].
 
 Use of this software is granted under the terms of the https://www.mozilla.org/en-US/MPL/2.0/[Mozilla Public License Version 2.0] (MPL-2.0).
