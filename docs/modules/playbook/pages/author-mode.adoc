@@ -20,9 +20,9 @@ Switch to the newly created directory and clone one of the repositories:
  $ git clone https://github.com/my-antora-demo/server-docs workspace/server-docs
 
 Next, make a copy of your playbook file for local use.
-In the example below, [.path]_site.yml_ is copied and the new file is named [.path]_site-workspace.yml_.
+In the example below, [.path]_antora-playbook.yml_ is copied and the new file is named [.path]_antora-playbook-author-mode.yml_.
 
- $ cp site.yml site-workspace.yml
+ $ cp antora-playbook.yml antora-playbook-author-mode.yml
 
 Next, open your new playbook file and configure it to use the cloned repository instead of the remote repository.
 You can specify the repository either as a path relative to the playbook file or as an absolute path.
@@ -30,7 +30,7 @@ You can specify the repository either as a path relative to the playbook file or
 // also a good place to use the demo
 // need clarification about where these local sources can be in relation to the playbook project
 
-.site-workspace.yml (excerpt)
+.antora-playbook-author-mode.yml (excerpt)
 [source,yaml]
 ----
 content:
@@ -42,7 +42,7 @@ content:
 
 Build your Antora site using the new playbook file.
 
- $ antora site-workspace.yml
+ $ antora antora-playbook-author-mode.yml
 
 The contents of your local repository will be incorporated into the pipeline.
 
