@@ -8,7 +8,7 @@ This document describes how releases of the packages (aka modules) in this repos
 
 == Quickstart
 
-To publish a release, first make sure the <<Credentials,npm token>> is still valid and that the copyright year is current.
+To publish a release, first make sure the <<Credentials,npm token>> is still valid and that the copyright year is current in README.adoc, packages/*/README.adoc, and docs/modules/ROOT/pages/project/copyright-and-license.adoc.
 Then simply switch to the _releases_ branch, update the [.path]_releaserc_ file, and force push the branch to origin.
 The CI job takes over from there.
 See <<Release Trigger>> to find more details and step-by-step commands.
