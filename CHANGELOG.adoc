@@ -13,17 +13,17 @@ This project utilizes semantic versioning.
 
 === Fixed
 
-* *content-aggregator*: delete empty repository in cache if clone fails (#455)
-* *content-aggregator*: disallow path segments in component name (#459)
-* *content-classifier*: warn instead of abort if start page for site or component version cannot be resolved (#456)
-* *content-classifier*: clean path segment of resource ID (remove self references, parent references, and repeat separators) (#457)
-* *content-classifier*: prevent page alias from referencing itself through the use of self references, parent references, and/or repeat separators (#457)
-* *content-classifier*: allow path (i.e., relative) of xref target to begin with @ (#433)
-* *asciidoc-loader*: verify xref target is publishable; otherwise, leave unresolved (#434)
-* *asciidoc-loader*: fix reference to page from nav file that has same root-relative path as nav file (#463)
-* *asciidoc-loader*: report correct line number when include target or tag cannot be resolved (#462)
-* *page-composer*: use URL of most recent non-prerelease version of page as canonical URL (#315)
-* *redirect-producer*: escape spaces in paths of redirect rule (#458)
+* *content-aggregator*: Delete empty repository in cache if clone fails (#455)
+* *content-aggregator*: Disallow path segments in component name (#459)
+* *content-classifier*: Warn instead of abort if start page for site or component version cannot be resolved (#456)
+* *content-classifier*: Clean path segment of resource ID (remove self references, parent references, and repeat separators) (#457)
+* *content-classifier*: Prevent page alias from referencing itself through the use of self references, parent references, and/or repeat separators (#457)
+* *content-classifier*: Allow path (i.e., relative) of xref target to begin with @ (#433)
+* *asciidoc-loader*: Verify xref target is publishable; otherwise, leave unresolved (#434)
+* *asciidoc-loader*: Fix reference to page from nav file that has same root-relative path as nav file (#463)
+* *asciidoc-loader*: Report correct line number when include target or tag cannot be resolved (#462)
+* *page-composer*: Use URL of most recent non-prerelease version of page as canonical URL (#315)
+* *redirect-producer*: Escape spaces in paths of redirect rule (#458)
 
 == 2.0.0 (2018-12-25)
 
