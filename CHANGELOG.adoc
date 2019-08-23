@@ -7,6 +7,10 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Added
+
+* *asciidoc-loader*: Set page-component-display-version attribute on each AsciiDoc file (#465)
+
 === Changed
 
 * *asciidoc-loader*: Assign implicit page attributes for navigation files (AsciiDoc files in nav family) (#430)

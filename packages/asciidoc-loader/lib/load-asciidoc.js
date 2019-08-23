@@ -80,7 +80,10 @@ function computePageAttrs (fileSrc, contentCatalog) {
   attrs['page-component-name'] = fileSrc.component
   attrs['page-component-version'] = attrs['page-version'] = fileSrc.version
   const component = contentCatalog && contentCatalog.getComponent(fileSrc.component)
-  if (component) attrs['page-component-title'] = component.title
+  if (component) {
+    attrs['page-component-display-version'] = component.displayVersion
+    attrs['page-component-title'] = component.title
+  }
   attrs['page-module'] = fileSrc.module
   attrs['page-relative'] = fileSrc.relative
   const origin = fileSrc.origin
