@@ -13,6 +13,7 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* *content-aggregator*: Add git.ensureGitSuffix key (default: true) to playbook to control whether git client appends .git suffix to URL if absent (#414)
 * *asciidoc-loader*: Assign implicit page attributes for navigation files (AsciiDoc files in nav family) (#430)
 
 === Fixed

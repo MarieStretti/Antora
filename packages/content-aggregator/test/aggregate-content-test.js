@@ -49,6 +49,11 @@ function testLocal (block) {
   it('on local repo', () => block(new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)))
 }
 
+function testRemote (block) {
+  it('on remote repo', () =>
+    block(new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })))
+}
+
 describe('aggregateContent()', function () {
   let playbookSpec
   let gitServer
@@ -2642,6 +2647,17 @@ describe('aggregateContent()', function () {
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+    })
+
+    describe('should not append .git suffix to URL if git.ensureGitSuffix is disabled in playbook', () => {
+      testRemote(async (repoBuilder) => {
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.git = { ensureGitSuffix: false }
+        playbookSpec.content.sources.push({ url: repoBuilder.url.replace(/\.git$/, '') })
+        const expectedErrorMessage = 'Content repository not found: ' + repoBuilder.url.replace(/\.git$/, '')
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      })
     })
 
     it('should throw meaningful error if credentials are insufficient', async () => {

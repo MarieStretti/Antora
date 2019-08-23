@@ -140,6 +140,11 @@ module.exports = {
         env: 'GIT_CREDENTIALS',
       },
     },
+    ensureGitSuffix: {
+      doc: 'Instructs the git client to automatically append .git to the repository URL if absent.',
+      format: Boolean,
+      default: true,
+    },
   },
   runtime: {
     cache_dir: {
