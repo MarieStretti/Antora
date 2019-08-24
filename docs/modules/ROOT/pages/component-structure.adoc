@@ -23,7 +23,7 @@ The xref:component-descriptor.adoc[component descriptor file] is named [.path]_a
 Once Antora finds this file, it assumes that that directory and all its files and subdirectories are a documentation component.
 The structure of a documentation component is laid out below.
 
-image::component-dir-structure-with-assets.png[]
+image::component-dir-structure-with-assets.png[,200]
 
 The component illustrated in the above figure contains required and reserved directories and files as well as an example of an optional, user created module ([.path]_named-module_).
 When Antora encounters these folders and files in a properly structured component, it automatically assigns preset behavior and metadata to them.
