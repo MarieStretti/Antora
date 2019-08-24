@@ -3,6 +3,7 @@
 const handlebars = require('handlebars')
 const { posix: path } = require('path')
 const requireFromString = require('require-from-string')
+const { URL } = require('url')
 
 const { DEFAULT_LAYOUT_NAME, HANDLEBARS_COMPILE_OPTIONS } = require('./constants')
 const { version: VERSION } = require('../package.json')
@@ -85,13 +86,14 @@ function createPageComposerInternal (site, env, layouts) {
 }
 
 function buildUiModel (file, contentCatalog, navigationCatalog, site, env) {
+  const siteRootPath = file.pub.rootPath || site.path || ''
   return {
     antoraVersion: VERSION,
     env,
     page: buildPageUiModel(file, contentCatalog, navigationCatalog, site),
     site,
-    siteRootPath: file.pub.rootPath,
-    uiRootPath: path.join(file.pub.rootPath, site.ui.url),
+    siteRootPath,
+    uiRootPath: siteRootPath + site.ui.url,
   }
 }
 
@@ -101,6 +103,7 @@ function buildSiteUiModel (playbook, contentCatalog) {
   let siteUrl = playbook.site.url
   if (siteUrl) {
     if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
+    if ((model.path = new URL(siteUrl).pathname) === '/') model.path = ''
     model.url = siteUrl
   }
 

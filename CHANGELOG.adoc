@@ -15,9 +15,11 @@ This project utilizes semantic versioning.
 
 * *content-aggregator*: Add git.ensureGitSuffix key (default: true) to playbook to control whether git client appends .git suffix to URL if absent (#414)
 * *asciidoc-loader*: Assign implicit page attributes for navigation files (AsciiDoc files in nav family) (#430)
+* *page-composer*: Prepend site path (pathname of site URL) to siteRootPath and uiRootPath on 404 page (#258)
 
 === Fixed
 
+* *page-composer*: Assign pathname of site URL to site.path property in UI model; use empty string if site URL is not set or pathname is / (#258)
 * *redirect-producer*: Trim trailing slash from site URL before extracting path to use as prefix for paths in rewrite rule (#468)
 
 == 2.0.1 (2019-08-22)

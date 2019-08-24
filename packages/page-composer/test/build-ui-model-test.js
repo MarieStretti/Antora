@@ -156,6 +156,33 @@ describe('build UI model', () => {
       expect(model.url).to.equal('https://example.com')
     })
 
+    it('should remove trailing slash from site URL with subpath before assigning to url property', () => {
+      playbook.site.url = 'https://example.com/docs/'
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model.url).to.equal('https://example.com/docs')
+    })
+
+    it('should not set path property if site.url property is not set in playbook', () => {
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model).not.to.have.property('path')
+    })
+
+    it('should set path property to empty if site.url property set in playbook has no subpath', () => {
+      ['https://example.com', 'https://example.com/'].forEach((siteUrl) => {
+        playbook.site.url = siteUrl
+        const model = buildSiteUiModel(playbook, contentCatalog)
+        expect(model.path).to.equal('')
+      })
+    })
+
+    it('should set path property to pathname of URL if site.url property set in playbook', () => {
+      ['https://example.com/docs', 'https://example.com/docs/'].forEach((siteUrl) => {
+        playbook.site.url = siteUrl
+        const model = buildSiteUiModel(playbook, contentCatalog)
+        expect(model.path).to.equal('/docs')
+      })
+    })
+
     it('should not set homeUrl property if site start page is not defined', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
       expect(contentCatalog.getSiteStartPage).to.have.been.called()
