@@ -33,7 +33,7 @@ If you only create one module in a component, we highly recommend that you name 
 The following figure illustrates a documentation component with a few example folders and files added for context.
 All of a component's modules must be stored in [.path]_modules_.
 
-image::modules-dir-structure-with-assets.png[,210]
+image::modules-dir-structure-with-assets.png[alt="Directory structure of a component containing two modules. The ROOT module contains all of the optional module subdirectories and sample file type in each folder for context.",width="210"]
 
 Let's examine the role the _ROOT_ module and the requirements of the subdirectories a module can contain.
 
@@ -42,7 +42,7 @@ Let's examine the role the _ROOT_ module and the requirements of the subdirector
 
 The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
 
-image::root-dir-structure.png[,200]
+image::root-dir-structure.png[alt="Directory structure of the ROOT module that uses the subdirectories named assets, pages, examples, and partials.",width="200"]
 
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
 (You can see an example of a ROOT page's URL in <<pages-dir,pages>>.)
@@ -74,7 +74,7 @@ Let's look at each of these directories and their content type in more detail.
 
 Any attachment or image files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets_ directory.
 
-image::assets-dir-structure.png[,168]
+image::assets-dir-structure.png[The assets subdirectory of a module that contains an images folder and an attachments folder,168]
 
 The subdirectory names automatically recognized by Antora and associated to the corresponding AsciiDoc macros are:
 
@@ -119,7 +119,7 @@ Instead, you should either host them in a binary repository such as Bintray or S
 [#examples-dir]
 == Example files
 
-image::examples-dir-structure-with-assets.png[,174]
+image::examples-dir-structure-with-assets.png[The examples subdirectory of a module,174]
 
 The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or data values.
 An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
@@ -130,7 +130,7 @@ An example is inserted into a standard page using the xref:asciidoc:include-exam
 AsciiDoc document files that are destined to become xref:page:index.adoc#standard[standard pages] are stored in the [.path]_pages_ folder of a module.
 These files are converted to HTML and automatically published as individual pages in the generated site.
 
-image::pages-dir-structure-with-assets.png[,176]
+image::pages-dir-structure-with-assets.png[The pages subdirectory of a module,176]
 
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
 
@@ -161,7 +161,7 @@ Learn more:
 [#partials-dir]
 === Partial AsciiDoc files
 
-image::partials-dir-structure-with-assets.png[,176]
+image::partials-dir-structure-with-assets.png[The partials subdirectory of a module,176]
 
 xref:page:index.adoc#partial[Partials] are AsciiDoc files.
 They're stored in the [.path]_partials_ directory in a module.
