@@ -28,30 +28,26 @@ It's easy to later detach a module from a component and set it up as its own doc
 
 == Module overview
 
-A documentation component must have at least one module, named _ROOT_.
-In addition to the ROOT module, you can create as many additional modules in a component as you need.
+A documentation component can contain as many modules as you need or as few as one.
+If you only create one module in a component, we highly recommend that you name it _ROOT_ because Antora automatically applies component-level URLs to the files in this module.
+The following figure illustrates a documentation component with a few example folders and files added for context.
 All of a component's modules must be stored in [.path]_modules_.
 
-The following figure illustrates a documentation component with a few example folders and files added for context.
-Let's examine the role of each module subdirectory and any associated requirements.
-
-//.Module directory hierarchy
 image::modules-dir.svg[,260]
 
-We'll start with the ROOT module, since it's required.
+Let's examine the role the _ROOT_ module and the requirements of the subdirectories a module can contain.
 
 [#root-dir]
 == ROOT module
 
-A documentation component must contain a ROOT module directory.
+The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
 
 image::root-dir-structure.png[,200]
 
-The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages in that component's URL.
 (You can see an example of a ROOT page's URL in <<pages-dir,pages>>.)
 The directory name, ROOT, must be entered in all uppercase letters.
-When used in a page reference, it must be entered in all uppercase letters.
+When used in a page or resource reference, it must be entered in all uppercase letters.
 
 Small documentation components may never need more than a ROOT module.
 However, if your project grows, you can easily add more modules and gradually redistribute the content without having to restructure the project.
