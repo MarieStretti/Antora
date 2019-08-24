@@ -33,7 +33,7 @@ If you only create one module in a component, we highly recommend that you name 
 The following figure illustrates a documentation component with a few example folders and files added for context.
 All of a component's modules must be stored in [.path]_modules_.
 
-image::modules-dir.svg[,260]
+image::modules-dir-structure-with-assets.png[,230]
 
 Let's examine the role the _ROOT_ module and the requirements of the subdirectories a module can contain.
 
