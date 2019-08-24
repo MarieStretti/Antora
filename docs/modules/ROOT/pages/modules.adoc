@@ -74,7 +74,7 @@ Let's look at each of these directories and their content type in more detail.
 
 Any attachment or image files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets_ directory.
 
-image::assets-dir.svg[,260]
+image::assets-dir-structure.png[,168]
 
 The subdirectory names automatically recognized by Antora and associated to the corresponding AsciiDoc macros are:
 
@@ -128,7 +128,7 @@ An example is inserted into a standard page using the xref:asciidoc:include-exam
 AsciiDoc document files that are destined to become xref:page:index.adoc#standard[standard pages] are stored in the [.path]_pages_ folder of a module.
 These files are converted to HTML and automatically published as individual pages in the generated site.
 
-image::pages-dir.svg[,260]
+image::pages-dir-structure-with-assets.png[,176]
 
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
 
