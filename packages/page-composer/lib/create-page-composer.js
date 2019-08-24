@@ -164,11 +164,13 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     editUrl: file.src.editUrl,
     home: url === site.homeUrl,
   }
-  Object.defineProperty(model, 'latest', {
-    get () {
-      return this.versions && this.versions.find((candidate) => candidate.latest)
-    },
-  })
+  if (versions) {
+    Object.defineProperty(model, 'latest', {
+      get () {
+        return this.versions.find((candidate) => candidate.latest)
+      },
+    })
+  }
   Object.assign(model, getNavContext(url, title, navigation))
 
   if (site.url) {
