@@ -45,7 +45,7 @@ We'll start with the ROOT module, since it's required.
 
 A documentation component must contain a ROOT module directory.
 
-image::root-dir.svg[,260]
+image::root-dir-structure.png[,200]
 
 The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages in that component's URL.
