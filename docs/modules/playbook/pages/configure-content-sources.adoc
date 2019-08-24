@@ -343,7 +343,7 @@ If the component isn't stored at the root of a content repository, then you need
 The value of the `start_path` key is the repository relative path to the component descriptor file.
 Let's define the start path value for a repository with the structure shown below.
 
-image::start-path-dir.svg[Start path directory,200]
+image::start-path-dir.png[,176]
 
 In order for Antora to locate the documentation component in this repository, the start path value needs to point Antora to the directory where [.path]_antora.yml_ is located.
 
