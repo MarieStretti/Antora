@@ -44,7 +44,7 @@ The [.term]_ROOT_ module contains all the content that's directly associated wit
 
 image::root-dir-structure.png[,200]
 
-When the pages in the ROOT module are published, these pages are promoted a level above any other modules' pages in that component's URL.
+When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
 (You can see an example of a ROOT page's URL in <<pages-dir,pages>>.)
 The directory name, ROOT, must be entered in all uppercase letters.
 When used in a page or resource reference, it must be entered in all uppercase letters.
@@ -72,7 +72,7 @@ Let's look at each of these directories and their content type in more detail.
 [#assets-dir]
 == Assets
 
-Any attachment, image, and video files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets_ directory.
+Any attachment or image files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets_ directory.
 
 image::assets-dir.svg[,260]
 
@@ -80,28 +80,23 @@ The subdirectory names automatically recognized by Antora and associated to the 
 
 * [.path]_assets/attachments_
 * [.path]_assets/images_
-* [.path]_assets/videos_
+//* [.path]_assets/videos_
 
-You don't need to set the path to these three, predefined subdirectories in the header of your AsciiDoc files.
+You don't need to set the path to these predefined subdirectories in the header of your AsciiDoc files.
 This is managed automatically by Antora.
-
-// You can create custom subdirectories, however, you'll need to add them to X & Y so that Antora can manage them.
 
 [#attachments-dir]
 === Attachment files
 
 An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
-Attachment files are saved in [.path]_assets/attachments_ in the same module where the page that links to that file is located.
-
+Attachment files are saved in [.path]_assets/attachments_.
 A link to an attachment is created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
 [#images-dir]
 === Image files
 
-Image files are saved in [.path]_assets/images_ in the same module where the page that references that image is located.
-We also recommend that you mirror the topic hierarchy of the page in which the image is referenced, if the image belongs to a specific page.
-
-Common image file formats include:
+Image files are saved in [.path]_assets/images_.
+Supported image file formats include:
 
 * PNG
 * JPG
@@ -110,16 +105,15 @@ Common image file formats include:
 
 Images are inserted into a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro] (block or inline).
 
-[#videos-dir]
-=== Video files
+//[#videos-dir]
+//=== Video files
 
-Self-hosted video files are saved in [.path]_assets/videos_ in the same module where the page that references that video is located.
-Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
+//Self-hosted video files are saved in [.path]_assets/videos_ in the same module where the page that references that video is located.
+//Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
 
 === Large files and GitLab / GitHub
 
-If your documentation component contains large asset files, we do not recommend that you store them in a regular GitLab or GitHub repository.
-
+If your documentation component contains large asset files, we don't recommend that you store them in a regular GitLab or GitHub repository.
 Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
 
 [#examples-dir]
@@ -132,7 +126,7 @@ An example is inserted into a standard page using the xref:asciidoc:include-exam
 == Pages
 
 AsciiDoc document files that are destined to become xref:page:index.adoc#standard[standard pages] are stored in the [.path]_pages_ folder of a module.
-These files are converted to HTML and automatically published as standalone pages in the generated site.
+These files are converted to HTML and automatically published as individual pages in the generated site.
 
 image::pages-dir.svg[,260]
 
@@ -150,7 +144,7 @@ The page name segment is the basename of the AsciiDoc file.
 Notice that the name of the module, ROOT, isn't in the URL.
 Files that are stored directly in the [.path]_ROOT_ folder are published at the root of the component.
 
-In contrast, pages that are stored in other modules (i.e., not in [.path]_ROOT_), will be preceded by the name of the module.
+In contrast, pages that are stored in other modules will be preceded by the name of the module.
 Let's see what the URL for [.path]_modules/a-module/pages/user-management.adoc_ would look like.
 
 //.URL for user-management.adoc page in a-module
@@ -169,6 +163,3 @@ xref:page:index.adoc#partial[Partials] are AsciiDoc files.
 They're stored in the [.path]_partials_ directory in a module.
 //(or [.path]_pages/_partials_) in the same module as the standard pages that use them.
 A partial is inserted into a standard page using the xref:asciidoc:include-partial.adoc[AsciiDoc include directive and the partial's resource ID].
-
-//Don't set the path to the [.path]_{blank}_partials_ directory in the header of the AsciiDoc file.
-//This is managed automatically by Antora.
