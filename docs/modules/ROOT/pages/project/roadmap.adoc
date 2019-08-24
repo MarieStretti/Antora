@@ -22,13 +22,17 @@ For a detailed list of current development tasks, refer to the Antora {url-issue
 *Release Timeframe*: Q3 2019
 
 * [ ] Add support for referencing images across modules and components {url-issues}/228[#228^]
-* [ ] Preserve linked text of an unresolved page xref {url-issues}/421[#421^]
+* [x] Assign pathname of site URL to `site.path` property in UI model; use empty string if site URL is not set or pathname is `/` {url-issues}/258[#258^]
+* [x] Add `git.ensureGitSuffix` key to playbook to control whether git client appends .git suffix to URL if absent {url-issues}/414[#414^]
+* [x] Preserve linked text of an unresolved page xref {url-issues}/421[#421^]
+* [x] Assign implicit page attributes for navigation files {url-issues}/430[#430^]
+* [x] Make assets folder optional for containing images and attachments {url-issues}/464[#464^]
+* [x] Set page-component-display-version attribute on each AsciiDoc file {url-issues}/465[#465^]
 
 === v2.x.x
 
 *Release Timeframe*: Q4 2019 - Q1 2020
 
-* [ ] Automatically set up latest version URLs {url-issues}/314[#314^]
 * [ ] Contents of xref should use page title if link text isn't specified {url-issues}/310[#310^]
 
 === Unscheduled
@@ -36,7 +40,7 @@ For a detailed list of current development tasks, refer to the Antora {url-issue
 The capabilities and features in this section have been proposed and tentatively accepted as future work tasks.
 They aren't slated for imminent development but are reviewed for possible scheduling after each release.
 
-* [ ] Add support for a moduleless docs component {url-issues}/27[#27^]
+//* [ ] Add support for a moduleless docs component {url-issues}/27[#27^]
 * [ ] Make module path configurable (using antora.yml) {url-issues}/28[#28^]
 * [ ] Add option to playbook to skip/bypass worktree(s) in local repositories {url-issues}/82[#82^]
 * [ ] Set up UI acceptance test suite {url-issues}/95[#95^]
@@ -64,6 +68,7 @@ They aren't slated for imminent development but are reviewed for possible schedu
 * [ ] Implement fallback value for component version based on git ref or config {url-issues}/296[#296^]
 * [ ] Use worktree of local git repository even when repository has no commits {url-issues}/298[#298^]
 * [ ] Provide access to cached repositories in Antora context (as src.origin.cacheDir) {url-issues}/305[#305^]
+* [ ] Automatically set up latest version URLs {url-issues}/314[#314^]
 * [ ] Add priority boosts in sitemap based on component version {url-issues}/317[#317^]
 * [ ] Add watch mode for files in worktree {url-issues}/329[#329^]
 * [ ] Add xref support to image link {url-issues}/330[#330^]
@@ -101,6 +106,30 @@ They aren't slated for imminent development but are reviewed for possible schedu
 .Discussions
 * Properly store generated PlantUML images directly in Antora content folder instead of output directory (Requirements: {url-issues}/189[#189^])
 
+== Antora default UI
+
+For a detailed list of current development tasks, refer to the UI {url-ui-issues}[issue tracker^].
+
+=== v1.0.0
+
+*Release Timeframe*: Q3 - Q4 2019
+
+* [x] Upgrade build to Gulp 4
+* [ ] Split off base UI from default UI; make default UI configurable from playbook
+* [ ] Cut stable release of default UI
+* [ ] Support sample content for preview pages written in AsciiDoc
+* [ ] Upgrade preview site sample content {url-ui-issues}/20[#20^]
+
+=== Unscheduled
+
+* [ ] Create task list SVGs {url-ui-issues}/31[#31^]
+* [ ] Enable unordered list marker styles {url-ui-issues}/26[#26^]
+* [ ] Extract all colors into CSS variables {url-ui-issues}/18[#18^]
+* [ ] Allow SVGs to be embedded directly into Handlebars template
+* [ ] Add client-side search (algolia docsearch) {url-ui-issues}/44[#44^]
+
+
+////
 == Antora documentation, demo, and sites
 
 For current Antora documentation tasks, see the Antora {url-issues}[issue tracker^].
@@ -136,27 +165,4 @@ For current docs.antora.org tasks, see the site {url-docs-site-issues}[issue tra
 * [ ] Create dedicated UI project and bundle for docs.antora.org instead of using supplemental UI
 * [ ] Mirror/link maintenance and bug fix priority policies on antora.org
 * [ ] Mirror/link release schedule on project site
-
-== Antora default UI
-
-For a detailed list of current development tasks, refer to the UI {url-ui-issues}[issue tracker^].
-
-=== v1.0.0
-
-*Release Timeframe*: Q3 2019
-
-* [x] Upgrade build to Gulp 4
-* [ ] Split off base UI from default UI; make default UI configurable from playbook
-* [ ] Cut stable release of default UI
-* [ ] Support sample content for preview pages written in AsciiDoc
-* [ ] Upgrade preview site sample content {url-ui-issues}/20[#20^]
-//* [ ] IE 11 fixes
-
-=== Unscheduled
-
-* [ ] Create task list SVGs {url-ui-issues}/31[#31^]
-* [ ] Enable unordered list marker styles {url-ui-issues}/26[#26^]
-* [ ] Extract all colors into CSS variables {url-ui-issues}/18[#18^]
-* [ ] Allow SVGs to be embedded directly into Handlebars template
-* [ ] Add client-side search (algolia docsearch) {url-ui-issues}/44[#44^]
-//* [ ] Improve SVG options stability
+////
