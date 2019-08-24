@@ -25,7 +25,7 @@ The structure of a documentation component is laid out below.
 
 image::component-dir-structure-with-assets.png[,200]
 
-The component illustrated in the above figure contains required and reserved directories and files as well as an example of an optional, user created module ([.path]_named-module_).
+The component illustrated in the above figure contains required and reserved directories and files as well as an example of an optional, user created module ([.path]_name-of-module_).
 When Antora encounters these folders and files in a properly structured component, it automatically assigns preset behavior and metadata to them.
 
 .Component preset legend
@@ -59,7 +59,7 @@ This special directory does not appear in the output path.
 Instead, it becomes the parent folder of any additional, named modules that you create in a component.
 The directory name must be written in all uppercase letters.
 
-modules/<named-module> ::
+modules/<name-of-module> ::
 _Optional_
 +
 In addition to the ROOT module, you can create as many additional modules as your documentation component requires.
