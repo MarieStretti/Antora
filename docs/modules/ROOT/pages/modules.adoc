@@ -119,6 +119,8 @@ Instead, you should either host them in a binary repository such as Bintray or S
 [#examples-dir]
 == Example files
 
+image::examples-dir-structure-with-assets.png[,174]
+
 The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or data values.
 An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
 
@@ -158,6 +160,8 @@ Learn more:
 
 [#partials-dir]
 === Partial AsciiDoc files
+
+image::partials-dir-structure-with-assets.png[,176]
 
 xref:page:index.adoc#partial[Partials] are AsciiDoc files.
 They're stored in the [.path]_partials_ directory in a module.
