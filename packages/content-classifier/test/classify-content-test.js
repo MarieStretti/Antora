@@ -370,7 +370,7 @@ describe('classifyContent()', () => {
       expect(file.pub).to.not.exist()
     })
 
-    it('should classify an image', () => {
+    it('should classify an image under assets', () => {
       aggregate[0].files.push(createFile('modules/ROOT/assets/images/foo.png'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files).to.have.lengthOf(1)
@@ -395,7 +395,32 @@ describe('classifyContent()', () => {
       })
     })
 
-    it('should classify an attachment', () => {
+    it('should classify an image', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/images/foo.png'))
+      const files = classifyContent(playbook, aggregate).getFiles()
+      expect(files).to.have.lengthOf(1)
+      const file = files[0]
+      expect(file.path).to.equal('modules/ROOT/images/foo.png')
+      expect(file.src).to.include({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'image',
+        relative: 'foo.png',
+        basename: 'foo.png',
+        moduleRootPath: '..',
+      })
+      expect(file.out).to.include({
+        path: 'the-component/v1.2.3/_images/foo.png',
+        dirname: 'the-component/v1.2.3/_images',
+        basename: 'foo.png',
+      })
+      expect(file.pub).to.include({
+        url: '/the-component/v1.2.3/_images/foo.png',
+      })
+    })
+
+    it('should classify an attachment under assets', () => {
       aggregate[0].files.push(createFile('modules/ROOT/assets/attachments/example.zip'))
       const files = classifyContent(playbook, aggregate).getFiles()
       expect(files).to.have.lengthOf(1)
@@ -409,6 +434,31 @@ describe('classifyContent()', () => {
         relative: 'example.zip',
         basename: 'example.zip',
         moduleRootPath: '../..',
+      })
+      expect(file.out).to.include({
+        path: 'the-component/v1.2.3/_attachments/example.zip',
+        dirname: 'the-component/v1.2.3/_attachments',
+        basename: 'example.zip',
+      })
+      expect(file.pub).to.include({
+        url: '/the-component/v1.2.3/_attachments/example.zip',
+      })
+    })
+
+    it('should classify an attachment', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/attachments/example.zip'))
+      const files = classifyContent(playbook, aggregate).getFiles()
+      expect(files).to.have.lengthOf(1)
+      const file = files[0]
+      expect(file.path).to.equal('modules/ROOT/attachments/example.zip')
+      expect(file.src).to.include({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'attachment',
+        relative: 'example.zip',
+        basename: 'example.zip',
+        moduleRootPath: '..',
       })
       expect(file.out).to.include({
         path: 'the-component/v1.2.3/_attachments/example.zip',

@@ -14,6 +14,7 @@ This project utilizes semantic versioning.
 === Changed
 
 * *content-aggregator*: Add git.ensureGitSuffix key (default: true) to playbook to control whether git client appends .git suffix to URL if absent (#414)
+* *content-classifier*: make assets parent folder optional for images and attachments (#464)
 * *asciidoc-loader*: Assign implicit page attributes for navigation files (AsciiDoc files in nav family) (#430)
 * *asciidoc-loader*: Preserve content (i.e., linked text) of unresolved page reference (#421)
 * *asciidoc-loader*: Put unresolved page ID spec in fragment identifier of link (e.g., `href="#unresolved.adoc`) (#421)

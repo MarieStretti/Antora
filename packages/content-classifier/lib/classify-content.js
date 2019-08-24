@@ -47,49 +47,52 @@ function allocateSrc (file, component, version, nav) {
       file.src.relative = filepath
     }
   } else if (pathSegments[0] === 'modules') {
-    switch (pathSegments[2]) {
+    let familyFolder = pathSegments[2]
+    switch (familyFolder) {
       case 'pages':
+        // this location for partials is deprecated; warn starting in Antora 3.x
         if (pathSegments[3] === '_partials') {
           file.src.family = 'partial'
-          // relative to modules/<module>/pages/_partials; deprecated (in the future, warn)
+          // relative to modules/<module>/pages/_partials (deprecated)
           file.src.relative = pathSegments.slice(4).join('/')
-          break
         } else if (file.src.mediaType === 'text/asciidoc') {
           file.src.family = 'page'
           // relative to modules/<module>/pages
           file.src.relative = pathSegments.slice(3).join('/')
-          break
+        } else {
+          // ignore file
+          return
         }
-        return
-      case 'assets':
-        if (pathSegments[3] === 'images') {
-          file.src.family = 'image'
-          // relative to modules/<module>/assets/images
-          file.src.relative = pathSegments.slice(4).join('/')
-          break
-        } else if (pathSegments[3] === 'attachments') {
-          file.src.family = 'attachment'
-          // relative to modules/<module>/assets/attachments
-          file.src.relative = pathSegments.slice(4).join('/')
-          break
-        }
-        return
-      case 'examples':
-        file.src.family = 'example'
-        // relative to modules/<module>/examples
-        file.src.relative = pathSegments.slice(3).join('/')
         break
+      case 'assets':
+        switch ((familyFolder = pathSegments[3])) {
+          case 'attachments':
+          case 'images':
+            file.src.family = familyFolder.substr(0, familyFolder.length - 1)
+            // relative to modules/<module>/assets/<family>s
+            file.src.relative = pathSegments.slice(4).join('/')
+            break
+          default:
+            // ignore file
+            return
+        }
+        break
+      case 'attachments':
+      case 'examples':
+      case 'images':
       case 'partials':
-        file.src.family = 'partial'
-        // relative to modules/<module>/partials
+        file.src.family = familyFolder.substr(0, familyFolder.length - 1)
+        // relative to modules/<module>/<family>s
         file.src.relative = pathSegments.slice(3).join('/')
         break
       default:
+        // ignore file
         return
     }
     file.src.module = pathSegments[1]
     file.src.moduleRootPath = calculateRootPath(pathSegments.length - 3)
   } else {
+    // ignore file
     return
   }
 
