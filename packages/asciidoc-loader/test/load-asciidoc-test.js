@@ -184,6 +184,22 @@ describe('loadAsciiDoc()', () => {
       })
     })
 
+    it('should set page component display version if component is found in content catalog', () => {
+      const contentCatalog = mockContentCatalog({
+        version: '4.5',
+        family: 'page',
+        relative: 'page-a.adoc',
+        contents: '= Document Title',
+      })
+      contentCatalog.getComponent('component-a').displayVersion = '4.5 LTS'
+      const inputFile = contentCatalog.getFiles()[0]
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      expect(doc.getAttributes()).to.include({
+        'page-component-name': 'component-a',
+        'page-component-display-version': '4.5 LTS',
+      })
+    })
+
     it('should set page origin attributes if origin information is available for file from branch', () => {
       const contentCatalog = mockContentCatalog({
         version: '4.5.x',
