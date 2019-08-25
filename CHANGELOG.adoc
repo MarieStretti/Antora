@@ -11,6 +11,10 @@ This project utilizes semantic versioning.
 
 * *asciidoc-loader*: Assign implicit page attributes for navigation files (AsciiDoc files in nav family) (#430)
 
+=== Fixed
+
+* *redirect-producer*: Trim trailing slash from site URL before extracting path to use as prefix for paths in rewrite rule (#468)
+
 == 2.0.1 (2019-08-22)
 
 === Changed

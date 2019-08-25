@@ -220,6 +220,18 @@ describe('produceRedirects()', () => {
       ])
     })
 
+    it('should drop trailing slash from site URL path when using it as prefix for rewrite rule', () => {
+      playbook.site.url = 'https://example.org/docs/'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('_redirects')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.include('/docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html 301')
+    })
+
     it('should not prefix rewrite rule with extra prefix if URL context is /', () => {
       playbook.site.url = playbook.site.url + '/'
       const result = produceRedirects(playbook, contentCatalog)
@@ -308,6 +320,20 @@ describe('produceRedirects()', () => {
         'location = /docs/component-b/1.0/alias-c.html { return 301 /docs/component-a/module-a/the-target.html; }',
         'location = /docs/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
       ])
+    })
+
+    it('should drop trailing slash from site URL path when using it as prefix for rewrite rule', () => {
+      playbook.site.url = 'https://example.org/docs/'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.include(
+        'location = /docs/component-a/module-a/alias-a.html { return 301 /docs/component-a/module-a/the-target.html; }'
+      )
     })
 
     it('should not prefix rewrite rule with extra prefix if URL context is /', () => {

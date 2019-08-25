@@ -33,26 +33,26 @@ function produceRedirects (playbook, contentCatalog) {
   const aliases = contentCatalog.findBy({ family: 'alias' })
   if (!aliases.length) return []
   let siteUrl = playbook.site.url
+  if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
   switch (playbook.urls.redirectFacility) {
     case 'static':
-      if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
       return populateStaticRedirectFiles(aliases, siteUrl)
     case 'netlify':
       return createNetlifyRedirects(
         aliases,
-        extractUrlContext(siteUrl),
+        extractUrlPath(siteUrl),
         (playbook.urls.htmlExtensionStyle || 'default') === 'default'
       )
     case 'nginx':
-      return createNginxRewriteConf(aliases, extractUrlContext(siteUrl))
+      return createNginxRewriteConf(aliases, extractUrlPath(siteUrl))
     default:
       return unpublish(aliases)
   }
 }
 
-function extractUrlContext (sourceUrl) {
-  let urlContext
-  return sourceUrl && (urlContext = new URL(sourceUrl).pathname) !== '/' ? urlContext : undefined
+function extractUrlPath (url) {
+  let urlPath
+  return url && (urlPath = new URL(url).pathname) === '/' ? '' : urlPath
 }
 
 function populateStaticRedirectFiles (files, siteUrl) {
@@ -63,11 +63,11 @@ function populateStaticRedirectFiles (files, siteUrl) {
   return []
 }
 
-function createNetlifyRedirects (files, urlContext = '', includeDirectoryRedirects = false) {
+function createNetlifyRedirects (files, urlPath = '', includeDirectoryRedirects = false) {
   const rules = files.reduce((accum, file) => {
     delete file.out
-    const from = `${urlContext}${file.pub.url.replace(ALL_SPACES_RX, '%20')}`
-    const to = `${urlContext}${file.rel.pub.url.replace(ALL_SPACES_RX, '%20')}`
+    const from = `${urlPath}${file.pub.url.replace(ALL_SPACES_RX, '%20')}`
+    const to = `${urlPath}${file.rel.pub.url.replace(ALL_SPACES_RX, '%20')}`
     accum.push(`${from} ${to} 301`)
     if (includeDirectoryRedirects && from.endsWith('/index.html')) accum.push(`${from.slice(0, -10)} ${to} 301`)
     return accum
@@ -79,11 +79,11 @@ function createNetlifyRedirects (files, urlContext = '', includeDirectoryRedirec
   return [redirectsFile]
 }
 
-function createNginxRewriteConf (files, urlContext = '') {
+function createNginxRewriteConf (files, urlPath = '') {
   const rules = files.map((file) => {
     delete file.out
-    const from = `${urlContext}${file.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
-    const to = `${urlContext}${file.rel.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
+    const from = `${urlPath}${file.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
+    const to = `${urlPath}${file.rel.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
     return `location = ${from} { return 301 ${to}; }`
   })
   const rewriteConfigFile = new File({
