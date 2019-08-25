@@ -369,6 +369,35 @@ describe('createPageComposer()', () => {
       `)
     })
 
+    it('should prepend site path to UI root path if site URL contains a subpath', () => {
+      file = create404Page()
+      layouts.push({
+        stem: '404',
+        contents: Buffer.from(
+          heredoc`
+          <!DOCTYPE html>
+          <html class="status-404">
+          {{> head}}
+          <link rel="stylesheet" href="{{uiRootPath}}/css/site.css">
+          <h1>{{{page.title}}}</h1>
+          </html>
+          `
+        ),
+      })
+      playbook.site.url = 'https://example.org/docs'
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      const result = composePage(file, contentCatalog, navigationCatalog)
+      expect(result).to.equal(file)
+      expect(file.contents.toString().trim()).to.equal(heredoc`
+        <!DOCTYPE html>
+        <html class="status-404">
+        <title>Page Not Found</title>
+        <link rel="stylesheet" href="/docs/_/css/site.css">
+        <h1>Page Not Found</h1>
+        </html>
+      `)
+    })
+
     // QUESTION what should we do with a template execution error? (e.g., missing partial or helper)
   })
 })
