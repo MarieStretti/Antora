@@ -17,12 +17,6 @@ describe('resolveResource', () => {
     expect(contentCatalog.getById).to.not.have.been.called()
   })
 
-  it('should throw error if resource ID spec has invalid syntax', () => {
-    const contentCatalog = mockContentCatalog()
-    expect(() => resolveResource('component-foo::', contentCatalog)).to.throw('Invalid resource ID syntax')
-    expect(contentCatalog.getById).to.not.have.been.called()
-  })
-
   it('should throw error if page ID spec has invalid syntax', () => {
     const contentCatalog = mockContentCatalog()
     expect(() => resolveResource('component-foo::', contentCatalog, undefined, undefined, 'page')).to.throw(
