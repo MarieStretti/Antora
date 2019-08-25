@@ -64,7 +64,8 @@ function aggregateContent (playbook) {
   const sourcesByUrl = _.groupBy(sources, 'url')
   const { cacheDir, fetch, silent, quiet } = playbook.runtime
   const progress = !quiet && !silent && createProgress(sourcesByUrl, process.stdout)
-  const credentialManager = registerGitPlugins((playbook.git || {}).credentials, startDir)
+  const { ensureGitSuffix, credentials } = Object.assign({ ensureGitSuffix: true }, playbook.git)
+  const credentialManager = registerGitPlugins(credentials, startDir)
   return ensureCacheDir(cacheDir, startDir).then((resolvedCacheDir) =>
     Promise.all(
       Object.entries(sourcesByUrl).map(([url, sources]) =>
@@ -75,6 +76,7 @@ function aggregateContent (playbook) {
           progress,
           fetch,
           startDir,
+          ensureGitSuffix,
         }).then(({ repo, authStatus }) =>
           Promise.all(
             sources.map((source) => {
@@ -125,7 +127,7 @@ async function loadRepository (url, opts) {
     ;({ displayUrl, url, credentials } = extractCredentials(url))
     dir = ospath.join(opts.cacheDir, generateCloneFolderName(displayUrl))
     // NOTE if url is set on repo, we assume it's remote
-    repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noCheckout: true }
+    repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noGitSuffix: !opts.ensureGitSuffix, noCheckout: true }
     credentialManager = opts.credentialManager
   } else if (await isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
     repo = (await isLocalDirectory(ospath.join(dir, '.git')))
