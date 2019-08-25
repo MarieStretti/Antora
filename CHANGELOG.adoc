@@ -19,7 +19,7 @@ This project utilizes semantic versioning.
 
 === Fixed
 
-* *page-composer*: Assign pathname of site URL to site.path property in UI model; use empty string if site URL is not set or pathname is / (#258)
+* *page-composer*: Assign pathname of site URL (if specified) to the site.path property in UI model; use empty value if pathname is / (#258)
 * *redirect-producer*: Trim trailing slash from site URL before extracting path to use as prefix for paths in rewrite rule (#468)
 
 == 2.0.1 (2019-08-22)
