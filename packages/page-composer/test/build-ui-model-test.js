@@ -168,7 +168,7 @@ describe('build UI model', () => {
     })
 
     it('should set path property to empty if site.url property set in playbook has no subpath', () => {
-      ['https://example.com', 'https://example.com/'].forEach((siteUrl) => {
+      ;['https://example.com', 'https://example.com/'].forEach((siteUrl) => {
         playbook.site.url = siteUrl
         const model = buildSiteUiModel(playbook, contentCatalog)
         expect(model.path).to.equal('')
@@ -176,7 +176,7 @@ describe('build UI model', () => {
     })
 
     it('should set path property to pathname of URL if site.url property set in playbook', () => {
-      ['https://example.com/docs', 'https://example.com/docs/'].forEach((siteUrl) => {
+      ;['https://example.com/docs', 'https://example.com/docs/'].forEach((siteUrl) => {
         playbook.site.url = siteUrl
         const model = buildSiteUiModel(playbook, contentCatalog)
         expect(model.path).to.equal('/docs')

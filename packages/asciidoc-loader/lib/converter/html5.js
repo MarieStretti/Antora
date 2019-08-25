@@ -21,13 +21,13 @@ const Html5Converter = (() => {
       if (node.getAttribute('path') && (callback = this[$pageRefCallback])) {
         const attrs = node.getAttributes()
         if (attrs.fragment === Opal.nil) delete attrs.fragment
-        const { content, target } = callback(attrs.refid, node.getText())
+        const { content, target, internal, unresolved } = callback(attrs.refid, node.getText())
         let options
-        // NOTE if resolved target starts with #, it's an unresolved xref
-        if (target.charAt() === '#') {
+        if (internal) {
+          // QUESTION should we propogate the role in this case?
           options = Opal.hash2(['type', 'target'], { type: 'link', target })
         } else {
-          attrs.role = attrs.role ? 'page ' + attrs.role : 'page'
+          attrs.role = `page${unresolved ? ' unresolved' : ''}${attrs.role ? ' ' + attrs.role : ''}`
           options = Opal.hash2(['type', 'target', 'attrs'], {
             type: 'link',
             target,
