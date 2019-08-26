@@ -116,15 +116,6 @@ describe('convertDocument()', () => {
     `)
   })
 
-  it('should resolve image relative to module root', () => {
-    inputFileInTopicFolder.contents = Buffer.from(heredoc`
-      image::screenshot.png[]
-    `)
-    convertDocument(inputFileInTopicFolder, undefined, asciidocConfig)
-    const contents = inputFileInTopicFolder.contents.toString()
-    expect(contents).to.include('src="../_images/screenshot.png"')
-  })
-
   it('should resolve attachment relative to module root', () => {
     inputFileInTopicFolder.contents = Buffer.from(heredoc`
       Grab the link:{attachmentsdir}/quickstart-project.zip[quickstart project].
@@ -334,5 +325,114 @@ describe('convertDocument()', () => {
       </div>
       </div>
     `)
+  })
+  ;['block', 'inline'].forEach((macroType) => {
+    const macroDelim = macroType === 'block' ? '::' : ':'
+
+    it(`should resolve target of ${macroType} image relative to imagesdir`, () => {
+      inputFile.contents = Buffer.from(`image${macroDelim}image-filename.png[]`)
+      convertDocument(inputFile, undefined, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include('<img src="_images/image-filename.png" alt="image filename">')
+    })
+
+    // NOTE this scenario should be disallowed in a future major release
+    it(`should honor parent reference in target of ${macroType} image`, () => {
+      inputFile.contents = Buffer.from(`image${macroDelim}../../module-b/_images/image-filename.png[]`)
+      convertDocument(inputFile, undefined, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include('<img src="../module-b/_images/image-filename.png" alt="image filename">')
+    })
+
+    it(`should preserve target of ${macroType} image if target is a URL`, () => {
+      inputFile.contents = Buffer.from(`image${macroDelim}https://example.org/image-filename.png[]`)
+      convertDocument(inputFile, undefined, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include('<img src="https://example.org/image-filename.png" alt="image filename">')
+    })
+
+    it(`should preserve target of ${macroType} image if target is a data URI`, () => {
+      const imageData = 'R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+      inputFile.contents = Buffer.from(`image${macroDelim}data:image/gif;base64,${imageData}[dot]`)
+      convertDocument(inputFile, undefined, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include(`<img src="data:image/gif;base64,${imageData}" alt="dot">`)
+    })
+
+    it(`should resolve target of ${macroType} image from file in topic folder relative to imagesdir`, () => {
+      inputFileInTopicFolder.contents = Buffer.from(`image${macroDelim}image-filename.png[]`)
+      convertDocument(inputFileInTopicFolder, undefined, asciidocConfig)
+      const contents = inputFileInTopicFolder.contents.toString()
+      expect(contents).to.include('<img src="../_images/image-filename.png" alt="image filename">')
+    })
+
+    it(`should resolve non-URL target of ${macroType} image as resource spec if target contains a colon`, () => {
+      inputFile.contents = Buffer.from(`image${macroDelim}module-b:image-filename.png[]`)
+      const imageFile = {
+        path: 'modules/module-b/assets/images/image-filename.png',
+        dirname: 'modules/module-b/assets/images',
+        src: {
+          path: 'modules/module-b/assets/images/image-filename.png',
+          dirname: 'modules/module-b/assets/images',
+          component: 'component-a',
+          version: '1.2.3',
+          module: 'module-b',
+          family: 'image',
+          relative: 'image-filename.png',
+        },
+        pub: {
+          url: '/component-a/1.2.3/module-b/_images/image-filename.png',
+        },
+      }
+      const contentCatalog = { resolveResource: spy(() => imageFile), getComponent: () => {} }
+      convertDocument(inputFile, contentCatalog, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include('<img src="../module-b/_images/image-filename.png" alt="image filename">')
+    })
+
+    it(`should resolve non-URL target of ${macroType} image as resource spec if target contains an at sign`, () => {
+      inputFile.contents = Buffer.from(`image${macroDelim}2.0.0@image-filename.png[]`)
+      const imageFile = {
+        path: 'modules/module-b/assets/images/image-filename.png',
+        dirname: 'modules/module-b/assets/images',
+        src: {
+          path: 'modules/module-b/assets/images/image-filename.png',
+          dirname: 'modules/module-b/assets/images',
+          component: 'component-a',
+          version: '2.0.0',
+          module: 'module-b',
+          family: 'image',
+          relative: 'image-filename.png',
+        },
+        pub: {
+          url: '/component-a/2.0.0/module-b/_images/image-filename.png',
+        },
+      }
+      const contentCatalog = { resolveResource: spy(() => imageFile), getComponent: () => {} }
+      convertDocument(inputFile, contentCatalog, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include('<img src="../../2.0.0/module-b/_images/image-filename.png" alt="image filename">')
+    })
+
+    it(`should use ${macroType} image target if target matches resource ID spec and image cannot be resolved`, () => {
+      inputFile.contents = Buffer.from(`image${macroDelim}no-such-module:image-filename.png[]`)
+      const contentCatalog = { resolveResource: spy(() => undefined), getComponent: () => {} }
+      convertDocument(inputFile, contentCatalog, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include('<img src="no-such-module:image-filename.png" alt="image filename">')
+    })
+
+    it(`should use ${macroType} image target if target matches resource ID spec and syntax is invalid`, () => {
+      inputFile.contents = Buffer.from(`image${macroDelim}component-b::[]`)
+      const contentCatalog = {
+        resolveResource: spy(() => {
+          throw new Error()
+        }),
+        getComponent: () => {},
+      }
+      convertDocument(inputFile, contentCatalog, asciidocConfig)
+      const contents = inputFile.contents.toString()
+      expect(contents).to.include('<img src="component-b::" alt="">')
+    })
   })
 })
