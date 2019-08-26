@@ -132,7 +132,7 @@ Otherwise, the value is assumed to be an explicit version number, which is used 
 
 If the RELEASE_NPM_TAG variable is set, its value is passed to Lerna's `--npm-tag` option.
 This setting can be used to publish releases that do not get installed by default (e.g., prereleases).
-If the RELEASE_NPM_TAG variable is not set, and the RELEASE_VERSION beings with `pre`, the RELEASE_NPM_TAG variable defaults to `next`.
+If the RELEASE_NPM_TAG variable is not set, and the RELEASE_VERSION beings with `pre` or contains a hyphen, the RELEASE_NPM_TAG variable defaults to `testing`.
 Otherwise, it defaults to `latest`.
 To override these defaults, set the RELEASE_NPM_TAG shell variable in the [.path]_releaserc_ file.
 For example:
@@ -141,7 +141,7 @@ For example:
 [source,bash]
 ----
 RELEASE_VERSION=2.0.0-alpha.1
-RELEASE_NPM_TAG=next
+RELEASE_NPM_TAG=preview
 ----
 
 The [.path]_releaserc_ file can also control the branch from which the release will be cut.

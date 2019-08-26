@@ -60,7 +60,9 @@ npm -v
 if case $RELEASE_VERSION in major|minor|patch) ;; *) false;; esac; then
   lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=latest} --yes
 elif case $RELEASE_VERSION in pre*) ;; *) false;; esac; then
-  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=next} --yes
+  lerna publish --cd-version=$RELEASE_VERSION --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=testing} --yes
+elif [ -z $RELEASE_NPM_TAG ] && [ "$RELEASE_VERSION" != "${RELEASE_VERSION/-/}" ]; then
+  lerna publish --exact --force-publish=* --npm-tag=testing --repo-version=$RELEASE_VERSION --yes
 else
   lerna publish --exact --force-publish=* --npm-tag=${RELEASE_NPM_TAG:=latest} --repo-version=$RELEASE_VERSION --yes
 fi
