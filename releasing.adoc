@@ -200,6 +200,13 @@ In summary, the releases branch is used to:
 
 The CI job will publish the packages to npmjs.com at the end of the job execution.
 
+=== Post Release Trigger
+
+Once the release completes, the job to build the Docker image is automatically triggered.
+The version of the Docker image matches the latest version of Antora.
+The Docker image will be tagged `testing` if the release number contains a hyphen.
+Otherwise, it will be tagged `latest` (the default version).
+
 == Testing a Release
 
 It's possible to test the release locally using a private npm registry.
