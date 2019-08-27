@@ -5,6 +5,7 @@ Attributes that are prefixed with `page-` are cataloged by Antora and available 
 These attributes are helpful when passing data from a page to the site UI and integrations, such as a search service.
 In addition to user-defined page attributes, Antora also provides built-in page attributes.
 
+[#page-attributes]
 == Built-in Antora attributes
 
 Antora sets the following attributes for each page:
