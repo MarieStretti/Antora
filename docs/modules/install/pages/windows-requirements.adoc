@@ -3,7 +3,7 @@
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm-windows: https://github.com/coreybutler/nvm-windows
 :version-node-major: 10
-:version-node: {version-node-major}.15.0
+:version-node: {version-node-major}.16.3
 
 On this page, you'll learn:
 

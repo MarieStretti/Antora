@@ -3,7 +3,7 @@
 :page-partial:
 //tag::shared[]
 :version-node-major: 10
-:version-node: {version-node-major}.15.0
+:version-node: {version-node-major}.16.3
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm: https://github.com/creationix/nvm
 :url-nvm-install: {url-nvm}#installation

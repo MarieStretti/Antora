@@ -17,23 +17,9 @@ The proposed features, their scope, and the release timeframes are estimates, no
 
 For a detailed list of current development tasks, refer to the Antora {url-issues}[issue tracker^].
 
-=== v2.1.x
+=== v3.0.0
 
-*Release Timeframe*: Q3 2019
-
-* [ ] Add support for referencing images across modules and components {url-issues}/228[#228^]
-* [x] Assign pathname of site URL to `site.path` property in UI model; use empty string if site URL is not set or pathname is `/` {url-issues}/258[#258^]
-* [x] Add `git.ensureGitSuffix` key to playbook to control whether git client appends .git suffix to URL if absent {url-issues}/414[#414^]
-* [x] Preserve linked text of an unresolved page xref {url-issues}/421[#421^]
-* [x] Assign implicit page attributes for navigation files {url-issues}/430[#430^]
-* [x] Make assets folder optional for containing images and attachments {url-issues}/464[#464^]
-* [x] Set page-component-display-version attribute on each AsciiDoc file {url-issues}/465[#465^]
-
-=== v2.x.x
-
-*Release Timeframe*: Q4 2019 - Q1 2020
-
-* [ ] Contents of xref should use page title if link text isn't specified {url-issues}/310[#310^]
+*Release Timeframe*: Q1 2020
 
 === Unscheduled
 
@@ -68,6 +54,7 @@ They aren't slated for imminent development but are reviewed for possible schedu
 * [ ] Implement fallback value for component version based on git ref or config {url-issues}/296[#296^]
 * [ ] Use worktree of local git repository even when repository has no commits {url-issues}/298[#298^]
 * [ ] Provide access to cached repositories in Antora context (as src.origin.cacheDir) {url-issues}/305[#305^]
+* [ ] Contents of xref should use page title if link text isn't specified {url-issues}/310[#310^]
 * [ ] Automatically set up latest version URLs {url-issues}/314[#314^]
 * [ ] Add priority boosts in sitemap based on component version {url-issues}/317[#317^]
 * [ ] Add watch mode for files in worktree {url-issues}/329[#329^]
@@ -103,8 +90,8 @@ They aren't slated for imminent development but are reviewed for possible schedu
 * [ ] Evaluate new strategies for interpreting equations (e.g., build-time conversion to SVG)
 ////
 
-.Discussions
-* Properly store generated PlantUML images directly in Antora content folder instead of output directory (Requirements: {url-issues}/189[#189^])
+//.Discussions
+//* Properly store generated PlantUML images directly in Antora content folder instead of output directory (Requirements: {url-issues}/189[#189^])
 
 == Antora default UI
 
@@ -127,42 +114,3 @@ For a detailed list of current development tasks, refer to the UI {url-ui-issues
 * [ ] Extract all colors into CSS variables {url-ui-issues}/18[#18^]
 * [ ] Allow SVGs to be embedded directly into Handlebars template
 * [ ] Add client-side search (algolia docsearch) {url-ui-issues}/44[#44^]
-
-
-////
-== Antora documentation, demo, and sites
-
-For current Antora documentation tasks, see the Antora {url-issues}[issue tracker^].
-
-For current demo tasks, see the Demo materials {url-demo-issues}[issue tracker^].
-
-For current docs.antora.org tasks, see the site {url-docs-site-issues}[issue tracker^].
-
-=== v2.1.x
-
-*Release Timeframe*: Q3 2019
-
-* [ ] Document how Antora selects the latest version {url-issues}/311[#311^]
-
-=== Unscheduled
-
-.Docs
-* [ ] Create community participation guidelines
-* [ ] Add changelog (mirror/link) to Docs
-* [ ] Add contributing guide (mirror/link) to Docs
-* [ ] Remove most documentation-type content from README and replace with links to the appropriate Docs pages
-* [ ] Improve custom publish provider documentation {url-issues}/164[#164^]
-* [ ] Document sitemap features {url-issues}/168[#168^]
-* [ ] Explain how to create a partial page {url-issues}/176[#176^]
-* [ ] Document the `page-` attributes {url-issues}/177[#177^]
-* [ ] Add quick start guide {url-issues}/299[#299^]
-* [ ] Document how to create user-defined page attributes
-* [ ] Document stem functionality with common UI integration scenarios
-* [ ] Document how to add MathJax integration to the UI
-* [ ] Document how to integrate external Javascript files with the UI
-
-.Sites
-* [ ] Create dedicated UI project and bundle for docs.antora.org instead of using supplemental UI
-* [ ] Mirror/link maintenance and bug fix priority policies on antora.org
-* [ ] Mirror/link release schedule on project site
-////
