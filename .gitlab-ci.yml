@@ -1,5 +1,7 @@
 image: node:10.14.2-stretch
 stages: [ init, verify, deploy ]
+variables:
+  GIT_DEPTH: '5'
 .defs:
 # only_code not used when an MR is created, hence the need for except_docs
 - &only_code
