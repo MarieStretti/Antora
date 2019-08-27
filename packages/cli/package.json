@@ -1,6 +1,6 @@
 {
   "name": "@antora/cli",
-  "version": "2.1.0-rc.1",
+  "version": "2.1.0",
   "description": "The command line interface for Antora.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
@@ -18,7 +18,7 @@
     "antora": "bin/antora"
   },
   "dependencies": {
-    "@antora/playbook-builder": "2.1.0-rc.1",
+    "@antora/playbook-builder": "2.1.0",
     "commander": "~3.0"
   },
   "devDependencies": {
