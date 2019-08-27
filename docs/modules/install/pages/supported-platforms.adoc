@@ -1,5 +1,5 @@
 = Supported Platforms and System Requirements
-:test-count: over 900
+:test-count: over 960
 :test-coverage: 99%
 // URLs
 :url-repo: https://gitlab.com/antora/antora
@@ -20,13 +20,13 @@ When a platform version reaches its end of life (EOL), Antora no longer supports
 |Supported Platform |Supported Version(s)
 
 |Alpine Linux
-|&#8805; 3.6
+|&#8805; 3.7
 
 |Debian
-|&#8805; 9.6
+|&#8805; 9.9
 
 |Fedora
-|&#8805; 28
+|&#8805; 29
 
 |Ubuntu
 |[%hardbreaks]
@@ -57,6 +57,7 @@ Windows Server 2016
 
 |Node.js
 |[%hardbreaks]
+12
 10
 8
 |===
@@ -109,7 +110,6 @@ OS Release schedule links
 
 Alpine: https://wiki.alpinelinux.org/wiki/Alpine_Linux:Releases
 - 3.7 ends 2019-11-01
-- 3.6.2 ends 2019-05-01, gets security fixes only
 
 Arch: https://www.archlinux.org/releng/releases/
 
@@ -118,11 +118,8 @@ Arch Linux releases once a month, with only the 3 most recent distros being offi
 Debian: https://www.debian.org/releases/stable/
 
 Fedora: https://fedoraproject.org/wiki/Releases
-
-Fedora 29 will be released approx Nov 2018
-
+estimated EOL of 29 is 12-01-2019
 Ubuntu Linux: https://wiki.ubuntu.com/Releases
-
 
 openSUSE: https://en.opensuse.org/Portal:42.3
 

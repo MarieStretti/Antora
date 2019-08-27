@@ -6,6 +6,9 @@ This page documents the items that slipped through and how to address them.
 
 == Security Bulletin ANTORA-350
 
+IMPORTANT: Antora 1.1, which is the only version of Antora this bulletin applies to, reaches its end of life on August 31, 2019.
+If you're using Antora 1.1, review the xref:2.0@whats-new.adoc#antora-2-0-0[Antora 2.0 release notes] and xref:2.0@whats-new.adoc#checklist[upgrade checklist] before upgrading to the latest Antora release.
+
 ID:: ANTORA-350
 Published:: November 26, 2018
 

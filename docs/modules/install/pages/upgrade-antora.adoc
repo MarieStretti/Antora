@@ -1,7 +1,8 @@
 = Upgrade Antora
 :version-node-major: 10
-:version-node: {version-node-major}.15.0
-:version-npm: 6.4.1
+:version-node: {version-node-major}.16.3
+:version-npm: 6.11.2
+//https://github.com/npm/cli/releases/tag/
 
 include::install:partial$upgrade-checklist.adoc[]
 

@@ -1,6 +1,6 @@
 == Upgrade checklist
 
-You may need to make some of the following changes to your documentation system before using Antora 2.0.
+If you're upgrading from Antora 1.1, you may need to make some of the following changes to your documentation system before using Antora {page-component-version}.
 
 Does Antora access private repositories in order to build your site?::
 If yes, you get to say goodbye to your SSH agent and set up your authentication credentials for each private repository URL in a git credential store.
@@ -11,9 +11,9 @@ Unfortunately, Antora can no longer connect to repositories that use these conne
 You'll need to either clone the repositories to a local folder and point Antora at those locations or you'll need to set up a proxy server that serves the repositories over smart HTTP (as do all major git hosts).
 
 Is your Antora playbook file written in CSON?::
-If yes, you'll need to migrate it to YAML, JSON, or TOML before running Antora 2.0.
+If yes, you'll need to migrate it to YAML, JSON, or TOML before running Antora {page-component-version}.
 
-If you answered *No* to all of the above questions, then you're ready to upgrade to Antora 2.0 now!
+If you answered *No* to all of the above questions, then you're ready to upgrade to Antora {page-component-version} now!
 ifeval::["{route}" == "New"]
 See xref:install:upgrade-antora.adoc[Upgrade Antora] for instructions.
 
