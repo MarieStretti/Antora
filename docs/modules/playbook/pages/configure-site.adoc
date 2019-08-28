@@ -24,13 +24,13 @@ Antora's default UI displays the site title in the navigation bar at the top of 
 [#configure-url]
 == Configure the base URL
 
-The site URL key (`url`) is the base URL of the published site.
+The site URL key (`url`) defines the optional base URL of the published site.
 
-The `url` value must be a valid URI scheme that is directly followed by a colon and two slashes (`://`).
+If set, the URL must be absolute and *should not contain a trailing slash* (e.g., _\https://docs.example.com_).
+The URL may end with a pathname (i.e., subpath) (e.g., _\https://example.com/docs_).
+
+IMPORTANT: The `url` value must start with a valid URL scheme directly followed by a colon and two slashes (`://`).
 Common URI schemes include `https://`, `http://`, and `file://`.
-
-The URI should be absolute, e.g., _\https://www.project.org/docs_ or _\https://docs.product.com_.
-The base URL *should not end with a trailing slash*.
 
 [source,yaml]
 ----
@@ -38,7 +38,14 @@ site:
   url: https://demo.antora.org
 ----
 
-When the site is generated, the component, version, module, and page URL segments are appended to the site URL, e.g.,  _\https://demo.antora.org/component/version/page.html_.
+The site URL is only used when an absolute URL is required.
+It also implicitly activates features that require an absolute URL.
+Those features are the sitemaps, the 404 page, and the canonical URL property in the UI model.
+
+If the site URL is set, Antora will produce sitemap files and include the canonical URL in the head of each page.
+In those instances, the component, version, module, and page segments are appended to the site URL to produce the complete URL.
+For example,  _\https://docs.example.org/component/version/page.html_.
+Antora will also generate the 404 page.
 
 [#configure-start-page]
 == Configure the site start page
