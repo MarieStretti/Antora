@@ -1,29 +1,290 @@
 = Insert an Image
+:listing-caption: Example
+:xrefstyle: short
 
 On this page, you'll learn:
 
-* [x] How to insert an image into a page.
+* [x] The basic structure of the block image macro.
+* [x] The basic structure of the inline image macro.
+* [x] How to insert an image into a page using its resource ID.
 
-== Add an image to a page
+== Block and inline images
 
-To insert a standalone image, use the AsciiDoc block image macro (`image::[]`).
+There are two image macro types, block and inline.
 
-.Anatomy of a block image macro
-[source,asciidoc]
 ----
-image::file-name.ext[optional alt text]
+This is a paragraph.
+
+image::resource-id[optional attributes] // <1>
+
+This is a sentence with an inline image image:resource-id[optional attributes]. // <2>
+----
+<1> A block image is designated by two colons (`::`) after the macro name.
+It's preceded by a blank line, entered on a line by itself, and then followed by blank line.
+<2> An inline image is entered into the flow of the content.
+It's designated by a single colon (`:`) after the macro name.
+
+=== Block image macro structure
+
+A block image is usually displayed as a discrete element on a site page.
+Let's break down the AsciiDoc syntax and resource coordinates you need to insert a block image into a page.
+
+. On a new line, enter the macro's name followed by two colons, `image::`.
+Make sure there is a blank line between the previous element, such as a paragraph or source block, and the line where you place the image macro.
++
+[subs=+quotes]
+----
+This is a paragraph.
+
+**image::**
 ----
 
-Let's break this down.
-You start with the image macro prefix, `image::` or `+image:+`.
-Next is the target.
-Put the path of the image relative to the xref:ROOT:modules.adoc#images-dir[image catalog] in that slot (no need for an attribute prefix).
-Finally, end with a pair of square brackets (`+[]+`), optionally containing alt text for the image (which is otherwise generated).
-
-.Block image syntax
-[source,asciidoc]
+. Enter the resource ID of the image file.
+An image's resource coordinates are assembled like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
+In this example, the image file is stored in the same module as the page it is being inserted into, so you only need to identify the image's file name.
+Enter the image's file name, including its extension, directly after the colons.
++
+[subs=+quotes]
 ----
-image::pipeline-workflow.png[a diagram illustrating the pipeline stages]
+image::**name-of-file.ext**
 ----
 
-A module's image files should be saved in its xref:ROOT:modules.adoc#images-dir[images folder].
+. Complete the macro with a set of square brackets (`+[]+`).
++
+[subs=+quotes]
+----
+image::name-of-file.ext**[]**
+----
+
+. Press kbd:Enter[] twice after the last square bracket (`]`) to insert a new line after the image macro.
++
+----
+This is a paragraph.
+
+image::name-of-file.ext[]
+
+This is another paragraph.
+----
+
+=== Inline image macro structure
+
+An inline image is displayed in the content flow of another element, such as a paragraph.
+The inline image macro is structured almost identically to the block image macro except for a few differences.
+
+. After the word or other content where you want to insert the image, press the kbd:[SPACE] bar once, and then enter the macro's name followed by one colon (`image:`).
++
+[subs=+quotes]
+----
+This sentence has an inline *image:*
+----
+
+. Enter the resource ID of the image file.
+An image's resource coordinates are assembled like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
+In this example, the image file is stored in the same module as the page it is being inserted into, so you only need to identify the image's file name.
+Enter the image's file name, including its extension, directly after the colon.
+Then complete the macro with a set of square brackets (`+[]+`).
++
+[subs=+quotes]
+----
+This sentence has an inline image:**name-of-file.ext[]**
+----
+
+. Press the kbd:[SPACE] bar once after the last square bracket (`]`) to insert a space after the macro, then continue entering your content.
++
+[subs=+quotes]
+----
+This sentence has an inline image:name-of-file.ext[] image in it.
+Yet another sentence!
+----
+
+== Use images stored in the same component but different modules
+
+To use an image from the same component but a different module, the image's resource ID needs to specify the module name where the image is stored.
+After the macro prefix, enter the name of the module where the image is stored followed by a colon (`:`).
+Then enter the image's file name, including its extension, followed by a set of square brackets (`+[]+`).
+
+----
+image::name-of-module:name-of-file.ext[]
+----
+
+<<ex-1>> and <<ex-2>> are based on a component named `colorado`.
+Colorado contains two modules named `la-garita` and `ROOT`.
+
+.Directories and files in the Colorado component
+....
+colorado
+  modules
+    la-garita
+      images
+        wilderness-map.jpg
+      pages
+        cochetopa-pass.adoc
+        index.adoc
+    ROOT
+      images
+        peak.svg
+      pages
+        index.adoc
+        ranges.adoc
+....
+
+In <<ex-1>>, the image [.path]_peak.svg_, stored in `ROOT`, is used in a page stored in the `la-garita` module.
+
+.Insert peak.svg into cochetopa-pass.adoc
+[#ex-1]
+----
+The elevation of Cochetopa pass is image:ROOT:peak.svg[] 10,067 ft (3,068 m).
+----
+
+In <<ex-2>>, the [.path]_wilderness-map.jpg_ image, stored in `la-garita`, is referenced by a page stored in the `ROOT` module.
+
+.Insert wilderness-map.jpg into ranges.adoc
+[#ex-2]
+----
+image::la-garita:wilderness-map.jpg[]
+----
+
+== Use images stored in different components
+
+To use an image stored in another component, the image's resource ID needs to specify the component and module where the image file is stored.
+After the macro prefix, enter the name of the component followed by a colon (`:`) and the name of the module followed by a colon where the image is stored.
+Then, enter the image's file name, including its extension, followed by a set of square brackets (`+[]+`).
+
+----
+image::name-of-component:name-of-module:name-of-file.ext[]
+----
+
+When the image is stored in the ROOT module of another component, `ROOT` doesn't need to be entered into the resource ID.
+It's designated by entering another colon (`:`) directly after the colon following the component's name.
+
+----
+image::name-of-component::name-of-file.ext[]
+----
+
+<<ex-3>> and <<ex-4>> are based on a component named `colorado` and a component named `wyoming`.
+
+.Directories and files in the Colorado component and Wyoming component
+....
+colorado
+  modules
+    ROOT
+      images
+        peak.svg
+      pages
+        index.adoc
+        ranges.adoc
+  ...
+
+wyoming
+  modules
+    sierra-madre
+      images
+        elevation.png
+      pages
+        wilderness-areas.adoc
+  ...
+....
+
+In <<ex-3>>, the image [.path]_peak.svg_, located in the `ROOT` module of the `colorado` component, is referenced by a page stored in the `wyoming` component.
+
+.Insert peak.svg into wilderness-areas.adoc
+[#ex-3]
+----
+image:colorado::peak.svg[] Bridger Peak is located in the Sierra Madre range.
+----
+
+In <<ex-4>>, the image [.path]_elevation.png_, located in the `sierra-madre` module of the `wyoming` component, is used in a page stored in the `colorado` component.
+
+.Insert elevation.png into ranges.adoc
+[#ex-4]
+----
+image::2.8@wyoming:sierra-madre:elevation.png[]
+----
+
+Specifically, we're using the [.path]_elevation.png_ file from version 2.8 of the Wyoming component.
+When referencing an image from another component, you'll usually want to identify a specific version.
+Otherwise, when Antora builds your documentation site, it will use the image file from the most recent version of the component.
+The next section shows more examples of using the version coordinate.
+
+== Insert an image into a page from a different version
+
+To use an image from a different version of a module or component, the image's resource ID needs to specify the version and be followed by the appropriate module or component names if they're needed.
+
+After the block image macro prefix, enter the version name followed by the `@` symbol.
+If the image is stored in the same module as the page you're inserting it into (just in a different version of that module), you only need to specify the image's file name after `name-of-version@`.
+Complete the macro with a set of square brackets (`+[]+`).
+
+----
+image::name-of-version@name-of-file.ext[]
+----
+
+If the image is stored in a different version and module of the same component, enter the module's name after the `@` symbol.
+
+----
+image::name-of-version@name-of-module:name-of-file.ext[]
+
+image::name-of-version@ROOT:name-of-file.ext[]
+----
+
+When preceded by a component name, the ROOT module's name doesn't need to be entered.
+It's designated by entering another colon (`:`) directly after the colon following the component's name.
+
+----
+image::name-of-version@name-of-component::name-of-file.ext[]
+
+image::name-of-version@name-of-component:name-of-module:name-of-file.ext[]
+----
+
+== Learn more
+
+* xref:ROOT:component-structure.adoc[Organize your documentation into components and modules]
+* xref:ROOT:modules.adoc#images-dir[Store image files in a module's image directory]
+
+////
+== Image resource ID patterns
+
+----
+image::name-of-file.ext[] // <1>
+
+image::name-of-version@name-of-file.ext[] // <2>
+
+image::name-of-module:name-of-file.ext[] // <3>
+
+image::ROOT:name-of-file.ext[] // <4>
+
+image::name-of-version@name-of-module:name-of-file.ext[] // <5>
+
+image::name-of-version@ROOT:name-of-file.ext[] // <6>
+
+image::name-of-component:name-of-module:name-of-file.ext[] // <7>
+
+image::name-of-component::name-of-file.ext[] // <8>
+
+image::name-of-version@name-of-component:name-of-module:name-of-file.ext[] // <9>
+
+image::name-of-version@name-of-component::name-of-file.ext[] // <10>
+----
+<1> Image is in the same version, component, and module as page.
+<2> Image is in a different version but same component and module as page.
+<3> Image is in a different module but same version and component as page.
+<4> Image is in the ROOT module but same version and component as page.
+<5> Image is in a different version and module but same component as page.
+<6> Image is in a different version and the ROOT module but the same component as page.
+<7> Image is in the most recent version of a different component and module.
+<8> Image is in the most recent version of a different component and the ROOT module.
+<9> Image is in a specific version of a different component and module.
+<10> Image is in a specific version of a different component and the ROOT module.
+
+
+== Apply attributes to an image
+
+The brackets can contain an list of attributes such as alt text, width, or height.
+Attributes are optional.
+The attributes are entered as key=value pairs separated by commas.
+To add alt text to the image, enter the information between the square brackets (`+[]+`).
++
+[subs=+quotes]
+----
+image::name-of-file.ext**[This is the alt text for this image]**
+----
+////

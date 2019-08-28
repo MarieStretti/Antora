@@ -26,7 +26,7 @@ image::module-b:image.png[]
 image::2.0@image.png[]
 ```
 
-//See xref:asciidoc:insert-image.adoc[Insert an Image] for more image macro and resource ID examples and xref:page:resource-id.adoc[Resource Identifier] to learn more about Antora's resource ID.
+See xref:asciidoc:insert-image.adoc[Insert an Image] for more image macro and resource ID examples.
 See <<deprecation>> for future image referencing changes.
 
 == The assets folder is now optional
