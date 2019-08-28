@@ -1,4 +1,4 @@
-image: node:10.16.3-stretch
+image: node:10.16.3-buster
 stages: [ init, verify, deploy ]
 variables:
   GIT_DEPTH: '5'
