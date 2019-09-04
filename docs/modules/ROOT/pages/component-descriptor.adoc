@@ -1,134 +1,167 @@
 = Component Descriptor: antora.yml
+//When Antora receives instructions from a playbook to scan a repository, its first objective is to find a component descriptor file in that repository.
+//This file provides stable metadata that Antora and other tools use when they retrieve information about the component and version.
 
-A documentation component must contain a component descriptor file named [.path]_antora.yml_.
+When an [.path]_antora.yml_ file is present in a repository or directory, Antora assumes that all of the subsequent files and subdirectories are part of a xref:component-structure.adoc[documentation component].
+Often referred to as the [.term]_component descriptor_, [.path]_antora.yml_ has two crucial purposes:
 
-This file serves two purposes:
+. *Component marker*: When Antora finds [.path]_antora.yml_ in a repository or directory, it knows that it has located a documentation component.
+This ability to store a documentation component anywhere in a directory hierarchy allows you to maintain and manage a component (or part of a component) in a repository with the software it documents, a demo or sample project, or in its own repository.
 
-. *Component marker*: When Antora finds [.path]_antora.yml_ in a repository, it knows that it has located a documentation component.
-This ability to "`start`" a documentation component anywhere in a directory hierarchy allows you to store a component in a repository with the software it documents, with a demo project, by itself, etc.
-
-. *Component information*: [.path]_antora.yml_ is a component descriptor file.
-It associates the files under this hierarchy with the specified component name and version (aka component-version), decoupling the files from the repository and branch in which they live.
-This information is used for creating links to pages in this component.
-The file also identifies files to use for site navigation.
-
-//When we find a component descriptor file, specifically , in a repository, we expect to find the standard structure of a documentation component below it.
-//Thus, the documentation can live anywhere in the repository.
-//The component can even share the same repository as the software it documents.
-//The documentation component is then repeated in each branch of each repository that hosts a documentation component.
+. *Component information*: [.path]_antora.yml_ is referred to as the component descriptor because it describes the documentation component.
+It associates the files in the standard directory structure with the specified component name and version (explicitly referred to as the component-version if you want to get technical).
+This assignment of component information decouples the source files from the repository and branches in which they're stored.
+It's also used for constructing Antora's resource IDs so you can reference pages, partials, examples, and images within a component and across components.
+Finally, the component descriptor identifies and orders the files Antora uses to build the documentation's navigation.
 
 == Component descriptor requirements
 
-A documentation component must have a [.term]_component descriptor_ file.
-This file provides stable metadata that Antora and other tools can use when they need to retrieve information about the component and version.
+The component descriptor file must:
 
-The component descriptor must:
+* be named [.path]_antora.yml_,
+* be written in valid YAML,
+* contain the required keys and their values, and
+* be located xref:component-structure.adoc#overview[adjacent to the _modules_ directory of a documentation component].
 
-* be located at the root of the documentation component (adjacent to the [.path]_modules_ directory for that component)
-* be named [.path]_antora.yml_
-* be written in YAML
-* contain the required keys and values
+The example below shows the structure of a component descriptor file.
 
-.Component descriptor structure
+.antora.yml
 [source,yaml]
 ----
-name: component-a # <1>
-title: Component A # <2>
-version: '1.0' # <3>
-start_page: module:filename.adoc # <4>
-nav: # <5>
+name: component-a
+title: The A Component
+version: '1.0'
+start_page: name-of-module:filename.adoc
+nav:
+- modules/name-of-module/nav.adoc
 - modules/ROOT/nav.adoc
-- modules/module-three/nav.adoc
-- ...
 ----
-<1> Name key
-<2> Title key
-<3> Version key
-<4> Start page key
-<5> Nav key
+
+The <<name-key>> and <<version-key>> keys are always required.
+The <<title>>, <<display-version>>, <<start-page-key>>, and <<nav-key>> keys may be optional depending on the version name, structure, and file names associated with a documentation component.
 
 [#name-key]
-=== name
+=== `name`
 
-The value of the `name` key is the component name that is used when the component is referenced in a xref:asciidoc:page-to-page-xref.adoc#page-id-cname-def[cross reference].
-The value can contain letter, number, underscore (`+_+`), hyphen (`-`), and period (`.`) characters.
-The component name *does not* have to be the same as the name of the repository it lives in.
+The `name` key is the component coordinate that's used when the component is referenced in a xref:asciidoc:page-to-page-xref.adoc#page-id-cname-def[page cross reference], xref:asciidoc:insert-image.adoc[image macro], xref:asciidoc:include-example.adoc[included example], or xref:asciidoc:include-partial.adoc[included partial].
 
-=== title
+```yaml
+name: leaf
+```
 
-The value of the `title` key is the display name for the component.
-It's used anywhere in the UI that the component is identified.
-//(or its super type, domain)
-This includes:
+The value can contain letters, numbers, underscores (`+_+`), hyphens (`-`), and periods (`.`).
+The value isn't related to the name of the repository or directory the component it is describing lives in, though they may be the same or similar.
+For instance, a documentation component might be stored in a GitLab repository named _Coco B's Massive Quantum App_ but this doesn't impact how Antora handles the component when it publishes a documentation site that uses it.
+Antora only uses the value assigned to the component's name key, which Coco B's docs manager decided should be `mq`, when converting AsciiDoc macros and directives and generating the URLs for the pages in component `mq`.
+
+=== `title`
+
+The `title` key is the display name for the component.
+
+```yaml
+title: Silver Leaf
+```
+
+The UI uses it where ever the component is identified, including the:
 
 * xref:navigation:index.adoc#component-menu[component navigation menu]
 * xref:navigation:index.adoc#component-dropdown[component version selector]
 * first breadcrumb position
 
-The component title *does not* have to be the same as the component name.
+This key is important because a component's name may have characters that don't work well in URLs or spaces, which don't work in Antora's resource IDs.
+Also, if the name of your product or project ever changes, you can change the value of the title key, but not have to change any resource IDs or URLs.
+Let's imagine the Coco B company decides to change their application's name from _Massive Quantum_ to _Ultra Massive Quantum_.
+All the docs manager has to do is change the value of the title key from `Massive Quantum` to `Ultra Massive Quantum` and the new application name will be displayed in their documentation site's UI.
 
 [#version-key]
-=== version
+=== `version`
 
-The value of the `version` key is both the display name and version coordinate.
-This includes:
+The `version` key is the version coordinate and, when `<<display-version>>` isn't set, the version name displayed in the UI.
 
-* page ID and cross references (xref:asciidoc:page-to-page-xref.adoc#page-id-vname-def[version@])
-* xref:navigation:index.adoc#component-menu[component navigation menu]
-* xref:navigation:index.adoc#component-dropdown[component version selector]
-* xref:navigation:index.adoc#page-dropdown[page version selector]
+```yaml
+version: '5.6'
+```
+
+The value can contain letters, numbers, periods (`.`), underscores (`+_+`), and hyphens (`-`).
+
+.*Version value examples*
+* '1'
+* v2.0-beta
+* rawhide
+
+The value of version is used in the:
+
+* Antora resource ID
 * edit page URI (not visible)
 * page URL
 
-The value is also used to sort multiple versions of the same component.
+And if the display_version key isn't set, the version value is used in the:
 
-The value can contain letter, number, period (`.`), underscore (`+_+`), and hyphen (`-`) characters.
-If the value starts with a number, it must be contained within a set of single quote marks (`'`).
+* xref:navigation:index.adoc#component-menu[component navigation menu]
+* xref:navigation:index.adoc#component-dropdown[component version selector]
+* xref:navigation:index.adoc#page-dropdown[page version selector]
 
-The version key value isn't related to a xref:component-versions.adoc[repository branch name or tag] in any way.
-Instead, the value should be useable by the documentation writers and useful to the readers.
+It's also used to xref:component-versions.adoc[sort multiple versions of the same component].
+Like with the name key, the version key isn't related, though it's often similar, to the xref:component-versions.adoc[name of the repository branch] where the component's source files are stored.
 
-.Example version key values
-* '1.0'
-* v2.0-beta
-* latest
+[#display-version]
+=== `display_version`
 
-If you want to use a different value when displaying the version in the UI, you can set the `display_version` key.
+To display a version in the UI that is different from the value specified in `<<version-key>>`, set the `display_version` key.
 
-[source,yaml]
-----
-display_version: TheBigOneDot0
-----
+```yaml
+display_version: The Big One Dot 0
+```
 
-The value of the `display_version` key is strictly used for presentation.
-It does not affect how versions are sorted.
+This key is useful when you want the version displayed in your site's UI to contain a blank (empty) space.
+(The <<version-key,version key>> can't contain spaces because it's used as a resource ID coordinate.)
+The display version key is optional and strictly used for presentation in the UI.
+It does not affect resource IDs or how versions are sorted.
+
+.*Display version value examples*
+* v2.0 Beta
+* Rawhide
+* '3.8 (EOL)'
+
+If the value starts with a number, enclose it within a set of single quote marks (`'`).
 
 [#start-page-key]
-=== start_page
+=== `start_page`
 
-By default, Antora looks for a file named [.path]_index.adoc_ in the ROOT module of each component to use as the start page for that component and version (e.g., _\https://example.org/component-name/index.html_).
+Antora automatically looks for [.path]_index.adoc_ in the ROOT module of a component and uses it as the component's start page (e.g., _\https://example.org/component-name/index.html_).
+If there isn't an [.path]_index.adoc_ file in the ROOT module, you must specify a file as the start page in the component descriptor.
 
-If the ROOT module doesn't have an [.path]_index.adoc_ page, you must specify a start page explicitly in the component descriptor.
-The `start_page` key accepts the xref:page:page-id.adoc[page ID structure] and must point to an existing page in the same component (e.g., `ROOT:home.adoc`, `module-one:overview.adoc`).
+```yaml
+start_page: ROOT:overview.adoc
+```
 
-If a start page isn't specified, and the component does not have a ROOT module with an [.path]_index.adoc_ page, the reader will be directed to a 404 page when navigating to that component from the xref:navigation:index.adoc#component-dropdown[component version selector] on any page.
+The `start_page` key accepts a xref:page:page-id.adoc[resource ID] that points to an existing page in the same component.
 
-.Start page value examples
-[source,yaml]
-----
-start_page: ROOT:home.adoc
+.*Start page value examples*
+* security:get-started.adoc
+* ROOT:welcome.adoc
+* group-governance:help.adoc
 
-# or
-
-start_page: security:protocols/ssh.adoc
-----
-
-IMPORTANT: A component must have a ROOT module that contains an [.path]_index.adoc_ page.
-Otherwise, a start page must be specified using the `start_page` key in the component descriptor.
+If Antora can't find [.path]_index.adoc_ in a component's ROOT module and a start page isn't specified in the component descriptor, site visitors will be directed to a 404 page when navigating to that component from the xref:navigation:index.adoc#component-dropdown[component version selector] on any page.
 
 [#nav-key]
-=== nav
+=== `nav`
 
-The nav key accepts a list of xref:navigation:filenames-and-locations.adoc[navigation files].
-Each xref:navigation:register-navigation-files.adoc[value specifies the path to a navigation file] (e.g., [.path]_modules/module-name/nav.adoc_).
-The order of the values dictates the order the contents of the navigation files are assembled in the published xref:navigation:index.adoc#component-menu[component menu].
+The `nav` key accepts a list of xref:navigation:filenames-and-locations.adoc[navigation files].
+
+```yaml
+nav:
+- modules/ROOT/nav.adoc
+- modules/module-three/nav.adoc
+- modules/module-one/install-nav.adoc
+```
+
+Each xref:navigation:register-navigation-files.adoc[value specifies the path to a navigation file] (e.g., [.path]_modules/name-of-module/name-of-nav-file.adoc_).
+The order the values are listed in dictates the order the contents of the navigation files are assembled in the site's xref:navigation:index.adoc#component-menu[component menu].
+
+////
+== Learn more
+
+* xref:component-versions.adoc[Component versions and branches]
+* xref:modules.adoc[Modules]
+////
