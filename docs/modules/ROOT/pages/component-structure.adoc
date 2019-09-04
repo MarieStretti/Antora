@@ -17,7 +17,7 @@ The source files of a documentation component are organized into a standard dire
 Antora uses this structure to automatically assign preset behavior and metadata to the files stored in each directory.
 The figure below shows an example of this standard directory structure.
 
-image::component-dir-structure-with-assets.png[alt="Directory structure of a component that uses the module subdirectories named assets, pages, examples, and partials.",width="200"]
+image::component-dir-structure.png[alt="Directory structure of a component that uses the module subdirectories named attachments, images, pages, examples, and partials.",width="200"]
 
 At a minimum, a documentation component must contain a component descriptor file ([.path]_antora.yml_), a [.path]_modules_ directory, one module directory, such as [.path]_ROOT_ or a name you choose ([.path]_name-of-module_), and one family directory ([.path]_attachments_, [.path]_examples_, [.path]_images_, [.path]_pages_, or [.path]_partials_).
 
