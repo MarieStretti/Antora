@@ -69,31 +69,30 @@ This arrangement mirrors how software developers work on source code.
 
 Let's look at each of these directories and their content type in more detail.
 
-[#assets-dir]
-== Assets
-
-Any attachment or image files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets_ directory.
-
-image::assets-dir-structure.png[The assets subdirectory of a module that contains an images folder and an attachments folder,168]
-
-The subdirectory names automatically recognized by Antora and associated to the corresponding AsciiDoc macros are:
-
-* [.path]_assets/attachments_
-* [.path]_assets/images_
-//* [.path]_assets/videos_
-
-You don't need to set the path to these predefined subdirectories in the header of your AsciiDoc files.
-This is managed automatically by Antora.
-
 [#attachments-dir]
-=== Attachment files
+== Attachments
 
-An attachment is a resource that you want your user to download, such as a PDF or a ZIP archive of a sample project.
-Attachment files are saved in [.path]_assets/attachments_.
+image::attachments-dir.png[The attachments subdirectory of a module,131]
+
+An attachment is a resource that you want your user to download, such as a ZIP archive of a sample project.
+Attachment files are saved in the [.path]_attachments_ directory.
 A link to an attachment is created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
+=== Large files and GitLab / GitHub
+
+If your documentation component contains large asset files, we don't recommend that you store them in a regular GitLab or GitHub repository.
+Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
+
+[#examples-dir]
+== Examples
+
+image::examples-dir-structure-with-assets.png[The examples subdirectory of a module,174]
+
+The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or data values.
+An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
+
 [#images-dir]
-=== Image files
+== Images
 
 Image files are saved in [.path]_assets/images_.
 Supported image file formats include:
@@ -110,19 +109,6 @@ Images are inserted into a page using the xref:asciidoc:insert-image.adoc[AsciiD
 
 //Self-hosted video files are saved in [.path]_assets/videos_ in the same module where the page that references that video is located.
 //Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
-
-=== Large files and GitLab / GitHub
-
-If your documentation component contains large asset files, we don't recommend that you store them in a regular GitLab or GitHub repository.
-Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
-
-[#examples-dir]
-== Example files
-
-image::examples-dir-structure-with-assets.png[The examples subdirectory of a module,174]
-
-The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or data values.
-An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
 
 [#pages-dir]
 == Pages
@@ -159,7 +145,7 @@ Learn more:
 * xref:page:create-standard-page.adoc[Create a standard page]
 
 [#partials-dir]
-=== Partial AsciiDoc files
+=== Partials
 
 image::partials-dir-structure-with-assets.png[The partials subdirectory of a module,176]
 
@@ -167,3 +153,19 @@ xref:page:index.adoc#partial[Partials] are AsciiDoc files.
 They're stored in the [.path]_partials_ directory in a module.
 //(or [.path]_pages/_partials_) in the same module as the standard pages that use them.
 A partial is inserted into a standard page using the xref:asciidoc:include-partial.adoc[AsciiDoc include directive and the partial's resource ID].
+
+[#assets-dir]
+== Assets
+
+Any attachment or image files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets_ directory.
+
+image::assets-dir-structure.png[The assets subdirectory of a module that contains an images folder and an attachments folder,168]
+
+The subdirectory names automatically recognized by Antora and associated to the corresponding AsciiDoc macros are:
+
+* [.path]_assets/attachments_
+* [.path]_assets/images_
+//* [.path]_assets/videos_
+
+You don't need to set the path to these predefined subdirectories in the header of your AsciiDoc files.
+This is managed automatically by Antora.
