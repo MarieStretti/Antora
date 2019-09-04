@@ -1,4 +1,4 @@
-= Documentation Components
+= Documentation Components and Repositories
 //:page-alias: component-structure.adoc
 
 Antora uses content organized into documentation components when it generates a documentation site.
