@@ -33,7 +33,7 @@ If you only create one module in a component, we highly recommend that you name 
 The following figure illustrates a documentation component with a few example folders and files added for context.
 All of a component's modules must be stored in [.path]_modules_.
 
-image::modules-dir-structure-with-assets.png[alt="Directory structure of a component containing two modules. The ROOT module contains all of the optional module subdirectories and sample file type in each folder for context.",width="210"]
+image::module-dir-structure.png[alt="Directory structure of a component containing two modules. The ROOT module contains all of the optional family subdirectories with a sample file type in each folder for context.",width="200"]
 
 Let's examine the role the _ROOT_ module and the requirements of the subdirectories a module can contain.
 
@@ -42,7 +42,7 @@ Let's examine the role the _ROOT_ module and the requirements of the subdirector
 
 The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
 
-image::root-dir-structure.png[alt="Directory structure of the ROOT module that uses the subdirectories named assets, pages, examples, and partials.",width="200"]
+image::root-dir-structure.png[alt="Directory structure of the ROOT module that uses the subdirectories named attachments, examples, images, pages, and partials.",width="165"]
 
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
 (You can see an example of a ROOT page's URL in <<pages-dir,pages>>.)
