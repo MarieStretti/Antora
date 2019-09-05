@@ -253,22 +253,38 @@ If you remove the [.path]_build/_ directory, the repositories will have to be do
 
 == Publish to GitHub Pages
 
-Antora is designed to create sites that run anywhere, whether it be a static web host or the local filesystem.
-However, some hosts offer "`features`" that interfere with Antora's output.
+Antora is designed to create sites that run anywhere, whether it be on a static web host or the local filesystem.
+However, some hosts offer "`features`" that mess with Antora's output.
 GitHub Pages is one of those hosts.
 
-By default, GitHub Pages runs all files through another static site generator named Jekyll.
-Since Antora already produces a ready-made site, there's no need for this.
-It's also problematic since Jekyll has the nasty side effect of removing all files that begin with an underscore (`+_+`).
-Antora puts UI files in a directory named `+_+`, which Jekyll subsequently erases.
-As a result, no UI.
-Antora also puts images in a folder named `_images` inside each module, so no images either.
+By default, GitHub Pages runs all files through another static site generator named Jekyll (even if they aren't using a Jekyll project structure).
+Since Antora already produces a ready-made site, there's absolutely no need for this step.
+This processing is particularly problematic since Jekyll has the nasty side effect of removing all files that begin with an underscore (`+_+`).
+Antora puts UI files in a directory named `+_+`, and places images under the directory name `+_images+`, which Jekyll subsequently erases.
+As a result, no UI, no images.
 
 Fortunately, there's a way to disable this "`feature`" of GitHub Pages.
-The solution is to add a [.path]_.nojekyll_ file to the root of the published site.
-Simply create an empty [.path]_.nojekyll_ file in the output directory before committing the files to GitHub Pages.
+The solution is to add a [.path]_.nojekyll_ file to the root folder of the published site (i.e., the output directory).
+
+One way to add this file is to touch the [.path]_.nojekyll_ file in the output directory after Antora runs, but before committing the files to GitHub Pages.
+For example:
 
  $ touch build/site/.nojekyll
 
+To avoid the need for the extra command, the other way to do it is to inject the file using Antora's supplemental UI feature.
+To do so, add the following `supplemental_files` block under the `ui` category in your playbook file:
+
+[source,yml]
+----
+ui:
+  bundle:
+    url: <url-of-bundle-goes-here>
+  supplemental_files:
+  - path: .nojekyll
+  - path: ui.yml
+    contents: "static_files: [ .nojekyll ]"
+----
+
 The presence of the [.path]_.nojekyll_ file at the root of the `gh-pages` branch tells GitHub Pages not to run the published files through Jekyll.
-The result is that your Antora-made site will work as expected (and will be available sooner).
+The result is that your Antora-made site will work as expected.
+(It will be available sooner since GitHub Pages doesn't waste time running Jekyll).
