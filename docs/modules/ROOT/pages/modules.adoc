@@ -74,14 +74,14 @@ Let's look at each of these directories and their content type in more detail.
 
 image::attachments-dir.png[The attachments subdirectory of a module,179]
 
-An attachment is a resource, such as a ZIP archive of a sample project, that a site visitor can download via a link.
+An attachment is a resource, such as the ZIP archive of a sample project, that a site visitor can download via a link.
 Attachment files are saved in the [.path]_attachments_ directory.
-A link to an attachment is created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
+A link to an attachment is created using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
 === Binaries and other large files
 
-If your documentation component contains large attachment files, such as binaries of sample projects or libraries, we don't recommend that you store them in a regular GitLab or GitHub repository.
-Instead, you should host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
+If your documentation component contains large attachment files, such as binaries of sample projects or libraries, we don't recommend storing them in a regular GitLab or GitHub repository.
+Instead, host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
 
 [#examples-dir]
 == Examples
@@ -89,7 +89,7 @@ Instead, you should host them in a binary repository such as Bintray or S3, or u
 image::examples-dir.png[The examples subdirectory of a module,176]
 
 The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or sample data sets.
-An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
+An example is inserted into a page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
 
 [#images-dir]
 == Images
@@ -97,34 +97,33 @@ An example is inserted into a standard page using the xref:asciidoc:include-exam
 image::images-dir.png[The images subdirectory of a module,176]
 
 Image files are saved in the [.path]_images_ directory and inserted into a page using the block or inline xref:asciidoc:insert-image.adoc[AsciiDoc image macro].
-Supported image file formats include:
-
-* PNG
-* JPG
-* SVG
-* GIF (static and animated)
+AsciiDoc supports PNG, JPG, SVG, and GIF (static and animated) image formats.
 
 [#pages-dir]
 == Pages
 
-AsciiDoc document files that are destined to become xref:page:index.adoc#standard[standard pages] are stored in the [.path]_pages_ folder of a module.
+image::pages-dir.png[The pages subdirectory of a module,174]
+
+AsciiDoc files destined to become xref:page:index.adoc#standard[site pages] are stored in the [.path]_pages_ directory of a module.
 These files are converted to HTML and automatically published as individual pages in the generated site.
 
-image::pages-dir-structure-with-assets.png[The pages subdirectory of a module,176]
+=== URLs for ROOT module pages
 
-When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
+When the documents stored in the [.path]_pages_ directory of ROOT are published to a documentation site, they're promoted a level above any other modules`' pages in that component's URL.
 
-Let's say the component illustrated above is the documentation for your newest software product, Hyper Lemur.
+Let's say the component illustrated above is the documentation for your newest software product, _Hyper Lemur_.
 What would the URL for [.path]_modules/ROOT/pages/deploy.adoc_ look like?
 
 //.URL for deploy.adoc page in ROOT module
 image::root-page-url.svg[ROOT module page URL,role=grow-x]
 
 The xref:playbook:configure-site.adoc#configure-url[base URL is set in the playbook].
-The component name, in this case _hyperlemur_, is set in the xref:component-descriptor.adoc#name-key[component descriptor].
+The component name segment, in this case _hyperlemur_, is set using the `name` key in the xref:component-descriptor.adoc#name-key[component descriptor].
 The page name segment is the basename of the AsciiDoc file.
-Notice that the name of the module, ROOT, isn't in the URL.
-Files that are stored directly in the [.path]_ROOT_ folder are published at the root of the component.
+Notice that the name of the module, `ROOT`, isn't in the URL.
+Files that are stored directly in a ROOT module are published at the root of the component.
+
+=== URLs for named module pages
 
 In contrast, pages that are stored in other modules will be preceded by the name of the module.
 Let's see what the URL for [.path]_modules/a-module/pages/user-management.adoc_ would look like.
@@ -134,19 +133,14 @@ image::module-page-url.svg[Module page URL,role=grow-x]
 
 The module name is the name of the module directory where that page is stored.
 
-Learn more:
-
-* xref:page:create-standard-page.adoc[Create a standard page]
-
 [#partials-dir]
 == Partials
 
-image::partials-dir-structure-with-assets.png[The partials subdirectory of a module,176]
+image::partials-dir.png[The partials subdirectory of a module,177]
 
 xref:page:index.adoc#partial[Partials] are AsciiDoc files.
 They're stored in the [.path]_partials_ directory in a module.
-//(or [.path]_pages/_partials_) in the same module as the standard pages that use them.
-A partial is inserted into a standard page using the xref:asciidoc:include-partial.adoc[AsciiDoc include directive and the partial's resource ID].
+A partial is inserted into a page using the xref:asciidoc:include-partial.adoc[AsciiDoc include directive and the partial's resource ID].
 
 [#assets-dir]
 == Assets
