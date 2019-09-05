@@ -35,7 +35,7 @@ All of a component's modules must be stored in [.path]_modules_.
 
 image::module-dir-structure.png[alt="Directory structure of a component containing two modules. The ROOT module contains all of the optional family subdirectories with a sample file type in each folder for context.",width="200"]
 
-Let's examine the role the _ROOT_ module and the requirements of the subdirectories a module can contain.
+Let's examine the role of the _ROOT_ module and the requirements of the subdirectories a module can contain.
 
 [#root-dir]
 == ROOT module
@@ -72,43 +72,37 @@ Let's look at each of these directories and their content type in more detail.
 [#attachments-dir]
 == Attachments
 
-image::attachments-dir.png[The attachments subdirectory of a module,131]
+image::attachments-dir.png[The attachments subdirectory of a module,179]
 
-An attachment is a resource that you want your user to download, such as a ZIP archive of a sample project.
+An attachment is a resource, such as a ZIP archive of a sample project, that a site visitor can download via a link.
 Attachment files are saved in the [.path]_attachments_ directory.
 A link to an attachment is created in a page using the xref:asciidoc:link-attachment.adoc[AsciiDoc link macro].
 
-=== Large files and GitLab / GitHub
+=== Binaries and other large files
 
-If your documentation component contains large asset files, we don't recommend that you store them in a regular GitLab or GitHub repository.
-Instead, you should either host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
+If your documentation component contains large attachment files, such as binaries of sample projects or libraries, we don't recommend that you store them in a regular GitLab or GitHub repository.
+Instead, you should host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
 
 [#examples-dir]
 == Examples
 
-image::examples-dir-structure-with-assets.png[The examples subdirectory of a module,174]
+image::examples-dir.png[The examples subdirectory of a module,176]
 
-The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or data values.
+The [.path]_examples_ directory contains non-AsciiDoc file types, such as source code or sample data sets.
 An example is inserted into a standard page using the xref:asciidoc:include-example.adoc[AsciiDoc include directive and the example's resource ID].
 
 [#images-dir]
 == Images
 
-Image files are saved in [.path]_assets/images_.
+image::images-dir.png[The images subdirectory of a module,176]
+
+Image files are saved in the [.path]_images_ directory and inserted into a page using the block or inline xref:asciidoc:insert-image.adoc[AsciiDoc image macro].
 Supported image file formats include:
 
 * PNG
 * JPG
 * SVG
 * GIF (static and animated)
-
-Images are inserted into a page using the xref:asciidoc:insert-image.adoc[AsciiDoc image macro] (block or inline).
-
-//[#videos-dir]
-//=== Video files
-
-//Self-hosted video files are saved in [.path]_assets/videos_ in the same module where the page that references that video is located.
-//Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
 
 [#pages-dir]
 == Pages
@@ -145,7 +139,7 @@ Learn more:
 * xref:page:create-standard-page.adoc[Create a standard page]
 
 [#partials-dir]
-=== Partials
+== Partials
 
 image::partials-dir-structure-with-assets.png[The partials subdirectory of a module,176]
 
@@ -165,7 +159,13 @@ The subdirectory names automatically recognized by Antora and associated to the 
 
 * [.path]_assets/attachments_
 * [.path]_assets/images_
-//* [.path]_assets/videos_
 
 You don't need to set the path to these predefined subdirectories in the header of your AsciiDoc files.
 This is managed automatically by Antora.
+
+
+//[#videos-dir]
+//=== Video files
+
+//Self-hosted video files are saved in [.path]_assets/videos_ in the same module where the page that references that video is located.
+//Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
