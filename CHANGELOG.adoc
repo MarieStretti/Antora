@@ -11,6 +11,7 @@ This project utilizes semantic versioning.
 
 * *site-mapper*: Generate a robots.txt file if the site.robots key is set in the playbook (#219) (@djencks)
 * *content-aggregator*: Make fs object used by git pluggable (assign fs property to git core named "antora") (#476)
+* *content-aggregator*: Prune stale branches and tags when fetching repository updates (#374)
 
 === Changed
 
