@@ -5,6 +5,10 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== 2.1.0 (2019-08-27)
+
+_No changes from previous release._
+
 == 2.1.0-rc.1 (2019-08-26)
 
 === Added
