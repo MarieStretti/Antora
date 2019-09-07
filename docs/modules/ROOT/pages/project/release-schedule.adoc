@@ -4,31 +4,30 @@
 
 Each major release line of the Antora Core components is typically supported for one year after it enters general availability (GA).
 
-[cols=6]
+[cols=6*]
 |===
-|	|Latest Release |Status |GA	|Maintenance |EOL
+| |Latest Release |Status |GA |Maintenance |EOL
 
-|Antora 3.0
+|Antora 3.x
 |NA
 |Pending
 |~ 2020/01
 |TBD
 |TBD
 
-|Antora 2.0
+|Antora 2.x
 |{page-component-version}
 |Active
 |2018/12/25
 |~ 2020/01/25
 |~ 2020/04/25
 
-|Antora 1.0
+|Antora 1.x
 |1.1.1
 |Maintenance
 |2018/08/28
 |2019/03/25
 |2019/08/31
-
 |===
 
 General Availability (GA):: A release line enters general availability on the date an initial, final major version of the software is released and available for download.
