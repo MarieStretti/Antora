@@ -164,7 +164,7 @@ _No changes from previous release._
 
 * *content-classifier*: Allow a page alias to reference any component or component version, regardless of whether they exist in the catalog (#303)
 * *asciidoc-loader*: Fix memory leak caused by Asciidoctor converter extension (#306)
-* *asciidoc-loader*: Fix memory leak causes by custom Asciidoctor extensions registered using the DSL
+* *asciidoc-loader*: Fix memory leak caused by custom Asciidoctor extensions registered using the DSL (#306)
 * *asciidoc-loader*: Leave include unresolved if target matches resource ID but family segment is missing (#297)
 
 == 1.1.0 (2018-08-28)
