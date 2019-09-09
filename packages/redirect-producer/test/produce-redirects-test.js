@@ -110,6 +110,26 @@ describe('produceRedirects()', () => {
         expect(html).to.not.include('undefined')
       })
     })
+
+    it('should not add canonical link element if site.url is /', () => {
+      playbook.site.url = '/'
+      produceRedirects(playbook, contentCatalog)
+      contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
+        const html = file.contents.toString()
+        expect(html).to.not.include('<link rel="canonical"')
+        expect(html).to.not.include('undefined')
+      })
+    })
+
+    it('should not add canonical link element if site.url is root-relative path', () => {
+      playbook.site.url = '/docs'
+      produceRedirects(playbook, contentCatalog)
+      contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
+        const html = file.contents.toString()
+        expect(html).to.not.include('<link rel="canonical"')
+        expect(html).to.not.include('undefined')
+      })
+    })
   })
 
   describe('netlify facility', () => {
@@ -200,8 +220,28 @@ describe('produceRedirects()', () => {
       ])
     })
 
-    it('should prefix each rewrite rule with URL context', () => {
+    it('should prefix each rewrite rule with URL context derived from absolute URL', () => {
       playbook.site.url = 'https://example.org/docs'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('_redirects')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.eql([
+        '/docs/ /docs/component-a/module-a/the-target.html 301',
+        '/docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html 301',
+        '/docs/component-a/module-a/old-target/ /docs/component-a/module-a/the-target.html 301',
+        '/docs/component-a/module-a/old-target/index.html /docs/component-a/module-a/the-target.html 301',
+        '/docs/component-a/module-b/alias-b.html /docs/component-a/module-a/the-target.html 301',
+        '/docs/component-b/1.0/alias-c.html /docs/component-a/module-a/the-target.html 301',
+        '/docs/index.html /docs/component-a/module-a/the-target.html 301',
+      ])
+    })
+
+    it('should prefix each rewrite rule with URL context derived from root-relative URL', () => {
+      playbook.site.url = '/docs'
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('_redirects')
@@ -304,8 +344,26 @@ describe('produceRedirects()', () => {
       ])
     })
 
-    it('should prefix each rewrite rule with URL context', () => {
+    it('should prefix each rewrite rule with URL context derived from absolute URL', () => {
       playbook.site.url = 'https://example.org/docs'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
+      const rules = result[0].contents
+        .toString()
+        .split('\n')
+        .sort()
+      expect(rules).to.eql([
+        'location = /docs/component-a/module-a/alias-a.html { return 301 /docs/component-a/module-a/the-target.html; }',
+        'location = /docs/component-a/module-a/old-target/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
+        'location = /docs/component-a/module-b/alias-b.html { return 301 /docs/component-a/module-a/the-target.html; }',
+        'location = /docs/component-b/1.0/alias-c.html { return 301 /docs/component-a/module-a/the-target.html; }',
+        'location = /docs/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
+      ])
+    })
+
+    it('should prefix each rewrite rule with URL context derived from root-relative URL', () => {
+      playbook.site.url = '/docs'
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')

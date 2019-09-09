@@ -42,6 +42,22 @@ describe('mapSite()', () => {
     expect(sitemaps).to.be.empty()
   })
 
+  it('should not generate sitemaps if site URL is /', () => {
+    playbook.site.url = '/'
+    const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
+    const pages = contentCatalog.findBy({ family: 'page' })
+    const sitemaps = mapSite(playbook, pages)
+    expect(sitemaps).to.be.empty()
+  })
+
+  it('should not generate sitemaps if site URL is a root-relative path', () => {
+    playbook.site.url = '/docs'
+    const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
+    const pages = contentCatalog.findBy({ family: 'page' })
+    const sitemaps = mapSite(playbook, pages)
+    expect(sitemaps).to.be.empty()
+  })
+
   it('should generate single sitemap at root of site for a site with a single component', () => {
     const contentCatalog = mockContentCatalog([
       { family: 'page', relative: 'index.adoc' },

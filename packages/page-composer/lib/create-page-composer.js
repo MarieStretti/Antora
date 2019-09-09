@@ -102,9 +102,18 @@ function buildSiteUiModel (playbook, contentCatalog) {
 
   let siteUrl = playbook.site.url
   if (siteUrl) {
-    if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
-    if ((model.path = new URL(siteUrl).pathname) === '/') model.path = ''
-    model.url = siteUrl
+    if (siteUrl === '/') {
+      model.url = siteUrl
+      model.path = ''
+    } else {
+      if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
+      if (siteUrl.charAt() === '/') {
+        model.path = siteUrl
+      } else if ((model.path = new URL(siteUrl).pathname) === '/') {
+        model.path = ''
+      }
+      model.url = siteUrl
+    }
   }
 
   const startPage = contentCatalog.getSiteStartPage()
@@ -176,7 +185,8 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   }
   Object.assign(model, getNavContext(url, title, navigation))
 
-  if (site.url) {
+  // NOTE the site URL has already been normalized at this point
+  if (site.url && site.url.charAt() !== '/') {
     // NOTE not always the same as the latest component version (since the page might cease to exist)
     const latestPageVersion = versions
       ? versions.find((candidate) => !(candidate.prerelease || candidate.missing))

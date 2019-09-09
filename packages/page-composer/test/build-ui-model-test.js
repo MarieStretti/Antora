@@ -144,6 +144,12 @@ describe('build UI model', () => {
       expect(model.url).to.not.exist()
     })
 
+    it('should set url property to / if site.url property is set to / in playbook', () => {
+      playbook.site.url = '/'
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(model.url).to.equal('/')
+    })
+
     it('should set url property if site.url property is set in playbook', () => {
       playbook.site.url = 'https://example.com'
       const model = buildSiteUiModel(playbook, contentCatalog)
@@ -168,7 +174,7 @@ describe('build UI model', () => {
     })
 
     it('should set path property to empty if site.url property set in playbook has no subpath', () => {
-      ;['https://example.com', 'https://example.com/'].forEach((siteUrl) => {
+      ;['https://example.com', 'https://example.com/', '/'].forEach((siteUrl) => {
         playbook.site.url = siteUrl
         const model = buildSiteUiModel(playbook, contentCatalog)
         expect(model.path).to.equal('')
@@ -176,7 +182,7 @@ describe('build UI model', () => {
     })
 
     it('should set path property to pathname of URL if site.url property set in playbook', () => {
-      ;['https://example.com/docs', 'https://example.com/docs/'].forEach((siteUrl) => {
+      ;['https://example.com/docs', 'https://example.com/docs/', '/docs', '/docs/'].forEach((siteUrl) => {
         playbook.site.url = siteUrl
         const model = buildSiteUiModel(playbook, contentCatalog)
         expect(model.path).to.equal('/docs')
@@ -1067,6 +1073,19 @@ describe('build UI model', () => {
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.canonicalUrl).to.exist()
       expect(model.canonicalUrl).to.equal('http://example.com/the-component/1.0/the-page.html')
+    })
+
+    it('should not set canonicalUrl property if url is not absolute', () => {
+      site.url = '/docs'
+      component.versions.unshift({
+        version: '2.0',
+        title: 'The Component',
+        url: '/the-component/2.0/index.html',
+      })
+      const files = { '1.0': file }
+      contentCatalog.getById = spy((filter) => files[filter.version])
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.canonicalUrl).not.to.exist()
     })
 
     it('should not set canonicalUrl property if all versions are prereleases', () => {

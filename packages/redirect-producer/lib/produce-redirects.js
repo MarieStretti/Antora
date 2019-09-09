@@ -33,7 +33,10 @@ function produceRedirects (playbook, contentCatalog) {
   const aliases = contentCatalog.findBy({ family: 'alias' })
   if (!aliases.length) return []
   let siteUrl = playbook.site.url
-  if (siteUrl && siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
+  if (siteUrl) {
+    if (siteUrl === '/') siteUrl = ''
+    else if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
+  }
   switch (playbook.urls.redirectFacility) {
     case 'static':
       return populateStaticRedirectFiles(aliases, siteUrl)
@@ -51,8 +54,12 @@ function produceRedirects (playbook, contentCatalog) {
 }
 
 function extractUrlPath (url) {
-  let urlPath
-  return url && (urlPath = new URL(url).pathname) === '/' ? '' : urlPath
+  if (url) {
+    if (url.charAt() === '/') return url
+    const urlPath = new URL(url).pathname
+    return urlPath === '/' ? '' : urlPath
+  }
+  return ''
 }
 
 function populateStaticRedirectFiles (files, siteUrl) {
@@ -63,7 +70,7 @@ function populateStaticRedirectFiles (files, siteUrl) {
   return []
 }
 
-function createNetlifyRedirects (files, urlPath = '', includeDirectoryRedirects = false) {
+function createNetlifyRedirects (files, urlPath, includeDirectoryRedirects = false) {
   const rules = files.reduce((accum, file) => {
     delete file.out
     const from = `${urlPath}${file.pub.url.replace(ALL_SPACES_RX, '%20')}`
@@ -79,7 +86,7 @@ function createNetlifyRedirects (files, urlPath = '', includeDirectoryRedirects 
   return [redirectsFile]
 }
 
-function createNginxRewriteConf (files, urlPath = '') {
+function createNginxRewriteConf (files, urlPath) {
   const rules = files.map((file) => {
     delete file.out
     const from = `${urlPath}${file.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
@@ -101,11 +108,11 @@ function unpublish (files) {
 function createStaticRedirectContents (file, siteUrl) {
   const targetUrl = file.rel.pub.url
   const relativeUrl = computeRelativeUrlPath(file.pub.url, targetUrl)
-  const canonicalUrl = siteUrl ? siteUrl + targetUrl : undefined
-  const canonicalLink = siteUrl ? `\n<link rel="canonical" href="${canonicalUrl}">` : ''
+  const canonicalUrl = siteUrl && siteUrl.charAt() !== '/' ? siteUrl + targetUrl : undefined
+  const canonicalLink = canonicalUrl ? `<link rel="canonical" href="${canonicalUrl}">\n` : ''
   return Buffer.from(`<!DOCTYPE html>
-<meta charset="utf-8">${canonicalLink}
-<script>location="${relativeUrl}"</script>
+<meta charset="utf-8">
+${canonicalLink}<script>location="${relativeUrl}"</script>
 <meta http-equiv="refresh" content="0; url=${relativeUrl}">
 <meta name="robots" content="noindex">
 <title>Redirect Notice</title>
