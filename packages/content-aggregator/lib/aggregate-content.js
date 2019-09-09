@@ -461,6 +461,7 @@ function entryToFile (entry) {
   return git.readObject(entry).then(({ object: contents }) => {
     const stat = new fs.Stats()
     stat.mode = entry.mode
+    stat.mtime = undefined
     stat.size = contents.length
     return new File({ path: entry.path, contents, stat })
   })

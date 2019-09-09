@@ -18,6 +18,8 @@ This project utilizes semantic versioning.
 
 * *playbook-builder*: Map git.ensure_git_suffix key in playbook schema and deprecate git.ensureGitSuffix key (#477)
 * *playbook-builder*: Validate value of site.url key in playbook is an absolute URL or pathname (i.e., root-relative path) (#479)
+* *content-aggregator*: Set the mtime of files read from git to undefined instead of an invalid date (#471)
+* *ui-bundle*: Set the mtime of supplemental UI files created from the playbook to undefined instead of an invalid date (#471)
 
 == 2.1.0 (2019-08-27)
 

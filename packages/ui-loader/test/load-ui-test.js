@@ -312,7 +312,11 @@ describe('loadUi()', () => {
           contents: supplementalFileContents['img/icon.png'].toString(),
         },
       ]
-      verifySupplementalFiles(await loadUi(playbook), false)
+      const uiCatalog = await loadUi(playbook)
+      verifySupplementalFiles(uiCatalog, false)
+      const iconFile = uiCatalog.getFiles().find((it) => it.path === 'img/icon.png')
+      expect(iconFile.stat.mtime).to.be.undefined()
+      expect(iconFile.stat.isFile()).to.be.true()
     })
 
     it('from file with string contents that does not contain any newline characters', async () => {

@@ -884,6 +884,14 @@ describe('aggregateContent()', function () {
         expect(paths).to.have.members(expectedPaths)
         expect(relatives).to.have.members(expectedPaths)
         files.forEach((file) => expect(file.stat.isFile()).to.be.true())
+        if (repoBuilder.bare || repoBuilder.remote) {
+          files.forEach((file) => expect(file.stat.mtime).to.be.undefined())
+        } else {
+          files.forEach((file) => {
+            expect(file.stat.mtime).not.to.be.undefined()
+            expect(file.stat.mtime.getTime()).not.to.be.NaN()
+          })
+        }
       })
     })
 
