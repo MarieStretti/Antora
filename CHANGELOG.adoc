@@ -7,6 +7,13 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Changed
+
+*page-composer*: Allow site.url in playbook to be a root-relative pathname (#478)
+*page-composer*: Site site.path in UI model to empty string if site.url in playbook is a root-relative pathname (#478)
+*redirect-producer*: Build redirects even when site.url in playbook is a root-relative pathname (#478)
+*site-mapper*: Skip site mapping unless site.url in playbook is an absolute URL (#478)
+
 === Fixed
 
 * *playbook-builder*: Map git.ensure_git_suffix key in playbook schema and deprecate git.ensureGitSuffix key (#477)

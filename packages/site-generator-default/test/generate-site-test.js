@@ -202,7 +202,7 @@ describe('generateSite()', function () {
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', 'https://example.com/docs')
   }).timeout(timeoutOverride)
 
-  it('should generate 404 page if site url is set in playbook', async () => {
+  it('should generate 404 page if site url is set to absolute URL in playbook', async () => {
     playbookSpec.site.url = 'https://example.com'
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
@@ -211,6 +211,28 @@ describe('generateSite()', function () {
     expect($('head > title')).to.have.text('Page Not Found :: The Site')
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/_/css/site.css')
     expect($('body > script:first-of-type')).to.have.attr('src', '/_/js/site.js')
+  }).timeout(timeoutOverride)
+
+  it('should generate 404 page if site url is set to / in playbook', async () => {
+    playbookSpec.site.url = '/'
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, '404.html')).to.be.a.file()
+    $ = loadHtmlFile('404.html')
+    expect($('head > title')).to.have.text('Page Not Found :: The Site')
+    expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/_/css/site.css')
+    expect($('body > script:first-of-type')).to.have.attr('src', '/_/js/site.js')
+  }).timeout(timeoutOverride)
+
+  it('should generate 404 page if site url is set to root-relative URL in playbook', async () => {
+    playbookSpec.site.url = '/docs'
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, '404.html')).to.be.a.file()
+    $ = loadHtmlFile('404.html')
+    expect($('head > title')).to.have.text('Page Not Found :: The Site')
+    expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/docs/_/css/site.css')
+    expect($('body > script:first-of-type')).to.have.attr('src', '/docs/_/js/site.js')
   }).timeout(timeoutOverride)
 
   it('should pass AsciiDoc attributes defined in playbook to AsciiDoc processor', async () => {
