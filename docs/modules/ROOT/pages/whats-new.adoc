@@ -6,12 +6,12 @@
 :url-gitlab: https://gitlab.com
 :url-git-antora: {url-gitlab}/antora/antora
 :url-issues: {url-git-antora}/issues
-:url-milestone-2-1: {url-issues}?scope=all&state=closed&milestone_title=v2.1.x
+:url-milestone-2-1-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.0
 :url-mr: {url-git-antora}/merge_requests
 
 = Antora 2.1.0
 
-_**Release date:** 2019.08.27 | *Milestone (closed issues):* {url-milestone-2-1}[v2.1.0^]_
+_**Release date:** 2019.08.27 | *Issue label:* {url-milestone-2-1-0}[2.1.0^]_
 
 The Antora 2.1.0 release provides more image capabilities, adds a new page attribute and playbook key, and improves path handling for 404 pages and rewrite rules.
 
