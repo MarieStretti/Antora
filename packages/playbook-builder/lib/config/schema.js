@@ -21,8 +21,8 @@ module.exports = {
       arg: 'title',
     },
     url: {
-      doc: 'The base URL of the published site. Should not include trailing slash.',
-      format: String,
+      doc: 'The base URL (absolute URL or pathname) of the published site. Should not include a trailing slash.',
+      format: 'url-or-pathname',
       default: undefined,
       arg: 'url',
       env: 'URL',

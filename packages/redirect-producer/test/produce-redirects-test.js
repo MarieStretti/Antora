@@ -121,7 +121,7 @@ describe('produceRedirects()', () => {
       })
     })
 
-    it('should not add canonical link element if site.url is root-relative path', () => {
+    it('should not add canonical link element if site.url is a pathname', () => {
       playbook.site.url = '/docs'
       produceRedirects(playbook, contentCatalog)
       contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
@@ -240,7 +240,7 @@ describe('produceRedirects()', () => {
       ])
     })
 
-    it('should prefix each rewrite rule with URL context derived from root-relative URL', () => {
+    it('should prefix each rewrite rule with URL context derived from pathname', () => {
       playbook.site.url = '/docs'
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
@@ -362,7 +362,7 @@ describe('produceRedirects()', () => {
       ])
     })
 
-    it('should prefix each rewrite rule with URL context derived from root-relative URL', () => {
+    it('should prefix each rewrite rule with URL context derived from pathname', () => {
       playbook.site.url = '/docs'
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
