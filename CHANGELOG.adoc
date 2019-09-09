@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Changed
 
+* Upgrade dependencies
 *page-composer*: Allow site.url in playbook to be a pathname (i.e., root-relative path) (#478)
 *page-composer*: Site site.path in UI model to empty string if site.url in playbook is a pathname (#478)
 *redirect-producer*: Build redirects even when site.url in playbook is a pathname (#478)

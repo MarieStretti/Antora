@@ -11,10 +11,10 @@
     "chai-spies": "~1.0",
     "cheerio": "1.0.0-rc.3",
     "dirty-chai": "~2.0",
-    "eslint": "~6.2",
-    "eslint-config-standard": "~14.0",
+    "eslint": "~6.3",
+    "eslint-config-standard": "~14.1",
     "eslint-plugin-import": "~2.18",
-    "eslint-plugin-node": "~9.1",
+    "eslint-plugin-node": "~10.0",
     "eslint-plugin-promise": "~4.2",
     "eslint-plugin-standard": "~4.0",
     "gulp": "~4.0",
@@ -29,7 +29,7 @@
     "stream-to-array": "~2.3",
     "through2": "~3.0",
     "vinyl-fs": "~3.0",
-    "yargs-parser": "~13.1"
+    "yargs-parser": "~14.0"
   },
   "nyc": {
     "cache": true,
