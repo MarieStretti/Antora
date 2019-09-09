@@ -6,15 +6,15 @@
 :url-gitlab: https://gitlab.com
 :url-git-antora: {url-gitlab}/antora/antora
 :url-issues: {url-git-antora}/issues
-:url-milestone-2-0: {url-issues}?milestone_title=v2.0.x&scope=all&state=closed
-:url-milestone-2-0-1: {url-issues}?milestone_title=v2.0.1&scope=all&state=closed
+:url-milestone-2-0-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.0.0
+:url-milestone-2-0-1: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.0.1
 :url-mr: {url-git-antora}/merge_requests
 
 Learn about what's new in the 2.0 release series of Antora.
 
 = Antora 2.0.1
 
-_**Release date:** 2019.08.22 | *Milestone (closed issues):* {url-milestone-2-0-1}[v2.0.1^]_
+_**Release date:** 2019.08.22 | *Issue Label:* {url-milestone-2-0-1}[2.0.1^]_
 
 The Antora 2.0.1 release updates Antora's dependencies ({url-mr}/328[MR 328^]) and adds several fixes.
 
@@ -58,7 +58,7 @@ Daniel Mulholland ({url-gitlab}/danyill[@danyill^]):: Re-order version informati
 
 = Antora 2.0.0
 
-_**Release date:** 2018.12.25 | *Milestone (closed issues):* {url-milestone-2-0}[v2.0.0^]_
+_**Release date:** 2018.12.25 | *Issue label:* {url-milestone-2-0-0}[2.0.0^]_
 
 The Antora 2.0.0 release streamlines the installation process, improves platform and library compatibility, provides a simpler and pluggable authentication mechanism for private repositories, and delivers the latest Asciidoctor capabilities.
 
