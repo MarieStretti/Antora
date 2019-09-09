@@ -18,7 +18,7 @@ const yaml = require('js-yaml')
 const vfs = require('vinyl-fs')
 const vzip = require('gulp-vinyl-zip')
 
-const { UI_CACHE_FOLDER, UI_DESC_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
+const { FILE_MODE, UI_CACHE_FOLDER, UI_DESC_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
 const URI_SCHEME_RX = /^https?:\/\//
 const EXT_RX = /\.[a-z]{2,3}$/
 
@@ -230,8 +230,9 @@ function srcSupplementalFiles (filesSpec, startDir) {
 
 function createMemoryFile (path_, contents = []) {
   const stat = new fs.Stats()
+  stat.mode = FILE_MODE
+  stat.mtime = undefined
   stat.size = contents.length
-  stat.mode = 33188
   return new File({ path: path_, contents: Buffer.from(contents), stat })
 }
 
