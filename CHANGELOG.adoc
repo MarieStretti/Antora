@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Fixed
+
+* *playbook-builder*: Map git.ensure_git_suffix key in playbook schema and deprecate git.ensureGitSuffix key (#477)
+
 == 2.1.0 (2019-08-27)
 
 _No changes from previous release._

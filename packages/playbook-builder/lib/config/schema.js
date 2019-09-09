@@ -140,10 +140,15 @@ module.exports = {
         env: 'GIT_CREDENTIALS',
       },
     },
-    ensureGitSuffix: {
+    ensure_git_suffix: {
       doc: 'Instructs the git client to automatically append .git to the repository URL if absent.',
       format: Boolean,
       default: true,
+    },
+    ensureGitSuffix: {
+      doc: '(Deprecated; to be removed in Antora 3) Instructs the git client to automatically append .git to the repository URL if absent.',
+      format: Boolean,
+      default: undefined,
     },
   },
   runtime: {
@@ -161,7 +166,7 @@ module.exports = {
       arg: 'fetch',
     },
     pull: {
-      doc: '(Deprecated) Download updates from remote resources. Use --fetch instead.',
+      doc: '(Deprecated; to be removed in Antora 3) Download updates from remote resources. Use --fetch instead.',
       format: Boolean,
       default: undefined,
       arg: 'pull',

@@ -56,18 +56,27 @@ function loadConvictConfig (args, env, customSchema) {
 }
 
 function exportModel (config) {
-  const properties = config.getProperties()
-  // FIXME would be nice if camelCaseKeys could exclude a subtree (e.g., asciidoc)
-  // see https://github.com/sindresorhus/camelcase-keys/issues/23
-  const asciidocProperty = properties.asciidoc
-  delete properties.asciidoc
-  const playbook = camelCaseKeys(properties, { deep: true })
-  if (asciidocProperty) playbook.asciidoc = asciidocProperty
-  const runtime = playbook.runtime
-  if (runtime && runtime.pull != null) {
-    runtime.fetch = runtime.pull
+  const schema = config.getSchema()
+  const data = config.getProperties()
+  if ('git' in schema.properties && 'ensureGitSuffix' in schema.properties.git.properties) {
+    const git = data.git
+    if (git.ensureGitSuffix != null) git.ensure_git_suffix = git.ensureGitSuffix
+    delete git.ensureGitSuffix
+  }
+  if ('runtime' in schema.properties && 'pull' in schema.properties.runtime.properties) {
+    const runtime = data.runtime
+    if (runtime.pull != null) runtime.fetch = runtime.pull
     delete runtime.pull
   }
+  // FIXME would be nice if camelCaseKeys could exclude a subtree (e.g., asciidoc)
+  // see https://github.com/sindresorhus/camelcase-keys/issues/23
+  let asciidocData
+  if ('asciidoc' in schema.properties) {
+    asciidocData = data.asciidoc
+    delete data.asciidoc
+  }
+  const playbook = camelCaseKeys(data, { deep: true })
+  if (asciidocData) playbook.asciidoc = asciidocData
   playbook.dir = playbook.playbook ? ospath.dirname((playbook.file = playbook.playbook)) : process.cwd()
   delete playbook.playbook
   return freeze(playbook)
