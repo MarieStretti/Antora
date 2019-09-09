@@ -1,6 +1,6 @@
 {
   "name": "@antora/redirect-producer",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Produces redirects (HTTP redirections) for pages in an Antora site.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
@@ -15,7 +15,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@antora/asciidoc-loader": "2.1.0",
+    "@antora/asciidoc-loader": "2.1.1",
     "vinyl": "~2.2"
   },
   "engines": {
