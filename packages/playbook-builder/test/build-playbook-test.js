@@ -405,6 +405,17 @@ describe('buildPlaybook()', () => {
     expect(playbook.output.destinations[0].path).to.equal('./site.zip')
   })
 
+  it('should allow site.url to be a pathname', () => {
+    const playbook = buildPlaybook(['--playbook', defaultSchemaSpec, '--url', '/docs'], {})
+    expect(playbook.site.url).to.equal('/docs')
+  })
+
+  it('should throw error if site.url is an invalid URL', () => {
+    expect(() => buildPlaybook(['--playbook', defaultSchemaSpec, '--url', ':/foo'], {})).to.throw(
+      'must be an absolute URL or a pathname (i.e., root-relative path)'
+    )
+  })
+
   it('should assign runtime.fetch to value of runtime.pull if latter is specified', () => {
     const playbook = buildPlaybook(['--playbook', legacyRuntimeSpec], {})
     expect(playbook.runtime.fetch).to.equal(true)

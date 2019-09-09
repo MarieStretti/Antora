@@ -4,6 +4,7 @@ const convict = require('convict')
 const json = require('json5')
 const toml = require('@iarna/toml')
 const yaml = require('js-yaml')
+const { URL } = require('url')
 
 const ARGS_SCANNER_RX = /(?:([^=,]+)|(?==))(?:,|$|=(|("|').*?\3|[^,]+)(?:,|$))/g
 
@@ -54,6 +55,18 @@ function registerFormats (convict) {
     validate: (val) => {
       if (!(typeof val === 'string' || val instanceof String || Array.isArray(val))) {
         throw new Error('must be a directory path or list of virtual files')
+      }
+    },
+  })
+  convict.addFormat({
+    name: 'url-or-pathname',
+    validate: (val) => {
+      if (!(val && (typeof val === 'string' || val instanceof String) && val.charAt() === '/')) {
+        try {
+          new URL(val) // eslint-disable-line no-new
+        } catch (e) {
+          throw new Error('must be an absolute URL or a pathname (i.e., root-relative path)')
+        }
       }
     },
   })

@@ -224,7 +224,7 @@ describe('generateSite()', function () {
     expect($('body > script:first-of-type')).to.have.attr('src', '/_/js/site.js')
   }).timeout(timeoutOverride)
 
-  it('should generate 404 page if site url is set to root-relative URL in playbook', async () => {
+  it('should generate 404 page if site url is set to a pathname in the playbook', async () => {
     playbookSpec.site.url = '/docs'
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)

@@ -26,10 +26,11 @@ Antora's default UI displays the site title in the navigation bar at the top of 
 
 The site URL key (`url`) defines the optional base URL of the published site.
 
-If set, the URL must be absolute and *should not contain a trailing slash* (e.g., _\https://docs.example.com_).
-The URL may end with a pathname (i.e., subpath) (e.g., _\https://example.com/docs_).
+If set, the URL must either be an absolute URL (e.g., _\https://docs.example.com_) or a pathname (aka root-relative path) (e.g., _/docs_).
+The value *should not contain a trailing slash.*
+If the the URL is absolute, it may include a pathname segment (e.g., _\https://example.com/docs_).
 
-IMPORTANT: The `url` value must start with a valid URL scheme directly followed by a colon and two slashes (`://`).
+IMPORTANT: If the `url` value is an absolute URL, it must start with a valid URL scheme directly followed by a colon and two slashes (`://`).
 Common URI schemes include `https://`, `http://`, and `file://`.
 
 [source,yaml]
@@ -38,14 +39,13 @@ site:
   url: https://demo.antora.org
 ----
 
-The site URL is only used when an absolute URL is required.
-It also implicitly activates features that require an absolute URL.
-Those features are the sitemaps, the 404 page, and the canonical URL property in the UI model.
+The site URL is only used in the generated site when either an absolute URL is required or a pathname.
+It also implicitly activates any features that require an absolute URL or a pathname.
 
-If the site URL is set, Antora will produce sitemap files and include the canonical URL in the head of each page.
+Features that require an absolute URL are the sitemap files and the canonical URL property in the UI model (which gets included in the head of each page).
 In those instances, the component, version, module, and page segments are appended to the site URL to produce the complete URL.
 For example,  _\https://docs.example.org/component/version/page.html_.
-Antora will also generate the 404 page.
+Features that require a pathname (which can be derived from the absolute URL) are the 404 page and the URL prefix on redirect rules.
 
 [#configure-start-page]
 == Configure the site start page
