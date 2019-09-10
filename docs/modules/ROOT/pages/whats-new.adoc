@@ -7,7 +7,67 @@
 :url-git-antora: {url-gitlab}/antora/antora
 :url-issues: {url-git-antora}/issues
 :url-milestone-2-1-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.0
+:url-milestone-2-1-1: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.1
 :url-mr: {url-git-antora}/merge_requests
+
+= Antora 2.1.1
+
+_**Release date:** 2019.09.09 | *Issue label:* {url-milestone-2-1-1}[2.1.1^]_
+
+The Antora 2.1.1 patch release makes the site URL more flexible (and validates it), corrects the timestamp of files in the published archive, and fixes an inconsistency in the playbook schema.
+
+== A more flexible site URL
+
+When the site URL is set in the playbook using the `site.url` key or `--url` CLI option, it activates several additional features.
+Those features include the sitemap, the canonical URLs, and the 404 page.
+The site URL is also used when producing redirects.
+However, not all these features require an absolute URL.
+Some only require the pathname segment of the URL (the part after the domain name).
+
+Therefore, Antora now allows you to set the site URL to a pathname.
+In that case, any feature that requires an absolute URL will remain disabled.
+Those features are the sitemap and the canonical URLs (as required by the powers that be).
+The 404 page will still be created (since it doesn't need an absolute URL), and the pathname will also be used as the prefix for any paths in the redirect rules.
+
+TIP: If you want the pathname to be empty, set the value to `/`.
+
+To summarize, the site URL can be either an absolute URL (with an optional pathname) or just a pathname.
+The playbook builder now validates that the site URL conforms to one of these two types.
+
+== Ensure .git suffix got camelCased
+
+The new key to control whether the git client automatically appends the .git suffix to the content source URL if missing was defined using camelCase, as in `git.ensureGitSuffix`.
+This naming is inconsistent with all other keys in the playbook schema.
+It should have been named `git.ensure_git_suffix`.
+As of this patch release, it now is.
+In other words:
+
+[source,yml]
+----
+git:
+  ensure_git_suffix: false
+----
+
+The incorrect name is still supported, but should be considered deprecated.
+
+== Timestamps in the published archive now live in the present
+
+When Antora reads files from a git tree, it does not assignment a timestamp to the file, meaning the mtime is undefined.
+That way, when the file is written, it gets assigned the current timestamp.
+At least, that's how it's supposed to work.
+
+What the code was actually doing was assigning an invalid date.
+While this wasn't a problem for the filesystem provider, it was for the archive provider.
+So all the files in the archive (ZIP) file that came from the git tree (and supplemental UI files that came from the playbook) had a timestamp of the Unix epoch (shortly after Woodstock).
+That caused certain cloud deployers to get rather confused (and dazed?).
+This patch release corrects this problem so that the timestamp of the files in the archive match the timestamp of the archive itself.
+
+== Resolved Issues
+
+Issue {url-issues}/478[#478^]:: Allow site.url to be a pathname, but disable any features that require an absolute URL.
+Issue {url-issues}/471[#471^]:: Files in a generated ZIP site bundle have a timestamp of the Unix epoch.
+Issue {url-issues}/479[#479^]:: Playbook builder should validate site.url.
+Issue {url-issues}/477[#477^]:: Name of playbook key for controlling git suffix (ensureGitSuffix) is inconsistent.
 
 = Antora 2.1.0
 
@@ -64,11 +124,11 @@ This attribute contains the display version value found in the component descrip
 
 == Fixes
 
-Issue {url-issues}/258[258^]:: The pathname of the site URL (site path) is now assigned to the `site.path` property in the UI model.
+Issue {url-issues}/258[#258^]:: The pathname of the site URL (site path) is now assigned to the `site.path` property in the UI model.
 An empty string is used if the site URL is not set or the pathname is `/`.
 To get the full fix, you must update your UI.
 
-Issue {url-issues}/468[468^]:: A site URL's trailing slash is now removed before it's used to compute rewrite rules.
+Issue {url-issues}/468[#468^]:: A site URL's trailing slash is now removed before it's used to compute rewrite rules.
 
 [#deprecation]
 == Scheduled deprecations for Antora 3.0
