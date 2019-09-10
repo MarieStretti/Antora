@@ -235,6 +235,14 @@ describe('generateSite()', function () {
     expect($('body > script:first-of-type')).to.have.attr('src', '/docs/_/js/site.js')
   }).timeout(timeoutOverride)
 
+  it('should be able to reference implicit page attributes', async () => {
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/the-page.html')
+    expect($('article').text()).to.include('This is version 2.0 of component the-component.')
+  }).timeout(timeoutOverride)
+
   it('should pass AsciiDoc attributes defined in playbook to AsciiDoc processor', async () => {
     playbookSpec.asciidoc = {
       attributes: { sectanchors: null, sectnums: '', description: 'Stuff about stuff@' },

@@ -26,11 +26,12 @@ function mockContentCatalog (seed = []) {
     if (!family) family = 'page'
     if (!contents) contents = ''
     if (component in components) {
-      // NOTE assume we want the latest to be the last version we register
-      components[component].latest = { version }
+      components[component].versions.unshift({ version })
     } else {
-      components[component] = { name: component, latest: { version } }
+      components[component] = { name: component, versions: [{ version }] }
     }
+    // NOTE assume we want the latest to be the last version we register
+    components[component].latest = components[component].versions[0]
     const componentVersionKey = buildComponentVersionKey(component, version)
     const componentRelativePath = path.join(module ? 'modules' : '', module, familyDirs[family], relative)
     const entry = {
@@ -85,7 +86,8 @@ function mockContentCatalog (seed = []) {
     getByPath: ({ path: path_, component, version }) =>
       entriesByPath[buildComponentVersionKey(component, version) + path_],
     getComponent: (name) => components[name],
-    getComponentVersion: (name, version) => components[name].latest,
+    getComponentVersion: (component, version) =>
+      (typeof component === 'string' ? components[component] : component).versions.find((it) => it.version === version),
     getFiles: () => entries,
     resolvePage: function (spec, ctx = {}) {
       return resolveResource(spec, this, ctx, ['page'])
