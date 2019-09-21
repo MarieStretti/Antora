@@ -107,59 +107,75 @@ image::pages-dir.png[The pages subdirectory of a module,174]
 AsciiDoc files destined to become xref:page:index.adoc#standard[site pages] are stored in the [.path]_pages_ directory of a module.
 These files are converted to HTML and automatically published as individual pages in the generated site.
 
+[#root-module-urls]
 === URLs for ROOT module pages
 
-When the documents stored in the [.path]_pages_ directory of ROOT are published to a documentation site, they're promoted a level above any other modules`' pages in that component's URL.
+When the AsciiDoc files stored in the [.path]_pages_ directory of ROOT are published to a documentation site, they're promoted a level above any other modules`' pages in that component's URL.
+To demonstrate this concept, let's compare the URLs of two pages, one from a ROOT module and one from a named module.
+The standardized directory structure illustrated in <<fig-2>> contains the documentation for a software product named _Hyper Lemur_.
+Notice that there is a file named [.path]_deploy.adoc_ in the [.path]_pages_ directory of ROOT.
 
-Let's say the component illustrated above is the documentation for your newest software product, _Hyper Lemur_.
-What would the URL for [.path]_modules/ROOT/pages/deploy.adoc_ look like?
+.Directory structure of the Hyper Lemur documentation.
+[#fig-2]
+image::hyperlemur-dir-structure.png[,260]
+
+When Antora generates a site that includes the documentation for Hyper Lemur, the URL for the page created from the [.path]_deploy.adoc_ file would look like this.
 
 //.URL for deploy.adoc page in ROOT module
 image::root-page-url.svg[ROOT module page URL,role=grow-x]
 
-The xref:playbook:configure-site.adoc#configure-url[base URL is set in the playbook].
-The component name segment, in this case _hyperlemur_, is set using the `name` key in the xref:component-descriptor.adoc#name-key[component descriptor].
-The page name segment is the basename of the AsciiDoc file.
-Notice that the name of the module, `ROOT`, isn't in the URL.
-Files that are stored directly in a ROOT module are published at the root of the component.
+The base URL, _\https://my-company.com_, xref:playbook:configure-site.adoc#configure-url[is set in the playbook] Antora uses to generate the site.
+The component name segment, _hyperlemur_, is set by the `name` key in the xref:component-descriptor.adoc#name-key[component descriptor].
+The version segment, _1.0_, is set by the `version` key in the xref:component-descriptor.adoc#version-key[component descriptor].
+The page name segment, _deploy_, is the basename of the AsciiDoc file [.path]_deploy.adoc_.
 
+Notice that the name of the module, _ROOT_, isn't in the URL.
+Now, let's see what the URL of a page stored in the named module, _admin_, would look like.
+
+[#named-module-urls]
 === URLs for named module pages
 
-In contrast, pages that are stored in other modules will be preceded by the name of the module.
-Let's see what the URL for [.path]_modules/a-module/pages/user-management.adoc_ would look like.
+AsciiDoc files stored in the [.path]_pages_ directory of named modules are preceded by the name of the module.
+The module name is the name of the module directory where that page is stored.
+Using the Hyper Lemur documentation shown in <<fig-2>>, let's see what the URL for the [.path]_user-management.adoc_ file stored in the [.path]_pages_ directory of the _admin_ module would look like.
 
 //.URL for user-management.adoc page in a-module
-image::module-page-url.svg[Module page URL,role=grow-x]
+image::module-page-url.svg[Named module page URL,role=grow-x]
 
-The module name is the name of the module directory where that page is stored.
+Notice that the name of the module, _admin_, is in the URL directly after the documentation component's version.
 
 [#partials-dir]
 == Partials
 
 image::partials-dir.png[The partials subdirectory of a module,177]
 
-xref:page:index.adoc#partial[Partials] are AsciiDoc files.
+xref:page:index.adoc#partial[Partials] are AsciiDoc files that contain reusable content snippets such as product descriptions and definitions.
 They're stored in the [.path]_partials_ directory in a module.
-A partial is inserted into a page using the xref:asciidoc:include-partial.adoc[AsciiDoc include directive and the partial's resource ID].
+A partial file or a tagged portion of a partial file is inserted into a page using the xref:asciidoc:include-partial.adoc[AsciiDoc include directive and the partial's resource ID].
 
 [#assets-dir]
-== Assets
+.Assets
+****
+A module can also contain a directory named [.path]_assets_.
+This is an alternate location, recognized by Antora, where the [.path]_attachments_ and [.path]_images_ family subdirectories can be placed.
 
-Any attachment or image files associated with a module must be stored in the corresponding content or media type subdirectory under that module's [.path]_assets_ directory.
-
-image::assets-dir-structure.png[The assets subdirectory of a module that contains an images folder and an attachments folder,168]
-
-The subdirectory names automatically recognized by Antora and associated to the corresponding AsciiDoc macros are:
-
-* [.path]_assets/attachments_
-* [.path]_assets/images_
+image::component-dir-structure-with-assets.png[The assets subdirectory of a module that contains an images folder and an attachments folder,200]
 
 You don't need to set the path to these predefined subdirectories in the header of your AsciiDoc files.
 This is managed automatically by Antora.
-
+****
 
 //[#videos-dir]
 //=== Video files
 
 //Self-hosted video files are saved in [.path]_assets/videos_ in the same module where the page that references that video is located.
 //Videos are inserted into a page using the xref:asciidoc:embed-video.adoc[AsciiDoc video macro].
+
+////
+For instance:
+
+* Full page AsciiDoc documents go in the [.path]_pages_ directory.
+* Photographs, diagrams, screenshots, and other graphics go in the [.path]_images_ directory.
+* Source code snippets and terminal output go in the [.path]_examples_ directory.
+* Reusable, AsciiDoc content snippets, such as product descriptions and definitions, go in the [.path]_partials_ directory.
+////
