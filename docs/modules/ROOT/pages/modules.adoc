@@ -1,73 +1,67 @@
-= Modules
+= Modules, Families, and Subdirectories
+:xrefstyle: short
+:image-caption: Figure
 
 == What is a module?
 
 A documentation component is composed of one or more modules.
-A [.term]_module_ is a discrete bundle of content, including text, images, and other source materials, organized in a hierarchy of folders by content type, then by optional topic (aka tag or category) if needed.
+A [.term]*module* is a discrete bundle of content that is usually related by concept, stage, feature, or workflow.
+A module can contain full page text files, reusable text and example snippets, images, and other source materials that are organized into <<family,families>>.
+The content associated with a module is stored in a module directory and its files are sorted into family subdirectories.
 
-=== Why modules?
+== Module directory names and structure
 
-You might be contemplating one or more of the following questions:
+A module directory represents a module in a documentation component.
+A component's module directories must reside in the xref:component-structure.adoc#modules-dir[_modules_ directory].
+<<fig-1>> illustrates a documentation component with three module directories.
+You can create as many module directories as you require.
 
-[%hardbreaks]
-Why have modules?
-Do we need all this structure?
-Isn't a component enough?
+.Directory structure of a documentation component containing two named modules and a ROOT module.
+[#fig-1]
+image::module-dir-structure.png[alt="Directory structure of a component containing three modules. The ROOT module contains all of the possible family subdirectories.",width="240"]
 
-One thing we've learned about documentation is that it multiplies, often quickly and unpredictably.
-As more content is created and your documentation team grows, more often than not, you want to start grouping files into folders to make them easier to find and manage.
-Modules allow you to group text files and their associated assets together as your documentation expands, all while preserving the xref:page:page-id.adoc#important[full capability of Antora's page ID].
+<<fig-1>> contains two directories that represent named modules, [.path]_a-named-module_ and [.path]_another-named-module_.
+You choose the directory name of a named module.
+This directory name is then used as the module coordinate in a resource ID, so it can't contain spaces.
+If your team often references pages, examples, images, or partials across modules, they'll have to type the target file's module coordinate in a resource ID, so don't make the directory name hard to remember or extremely long.
 
-Modules are also perfect when one software project is incubating a potential subproject that may spin off as its own project in the future.
-It's easy to later detach a module from a component and set it up as its own documentation component.
+In addition to being the module coordinate, the directory name of a module, with the exception of the special [.path]_ROOT_ directory, also appears in the site's output path.
+See <<named-module-urls>> to learn more.
 
-// This section feels rather unhelpful/hand-wavy, a nice solid example will probably help structure it better but such an example is going to take time (i.e. needs to be its own issue)
-// Eventually, we'll want to put together a little "Should I make this a topic folder or a module?" and/or what are some examples of topics vs modules.
+Inside of a module directory, you can create one or more <<family,family subdirectories>>.
+Antora recognizes family subdirectories named [.path]_attachments_, [.path]_examples_, [.path]_images_, [.path]_pages_, and [.path]_partials_.
+In <<fig-1>>, the [.path]_a-named-module_ directory contains two family subdirectories while the [.path]_ROOT_ directory just happens to contain all five possible family subdirectories.
 
-//Modules are also useful for grouping all the content related to a feature that you'll retire in a few versions.
-
-== Module overview
-
-A documentation component can contain as many modules as you need or as few as one.
-If you only create one module in a component, we highly recommend that you name it _ROOT_ because Antora automatically applies component-level URLs to the files in this module.
-The following figure illustrates a documentation component with a few example folders and files added for context.
-All of a component's modules must be stored in [.path]_modules_.
-
-image::module-dir-structure.png[alt="Directory structure of a component containing two modules. The ROOT module contains all of the optional family subdirectories with a sample file type in each folder for context.",width="200"]
-
-Let's examine the role of the _ROOT_ module and the requirements of the subdirectories a module can contain.
+Let's examine the role of the ROOT module in more depth.
 
 [#root-dir]
-== ROOT module
+=== ROOT module
 
-The [.term]_ROOT_ module contains all the content that's directly associated with the documentation component itself.
+The [.term]*ROOT module* typically contains the content that's directly associated with the documentation component itself.
 
-image::root-dir-structure.png[alt="Directory structure of the ROOT module that uses the subdirectories named attachments, examples, images, pages, and partials.",width="165"]
+image::root-dir-structure.png[alt="Directory structure of the ROOT module that uses the subdirectories named examples, pages, and partials.",width="190"]
 
+The directory name, [.path]_ROOT_, as well as when the module coordinate, `ROOT`, is used in a resource ID, must be written in uppercase.
+
+We recommend you create a [.path]_ROOT_ module directory in your component because Antora automatically applies component-level URLs to the <<pages-dir,page files>> stored in it.
 When the pages in the ROOT module are published, these pages are promoted a level above any other modules`' pages in that component's URL.
-(You can see an example of a ROOT page's URL in <<pages-dir,pages>>.)
-The directory name, ROOT, must be entered in all uppercase letters.
-When used in a page or resource reference, it must be entered in all uppercase letters.
+This means that, unlike the named modules, the directory name [.path]_ROOT_ isn't displayed in the site's output path.
+You can see an example of a ROOT page's URL in <<root-module-urls>>.
 
 Small documentation components may never need more than a ROOT module.
-However, if your project grows, you can easily add more modules and gradually redistribute the content without having to restructure the project.
+However, as your project grows, you can easily add more modules and gradually redistribute the content without having to restructure the project.
 So while the extra structure seems like overkill now, in the long run, you'll be glad you gave your content the space to grow.
 
-The ROOT module, as well as any other modules you create, should include the appropriate content type subdirectory when a module uses that content type.
+Now, let's review the requirements of each of the family subdirectories in more detail.
 
-For instance:
+[#family]
+== What is a family?
 
-* AsciiDoc documents go in the [.path]_pages_ folder.
-* Images go in the [.path]_assets/images_ folder.
-* Code snippets go in the [.path]_examples_ folder.
-
-Each one of these folders can have an arbitrary depth of topic folders that are used to group files to make them easier for you to manage and navigate.
-
-When a writer is working on the content, the module becomes the writer's primary workspace.
-The writer doesn't have to look elsewhere to find files that belong together.
-This arrangement mirrors how software developers work on source code.
-
-Let's look at each of these directories and their content type in more detail.
+A [.term]*family* is a collection of files in a module that share the same content type or output role.
+These files are stored in the standardized family subdirectories, [.path]_attachments_, [.path]_examples_, [.path]_images_, [.path]_pages_, and [.path]_partials_, within a module.
+Antora automatically assigns preset behavior to the files it finds in these subdirectories.
+Example, image, page, and partial files can be referenced by any module or component using Antora's resource IDs.
+(The ability to reference attachments using a resource ID is coming soon.)
 
 [#attachments-dir]
 == Attachments
@@ -80,7 +74,7 @@ A link to an attachment is created using the xref:asciidoc:link-attachment.adoc[
 
 === Binaries and other large files
 
-If your documentation component contains large attachment files, such as binaries of sample projects or libraries, we don't recommend storing them in a regular GitLab or GitHub repository.
+If your documentation component contains large attachment files, such as sample project binaries, libraries, or PDFs, we don't recommend storing them in a regular git repository.
 Instead, host them in a binary repository such as Bintray or S3, or use git LFS (Large File Storage).
 
 [#examples-dir]
@@ -96,8 +90,9 @@ An example is inserted into a page using the xref:asciidoc:include-example.adoc[
 
 image::images-dir.png[The images subdirectory of a module,176]
 
-Image files are saved in the [.path]_images_ directory and inserted into a page using the block or inline xref:asciidoc:insert-image.adoc[AsciiDoc image macro].
-AsciiDoc supports PNG, JPG, SVG, and GIF (static and animated) image formats.
+Photographs, diagrams, screenshots, and other graphics files are saved in the [.path]_images_ directory.
+They're inserted into a page using the xref:asciidoc:insert-image.adoc[block or inline image macros].
+AsciiDoc supports PNG, JPG, SVG, and GIF (static and animated) image file formats.
 
 [#pages-dir]
 == Pages
