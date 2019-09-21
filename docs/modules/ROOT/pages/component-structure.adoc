@@ -1,51 +1,55 @@
 = Documentation Components and Repositories
+:xrefstyle: short
+:image-caption: Figure
 //:page-alias: component-structure.adoc
 
 Antora uses content organized into documentation components when it generates a documentation site.
-A site can have many documentation components or a single documentation component.
 
 == What is a documentation component?
 
-A [.term]_documentation component_ typically represents the documentation for a product, application, project, microservice, or even a training or college course.
+A [.term]*documentation component* typically represents the documentation for a product, application, project, microservice, or training course.
 It's a collection of files grouped into modules and families that share common metadata.
-Antora extracts a documentation component's metadata from its component descriptor file ([.path]_antora.yml_) and the standardized directory structure used to store the component's source files.
+Antora can generate a site that only contains one documentation component or a site that contains as many documentation components as you require.
 
 [#overview]
 == Standard directory structure of a documentation component
 
-The source files of a documentation component are organized into a standard directory structure.
-Antora uses this structure to automatically assign preset behavior and metadata to the files stored in each directory.
-The figure below shows an example of this standard directory structure.
+Antora extracts the metadata that defines a documentation component from its component descriptor file ([.path]_antora.yml_) and the standardized directory structure used to store the component's source files.
+//The source files of a documentation component are organized into a standard directory structure.
+Antora also uses this structure to automatically assign preset behavior to the files stored in each directory.
+<<fig-1>> shows an example of this standard directory structure.
 
-image::component-dir-structure.png[alt="Directory structure of a component that uses the module subdirectories named attachments, images, pages, examples, and partials.",width="200"]
+.Standard directory structure of a documentation component.
+[#fig-1]
+image::component-dir-structure.png[alt="Directory structure of a component that contains three module directories and the family subdirectories named attachments, images, pages, examples, and partials.",width="240"]
 
-At a minimum, a documentation component must contain a component descriptor file ([.path]_antora.yml_), a [.path]_modules_ directory, one module directory, such as [.path]_ROOT_ or a name you choose ([.path]_name-of-module_), and one family directory ([.path]_attachments_, [.path]_examples_, [.path]_images_, [.path]_pages_, or [.path]_partials_).
+At a minimum, a documentation component contains:
 
-=== _antora.yml_ file
+* a component descriptor file ([.path]_antora.yml_),
+* a [.path]_modules_ directory,
+* at least one module directory, such as [.path]_ROOT_ or a named module (that is, a module directory that you name), and
+* at least one family subdirectory ([.path]_attachments_, [.path]_examples_, [.path]_images_, [.path]_pages_, or [.path]_partials_).
 
-The component descriptor file tells Antora that the contents of the repository or directory are a documentation component.
-This file contains crucial metadata, assigned by key-value pairs, that are applied to all of a component's files.
-See xref:component-descriptor.adoc[Component Descriptor: antora.yml] to learn more about the required and optional information you can assign to a component.
-
+[#modules-dir]
 === _modules_ directory
 
 Except for [.path]_antora.yml_, all of a component's source files must reside in the [.path]_modules_ directory.
-This directory helps Antora locate the documentation component when it is stored in a repository or directory with other files, such as an application's source code.
+This directory allows Antora to locate a documentation component that is stored in a repository or directory with other files, such as an application's source code.
 
 === Named and ROOT module directories
 
 The [.path]_modules_ directory can contain a single module directory or as many module directories as you require.
 A module directory represents a module in that documentation component.
-A xref:modules.adoc[module] is a discrete bundle of content, such as text, images, and other source materials, that is usually related by concept, stage, feature, or audience.
-The directory name of a module ([.path]_name-of-module_) is used as the module coordinate in a resource ID and, with the exception of the special `ROOT` module, appears in the site's output path.
+A xref:modules.adoc[module] is a discrete bundle of content, such as text, images, and other source materials, that is usually related by concept, stage, feature, or workflow.
+The directory name of a module is used as the module coordinate in a resource ID and, with the exception of the special `ROOT` module, appears in the site's output path.
 
-The xref:modules.adoc#root[_ROOT_ directory is a special module directory].
+The xref:modules.adoc#root-dir[_ROOT_ directory is a special module directory].
 Its name doesn't appear in the site's output path.
 Instead, it becomes the parent of any named modules in that component.
 
 === Family directories
 
-Each module directory, whether [.path]_ROOT_ or a named module ([.path]_name-of-module_), can contain any of the following family directories:
+Each module directory, whether [.path]_ROOT_ or a module you name, can contain any of the following xref:modules.adoc#family[family subdirectories]:
 
 * xref:modules.adoc#attachments-dir[_attachments_]
 * xref:modules.adoc#examples-dir[_examples_]
@@ -54,22 +58,27 @@ Each module directory, whether [.path]_ROOT_ or a named module ([.path]_name-of-
 * xref:modules.adoc#partials-dir[_partials_]
 
 Antora automatically assigns preset behavior to the files in these directories.
-For example, AsciiDoc files in [.path]_name-of-module/pages_ are automatically converted to standalone HTML pages.
+For example, AsciiDoc files in [.path]_pages_ are automatically converted to individual HTML pages.
 
 === Navigation file
 
-A module can contain none, one, or more navigation files.
-A xref:navigation:filenames-and-locations.adoc[navigation file] is an AsciiDoc file ([.path]_nav.adoc_) that is stored in the directory of the module, but not in any of the module's family directories.
-In order to be displayed in the xref:navigation:index.adoc[component's navigation menu], a module's navigation file must be xref:navigation:register-navigation-files.adoc[declared in the component descriptor] .
+A module can contain none, one, or numerous navigation files.
+A xref:navigation:filenames-and-locations.adoc[navigation file] is an AsciiDoc file ([.path]_nav.adoc_) that is stored in the directory of the module, but not in any of the module's family subdirectories.
+In order to be displayed in the xref:navigation:index.adoc[component's navigation menu], the navigation file must be xref:navigation:register-navigation-files.adoc[declared in the component descriptor].
 
-//TIP: Did you know that a component's files can be sourced from multiple repositories?
-//That means a module's examples directory can be stored in one repository and its pages in another or several repositories.
-//This capability is provided by the simple but-oh-so-powerful component descriptor file, [.path]_antora.yml_.
+=== _antora.yml_ file
 
-////
-== Learn more
+The component descriptor file tells Antora that the contents of the repository or directory are a documentation component.
+This file contains crucial metadata that's applied to all of a component's files.
+See xref:component-descriptor.adoc[Component Descriptor: antora.yml] to learn about the required and optional information you can assign to a component.
 
-* xref:component-versions.adoc[Component versions and branches]
-* xref:modules.adoc[Modules]
-* xref:component-descriptor.adoc[antora.yml]
-////
+//Antora easily builds and publishes documentation sites with over 60 documentation components--that are collected from even more repositories since a <<distributed,component can be distributed>>--and hundreds of component-versions.
+
+[#distributed]
+.Distributed component
+[TIP]
+While all of a documentation component's source files can be stored in a single repository, it isn't a requirement.
+Antora can collect a component's source files from 5, 25, and even more repositories.
+That means a few of a component's modules could be store in one repository, while the [.path]_examples_ directory of another module is stored in a tutorial repository that's maintained by a training team, and then that same module's pages could be stored in [.path]_pages_ directories across three different repositories.
+When a documentation component's source files are stored in multiple repositories, it's referred to as a [.term]*distributed component*.
+This capability is provided by the simple, but-oh-so-powerful component descriptor file, [.path]_antora.yml_.
