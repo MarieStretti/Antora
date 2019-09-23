@@ -97,15 +97,15 @@ These folders can be top-level folders inside a module.
 ....
 modules/
   ROOT/
-    pages/
-    images/
     attachments/
-    partials/
     examples/
+    images/
+    pages/
+    partials/
 ....
 
 And don't worry if you prefer using the assets folder or currently have files in an assets folder, Antora still collects images and attachments stored in the assets folder.
-//See xref:component-structure.adoc[Organizing Your Documentation for Antora] and xref:modules.adoc[Modules] to learn more about how to organize your documentation source files.
+See xref:component-structure.adoc[Documentation Components and Repositories] and xref:modules.adoc[Modules, Families, and Subdirectories] to learn more about how to organize your documentation source files.
 
 == More new features and improvements
 

@@ -17,21 +17,13 @@
 ** xref:antora-container.adoc[Run Antora in a Container]
 ** xref:cli:index.adoc[CLI Reference]
 
-* xref:component-structure.adoc[File Organization]
-** xref:modules.adoc[Modules]
-//** Pages & Partials
-//** Assets
-//** Examples
-** xref:component-descriptor.adoc[Component Descriptor]
-** xref:component-versions.adoc[Versions & Branches]
+* File Organization
+** xref:component-structure.adoc[Documentation Components and Repositories]
+** xref:modules.adoc[Modules, Families, and Subdirectories]
+** xref:component-descriptor.adoc[Component Descriptor: antora.yml]
+** xref:component-versions.adoc[Component Versions and Branches]
 
 //* Source Files
 //** Content and asset files
 //** Navigation files
 //** UI files
-//** Documentation component
-//
-//.Configure
-//* Playbook files
-//
-//.Publishing
