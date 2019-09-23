@@ -3,7 +3,7 @@ TODO: explain how this relates to page versions
 ////
 = Component Versions and Branches
 
-Versions of a documentation component are stored in branches in a version control repository such as git.
+Versions of a xref:component-structure.adoc[documentation component] are stored in branches in a version control repository such as git.
 The name of the branch itself doesn't matter.
 It's the version property in the component descriptor that determines the name of the version for the component.
 
@@ -21,7 +21,7 @@ You simply create a new branch from an existing reference in the repository, and
 
 == Setting the version for a branch
 
-To set the version of documentation stored in a particular branch, you simply specify the version in the component descriptor:
+To set the version of documentation stored in a particular branch, you specify the xref:component-descriptor.adoc#version-key[version in the component descriptor]:
 
 [source,yaml]
 ----
@@ -38,7 +38,7 @@ This is the only file you have to update when creating a new branch.
 All the page references for that component should be relative to the version, so you shouldn't need to update any links.
 The next time you run Antora on the repository, you'll see a new version in the component explorer drawer.
 
-You may need to add the branch to your playbook file.
+You may need to add the xref:playbook:configure-content-sources.adoc#branches[branch to your playbook file].
 Keep in mind that content sources are filtered by branch name, not by the version they contain.
 That's because a single version can be spread out across multiple branches, or even multiple repositories.
 
@@ -49,11 +49,11 @@ To attain the order you want, you need to understand Antora's sorting rules.
 Antora uses these rules:
 
 * Filter out prerelease versions (unless the list only has prerelease versions).
-* Drop the leading "v".
+* Drop the leading "`v`".
 * Sort versions that start with a digit in descending order.
  ** Follow semantic versioning order as defined on https://semver.org.
 * Sort the remaining versions alphabetically. Promote the group to the top.
-* Move the version "master" to the top.
+* Move the version "`master`" to the top.
 
 The lastest version is the one at the top.
 
@@ -72,7 +72,7 @@ When Antora displays the versions, it also applies this sorting order.
 == Versionless components
 
 It's possible to make a component versionless.
-A [.term]_versionless component_ is one that has a single component version, but where the URL of its files do not contain a version segment in the published site.
+A [.term]*versionless component* is one that has a single component version, but where the URL of its files do not contain a version segment in the published site.
 
 To make a versionless component, you still need to use a branch.
 However, you'll only use one.
