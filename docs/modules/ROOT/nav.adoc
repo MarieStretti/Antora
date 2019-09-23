@@ -19,9 +19,9 @@
 
 * File Organization
 ** xref:component-structure.adoc[Documentation Components and Repositories]
-** xref:modules.adoc[Modules]
-** xref:component-descriptor.adoc[Component Descriptor]
-** xref:component-versions.adoc[Versions and Branches]
+** xref:modules.adoc[Modules, Families, and Subdirectories]
+** xref:component-descriptor.adoc[Component Descriptor: antora.yml]
+** xref:component-versions.adoc[Component Versions and Branches]
 
 //* Source Files
 //** Content and asset files
