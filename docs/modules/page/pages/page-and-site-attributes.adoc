@@ -17,7 +17,7 @@ Antora sets the following attributes for each page:
 `page-module`:: The name of the module where the page is located.
 `page-relative`:: The family-relative source path of the page.
 `page-origin-type`:: The content source type (e.g., git).
-`page-origin-url`:: The content source URL (i.e., the URL of the git repository).
+`page-origin-url`:: The content source URL (minus any credentials) (i.e., the URL of the git repository).
 `page-origin-start-path`:: The path where the component is located in the repository.
 `page-origin-refname`:: The name of the reference where the page is located in the repository.
 `page-origin-branch`:: The shortname of the branch where the page is located in the repository.
