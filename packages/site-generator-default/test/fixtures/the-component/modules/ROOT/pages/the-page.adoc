@@ -14,3 +14,7 @@ Section B content.
 == Legalese
 
 &copy; now to infinity, ACME, Inc.
+
+== Attributes
+
+This is version {page-component-display-version} of component {page-component-name}.

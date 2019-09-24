@@ -197,7 +197,7 @@ describe('loadAsciiDoc()', () => {
         relative: 'page-a.adoc',
         contents: '= Document Title',
       })
-      contentCatalog.getComponent('component-a').displayVersion = '4.5 LTS'
+      contentCatalog.getComponent('component-a').latest.displayVersion = '4.5 LTS'
       const inputFile = contentCatalog.getFiles()[0]
       const doc = loadAsciiDoc(inputFile, contentCatalog)
       expect(doc.getAttributes()).to.include({
