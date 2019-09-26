@@ -49,8 +49,14 @@ class GitCredentialManagerStore {
               .reduce((accum, url) => {
                 try {
                   const { username, password, hostname, pathname } = new URL(url)
-                  const credentials = password ? { username, password } : username ? { token: username } : undefined
-                  if (!credentials) return accum
+                  let credentials
+                  if (password) {
+                    credentials = { username: decodeURIComponent(username), password: decodeURIComponent(password) }
+                  } else if (username) {
+                    credentials = { token: decodeURIComponent(username) }
+                  } else {
+                    return accum
+                  }
                   if (pathname === '/') {
                     accum[hostname] = credentials
                   } else {
