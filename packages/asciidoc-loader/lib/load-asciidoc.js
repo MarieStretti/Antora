@@ -81,7 +81,7 @@ function computePageAttrs (fileSrc, contentCatalog) {
   // QUESTION should we soft set the page-id attribute?
   attrs['page-component-name'] = fileSrc.component
   const component = contentCatalog && contentCatalog.getComponent(fileSrc.component)
-  const version = attrs['page-component-version'] = attrs['page-version'] = fileSrc.version
+  const version = (attrs['page-component-version'] = attrs['page-version'] = fileSrc.version)
   if (component) {
     const componentVersion = component.versions.find((it) => it.version === version)
     if (componentVersion) attrs['page-component-display-version'] = componentVersion.displayVersion

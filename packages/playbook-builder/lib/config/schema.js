@@ -146,7 +146,10 @@ module.exports = {
       default: true,
     },
     ensureGitSuffix: {
-      doc: '(Deprecated; to be removed in Antora 3) Instructs the git client to automatically append .git to the repository URL if absent.',
+      doc: [
+        '(Deprecated; to be removed in Antora 3)',
+        'Instructs the git client to automatically append .git to the repository URL if absent.',
+      ].join(' '),
       format: Boolean,
       default: undefined,
     },
