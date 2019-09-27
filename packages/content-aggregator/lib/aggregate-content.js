@@ -36,7 +36,7 @@ const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org|pagure\.io)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
-const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)(?::([^/@]+))?@)?(.*)/
+const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)?(?::([^/@]+)?)?@)?(.*)/
 
 /**
  * Aggregates files from the specified content sources so they can
@@ -201,8 +201,9 @@ function extractCredentials (url) {
     // BitBucket: x-token-auth:<token>@
     const [, scheme, username, password, rest] = url.match(URL_AUTH_EXTRACTOR_RX)
     const displayUrl = (url = scheme + rest)
-    // NOTE if only username is present, assume it's a GitHub token
-    return { displayUrl, url, credentials: password == null ? { token: username } : { username, password } }
+    // NOTE if only username is present, assume it's an oauth token
+    const credentials = username ? (password == null ? { token: username } : { username, password }) : {}
+    return { displayUrl, url, credentials }
   } else if (url.startsWith('git@')) {
     return { displayUrl: url, url: 'https://' + url.substr(4).replace(':', '/') }
   } else {

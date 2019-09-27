@@ -10,6 +10,7 @@ This project utilizes semantic versioning.
 === Fixed
 
 * *content-aggregator*: decode characters in credentials parsed from URL for private content source (#489)
+* *content-aggregator*: remove empty embedded auth (i.e., credentials) from content source URL (#485)
 * *asciidoc-loader*: resolve correct value for page-component-display-version attribute (#480)
 
 == 2.1.1 (2019-09-09)
