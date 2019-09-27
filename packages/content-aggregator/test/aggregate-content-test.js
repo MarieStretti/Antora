@@ -2230,6 +2230,7 @@ describe('aggregateContent()', function () {
     let credentialsRequestCount
     let credentialsSent
     let credentialsVerdict
+    let skipAuthenticateIfNoAuth
     let originalEnv
 
     before(() => {
@@ -2243,14 +2244,20 @@ describe('aggregateContent()', function () {
       credentialsRequestCount = 0
       credentialsSent = undefined
       credentialsVerdict = undefined
+      skipAuthenticateIfNoAuth = undefined
       gitServer.authenticate = ({ type, repo, user, headers }, next) => {
         authorizationHeaderValue = headers.authorization
         if (type === 'fetch') {
-          user((username, password) => {
-            credentialsRequestCount += 1
-            credentialsSent = { username, password }
-            credentialsVerdict ? next(credentialsVerdict) : next()
-          })
+          if (!authorizationHeaderValue && skipAuthenticateIfNoAuth) {
+            credentialsSent = {}
+            next()
+          } else {
+            user((username, password) => {
+              credentialsRequestCount += 1
+              credentialsSent = { username, password }
+              credentialsVerdict ? next(credentialsVerdict) : next()
+            })
+          }
         } else {
           next()
         }
@@ -2276,6 +2283,54 @@ describe('aggregateContent()', function () {
       const aggregate = await aggregateContent(playbookSpec)
       expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u=:p=').toString('base64'))
       expect(credentialsSent).to.eql({ username: 'u=', password: 'p=' })
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files).to.not.be.empty()
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-embedded')
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.url', urlWithoutAuth)
+    })
+
+    it('should remove empty credentials from URL', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const urlWithoutAuth = repoBuilder.url
+      repoBuilder.url = urlWithoutAuth.replace('//', '//@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      skipAuthenticateIfNoAuth = true
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.be.undefined()
+      expect(credentialsSent).to.eql({})
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files).to.not.be.empty()
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-embedded')
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.url', urlWithoutAuth)
+    })
+
+    it('should remove credentials with empty username and password from URL', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const urlWithoutAuth = repoBuilder.url
+      repoBuilder.url = urlWithoutAuth.replace('//', '//:@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      skipAuthenticateIfNoAuth = true
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.be.undefined()
+      expect(credentialsSent).to.eql({})
+      expect(aggregate).to.have.lengthOf(1)
+      expect(aggregate[0].files).to.not.be.empty()
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-embedded')
+      expect(aggregate[0].files[0]).to.have.nested.property('src.origin.url', urlWithoutAuth)
+    })
+
+    it('should ignore credentials in URL with only password', async () => {
+      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
+      await initRepoWithFiles(repoBuilder)
+      const urlWithoutAuth = repoBuilder.url
+      repoBuilder.url = urlWithoutAuth.replace('//', '//:p@')
+      playbookSpec.content.sources.push({ url: repoBuilder.url })
+      skipAuthenticateIfNoAuth = true
+      const aggregate = await aggregateContent(playbookSpec)
+      expect(authorizationHeaderValue).to.be.undefined()
+      expect(credentialsSent).to.eql({})
       expect(aggregate).to.have.lengthOf(1)
       expect(aggregate[0].files).to.not.be.empty()
       expect(aggregate[0].files[0]).to.have.nested.property('src.origin.private', 'auth-embedded')
