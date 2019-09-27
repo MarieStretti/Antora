@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Fixed
+
+* *content-aggregator*: decode characters in credentials parsed from URL for private content source (#489)
+
 == 2.1.1 (2019-09-09)
 
 === Changed
