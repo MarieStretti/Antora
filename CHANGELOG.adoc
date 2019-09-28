@@ -12,6 +12,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: decode characters in credentials parsed from URL for private content source (#489)
 * *content-aggregator*: remove empty embedded auth (i.e., credentials) from content source URL (#485)
 * *asciidoc-loader*: resolve correct value for page-component-display-version attribute (#480)
+* *ui-loader*: Emit specific message when remote UI bundle can't be found / downloaded (#466)
 
 == 2.1.1 (2019-09-09)
 

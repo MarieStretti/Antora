@@ -735,6 +735,16 @@ describe('loadUi()', () => {
     expect(paths).to.have.members(expectedFilePaths)
   })
 
+  it('should throw error if remove bundle UI cannot be found', async () => {
+    const playbook = {
+      runtime: { fetch: true },
+      ui: { bundle: { url: 'http://localhost:1337/the-ui-bundl.zip', snapshot: true } },
+    }
+    const loadUiDeferred = await deferExceptions(loadUi, playbook)
+    const expectedMessage = 'Failed to download UI bundle'
+    expect(loadUiDeferred).to.throw(expectedMessage)
+  })
+
   describe('custom cache dir', () => {
     const testCacheDir = async (cacheDir, dir) => {
       const customCacheDir = ospath.join(WORK_DIR, '.antora-cache')
