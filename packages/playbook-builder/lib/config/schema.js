@@ -27,6 +27,11 @@ module.exports = {
       arg: 'url',
       env: 'URL',
     },
+    robots: {
+      doc: 'Either the literal allow to generate an allow-all robots.txt, the literal disallow to generate a deny-all robots.txt, or the contents of the desired file',
+      format: String,
+      default: undefined,
+    },
     //root: {
     //  doc: 'The name of the component to use as the root of the site.',
     //  format: String,

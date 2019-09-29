@@ -179,4 +179,62 @@ describe('mapSite()', () => {
     expect(sitemapXml).to.include('setup&amp;go')
     expect(sitemapXml).to.include('reverting-1&lt;2')
   })
+
+  it('should generate allow-all robots.txt from allow', () => {
+    playbook.site.robots = 'allow'
+    const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
+    const pages = contentCatalog.findBy({ family: 'page' })
+    const sitemaps = mapSite(playbook, pages)
+    expect(sitemaps).to.have.lengthOf(2)
+    const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
+    expect(robotstxt).to.be.an('object')
+    expect(robotstxt.contents.toString()).to.equals(`User-agent: *
+Allow: /
+`)
+  })
+
+  it('should generate disallow-all robots.txt from disallow', () => {
+    playbook.site.robots = 'disallow'
+    const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
+    const pages = contentCatalog.findBy({ family: 'page' })
+    const sitemaps = mapSite(playbook, pages)
+    expect(sitemaps).to.have.lengthOf(2)
+    const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
+    expect(robotstxt).to.be.an('object')
+    expect(robotstxt.contents.toString()).to.equals(`User-agent: *
+Disallow: /
+`)
+  })
+
+  it('should generate specified robots.txt from supplied text', () => {
+    playbook.site.robots = `User-agent: *
+Disallow: /secret-component/`
+    const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
+    const pages = contentCatalog.findBy({ family: 'page' })
+    const sitemaps = mapSite(playbook, pages)
+    expect(sitemaps).to.have.lengthOf(2)
+    const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
+    expect(robotstxt).to.be.an('object')
+    expect(robotstxt.contents.toString()).to.equals(`User-agent: *
+Disallow: /secret-component/
+`)
+  })
+
+  it('should not generate robots.txt from empty string', () => {
+    playbook.site.robots = ''
+    const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
+    const pages = contentCatalog.findBy({ family: 'page' })
+    const sitemaps = mapSite(playbook, pages)
+    const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
+    expect(robotstxt).to.be.undefined()
+  })
+
+  it('should not generate robots.txt from null', () => {
+    playbook.site.robots = null
+    const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
+    const pages = contentCatalog.findBy({ family: 'page' })
+    const sitemaps = mapSite(playbook, pages)
+    const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
+    expect(robotstxt).to.be.undefined()
+  })
 })
