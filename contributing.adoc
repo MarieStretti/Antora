@@ -27,27 +27,27 @@
 :uri-site-mapper-arch: {uri-project}/blob/master/packages/site-mapper/devdocs/architecture-guidebook.adoc
 :uri-site-publisher-arch: {uri-project}/blob/master/packages/site-publisher/devdocs/architecture-guidebook.adoc
 :uri-ui-loader-arch: {uri-project}/blob/master/packages/ui-loader/devdocs/architecture-guidebook.adoc
-// External URIs:
+// External URIs, please keep alphebetized:
 :uri-async-func: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
-:uri-git: https://git-scm.com
-:uri-git-dl: {uri-git}/downloads
-:uri-gulp: https://gulpjs.com
-:uri-node: https://nodejs.org
-:uri-nvm: https://github.com/creationix/nvm
-:uri-nvm-install: {uri-nvm}#installation
-:uri-yarn: https://yarnpkg.com
-:uri-mocha: https://mochajs.org/
 :uri-chai: http://chaijs.com/api/bdd/
 :uri-chai-cheerio: https://www.chaijs.com/plugins/chai-cheerio/
 :uri-chai-fs: https://www.chaijs.com/plugins/chai-fs/
 :uri-chai-spies: https://www.chaijs.com/plugins/chai-spies/
 :uri-dirty-chai: https://www.chaijs.com/plugins/dirty-chai/
+:uri-eslint-ide: https://eslint.org/docs/user-guide/integrations#editors
+:uri-git: https://git-scm.com
+:uri-git-dl: {uri-git}/downloads
+:uri-gitter-antora-dev: https://gitter.im/antora/dev
+:uri-gulp: https://gulpjs.com
 :uri-istanbul: https://istanbul.js.org/
+:uri-mocha: https://mochajs.org/
+:uri-node: https://nodejs.org
+:uri-nvm: https://github.com/creationix/nvm
+:uri-nvm-install: {uri-nvm}#installation
+:uri-prettier: https://github.com/prettier/prettier
 :uri-standardjs: https://standardjs.com/
 :uri-standardjs-rules: https://standardjs.com/rules.html
-:uri-eslint-ide: https://eslint.org/docs/user-guide/integrations#editors
-:uri-prettier: https://github.com/prettier/prettier
-:uri-gitter-antora-dev: https://gitter.im/antora/dev
+:uri-yarn: https://yarnpkg.com
 
 == You're Invited!
 
