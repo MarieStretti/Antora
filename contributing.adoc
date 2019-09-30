@@ -11,6 +11,8 @@
 :uri-issue-board: {uri-project}/boards/368796
 :uri-issue-labels: {uri-project}/labels
 :uri-ci-pipelines: {uri-project}/pipelines
+:uri-members: {uri-project}/-/project_members
+// Project documentation URIs, please keep alphebetized:
 :uri-adrs: {uri-project}/tree/master/devdocs/adr
 :uri-adr-0001: {uri-adrs}/0001-minimum-node-version.adoc
 :uri-asciidoc-loader-arch: {uri-project}/blob/master/packages/asciidoc-loader/devdocs/architecture-guidebook.adoc
@@ -45,6 +47,7 @@
 :uri-standardjs-rules: https://standardjs.com/rules.html
 :uri-eslint-ide: https://eslint.org/docs/user-guide/integrations#editors
 :uri-prettier: https://github.com/prettier/prettier
+:uri-gitter-antora-dev: https://gitter.im/antora/dev
 
 == You're Invited!
 
@@ -133,6 +136,9 @@ Issues move across the board from left (Backlog) to right (Done).
 
 To contribute to the project:
 
+. *Join the project.*
+Post to the {uri-gitter-antora-dev}[gitter antora/dev channel] requesting to be added to the GitLab project {uri-members}[Members] mentioning your GitLab id.
+
 . *Fork the project.*
 We do not accept merge requests that do not come from a dedicated branch in a fork.
 
@@ -144,7 +150,7 @@ Here's an example of a branch name for issue #2, which was to initiate the Gulp 
 
  issue-2-init-gulp-build
 
-If your only working on docs, then add `docs/` to the beginning of the branch name.
+If you're only working on docs, then add `docs/` to the beginning of the branch name.
 Here's an example of a branch name for issue #168, which was to write documentation for the sitemap generation:
 
  docs/issue-168-document-sitemap
@@ -152,12 +158,12 @@ Here's an example of a branch name for issue #168, which was to write documentat
 The `docs/` prefix tells the CI server not to run the test suite.
 --
 
-. In the issue tracker, label the issue as *[Progress] Preparing Change* and make sure you're assigned to it so that the rest of the team knows you're working on it.
+. In the issue tracker, label the issue as *[Progress] Preparing Change* and make sure you're assigned to it so that the rest of the team knows you're working on it.  If the issue is already assigned but not labeled as being worked on feel free to reassign it to yourself.
 
 . *Make your changes.*
  .. Use as many commits as you think are necessary, but each commit should consist of a logical change.
  .. Write tests to verify each change.
- .. If necessary, add yourself to the list of contributors in the package.json file for the package you're modifying.
+ .. If not already present, add yourself to the list of contributors in the package.json file for the package you're modifying.
 
 . *Write concise but explicit commit messages.*
 Write the commit message as though the person reading it cannot see the code change.
