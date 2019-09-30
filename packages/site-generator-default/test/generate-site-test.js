@@ -211,6 +211,21 @@ describe('generateSite()', function () {
     expect($('head > title')).to.have.text('Page Not Found :: The Site')
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/_/css/site.css')
     expect($('body > script:first-of-type')).to.have.attr('src', '/_/js/site.js')
+    expect($('.navbar-brand a.navbar-item')).to.have.attr('href', 'https://example.com')
+    expect($('.nav-panel-explore .version.is-latest a')).to.have.attr('href', '/the-component/2.0/index.html')
+  }).timeout(timeoutOverride)
+
+  it('should generate 404 page if site url is set to absolute URL with subpath in playbook', async () => {
+    playbookSpec.site.url = 'https://example.com/docs'
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, '404.html')).to.be.a.file()
+    $ = loadHtmlFile('404.html')
+    expect($('head > title')).to.have.text('Page Not Found :: The Site')
+    expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/docs/_/css/site.css')
+    expect($('body > script:first-of-type')).to.have.attr('src', '/docs/_/js/site.js')
+    expect($('.navbar-brand a.navbar-item')).to.have.attr('href', 'https://example.com/docs')
+    expect($('.nav-panel-explore .version.is-latest a')).to.have.attr('href', '/docs/the-component/2.0/index.html')
   }).timeout(timeoutOverride)
 
   it('should generate 404 page if site url is set to / in playbook', async () => {
@@ -222,6 +237,8 @@ describe('generateSite()', function () {
     expect($('head > title')).to.have.text('Page Not Found :: The Site')
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/_/css/site.css')
     expect($('body > script:first-of-type')).to.have.attr('src', '/_/js/site.js')
+    expect($('.navbar-brand a.navbar-item')).to.have.attr('href', '/')
+    expect($('.nav-panel-explore .version.is-latest a')).to.have.attr('href', '/the-component/2.0/index.html')
   }).timeout(timeoutOverride)
 
   it('should generate 404 page if site url is set to a pathname in the playbook', async () => {
@@ -233,6 +250,8 @@ describe('generateSite()', function () {
     expect($('head > title')).to.have.text('Page Not Found :: The Site')
     expect($('head > link[rel=stylesheet]')).to.have.attr('href', '/docs/_/css/site.css')
     expect($('body > script:first-of-type')).to.have.attr('src', '/docs/_/js/site.js')
+    expect($('.navbar-brand a.navbar-item')).to.have.attr('href', '/docs')
+    expect($('.nav-panel-explore .version.is-latest a')).to.have.attr('href', '/docs/the-component/2.0/index.html')
   }).timeout(timeoutOverride)
 
   it('should be able to reference implicit page attributes', async () => {
