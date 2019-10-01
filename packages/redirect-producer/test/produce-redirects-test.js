@@ -324,7 +324,7 @@ describe('produceRedirects()', () => {
       ])
     })
 
-    it('should escape spaces in paths of redirect rule', () => {
+    it('should enclose paths that contain spaces in quotes', () => {
       contentCatalog = mockContentCatalog([
         { family: 'page', relative: 'target with spaces.adoc' },
         { family: 'alias', relative: 'alias with spaces.adoc' },
@@ -340,7 +340,7 @@ describe('produceRedirects()', () => {
         .split('\n')
         .sort()
       expect(rules).to.eql([
-        'location = /component-a/module-a/alias\\ with\\ spaces.html { return 301 /component-a/module-a/target\\ with\\ spaces.html; }',
+        'location = \'/component-a/module-a/alias with spaces.html\' { return 301 \'/component-a/module-a/target with spaces.html\'; }',
       ])
     })
 

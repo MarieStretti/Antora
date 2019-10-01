@@ -14,6 +14,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: remove empty embedded auth (i.e., credentials) from content source URL (#485)
 * *asciidoc-loader*: resolve correct value for page-component-display-version attribute (#480)
 * *ui-loader*: Emit specific message when remote UI bundle can't be found / downloaded (#466)
+* *redirect-producer*: enclose paths in an nginx rewrite rule in quotes to escape spaces (instead of escaping with backslash) (#492)
 
 == 2.1.1 (2019-09-09)
 
