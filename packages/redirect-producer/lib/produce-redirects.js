@@ -73,8 +73,8 @@ function populateStaticRedirectFiles (files, siteUrl) {
 function createNetlifyRedirects (files, urlPath, includeDirectoryRedirects = false) {
   const rules = files.reduce((accum, file) => {
     delete file.out
-    const from = `${urlPath}${file.pub.url.replace(ALL_SPACES_RX, '%20')}`
-    const to = `${urlPath}${file.rel.pub.url.replace(ALL_SPACES_RX, '%20')}`
+    const from = urlPath + file.pub.url.replace(ALL_SPACES_RX, '%20')
+    const to = urlPath + file.rel.pub.url.replace(ALL_SPACES_RX, '%20')
     accum.push(`${from} ${to} 301`)
     if (includeDirectoryRedirects && from.endsWith('/index.html')) accum.push(`${from.slice(0, -10)} ${to} 301`)
     return accum
@@ -89,8 +89,10 @@ function createNetlifyRedirects (files, urlPath, includeDirectoryRedirects = fal
 function createNginxRewriteConf (files, urlPath) {
   const rules = files.map((file) => {
     delete file.out
-    const from = `${urlPath}${file.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
-    const to = `${urlPath}${file.rel.pub.url.replace(ALL_SPACES_RX, '\\ ')}`
+    let from = file.pub.url
+    from = ~from.indexOf(' ') ? `'${urlPath}${from}'` : urlPath + from
+    let to = file.rel.pub.url
+    to = ~to.indexOf(' ') ? `'${urlPath}${to}'` : urlPath + to
     return `location = ${from} { return 301 ${to}; }`
   })
   const rewriteConfigFile = new File({
