@@ -8,7 +8,42 @@
 :url-issues: {url-git-antora}/issues
 :url-milestone-2-1-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.0
 :url-milestone-2-1-1: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.1
+:url-milestone-2-1-2: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.2
 :url-mr: {url-git-antora}/merge_requests
+
+= Antora 2.1.2
+
+_**Release date:** 2019.10.01 | *Issue label:* {url-milestone-2-1-2}[2.1.2^]_
+
+== Resolved issues
+
+Issue {url-issues}/466[466^]:: Emit "`Failed to download UI bundle: <reason>`" error message when remote UI bundle can't be found or downloaded.
+Issue {url-issues}/480[480^]:: Resolve correct value for `page-component-display-version` attribute.
+Issue {url-issues}/485[485^]:: Remove empty embedded auth (i.e., credentials) from content source URL.
+Issue {url-issues}/489[489^]:: Decode characters in credentials parsed from URL for private content source.
+Issue {url-issues}/491[491^]:: Encode spaces as `%20` in `file.src.editUrl` and `file.pub.url`.
+This ensures that the HTML page that uses such URLs will validate.
+Issue {url-issues}/492[492^]:: Enclose paths in an nginx rewrite rule in quotes to escape spaces.
+
+== Documentation changes
+
+The documentation pages explaining the roles of documentation components, modules, and families, and their relationship to Antora's standardized directory structure have been extensively updated.
+
+* xref:component-structure.adoc[Documentation Components and Repositories]
+* xref:modules.adoc[Modules, Families, and Subdirectories]
+
+The xref:component-descriptor.adoc[component descriptor key-value pair examples] have also been updated.
+
+[#thank-you-2-1-2]
+== Thank you!
+
+Most important of all, a huge *thank you!* to all the folks who helped make Antora even better.
+
+Yael Namen ({url-gitlab}/recfab[@recfab^]):: Provided error scenario and feedback for issue {url-issues}/466[466^].
+
+Daniel Mulholland ({url-gitlab}/danyill[@danyill^]):: Filed issue {url-issues}/480[480^] and resolved it with {url-mr}/363[MR 363^]: retrieve display version from `componentVersion` for `page-component-display-version attribute`.
+
+Mateusz ({url-gitlab}/centu81[@centu81^]):: Provided error scenario and feedback for issue {url-issues}/489[489^].
 
 = Antora 2.1.1
 
@@ -62,12 +97,12 @@ So all the files in the archive (ZIP) file that came from the git tree (and supp
 That caused certain cloud deployers to get rather confused (and dazed?).
 This patch release corrects this problem so that the timestamp of the files in the archive match the timestamp of the archive itself.
 
-== Resolved Issues
+== Resolved issues
 
-Issue {url-issues}/478[#478^]:: Allow site.url to be a pathname, but disable any features that require an absolute URL.
 Issue {url-issues}/471[#471^]:: Files in a generated ZIP site bundle have a timestamp of the Unix epoch.
-Issue {url-issues}/479[#479^]:: Playbook builder should validate site.url.
 Issue {url-issues}/477[#477^]:: Name of playbook key for controlling git suffix (ensureGitSuffix) is inconsistent.
+Issue {url-issues}/478[#478^]:: Allow site.url to be a pathname, but disable any features that require an absolute URL.
+Issue {url-issues}/479[#479^]:: Playbook builder should validate site.url.
 
 = Antora 2.1.0
 

@@ -9,14 +9,14 @@ This project utilizes semantic versioning.
 
 === Fixed
 
-* *playbook-builder*: don't allow spaces in pathname of site.url
-* *content-aggregator*: decode characters in credentials parsed from URL for private content source (#489)
-* *content-aggregator*: remove empty embedded auth (i.e., credentials) from content source URL (#485)
-* *content-aggregator*: encode spaces in the file.src.editUrl property for files in the content aggregate (#491)
-* *content-classifier*: encode spaces in the file.pub.url property for files in the content catalog (#491)
-* *asciidoc-loader*: resolve correct value for page-component-display-version attribute (#480)
+* *playbook-builder*: Don't allow spaces in pathname of site.url
+* *content-aggregator*: Decode characters in credentials parsed from URL for private content source (#489)
+* *content-aggregator*: Remove empty embedded auth (i.e., credentials) from content source URL (#485)
+* *content-aggregator*: Encode spaces in the file.src.editUrl property for files in the content aggregate (#491)
+* *content-classifier*: Encode spaces in the file.pub.url property for files in the content catalog (#491)
+* *asciidoc-loader*: Resolve correct value for page-component-display-version attribute (#480)
 * *ui-loader*: Emit specific message when remote UI bundle can't be found / downloaded (#466)
-* *redirect-producer*: enclose paths in an nginx rewrite rule in quotes to escape spaces (instead of escaping with backslash) (#492)
+* *redirect-producer*: Enclose paths in an nginx rewrite rule in quotes to escape spaces (instead of escaping with backslash) (#492)
 
 == 2.1.1 (2019-09-09)
 
