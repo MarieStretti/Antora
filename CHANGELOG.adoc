@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Fixed
 
+* *playbook-builder*: don't allow spaces in pathname of site.url
 * *content-aggregator*: decode characters in credentials parsed from URL for private content source (#489)
 * *content-aggregator*: remove empty embedded auth (i.e., credentials) from content source URL (#485)
 * *asciidoc-loader*: resolve correct value for page-component-display-version attribute (#480)

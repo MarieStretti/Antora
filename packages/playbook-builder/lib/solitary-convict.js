@@ -61,12 +61,19 @@ function registerFormats (convict) {
   convict.addFormat({
     name: 'url-or-pathname',
     validate: (val) => {
-      if (!(val && (typeof val === 'string' || val instanceof String) && val.charAt() === '/')) {
+      if (typeof val === 'string' || val instanceof String) {
+        if (val.charAt() === '/') val = 'https://example.org' + val
+        let parsed
         try {
-          new URL(val) // eslint-disable-line no-new
+          parsed = new URL(val)
         } catch (e) {
           throw new Error('must be an absolute URL or a pathname (i.e., root-relative path)')
         }
+        if (~parsed.pathname.indexOf('%20')) {
+          throw new Error('must not contain spaces')
+        }
+      } else if (val) {
+        throw new Error('must be an absolute URL or a pathname (i.e., root-relative path)')
       }
     },
   })

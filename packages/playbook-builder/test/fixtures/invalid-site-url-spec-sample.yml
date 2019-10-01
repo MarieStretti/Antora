@@ -1,0 +1,5 @@
+site:
+  url: 123
+ui:
+  bundle:
+    url: ./../ui/build/ui-bundles.zip

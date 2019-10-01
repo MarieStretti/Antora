@@ -88,6 +88,7 @@ describe('buildPlaybook()', () => {
   const legacyRuntimeSpec = ospath.join(FIXTURES_DIR, 'legacy-runtime-sample.yml')
   const legacyUiBundleSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-bundle-sample.yml')
   const legacyUiStartPathSpec = ospath.join(FIXTURES_DIR, 'legacy-ui-start-path-sample.yml')
+  const invalidSiteUrlSpec = ospath.join(FIXTURES_DIR, 'invalid-site-url-spec-sample.yml')
   const defaultSchemaSpec = ospath.join(FIXTURES_DIR, 'default-schema-spec-sample.yml')
 
   it('should set dir to process.cwd() when playbook file is not specified', () => {
@@ -413,6 +414,24 @@ describe('buildPlaybook()', () => {
   it('should throw error if site.url is an invalid URL', () => {
     expect(() => buildPlaybook(['--playbook', defaultSchemaSpec, '--url', ':/foo'], {})).to.throw(
       'must be an absolute URL or a pathname (i.e., root-relative path)'
+    )
+  })
+
+  it('should throw error if site.url is not a string', () => {
+    expect(() => buildPlaybook(['--playbook', invalidSiteUrlSpec], {})).to.throw(
+      'must be an absolute URL or a pathname (i.e., root-relative path)'
+    )
+  })
+
+  it('should throw error if site.url is a pathname containing spaces', () => {
+    expect(() => buildPlaybook(['--playbook', defaultSchemaSpec, '--url', '/my docs'], {})).to.throw(
+      'must not contain spaces'
+    )
+  })
+
+  it('should throw error if site.url is an absolute URL containing spaces in the pathname', () => {
+    expect(() => buildPlaybook(['--playbook', defaultSchemaSpec, '--url', 'https://example.org/my docs'], {})).to.throw(
+      'must not contain spaces'
     )
   })
 
