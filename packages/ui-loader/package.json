@@ -17,7 +17,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@antora/expand-path-helper": "~1.0",
-    "bl": "~3.0",
+    "bl": "~4.0",
     "cache-directory": "~2.0",
     "camelcase-keys": "~6.0",
     "fs-extra": "~8.1",
