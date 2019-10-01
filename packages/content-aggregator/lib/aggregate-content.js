@@ -36,6 +36,7 @@ const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /(github\.com|gitlab\.com|bitbucket\.org|pagure\.io)[:/](.+?)(?:\.git)?$/
 const NON_UNIQUE_URI_SUFFIX_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
+const SPACE_RX = / /g
 const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)?(?::([^/@]+)?)?@)?(.*)/
 
 /**
@@ -527,7 +528,10 @@ function assignFileProperties (file, origin) {
     mediaType: file.mediaType,
     origin,
   })
-  if (origin.editUrlPattern) file.src.editUrl = origin.editUrlPattern.replace('%s', file.src.path)
+  if (origin.editUrlPattern) {
+    const editUrl = origin.editUrlPattern.replace('%s', file.src.path)
+    file.src.editUrl = ~editUrl.indexOf(' ') ? editUrl.replace(SPACE_RX, '%20') : editUrl
+  }
   return file
 }
 

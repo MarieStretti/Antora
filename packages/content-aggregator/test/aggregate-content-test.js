@@ -1344,6 +1344,53 @@ describe('aggregateContent()', function () {
       })
     })
 
+    describe('should encode spaces in editUrl', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page with spaces.adoc')
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const actualFile = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page with spaces.adoc')
+        const expectedFile = {
+          path: 'modules/ROOT/pages/page with spaces.adoc',
+          relative: 'modules/ROOT/pages/page with spaces.adoc',
+          dirname: 'modules/ROOT/pages',
+          basename: 'page with spaces.adoc',
+          stem: 'page with spaces',
+          extname: '.adoc',
+          mediaType: 'text/asciidoc',
+        }
+        const expectedFileSrc = {
+          path: expectedFile.path,
+          basename: expectedFile.basename,
+          stem: expectedFile.stem,
+          extname: expectedFile.extname,
+          mediaType: expectedFile.mediaType,
+          origin: {
+            type: 'git',
+            url: repoBuilder.url,
+            branch: 'master',
+            startPath: '',
+          },
+        }
+        // NOTE we can't test editUrl for remote repos since it's not a known git host
+        if (!(repoBuilder.bare || repoBuilder.remote)) {
+          expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, expectedFileSrc.path)
+          const fileUriScheme = posixify ? 'file:///' : 'file://'
+          expectedFileSrc.origin.editUrlPattern = fileUriScheme + repoBuilder.repoPath + '/%s'
+          expectedFileSrc.origin.worktree = true
+          expectedFileSrc.editUrl = fileUriScheme + expectedFileSrc.abspath.replace(/ /g, '%20')
+          if (posixify) {
+            expectedFileSrc.origin.editUrlPattern = posixify(expectedFileSrc.origin.editUrlPattern)
+            expectedFileSrc.editUrl = posixify(expectedFileSrc.editUrl)
+          }
+        }
+        expect(actualFile).to.include(expectedFile)
+        expect(actualFile.src).to.eql(expectedFileSrc)
+      })
+    })
+
     describe('remote origin data', () => {
       it('should generate correct origin data for file taken from repository on GitHub', () => {
         const urls = [

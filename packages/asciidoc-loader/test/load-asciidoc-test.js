@@ -2070,6 +2070,26 @@ describe('loadAsciiDoc()', () => {
       expectPageLink(html, 'the-page.html', 'The Page Title')
     })
 
+    it('should convert a page reference that contains spaces', () => {
+      const contentCatalog = mockContentCatalog({
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'i like spaces.adoc',
+      }).spyOn('getById')
+      setInputFileContents('xref:i like spaces.adoc[The Page Title]')
+      const html = loadAsciiDoc(inputFile, contentCatalog).convert()
+      expectCalledWith(contentCatalog.getById, {
+        component: 'component-a',
+        version: 'master',
+        module: 'module-a',
+        family: 'page',
+        relative: 'i like spaces.adoc',
+      })
+      expectPageLink(html, 'i%20like%20spaces.html', 'The Page Title')
+    })
+
     it('should convert a basic page reference from within topic', () => {
       const contentCatalog = mockContentCatalog([
         {

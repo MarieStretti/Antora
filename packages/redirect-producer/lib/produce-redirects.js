@@ -4,7 +4,7 @@ const computeRelativeUrlPath = require('@antora/asciidoc-loader/lib/util/compute
 const File = require('vinyl')
 const { URL } = require('url')
 
-const ALL_SPACES_RX = / /g
+const ENCODED_SPACE_RX = /%20/g
 
 /**
  * Produces redirects (HTTP redirections) for registered page aliases.
@@ -58,8 +58,9 @@ function extractUrlPath (url) {
     if (url.charAt() === '/') return url
     const urlPath = new URL(url).pathname
     return urlPath === '/' ? '' : urlPath
+  } else {
+    return ''
   }
-  return ''
 }
 
 function populateStaticRedirectFiles (files, siteUrl) {
@@ -73,33 +74,27 @@ function populateStaticRedirectFiles (files, siteUrl) {
 function createNetlifyRedirects (files, urlPath, includeDirectoryRedirects = false) {
   const rules = files.reduce((accum, file) => {
     delete file.out
-    const from = urlPath + file.pub.url.replace(ALL_SPACES_RX, '%20')
-    const to = urlPath + file.rel.pub.url.replace(ALL_SPACES_RX, '%20')
-    accum.push(`${from} ${to} 301`)
-    if (includeDirectoryRedirects && from.endsWith('/index.html')) accum.push(`${from.slice(0, -10)} ${to} 301`)
+    const fromUrl = urlPath + file.pub.url
+    const toUrl = urlPath + file.rel.pub.url
+    accum.push(`${fromUrl} ${toUrl} 301`)
+    if (includeDirectoryRedirects && fromUrl.endsWith('/index.html')) {
+      accum.push(`${fromUrl.slice(0, -10)} ${toUrl} 301`)
+    }
     return accum
   }, [])
-  const redirectsFile = new File({
-    contents: Buffer.from(rules.join('\n')),
-    out: { path: '_redirects' },
-  })
-  return [redirectsFile]
+  return [new File({ contents: Buffer.from(rules.join('\n')), out: { path: '_redirects' } })]
 }
 
 function createNginxRewriteConf (files, urlPath) {
   const rules = files.map((file) => {
     delete file.out
-    let from = file.pub.url
-    from = ~from.indexOf(' ') ? `'${urlPath}${from}'` : urlPath + from
-    let to = file.rel.pub.url
-    to = ~to.indexOf(' ') ? `'${urlPath}${to}'` : urlPath + to
-    return `location = ${from} { return 301 ${to}; }`
+    let fromUrl = file.pub.url
+    fromUrl = ~fromUrl.indexOf('%20') ? `'${urlPath}${fromUrl.replace(ENCODED_SPACE_RX, ' ')}'` : urlPath + fromUrl
+    let toUrl = file.rel.pub.url
+    toUrl = ~toUrl.indexOf('%20') ? `'${urlPath}${toUrl.replace(ENCODED_SPACE_RX, ' ')}'` : urlPath + toUrl
+    return `location = ${fromUrl} { return 301 ${toUrl}; }`
   })
-  const rewriteConfigFile = new File({
-    contents: Buffer.from(rules.join('\n')),
-    out: { path: '.etc/nginx/rewrite.conf' },
-  })
-  return [rewriteConfigFile]
+  return [new File({ contents: Buffer.from(rules.join('\n')), out: { path: '.etc/nginx/rewrite.conf' } })]
 }
 
 function unpublish (files) {

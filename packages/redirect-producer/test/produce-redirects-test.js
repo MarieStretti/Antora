@@ -69,9 +69,9 @@ describe('produceRedirects()', () => {
       contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(0)
-      const expectedQualifiedUrl = 'https://docs.example.org/component-a/module-a/target with spaces.html'
+      const expectedQualifiedUrl = 'https://docs.example.org/component-a/module-a/target%20with%20spaces.html'
       const expectedRelativeUrls = {
-        'alias with spaces.adoc': 'target with spaces.html',
+        'alias with spaces.adoc': 'target%20with%20spaces.html',
       }
       contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
         const expectedRelativeUrl = expectedRelativeUrls[file.src.relative]
@@ -158,7 +158,7 @@ describe('produceRedirects()', () => {
       ])
     })
 
-    it('should escape spaces in paths of redirect rule', () => {
+    it('should encode spaces in paths of redirect rule', () => {
       contentCatalog = mockContentCatalog([
         { family: 'page', relative: 'target with spaces.adoc' },
         { family: 'alias', relative: 'alias with spaces.adoc' },
@@ -324,7 +324,7 @@ describe('produceRedirects()', () => {
       ])
     })
 
-    it('should enclose paths that contain spaces in quotes', () => {
+    it('should enclose paths in quotes that contain spaces', () => {
       contentCatalog = mockContentCatalog([
         { family: 'page', relative: 'target with spaces.adoc' },
         { family: 'alias', relative: 'alias with spaces.adoc' },
@@ -340,7 +340,7 @@ describe('produceRedirects()', () => {
         .split('\n')
         .sort()
       expect(rules).to.eql([
-        'location = \'/component-a/module-a/alias with spaces.html\' { return 301 \'/component-a/module-a/target with spaces.html\'; }',
+        "location = '/component-a/module-a/alias with spaces.html' { return 301 '/component-a/module-a/target with spaces.html'; }",
       ])
     })
 
