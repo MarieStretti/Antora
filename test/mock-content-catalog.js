@@ -4,6 +4,8 @@ const { posix: path } = require('path')
 const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
 const { spy } = require('./test-utils')
 
+const SPACE_RX = / /g
+
 function mockContentCatalog (seed = []) {
   if (!Array.isArray(seed)) seed = [seed]
   const familyDirs = {
@@ -62,7 +64,9 @@ function mockContentCatalog (seed = []) {
               .join('/')
             : '.',
         }
-        entry.pub = { url: '/' + entry.out.path, moduleRootPath: entry.out.moduleRootPath }
+        let url = '/' + entry.out.path
+        if (~url.indexOf(' ')) url = url.replace(SPACE_RX, '%20')
+        entry.pub = { url, moduleRootPath: entry.out.moduleRootPath }
       }
     } else if (family === 'nav') {
       entry.pub = {

@@ -261,6 +261,32 @@ describe('classifyContent()', () => {
       })
     })
 
+    it('should classify a page that contains spaces', () => {
+      aggregate[0].files.push(createFile('modules/ROOT/pages/the topic/i like spaces.adoc'))
+      const files = classifyContent(playbook, aggregate).getFiles()
+      expect(files).to.have.lengthOf(1)
+      const file = files[0]
+      expect(file.path).to.equal('modules/ROOT/pages/the topic/i like spaces.adoc')
+      expect(file.src).to.include({
+        component: 'the-component',
+        version: 'v1.2.3',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'the topic/i like spaces.adoc',
+        basename: 'i like spaces.adoc',
+      })
+      expect(file.out).to.include({
+        path: 'the-component/v1.2.3/the topic/i like spaces.html',
+        dirname: 'the-component/v1.2.3/the topic',
+        basename: 'i like spaces.html',
+      })
+      expect(file.pub).to.include({
+        url: '/the-component/v1.2.3/the%20topic/i%20like%20spaces.html',
+        moduleRootPath: '..',
+        rootPath: '../../..',
+      })
+    })
+
     it('should set the component url to the index page of the ROOT module by default', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
       const expectedUrl = '/the-component/v1.2.3/index.html'

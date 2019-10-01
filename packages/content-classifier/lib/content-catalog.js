@@ -8,6 +8,7 @@ const resolveResource = require('./util/resolve-resource')
 const versionCompare = require('./util/version-compare-desc')
 
 const { START_PAGE_ID } = require('./constants')
+const SPACE_RX = / /g
 
 const $components = Symbol('components')
 const $files = Symbol('files')
@@ -290,7 +291,7 @@ function computePub (src, out, family, htmlUrlExtensionStyle) {
     url = '/' + out.path
   }
 
-  pub.url = url
+  pub.url = ~url.indexOf(' ') ? url.replace(SPACE_RX, '%20') : url
 
   if (out) {
     pub.moduleRootPath = out.moduleRootPath
