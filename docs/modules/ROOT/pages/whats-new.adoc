@@ -17,13 +17,14 @@ _**Release date:** 2019.10.01 | *Issue label:* {url-milestone-2-1-2}[2.1.2^]_
 
 == Resolved issues
 
-Issue {url-issues}/466[466^]:: Emit "`Failed to download UI bundle: <reason>`" error message when remote UI bundle can't be found or downloaded.
-Issue {url-issues}/480[480^]:: Resolve correct value for `page-component-display-version` attribute.
-Issue {url-issues}/485[485^]:: Remove empty embedded auth (i.e., credentials) from content source URL.
-Issue {url-issues}/489[489^]:: Decode characters in credentials parsed from URL for private content source.
-Issue {url-issues}/491[491^]:: Encode spaces as `%20` in `file.src.editUrl` and `file.pub.url`.
+Issue {url-issues}/466[#466^]:: Emit "`Failed to download UI bundle: <reason>`" error message when remote UI bundle can't be found or downloaded.
+Issue {url-issues}/480[#480^]:: Resolve correct value for `page-component-display-version` attribute.
+Issue {url-issues}/485[#485^]:: Remove empty embedded auth (i.e., credentials) from content source URL.
+Issue {url-issues}/489[#489^]:: Decode characters in credentials parsed from URL for private content source.
+Issue {url-issues}/491[#491^]:: Encode spaces as `%20` in `file.src.editUrl` and `file.pub.url`.
 This ensures that the HTML page that uses such URLs will validate.
-Issue {url-issues}/492[492^]:: Enclose paths in an nginx rewrite rule in quotes to escape spaces.
+As part of this change, spaces in the pathname of the site.url value are now disallowed.
+Issue {url-issues}/492[#492^]:: Enclose paths in an nginx rewrite rule in quotes to escape spaces.
 
 == Documentation changes
 
@@ -39,11 +40,11 @@ The xref:component-descriptor.adoc[component descriptor key-value pair examples]
 
 Most important of all, a huge *thank you!* to all the folks who helped make Antora even better.
 
-Yael Namen ({url-gitlab}/recfab[@recfab^]):: Provided error scenario and feedback for issue {url-issues}/466[466^].
+Yael Namen ({url-gitlab}/recfab[@recfab^]):: Provided error scenario and feedback for issue {url-issues}/466[#466^].
 
-Daniel Mulholland ({url-gitlab}/danyill[@danyill^]):: Filed issue {url-issues}/480[480^] and resolved it with {url-mr}/363[MR 363^]: retrieve display version from `componentVersion` for `page-component-display-version attribute`.
+Daniel Mulholland ({url-gitlab}/danyill[@danyill^]):: Filed issue {url-issues}/480[#480^] and resolved it with {url-mr}/363[MR 363^]: retrieve display version from `componentVersion` for `page-component-display-version attribute`.
 
-Mateusz ({url-gitlab}/centu81[@centu81^]):: Provided error scenario and feedback for issue {url-issues}/489[489^].
+Mateusz ({url-gitlab}/centu81[@centu81^]):: Provided error scenario and feedback for issue {url-issues}/489[#489^].
 
 = Antora 2.1.1
 
