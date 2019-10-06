@@ -9,7 +9,7 @@ This document describes how releases of the packages (aka modules) in this repos
 == Quickstart
 
 To publish a release, first make sure the <<Credentials,npm token>> is still valid and that the copyright year is current in README.adoc, packages/*/README.adoc, and docs/modules/ROOT/pages/project/copyright-and-license.adoc.
-Then simply switch to the _releases_ branch, update the [.path]_releaserc_ file, and force push the branch to origin.
+Then switch to the _releases_ branch, update the [.path]_releaserc_ file, and force push the branch to origin.
 The CI job takes over from there.
 See <<Release Trigger>> to find more details and step-by-step commands.
 
@@ -155,6 +155,8 @@ For example:
 RELEASE_VERSION=patch
 RELEASE_BRANCH=1.x
 ----
+
+CAUTION: If you release from a branch other than master, you'll need to carry over the change that the release scripts makes to the CHANGELOG to the master branch manually in order to retain a continuity of releases.
 
 Modifying the [.path]_releaserc_ file is the central mechanism for triggering a release, as covered in the next section.
 
