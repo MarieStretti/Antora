@@ -26,10 +26,13 @@ const SITEMAP_PREFIX = 'sitemap-'
  * The sitemaps are only created if a url for the site has been defined to
  * the site.url property in the playbook.
  *
- * In addition, if the site.robots key is present, a robots.txt file is generated.
- * The string 'allow' results in an all-access robots.txt, the string 'disallow'
- * results in a no-access robots.txt, otherwise the key value is copied into
- * robots.txt, ending with a newline.
+ * If the site.robots key is set in the playbook, this function generates a
+ * robots.txt file from that value. If the value matches the string 'allow' the
+ * function creates a robots.txt file that allows access from all user agents
+ * to all paths. If the value matches the string 'disallow', the function
+ * creates a robots.txt file that disallows access from all user agents to all
+ * paths. Otherwise, if the value is non-empty (i.e., a custom string), the
+ * function creates a robots.txt file using that value.
  *
  * @memberof site-mapper
  *
@@ -83,9 +86,7 @@ function mapSite (playbook, pages) {
   sitemapIndex.out = { path: basename }
   sitemapIndex.pub = { url: '/' + basename }
   const robots = playbook.site.robots
-  if (robots) {
-    sitemaps.push(createRobots(robots))
-  }
+  if (robots) sitemaps.push(createRobotsExclusionFile(robots))
   return sitemaps
 }
 
@@ -132,27 +133,23 @@ ${entries.join('\n')}
 </urlset>`
 }
 
-function escapeHtml (str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
-}
-
-function createRobots (robots) {
+function createRobotsExclusionFile (robots) {
   if (robots === 'allow') {
-    robots = `User-agent: *
-Allow: /
-`
+    robots = 'User-agent: *\nAllow: /'
   } else if (robots === 'disallow') {
-    robots = `User-agent: *
-Disallow: /
-`
+    robots = 'User-agent: *\nDisallow: /'
   } else {
-    robots = robots.trim() + '\n'
+    robots = robots.trimRight()
   }
   return new File({
     out: { path: 'robots.txt' },
     pub: { url: '/robots.txt' },
-    contents: Buffer.from(robots),
+    contents: Buffer.from(robots + '\n'),
   })
+}
+
+function escapeHtml (str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
 }
 
 module.exports = mapSite

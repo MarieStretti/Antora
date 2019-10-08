@@ -1,4 +1,5 @@
 = Site Configuration
+:url-robots-exclusion-standard: https://en.wikipedia.org/wiki/Robots_exclusion_standard
 
 On this page, you'll learn:
 
@@ -104,56 +105,70 @@ The account key must be enclosed in single quotation marks (`'`).
 [#configure-robots]
 == Generate a robots.txt file
 
-Given a site.url value, an allow-all, disallow-all, or explicitly specified robots.txt file will be generated upon including the site.robots key.
+Antora can generate a https://en.wikipedia.org/wiki/Robots_exclusion_standard[robots.txt file] (aka robots exclusion standard) for the site to control which paths in the sitemap crawlers can visit.
+
+If the site.robots key in the playbook is both set and non-empty, and the site.url is also defined, Antora will generate a robots.txt file at the root of the site.
+
+The allowed values of this key are as follows:
+
+* allow
+* disallow
+* arbitrary, multiline string
+
+The special values "allow" and "disallow" are shorthand for allowing or disallowing all user agents access to all paths.
+
+Let's assume the site category in playbook is defined as follows:
 
 [source,yaml]
 ----
 site:
-  url: https://demo.antora.org
+  url: https://example.org
   robots: allow
 ----
 
-will generate
+This will generate a robots.txt file that allows access to all paths.
 
-[source, text]
+[source,text]
 ----
 User-agent: *
 Allow: /
 ----
 
+Similarly, if the site category in playbook is defined as follows:
+
 [source,yaml]
 ----
 site:
-  url: https://demo.antora.org
+  url: https://example.org
   robots: disallow
 ----
 
-will generate
+This will generate a robots.txt file that _disallows_ access to all paths.
 
-[source, text]
+[source,text]
 ----
 User-agent: *
 Disallow: /
 ----
 
-and other text will be copied into robots.txt, for example:
+Any other non-empty value will be used as the contents of the robots.txt file.
+For example, let's assume the site.robots key is declared as follows:
 
 [source,yaml]
 ----
 site:
-  url: https://demo.antora.org
+  url: https://example.org
   robots: |
     User-agent: *
     Disallow: /private/
-
 ----
 
-will generate
+This will result in the following robots.txt file being generated.
 
-[source, text]
+[source,text]
 ----
 User-agent: *
 Disallow: /private/
 ----
 
-
+Use a custom value if the built-in options are insufficient.

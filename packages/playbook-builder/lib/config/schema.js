@@ -28,7 +28,7 @@ module.exports = {
       env: 'URL',
     },
     robots: {
-      doc: 'Either the literal allow to generate an allow-all robots.txt, the literal disallow to generate a deny-all robots.txt, or the contents of the desired file',
+      doc: 'Controls generation of robots.txt if site.url is set (permitted values: allow, disallow, or arbitrary string).',
       format: String,
       default: undefined,
     },
