@@ -6,7 +6,8 @@
   "author": "OpenDevise Inc. (https://opendevise.com)",
   "contributors": [
     "Dan Allen <dan@opendevise.com>",
-    "Sarah White <sarah@opendevise.com>"
+    "Sarah White <sarah@opendevise.com>",
+    "David Jencks <david.a.jencks@gmail.com>" 
   ],
   "homepage": "https://antora.org",
   "repository": "gitlab:antora/antora",

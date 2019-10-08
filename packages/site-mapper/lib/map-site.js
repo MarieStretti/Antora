@@ -26,6 +26,11 @@ const SITEMAP_PREFIX = 'sitemap-'
  * The sitemaps are only created if a url for the site has been defined to
  * the site.url property in the playbook.
  *
+ * In addition, if the site.robots key is present, a robots.txt file is generated.
+ * The string 'allow' results in an all-access robots.txt, the string 'disallow'
+ * results in a no-access robots.txt, otherwise the key value is copied into
+ * robots.txt, ending with a newline.
+ *
  * @memberof site-mapper
  *
  * @param {Object} playbook - The configuration object for Antora.
@@ -77,6 +82,10 @@ function mapSite (playbook, pages) {
   const basename = SITEMAP_STEM + '.xml'
   sitemapIndex.out = { path: basename }
   sitemapIndex.pub = { url: '/' + basename }
+  const robots = playbook.site.robots
+  if (robots) {
+    sitemaps.push(createRobots(robots))
+  }
   return sitemaps
 }
 
@@ -125,6 +134,25 @@ ${entries.join('\n')}
 
 function escapeHtml (str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+}
+
+function createRobots (robots) {
+  if (robots === 'allow') {
+    robots = `User-agent: *
+Allow: /
+`
+  } else if (robots === 'disallow') {
+    robots = `User-agent: *
+Disallow: /
+`
+  } else {
+    robots = robots.trim() + '\n'
+  }
+  return new File({
+    out: { path: 'robots.txt' },
+    pub: { url: '/robots.txt' },
+    contents: Buffer.from(robots),
+  })
 }
 
 module.exports = mapSite

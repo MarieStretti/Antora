@@ -100,3 +100,60 @@ site:
 ----
 
 The account key must be enclosed in single quotation marks (`'`).
+
+[#configure-robots]
+== Generate a robots.txt file
+
+Given a site.url value, an allow-all, disallow-all, or explicitly specified robots.txt file will be generated upon including the site.robots key.
+
+[source,yaml]
+----
+site:
+  url: https://demo.antora.org
+  robots: allow
+----
+
+will generate
+
+[source, text]
+----
+User-agent: *
+Allow: /
+----
+
+[source,yaml]
+----
+site:
+  url: https://demo.antora.org
+  robots: disallow
+----
+
+will generate
+
+[source, text]
+----
+User-agent: *
+Disallow: /
+----
+
+and other text will be copied into robots.txt, for example:
+
+[source,yaml]
+----
+site:
+  url: https://demo.antora.org
+  robots: |
+    User-agent: *
+    Disallow: /private/
+
+----
+
+will generate
+
+[source, text]
+----
+User-agent: *
+Disallow: /private/
+----
+
+
