@@ -5,6 +5,10 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+* *site-mapper*: Generate a robots.txt file if the site.robots key is set in the playbook (#219) (@djencks)
+
 == 2.1.2 (2019-10-02)
 
 === Fixed
