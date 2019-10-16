@@ -1,6 +1,9 @@
 = Run Antora to Generate Your Site
 :url-demo-project: https://gitlab.com/antora/demo/demo-site
 :url-demo-playbook: {url-demo-project}/raw/master/site.yml
+:url-demo-component-a: https://gitlab.com/antora/demo/demo-component-a
+:url-demo-component-b: https://gitlab.com/antora/demo/demo-component-b
+:url-default-ui: https://gitlab.com/antora/antora-ui-default
 
 Assumptions:
 
@@ -18,10 +21,15 @@ On this page, you'll learn:
 
 == Antora Demo
 
-You don't need to set up a docs component or create a UI to try out Antora.
-We've set up a playbook file, several content source repositories, and provided a default UI bundle.
-As soon as you've installed Antora, you can run Antora with the Demo materials and explore its capabilities.
-The instructions and examples on this page will show you how to operate Antora with the Demo materials.
+You don't need to set up a playbook file, docs component, or create a UI to evaluate Antora.
+Instead, you can use the Antora demo.
+
+The demo consists of a {url-demo-project}[playbook repository] containing a {url-demo-playbook}[playbook file] and several content respositories ({url-demo-component-a}[component-a] and {url-demo-component-b}[component-b]) to which that playbook refers.
+It also makes use the UI bundle produced by the {url-default-ui}[default UI project].
+In other words, it contains everything you need to get started.
+
+Once you've installed Antora, you can run Antora using the demo materials to explore its capabilities.
+The instructions and examples on this page will guide you through the process.
 
 == Choose a Playbook
 
