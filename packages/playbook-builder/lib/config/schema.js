@@ -28,7 +28,7 @@ module.exports = {
       env: 'URL',
     },
     robots: {
-      doc: 'Controls generation of robots.txt if site.url is set (permitted values: allow, disallow, or arbitrary string).',
+      doc: 'Controls generation of robots.txt if site.url is set (allowed values: allow, disallow, or custom string).',
       format: String,
       default: undefined,
     },
