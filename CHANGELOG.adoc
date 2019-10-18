@@ -10,10 +10,12 @@ This project utilizes semantic versioning.
 === Added
 
 * *site-mapper*: Generate a robots.txt file if the site.robots key is set in the playbook (#219) (@djencks)
+* *content-aggregator*: Make fs object used by git pluggable (assign fs property to git core named "antora") (#476)
 
 === Changed
 
 * *content-aggregator*: Upgrade isomorphic-git (#476)
+* *content-aggregator*: Automatically unregister any managed git plugin (e.g., fs and credentialManager) (#476)
 * Upgrade development dependencies
 
 == 2.1.2 (2019-10-02)

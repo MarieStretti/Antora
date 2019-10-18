@@ -16,6 +16,7 @@ const MultiProgress = require('multi-progress')
 const ospath = require('path')
 const { posix: path } = ospath
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
+const promiseFinally = require('./promise-finally')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
@@ -66,36 +67,39 @@ function aggregateContent (playbook) {
   const { cacheDir, fetch, silent, quiet } = playbook.runtime
   const progress = !quiet && !silent && createProgress(sourcesByUrl, process.stdout)
   const { ensureGitSuffix, credentials } = Object.assign({ ensureGitSuffix: true }, playbook.git)
-  const credentialManager = registerGitPlugins(credentials, startDir)
-  return ensureCacheDir(cacheDir, startDir).then((resolvedCacheDir) =>
-    Promise.all(
-      Object.entries(sourcesByUrl).map(([url, sources]) =>
-        loadRepository(url, {
-          cacheDir: resolvedCacheDir,
-          credentialManager,
-          fetchTags: tagsSpecified(sources, defaultTags),
-          progress,
-          fetch,
-          startDir,
-          ensureGitSuffix,
-        }).then(({ repo, authStatus }) =>
-          Promise.all(
-            sources.map((source) => {
-              const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
-              // NOTE if repository is managed (has a url), we can assume the remote name is origin
-              // TODO if the repo has no remotes, then remoteName should be undefined
-              const remoteName = repo.url ? 'origin' : source.remote || 'origin'
-              return collectComponentVersions(source, repo, remoteName, authStatus, refPatterns)
-            })
+  const credentialManager = registerGitPlugins(credentials, startDir).get('credentialManager')
+  return promiseFinally(
+    ensureCacheDir(cacheDir, startDir).then((resolvedCacheDir) =>
+      Promise.all(
+        Object.entries(sourcesByUrl).map(([url, sources]) =>
+          loadRepository(url, {
+            cacheDir: resolvedCacheDir,
+            credentialManager,
+            fetchTags: tagsSpecified(sources, defaultTags),
+            progress,
+            fetch,
+            startDir,
+            ensureGitSuffix,
+          }).then(({ repo, authStatus }) =>
+            Promise.all(
+              sources.map((source) => {
+                const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
+                // NOTE if repository is managed (has a url), we can assume the remote name is origin
+                // TODO if the repo has no remotes, then remoteName should be undefined
+                const remoteName = repo.url ? 'origin' : source.remote || 'origin'
+                return collectComponentVersions(source, repo, remoteName, authStatus, refPatterns)
+              })
+            )
           )
         )
       )
-    )
-      .then((accruedComponentVersions) => buildAggregate(accruedComponentVersions))
-      .catch((err) => {
-        progress && progress.terminate()
-        throw err
-      })
+        .then((accruedComponentVersions) => buildAggregate(accruedComponentVersions))
+        .catch((err) => {
+          progress && progress.terminate()
+          throw err
+        })
+    ),
+    unregisterGitPlugins
   )
 }
 
@@ -128,12 +132,12 @@ async function loadRepository (url, opts) {
     ;({ displayUrl, url, credentials } = extractCredentials(url))
     dir = ospath.join(opts.cacheDir, generateCloneFolderName(displayUrl))
     // NOTE if url is set on repo, we assume it's remote
-    repo = { core: GIT_CORE, fs, dir, gitdir: dir, url, noGitSuffix: !opts.ensureGitSuffix, noCheckout: true }
+    repo = { core: GIT_CORE, dir, gitdir: dir, url, noGitSuffix: !opts.ensureGitSuffix, noCheckout: true }
     credentialManager = opts.credentialManager
   } else if (await isLocalDirectory((dir = expandPath(url, '~+', opts.startDir)))) {
     repo = (await isLocalDirectory(ospath.join(dir, '.git')))
-      ? { core: GIT_CORE, fs, dir }
-      : { core: GIT_CORE, fs, dir, gitdir: dir, noCheckout: true }
+      ? { core: GIT_CORE, dir }
+      : { core: GIT_CORE, dir, gitdir: dir, noCheckout: true }
   } else {
     throw new Error(
       `Local content source does not exist: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
@@ -669,20 +673,23 @@ function tagsSpecified (sources, defaultTags) {
 
 function registerGitPlugins (config, startDir) {
   const plugins = git.cores.create(GIT_CORE)
-  // QUESTION should fs be pluggable?
-  //if (!plugins.has('fs')) plugins.set('fs', fs)
+  if (!plugins.has('fs')) plugins.set('fs', Object.assign({ _managed: true }, fs))
   let credentialManager
   if (plugins.has('credentialManager')) {
     credentialManager = plugins.get('credentialManager')
     if (typeof credentialManager.configure === 'function') credentialManager.configure({ config, startDir })
     if (typeof credentialManager.status !== 'function') {
-      credentialManager = Object.assign({}, credentialManager, { status () {} })
+      plugins.set('credentialManager', Object.assign({}, credentialManager, { status () {} }))
     }
   } else {
-    plugins.set('credentialManager', (credentialManager = new GitCredentialManagerStore()))
-    credentialManager.configure({ config, startDir })
+    ;(credentialManager = new GitCredentialManagerStore().configure({ config, startDir }))._managed = true
+    plugins.set('credentialManager', credentialManager)
   }
-  return credentialManager
+  return plugins
+}
+
+function unregisterGitPlugins () {
+  git.cores.create(GIT_CORE).forEach((val, key, map) => val._managed && map.delete(key))
 }
 
 /**
