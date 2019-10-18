@@ -152,12 +152,12 @@ describe('generateSite()', () => {
     expect($('body > script:first-of-type')).to.have.attr('src', '../../_/js/site.js')
     expect($('nav.navbar .navbar-brand .navbar-item')).to.have.attr('href', '../..')
     // assert current component version is correct
-    expect($('.navigation-explore .context .title')).to.have.text('The Component')
-    expect($('.navigation-explore .component.is-current .title')).to.have.text('The Component')
-    expect($('.navigation-explore .component.is-current .version')).to.have.lengthOf(1)
-    expect($('.navigation-explore .component.is-current .version a')).to.have.text('2.0')
-    expect($('.navigation-explore .component.is-current .version.is-current a')).to.have.text('2.0')
-    expect($('.navigation-explore .component.is-current .version.is-latest a')).to.have.text('2.0')
+    expect($('.nav-panel-explore .context .title')).to.have.text('The Component')
+    expect($('.nav-panel-explore .component.is-current .title')).to.have.text('The Component')
+    expect($('.nav-panel-explore .component.is-current .version')).to.have.lengthOf(1)
+    expect($('.nav-panel-explore .component.is-current .version a')).to.have.text('2.0')
+    expect($('.nav-panel-explore .component.is-current .version.is-current a')).to.have.text('2.0')
+    expect($('.nav-panel-explore .component.is-current .version.is-latest a')).to.have.text('2.0')
     // assert paths in navigation are relativized
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', 'index.html')
     expect($('article h1')).to.have.text('Index Page')
@@ -332,7 +332,7 @@ describe('generateSite()', () => {
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     // assert that all versions of page are shown
     expect($('.page-versions')).to.exist()
-    expect($('.page-versions .versions-menu-toggle')).to.have.text('2.0')
+    expect($('.page-versions .version-menu-toggle')).to.have.text('2.0')
     expect($('.page-versions a.version')).to.have.lengthOf(2)
     expect($('.page-versions a.version.is-current'))
       .to.have.lengthOf(1)
@@ -352,16 +352,16 @@ describe('generateSite()', () => {
       .and.to.have.text('1.0')
       .and.to.have.attr('href', '../1.0/index.html')
     // assert that all versions of component are present in navigation explore panel
-    expect($('.navigation-explore .component.is-current li.version')).to.have.lengthOf(2)
+    expect($('.nav-panel-explore .component.is-current li.version')).to.have.lengthOf(2)
     expect(
-      $('.navigation-explore .component.is-current li.version')
+      $('.nav-panel-explore .component.is-current li.version')
         .eq(0)
         .find('a')
     )
       .to.have.text('2.0')
       .and.to.have.attr('href', 'index.html')
     expect(
-      $('.navigation-explore .component.is-current li.version')
+      $('.nav-panel-explore .component.is-current li.version')
         .eq(1)
         .find('a')
     )
@@ -369,9 +369,9 @@ describe('generateSite()', () => {
       .and.to.have.attr('href', '../1.0/index.html')
     expect(ospath.join(absDestDir, 'the-component/1.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/1.0/the-page.html')
-    expect($('.navigation-explore .component.is-current .version')).to.have.lengthOf(2)
-    expect($('.navigation-explore .component.is-current .version.is-latest a')).to.have.text('2.0')
-    expect($('.navigation-explore .component.is-current .version.is-current a')).to.have.text('1.0')
+    expect($('.nav-panel-explore .component.is-current .version')).to.have.lengthOf(2)
+    expect($('.nav-panel-explore .component.is-current .version.is-latest a')).to.have.text('2.0')
+    expect($('.nav-panel-explore .component.is-current .version.is-current a')).to.have.text('1.0')
   }).timeout(TIMEOUT)
 
   it('should provide navigation to all versions of all components', async () => {
@@ -424,29 +424,29 @@ describe('generateSite()', () => {
     expect(ospath.join(absDestDir, 'the-other-component')).to.be.a.directory()
     expect(ospath.join(absDestDir, 'the-other-component/core/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-other-component/core/index.html')
-    expect($('.navigation-explore .component')).to.have.lengthOf(2)
+    expect($('.nav-panel-explore .component')).to.have.lengthOf(2)
     // assert sorted by title
     expect(
-      $('.navigation-explore .component')
+      $('.nav-panel-explore .component')
         .eq(0)
         .find('.title')
     ).to.have.text('The Component')
     expect(
-      $('.navigation-explore .component')
+      $('.nav-panel-explore .component')
         .eq(1)
         .find('.title')
     ).to.have.text('The Other Component')
     // assert correct component is marked as current
-    expect($('.navigation-explore .component').eq(1)).to.have.class('is-current')
-    expect($('.navigation-explore .component.is-current a')).to.have.lengthOf(2)
-    expect($('.navigation-explore .component.is-current a').eq(0)).to.have.text('master')
-    expect($('.navigation-explore .component.is-current .version').eq(0))
+    expect($('.nav-panel-explore .component').eq(1)).to.have.class('is-current')
+    expect($('.nav-panel-explore .component.is-current a')).to.have.lengthOf(2)
+    expect($('.nav-panel-explore .component.is-current a').eq(0)).to.have.text('master')
+    expect($('.nav-panel-explore .component.is-current .version').eq(0))
       .to.have.class('is-current')
       .and.to.have.class('is-latest')
     expect(ospath.join(absDestDir, 'the-component/2.0/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     // assert component link points to start page
-    expect($('.navigation-explore .component:not(.is-current) a').eq(0)).to.have.attr(
+    expect($('.nav-panel-explore .component:not(.is-current) a').eq(0)).to.have.attr(
       'href',
       '../../the-other-component/core/index.html'
     )
@@ -478,7 +478,7 @@ describe('generateSite()', () => {
     expect(ospath.join(absDestDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/index.html')
     expect($('article a.page')).to.have.attr('href', 'the-page/')
-    expect($('nav.crumbs a')).to.have.attr('href', './')
+    expect($('nav.breadcrumbs a')).to.have.attr('href', './')
     expect($('nav.nav-menu .nav-link')).to.have.attr('href', './')
     expect(ospath.join(absDestDir, 'the-component/2.0/the-page/index.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page/index.html')
