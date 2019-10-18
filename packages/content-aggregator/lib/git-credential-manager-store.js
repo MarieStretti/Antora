@@ -16,6 +16,7 @@ class GitCredentialManagerStore {
       const path = config.path
       this.path = path ? expandPath(path, '~+', startDir) : undefined
     }
+    return this
   }
 
   async load () {

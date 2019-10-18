@@ -28,11 +28,12 @@ class RepositoryBuilder {
       this.repoPath += '.git'
       this.url = `http://localhost:${this.gitServerPort}/${repoName}.git`
     } else if (this.bare) this.url += ospath.sep + '.git'
-    this.repository = { fs, dir: this.repoPath, gitdir: ospath.join(this.repoPath, '.git') }
+    // NOTE create new fs to clear index cache
+    this.repository = { fs: { ...fs }, dir: this.repoPath, gitdir: ospath.join(this.repoPath, '.git') }
     await git.init(this.repository)
     if (opts.empty) return this
     await (await this.addToWorktree('.gitignore')).addToWorktree('.gitattributes', '* text=auto eol=lf')
-    // NOTE isomorphic-git requires at least one commit to set up refs/heads/master (required to use statusMatrix)
+    // NOTE isomorphic-git does not require any commits to set up refs/heads/master, but tests still rely on these files
     await git.commit({ ...this.repository, author: this.author, message: 'init' })
     return this.commitAll()
   }
@@ -58,13 +59,15 @@ class RepositoryBuilder {
       }
       gitdir = ospath.join(dir, '.git')
     }
-    this.repository = { fs, dir, gitdir }
+    // NOTE create new fs to clear index cache
+    this.repository = { fs: { ...fs }, dir, gitdir }
     await git.resolveRef({ ...this.repository, ref: 'HEAD', depth: 1 })
     return this
   }
 
   async clone (clonePath) {
-    return git.clone({ fs, dir: clonePath, url: this.url })
+    // NOTE create new fs to clear index cache
+    return git.clone({ fs: { ...fs }, dir: clonePath, url: this.url })
   }
 
   async checkoutBranch (branchName) {
@@ -195,8 +198,6 @@ class RepositoryBuilder {
   async detachHead (oid = undefined) {
     if (!oid) oid = await git.resolveRef({ ...this.repository, ref: 'HEAD' })
     await git.checkout({ ...this.repository, ref: oid })
-    // NOTE workaround bug in isomorphic-git when checking out a commit
-    await fs.writeFile(ospath.join(this.repository.gitdir, 'HEAD'), oid + '\n')
     return this
   }
 
@@ -208,6 +209,10 @@ class RepositoryBuilder {
     if (branchName) await git.checkout({ ...this.repository, ref: branchName })
     this.repository = undefined
     return this
+  }
+
+  static getPlugin (name, core = 'default') {
+    return git.cores.create(core).get(name)
   }
 
   static registerPlugin (name, impl, core = 'default') {
