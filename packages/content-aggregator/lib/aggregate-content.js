@@ -543,7 +543,8 @@ function getFetchOptions (repo, progress, url, credentials, fetchTags, operation
   const opts = Object.assign({ depth: 1 }, credentials, repo)
   if (progress) opts.emitter = createProgressEmitter(progress, url, operation)
   if (operation === 'fetch') {
-    if (fetchTags) opts.tags = true
+    opts.prune = true
+    if (fetchTags) opts.tags = opts.pruneTags = true
   } else if (!fetchTags) {
     opts.noTags = true
   }
