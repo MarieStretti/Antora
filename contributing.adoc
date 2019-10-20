@@ -1,9 +1,9 @@
 = Contributing
-// Settings:
+// Settings
 :toc-title: Contents
 :toclevels: 1
 :toc:
-// Project URIs:
+// Project URIs
 :uri-org: https://gitlab.com/antora
 :uri-project: {uri-org}/antora
 :uri-repo: {uri-project}
@@ -12,7 +12,7 @@
 :uri-issue-labels: {uri-project}/labels
 :uri-ci-pipelines: {uri-project}/pipelines
 :uri-members: {uri-project}/-/project_members
-// Project documentation URIs, please keep alphebetized:
+// Project documentation URIs (alphebetized)
 :uri-adrs: {uri-project}/tree/master/devdocs/adr
 :uri-adr-0001: {uri-adrs}/0001-minimum-node-version.adoc
 :uri-asciidoc-loader-arch: {uri-project}/blob/master/packages/asciidoc-loader/devdocs/architecture-guidebook.adoc
@@ -27,7 +27,7 @@
 :uri-site-mapper-arch: {uri-project}/blob/master/packages/site-mapper/devdocs/architecture-guidebook.adoc
 :uri-site-publisher-arch: {uri-project}/blob/master/packages/site-publisher/devdocs/architecture-guidebook.adoc
 :uri-ui-loader-arch: {uri-project}/blob/master/packages/ui-loader/devdocs/architecture-guidebook.adoc
-// External URIs, please keep alphebetized:
+// External URIs (alphebetized)
 :uri-async-func: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
 :uri-chai: http://chaijs.com/api/bdd/
 :uri-chai-cheerio: https://www.chaijs.com/plugins/chai-cheerio/
@@ -137,7 +137,8 @@ Issues move across the board from left (Backlog) to right (Done).
 To contribute to the project:
 
 . *Join the project.*
-Post to the {uri-gitter-antora-dev}[gitter antora/dev channel] requesting to be added to the GitLab project {uri-members}[Members] mentioning your GitLab id.
+Post to the {uri-gitter-antora-dev}[gitter antora/dev channel] requesting to be added to the GitLab project as a {uri-members}[members].
+Please communicate your GitLab ID in the message.
 
 . *Fork the project.*
 We do not accept merge requests that do not come from a dedicated branch in a fork.
@@ -158,12 +159,13 @@ Here's an example of a branch name for issue #168, which was to write documentat
 The `docs/` prefix tells the CI server not to run the test suite.
 --
 
-. In the issue tracker, label the issue as *[Progress] Preparing Change* and make sure you're assigned to it so that the rest of the team knows you're working on it.  If the issue is already assigned but not labeled as being worked on feel free to reassign it to yourself.
+. In the issue tracker, label the issue as *[Progress] Preparing Change* and make sure you're assigned to it so that the rest of the team knows you're working on it.
+If the issue is already assigned but not labeled as being worked on feel free to reassign it to yourself.
 
 . *Make your changes.*
  .. Use as many commits as you think are necessary, but each commit should consist of a logical change.
  .. Write tests to verify each change.
- .. If not already present, add yourself to the list of contributors in the package.json file for the package you're modifying.
+ .. If not already present, add yourself to the list of contributors in the [.path]_package.json_ file for the package you're modifying.
 
 . *Write concise but explicit commit messages.*
 Write the commit message as though the person reading it cannot see the code change.
