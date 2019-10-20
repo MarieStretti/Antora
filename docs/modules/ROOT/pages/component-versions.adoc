@@ -48,36 +48,49 @@ Antora sorts the versions of a component.
 To attain the order you want, you need to understand Antora's sorting rules.
 Antora uses these rules:
 
-* Filter out prerelease versions (unless the list only has prerelease versions).
-* Drop the leading "`v`".
-* Sort versions that start with a digit in descending order.
- ** Follow semantic versioning order as defined on https://semver.org.
-* Sort the remaining versions alphabetically. Promote the group to the top.
-* Move the version "`master`" to the top.
+* Consider separately versions that look like sematic versions with an optional leading "'v'" (e.g. 3.4.9-beta or v10.2) and those that do not.
+* Add the versions that are not semantic to the list in reverse-alphabetical (descending) order.
+* Add the remaing versions, those that do start with an optional leading "`v`" followed by a digit, to the list in descending semantic versioning order as defined on https://semver.org.
 
-The lastest version is the one at the top.
+Whenever Antora displays versions, it presents them in this order.
+Bear in mind that if a display version is specified, the display version is shown instead (other than in URLs).
+Thus, to the reader's eyes, the versions may not appear to be sorted this way.
+The display version allows the sortable version and the version displayed to be independent of each other.
 
-Example:
+Example (with no display versions):
 
 ----
+witt
+venn
+ulam
 master
-el-capitan
 v3.10
 v3.9
 v2.0
 ----
 
-When Antora displays the versions, it also applies this sorting order.
+Although `master` is a reserved word and <<#versionlessComponents,affects the URLs for pages in that component-version>>, it is sorted normally.
 
-== Versionless components
+== Subtle considerations with versions
 
-It's possible to make a component versionless.
-A [.term]*versionless component* is one that has a single component version, but where the URL of its files do not contain a version segment in the published site.
+=== Prerelease versions and latest version
 
-To make a versionless component, you still need to use a branch.
-However, you'll only use one.
-Put all the files for the component in the master branch or a branch name of your choosing.
-Then, assign the reserved word `master` to the component's version property in the component descriptor:
+A version may be designated [.term]*prerelease* by including a `prerelease` attribute with a value in [.path]_antora.yml_.
+This has two effects:
+
+* If a `display_version` is not explicitly specified, the value of the `prerelease` is combined with the version to generate a `display_version`
+* A prerelease version is normally skipped when determining the [.term]*latest version*:
+
+The [.term]*latest version* is the first version (in sorted order) that is not prerelease, unless all versions are prerelease, in which case it is the first.
+This is used as the version for the overall site start page and in resource ids that otherwise cannot determine version, and is exposed in the content model.
+
+
+[#versionlessComponents]
+=== Versionless URLs and components
+
+Normally the version is a segment in the URL of every page of the component.
+One version of a component may omit the version in the URLs for that version by using the reserved word 'master' as the version.
+If this is the only version of the component, the component is termed a [.term]*versionless component*.
 
 .antora.yml for a versionless component
 [source,yaml]
@@ -92,6 +105,3 @@ For example, a page in the versionless component shown above might have a URL li
 However, the version name can still be referenced in resource IDs for the purpose of making references (e.g., `master@tutorials::build-a-restful-web-service.adoc`).
 
 If the version property has any value other than `master` (e.g., latest), that value will appear in the URL (and output path) of the files.
-
-You can also make a hybrid component which has both regular component versions and a versionless component version.
-//They don't even have to contain the same files.
