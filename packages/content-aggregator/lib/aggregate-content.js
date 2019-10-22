@@ -725,14 +725,18 @@ function transformGitCloneError (err, displayUrl) {
     } else if (data.statusCode === 404) {
       msg = 'Content repository not found'
     } else {
-      msg = message.replace(/[.:]?\s*$/, '')
+      msg = message
     }
   } else if (code === git.E.RemoteUrlParseError || code === git.E.UnknownTransportError) {
     msg = 'Content source uses an unsupported transport protocol'
+  } else if (code && data) {
+    msg = ~message.indexOf('. ') ? message : message.replace(/\.$/, '')
   } else {
-    msg = message.replace(/[.:]?\s*$/, '')
+    msg = err.name + ': See cause'
   }
-  return new Error(msg + ': ' + displayUrl)
+  const wrappedErr = new Error(msg + ' (url: ' + displayUrl + ')')
+  wrappedErr.stack += '\nCaused by: ' + (err.stack || 'unknown')
+  return wrappedErr
 }
 
 module.exports = aggregateContent
