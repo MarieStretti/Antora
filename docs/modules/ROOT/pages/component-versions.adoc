@@ -30,11 +30,11 @@ version: '2.1'
 title: Versioned Component
 ----
 
-This component descriptor communicates that the files taken from this branch contribute to version 2.1 of the versioned-component component.
+This component descriptor communicates that the files taken from this branch contribute to the 2.1 version of the component named versioned-component.
 The name of the branch could be v2.1 or v2.1-beta.
 It doesn't matter.
 
-This is the only file you have to update when creating a new branch.
+The component descriptor is the only file you have to update when creating a new branch.
 All the page references for that component should be relative to the version, so you shouldn't need to update any links.
 The next time you run Antora on the repository, you'll see a new version in the component explorer drawer.
 
@@ -44,55 +44,78 @@ That's because a single version can be spread out across multiple branches, or e
 
 == How Antora sorts versions
 
-Antora sorts the versions of a component.
+Antora sorts the versions of each component.
 To attain the order you want, you need to understand Antora's sorting rules.
-Antora uses these rules:
 
-* Consider separately versions that look like sematic versions with an optional leading "'v'" (e.g. 3.4.9-beta or v10.2) and those that do not.
-* Add the versions that are not semantic to the list in reverse-alphabetical (descending) order.
-* Add the remaing versions, those that do start with an optional leading "`v`" followed by a digit, to the list in descending semantic versioning order as defined on https://semver.org.
+Antora sorts component versions using to the following rules:
 
-Whenever Antora displays versions, it presents them in this order.
-Bear in mind that if a display version is specified, the display version is shown instead (other than in URLs).
-Thus, to the reader's eyes, the versions may not appear to be sorted this way.
-The display version allows the sortable version and the version displayed to be independent of each other.
+* Partition semantic versions and named versions.
+ ** A version that contains at least one `.` and starts with either a digit or a "`v`" followed by a digit is assumed to be a semantic version.
+ ** All other versions are assumed to be named versions.
+* Sort named versions in reverse (i.e., descending) alphabetical order and add them to the list.
+ ** The assumption is that named versions that fall later in the alphabet are newer.
+* Sort semantic versions in descending order
+ ** Apply the ordering rules for semantic versioning as defined by https://semver.org.
 
-Example (with no display versions):
+NOTE: Although the version `master` has special meaning when <<versionless-urls,creating URLs for a component version>>, it's treated as any other named version when sorting.
+
+Here's an example of a version list that has been sorted according to these rules:
 
 ----
-witt
-venn
-ulam
-master
+wily
+vivid
+utopic
 v3.10
 v3.9
 v2.0
 ----
 
-Although `master` is a reserved word and <<#versionlessComponents,affects the URLs for pages in that component-version>>, it is sorted normally.
+Whenever Antora displays versions in the UI, it presents them in this order.
+Bear in mind that if a display version is specified, the display version is shown instead.
+Thus, to the reader's eyes, the versions may not appear to be sorted as described.
+The display version allows the sortable version and the version displayed to be independent of one another.
 
-== Subtle considerations with versions
+== Prerelease versions
 
-=== Prerelease versions and latest version
+A version may be designated a [.term]_prerelease version_ by assigning a value to the `prerelease` key in [.path]_antora.yml_.
+For example:
 
-A version may be designated [.term]*prerelease* by including a `prerelease` attribute with a value in [.path]_antora.yml_.
-This has two effects:
+[source,yaml]
+----
+name: versioned-component
+version: '2.2'
+prerelease: Beta
+title: Versioned Component
+----
 
-* If a `display_version` is not explicitly specified, the value of the `prerelease` is combined with the version to generate a `display_version`
-* A prerelease version is normally skipped when determining the [.term]*latest version*:
+This assignment has two effects:
 
-The [.term]*latest version* is the first version (in sorted order) that is not prerelease, unless all versions are prerelease, in which case it is the first.
-This is used as the version for the overall site start page and in resource ids that otherwise cannot determine version, and is exposed in the content model.
+* The value of the `prerelease` key is combined with the value of the `version` key to generate the `display_version` (e.g., `2.2 Beta`).
+ ** If the `prerelease` value begins with a hyphen (`-`) or dot (`.`), a space is not added between the values when combining them.
+ ** This computed value is replaced by the value of the `display_version` key, if set.
+* The prerelease version is skipped when determining the latest version, unless all versions are prerelease versions.
 
+== Choosing the latest version
 
-[#versionlessComponents]
-=== Versionless URLs and components
+In additional to sorting versions, Antora keeps track of the latest version of each component.
+The sorting rules previously covered impact how the latest version is selected.
 
-Normally the version is a segment in the URL of every page of the component.
-One version of a component may omit the version in the URLs for that version by using the reserved word 'master' as the version.
-If this is the only version of the component, the component is termed a [.term]*versionless component*.
+The [.term]_latest version_ is the first version in the sorted list that is not prerelease.
+If all versions are prereleases, then the first version in the list is used.
 
-.antora.yml for a versionless component
+Antora uses the latest version when qualifying a resource ID whenever it cannot otherwise determine the version.
+The latest version is also available as a property on the component in the UI model, often used to inform the reader if there's a newer version of the documentation available.
+
+[#versionless-urls]
+=== Versionless URLs
+
+The version of the component is typically included as a segment in the URL of publishable files.
+The exception to this rule is if the version has the reserved word `master`.
+When the version is `master`, Antora removes the version segment from the URL (and output path) of all publishable files in that component version.
+If the version is any other value (e.g., `latest`), that value will be used in the URL (and output path) of the files.
+
+Here's an example of a component version that will have versionless URLs:
+
 [source,yaml]
 ----
 name: tutorials
@@ -100,8 +123,8 @@ version: master
 title: Tutorials
 ----
 
-When the name of a component version is `master`, Antora removes the version segment from the URL (and output path) of all publishable files in that component version.
-For example, a page in the versionless component shown above might have a URL like `/tutorials/build-a-restful-web-service.html`.
-However, the version name can still be referenced in resource IDs for the purpose of making references (e.g., `master@tutorials::build-a-restful-web-service.adoc`).
+A page in the versionless component shown in the previous example might have a URL such as `/tutorials/build-a-restful-web-service.html`.
+However, the version name is still referenced in resource IDs as normal (e.g., `master@tutorials::build-a-restful-web-service.adoc`).
 
-If the version property has any value other than `master` (e.g., latest), that value will appear in the URL (and output path) of the files.
+If the component only has a single version, and that version is the reserved word `master`, we say that the component is a [.term]_versionless component_.
+Typically, the `master` version is only used for a versionless component.
