@@ -44,6 +44,20 @@ describe('versionCompareDesc()', () => {
     expect(versions).to.eql(['1.0', '1.0-beta.1', '1.0-alpha.2', '1.0-alpha.1'])
   })
 
+  it('should order non-semantic version strings before pre-release versions', () => {
+    const versions = ['1.0-alpha.1', 'named', '1.0-beta.1']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['named', '1.0-beta.1', '1.0-alpha.1'])
+  })
+
+  it('should not change order of semantic version strings containing non-numbers', () => {
+    const versions = ['1.0', '2.x', '2.y', '3.0']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['3.0', '2.x', '2.y', '1.0'])
+  })
+
   it('should order non-semantic version strings before semantic version strings', () => {
     const versionFixtures = [['1.0', 'master'], ['master', '1.0'], ['2.0.1', 'dev'], ['dev', '2.0.1']]
     const expected = [['master', '1.0'], ['master', '1.0'], ['dev', '2.0.1'], ['dev', '2.0.1']]
@@ -87,6 +101,13 @@ describe('versionCompareDesc()', () => {
 
     versions.sort(versionCompareDesc)
     expect(versions).to.eql(['90.1', '80', '10', '9.0.2', '9.0.1', '8'])
+  })
+
+  it('should group version v with other named versions', () => {
+    const versions = ['trusty', 'xenial', 'v']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['xenial', 'v', 'trusty'])
   })
 
   it('should help ensure order is maintained on insertion', () => {
