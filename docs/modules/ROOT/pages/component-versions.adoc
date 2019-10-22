@@ -47,7 +47,7 @@ That's because a single version can be spread out across multiple branches, or e
 Antora sorts the versions of each component.
 To attain the order you want, you need to understand Antora's sorting rules.
 
-Antora sorts component versions using to the following rules:
+Antora sorts component versions using the following rules:
 
 * Partition semantic versions and named versions.
  ** A version that contains at least one `.` and starts with either a digit or a "`v`" followed by a digit is assumed to be a semantic version.
@@ -72,12 +72,12 @@ v2.0
 
 Whenever Antora displays versions in the UI, it presents them in this order.
 Bear in mind that if a display version is specified, the display version is shown instead.
-Thus, to the reader's eyes, the versions may not appear to be sorted as described.
 The display version allows the sortable version and the version displayed to be independent of one another.
+Thus, to the reader's eyes, the versions may not appear to be sorted as described.
 
 == Prerelease versions
 
-A version may be designated a [.term]_prerelease version_ by assigning a value to the `prerelease` key in [.path]_antora.yml_.
+A version may be designated a [.term]_prerelease version_ by assigning a value to the `prerelease` property in [.path]_antora.yml_.
 For example:
 
 [source,yaml]
@@ -90,14 +90,14 @@ title: Versioned Component
 
 This assignment has two effects:
 
-* The value of the `prerelease` key is combined with the value of the `version` key to generate the `display_version` (e.g., `2.2 Beta`).
+* The value of the `prerelease` property is combined with the value of the `version` property to generate the `display_version` (e.g., `2.2 Beta`).
  ** If the `prerelease` value begins with a hyphen (`-`) or dot (`.`), a space is not added between the values when combining them.
- ** This computed value is replaced by the value of the `display_version` key, if set.
+ ** This computed value is replaced by the value of the `display_version` property, if set.
 * The prerelease version is skipped when determining the latest version, unless all versions are prerelease versions.
 
 == Choosing the latest version
 
-In additional to sorting versions, Antora keeps track of the latest version of each component.
+In addition to sorting versions, Antora keeps track of the latest version of each component.
 The sorting rules previously covered impact how the latest version is selected.
 
 The [.term]_latest version_ is the first version in the sorted list that is not prerelease.
@@ -107,10 +107,10 @@ Antora uses the latest version when qualifying a resource ID whenever it cannot 
 The latest version is also available as a property on the component in the UI model, often used to inform the reader if there's a newer version of the documentation available.
 
 [#versionless-urls]
-=== Versionless URLs
+== Versionless URLs
 
 The version of the component is typically included as a segment in the URL of publishable files.
-The exception to this rule is if the version has the reserved word `master`.
+The exception to this rule is if the version is the reserved word `master`.
 When the version is `master`, Antora removes the version segment from the URL (and output path) of all publishable files in that component version.
 If the version is any other value (e.g., `latest`), that value will be used in the URL (and output path) of the files.
 
