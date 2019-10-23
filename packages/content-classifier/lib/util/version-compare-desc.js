@@ -1,16 +1,18 @@
 'use strict'
 
+const NUMBERS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
 /**
- * A modified semantic version comparison function.
+ * An augmented semantic version comparison function.
  *
- * Based on a semantic version comparison algorithm with the following enhancements:
+ * Augments the semantic version comparison algorithm with the following enhancements:
  *
- * * Drops the leading "v" character from a semantic version, if present.
- * * Compares semantic versions in descending order (e.g., 2.0.0 comes before 1.0.0).
- * * Bubbles non-semantic versions to the top (e.g., dev, master).
- * * Compares non-semantic versions as strings.
+ * * Discard the leading "v" character, if present and the version string is a semantic version.
+ * * Compare non-semantic versions as strings in reverse alphabetical order (e.g., xenial comes before trusty).
+ * * Compare semantic versions in descending order (e.g., 2.0.0 comes before 1.0.0).
  *
- * This function assumes the string is a semantic version if it contains a "." character.
+ * This function assumes that the string is a semantic version if it begins with a number (or a "v"
+ * followed by a number) and contains a "." character or it's a parsable number.
  *
  * @param {String} a - The left version string.
  * @param {String} b - The right version string.
@@ -18,12 +20,23 @@
  */
 function versionCompareDesc (a, b) {
   if (a === b) return 0
-  const semverA = a.charAt() === 'v' ? a.substr(1) : a
-  const semverB = b.charAt() === 'v' ? b.substr(1) : b
-  if (~a.indexOf('.') || isNumber(semverA)) {
-    return ~b.indexOf('.') || isNumber(semverB) ? -1 * semverCompare(semverA, semverB) : 1
+  const semverA = resolveSemver(a)
+  const semverB = resolveSemver(b)
+  if (semverA) {
+    return semverB ? -1 * semverCompare(semverA, semverB) : 1
   } else {
-    return ~b.indexOf('.') || isNumber(semverB) ? -1 : -1 * a.localeCompare(b, 'en', { numeric: true })
+    return semverB ? -1 : -1 * a.localeCompare(b, 'en', { numeric: true })
+  }
+}
+
+function resolveSemver (str) {
+  const char0 = str.charAt()
+  if (char0 === 'v') {
+    if (NUMBERS.includes(str.charAt(1)) && (str = str.substr(1)) && (~str.indexOf('.') || isNumber(str.charAt()))) {
+      return str
+    }
+  } else if (NUMBERS.includes(char0) && (~str.indexOf('.') || isNumber(str))) {
+    return str
   }
 }
 
@@ -47,8 +60,8 @@ function semverCompare (a, b) {
   const numsA = a.split('.')
   const numsB = b.split('.')
   for (let i = 0; i < 3; i++) {
-    const numA = numsA[i] ? Number(numsA[i]) : 0
-    const numB = numsB[i] ? Number(numsB[i]) : 0
+    const numA = Number(numsA[i] || 0)
+    const numB = Number(numsB[i] || 0)
     if (numA > numB) {
       return 1
     } else if (numB > numA) {
