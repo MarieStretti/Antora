@@ -342,6 +342,6 @@ It's left up to an exercise for the reader to store or erase the credentials bas
 == SSH authentication
 
 Since 2.0, Antora no longer supports public/private key authentication over SSH using an SSH agent.
-Instead, Antora transparently converts git SSH URLs in the playbook to HTTPS URLs.
-That means you can use SSH URLs and HTTPS URLs interchangeably in your playbook file.
-If this automatic translation doesn't work, meaning a git repository is not available at the equivalent HTTPS URL, then you'll need to update your playbook file to use the correct HTTPS URL.
+Instead, Antora transparently converts git SSH URLs in the playbook to HTTPS URLs and uses the credential manager for authentication.
+That means you can use SSH URLs and HTTPS URLs interchangeably in your playbook file, but ultimately the git client will communicate over HTTPS.
+If, for some reason, this automatic translation doesn't work, you'll need to update your playbook file to use the correct HTTPS URL.
