@@ -1929,7 +1929,8 @@ describe('aggregateContent()', function () {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     const componentDesc = { name: 'the-component', version: '1.2' }
     await initRepoWithFiles(repoBuilder, componentDesc, 'modules/ROOT/pages/page-one.adoc', () =>
-      repoBuilder.checkoutBranch('v1.2.x')
+      repoBuilder
+        .checkoutBranch('v1.2.x')
         .then(() => repoBuilder.commitAll('create stable version'))
         .then(() => repoBuilder.checkoutBranch('v1.1.x'))
         .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: '1.1' }))
@@ -1946,11 +1947,13 @@ describe('aggregateContent()', function () {
     const firstAggregate = await aggregateContent(playbookSpec)
     expect(firstAggregate).to.have.lengthOf(3)
     expect(firstAggregate.map((it) => it.version)).to.have.members(['1.1', '1.2', '2.0'])
-    let page = firstAggregate.find((it) => it.version === '1.1').files
-      .find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    let page = firstAggregate
+      .find((it) => it.version === '1.1')
+      .files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
     expect(page.contents.toString()).to.have.string('Previous content')
-    page = firstAggregate.find((it) => it.version === '2.0').files
-      .find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
+    page = firstAggregate
+      .find((it) => it.version === '2.0')
+      .files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
     expect(page.contents.toString()).to.have.string('New content')
 
     await repoBuilder
@@ -1969,7 +1972,8 @@ describe('aggregateContent()', function () {
   it('should prune tags when runtime.fetch option is enabled and source has tags filter', async () => {
     const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR, { remote: { gitServerPort } })
     await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page-one.adoc', () =>
-      repoBuilder.checkoutBranch('v1.2.x')
+      repoBuilder
+        .checkoutBranch('v1.2.x')
         .then(() => repoBuilder.checkoutBranch('v1.1.x'))
         .then(() => repoBuilder.addComponentDescriptorToWorktree({ name: 'the-component', version: 'v1.1' }))
         .then(() => repoBuilder.addToWorktree('modules/ROOT/pages/page-one.adoc', '= Page One\n\nPrevious content.'))
@@ -1984,8 +1988,9 @@ describe('aggregateContent()', function () {
     const firstAggregate = await aggregateContent(playbookSpec)
     expect(firstAggregate).to.have.lengthOf(3)
     expect(firstAggregate.map((it) => it.version)).to.have.members(['v1.1.0', 'v1.1', 'v1.2.3'])
-    const page = firstAggregate.find((it) => it.version === 'v1.1').files
-      .find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+    const page = firstAggregate
+      .find((it) => it.version === 'v1.1')
+      .files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
     expect(page.contents.toString()).to.have.string('Previous content')
 
     await repoBuilder
