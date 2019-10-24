@@ -262,6 +262,15 @@ Then pass this file to the `-r` option when running Antora:
 
  $ antora -r ./custom-credential-manager.js antora-playbook.yml
 
+If you've installed Antora globally using `npm`, you may run into problems getting your custom credential manager to work.
+Either you'll encounter the error `Cannot find module 'isomorphic-git'` or your custom credential manager won't be called.
+To fix this problem, set the `NODE_PATH` environment variable to tell Node where to look for Antora's dependencies:
+
+ $ NODE_PATH=$(npm -g list --parseable=true @antora/site-generator-default)/node_modules \
+   antora -r ./system-git-credential-manager.js antora-playbook.yml 
+
+The alternate solution is to install Antora locally (i.e., add the Antora packages to the dependencies in [.path]_package.json_ file and run `npm i`).
+
 === Get credentials from git
 
 Git offers a command named `git credential` that serves as a simple interface for storing and retrieving credentials from system-specific helpers in the same manner as git itself.
@@ -336,12 +345,7 @@ If we require this script when invoking Antora, Antora will delegate to the syst
 
  $ antora -r ./system-git-credential-manager.js antora-playbook.yml
 
-If you've installed Antora globally using `npm`, and you encounter the error `Cannot find module 'isomorphic-git'`, you need to set the `NODE_PATH` environment variable so the custom credential manager can access Antora's dependencies.
-
- $ NODE_PATH=$(npm -g list --parseable=true @antora/site-generator-default)/node_modules \
-   antora -r ./system-git-credential-manager.js antora-playbook.yml 
-
-The alternate solution is to install Antora locally (i.e., add the Antora packages to the dependencies in [.path]_package.json_ file and run `npm i`).
+If you run into problems, make sure to set the `NODE_PATH` environment variable as explained in the previous section.
 
 It's left up to an exercise for the reader to store or erase the credentials based on whether they were approved or rejected by the server (hint: use the `approved` and `rejected` methods to invoke `git credential` again).
 
