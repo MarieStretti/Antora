@@ -1298,7 +1298,7 @@ describe('aggregateContent()', function () {
       })
     })
 
-    describe('should assign correct properties to virtual file', () => {
+    describe('should assign correct properties to virtual files taken from root of repository', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithFiles(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url })
@@ -1332,6 +1332,54 @@ describe('aggregateContent()', function () {
           expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, expectedFileSrc.path)
           const fileUriScheme = posixify ? 'file:///' : 'file://'
           expectedFileSrc.origin.editUrlPattern = fileUriScheme + repoBuilder.repoPath + '/%s'
+          expectedFileSrc.origin.worktree = true
+          expectedFileSrc.editUrl = fileUriScheme + expectedFileSrc.abspath
+          if (posixify) {
+            expectedFileSrc.origin.editUrlPattern = posixify(expectedFileSrc.origin.editUrlPattern)
+            expectedFileSrc.editUrl = posixify(expectedFileSrc.editUrl)
+          }
+        }
+        expect(pageOne).to.include(expectedFile)
+        expect(pageOne.src).to.eql(expectedFileSrc)
+      })
+    })
+
+    describe('should assign correct properties to virtual files taken from start path', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = { name: 'the-component', version: 'v1.2.3', startPath: 'docs' }
+        await initRepoWithFiles(repoBuilder, componentDesc)
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+        const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
+        const expectedFile = {
+          path: 'modules/ROOT/pages/page-one.adoc',
+          relative: 'modules/ROOT/pages/page-one.adoc',
+          dirname: 'modules/ROOT/pages',
+          basename: 'page-one.adoc',
+          stem: 'page-one',
+          extname: '.adoc',
+          mediaType: 'text/asciidoc',
+        }
+        const expectedFileSrc = {
+          path: expectedFile.path,
+          basename: expectedFile.basename,
+          stem: expectedFile.stem,
+          extname: expectedFile.extname,
+          mediaType: expectedFile.mediaType,
+          origin: {
+            type: 'git',
+            url: repoBuilder.url,
+            branch: 'master',
+            startPath: 'docs',
+          },
+        }
+        if (!(repoBuilder.bare || repoBuilder.remote)) {
+          expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, repoBuilder.startPath, expectedFileSrc.path)
+          const fileUriScheme = posixify ? 'file:///' : 'file://'
+          expectedFileSrc.origin.editUrlPattern =
+            fileUriScheme + ospath.join(repoBuilder.repoPath, repoBuilder.startPath, '%s')
           expectedFileSrc.origin.worktree = true
           expectedFileSrc.editUrl = fileUriScheme + expectedFileSrc.abspath
           if (posixify) {

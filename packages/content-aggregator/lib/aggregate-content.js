@@ -323,8 +323,8 @@ async function populateComponentVersion (source, repo, remoteName, authStatus, r
   const originUrl = url || (await resolveRemoteUrl(repo, remoteName).then((url) => url || repo.dir))
   let startPath = source.startPath || ''
   if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
-  // Q: should worktreePath be passed in?
-  const worktreePath = ref.isHead && !(url || repo.noCheckout) ? ospath.join(repo.dir, startPath) : undefined
+  // Q: should worktreePath be passed in to this function?
+  const worktreePath = ref.isHead && !(url || repo.noCheckout) ? repo.dir : undefined
   let files
   let componentVersion
   try {
@@ -341,7 +341,8 @@ async function populateComponentVersion (source, repo, remoteName, authStatus, r
   return componentVersion
 }
 
-function readFilesFromWorktree (base, startPath) {
+function readFilesFromWorktree (worktreePath, startPath) {
+  const base = path.join(worktreePath, startPath)
   return fs
     .stat(base)
     .catch(() => {
@@ -500,7 +501,8 @@ function computeOrigin (url, authStatus, refName, refType, startPath, worktreePa
   if (authStatus) origin.private = authStatus
   origin[refType] = refName
   if (worktreePath) {
-    origin.editUrlPattern = 'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + '/%s'
+    origin.editUrlPattern =
+      'file://' + path.join(posixify ? '/' + posixify(worktreePath) : worktreePath, startPath, '%s')
     // Q: should we set worktreePath instead (or additionally?)
     origin.worktree = true
   } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
