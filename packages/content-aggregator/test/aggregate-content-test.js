@@ -2456,7 +2456,7 @@ describe('aggregateContent()', function () {
       repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + urlWithoutAuth
+      const expectedErrorMessage = 'Content repository not found or requires credentials (url: ' + urlWithoutAuth + ')'
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
       expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
     })
@@ -2469,7 +2469,7 @@ describe('aggregateContent()', function () {
       repoBuilder.url = urlWithoutAuth.replace('//', '//u:p@')
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + urlWithoutAuth
+      const expectedErrorMessage = 'Content repository not found or requires credentials (url: ' + urlWithoutAuth + ')'
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
       expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
       expect(CONTENT_CACHE_DIR)
@@ -2638,7 +2638,7 @@ describe('aggregateContent()', function () {
       await initRepoWithFiles(repoBuilder)
       playbookSpec.content.sources.push({ url: repoBuilder.url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + repoBuilder.url
+      const expectedErrorMessage = 'Content repository not found or requires credentials (url: ' + repoBuilder.url + ')'
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
       expect(authorizationHeaderValue).to.be.undefined()
       expect(credentialsSent).to.be.undefined()
@@ -2662,7 +2662,8 @@ describe('aggregateContent()', function () {
       playbookSpec.runtime.fetch = true
       return withMockStdout(async (lines) => {
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-        const expectedErrorMessage = 'Content repository not found or credentials were rejected: ' + repoBuilder.url
+        const expectedErrorMessage =
+          'Content repository not found or credentials were rejected (url: ' + repoBuilder.url + ')'
         expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
         expect(authorizationHeaderValue).to.eql('Basic ' + Buffer.from('u:p').toString('base64'))
         expect(credentialsSent).to.eql({ username: 'u', password: 'p' })
@@ -2831,8 +2832,9 @@ describe('aggregateContent()', function () {
       const url = 'git@gitlab.com:invalid-repository.git'
       const expectedErrorMessage =
         'Remote does not support the "smart" HTTP protocol, ' +
-        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible: ' +
-        url
+        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible (url: ' +
+        url +
+        ')'
       playbookSpec.content.sources.push({ url })
       await withMockStdout(async (lines) => {
         playbookSpec.runtime.quiet = false
@@ -2845,10 +2847,13 @@ describe('aggregateContent()', function () {
 
     it('should throw meaningful error if remote repository URL not found', async () => {
       const url = `http://localhost:${serverPort}/404/invalid-repository.git`
-      const expectedErrorMessage = 'Content repository not found: ' + url
+      const expectedErrorMessage = 'Content repository not found (url: ' + url + ')'
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-      expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
+      expect(aggregateContentDeferred)
+        .to.throw(expectedErrorMessage)
+        .with.property('stack')
+        .that.includes('Caused by: HTTPError: HTTP Error: 404 Not Found')
     })
 
     describe('should not append .git suffix to URL if git.ensureGitSuffix is disabled in playbook', () => {
@@ -2856,7 +2861,7 @@ describe('aggregateContent()', function () {
         await initRepoWithFiles(repoBuilder)
         playbookSpec.git = { ensureGitSuffix: false }
         playbookSpec.content.sources.push({ url: repoBuilder.url.replace(/\.git$/, '') })
-        const expectedErrorMessage = 'Content repository not found: ' + repoBuilder.url.replace(/\.git$/, '')
+        const expectedErrorMessage = 'Content repository not found (url: ' + repoBuilder.url.replace(/\.git$/, '') + ')'
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
       })
@@ -2864,16 +2869,27 @@ describe('aggregateContent()', function () {
 
     it('should throw meaningful error if credentials are insufficient', async () => {
       const url = `http://localhost:${serverPort}/401/invalid-repository.git`
-      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + url
+      const expectedErrorMessage = 'Content repository not found or requires credentials (url: ' + url + ')'
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })
 
+    it('should preserve stack of original git error', async () => {
+      const url = `http://localhost:${serverPort}/401/invalid-repository.git`
+      const expectedErrorMessage = 'Content repository not found or requires credentials (url: ' + url + ')'
+      playbookSpec.content.sources.push({ url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred)
+        .to.throw(expectedErrorMessage)
+        .with.property('stack')
+        .that.includes('Caused by: HTTPError: HTTP Error: 401 HTTP Basic: Access Denied')
+    })
+
     it('should not show auth information in progress bar label', async () => {
       const url = `http://0123456789@localhost:${serverPort}/401/invalid-repository.git`
       const sanitizedUrl = `http://localhost:${serverPort}/401/invalid-repository.git`
-      const expectedErrorMessage = 'Content repository not found or requires credentials: ' + sanitizedUrl
+      const expectedErrorMessage = 'Content repository not found or requires credentials (url: ' + sanitizedUrl + ')'
       return withMockStdout(async (lines) => {
         playbookSpec.runtime.quiet = false
         playbookSpec.content.sources.push({ url })
@@ -2885,16 +2901,11 @@ describe('aggregateContent()', function () {
 
     it('should throw meaningful error if server returns unexpected error', async () => {
       const url = `http://localhost:${serverPort}/301/invalid-repository.git`
-      //let expectedErrorMessage
-      //if (process.platform === 'win32') {
-      //  expectedErrorMessage = 'too many redirects or authentication replays: ' + url
-      //} else {
-      //  expectedErrorMessage = 'cross host redirect not allowed: ' + url
-      //}
       const expectedErrorMessage =
         'Remote does not support the "smart" HTTP protocol, ' +
-        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible: ' +
-        url
+        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible (url: ' +
+        url +
+        ')'
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
