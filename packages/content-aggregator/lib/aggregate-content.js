@@ -734,7 +734,7 @@ function transformGitCloneError (err, displayUrl) {
   } else if (code && data) {
     msg = ~message.indexOf('. ') ? message : message.replace(/\.$/, '')
   } else {
-    msg = err.name + ': See cause'
+    msg = 'Unknown ' + err.name + ': See cause'
   }
   const wrappedErr = new Error(msg + ' (url: ' + displayUrl + ')')
   wrappedErr.stack += '\nCaused by: ' + (err.stack || 'unknown')
