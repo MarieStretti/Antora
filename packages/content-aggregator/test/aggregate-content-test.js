@@ -449,11 +449,20 @@ describe('aggregateContent()', function () {
         .then(() => beforeClose && beforeClose())
         .then(() => repoBuilder.close('master'))
 
-    describe('should exclude all branches when filter is undefined', () => {
+    describe('should exclude all branches when global filter is undefined', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithBranches(repoBuilder)
         playbookSpec.content.branches = undefined
         playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(0)
+      })
+    })
+
+    describe('should exclude all branches when filter on content source is undefined', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url, branches: undefined })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(0)
       })
@@ -819,6 +828,22 @@ describe('aggregateContent()', function () {
         expect(aggregate).to.have.lengthOf(2)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.0' })
         expect(aggregate[1]).to.include({ name: 'the-component', version: 'v3.0' })
+      })
+    })
+
+    describe('should exclude all refs if filter on content source is undefined', () => {
+      testAll(async (repoBuilder) => {
+        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+          repoBuilder
+            .createTag('v1.0.0', 'v1.0')
+            .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
+            .then(() => repoBuilder.createTag('v3.0.0', 'v3.0'))
+        )
+        playbookSpec.content.branches = undefined
+        playbookSpec.content.tags = 'v*'
+        playbookSpec.content.sources.push({ url: repoBuilder.url, tags: undefined })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(0)
       })
     })
 
