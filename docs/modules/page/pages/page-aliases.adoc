@@ -1,0 +1,74 @@
+= The [.term]*page-aliases* attribute and rewrite rules
+
+Setting the [.term]*page-aliases* attribute in a page causes Antora to generate redirect information to that page in a format determined by playbook configuration.
+The value of the [.term]*page-aliases* attribute is a comma-separated list of resource ids.
+For each resource id, Antora will generate redirect information so that the URL calculated from that resource id is redirected to the current page.
+For simplicity I'll call the current page at its URL the [.term]*target page*.
+
+The site start_page, if specified in the playbook, is implemented through the redirect facility.
+
+== Simplest Example
+
+If you rename old-name.adoc to new-name.adoc in the same directory, use:
+
+----
+:page-aliases: ::old-name.adoc
+----
+
+Note that the value has the format of an xref with "`xref`" removed.
+This will result in path/to/this/page/old-name.html being redirected to path/to/this/page/new-name.html.
+Alternatively, if you've specified "`indexify`", path/to/this/page/old-name will be redirected to path/to/this/page/new-name.
+
+== Results, or configuring the rewrite facility
+
+What sort of redirect facility will be used is configured in the playbook under the (optional) urls key.
+
+----
+urls:
+  redirect-facility: static
+----
+
+Allowed values and the resulting effects:
+
+static::
+(default) A static "bounce page" is generated and placed in the generated site at the location of the resource id, specifying a 301 redirect to the target page.
+nginx::
+An nginx format redirect file is generated and placed at the root of the generated site at [.path]_.etc/nginx/rewrite.conf_.
+netlify::
+An netlify format redirect file is generated and placed at the root of the generated site at [.path]__redirects_.
+disabled::
+No redirects will be generated.
+
+== Limitations
+
+* A redirect URL cannot be the target of an xref.
+Therefore, if you move a page, you need to update all the references to it in your source to the new Antora coordinates.
+See https://gitlab.com/antora/antora/issues/425[Page version selector and canonical URL should take page aliases into account] for a possibly relevant enhancement.
+
+== Examples
+
+* Produce a versionless alias for a page at coordinates v2@component1::topic/topic.adoc:
+----
+:page-aliases: master@{page-component-name}:{page-module}:{page-relative}
+----
+** static redirect:
+----
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="canonical" href="http://example.com/component1/v2/topic/topic.html">
+<script>location="../v2/topic/topic.html"</script>
+<meta http-equiv="refresh" content="0; url=../v2/topic/topic.html">
+<meta name="robots" content="noindex">
+<title>Redirect Notice</title>
+<h1>Redirect Notice</h1>
+<p>The page you requested has been relocated to <a href="../v2/topic/topic.html">http://example.com/component1/v2/topic/topic.html</a>.</p>
+----
+** netlify redirect:
+----
+/component1/topic/topic.html /component1/v2/topic/topic.html 301
+----
+** nginx redirect:
+----
+location = /component1/topic/topic.html { return 301 /component1/v2/topic/topic.html; }
+----
+
