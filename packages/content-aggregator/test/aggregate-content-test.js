@@ -4,6 +4,7 @@
 const { deferExceptions, expect, heredoc, removeSyncForce, spy } = require('../../../test/test-utils')
 
 const aggregateContent = require('@antora/content-aggregator')
+const computeOrigin = aggregateContent._computeOrigin
 const { createHash } = require('crypto')
 const freeze = require('deep-freeze-node')
 const fs = require('fs-extra')
@@ -1478,78 +1479,110 @@ describe('aggregateContent()', function () {
     describe('remote origin data', () => {
       it('should generate correct origin data for file taken from repository on GitHub', () => {
         const urls = [
-          'https://github.com/org-name/repo-name.git',
-          'https://github.com/org-name/repo-name',
-          'git@github.com:org-name/repo-name.git',
-          'git@github.com:org-name/repo-name',
+          'https://{hostname}/org-name/repo-name.git',
+          'https://{hostname}/org-name/repo-name',
+          'git@{hostname}:org-name/repo-name.git',
+          'git@{hostname}:org-name/repo-name',
         ]
+        const hostnames = ['github.com', 'private.github.com']
         const action = { branch: 'edit', tag: 'blob' }
         const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
         refs.forEach(([name, type]) => {
-          const expectedEditUrlPattern = 'https://github.com/org-name/repo-name/' + action[type] + '/' + name + '/%s'
-          urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
-            expect(origin.url).to.equal(url)
-            expect(origin[type]).to.equal(name)
-            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          hostnames.forEach((hostname) => {
+            urls.forEach((url) => {
+              url = url.replace('{hostname}', hostname)
+              const origin = computeOrigin(url, false, name, type, '')
+              expect(origin.url).to.equal(url)
+              expect(origin[type]).to.equal(name)
+              if (hostname === 'github.com') {
+                const expectedEditUrlPattern = `https://${hostname}/org-name/repo-name/${action[type]}/${name}/%s`
+                expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+              } else {
+                expect(origin).not.to.have.property('editUrlPattern')
+              }
+            })
           })
         })
       })
 
       it('should generate correct origin data for file taken from repository on GitLab', () => {
         const urls = [
-          'https://gitlab.com/org-name/repo-name.git',
-          'https://gitlab.com/org-name/repo-name',
-          'git@gitlab.com:org-name/repo-name.git',
-          'git@gitlab.com:org-name/repo-name',
+          'https://{hostname}/org-name/repo-name.git',
+          'https://{hostname}/org-name/repo-name',
+          'git@{hostname}:org-name/repo-name.git',
+          'git@{hostname}:org-name/repo-name',
         ]
+        const hostnames = ['gitlab.com', 'private.gitlab.com']
         const action = { branch: 'edit', tag: 'blob' }
         const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
         refs.forEach(([name, type]) => {
-          const expectedEditUrlPattern = 'https://gitlab.com/org-name/repo-name/' + action[type] + '/' + name + '/%s'
-          urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
-            expect(origin.url).to.equal(url)
-            expect(origin[type]).to.equal(name)
-            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          hostnames.forEach((hostname) => {
+            urls.forEach((url) => {
+              url = url.replace('{hostname}', hostname)
+              const origin = computeOrigin(url, false, name, type, '')
+              expect(origin.url).to.equal(url)
+              expect(origin[type]).to.equal(name)
+              if (hostname === 'gitlab.com') {
+                const expectedEditUrlPattern = `https://${hostname}/org-name/repo-name/${action[type]}/${name}/%s`
+                expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+              } else {
+                expect(origin).not.to.have.property('editUrlPattern')
+              }
+            })
           })
         })
       })
 
       it('should generate correct origin data for file taken from repository on BitBucket', () => {
         const urls = [
-          'https://bitbucket.org/org-name/repo-name.git',
-          'https://bitbucket.org/org-name/repo-name',
-          'git@bitbucket.org:org-name/repo-name.git',
-          'git@bitbucket.org:org-name/repo-name',
+          'https://{hostname}/org-name/repo-name.git',
+          'https://{hostname}/org-name/repo-name',
+          'git@{hostname}:org-name/repo-name.git',
+          'git@{hostname}:org-name/repo-name',
         ]
+        const hostnames = ['bitbucket.org', 'private.bitbucket.org']
         const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
         refs.forEach(([name, type]) => {
-          const expectedEditUrlPattern = 'https://bitbucket.org/org-name/repo-name/src/' + name + '/%s'
-          urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
-            expect(origin.url).to.equal(url)
-            expect(origin[type]).to.equal(name)
-            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          hostnames.forEach((hostname) => {
+            urls.forEach((url) => {
+              url = url.replace('{hostname}', hostname)
+              const origin = computeOrigin(url, false, name, type, '')
+              expect(origin.url).to.equal(url)
+              expect(origin[type]).to.equal(name)
+              if (hostname === 'bitbucket.org') {
+                const expectedEditUrlPattern = `https://${hostname}/org-name/repo-name/src/${name}/%s`
+                expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+              } else {
+                expect(origin).not.to.have.property('editUrlPattern')
+              }
+            })
           })
         })
       })
 
       it('should generate correct origin data for file taken from repository on pagure.io', () => {
         const urls = [
-          'https://pagure.io/group-name/repo-name.git',
-          'https://pagure.io/group-name/repo-name',
-          'git@pagure.io:group-name/repo-name.git',
-          'git@pagure.io:group-name/repo-name',
+          'https://{hostname}/group-name/repo-name.git',
+          'https://{hostname}/group-name/repo-name',
+          'git@{hostname}:group-name/repo-name.git',
+          'git@{hostname}:group-name/repo-name',
         ]
+        const hostnames = ['pagure.io', 'private.pagure.io']
         const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
         refs.forEach(([name, type]) => {
-          const expectedEditUrlPattern = 'https://pagure.io/group-name/repo-name/blob/' + name + '/f/%s'
-          urls.forEach((url) => {
-            const origin = aggregateContent._computeOrigin(url, false, name, type, '')
-            expect(origin.url).to.equal(url)
-            expect(origin[type]).to.equal(name)
-            expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+          hostnames.forEach((hostname) => {
+            urls.forEach((url) => {
+              url = url.replace('{hostname}', hostname)
+              const origin = computeOrigin(url, false, name, type, '')
+              expect(origin.url).to.equal(url)
+              expect(origin[type]).to.equal(name)
+              if (hostname === 'pagure.io') {
+                const expectedEditUrlPattern = `https://${hostname}/group-name/repo-name/blob/${name}/f/%s`
+                expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+              } else {
+                expect(origin).not.to.have.property('editUrlPattern')
+              }
+            })
           })
         })
       })
@@ -1561,7 +1594,7 @@ describe('aggregateContent()', function () {
         const expectedEditUrlPattern = posixify
           ? 'file:///' + posixify(worktreePath) + '/%s'
           : 'file://' + worktreePath + '/%s'
-        const origin = aggregateContent._computeOrigin(url, false, branch, 'branch', '', worktreePath)
+        const origin = computeOrigin(url, false, branch, 'branch', '', worktreePath)
         expect(origin.url).to.equal(url)
         expect(origin.branch).to.equal(branch)
         expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
@@ -1569,7 +1602,7 @@ describe('aggregateContent()', function () {
 
       it('should set correct origin data if URL requires auth', () => {
         const url = 'https://gitlab.com/antora/demo/demo-component-a.git'
-        const origin = aggregateContent._computeOrigin(url, 'auth-required', 'master', 'branch', '')
+        const origin = computeOrigin(url, 'auth-required', 'master', 'branch', '')
         expect(origin.private).to.equal('auth-required')
       })
     })
