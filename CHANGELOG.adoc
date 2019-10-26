@@ -18,6 +18,7 @@ This project utilizes semantic versioning.
 
 * *content-aggregator*: Upgrade isomorphic-git (#476)
 * *content-aggregator*: Automatically unregister any managed git plugin (e.g., fs and credentialManager) (#476)
+* *content-aggregator*: The tags and branches key defined on content source should override inherited value even when value is falsy (#510)
 * *content-classifier:* Make detection of semantic versions more robust (#505)
 * Upgrade development dependencies
 

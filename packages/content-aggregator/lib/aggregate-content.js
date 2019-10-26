@@ -83,11 +83,11 @@ function aggregateContent (playbook) {
           }).then(({ repo, authStatus }) =>
             Promise.all(
               sources.map((source) => {
-                const refPatterns = { branches: source.branches || defaultBranches, tags: source.tags || defaultTags }
+                source = Object.assign({ branches: defaultBranches, tags: defaultTags }, source)
                 // NOTE if repository is managed (has a url), we can assume the remote name is origin
                 // TODO if the repo has no remotes, then remoteName should be undefined
                 const remoteName = repo.url ? 'origin' : source.remote || 'origin'
-                return collectComponentVersions(source, repo, remoteName, authStatus, refPatterns)
+                return collectComponentVersions(source, repo, remoteName, authStatus)
               })
             )
           )
@@ -216,15 +216,15 @@ function extractCredentials (url) {
   }
 }
 
-function collectComponentVersions (source, repo, remoteName, authStatus, refPatterns) {
-  return selectReferences(repo, remoteName, refPatterns).then((refs) =>
+function collectComponentVersions (source, repo, remoteName, authStatus) {
+  return selectReferences(source, repo, remoteName).then((refs) =>
     Promise.all(refs.map((ref) => populateComponentVersion(source, repo, remoteName, authStatus, ref)))
   )
 }
 
 // QUESTION should we resolve HEAD to a ref eagerly to avoid having to do a match on it?
-async function selectReferences (repo, remote, refPatterns) {
-  let { branches: branchPatterns, tags: tagPatterns } = refPatterns
+async function selectReferences (source, repo, remote) {
+  let { branches: branchPatterns, tags: tagPatterns } = source
   const isBare = repo.noCheckout
   const refs = new Map()
 
