@@ -35,7 +35,7 @@ const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /^(?:https?:\/\/|.+@)(git(?:hub|lab)\.com|bitbucket\.org|pagure\.io)[/:](.+?)(?:\.git)?$/
-const NON_UNIQUE_URI_SUFFIX_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
+const GIT_EXTENSION_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
 const SPACE_RX = / /g
 const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)?(?::([^/@]+)?)?@)?(.*)/
@@ -636,7 +636,7 @@ function onGitComplete (progressBar, err) {
 function generateCloneFolderName (url) {
   let normalizedUrl = url.toLowerCase()
   if (posixify) normalizedUrl = posixify(normalizedUrl)
-  normalizedUrl = normalizedUrl.replace(NON_UNIQUE_URI_SUFFIX_RX, '')
+  normalizedUrl = normalizedUrl.replace(GIT_EXTENSION_RX, '')
   const basename = normalizedUrl.split(ANY_SEPARATOR_RX).pop()
   const hash = createHash('sha1')
   hash.update(normalizedUrl)
