@@ -305,6 +305,17 @@ describe('aggregateContent()', function () {
       })
     })
 
+    describe('should throw if component descriptor cannot be found at start path', () => {
+      testAll(async (repoBuilder) => {
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        await initRepoWithFiles(repoBuilder)
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'modules' })
+        const expectedMessage = `modules/${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
     describe('should discover components across multiple repositories', () => {
       testAll(async (repoBuilderA, repoBuilderB) => {
         const componentDescA = { name: 'the-component', title: 'The Component', version: 'v1.2' }
