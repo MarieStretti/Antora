@@ -1360,20 +1360,20 @@ describe('aggregateContent()', function () {
           mediaType: expectedFile.mediaType,
           origin: {
             type: 'git',
-            url: repoBuilder.url,
             branch: 'master',
             startPath: '',
           },
         }
+        if (repoBuilder.remote) expectedFileSrc.origin.url = repoBuilder.url
         if (!(repoBuilder.bare || repoBuilder.remote)) {
           expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, expectedFileSrc.path)
           const fileUriScheme = posixify ? 'file:///' : 'file://'
-          expectedFileSrc.origin.editUrlPattern = fileUriScheme + repoBuilder.repoPath + '/%s'
+          expectedFileSrc.origin.fileUriPattern = fileUriScheme + repoBuilder.repoPath + '/%s'
           expectedFileSrc.origin.worktree = true
-          expectedFileSrc.editUrl = fileUriScheme + expectedFileSrc.abspath
+          expectedFileSrc.fileUri = fileUriScheme + expectedFileSrc.abspath
           if (posixify) {
-            expectedFileSrc.origin.editUrlPattern = posixify(expectedFileSrc.origin.editUrlPattern)
-            expectedFileSrc.editUrl = posixify(expectedFileSrc.editUrl)
+            expectedFileSrc.origin.fileUriPattern = posixify(expectedFileSrc.origin.fileUriPattern)
+            expectedFileSrc.fileUri = posixify(expectedFileSrc.fileUri)
           }
         }
         expect(pageOne).to.include(expectedFile)
@@ -1407,21 +1407,21 @@ describe('aggregateContent()', function () {
           mediaType: expectedFile.mediaType,
           origin: {
             type: 'git',
-            url: repoBuilder.url,
             branch: 'master',
             startPath: 'docs',
           },
         }
+        if (repoBuilder.remote) expectedFileSrc.origin.url = repoBuilder.url
         if (!(repoBuilder.bare || repoBuilder.remote)) {
           expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, repoBuilder.startPath, expectedFileSrc.path)
           const fileUriScheme = posixify ? 'file:///' : 'file://'
-          expectedFileSrc.origin.editUrlPattern =
+          expectedFileSrc.origin.fileUriPattern =
             fileUriScheme + ospath.join(repoBuilder.repoPath, repoBuilder.startPath, '%s')
           expectedFileSrc.origin.worktree = true
-          expectedFileSrc.editUrl = fileUriScheme + expectedFileSrc.abspath
+          expectedFileSrc.fileUri = fileUriScheme + expectedFileSrc.abspath
           if (posixify) {
-            expectedFileSrc.origin.editUrlPattern = posixify(expectedFileSrc.origin.editUrlPattern)
-            expectedFileSrc.editUrl = posixify(expectedFileSrc.editUrl)
+            expectedFileSrc.origin.fileUriPattern = posixify(expectedFileSrc.origin.fileUriPattern)
+            expectedFileSrc.fileUri = posixify(expectedFileSrc.fileUri)
           }
         }
         expect(pageOne).to.include(expectedFile)
@@ -1429,7 +1429,7 @@ describe('aggregateContent()', function () {
       })
     })
 
-    describe('should encode spaces in editUrl', () => {
+    describe('should encode spaces in editUrl and fileUri', () => {
       testAll(async (repoBuilder) => {
         await initRepoWithFiles(repoBuilder, undefined, 'modules/ROOT/pages/page with spaces.adoc')
         playbookSpec.content.sources.push({ url: repoBuilder.url })
@@ -1454,21 +1454,20 @@ describe('aggregateContent()', function () {
           mediaType: expectedFile.mediaType,
           origin: {
             type: 'git',
-            url: repoBuilder.url,
             branch: 'master',
             startPath: '',
           },
         }
-        // NOTE we can't test editUrl for remote repos since it's not a known git host
+        if (repoBuilder.remote) expectedFileSrc.origin.url = repoBuilder.url
         if (!(repoBuilder.bare || repoBuilder.remote)) {
           expectedFileSrc.abspath = ospath.join(repoBuilder.repoPath, expectedFileSrc.path)
           const fileUriScheme = posixify ? 'file:///' : 'file://'
-          expectedFileSrc.origin.editUrlPattern = fileUriScheme + repoBuilder.repoPath + '/%s'
+          expectedFileSrc.origin.fileUriPattern = fileUriScheme + repoBuilder.repoPath + '/%s'
           expectedFileSrc.origin.worktree = true
-          expectedFileSrc.editUrl = fileUriScheme + expectedFileSrc.abspath.replace(/ /g, '%20')
+          expectedFileSrc.fileUri = fileUriScheme + expectedFileSrc.abspath.replace(/ /g, '%20')
           if (posixify) {
-            expectedFileSrc.origin.editUrlPattern = posixify(expectedFileSrc.origin.editUrlPattern)
-            expectedFileSrc.editUrl = posixify(expectedFileSrc.editUrl)
+            expectedFileSrc.origin.fileUriPattern = posixify(expectedFileSrc.origin.fileUriPattern)
+            expectedFileSrc.fileUri = posixify(expectedFileSrc.fileUri)
           }
         }
         expect(actualFile).to.include(expectedFile)
@@ -1478,6 +1477,19 @@ describe('aggregateContent()', function () {
 
     describe('remote origin data', () => {
       it('should resolve origin url from git config for local repository', async () => {
+        const remoteUrl = 'https://gitlab.com/antora/demo/demo-component-a'
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        const fixturePath = 'modules/ROOT/pages/page-one.adoc'
+        await initRepoWithFiles(repoBuilder, {}, fixturePath, () => repoBuilder.config('remote.origin.url', remoteUrl))
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const page = aggregate[0].files[0]
+        expect(page).not.to.be.undefined()
+        expect(page.src.origin.url).to.equal(remoteUrl)
+      })
+
+      it('should not remove .git extension from url resolved from git config for local repository', async () => {
         const remoteUrl = 'https://gitlab.com/antora/demo/demo-component-a.git'
         const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
         const fixturePath = 'modules/ROOT/pages/page-one.adoc'
@@ -1488,6 +1500,19 @@ describe('aggregateContent()', function () {
         const page = aggregate[0].files[0]
         expect(page).not.to.be.undefined()
         expect(page.src.origin.url).to.equal(remoteUrl)
+      })
+
+      it('should coerce SSH URI resolved from git config for local repository to HTTPS URL', async () => {
+        const remoteUrl = 'git@gitlab.com:antora/demo/demo-component-a.git'
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        const fixturePath = 'modules/ROOT/pages/page-one.adoc'
+        await initRepoWithFiles(repoBuilder, {}, fixturePath, () => repoBuilder.config('remote.origin.url', remoteUrl))
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const page = aggregate[0].files[0]
+        expect(page).not.to.be.undefined()
+        expect(page.src.origin.url).to.equal('https://gitlab.com/antora/demo/demo-component-a.git')
       })
 
       it('should clean credentials from remote url retrieved from git config', async () => {
@@ -1504,7 +1529,7 @@ describe('aggregateContent()', function () {
         expect(page.src.origin.url).to.equal(remoteUrlWithoutAuth)
       })
 
-      it('should set origin url to repository dir if remote url not set in git config', async () => {
+      it('should not set origin url for local repository if remote url not set in git config', async () => {
         const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
         await initRepoWithFiles(repoBuilder, {}, 'modules/ROOT/pages/page-one.adoc')
         playbookSpec.content.sources.push({ url: repoBuilder.url })
@@ -1512,7 +1537,7 @@ describe('aggregateContent()', function () {
         expect(aggregate).to.have.lengthOf(1)
         const page = aggregate[0].files[0]
         expect(page).not.to.be.undefined()
-        expect(page.src.origin.url).to.equal(repoBuilder.url)
+        expect(page.src.origin.url).to.undefined()
       })
 
       it('should generate correct origin data for file taken from repository on GitHub', () => {
@@ -1629,13 +1654,14 @@ describe('aggregateContent()', function () {
         const url = 'the-component'
         const worktreePath = ospath.join(CONTENT_REPOS_DIR, url)
         const branch = 'master'
-        const expectedEditUrlPattern = posixify
+        const expectedfileUriPattern = posixify
           ? 'file:///' + posixify(worktreePath) + '/%s'
           : 'file://' + worktreePath + '/%s'
         const origin = computeOrigin(url, false, branch, 'branch', '', worktreePath)
         expect(origin.url).to.equal(url)
         expect(origin.branch).to.equal(branch)
-        expect(origin.editUrlPattern).to.equal(expectedEditUrlPattern)
+        expect(origin.fileUriPattern).to.equal(expectedfileUriPattern)
+        expect(origin.editUrlPattern).to.be.undefined()
       })
 
       it('should set correct origin data if URL requires auth', () => {
@@ -1643,22 +1669,25 @@ describe('aggregateContent()', function () {
         const origin = computeOrigin(url, 'auth-required', 'master', 'branch', '')
         expect(origin.private).to.equal('auth-required')
       })
-    })
 
-    it('should set origin url to repository path if repository is local and not connected to remote', async () => {
-      const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
-      const componentDesc = {
-        name: 'the-component',
-        title: 'The Component',
-        version: 'v1.2.3',
-      }
-      await initRepoWithFiles(repoBuilder, componentDesc)
-      playbookSpec.content.sources.push({ url: ospath.relative(WORK_DIR, repoBuilder.url) })
-      const aggregate = await aggregateContent(playbookSpec)
-      expect(aggregate).to.have.lengthOf(1)
-      aggregate[0].files.forEach((file) => {
-        expect(file).to.have.nested.property('src.origin.url', repoBuilder.repoPath)
-      })
+      it('should not populate editUrl if edit_url key on content source is falsy', async () => {
+        const url = 'https://gitlab.com/antora/demo/demo-component-a.git'
+        playbookSpec.content.sources.push({ url, editUrl: false })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const file = aggregate[0].files[0]
+        expect(file.src).not.to.have.property('editUrl')
+      }).timeout(this.timeout() * 2)
+
+      it('should use editUrl pattern to generate editUrl', async () => {
+        const webUrl = 'https://gitlab.com/antora/demo/demo-component-a'
+        const url = webUrl + '.git'
+        playbookSpec.content.sources.push({ url, editUrl: '{web_url}/blob/{refname}/{path}' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const file = aggregate[0].files.find((it) => it.path.startsWith('modules/ROOT/pages/'))
+        expect(file.src.editUrl).to.equal(webUrl + '/blob/master/' + file.src.path)
+      }).timeout(this.timeout() * 2)
     })
   })
 
@@ -1697,9 +1726,23 @@ describe('aggregateContent()', function () {
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
         const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
-        expect(pageOne.src.origin.url).to.equal(repoBuilderA.url)
         const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
-        expect(pageTwo.src.origin.url).to.equal(repoBuilderB.url)
+        expect(pageOne).to.exist()
+        expect(pageTwo).to.exist()
+        // FIXME we can't distinguish origin for local bare repo
+        if (repoBuilderA.remote) {
+          expect(pageOne.src.origin.url).to.equal(repoBuilderA.url)
+          expect(pageTwo.src.origin.url).to.equal(repoBuilderB.url)
+        } else if (!repoBuilderA.bare) {
+          const pageOneFileUri = posixify
+            ? `file:///${posixify(repoBuilderA.repoPath)}/${pageOne.src.path}`
+            : `file://${repoBuilderA.repoPath}/${pageOne.src.path}`
+          const pageTwoFileUri = posixify
+            ? `file:///${posixify(repoBuilderB.repoPath)}/${pageTwo.src.path}`
+            : `file://${repoBuilderB.repoPath}/${pageTwo.src.path}`
+          expect(pageOne.src.fileUri).to.equal(pageOneFileUri)
+          expect(pageTwo.src.fileUri).to.equal(pageTwoFileUri)
+        }
       }, 2)
     })
 
@@ -1833,7 +1876,7 @@ describe('aggregateContent()', function () {
         files.forEach((file) => expect(file).to.have.nested.property('src.origin.worktree', true))
       })
 
-      it('should set src.editUrl property on files taken from worktree', async () => {
+      it('should set src.fileUri property on files taken from worktree', async () => {
         const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
         await initRepoWithFilesAndWorktree(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url })
@@ -1851,9 +1894,9 @@ describe('aggregateContent()', function () {
         ].map((p) => fileUriBase + '/' + p)
         const files = aggregate[0].files
         expect(files).to.have.lengthOf(expectedUrls.length)
-        expect(files[0].src).to.have.property('editUrl')
-        const editUrls = files.map((file) => file.src.editUrl)
-        expect(editUrls).to.have.members(expectedUrls)
+        expect(files[0].src).to.have.property('fileUri')
+        const fileUris = files.map((file) => file.src.fileUri)
+        expect(fileUris).to.have.members(expectedUrls)
       })
 
       it('should populate file with correct contents from worktree of clone', async () => {

@@ -9,6 +9,7 @@ site:
     google_analytics: 'XX-123456'
 content:
   branches: v*
+  edit_url: '{web_url}/blob/{refname}/{path}'
   sources:
   - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches: [master, v*]

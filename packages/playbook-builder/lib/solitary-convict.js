@@ -51,6 +51,14 @@ function registerFormats (convict) {
     },
   })
   convict.addFormat({
+    name: 'boolean-or-string',
+    validate: (val) => {
+      if (!(val == null || typeof val === 'string' || val instanceof String || typeof val === 'boolean')) {
+        throw new Error('must be a boolean or string')
+      }
+    },
+  })
+  convict.addFormat({
     name: 'dir-or-virtual-files',
     validate: (val) => {
       if (!(typeof val === 'string' || val instanceof String || Array.isArray(val))) {

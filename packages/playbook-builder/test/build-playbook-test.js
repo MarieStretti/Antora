@@ -83,6 +83,7 @@ describe('buildPlaybook()', () => {
   const coerceValueSpec = ospath.join(FIXTURES_DIR, 'coerce-value-spec-sample.yml')
   const invalidMapSpec = ospath.join(FIXTURES_DIR, 'invalid-map-spec-sample.yml')
   const invalidDirOrFilesSpec = ospath.join(FIXTURES_DIR, 'invalid-dir-or-files-spec-sample.yml')
+  const invalidStringOrBooleanSpec = ospath.join(FIXTURES_DIR, 'invalid-string-or-boolean-spec-sample.yml')
   const legacyGitSpec = ospath.join(FIXTURES_DIR, 'legacy-git-sample.yml')
   const legacyAndModernGitSpec = ospath.join(FIXTURES_DIR, 'legacy-and-modern-git-sample.yml')
   const legacyRuntimeSpec = ospath.join(FIXTURES_DIR, 'legacy-runtime-sample.yml')
@@ -376,6 +377,7 @@ describe('buildPlaybook()', () => {
     expect(playbook.site.startPage).to.equal('1.0@server::intro')
     expect(playbook.site.keys.googleAnalytics).to.equal('XX-123456')
     expect(playbook.content.branches).to.eql(['v*'])
+    expect(playbook.content.editUrl).to.equal('{web_url}/blob/{refname}/{path}')
     expect(playbook.content.sources).to.have.lengthOf(1)
     expect(playbook.content.sources[0]).to.eql({
       url: 'https://gitlab.com/antora/demo/demo-component-a.git',
@@ -432,6 +434,19 @@ describe('buildPlaybook()', () => {
   it('should throw error if site.url is an absolute URL containing spaces in the pathname', () => {
     expect(() => buildPlaybook(['--playbook', defaultSchemaSpec, '--url', 'https://example.org/my docs'], {})).to.throw(
       'must not contain spaces'
+    )
+  })
+
+  it('should throw error if boolean-or-string key is not a boolean or string', () => {
+    Object.keys(schema).forEach((key) => {
+      if (key !== 'playbook') delete schema[key]
+    })
+    schema.edit_url = {
+      format: 'boolean-or-string',
+      default: undefined,
+    }
+    expect(() => buildPlaybook([], { PLAYBOOK: invalidStringOrBooleanSpec }, schema)).to.throw(
+      'must be a boolean or string'
     )
   })
 
