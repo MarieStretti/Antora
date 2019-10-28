@@ -104,6 +104,18 @@ If `display_version` isn't set, `version` is also used in the:
 Like with the name key, the version key isn't related, though it may be similar, to the xref:component-versions.adoc[name of the repository branch] where the component's source files are stored.
 See xref:component-versions.adoc#setting-the-version-for-a-branch[Setting the version for a branch] for more examples and xref:component-versions.adoc#versionless-components[Versionless components] to learn how to create a versionless component.
 
+[#prerelease-key]
+=== `prerelease`
+
+The `prerelease` key is a marker that this version is considered prerelease.
+Prerelease versions are skipped when selecting the latest version of a component (unless all versions are prereleases, in which case the normal rules apply).
+
+```yaml
+prerelease: true
+```
+
+The `prerelease` key is not set by default.
+
 [#display-version]
 === `display_version`
 
