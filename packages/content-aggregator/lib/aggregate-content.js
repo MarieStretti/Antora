@@ -63,7 +63,7 @@ const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)?(?::([^/@]+)?)?@)?(.*)
  */
 function aggregateContent (playbook) {
   const startDir = playbook.dir || '.'
-  const { branches: defaultBranches, tags: defaultTags, sources } = playbook.content
+  const { branches, tags, sources } = playbook.content
   const sourcesByUrl = _.groupBy(sources, 'url')
   const { cacheDir, fetch, silent, quiet } = playbook.runtime
   const progress = !quiet && !silent && createProgress(sourcesByUrl, process.stdout)
@@ -76,7 +76,7 @@ function aggregateContent (playbook) {
           loadRepository(url, {
             cacheDir: resolvedCacheDir,
             credentialManager,
-            fetchTags: tagsSpecified(sources, defaultTags),
+            fetchTags: tagsSpecified(sources, tags),
             progress,
             fetch,
             startDir,
@@ -84,7 +84,7 @@ function aggregateContent (playbook) {
           }).then(({ repo, authStatus }) =>
             Promise.all(
               sources.map((source) => {
-                source = Object.assign({ branches: defaultBranches, tags: defaultTags }, source)
+                source = Object.assign({ branches, tags }, source)
                 // NOTE if repository is managed (has a url), we can assume the remote name is origin
                 // TODO if the repo has no remotes, then remoteName should be undefined
                 const remoteName = repo.url ? 'origin' : source.remote || 'origin'
