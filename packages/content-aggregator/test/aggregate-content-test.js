@@ -1477,6 +1477,44 @@ describe('aggregateContent()', function () {
     })
 
     describe('remote origin data', () => {
+      it('should resolve origin url from git config for local repository', async () => {
+        const remoteUrl = 'https://gitlab.com/antora/demo/demo-component-a.git'
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        const fixturePath = 'modules/ROOT/pages/page-one.adoc'
+        await initRepoWithFiles(repoBuilder, {}, fixturePath, () => repoBuilder.config('remote.origin.url', remoteUrl))
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const page = aggregate[0].files[0]
+        expect(page).not.to.be.undefined()
+        expect(page.src.origin.url).to.eql(remoteUrl)
+      })
+
+      it('should clean credentials from remote url retrieved from git config', async () => {
+        const remoteUrl = 'https://u:p@gitlab.com/antora/demo/demo-component-a.git'
+        const remoteUrlWithoutAuth = remoteUrl.replace('u:p@', '')
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        const fixturePath = 'modules/ROOT/pages/page-one.adoc'
+        await initRepoWithFiles(repoBuilder, {}, fixturePath, () => repoBuilder.config('remote.origin.url', remoteUrl))
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const page = aggregate[0].files[0]
+        expect(page).not.to.be.undefined()
+        expect(page.src.origin.url).to.eql(remoteUrlWithoutAuth)
+      })
+
+      it('should set origin url to repository dir if remote url not set in git config', async () => {
+        const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
+        await initRepoWithFiles(repoBuilder, {}, 'modules/ROOT/pages/page-one.adoc')
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        const page = aggregate[0].files[0]
+        expect(page).not.to.be.undefined()
+        expect(page.src.origin.url).to.eql(repoBuilder.url)
+      })
+
       it('should generate correct origin data for file taken from repository on GitHub', () => {
         const urls = [
           'https://{hostname}/org-name/repo-name.git',

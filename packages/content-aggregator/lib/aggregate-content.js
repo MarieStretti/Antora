@@ -38,6 +38,7 @@ const HOSTED_GIT_REPO_RX = /^(?:https?:\/\/|.+@)(git(?:hub|lab)\.com|bitbucket\.
 const GIT_EXTENSION_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
 const SPACE_RX = / /g
+const URL_AUTH_CLEANER_RX = /^(https?:\/\/)[^/@]*@/
 const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)?(?::([^/@]+)?)?@)?(.*)/
 
 /**
@@ -310,7 +311,7 @@ function getCurrentBranchName (repo, remote) {
   let refPromise
   if (repo.noCheckout) {
     refPromise = git
-      .resolveRef(Object.assign({ ref: `refs/remotes/${remote}/HEAD`, depth: 2 }, repo))
+      .resolveRef(Object.assign({ ref: 'refs/remotes/' + remote + '/HEAD', depth: 2 }, repo))
       .catch(() => git.resolveRef(Object.assign({ ref: 'HEAD', depth: 2 }, repo)))
   } else {
     refPromise = git.resolveRef(Object.assign({ ref: 'HEAD', depth: 2 }, repo))
@@ -644,7 +645,7 @@ function generateCloneFolderName (url) {
 }
 
 /**
- * Resolve the URL of the specified remote for the given repository.
+ * Resolve the URL of the specified remote for the given repository, removing embedded auth if present.
  *
  * @param {Repository} repo - The repository on which to operate.
  * @param {String} remoteName - The name of the remote to resolve.
@@ -652,6 +653,7 @@ function generateCloneFolderName (url) {
  */
 async function resolveRemoteUrl (repo, remoteName) {
   return git.config(Object.assign({ path: 'remote.' + remoteName + '.url' }, repo))
+    .then((url) => url && url.startsWith('http') && ~url.indexOf('@') ? url.replace(URL_AUTH_CLEANER_RX, '$1') : url)
 }
 
 /**
