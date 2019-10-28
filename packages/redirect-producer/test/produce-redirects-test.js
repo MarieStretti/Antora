@@ -414,5 +414,113 @@ describe('produceRedirects()', () => {
     })
   })
 
+  describe('httpd facility', () => {
+    beforeEach(() => {
+      playbook.urls.redirectFacility = 'httpd'
+    })
+
+    it('should create and return httpd .htaccess config file', () => {
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0]).to.have.property('contents')
+      expect(result[0]).to.have.property('out')
+      expect(result[0].out.path).to.equal('.htaccess')
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
+      expect(rules).to.eql([
+        'Redirect 301 /component-a/module-a/alias-a.html /component-a/module-a/the-target.html',
+        'Redirect 301 /component-a/module-a/old-target/index.html /component-a/module-a/the-target.html',
+        'Redirect 301 /component-a/module-b/alias-b.html /component-a/module-a/the-target.html',
+        'Redirect 301 /component-b/1.0/alias-c.html /component-a/module-a/the-target.html',
+        'Redirect 301 /index.html /component-a/module-a/the-target.html',
+      ])
+    })
+
+    it('should accept paths ithat contain spaces', () => {
+      contentCatalog = mockContentCatalog([
+        { family: 'page', relative: 'target with spaces.adoc' },
+        { family: 'alias', relative: 'alias with spaces.adoc' },
+      ])
+      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0]).to.have.property('contents')
+      expect(result[0]).to.have.property('out')
+      expect(result[0].out.path).to.equal('.htaccess')
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
+      expect(rules).to.eql([
+        "Redirect 301 '/component-a/module-a/alias with spaces.html' '/component-a/module-a/target with spaces.html'",
+      ])
+    })
+
+    it('should prefix each rewrite rule with URL context derived from absolute URL', () => {
+      playbook.site.url = 'https://example.org/docs'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('.htaccess')
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
+      expect(rules).to.eql([
+        'Redirect 301 /docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/component-a/module-a/old-target/index.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/component-a/module-b/alias-b.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/component-b/1.0/alias-c.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/index.html /docs/component-a/module-a/the-target.html',
+      ])
+    })
+
+    it('should prefix each rewrite rule with URL context derived from pathname', () => {
+      playbook.site.url = '/docs'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('.htaccess')
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
+      expect(rules).to.eql([
+        'Redirect 301 /docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/component-a/module-a/old-target/index.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/component-a/module-b/alias-b.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/component-b/1.0/alias-c.html /docs/component-a/module-a/the-target.html',
+        'Redirect 301 /docs/index.html /docs/component-a/module-a/the-target.html',
+      ])
+    })
+
+    it('should drop trailing slash from site URL path when using it as prefix for rewrite rule', () => {
+      playbook.site.url = 'https://example.org/docs/'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('.htaccess')
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
+      expect(rules).to.include(
+        'Redirect 301 /docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html'
+      )
+    })
+
+    it('should not prefix rewrite rule with extra prefix if URL context is /', () => {
+      playbook.site.url = playbook.site.url + '/'
+      const result = produceRedirects(playbook, contentCatalog)
+      expect(result).to.have.lengthOf(1)
+      expect(result[0].out.path).to.equal('.htaccess')
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
+      expect(rules).to.eql([
+        'Redirect 301 /component-a/module-a/alias-a.html /component-a/module-a/the-target.html',
+        'Redirect 301 /component-a/module-a/old-target/index.html /component-a/module-a/the-target.html',
+        'Redirect 301 /component-a/module-b/alias-b.html /component-a/module-a/the-target.html',
+        'Redirect 301 /component-b/1.0/alias-c.html /component-a/module-a/the-target.html',
+        'Redirect 301 /index.html /component-a/module-a/the-target.html',
+      ])
+    })
+
+    it('should remove the out property on alias files', () => {
+      produceRedirects(playbook, contentCatalog)
+      contentCatalog.findBy({ family: 'alias' }).forEach((file) => {
+        expect(file).to.not.have.property('out')
+      })
+    })
+  })
+
   // QUESTION should function return a single virtual file instead of an array?
 })

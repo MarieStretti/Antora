@@ -38,8 +38,8 @@ function produceRedirects (playbook, contentCatalog) {
     else if (siteUrl.charAt(siteUrl.length - 1) === '/') siteUrl = siteUrl.substr(0, siteUrl.length - 1)
   }
   switch (playbook.urls.redirectFacility) {
-    case 'static':
-      return populateStaticRedirectFiles(aliases, siteUrl)
+    case 'httpd':
+      return createHttpdHtaccess(aliases, extractUrlPath(siteUrl))
     case 'netlify':
       return createNetlifyRedirects(
         aliases,
@@ -48,6 +48,8 @@ function produceRedirects (playbook, contentCatalog) {
       )
     case 'nginx':
       return createNginxRewriteConf(aliases, extractUrlPath(siteUrl))
+    case 'static':
+      return populateStaticRedirectFiles(aliases, siteUrl)
     default:
       return unpublish(aliases)
   }
@@ -63,12 +65,17 @@ function extractUrlPath (url) {
   }
 }
 
-function populateStaticRedirectFiles (files, siteUrl) {
-  files.forEach((file) => {
-    file.contents = Buffer.from(createStaticRedirectContents(file, siteUrl) + '\n')
-    file.mediaType = 'text/html'
-  })
-  return []
+function createHttpdHtaccess (files, urlPath) {
+  const rules = files.reduce((accum, file) => {
+    delete file.out
+    let fromUrl = file.pub.url
+    fromUrl = ~fromUrl.indexOf('%20') ? `'${urlPath}${fromUrl.replace(ENCODED_SPACE_RX, ' ')}'` : urlPath + fromUrl
+    let toUrl = file.rel.pub.url
+    toUrl = ~toUrl.indexOf('%20') ? `'${urlPath}${toUrl.replace(ENCODED_SPACE_RX, ' ')}'` : urlPath + toUrl
+    accum.push(`Redirect 301 ${fromUrl} ${toUrl}`)
+    return accum
+  }, [])
+  return [new File({ contents: Buffer.from(rules.join('\n') + '\n'), out: { path: '.htaccess' } })]
 }
 
 function createNetlifyRedirects (files, urlPath, includeDirectoryRedirects = false) {
@@ -97,8 +104,11 @@ function createNginxRewriteConf (files, urlPath) {
   return [new File({ contents: Buffer.from(rules.join('\n') + '\n'), out: { path: '.etc/nginx/rewrite.conf' } })]
 }
 
-function unpublish (files) {
-  files.forEach((file) => delete file.out)
+function populateStaticRedirectFiles (files, siteUrl) {
+  files.forEach((file) => {
+    file.contents = Buffer.from(createStaticRedirectContents(file, siteUrl) + '\n')
+    file.mediaType = 'text/html'
+  })
   return []
 }
 
@@ -115,6 +125,11 @@ ${canonicalLink}<script>location="${relativeUrl}"</script>
 <title>Redirect Notice</title>
 <h1>Redirect Notice</h1>
 <p>The page you requested has been relocated to <a href="${relativeUrl}">${canonicalUrl || relativeUrl}</a>.</p>`
+}
+
+function unpublish (files) {
+  files.forEach((file) => delete file.out)
+  return []
 }
 
 module.exports = produceRedirects
