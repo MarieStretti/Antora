@@ -87,6 +87,10 @@ class RepositoryBuilder {
     return this
   }
 
+  async config (path, value) {
+    return git.config({ ...this.repository, path, value })
+  }
+
   async deleteBranch (ref) {
     await git.deleteBranch({ ...this.repository, ref }).catch(() => {})
     return this
