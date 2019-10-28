@@ -264,7 +264,72 @@ describe('convertDocument()', () => {
     expect(inputFile.contents.toString()).to.include('cloud: someone else&#8217;s computer')
   })
 
+  it('should be able to include which has already been converted', () => {
+    inputFile.contents = Buffer.from(heredoc`
+      = Page Title
+
+      == Recent Changes
+
+      include::changelog.adoc[tag=entries,leveloffset=+1]
+    `)
+    const includedFile = {
+      path: 'modules/module-a/pages/changelog.adoc',
+      dirname: 'modules/module-a/pages',
+      contents: Buffer.from(heredoc`
+        = Changelog
+
+        // tag::entries[]
+        == Version 1.1
+
+        * Bug fixes.
+        // end::entries[]
+      `),
+      src: {
+        path: 'modules/module-a/pages/changelog.adoc',
+        dirname: 'modules/module-a/pages',
+        component: 'component-a',
+        version: '1.2.3',
+        module: 'module-a',
+        family: 'page',
+        relative: 'changelog.adoc',
+      },
+      pub: {
+        url: '/component-a/1.2.3/module-a/changelog.html',
+        moduleRootPath: '..',
+        rootPath: '../../..',
+      },
+    }
+    const contentCatalog = { getByPath: spy(() => includedFile), getComponent: () => {} }
+    convertDocument(includedFile, undefined, asciidocConfig)
+    expect(includedFile.src).to.have.property('contents')
+    convertDocument(inputFile, contentCatalog, asciidocConfig)
+    expectCalledWith(contentCatalog.getByPath, {
+      component: 'component-a',
+      version: '1.2.3',
+      path: 'modules/module-a/pages/changelog.adoc',
+    })
+    expect(inputFile.contents.toString()).to.include(heredoc`
+      <div class="sect1">
+      <h2 id="_recent_changes"><a class="anchor" href="#_recent_changes"></a>Recent Changes</h2>
+      <div class="sectionbody">
+      <div class="sect2">
+      <h3 id="_version_1_1"><a class="anchor" href="#_version_1_1"></a>Version 1.1</h3>
+      <div class="ulist">
+      <ul>
+      <li>
+      <p>Bug fixes.</p>
+      </li>
+      </ul>
+      </div>
+      </div>
+      </div>
+      </div>
+    `)
+  })
+
   it('should be able to include a page marked as a partial which has already been converted', () => {
+    playbook.asciidoc = { attributes: { 'page-partial': false } }
+    asciidocConfig = resolveAsciiDocConfig(playbook)
     inputFile.contents = Buffer.from(heredoc`
       = Page Title
 
@@ -302,6 +367,7 @@ describe('convertDocument()', () => {
     }
     const contentCatalog = { getByPath: spy(() => includedFile), getComponent: () => {} }
     convertDocument(includedFile, undefined, asciidocConfig)
+    expect(includedFile.src).to.have.property('contents')
     convertDocument(inputFile, contentCatalog, asciidocConfig)
     expectCalledWith(contentCatalog.getByPath, {
       component: 'component-a',
@@ -326,6 +392,7 @@ describe('convertDocument()', () => {
       </div>
     `)
   })
+
   ;['block', 'inline'].forEach((macroType) => {
     const macroDelim = macroType === 'block' ? '::' : ':'
 

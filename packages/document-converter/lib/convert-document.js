@@ -29,8 +29,8 @@ function convertDocument (file, contentCatalog = undefined, asciidocConfig = {})
   const attributes = doc.getAttributes()
   registerAliases(attributes['page-aliases'], file, contentCatalog)
   // Q: should we backup the AsciiDoc contents for all pages? what's the impact?
-  if ('page-partial' in attributes) file.src.contents = file.contents
   file.asciidoc = doc.hasHeader() ? { attributes, doctitle: doc.getDocumentTitle() } : { attributes }
+  if ('page-partial' in attributes) file.src.contents = file.contents.toString()
   file.contents = Buffer.from(doc.convert())
   file.mediaType = 'text/html'
   return file

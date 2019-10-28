@@ -55,8 +55,8 @@ function loadAsciiDoc (file, contentCatalog = undefined, config = {}) {
     examplesdir: EXAMPLES_DIR_TOKEN,
     partialsdir: PARTIALS_DIR_TOKEN,
   }
-  const pageAttrs = computePageAttrs(fileSrc, contentCatalog)
-  const attributes = Object.assign({}, config.attributes, intrinsicAttrs, pageAttrs)
+  const attributes = fileSrc.family === 'page' ? { 'page-partial': '@' } : {}
+  Object.assign(attributes, config.attributes, intrinsicAttrs, computePageAttrs(fileSrc, contentCatalog))
   const relativizePageRefs = config.relativizePageRefs !== false
   const converter = createConverter({
     onImageRef: (resourceSpec) => convertImageRef(resourceSpec, file, contentCatalog),
