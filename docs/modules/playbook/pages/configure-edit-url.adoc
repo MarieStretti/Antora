@@ -1,0 +1,93 @@
+= Edit URL Configuration
+
+Antora automatically provides edit URLs for pages that are sourced from the hosted GitLab, GitHub, Bitbucket, and Pagure services.
+In the default UI, the *Edit this Page* link in the upper right corner of the page uses the computed edit URL to link a visitor to edit interface provided by the hosted git service for that particular source file.
+For instance, if you click the *Edit this Page* link on this page, you'll go to GitLab's file editing page and the AsciiDoc source file will be loaded into the interface.
+
+== Build an edit URL pattern
+
+However, if you're using an on-premise installation or custom configuration of GitLab, GitHub, Bitbucket, and Pagure, or any other git solution, you may need to set the `edit_url` key in your Antora playbook in order to use the *Edit this Page* feature.
+
+The `edit_url` key accepts a URL pattern that contains three variables: `url`, `refname`, and `path`.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://app.company.com/the-group/schwoop.git
+    branches: [v1.2.5, next]
+    edit_url: {url}/_src/{refname}/u890/{path} // <1>
+----
+<1> The `edit_url` key accepts a URL pattern with three variables that Antora will compute at processing time.
+
+Antora automatically computes the values of `url`, `refname`, and `path` for each page and inserts them into the pattern you assign to the `edit_URL` key.
+
+url:: The `url` is the Antora-modified URL of the content source repository.
+Antora automatically converts the source `url` to `https://` (if it isn't present) and removes the `.git` extension.
+For example, [.path]_\https://gitlab.com/antora/antora.git_ is converted to [.path]_\https://gitlab.com/antora/antora_.
+
+refname:: The `refname` is the name of the git reference (e.g., v2.1.x, master, rawhide).
+
+path:: The `path` is the path of the source file relative to the root of the repository, including the start path.
+
+Using the content source from the previous example, let's determine what the computed edit URL would look like for the page generated from a file named [.path]_index.adoc_.
+The file is stored in branch v1.2.5 of the schwoop repository in the pages directory of the ROOT module.
+Antora uses the URL pattern you assigned to `edit_url` to compute the following edit URL for [.path]_index.adoc_.
+
+  https://app.company.com/the-group/schwoop/_src/v1.2.5/u890/modules/ROOT/pages/index.adoc
+
+The `{url}` is replaced with the Antora-modified content source of `url`.
+In this example, the _.git_ is dropped from the end of the value of `url`.
+`{refname}` is replaced with the _v1.2.5_ git branch reference.
+Finally, `{path}` is replaced by the path to the source file, relative to the root of the repository.
+Since this source doesn't have a specified start path, the result is simply _modules/ROOT/pages/index.adoc_.
+
+If the content source does have a value assigned to `start_path`, Antora accounts for this segment when it computes `{path}`.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://app.company.com/the-group/schwoop.git
+    branches: [v1.2.5, next]
+    start_path: learn/docs
+    edit_url: {url}/_src/{refname}/u890/{path}
+----
+
+Taking into account the `start_path` specified for the schwoop repository, the edit URL for [.path]_index.adoc_ would now be:
+
+  https://app.company.com/the-group/schwoop/_src/v1.2.5/u890/learn/docs/modules/ROOT/pages/index.adoc
+
+== Apply a custom edit URL to all content sources
+
+An `edit_url` can be applied to all of your content sources by setting the key directly on the `content` key.
+
+[source,yaml]
+----
+content:
+  edit_url: {url}/_src/{refname}/u890/{path}
+  sources:
+  - url: https://app.company.com/the-group/schwoop.git
+    branches: [v1.2.5, next]
+    start_path: learn/docs
+  - url: https://app.company.com/city/team-l/kapow.git
+    branches: v2.*
+  - url: https://app.company.com/city/team-l/bam.git
+    branches: release/*
+----
+
+== Apply custom edit URLs to individual content sources
+
+When the `edit_url` key is set on an individual content source, it applies only to that content source.
+For instance, let's set the `edit_url` on the kapow repository but not on the fizz repository.
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://app.company.com/city/team-l/kapow.git
+    branches: v2.*
+    edit_url: {url}/_src/{refname}/u890/{path}
+  - url: https://gitlab.com/wow/fizz.git
+    branches: v*
+----
