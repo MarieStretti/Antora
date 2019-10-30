@@ -1487,7 +1487,7 @@ describe('aggregateContent()', function () {
         expect(aggregate).to.have.lengthOf(1)
         const page = aggregate[0].files[0]
         expect(page).not.to.be.undefined()
-        expect(page.src.origin.url).to.eql(remoteUrl)
+        expect(page.src.origin.url).to.equal(remoteUrl)
       })
 
       it('should clean credentials from remote url retrieved from git config', async () => {
@@ -1501,7 +1501,7 @@ describe('aggregateContent()', function () {
         expect(aggregate).to.have.lengthOf(1)
         const page = aggregate[0].files[0]
         expect(page).not.to.be.undefined()
-        expect(page.src.origin.url).to.eql(remoteUrlWithoutAuth)
+        expect(page.src.origin.url).to.equal(remoteUrlWithoutAuth)
       })
 
       it('should set origin url to repository dir if remote url not set in git config', async () => {
@@ -1512,7 +1512,7 @@ describe('aggregateContent()', function () {
         expect(aggregate).to.have.lengthOf(1)
         const page = aggregate[0].files[0]
         expect(page).not.to.be.undefined()
-        expect(page.src.origin.url).to.eql(repoBuilder.url)
+        expect(page.src.origin.url).to.equal(repoBuilder.url)
       })
 
       it('should generate correct origin data for file taken from repository on GitHub', () => {

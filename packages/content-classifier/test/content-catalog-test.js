@@ -315,7 +315,7 @@ describe('ContentCatalog', () => {
         })
       )
       expect(stdErrMessages).to.have.lengthOf(1)
-      expect(stdErrMessages[0].trim()).to.eql('Start page specified for 1.0.0@the-component not found: home.adoc')
+      expect(stdErrMessages[0].trim()).to.equal('Start page specified for 1.0.0@the-component not found: home.adoc')
     })
 
     it('should use url of index page in ROOT module if found', () => {

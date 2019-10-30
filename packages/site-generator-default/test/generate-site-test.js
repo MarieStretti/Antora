@@ -186,7 +186,7 @@ describe('generateSite()', function () {
     //expect(generateSiteDeferred).to.throw('Specified start page for site not found: unknown-component::index')
     const stdErrMessages = await captureStdErr(generateSite, ['--playbook', playbookFile], env)
     expect(stdErrMessages).to.have.lengthOf(1)
-    expect(stdErrMessages[0]).to.eql('Start page specified for site not found: unknown-component::index.adoc')
+    expect(stdErrMessages[0]).to.equal('Start page specified for site not found: unknown-component::index.adoc')
   }).timeout(timeoutOverride)
 
   it('should qualify applicable links using site url if set in playbook', async () => {
