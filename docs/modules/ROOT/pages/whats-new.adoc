@@ -11,6 +11,8 @@
 :url-milestone-2-1-2: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.2
 :url-mr: {url-git-antora}/merge_requests
 
+Learn about what's new in the 2.1 release series of Antora.
+
 = Antora 2.1.2
 
 _**Release date:** 2019.10.01 | *Issue label:* {url-milestone-2-1-2}[2.1.2^]_
