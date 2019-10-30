@@ -74,6 +74,27 @@ describe('convertDocuments()', () => {
     })
   })
 
+  it('should remove src.contents property after all documents are converted', () => {
+    const contentCatalog = mockContentCatalog([
+      {
+        relative: 'index.adoc',
+        contents: '= Home\n\nThis is the index page.',
+        mediaType: 'text/asciidoc',
+      },
+      {
+        relative: 'topic/index.adoc',
+        contents: '= Topic\n\nThis is a topic page.',
+        mediaType: 'text/asciidoc',
+      },
+    ])
+    expect(asciidocConfig).not.to.have.nested.property('attributes.page-partial')
+    const pages = convertDocuments(contentCatalog, asciidocConfig)
+    expect(pages).to.have.lengthOf(2)
+    pages.forEach((page) => {
+      expect(page.src).not.to.have.property('contents')
+    })
+  })
+
   it('should convert contents to embeddable HTML using default settings if AsciiDoc config not provided', () => {
     const contentCatalog = mockContentCatalog([
       {

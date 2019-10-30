@@ -4,76 +4,145 @@
 :url-tags: {url-adoc-manual}/#by-tagged-regions
 :url-leveloffset: {url-adoc-manual}/#include-partitioning
 
-You can insert one page, or a portion of that page, into another page using the include directive.
+You can include another page or a portion of another page into the current page using the AsciiDoc include directive.
 
-== The page-partial attribute
+== Overview
 
-Before we get started, we need to talk about the `page-partial` attribute.
-If you plan to use a page as an include, you *must* define the `page-partial` attribute in the header of that page, as shown here:
+In Antora, the AsciiDoc include directive has been configured to include pages from the content catalog.
+You can include a page from anywhere in the site, including pages from a different component, component version, or module.
 
-[source,asciidoc]
-----
-= Page Used as an Include
-:page-partial:
-
-Page contents.
-----
-
-This attribute declaration tells Antora to keep the source lines available so they can be used in an include.
-
-== Include directive structure for pages
-
-You can include a page (or a portion of that page) into another page using either a relative path (a path relative to the current file) or the familiar resource ID syntax in the target of the include directive.
+In the simplest form, the target can be a path relative to the current page:
 
 ----
-\include::./relative-path.adoc[<attrlist>]
+\include::./relative-page.adoc[<attrlist>]
 ----
 
-or
+The target can also be a page ID.
+The page ID ranges in scope from a page in the current module (starting from the root of the pages family):
 
 ----
-\include::version@component:module:page$relative-path.adoc[<attrlist>]
+\include::page$page.adoc[<attrlist>]
 ----
 
-Let's explore this syntax.
+to a page in a topic in a module of different component version:
+
+----
+\include::version@component:module:page$topic/page.adoc[<attrlist>]
+----
+
+Let's explore the syntax of the include directive in detail.
+
+== Syntax Walkthrough
 
 . On a new line, enter the name of the directive followed by two colons.
 +
 [subs=+quotes]
 ----
-**include::**version@component:module:page$relative-path.adoc[]
+*include::*
 ----
 
-. Next, enter the relative path (starting with `./`) or the xref:page:page-id.adoc[resource ID] of the target file.
+. Next, enter the relative path or xref:page:page-id.adoc[resource ID] of the target page (i.e., page ID) in the target slot.
+
+Target as relative path::
 +
 --
-A relative path must begin with `./`.
+A relative path include is resolved from the current page (not the root of the pages family).
+The relative path must be prefixed with `./`.
 
 [subs=+quotes]
 ----
-\include::**./relative-path.adoc**[]
+\include::**./relative-page.adoc**[]
 ----
 
-A page's resource ID is determined just like the xref:page-to-page-xref.adoc#same-module[coordinates in an xref].
-However, when used in an include directive, the resource ID must contain the `page$` family (since it supports multiple families).
-All other segments (component, version, and module) are optional and will inherit the context from the current file.
+CAUTION: You may find that the relative path works without this prefix, but that could change in the future.
+--
+
+Target as resource ID::
++
+--
+A resource ID include is resolved much like the xref:page-to-page-xref.adoc#same-module[target of an xref].
+There are two key differences:
+
+. A relative path (normally the shortest form of a resource ID) is not, in fact, treated as a resource ID.
+Instead, it's resolved from the directory of the current page.
+. A resource ID must include the `page$` family segment since the include directive can also be used to include files from other families.
+The presence of the family segment forces the target to be treated as a resource ID, specifically a page ID (e.g., `page$name-of-page.adoc`).
+
+Like in the xref macro, all other segments (component, version, and module) are optional and will inherit the context of the current page.
 
 [subs=+quotes]
 ----
-\include::**version@component:module:page$relative-path.adoc**[]
+\include::**version@component:module:page$topic/page.adoc**[]
 ----
 --
 
 . Close the directive with a set of square brackets (`[]`).
-The brackets may contain an optional list of attributes (i.e., attrlist) such as `leveloffset`, `tag`, and `tags`.
-The attributes should be entered as key=value pairs separated by commas.
 +
+--
 [subs=+quotes]
 ----
-include::version@component:module:page$relative-path.adoc**[tag=definition]**
+include::version@component:module:page$topic/page.adoc**[]**
 ----
 
+The brackets may contain an optional list of attributes (represented in the examples above by `<attrlist>`).
+Include attributes should be entered as key=value pairs that are separated by commas.
+
+[subs=+quotes]
+----
+include::version@component:module:page$topic/page.adoc**[tag=definition]**
+----
+
+All the optional attributes (e.g., `tags`, `leveloffset`, `indent`) on the include directive are supported.
+--
+
 Currently, Antora only supports filtering lines of an include by tags, not by lines.
+
+== The page-partial attribute
+
+As Antora processes each page, it converts the contents of the file from AsciiDoc to HTML.
+(Within a component version, pages are typically processed in order according to the module and relative filename).
+The conversion of the contents from AsciiDoc to HTML would normally impact the behavior of the include directive.
+Specifically, a page that uses the include directive to include a page that has already been processed would see HTML instead of AsciiDoc.
+
+To rectify this ordering problem, Antora can retain the AsciiDoc source until all pages have been converted.
+This behavior is activated by setting the `page-partial` attribute in the document header of the page.
+As of Antora 2.2, the `page-partial` attribute is (soft) set globally by default.
+(Soft set means the it can still be overridden by the page).
+So, really, you don't even have to think of it.
+It will just work.
+
+The downside of retaining the AsciiDoc source is that it _may_ increase the peak heap usage of Antora for very large sites by ~ 10%.
+If that's a concern, you can revert to the previous behavior.
+To revert to the previous behavior (prior to Antora 2.2), set the following property in the playbook file:
+
+[source,yaml]
+----
+asciidoc:
+  attributes:
+    page-partial: false
+----
+
+Now the `page-partial` attribute will not be set globally.
+But you can still set it per page.
+In fact, you *must* now set set the `page-partial` atttribute on any page that you want to use in an include directive.
+For example:
+
+[source,asciidoc]
+----
+= Shared Page
+:page-partial:
+
+Page contents.
+----
+
+Now you can safely refer to that page using the include directive:
+
+[source,asciidoc]
+----
+\include:shared-page.adoc[]
+----
+
+The `page-partial` attribute in the included page instructs Antora to retain the AsciiDoc source until all pages have been converted.
 
 == Learn more
 
