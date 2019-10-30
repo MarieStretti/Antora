@@ -1076,6 +1076,232 @@ describe('loadAsciiDoc()', () => {
       expect(doc.convert()).to.include('<a href="greeting.html#message"')
     })
 
+    it('should not apply linenum filtering to contents of include if lines attribute is empty', () => {
+      const includeContents = heredoc`
+        puts 1
+        puts 2
+        puts 3
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
+    })
+
+    it('should not apply linenum filtering to contents of include if lines attribute has empty values', () => {
+      const includeContents = heredoc`
+        puts 1
+        puts 2
+        puts 3
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=;]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n'))
+    })
+
+    it('should apply linenum filtering to contents of include if lines separated by semi-colons are specified', () => {
+      const includeContents = heredoc`
+        # hello
+        puts "Hello, World!"
+        # goodbye
+        puts "Goodbye, World!"
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=2;4]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should apply linenum filtering to contents of include if lines separated by commas are specified', () => {
+      const includeContents = heredoc`
+        # hello
+        puts "Hello, World!"
+        # goodbye
+        puts "Goodbye, World!"
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines="2,4"]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should ignore redundant values in lines attribute when applying linenum filtering', () => {
+      const includeContents = heredoc`
+        puts "Please stand by..."
+        # waiting...
+        # waiting...
+        puts "Hello, World!"
+        # the wait is over
+        # fin
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=4;1;1]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should include all lines in range when applying linenum filtering', () => {
+      const includeContents = heredoc`
+        # warming up
+        puts "Please stand by..."
+        puts "Hello, World!"
+        puts "Goodbye, World!"
+        # fin
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=2..4]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should include all remaining lines when applying linenum filtering when end value is -1', () => {
+      const includeContents = heredoc`
+        # warming up
+        puts "Please stand by..."
+        puts "Hello, World!"
+        puts "Goodbye, World!"
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=2..-1]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should include all remaining lines when applying linenum filtering when end value is not specified', () => {
+      const includeContents = heredoc`
+        # warming up
+        puts "Please stand by..."
+        puts "Hello, World!"
+        puts "Goodbye, World!"
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=2..]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.eql(includeContents.split('\n').filter((l) => l.charAt() !== '#'))
+    })
+
+    it('should filter out all lines when line number filtering if start value is negative', () => {
+      const includeContents = heredoc`
+        puts "Please stand by..."
+        puts "Hello, World!"
+        puts "Goodbye, World!"
+        # fin
+      `
+      const contentCatalog = mockContentCatalog({
+        family: 'example',
+        relative: 'ruby/greet.rb',
+        contents: includeContents,
+      })
+      setInputFileContents(heredoc`
+        [source,ruby]
+        ----
+        include::{examplesdir}/ruby/greet.rb[lines=-1..3]
+        ----
+      `)
+      const doc = loadAsciiDoc(inputFile, contentCatalog)
+      const firstBlock = doc.getBlocks()[0]
+      expect(firstBlock).not.to.be.undefined()
+      expect(firstBlock.getContext()).to.equal('listing')
+      expect(firstBlock.getSourceLines()).to.be.empty()
+    })
+
     it('should not apply tag filtering to contents of include if tag attribute is empty', () => {
       const includeContents = heredoc`
         # tag::hello[]
