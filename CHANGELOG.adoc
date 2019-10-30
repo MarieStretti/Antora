@@ -13,6 +13,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Make fs object used by git pluggable (assign fs property to git core named "antora") (#476)
 * *content-aggregator*: Prune stale branches and tags when fetching repository updates (#374)
 * *content-aggregator*: Preserve stack from original clone error thrown by git client (#497)
+* *asciidoc-loader*: Add support for `lines` attribute on include directive; filters lines by individual line numbers or line number ranges (#412)
 
 === Changed
 

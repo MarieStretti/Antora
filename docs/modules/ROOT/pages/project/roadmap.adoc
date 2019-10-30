@@ -63,7 +63,7 @@ They aren't slated for imminent development but are reviewed for possible schedu
 
 ////
 * [ ] Provide a better way to indicate that a component version is "versionless"
-* [ ] Add support to include processor for including lines by line number
+* [x] Add support to include processor for including lines by line number
 * [ ] Add initial support for translations by adding language key to virtual file
 * [ ] Publish metapackage @antora/antora to simplify installation
 * [ ] Add algolia keys (app ID, API key, and index name) to playbook schema

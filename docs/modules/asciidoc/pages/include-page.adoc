@@ -95,7 +95,8 @@ include::version@component:module:page$topic/page.adoc**[tag=definition]**
 All the optional attributes (e.g., `tags`, `leveloffset`, `indent`) on the include directive are supported.
 --
 
-Currently, Antora only supports filtering lines of an include by tags, not by lines.
+Antora supports filtering the lines of an include file by either line numbers using the `lines` attribute (since Antora 2.2) or tags using the `tag` or `tags` attributes.
+Filtering by line numbers takes precedence.
 
 == The page-partial attribute
 
