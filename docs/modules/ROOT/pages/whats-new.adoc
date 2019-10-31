@@ -1,178 +1,201 @@
 = What's New in Antora
-:route: New
 :doctype: book
 :url-releases-asciidoctor: https://github.com/asciidoctor/asciidoctor/releases
 :url-releases-asciidoctorjs: https://github.com/asciidoctor/asciidoctor.js/releases
 :url-gitlab: https://gitlab.com
 :url-git-antora: {url-gitlab}/antora/antora
 :url-issues: {url-git-antora}/issues
-:url-milestone-2-1-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.0
-:url-milestone-2-1-1: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.1
-:url-milestone-2-1-2: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.1.2
+:url-milestone-2-2-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.2.0
 :url-mr: {url-git-antora}/merge_requests
 
-= Antora 2.1.2
+= Antora 2.2.0
 
-_**Release date:** 2019.10.01 | *Issue label:* {url-milestone-2-1-2}[2.1.2^]_
+_**Release date:** 2019.10.31 | *Issue label:* {url-milestone-2-2-0}[2.2.0^]_
 
 == Resolved issues
 
-Issue {url-issues}/466[#466^]:: Emit "`Failed to download UI bundle: <reason>`" error message when remote UI bundle can't be found or downloaded.
-Issue {url-issues}/480[#480^]:: Resolve correct value for `page-component-display-version` attribute.
-Issue {url-issues}/485[#485^]:: Remove empty embedded auth (i.e., credentials) from content source URL.
-Issue {url-issues}/489[#489^]:: Decode characters in credentials parsed from URL for private content source.
-Issue {url-issues}/491[#491^]:: Encode spaces as `%20` in `file.src.editUrl` and `file.pub.url`.
-This ensures that the HTML page that uses such URLs will validate.
-As part of this change, spaces in the pathname of the site.url value are now disallowed.
-Issue {url-issues}/492[#492^]:: Enclose paths in an nginx rewrite rule in quotes to escape spaces.
+=== Added
+
+Issue {url-issues}/292[#292^]:: Allow edit URL to be configured from pattern or disabled in playbook using the `edit_url` key on the content category or specific content source.
+Additionally, store the edit URL and file URI independently so both values are accessible via the UI model.
+Issue {url-issues}/219[#219^]:: Generate a robots.txt file if the `site.robots` key is set in the playbook.
+Issue {url-issues}/374[#374^]:: Prune stale branches and tags when fetching repository updates.
+Issue {url-issues}/412[#412^]:: Add support for `lines` attribute on include directive, which can be used to filter lines by line numbers or line number ranges.
+Issue {url-issues}/497[#497^]:: Preserve stack from original clone error thrown by git client.
+
+=== Changed
+
+Issue {url-issues}/476[#476^]:: Upgrade git client (isomorphic-git); new index cache may improve performance.
+Issue {url-issues}/510[#510]:: The `tags` and `branches` keys override the inherited (global) value even if the values are falsy.
+Issue {url-issues}/513[#513]:: Clean embedded auth from remote URL resolved from git config of local repository.
+Issue {url-issues}/505[#505]:: Be more strict about detecting semantic component versions when sorting.
+
+== Customizable edit URL
+
+By default, Antora automatically computes the edit URL for all files it takes from a remote repository or a local repository connected to a remote repository, if possible.
+"`If possible`" means this works if the remote repository is located on the primary GitHub, GitLab, BitBucket, or Pagure hosted services.
+What was lacking in previous versions of Antora was support for other git hosts (e.g., on-prem GitLab) or to be able to customize or disable the value.
+If the automatic value of the edit URL doesn't work in your case, you can now customize it using the playbook.
+
+You can use the `edit_url` key to control the edit URL.
+This optional key can be set directly on the `content` category to apply to all content sources or on an individual content source entry to override that inherited value.
+
+By default, the value of the `edit_url` is `true`, which tells Antora to use the existing behavior of computing the edit URL automatically.
+
+If the value of the `edit_url` is a string, it's interpreted as a pattern.
+That pattern supports the following placeholders, which are fulfilled by the file's origin information:
+
+\{web_url}:: The web URL for the git repository from which the file was taken.
+This value is derived automatically from the repository URL (by converting the protocol to `https` and dropping the `.git` extension, if necessary).
+\{refname}:: The name of the reference (i.e., branch or tag) from which the file was taken.
+\{path}:: The path of the file from the root of the repository (regardless of whether the content source defines a `start_path`).
+
+For example, to configure the edit URL to point to the view page of a file on GitHub, you'd use the following entry:
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://github.com/asciidoctor/asciidoctor.git
+    edit_url: '{web_url}/blob/{refname}/{path}'
+----
+
+If, instead, you want to disable the edit URL, set the value to `false`.
+
+[source,yaml]
+----
+content:
+  edit_url: false
+----
+
+or
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://github.com/asciidoctor/asciidoctor.git
+    edit_url: false
+----
+
+As part of this change, the edit URL no longer points to the file URI when a file is taken from the worktree (local file tree).
+Instead, the file URI is stored separately.
+Both values are passed to the UI model as `editUrl` and `fileUri`, respectively.
+This gives the UI template control over whether to use the file URI when available, or whether to ignore it and use the edit URL instead.
+
+The default UI has been updated to use the value of the `fileUri` for the edit link if it is set and the `CI` environment variable is not set (i.e., `(and page.fileUri (not env.CI))`).
+Otherwise, it falls back to using the `editUrl` if the repository is public (i.e., `(and page.editUrl (not page.origin.private))`).
+That change allows the default UI to work with Antora 2.2 as well as earlier versions.
+
+To find out all the details about how this feature works, please refer to the xref:playbook:configure-edit-url.adoc[edit URL configuration page] in the documentation.
+
+== robots.txt generation
+
+When you put a static site online, you want to give a hint to search engines about where to crawl when indexing the site.
+Sometimes, you want to give them free rein.
+Other times, you want to tell them to back off entirely.
+Or, you may want to restrict access to certain portions of the site.
+That's the role of the https://en.wikipedia.org/wiki/Robots_exclusion_standard[robots.txt file], stored at the root of the site.
+
+You can now use the `site.robots` key in the playbook file to instruct Antora to generate a robots.txt.
+
+If you want to grant full access, set the value to `allow`:
+
+[source,yaml]
+----
+site:
+  robots: allow
+----
+
+If you want to forbid access, set the value to `disallow`:
+
+[source,yaml]
+----
+site:
+  robots: disallow
+----
+
+Any other value will be used as the contents of the robots.txt file.
+For more details, see xref:playbook:configure-site.adoc#configure-robots[configuring the robots.txt file].
+
+== Filter includes by line numbers
+
+In addition to filtering the lines of an include file by named tags, you can now filter lines by line numbers.
+This AsciiDoc feature has already been available in Asciidoctor, but was not previously working in Antora.
+
+Line numbers of specified in the value of the `lines` attribute on the include directive.
+Line numbers, which are numbered starting with 1, can be identified as individual entries or as a range.
+Multiple entries can be separated either by semi-colons or commas.
+
+For example, here's how you'd select the first line of this page:
+
+[source,asciidoc]
+----
+\include::./whats-new.adoc[lines=1]
+----
+
+Here's how you'd select lines 2 through 10:
+
+[source,asciidoc]
+----
+\include::./whats-new.adoc[lines=2..10]
+----
+
+And here's how you'd select the first line, and all the remaining lines starting at line 10:
+
+[source,asciidoc]
+----
+\include::./whats-new.adoc[lines=1,10..]
+----
+
+For more information about the `lines` attribute on the include directive, refer to the https://asciidoctor.org/docs/user-manual/#by-line-ranges[include by line ranges] section in the Asciidoctor user manual.
+
+== Prune references
+
+When you pass the `--fetch` flag to the `antora` command or set the `runtime.fetch` key in the playbook file to true, Antora fetches updates from all the remote git repositories.
+What it was not doing was removing references that had been deleted from the remote repository.
+As a result, Antora would discover references (branches and tags) that it should not be finding as the result of a stale cache.
+In addition to publishing content it shouldn't publish, Antora would also fail when files from a stale reference conflicted with files from a newer reference (the dreaded duplicate nav or page errors).
+
+Now when Antora reaches out to the remote repositories for updates, it will also remove any references in the cache that have been removed from the remote repository.
+In other words, it will do a complete sync.
+That means Antora won't discover any references that it shouldn't be finding.
+There's nothing you need to do to enable this feature.
+It's automatic.
+
+== Disable tags or branches
+
+To disable either tags or branches for a content source entry, you used to have to set the value to an empty array:
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://git.example.org/org/repo.git
+    branches: []
+----
+
+Now you can use the special value `~`, which is short for `null` (aka nothing).
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://git.example.org/org/repo.git
+    branches: ~
+----
+
+If the `tags` or `branches` key is present on a content source entry, that value takes precedence, regardless of what the value is.
 
 == Documentation changes
 
-The documentation pages explaining the roles of documentation components, modules, and families, and their relationship to Antora's standardized directory structure have been extensively updated.
+TODO
 
-* xref:component-structure.adoc[Documentation Components and Repositories]
-* xref:modules.adoc[Modules, Families, and Subdirectories]
-
-The xref:component-descriptor.adoc[component descriptor key-value pair examples] have also been updated.
-
-[#thank-you-2-1-2]
+[#thank-you-2-2-0]
 == Thank you!
 
 Most important of all, a huge *thank you!* to all the folks who helped make Antora even better.
 
-Yael Namen ({url-gitlab}/recfab[@recfab^]):: Provided error scenario and feedback for issue {url-issues}/466[#466^].
+We want to call out the following people for making contributions to this release:
 
-Daniel Mulholland ({url-gitlab}/danyill[@danyill^]):: Filed issue {url-issues}/480[#480^] and resolved it with {url-mr}/363[MR 363^]: retrieve display version from `componentVersion` for `page-component-display-version attribute`.
-
-Mateusz ({url-gitlab}/centu81[@centu81^]):: Provided error scenario and feedback for issue {url-issues}/489[#489^].
-
-= Antora 2.1.1
-
-_**Release date:** 2019.09.09 | *Issue label:* {url-milestone-2-1-1}[2.1.1^]_
-
-The Antora 2.1.1 patch release makes the site URL more flexible (and validates it), corrects the timestamp of files in the published archive, and fixes an inconsistency in the playbook schema.
-
-== A more flexible site URL
-
-When the site URL is set in the playbook using the `site.url` key or `--url` CLI option, it activates several additional features.
-Those features include the sitemap, the canonical URLs, and the 404 page.
-The site URL is also used when producing redirects.
-However, not all these features require an absolute URL.
-Some only require the pathname segment of the URL (the part after the domain name).
-
-Therefore, Antora now allows you to set the site URL to a pathname.
-In that case, any feature that requires an absolute URL will remain disabled.
-Those features are the sitemap and the canonical URLs (as required by the powers that be).
-The 404 page will still be created (since it doesn't need an absolute URL), and the pathname will also be used as the prefix for any paths in the redirect rules.
-
-TIP: If you want the pathname to be empty, set the value to `/`.
-
-To summarize, the site URL can be either an absolute URL (with an optional pathname) or just a pathname.
-The playbook builder now validates that the site URL conforms to one of these two types.
-
-== Ensure .git suffix got camelCased
-
-The new key to control whether the git client automatically appends the .git suffix to the content source URL if missing was defined using camelCase, as in `git.ensureGitSuffix`.
-This naming is inconsistent with all other keys in the playbook schema.
-It should have been named `git.ensure_git_suffix`.
-As of this patch release, it now is.
-In other words:
-
-[source,yml]
-----
-git:
-  ensure_git_suffix: false
-----
-
-The incorrect name is still supported, but should be considered deprecated.
-
-== Timestamps in the published archive now live in the present
-
-When Antora reads files from a git tree, it does not assignment a timestamp to the file, meaning the mtime is undefined.
-That way, when the file is written, it gets assigned the current timestamp.
-At least, that's how it's supposed to work.
-
-What the code was actually doing was assigning an invalid date.
-While this wasn't a problem for the filesystem provider, it was for the archive provider.
-So all the files in the archive (ZIP) file that came from the git tree (and supplemental UI files that came from the playbook) had a timestamp of the Unix epoch (shortly after Woodstock).
-That caused certain cloud deployers to get rather confused (and dazed?).
-This patch release corrects this problem so that the timestamp of the files in the archive match the timestamp of the archive itself.
-
-== Resolved issues
-
-Issue {url-issues}/471[#471^]:: Files in a generated ZIP site bundle have a timestamp of the Unix epoch.
-Issue {url-issues}/477[#477^]:: Name of playbook key for controlling git suffix (ensureGitSuffix) is inconsistent.
-Issue {url-issues}/478[#478^]:: Allow site.url to be a pathname, but disable any features that require an absolute URL.
-Issue {url-issues}/479[#479^]:: Playbook builder should validate site.url.
-
-= Antora 2.1.0
-
-_**Release date:** 2019.08.27 | *Issue label:* {url-milestone-2-1-0}[2.1.0^]_
-
-The Antora 2.1.0 release provides more image capabilities, adds a new page attribute and playbook key, and improves path handling for 404 pages and rewrite rules.
-
-== Reference images from other modules, components, and versions using Antora's resource ID
-
-Antora 1.1 introduced the resource ID for referencing xref:asciidoc:include-partial.adoc[partial] and xref:asciidoc:include-example.adoc[example files] stored in other modules, components, and versions.
-Now you can use the resource ID to reference images in the AsciiDoc image macro, too!
-
-```
-image::module-b:image.png[]
-
-image::2.0@image.png[]
-```
-
-See xref:asciidoc:insert-image.adoc[Insert an Image] for more image macro and resource ID examples.
-See <<deprecation>> for future image referencing changes.
-
-== The assets folder is now optional
-
-You no longer have to store your images and attachments inside the [.path]_assets_ folder.
-These folders can be top-level folders inside a module.
-
-....
-modules/
-  ROOT/
-    attachments/
-    examples/
-    images/
-    pages/
-    partials/
-....
-
-And don't worry if you prefer using the assets folder or currently have files in an assets folder, Antora still collects images and attachments stored in the assets folder.
-See xref:component-structure.adoc[Documentation Components and Repositories] and xref:modules.adoc[Modules, Families, and Subdirectories] to learn more about how to organize your documentation source files.
-
-== More new features and improvements
-
-Control the git repository URL suffix with ensureGitSuffix:: The new playbook key `ensureGitSuffix` instructs the git client to automatically append .git to the repository URL if it is absent.
-You don't have to add this key to your Antora playbook if you're using GitHub or GitLab because Antora automatically sets `ensureGitSuffix` to `true` by default.
-However, if you use Team Foundation Server (TFS) or Azure DevOps, set `ensureGitSuffix: false` under the `git` category of your playbook if your content source repositories fail to clone.
-
-Access implicit page attributes from navigation files:: Antora's implicit xref:page:page-and-site-attributes.adoc#page-attributes[page attributes] can now be used in AsciiDoc navigation files.
-
-Unresolved cross references and their link text:: The link text of an unresolved page reference is now displayed with the page ID when an xref can't be resolved.
-
-Access a page's display version:: The component display version is now accessible via the implicit page attribute `page-component-display-version`.
-This attribute contains the display version value found in the component descriptor ([.path]_antora.yml_).
-
-404 pages and site paths:: Antora automatically prepends the site path (pathname of site URL) to `siteRootPath` and `uiRootPath` on the 404 page.
-
-== Fixes
-
-Issue {url-issues}/258[#258^]:: The pathname of the site URL (site path) is now assigned to the `site.path` property in the UI model.
-An empty string is used if the site URL is not set or the pathname is `/`.
-To get the full fix, you must update your UI.
-
-Issue {url-issues}/468[#468^]:: A site URL's trailing slash is now removed before it's used to compute rewrite rules.
-
-[#deprecation]
-== Scheduled deprecations for Antora 3.0
-
-The ability to use parent references in the target of the AsciiDoc image macro (e.g., `image::../../../module-b/_images/image-filename.png[]`) will be deprecated in Antora 3.0.
-You should begin replacing any such image targets with resource IDs.
-
-== Antora 1.1 EOL
-
-Antora 1.1 reaches its end of life on August 31, 2019.
-If you're using Antora 1.1, review the xref:2.0@whats-new.adoc#antora-2-0-0[Antora 2.0 release notes] and xref:2.0@whats-new.adoc#checklist[upgrade checklist] before upgrading to the latest Antora release.
+David Jencks ({url-gitlab}/djencks[@djencks]):: For implementing the robots.txt generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
