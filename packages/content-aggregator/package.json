@@ -20,7 +20,7 @@
     "@antora/expand-path-helper": "~1.0",
     "cache-directory": "~2.0",
     "fs-extra": "~8.1",
-    "isomorphic-git": "0.67.5",
+    "isomorphic-git": "0.70.3",
     "js-yaml": "~3.13",
     "lodash": "~4.17",
     "matcher": "~2.0",

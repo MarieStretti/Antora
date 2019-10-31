@@ -81,8 +81,9 @@ class RepositoryBuilder {
   }
 
   async checkoutBranch$1 (branchName, ref = 'HEAD') {
-    const oid = await git.resolveRef({ ...this.repository, ref })
-    await fs.writeFile(ospath.join(this.repository.gitdir, `refs/heads/${branchName}`), oid + '\n')
+    await git.branch({ ...this.repository, ref: branchName })
+    await git.fastCheckout({ ...this.repository, ref, noCheckout: true })
+    // NOTE isomorphic-git writes oid to HEAD, but we want to test case when it's a ref
     await fs.writeFile(ospath.join(this.repository.gitdir, 'HEAD'), `ref: refs/heads/${branchName}\n`)
     return this
   }

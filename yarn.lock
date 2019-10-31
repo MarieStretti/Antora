@@ -2807,10 +2807,10 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
-isomorphic-git@0.67.5:
-  version "0.67.5"
-  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.67.5.tgz#1439536ee22620a9a7159878c0b22c0dfd07ecc0"
-  integrity sha512-KUhQsbudnjOyI0O1lLTMFZS8JM2lbTp0gc/YKyAhVKWi1QTR4MmLKC65dapmluNGY5+ycEdoci20ffcfSEvXHQ==
+isomorphic-git@0.70.3:
+  version "0.70.3"
+  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.70.3.tgz#86430b593a1ead992dcc642e1745780827c9ffb2"
+  integrity sha512-1ICEZ5zK2T42qcQ/aXmB5sa3WPdp4BouNTi41GAsNmc1ojdr2Dbcdmr6GCWaqCRhsf8Wd34bfZx/KazCbClaBA==
   dependencies:
     async-lock "^1.1.0"
     clean-git-ref "^2.0.1"
