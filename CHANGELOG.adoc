@@ -9,18 +9,24 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *site-mapper*: Generate a robots.txt file if the site.robots key is set in the playbook (#219) (@djencks)
+* *playbook-builder*: Add `edit_url` key to content category for configuring pattern for edit URL globally (#292)
 * *content-aggregator*: Make fs object used by git pluggable (assign fs property to git core named "antora") (#476)
 * *content-aggregator*: Prune stale branches and tags when fetching repository updates (#374)
 * *content-aggregator*: Preserve stack from original clone error thrown by git client (#497)
 * *asciidoc-loader*: Add support for `lines` attribute on include directive; filters lines by individual line numbers or line number ranges (#412)
+* *page-composer*: Map src.fileUri to fileUri property on page UI model (#292)
+* *site-mapper*: Generate a robots.txt file if the site.robots key is set in the playbook (#219) (@djencks)
 
 === Changed
 
 * *content-aggregator*: Upgrade isomorphic-git (#476)
 * *content-aggregator*: Automatically unregister any managed git plugin (e.g., fs and credentialManager) (#476)
-* *content-aggregator*: The tags and branches key defined on content source should override inherited value even when value is falsy (#510)
-* *content-aggregator*: Clean auth from remote URL assigned to src.origin.url resolved from git config of local repo (#513)
+* *content-aggregator*: The tags and branches keys defined on content source replace inherited value, even when value is falsy (#510)
+* *content-aggregator*: Clean auth from remote URL assigned to src.origin.url resolved from git config of local repository (#513)
+* *content-aggregator*: Coerce remote URL resolved from git config of local repository to HTTPS URL (#292)
+* *content-aggregator*: Split src.editUrl on file object into src.editUrl and src.fileUri so both values can coexist (#292)
+* *content-aggregator*: Allow edit URL to be disabled or configured from pattern using edit_url key on content category in playbook or on content source (#292)
+* *content-aggregator*: Only assign src.origin.url property on file object using value of remote URL, if available (#292)
 * *content-classifier:* Make detection of semantic versions more robust (#505)
 * Upgrade development dependencies
 

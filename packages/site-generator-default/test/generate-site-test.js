@@ -326,18 +326,53 @@ describe('generateSite()', function () {
       .with.subDirs.with.members(['css', 'js', 'font', 'img'])
   }).timeout(timeoutOverride)
 
-  it('should add edit page link to toolbar if page.editUrl is set in UI model', async () => {
-    await repoBuilder.open().then(() => repoBuilder.checkoutBranch('v2.0'))
+  it('should add edit page link to toolbar that links to edit URL if page.editUrl is set in UI model', async () => {
+    const remoteGitUrl = 'git@gitlab.com:org/docs-repo.git'
+    const remoteWebUrl = 'https://gitlab.com/org/docs-repo'
+    const refname = 'v2.0'
+    await repoBuilder
+      .open()
+      .then(() => repoBuilder.config('remote.origin.url', remoteGitUrl))
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
     expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
     $ = loadHtmlFile('the-component/2.0/the-page.html')
     const thePagePath = 'modules/ROOT/pages/the-page.adoc'
-    const editUrl =
+    const editLinkUrl = `${remoteWebUrl}/edit/${refname}/${thePagePath}`
+    expect($('.toolbar .edit-this-page a')).to.have.attr('href', editLinkUrl)
+  }).timeout(timeoutOverride)
+
+  it('should add edit page link to toolbar that links to local file if page.fileUri is set in UI model', async () => {
+    await repoBuilder.open().then(() => repoBuilder.checkoutBranch('v2.0'))
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    expect(env).not.to.have.property('CI')
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/the-page.html')
+    const thePagePath = 'modules/ROOT/pages/the-page.adoc'
+    const editLinkUrl =
       ospath.sep === '\\'
         ? 'file:///' + ospath.join(repoBuilder.repoPath, thePagePath).replace(/\\/g, '/')
         : 'file://' + ospath.join(repoBuilder.repoPath, thePagePath)
-    expect($('.toolbar .edit-this-page a')).to.have.attr('href', editUrl)
+    expect($('.toolbar .edit-this-page a')).to.have.attr('href', editLinkUrl)
+  }).timeout(timeoutOverride)
+
+  it('should point edit page link to edit URL instead of local file if CI env var is set', async () => {
+    env.CI = 'true'
+    const remoteGitUrl = 'git@gitlab.com:org/docs-repo.git'
+    const remoteWebUrl = 'https://gitlab.com/org/docs-repo'
+    const refname = 'v2.0'
+    await repoBuilder
+      .open()
+      .then(() => repoBuilder.config('remote.origin.url', remoteGitUrl))
+      .then(() => repoBuilder.checkoutBranch(refname))
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/the-page.html')
+    const thePagePath = 'modules/ROOT/pages/the-page.adoc'
+    const editLinkUrl = `${remoteWebUrl}/edit/${refname}/${thePagePath}`
+    expect($('.toolbar .edit-this-page a')).to.have.attr('href', editLinkUrl)
   }).timeout(timeoutOverride)
 
   it('should provide navigation to multiple versions of a component', async () => {

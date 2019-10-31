@@ -69,6 +69,11 @@ module.exports = {
       format: Array,
       default: ['v*', 'master'],
     },
+    edit_url: {
+      doc: 'The default edit URL setting when no specific setting is provided.',
+      format: 'boolean-or-string',
+      default: true,
+    },
     sources: {
       doc: 'The list of git repositories + branch patterns to use.',
       format: Array,

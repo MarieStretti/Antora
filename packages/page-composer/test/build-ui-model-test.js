@@ -284,6 +284,14 @@ describe('build UI model', () => {
       expect(model.origin).to.equal(file.src.origin)
     })
 
+    it('should set editUrl and fileUri properties from file.src object', () => {
+      file.src.editUrl = 'https://github.com/org/repo/edit/master/modules/ROOT/pages/the-page.adoc'
+      file.src.fileUri = 'file:///path/to/worktree/modules/ROOT/pages/the-page.adoc'
+      const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
+      expect(model.editUrl).to.equal(file.src.editUrl)
+      expect(model.fileUri).to.equal(file.src.fileUri)
+    })
+
     it('should set url property to pub url of file', () => {
       const model = buildPageUiModel(file, contentCatalog, navigationCatalog, site)
       expect(model.url).to.equal('/the-component/1.0/the-page.html')

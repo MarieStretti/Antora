@@ -174,6 +174,7 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
     versions,
     navigation,
     editUrl: file.src.editUrl,
+    fileUri: file.src.fileUri,
     home: url === site.homeUrl,
   }
   if (versions) {

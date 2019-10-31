@@ -33,9 +33,10 @@ const {
 const ABBREVIATE_REF_RX = /^refs\/(?:heads|remotes\/[^/]+|tags)\//
 const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
+const EDIT_URL_TEMPLATE_VAR_RX = /\{(web_url|refname|path)\}/g
+const GIT_EXTENSION_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /^(?:https?:\/\/|.+@)(git(?:hub|lab)\.com|bitbucket\.org|pagure\.io)[/:](.+?)(?:\.git)?$/
-const GIT_EXTENSION_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
 const SPACE_RX = / /g
 const URL_AUTH_CLEANER_RX = /^(https?:\/\/)[^/@]*@/
@@ -63,7 +64,7 @@ const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)?(?::([^/@]+)?)?@)?(.*)
  */
 function aggregateContent (playbook) {
   const startDir = playbook.dir || '.'
-  const { branches, tags, sources } = playbook.content
+  const { branches, editUrl, tags, sources } = playbook.content
   const sourcesByUrl = _.groupBy(sources, 'url')
   const { cacheDir, fetch, silent, quiet } = playbook.runtime
   const progress = !quiet && !silent && createProgress(sourcesByUrl, process.stdout)
@@ -84,7 +85,7 @@ function aggregateContent (playbook) {
           }).then(({ repo, authStatus }) =>
             Promise.all(
               sources.map((source) => {
-                source = Object.assign({ branches, tags }, source)
+                source = Object.assign({ branches, editUrl, tags }, source)
                 // NOTE if repository is managed (has a url), we can assume the remote name is origin
                 // TODO if the repo has no remotes, then remoteName should be undefined
                 const remoteName = repo.url ? 'origin' : source.remote || 'origin'
@@ -321,7 +322,7 @@ function getCurrentBranchName (repo, remote) {
 
 async function populateComponentVersion (source, repo, remoteName, authStatus, ref) {
   const url = repo.url
-  const originUrl = url || (await resolveRemoteUrl(repo, remoteName).then((url) => url || repo.dir))
+  const originUrl = url || (await resolveRemoteUrl(repo, remoteName))
   let startPath = source.startPath || ''
   if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
   // Q: should worktreePath be passed in to this function?
@@ -337,7 +338,7 @@ async function populateComponentVersion (source, repo, remoteName, authStatus, r
     err.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
     throw err
   }
-  const origin = computeOrigin(originUrl, authStatus, ref.name, ref.type, startPath, worktreePath)
+  const origin = computeOrigin(originUrl, authStatus, ref.name, ref.type, startPath, worktreePath, source.editUrl)
   componentVersion.files = files.map((file) => assignFileProperties(file, origin))
   return componentVersion
 }
@@ -496,29 +497,40 @@ function loadComponentDescriptor (files, startPath) {
   return data
 }
 
-function computeOrigin (url, authStatus, refName, refType, startPath, worktreePath = undefined) {
-  let match
-  const origin = { type: 'git', url, startPath }
+function computeOrigin (url, authStatus, refname, reftype, startPath, worktreePath = undefined, editUrl = true) {
+  const origin = { type: 'git', startPath }
+  if (url) origin.url = url
   if (authStatus) origin.private = authStatus
-  origin[refType] = refName
+  origin[reftype] = refname
   if (worktreePath) {
-    origin.editUrlPattern =
-      'file://' + path.join(posixify ? '/' + posixify(worktreePath) : worktreePath, startPath, '%s')
+    origin.fileUriPattern =
+      'file://' + (posixify ? '/' + posixify(worktreePath) : worktreePath) + path.join('/', startPath, '%s')
     // Q: should we set worktreePath instead (or additionally?)
     origin.worktree = true
-  } else if ((match = url.match(HOSTED_GIT_REPO_RX))) {
-    const host = match[1]
-    let action
-    let category = ''
-    if (host === 'pagure.io') {
-      action = 'blob'
-      category = 'f'
-    } else if (host === 'bitbucket.org') {
-      action = 'src'
-    } else {
-      action = refType === 'branch' ? 'edit' : 'blob'
+  }
+  if (editUrl === true) {
+    let match
+    if (url && (match = url.match(HOSTED_GIT_REPO_RX))) {
+      const host = match[1]
+      let action
+      let category = ''
+      if (host === 'pagure.io') {
+        action = 'blob'
+        category = 'f'
+      } else if (host === 'bitbucket.org') {
+        action = 'src'
+      } else {
+        action = reftype === 'branch' ? 'edit' : 'blob'
+      }
+      origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, refname, category, startPath, '%s')
     }
-    origin.editUrlPattern = 'https://' + path.join(match[1], match[2], action, refName, category, startPath, '%s')
+  } else if (editUrl) {
+    const vars = {
+      path: () => startPath ? path.join(startPath, '%s') : '%s',
+      refname: () => refname,
+      web_url: () => url ? url.replace(GIT_EXTENSION_RX, '') : '',
+    }
+    origin.editUrlPattern = editUrl.replace(EDIT_URL_TEMPLATE_VAR_RX, (_, name) => vars[name]())
   }
   return origin
 }
@@ -535,6 +547,10 @@ function assignFileProperties (file, origin) {
     mediaType: file.mediaType,
     origin,
   })
+  if (origin.fileUriPattern) {
+    const fileUri = origin.fileUriPattern.replace('%s', file.src.path)
+    file.src.fileUri = ~fileUri.indexOf(' ') ? fileUri.replace(SPACE_RX, '%20') : fileUri
+  }
   if (origin.editUrlPattern) {
     const editUrl = origin.editUrlPattern.replace('%s', file.src.path)
     file.src.editUrl = ~editUrl.indexOf(' ') ? editUrl.replace(SPACE_RX, '%20') : editUrl
@@ -645,15 +661,21 @@ function generateCloneFolderName (url) {
 }
 
 /**
- * Resolve the URL of the specified remote for the given repository, removing embedded auth if present.
+ * Resolve the HTTP URL of the specified remote for the given repository, removing embedded auth if present.
  *
  * @param {Repository} repo - The repository on which to operate.
  * @param {String} remoteName - The name of the remote to resolve.
  * @returns {String} The URL of the specified remote, if present.
  */
 async function resolveRemoteUrl (repo, remoteName) {
-  return git.config(Object.assign({ path: 'remote.' + remoteName + '.url' }, repo))
-    .then((url) => url && url.startsWith('http') && ~url.indexOf('@') ? url.replace(URL_AUTH_CLEANER_RX, '$1') : url)
+  return git.config(Object.assign({ path: 'remote.' + remoteName + '.url' }, repo)).then((url) => {
+    if (!url) return
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      return ~url.indexOf('@') ? url.replace(URL_AUTH_CLEANER_RX, '$1') : url
+    } else if (url.startsWith('git@')) {
+      return 'https://' + url.substr(4).replace(':', '/')
+    }
+  })
 }
 
 /**
