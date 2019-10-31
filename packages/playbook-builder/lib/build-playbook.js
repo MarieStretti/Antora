@@ -68,15 +68,7 @@ function exportModel (config) {
     if (runtime.pull != null) runtime.fetch = runtime.pull
     delete runtime.pull
   }
-  // FIXME would be nice if camelCaseKeys could exclude a subtree (e.g., asciidoc)
-  // see https://github.com/sindresorhus/camelcase-keys/issues/23
-  let asciidocData
-  if ('asciidoc' in schema.properties) {
-    asciidocData = data.asciidoc
-    delete data.asciidoc
-  }
-  const playbook = camelCaseKeys(data, { deep: true })
-  if (asciidocData) playbook.asciidoc = asciidocData
+  const playbook = camelCaseKeys(data, { deep: true, stopPaths: ['asciidoc'] })
   playbook.dir = playbook.playbook ? ospath.dirname((playbook.file = playbook.playbook)) : process.cwd()
   delete playbook.playbook
   return freeze(playbook)
