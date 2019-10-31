@@ -15,7 +15,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "handlebars": "~4.4",
+    "handlebars": "~4.5",
     "require-from-string": "~2.0"
   },
   "engines": {
