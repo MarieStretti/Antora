@@ -309,7 +309,7 @@ If you only want to use tags, you must explicitly disable branches.
 content:
   sources:
   - url: https://gitlab.com/org/project-docs.git
-    branches: []
+    branches: ~
     tags: v*
 ----
 
