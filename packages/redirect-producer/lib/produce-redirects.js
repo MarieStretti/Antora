@@ -65,7 +65,7 @@ function extractUrlPath (url) {
 
 function populateStaticRedirectFiles (files, siteUrl) {
   files.forEach((file) => {
-    file.contents = createStaticRedirectContents(file, siteUrl)
+    file.contents = Buffer.from(createStaticRedirectContents(file, siteUrl) + '\n')
     file.mediaType = 'text/html'
   })
   return []
@@ -82,7 +82,7 @@ function createNetlifyRedirects (files, urlPath, includeDirectoryRedirects = fal
     }
     return accum
   }, [])
-  return [new File({ contents: Buffer.from(rules.join('\n')), out: { path: '_redirects' } })]
+  return [new File({ contents: Buffer.from(rules.join('\n') + '\n'), out: { path: '_redirects' } })]
 }
 
 function createNginxRewriteConf (files, urlPath) {
@@ -94,7 +94,7 @@ function createNginxRewriteConf (files, urlPath) {
     toUrl = ~toUrl.indexOf('%20') ? `'${urlPath}${toUrl.replace(ENCODED_SPACE_RX, ' ')}'` : urlPath + toUrl
     return `location = ${fromUrl} { return 301 ${toUrl}; }`
   })
-  return [new File({ contents: Buffer.from(rules.join('\n')), out: { path: '.etc/nginx/rewrite.conf' } })]
+  return [new File({ contents: Buffer.from(rules.join('\n') + '\n'), out: { path: '.etc/nginx/rewrite.conf' } })]
 }
 
 function unpublish (files) {
@@ -107,14 +107,14 @@ function createStaticRedirectContents (file, siteUrl) {
   const relativeUrl = computeRelativeUrlPath(file.pub.url, targetUrl)
   const canonicalUrl = siteUrl && siteUrl.charAt() !== '/' ? siteUrl + targetUrl : undefined
   const canonicalLink = canonicalUrl ? `<link rel="canonical" href="${canonicalUrl}">\n` : ''
-  return Buffer.from(`<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <meta charset="utf-8">
 ${canonicalLink}<script>location="${relativeUrl}"</script>
 <meta http-equiv="refresh" content="0; url=${relativeUrl}">
 <meta name="robots" content="noindex">
 <title>Redirect Notice</title>
 <h1>Redirect Notice</h1>
-<p>The page you requested has been relocated to <a href="${relativeUrl}">${canonicalUrl || relativeUrl}</a>.</p>`)
+<p>The page you requested has been relocated to <a href="${relativeUrl}">${canonicalUrl || relativeUrl}</a>.</p>`
 }
 
 module.exports = produceRedirects

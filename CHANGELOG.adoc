@@ -14,6 +14,8 @@ This project utilizes semantic versioning.
 * *page-composer*: Add built-in helpers resolvePage and resolvePageUrl to resolve arbitrary pages and their publish URLs (#328)
 * *content-classifier*: Rename `getFiles()` method on content catalog to `getAll()`; retain `getFiles()` as deprecated method (#538)
 * *ui-loader*: Rename `getFiles()` method on UI catalog to `getAll()`; retain `getFiles()` as deprecated method (#538)
+* *site-mapper*: Add trailing newline to all generated files (#494)
+* *redirect-producer*: Add trailing newline to all generated files (#494)
 * *site-publisher*: Call `getAll()` method on catalog if available, otherwise `getFiles()` (#538)
 
 == 2.3.0-alpha.1 (2019-11-20)

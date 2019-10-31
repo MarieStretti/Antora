@@ -70,14 +70,14 @@ function mapSite (playbook, pages) {
       if (sitemap.versions.size > 1) sitemapEntries.sort((a, b) => versionCompare(a.version, b.version))
       delete sitemap.versions
       sitemapEntries = sitemapEntries.map(createUrlElement.bind(null, siteUrl))
-      sitemap.contents = Buffer.from(createSitemapDocument(sitemapEntries))
+      sitemap.contents = Buffer.from(createSitemapDocument(sitemapEntries) + '\n')
       return sitemap
     })
 
   let sitemapIndex
   if (sitemaps.length > 1) {
     const sitemapIndexEntries = sitemaps.map(createSitemapElement.bind(null, siteUrl))
-    sitemapIndex = new File({ contents: Buffer.from(createSitemapIndexDocument(sitemapIndexEntries)) })
+    sitemapIndex = new File({ contents: Buffer.from(createSitemapIndexDocument(sitemapIndexEntries) + '\n') })
     sitemaps.unshift(sitemapIndex)
   } else {
     sitemapIndex = sitemaps[0]

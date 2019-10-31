@@ -275,7 +275,8 @@ describe('createPageComposer()', () => {
       const result = composePage(file, contentCatalog, navigationCatalog)
       expect(result).to.equal(file)
       expect(file.contents).to.be.instanceOf(Buffer)
-      expect(file.contents.toString().trim()).to.equal(heredoc`
+      expect(file.contents.toString()).to.endWith('\n')
+      expect(file.contents.toString().trimRight()).to.equal(heredoc`
         <!DOCTYPE html>
         <html class="default">
         <title>The Page</title>
@@ -393,13 +394,15 @@ describe('createPageComposer()', () => {
           <link rel="stylesheet" href="{{uiRootPath}}/css/site.css">
           <h1>{{{page.title}}}</h1>
           </html>
-          `
+          ` + '\n'
         ),
       })
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
       const result = composePage(file, contentCatalog, navigationCatalog)
       expect(result).to.equal(file)
-      expect(file.contents.toString().trim()).to.equal(heredoc`
+      expect(file.contents).to.be.instanceOf(Buffer)
+      expect(file.contents.toString()).to.endWith('\n')
+      expect(file.contents.toString().trimRight()).to.equal(heredoc`
         <!DOCTYPE html>
         <html class="status-404">
         <title>Page Not Found</title>
@@ -421,14 +424,16 @@ describe('createPageComposer()', () => {
           <link rel="stylesheet" href="{{uiRootPath}}/css/site.css">
           <h1>{{{page.title}}}</h1>
           </html>
-          `
+          ` + '\n'
         ),
       })
       playbook.site.url = 'https://example.org/docs'
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
       const result = composePage(file, contentCatalog, navigationCatalog)
       expect(result).to.equal(file)
-      expect(file.contents.toString().trim()).to.equal(heredoc`
+      expect(file.contents).to.be.instanceOf(Buffer)
+      expect(file.contents.toString()).to.endWith('\n')
+      expect(file.contents.toString().trimRight()).to.equal(heredoc`
         <!DOCTYPE html>
         <html class="status-404">
         <title>Page Not Found</title>
