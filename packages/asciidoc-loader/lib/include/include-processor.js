@@ -58,24 +58,26 @@ function getLines (attrs) {
     if (lines) {
       const linenums = []
       let filtered
-      ;(~lines.indexOf(',') ? lines.split(',') : lines.split(';')).filter((it) => it).forEach((linedef) => {
-        filtered = true
-        let delim
-        let from
-        if (~(delim = linedef.indexOf('..'))) {
-          from = linedef.substr(0, delim)
-          let to = linedef.substr(delim + 2)
-          if ((to = parseInt(to) || -1) > 0) {
-            if ((from = parseInt(from) || -1) > 0) {
-              linenums.push(...Array.from({ length: to - from + 1 }, (_, i) => i + from))
+      ;(~lines.indexOf(',') ? lines.split(',') : lines.split(';'))
+        .filter((it) => it)
+        .forEach((linedef) => {
+          filtered = true
+          let delim
+          let from
+          if (~(delim = linedef.indexOf('..'))) {
+            from = linedef.substr(0, delim)
+            let to = linedef.substr(delim + 2)
+            if ((to = parseInt(to) || -1) > 0) {
+              if ((from = parseInt(from) || -1) > 0) {
+                linenums.push(...Array.from({ length: to - from + 1 }, (_, i) => i + from))
+              }
+            } else if (to === -1 && (from = parseInt(from) || -1) > 0) {
+              linenums.push(from, Infinity)
             }
-          } else if (to === -1 && (from = parseInt(from) || -1) > 0) {
-            linenums.push(from, Infinity)
+          } else if ((from = parseInt(linedef) || -1) > 0) {
+            linenums.push(from)
           }
-        } else if ((from = parseInt(linedef) || -1) > 0) {
-          linenums.push(from)
-        }
-      })
+        })
       if (linenums.length) return [...new Set(linenums.sort((a, b) => a - b))]
       if (filtered) return []
     }

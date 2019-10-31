@@ -526,9 +526,9 @@ function computeOrigin (url, authStatus, refname, reftype, startPath, worktreePa
     }
   } else if (editUrl) {
     const vars = {
-      path: () => startPath ? path.join(startPath, '%s') : '%s',
+      path: () => (startPath ? path.join(startPath, '%s') : '%s'),
       refname: () => refname,
-      web_url: () => url ? url.replace(GIT_EXTENSION_RX, '') : '',
+      web_url: () => (url ? url.replace(GIT_EXTENSION_RX, '') : ''),
     }
     origin.editUrlPattern = editUrl.replace(EDIT_URL_TEMPLATE_VAR_RX, (_, name) => vars[name]())
   }

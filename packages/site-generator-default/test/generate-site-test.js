@@ -330,9 +330,7 @@ describe('generateSite()', function () {
     const remoteGitUrl = 'git@gitlab.com:org/docs-repo.git'
     const remoteWebUrl = 'https://gitlab.com/org/docs-repo'
     const refname = 'v2.0'
-    await repoBuilder
-      .open()
-      .then(() => repoBuilder.config('remote.origin.url', remoteGitUrl))
+    await repoBuilder.open().then(() => repoBuilder.config('remote.origin.url', remoteGitUrl))
     fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
     await generateSite(['--playbook', playbookFile], env)
     expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()

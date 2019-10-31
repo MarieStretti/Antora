@@ -22,7 +22,7 @@ function convertDocuments (contentCatalog, asciidocConfig = {}) {
     .findBy({ family: 'page' })
     .filter((page) => page.out)
     .map((page) => (page.mediaType === 'text/asciidoc' ? convertDocument(page, contentCatalog, asciidocConfig) : page))
-    .map((page) => (delete page.src.contents) && page)
+    .map((page) => delete page.src.contents && page)
 }
 
 module.exports = convertDocuments
