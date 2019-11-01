@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Changed
+
+* *ui-loader*: Preserve stack from got (HTTP client) error when downloading UI (#516)
+
 == 2.2.0 (2019-11-02)
 
 === Added
