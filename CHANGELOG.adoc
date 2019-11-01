@@ -7,9 +7,14 @@ This project utilizes semantic versioning.
 
 == Unreleased
 
+=== Added
+
+* *ui-loader*: Verify downloaded UI bundle is a valid zip file before caching; throw error if invalid (#517)
+
 === Changed
 
 * *ui-loader*: Preserve stack from got (HTTP client) error when downloading UI (#516)
+* *ui-loader*: Report clearer error when local or cached UI bundle is not valid or cannot otherwise be read (#517)
 
 == 2.2.0 (2019-11-02)
 
