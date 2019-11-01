@@ -10,15 +10,15 @@
 
 = Antora 2.2.0
 
-_**Release date:** 2019.10.31 | *Issue label:* {url-milestone-2-2-0}[2.2.0^]_
+_**Release date:** 2019.11.02 | *Issue label:* {url-milestone-2-2-0}[2.2.0^]_
 
 == Resolved issues
 
 === Added
 
+Issue {url-issues}/219[#219^]:: Generate a robots.txt file if the `site.robots` key is set in the playbook.
 Issue {url-issues}/292[#292^]:: Allow edit URL to be configured from pattern or disabled in playbook using the `edit_url` key on the content category or specific content source.
 Additionally, store the edit URL and file URI independently so both values are accessible via the UI model.
-Issue {url-issues}/219[#219^]:: Generate a robots.txt file if the `site.robots` key is set in the playbook.
 Issue {url-issues}/374[#374^]:: Prune stale branches and tags when fetching repository updates.
 Issue {url-issues}/412[#412^]:: Add support for `lines` attribute on include directive, which can be used to filter lines by line numbers or line number ranges.
 Issue {url-issues}/497[#497^]:: Preserve stack from original clone error thrown by git client.
@@ -26,14 +26,14 @@ Issue {url-issues}/497[#497^]:: Preserve stack from original clone error thrown 
 === Changed
 
 Issue {url-issues}/476[#476^]:: Upgrade git client (isomorphic-git); new index cache may improve performance.
-Issue {url-issues}/510[#510]:: The `tags` and `branches` keys override the inherited (global) value even if the values are falsy.
-Issue {url-issues}/513[#513]:: Clean embedded auth from remote URL resolved from git config of local repository.
-Issue {url-issues}/505[#505]:: Be more strict about detecting semantic component versions when sorting.
+Issue {url-issues}/505[#505^]:: Be more strict about detecting semantic component versions when sorting.
+Issue {url-issues}/510[#510^]:: The `tags` and `branches` keys override the inherited (global) value even if the values are falsey.
+Issue {url-issues}/513[#513^]:: Clean embedded auth from remote URL resolved from git config of local repository.
 
 == Customizable edit URL
 
 By default, Antora automatically computes the edit URL for all files it takes from a remote repository or a local repository connected to a remote repository, if possible.
-"`If possible`" means this works if the remote repository is located on the primary GitHub, GitLab, BitBucket, or Pagure hosted services.
+"`If possible`" means this works if the remote repository is located on the primary GitHub, GitLab, Bitbucket, or Pagure hosted services.
 What was lacking in previous versions of Antora was support for other git hosts (e.g., on-prem GitLab) or to be able to customize or disable the value.
 If the automatic value of the edit URL doesn't work in your case, you can now customize it using the playbook.
 
@@ -60,7 +60,7 @@ content:
     edit_url: '{web_url}/blob/{refname}/{path}'
 ----
 
-If, instead, you want to disable the edit URL, set the value to `false`.
+If, instead, you want to disable the edit URL, set the value to tilde (`~`) or `false`.
 
 [source,yaml]
 ----
@@ -97,7 +97,7 @@ Other times, you want to tell them to back off entirely.
 Or, you may want to restrict access to certain portions of the site.
 That's the role of the https://en.wikipedia.org/wiki/Robots_exclusion_standard[robots.txt file], stored at the root of the site.
 
-You can now use the `site.robots` key in the playbook file to instruct Antora to generate a robots.txt.
+You can now use the `site.robots` key in the playbook file to instruct Antora to generate [.path]_robots.txt_.
 
 If you want to grant full access, set the value to `allow`:
 
@@ -115,13 +115,13 @@ site:
   robots: disallow
 ----
 
-Any other value will be used as the contents of the robots.txt file.
+Any other value will be used as the contents of the [.path]_robots.txt_ file.
 For more details, see xref:playbook:configure-site.adoc#configure-robots[configuring the robots.txt file].
 
 == Filter includes by line numbers
 
 In addition to filtering the lines of an include file by named tags, you can now filter lines by line numbers.
-This AsciiDoc feature has already been available in Asciidoctor, but was not previously working in Antora.
+This AsciiDoc feature has been available in Asciidoctor, but was not previously working in Antora.
 
 Line numbers of specified in the value of the `lines` attribute on the include directive.
 Line numbers, which are numbered starting with 1, can be identified as individual entries or as a range.
@@ -153,13 +153,12 @@ For more information about the `lines` attribute on the include directive, refer
 == Prune references
 
 When you pass the `--fetch` flag to the `antora` command or set the `runtime.fetch` key in the playbook file to true, Antora fetches updates from all the remote git repositories.
-What it was not doing was removing references that had been deleted from the remote repository.
-As a result, Antora would discover references (branches and tags) that it should not be finding as the result of a stale cache.
-In addition to publishing content it shouldn't publish, Antora would also fail when files from a stale reference conflicted with files from a newer reference (the dreaded duplicate nav or page errors).
+However, it wasn't removing references (branches and tags) that had been deleted from the remote repository.
+Antora would discover these references due to the stale cache and end up publishing content that was supposed to be removed.
+Also, Antora would fail when files from a stale reference conflicted with files from a newer reference (the dreaded duplicate nav or page errors).
 
-Now when Antora reaches out to the remote repositories for updates, it will also remove any references in the cache that have been removed from the remote repository.
-In other words, it will do a complete sync.
-That means Antora won't discover any references that it shouldn't be finding.
+Now, Antora will do a complete sync.
+When Antora reaches out to the remote repositories for updates, it will remove any references in the cache that have been removed from the remote repository.
 There's nothing you need to do to enable this feature.
 It's automatic.
 
@@ -175,7 +174,7 @@ content:
     branches: []
 ----
 
-Now you can use the special value `~`, which is short for `null` (aka nothing).
+Now you can use the value tilde (`~`), which is short for `null` (aka nothing).
 
 [source,yaml]
 ----
@@ -187,10 +186,6 @@ content:
 
 If the `tags` or `branches` key is present on a content source entry, that value takes precedence, regardless of what the value is.
 
-== Documentation changes
-
-TODO
-
 [#thank-you-2-2-0]
 == Thank you!
 
@@ -198,4 +193,4 @@ Most important of all, a huge *thank you!* to all the folks who helped make Anto
 
 We want to call out the following people for making contributions to this release:
 
-David Jencks ({url-gitlab}/djencks[@djencks]):: For implementing the robots.txt generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
+David Jencks ({url-gitlab}/djencks[@djencks^]):: For implementing the robots.txt generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
