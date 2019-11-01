@@ -25,6 +25,7 @@ Issue {url-issues}/497[#497^]:: Preserve stack from original clone error thrown 
 
 === Changed
 
+Issue {url-issues}/487[#487^]:: Make page-partial attribute obsolete.
 Issue {url-issues}/476[#476^]:: Upgrade git client (isomorphic-git); new index cache may improve performance.
 Issue {url-issues}/505[#505^]:: Be more strict about detecting semantic component versions when sorting.
 Issue {url-issues}/510[#510^]:: The `tags` and `branches` keys override the inherited (global) value even if the values are falsey.
@@ -117,6 +118,27 @@ site:
 
 Any other value will be used as the contents of the [.path]_robots.txt_ file.
 For more details, see xref:playbook:configure-site.adoc#configure-robots[configuring the robots.txt file].
+
+== All pages can be included by default
+
+Previously, to include a page (i.e., an AsciiDoc file inside the pages directory), it was necessary to mark that page as a partial.
+You would mark a page as a partial by declaring the `page-partial` attribute in the document header.
+As of this release, you can use any page in the include directive by default.
+In other words, *you no longer have to worry about marking individual pages as partials.*
+(Under the covers, the `page-partial` attribute is set globally).
+
+If you want to restore the previous behavior, add the following configuration to your playbook file:
+
+[source,yaml]
+----
+asciidoc:
+  attributes:
+    page-partial: false
+----
+
+If you make this change, you'll again need to mark any page you want to include using the `page-partial`.
+You may decide to revert to the previous behavior as an optmization, since it uses slightly less memory.
+You can find more details about this setting in the xref:asciidoc:include-page.adoc#page-partial[documentation for the page-partial attribute].
 
 == Filter includes by line numbers
 
