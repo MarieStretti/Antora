@@ -1,0 +1,222 @@
+= Edit URL Configuration
+:xrefstyle: short
+:listing-caption: Example
+// placeholders that are fulfilled by the file's origin information
+//https://gitlab.com/antora/antora/blob/master/docs/modules/cli/pages/index.adoc
+
+On this page, you'll learn:
+
+* [x] How Antora builds the edit URL for each page.
+* [x] How to customize the edit URL.
+* [x] How to disable the edit URL.
+
+[#default]
+== Antora's default edit URL behavior
+
+Antora automatically provides edit URLs for pages that are sourced from the hosted GitLab, GitHub, Bitbucket, and Pagure services.
+In the default UI, the *Edit this Page* link in the upper right corner of the page uses the edit URL Antora computes to link a visitor to the edit interface provided by the hosted git service.
+For example, if you click the *Edit this Page* link on this page, your browser will go to GitLab's file editing interface and load this page's AsciiDoc source file.
+
+== Customize the edit URL
+
+The `edit_url` key is useful when you're using an unrecognized git solution, or you want <<source-view,Edit this Page to link to an alternate view>>, such as the raw or rendered display, of a page's source file.
+
+The `edit_url` key is set in the playbook and can be applied to all of the content sources or customized per individual source.
+The key accepts a URL pattern that contains the URL segments of the git solution or source file view plus three placeholder segments, `+{web_url}+`, `+{refname}+`, and `+{path}+`.
+Antora automatically fulfills these placeholders with the file's origin information at processing time.
+
+[#ex-key]
+.edit_url key and value
+[source,yaml]
+----
+edit_url: '{web_url}/blob/{refname}/{path}' # <1>
+----
+<1> Enclose the value of `edit_url` in single quotation marks (`'`) when it starts with a curly bracket (`{`).
+
+<<ex-key>> shows a hypothetical edit URL pattern containing the three placeholders.
+The word _blob_ is an example of a URL segment that isn't represented by a placeholder.
+In the following section, we'll explain the role of the three placeholders.
+
+=== How does Antora assemble an edit URL for a page?
+
+When `edit_url` is set, either by default or explicitly, Antora computes the value of the `+{web_url}+`, `+{refname}+`, and `+{path}+` placeholders for each page according to its content source and file origin information.
+Then, using the pattern assigned to the `edit_url` key, it assembles each page's unique edit URL.
+
+web_url:: The `+{web_url}+` placeholder is the corresponding web URL for the content source repository that Antora automatically computes from its git URL.
+For example, [.path]_\https://gitlab.com/cave/sneaky.git_ is converted to [.path]_\https://gitlab.com/cave/sneaky_.
+This placeholder can be omitted if you use a web URL that differs from the one Antora computes.
+
+refname:: The `+{refname}+` is the name of the git reference (e.g., v2.1.x, master, rawhide).
+
+path:: The `+{path}+` is the path of the source file relative to the root of the repository.
+It includes the `start_path` if one is specified.
+
+To see an example of the values Antora would compute for the placeholders, we'll use the content source, branches, and edit URL pattern inputs shown in <<ex-value>>.
+
+[#ex-value]
+.edit_url placeholders
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://app.company.com/the-group/zap.git
+    branches: v1.2.5, next
+    edit_url: '{web_url}/_src/{refname}/u890/{path}'
+----
+
+Let's determine what the edit URL would look like for the page generated from a file named [.path]_index.adoc_.
+This [.path]_index.adoc_ file is stored in branch v1.2.5 of the zap repository in the pages directory of the ROOT module.
+Using the pattern assigned to `edit_url` in <<ex-value>>, Antora would compute the edit URL shown in <<ex-value-result>> for [.path]_index.adoc_.
+
+[#ex-value-result]
+.Edit URL for index.adoc using the inputs from <<ex-value>>
+----
+https://app.company.com/the-group/zap/_src/v1.2.5/u890/modules/ROOT/pages/index.adoc
+----
+
+Antora replaces `+{web_url}+` with the content source's web URL.
+In this case, the _.git_ is dropped from the end of the value of `url`.
+`+{refname}+` is replaced with the _v1.2.5_ git branch reference.
+Finally, `+{path}+` is replaced by the path to the source file, relative to the root of the repository.
+Since this source doesn't have a specified start path, the resulting path is [.path]_modules/ROOT/pages/index.adoc_.
+
+When a content source has an assigned `start_path`, Antora prepends it to `+{path}+`.
+
+[#ex-start]
+.Content source with start_path and edit_url set
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://app.company.com/the-group/zap.git
+    branches: v1.2.5, next
+    start_path: learn/docs
+    edit_url: '{web_url}/_src/{refname}/u890/{path}'
+----
+
+Using the inputs from <<ex-start>>, the edit URL for [.path]_index.adoc_ would be:
+
+[#ex-start-result]
+.Edit URL for index.adoc using the inputs from <<ex-start>>
+----
+https://app.company.com/the-group/zap/_src/v1.2.5/u890/learn/docs/modules/ROOT/pages/index.adoc
+----
+
+== Apply the same edit_url to multiple content sources
+
+When all or most of your content sources use the same `edit_url`, you can set it directly on the `content` key.
+
+[#ex-content]
+.Set edit_url on the content key
+[source,yaml]
+----
+content:
+  edit_url: '{web_url}/_src/{refname}/u890/{path}' # <1>
+  sources:
+  - url: https://app.company.com/the-group/zap.git
+    branches: v1.2.5, next
+  - url: https://app.company.com/city/team-l/zonk.git
+    branches: v2.*
+----
+<1> When `edit_url` is set directly on the `content` key, as it is here, its value is applied to all of the content sources unless the key is reset or disabled on an individual content source.
+
+As seen in <<ex-source>>, the `edit_url` key can be set on an individual content source even when it's set on the `content` key.
+
+[#ex-source]
+.Set edit_url on the content key and an individual source
+[source,yaml]
+----
+content:
+  edit_url: '{web_url}/_src/{refname}/u890/{path}' # <1>
+  sources:
+  - url: https://app.company.com/the-group/zap.git # <2>
+    branches: v1.2.5, next
+  - url: https://git.secretbase.org/ack/boom
+    branches: dev
+    edit_url: '{web_url}/{refname}/ping/0/{path}' # <3>
+  - url: https://app.company.com/city/team-l/zonk.git # <4>
+    branches: v2.*
+----
+<1> This `edit_url` key is set directly on the `content` key.
+Its value is applied to all of the content sources unless the key is reset or disabled on an individual content source.
+<2> This content source will inherit the value of the `edit_url` key set directly on the `content` key.
+<3> When `edit_url` is set on an individual content source, that value will be used instead of the value assigned to the `edit_url` key set on the `content` key.
+<4> This content source will inherit the value of the `edit_url` key set directly on the `content` key.
+
+[#source-view]
+== Change the source file view linked to Edit this Page
+
+By default, a page's edit URL links to the file editing interface of a git service, as long as the content source is stored on a hosted git service Antora recognizes (GitLab, GitHub, Bitbucket, and Pagure).
+With the `edit_url` key you can change this behavior.
+For instance, in <<ex-view>>, each page's computed edit URL will now be the URL for GitLab's rendered file view of the corresponding source file.
+
+[#ex-view]
+.Route the edit URL to an alternate source file view
+[source,yaml]
+----
+content:
+  edit_url: '{web_url}/blob/{refname}/{path}' # <1>
+  sources:
+  - url: https://gitlab.com/cave/sneaky.git
+    branches: v2.0, v1.0
+----
+<1> The `edit_url` key is assigned the URL pattern for GitLab's rendered file view.
+
+Using the inputs in <<ex-view>>, the *Edit this Page* link on each page sourced from the _\https://gitlab.com/cave/sneaky.git_ repository will link to the rendered view of the corresponding source file on GitLab.
+
+NOTE: To change the link text of *Edit this Page* or replace it with an image, you'll need to update your UI.
+
+== Disable the edit URL
+
+The `edit_url` key can turn off the edit URL feature on all of your content sources or per individual content source.
+To disable the edit URL, assign a tilde (`~`) or the word `false` to the `edit_url` key.
+
+[source,yaml]
+----
+content:
+  branches: v*
+  edit_url: ~ # <1>
+  sources:
+  - url: https://app.company.com/the-group/zap.git
+  - url: https://gitlab.com/cave/sneaky.git
+----
+<1> Disable the edit URL feature for all content sources by setting `edit_url` on the `content` key and assigning it a value of `~`.
+The tilde (`~`) disables the edit URL feature.
+An edit URL won't be produced for any of the pages sourced from the content sources unless `edit_url` is reset per individual content source.
+
+The `edit_url` can also be disabled on an individual content source.
+
+[source,yaml]
+----
+content:
+  branches: v*
+  sources:
+  - url: https://app.company.com/the-group/zap.git
+    edit_url: ~ # <1>
+  - url: https://gitlab.com/cave/sneaky.git # <2>
+----
+<1> The `edit_url` key is set on this individual content source and assigned a value of `~`.
+<2> Since `edit_url` isn't explicitly set on the `content` key or on this content source, it will use the default edit URL behavior built into Antora.
+
+== Revert a content source to the default edit URL behavior
+
+You can revert to the <<default,default edit URL behavior>> for an individual content source even when you've set or disabled the `edit_url` key at the `content` key level.
+On the source, set `edit_url` and assign it the value `true`.
+
+[#ex-reset]
+.Reset edit_url to the default behavior
+[source,yaml]
+----
+content:
+  branches: v*
+  edit_url: '{web_url}/_src/{refname}/u890/{path}' # <1>
+  sources:
+  - url: https://app.company.com/the-group/zap.git
+  - url: https://gitlab.com/cave/sneaky.git
+    edit_url: true # <2>
+  - url: https://app.company.com/city/team-l/zonk.git
+----
+<1> When `edit_url` is set directly on the `content` key, its value is applied to all of the content sources unless the key is reset or disabled on an individual content source.
+<2> Assign the value `true` to the `edit_url` key to revert a content source to the default edit URL behavior.
+
+In <<ex-reset>>, the _zap_ and _zonk_ content sources will use the `edit_url` set on the `content` key while the _sneaky_ source will use the default edit URL behavior built into Antora.

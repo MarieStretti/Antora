@@ -4,6 +4,7 @@
 *** xref:configure-site.adoc[Site]
 *** xref:configure-content-sources.adoc[Content Sources]
 **** xref:private-repository-auth.adoc[Private Repository Authentication]
+**** xref:configure-edit-url.adoc[Edit URL]
 *** xref:configure-asciidoc.adoc[AsciiDoc]
 *** xref:configure-ui.adoc[UI]
 //*** xref:configure-redirects.adoc[Configure Redirects]
