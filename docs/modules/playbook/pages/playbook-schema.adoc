@@ -13,7 +13,7 @@ Here's a contrived example of a playbook file showing all the keys that can be d
 WARNING: *Do not copy and paste this listing!*
 It's only meant to serve as a reference to illustrate all the available keys and possible values in a playbook.
 If you try to use it as is, it will _not_ work.
-Use the https://gitlab.com/antora/demo/demo-site/blob/master/site.yml[demo site.yml] instead if you're looking for a starting point.
+Use the https://gitlab.com/antora/demo/docs-site/blob/master/antora-playbook.yml[Demo antora-playbook.yml] instead if you're looking for a starting point.
 
 [source,yaml]
 ----

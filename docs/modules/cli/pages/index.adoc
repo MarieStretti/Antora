@@ -200,7 +200,7 @@ The site title will be _My Awesome Docs_.
 A directory named [.path]_site_ will be created (relative to the current working directory) and the site files written to it.
 
 .Example 5: Have the generate command download updates
- $ antora --fetch site.yml
+ $ antora --fetch antora-playbook.yml
 
 After running the generate command the first time, subsequent runs will use cached copies of remote resources by default (effectively running offline).
 Example 5 shows how to run the generate command so it will download (fetch) updates to remote content sources and download a remote UI bundle again.
