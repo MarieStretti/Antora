@@ -25,10 +25,10 @@ Issue {url-issues}/497[#497^]:: Preserve stack from original clone error thrown 
 
 === Changed
 
-Issue {url-issues}/487[#487^]:: Make page-partial attribute obsolete.
 Issue {url-issues}/476[#476^]:: Upgrade git client (isomorphic-git); new index cache may improve performance.
+Issue {url-issues}/487[#487^]:: Make `page-partial` attribute obsolete.
 Issue {url-issues}/505[#505^]:: Be more strict about detecting semantic component versions when sorting.
-Issue {url-issues}/510[#510^]:: The `tags` and `branches` keys override the inherited (global) value even if the values are falsey.
+Issue {url-issues}/510[#510^]:: The `tags` and `branches` keys override the inherited (global) value even if the values are falsy.
 Issue {url-issues}/513[#513^]:: Clean embedded auth from remote URL resolved from git config of local repository.
 
 == Customizable edit URL
@@ -125,7 +125,7 @@ For more details, see xref:playbook:configure-site.adoc#configure-robots[configu
 Previously, to include a page (i.e., an AsciiDoc file inside the pages directory), it was necessary to mark that page as a partial.
 You'd mark a page as a partial by declaring the `page-partial` attribute in the document header.
 As of this release, you can use any page in the include directive by default.
-In other words, *you no longer have to worry about marking individual pages as partials.*
+In other words, *you no longer have to worry about marking individual pages as partials*.
 (Under the covers, Antora automatically sets the `page-partial` attribute globally).
 
 If you want to restore the previous behavior, add the following configuration to your playbook file:
@@ -138,7 +138,7 @@ asciidoc:
 ----
 
 If you make this change, you'll again need to mark any page you want to include using the `page-partial`.
-You may decide to revert to the previous behavior as an optmization, since it uses slightly less memory.
+You may decide to revert to the previous behavior as an optimization, since it uses slightly less memory.
 You can find more details about this setting in the xref:asciidoc:include-page.adoc#page-partial[documentation for the page-partial attribute].
 
 == Filter includes by line numbers
@@ -216,6 +216,12 @@ Most important of all, a huge *thank you!* to all the folks who helped make Anto
 
 We want to call out the following people for making contributions to this release:
 
-David Jencks ({url-gitlab}/djencks[@djencks^]):: For implementing the robots.txt generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
+David Jencks ({url-gitlab}/djencks[@djencks^]):: For implementing the [.path]_robots.txt_ generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
 
 Imran Iqbal ({url-gitlab}/myii[@myii^]):: Update site navigation to place "`Navigation Content & Link Formatting`" at the correct hierarchical level.
+
+[#deprecation]
+== Scheduled deprecations for Antora 3.0
+
+The ability to use parent references in the target of the AsciiDoc image macro (e.g., `image::../../../module-b/_images/image-filename.png[]`) will be deprecated in Antora 3.0.
+You should begin replacing any such image targets with resource IDs.
