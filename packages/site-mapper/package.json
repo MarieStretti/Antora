@@ -1,13 +1,13 @@
 {
   "name": "@antora/site-mapper",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Generates sitemap files that list all publishable pages in an Antora documentation pipeline.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
   "contributors": [
     "Dan Allen <dan@opendevise.com>",
     "Sarah White <sarah@opendevise.com>",
-    "David Jencks <david.a.jencks@gmail.com>" 
+    "David Jencks <david.a.jencks@gmail.com>"
   ],
   "homepage": "https://antora.org",
   "repository": "gitlab:antora/antora",
@@ -16,7 +16,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@antora/content-classifier": "2.1.2",
+    "@antora/content-classifier": "2.2.0",
     "vinyl": "~2.2"
   },
   "devDependencies": {

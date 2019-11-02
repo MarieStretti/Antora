@@ -5,7 +5,7 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
-== Unreleased
+== 2.2.0 (2019-11-02)
 
 === Added
 

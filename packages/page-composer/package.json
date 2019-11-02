@@ -1,6 +1,6 @@
 {
   "name": "@antora/page-composer",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Wraps the embeddable HTML contents of each page file from the content catalog in a page layout to yield standalone pages in an Antora documentation pipeline.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
