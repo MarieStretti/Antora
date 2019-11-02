@@ -36,20 +36,21 @@ Issue {url-issues}/513[#513^]:: Clean embedded auth from remote URL resolved fro
 By default, Antora automatically computes the edit URL for all files it takes from a remote repository or a local repository connected to a remote repository, if possible.
 "`If possible`" means this works if the remote repository is located on the primary GitHub, GitLab, Bitbucket, or Pagure hosted services.
 What was lacking in previous versions of Antora was support for other git hosts (e.g., on-prem GitLab) or to be able to customize or disable the value.
-If the automatic value of the edit URL doesn't work in your case, you can now customize it using the playbook.
+If the automatic value of the edit URL doesn't work in your case, you can now customize it.
 
-You can use the `edit_url` key to control the edit URL.
+You can use the `edit_url` key in the playbook to control the edit URL.
 This optional key can be set directly on the `content` category to apply to all content sources or on an individual content source entry to override that inherited value.
 
-By default, the value of the `edit_url` is `true`, which tells Antora to use the existing behavior of computing the edit URL automatically.
+By default, the value of the `edit_url` is `true`.
+This value tells Antora to use the existing, built-in behavior of computing the edit URL automatically.
 
 If the value of the `edit_url` is a string, it's interpreted as a pattern.
-That pattern supports the following placeholders, which are fulfilled by the file's origin information:
+That pattern supports the following placeholders, fulfilled by the file's origin information:
 
-\{web_url}:: The web URL for the git repository from which the file was taken.
-This value is derived automatically from the repository URL (by converting the protocol to `https` and dropping the `.git` extension, if necessary).
-\{refname}:: The name of the reference (i.e., branch or tag) from which the file was taken.
-\{path}:: The path of the file from the root of the repository (regardless of whether the content source defines a `start_path`).
+\{web_url}:: The web URL of the git repository from which the file was taken.
+This value is derived automatically from the repository URL (by converting the protocol to `https` and dropping the `.git` extension, if present).
+\{refname}:: The name of the reference (i.e., branch or tag) in the git repository from which the file was taken.
+\{path}:: The path of the file from the root of the git repository (regardless of whether the content source defines a `start_path`).
 
 For example, to configure the edit URL to point to the view page of a file on GitHub, you'd use the following entry:
 
@@ -61,7 +62,7 @@ content:
     edit_url: '{web_url}/blob/{refname}/{path}'
 ----
 
-If, instead, you want to disable the edit URL, set the value to tilde (`~`) or `false`.
+To disable the edit URL instead, set the value to tilde (`~`) or `false`.
 
 [source,yaml]
 ----
@@ -84,21 +85,21 @@ Instead, the file URI is stored separately.
 Both values are passed to the UI model as `editUrl` and `fileUri`, respectively.
 This gives the UI template control over whether to use the file URI when available, or whether to ignore it and use the edit URL instead.
 
-The default UI has been updated to use the value of the `fileUri` for the edit link if it is set and the `CI` environment variable is not set (i.e., `(and page.fileUri (not env.CI))`).
+The default UI has been updated to use the value of the `fileUri` for the edit link if set _and_ the `CI` environment variable is not set (i.e., `(and page.fileUri (not env.CI))`).
 Otherwise, it falls back to using the `editUrl` if the repository is public (i.e., `(and page.editUrl (not page.origin.private))`).
-That change allows the default UI to work with Antora 2.2 as well as earlier versions.
+This update allows the default UI to work with Antora 2.2 as well as earlier versions.
 
 To find out all the details about how this feature works, please refer to the xref:playbook:configure-edit-url.adoc[edit URL configuration page] in the documentation.
 
 == robots.txt generation
 
-When you put a static site online, you want to give a hint to search engines about where to crawl when indexing the site.
+When you put a static site online, you want to provide a hint to search engines about where to crawl when indexing the site.
 Sometimes, you want to give them free rein.
 Other times, you want to tell them to back off entirely.
 Or, you may want to restrict access to certain portions of the site.
-That's the role of the https://en.wikipedia.org/wiki/Robots_exclusion_standard[robots.txt file], stored at the root of the site.
+That's the role of the https://en.wikipedia.org/wiki/Robots_exclusion_standard[robots.txt file], found at the root of the site.
 
-You can now use the `site.robots` key in the playbook file to instruct Antora to generate [.path]_robots.txt_.
+You can now use the `site.robots` key in the playbook file to instruct Antora to generate the [.path]_robots.txt_ file.
 
 If you want to grant full access, set the value to `allow`:
 
@@ -122,10 +123,10 @@ For more details, see xref:playbook:configure-site.adoc#configure-robots[configu
 == All pages can be included by default
 
 Previously, to include a page (i.e., an AsciiDoc file inside the pages directory), it was necessary to mark that page as a partial.
-You would mark a page as a partial by declaring the `page-partial` attribute in the document header.
+You'd mark a page as a partial by declaring the `page-partial` attribute in the document header.
 As of this release, you can use any page in the include directive by default.
 In other words, *you no longer have to worry about marking individual pages as partials.*
-(Under the covers, the `page-partial` attribute is set globally).
+(Under the covers, Antora automatically sets the `page-partial` attribute globally).
 
 If you want to restore the previous behavior, add the following configuration to your playbook file:
 
@@ -143,10 +144,10 @@ You can find more details about this setting in the xref:asciidoc:include-page.a
 == Filter includes by line numbers
 
 In addition to filtering the lines of an include file by named tags, you can now filter lines by line numbers.
-This AsciiDoc feature has been available in Asciidoctor, but was not previously working in Antora.
+This AsciiDoc feature has long been available in Asciidoctor, but was not enabled in Antora.
 
-Line numbers of specified in the value of the `lines` attribute on the include directive.
-Line numbers, which are numbered starting with 1, can be identified as individual entries or as a range.
+Line numbers are specified by the value of the `lines` attribute on the include directive.
+Line numbers, which start at 1, can be identified as individual entries or as a range.
 Multiple entries can be separated either by semi-colons or commas.
 
 For example, here's how you'd select the first line of this page:
@@ -167,7 +168,7 @@ And here's how you'd select the first line, and all the remaining lines starting
 
 [source,asciidoc]
 ----
-\include::./whats-new.adoc[lines=1,10..]
+\include::./whats-new.adoc[lines=1;10..]
 ----
 
 For more information about the `lines` attribute on the include directive, refer to the https://asciidoctor.org/docs/user-manual/#by-line-ranges[include by line ranges] section in the Asciidoctor user manual.
@@ -176,10 +177,10 @@ For more information about the `lines` attribute on the include directive, refer
 
 When you pass the `--fetch` flag to the `antora` command or set the `runtime.fetch` key in the playbook file to true, Antora fetches updates from all the remote git repositories.
 However, it wasn't removing references (branches and tags) that had been deleted from the remote repository.
-Antora would discover these references due to the stale cache and end up publishing content that was supposed to be removed.
-Also, Antora would fail when files from a stale reference conflicted with files from a newer reference (the dreaded duplicate nav or page errors).
+Antora would still discover these references due to the stale cache.
+In addition to publishing content that was supposed to be removed, Antora could also fail if it found the same file in two different references (the pesky duplicate nav or page errors).
 
-Now, Antora will do a complete sync.
+Now, Antora does a complete sync.
 When Antora reaches out to the remote repositories for updates, it will remove any references in the cache that have been removed from the remote repository.
 There's nothing you need to do to enable this feature.
 It's automatic.
