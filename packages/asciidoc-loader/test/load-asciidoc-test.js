@@ -2714,6 +2714,58 @@ describe('loadAsciiDoc()', () => {
       const html = loadAsciiDoc(inputFile, contentCatalog, config).convert()
       expectPageLink(html, 'the-page.html', 'the-page')
     })
+
+    it('should process xref inside of a footnote macro', () => {
+      const contentCatalog = mockContentCatalog({
+        component: 'relnotes',
+        version: '6.5',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'index.adoc',
+      })
+      ;[
+        'xref:6.5@relnotes::index.adoc[completely removed\\]',
+        '<<6.5@relnotes::index.adoc#,completely removed>>',
+      ].forEach((pageMacro) => {
+        const contents = `Text.footnote:[Support for pixie dust has been ${pageMacro}.]`
+        setInputFileContents(contents)
+        const doc = loadAsciiDoc(inputFile, contentCatalog)
+        const html = doc.convert()
+        expect(doc.getCatalog().footnotes).to.have.length(1)
+        expectPageLink(html, '../../relnotes/6.5/index.html', 'completely removed')
+        expect(html).to.include('>completely removed</a>.')
+      })
+    })
+
+    it('should allow footnote text to be defined and inserted using attribute', () => {
+      const contentCatalog = mockContentCatalog({
+        component: 'relnotes',
+        version: '6.5',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'index.adoc',
+      })
+      ;[
+        'xref:6.5@relnotes::index.adoc[completely removed\\]',
+        '<<6.5@relnotes::index.adoc#,completely removed>>',
+      ].forEach((pageMacro) => {
+        const contents = heredoc`
+          :fn-text: pass:n[Support for pixie dust has been ${pageMacro}.]
+
+          Text.footnote:pixiedust[{fn-text}]
+
+          More text.footnote:pixiedust[]
+        `
+        setInputFileContents(contents)
+        const doc = loadAsciiDoc(inputFile, contentCatalog)
+        const html = doc.convert()
+        expect(doc.getCatalog().footnotes).to.have.length(1)
+        expectPageLink(html, '../../relnotes/6.5/index.html', 'completely removed')
+        expect(html).to.include('<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1"')
+        expect(html).to.include('<a class="footnote" href="#_footnotedef_1"')
+        expect(html).to.include('>completely removed</a>.')
+      })
+    })
   })
 
   describe('resolveConfig()', () => {
