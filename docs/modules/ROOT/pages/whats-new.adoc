@@ -216,3 +216,5 @@ Most important of all, a huge *thank you!* to all the folks who helped make Anto
 We want to call out the following people for making contributions to this release:
 
 David Jencks ({url-gitlab}/djencks[@djencks^]):: For implementing the robots.txt generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
+
+Imran Iqbal ({url-gitlab}/myii[@myii^]):: Update site navigation to place "`Navigation Content & Link Formatting`" at the correct hierarchical level.
