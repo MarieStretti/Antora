@@ -98,6 +98,7 @@ All the optional attributes (e.g., `tags`, `leveloffset`, `indent`) on the inclu
 Antora supports filtering the lines of an include file by either line numbers using the `lines` attribute (since Antora 2.2) or tags using the `tag` or `tags` attributes.
 Filtering by line numbers takes precedence.
 
+[#page-partial]
 == The page-partial attribute
 
 As Antora processes each page, it converts the contents of the file from AsciiDoc to HTML.
