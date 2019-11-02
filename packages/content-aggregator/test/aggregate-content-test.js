@@ -2983,7 +2983,7 @@ describe('aggregateContent()', function () {
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })
 
-    // NOTE on Windows, : is a reserved filename character, so we can use this test
+    // NOTE on Windows, : is a reserved filename character, so we can't use this test there
     if (process.platform !== 'win32') {
       it('should treat SSH URI as a remote repository', async () => {
         const repoBuilder = new RepositoryBuilder(WORK_DIR, FIXTURES_DIR)
@@ -3043,16 +3043,18 @@ describe('aggregateContent()', function () {
       if (oldSshAuthSock) process.env.SSH_AUTH_SOCK = oldSshAuthSock
     }).timeout(this.timeout())
 
-    it('should throw meaningful error if remote repository URL is invalid', async () => {
-      const url = `http://localhost:${serverPort}|`
-      const expectedErrorMessage = `HTTP Error: 400 Bad Request (url: ${url})`
-      playbookSpec.content.sources.push({ url })
-      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
-      expect(aggregateContentDeferred)
-        .to.throw(expectedErrorMessage)
-        .with.property('stack')
-        .that.includes('Caused by: HTTPError: HTTP Error: 400 Bad Request')
-    })
+    if (process.platform !== 'win32') {
+      it('should throw meaningful error if remote repository URL is invalid', async () => {
+        const url = `http://localhost:${serverPort}|`
+        const expectedErrorMessage = `HTTP Error: 400 Bad Request (url: ${url})`
+        playbookSpec.content.sources.push({ url })
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred)
+          .to.throw(expectedErrorMessage)
+          .with.property('stack')
+          .that.includes('Caused by: HTTPError: HTTP Error: 400 Bad Request')
+      })
+    }
 
     it('should throw meaningful error if remote repository URL not found', async () => {
       const url = `http://localhost:${serverPort}/404/invalid-repository.git`
