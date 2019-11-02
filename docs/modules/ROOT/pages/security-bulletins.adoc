@@ -1,0 +1,5 @@
+= Security Bulletins
+
+A prompt response to software defects and security vulnerabilities is a top priority for Antora. Even though threats are a fact of life, we take quality assurance seriously with nearly 100% test coverage. This page documents the items that slipped through and how to address them.
+
+*There are no security bulletins for xref:project/release-schedule.adoc[active or maintenance releases] of Antora.*

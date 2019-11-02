@@ -1,5 +1,5 @@
 = Antora Release Schedule
-:page-aliases: version-and-lifecycle-policies.adoc
+:page-aliases: version-and-lifecycle-policies.adoc, project/roadmap.adoc
 :table-caption!:
 
 Each major release line of the Antora Core components is typically supported for one year after it enters general availability (GA).
@@ -58,6 +58,6 @@ Once a release candidate (rc) has been thoroughly tested, the stable release wil
 [#roadmap]
 == Roadmap
 
-Refer to https://gitlab.com/antora/antora/-/milestones[Antora's milestones] and https://gitlab.com/antora/antora/issues[issue tracker] for a list of the currently scheduled development tasks.
+Refer to https://gitlab.com/antora/antora/-/milestones[Antora's milestones^] and https://gitlab.com/antora/antora/issues[issue tracker^] for a list of the currently scheduled development tasks.
 The milestones are intended for informational purposes only.
 The proposed features, their scope, and the release timeframes are estimates, not firm commitments.
