@@ -2,8 +2,8 @@
 :platform: Linux
 :page-partial:
 //tag::shared[]
-:version-node-major: 10
-:version-node: {version-node-major}.16.3
+:version-node-major: 12
+:version-node: {version-node-major}.13.0
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm: https://github.com/creationix/nvm
 :url-nvm-install: {url-nvm}#installation
@@ -12,21 +12,14 @@ On this page, you'll learn:
 
 * [x] How to install Node.
 
-If you've never installed Antora before, you'll need to complete the steps on this page before you can install Antora and use it to generate a documentation site.
-
-Antora is built on Node.js ("`Node`").
-To install Antora, all you need on your machine is a long term support (LTS) release of Node.
+Since Antora is built on Node.js, you'll need Node installed on your machine to install and run Antora.
 
 == Node
 
-//tag::node-intro[]
-You need Node installed on your machine to install and run Antora.
-Antora follows {url-node-releases}[Node's release schedule], so we advise that you choose an active long term support (LTS) release of Node.
-We recommend using the latest active Node LTS version.
-While you can use other versions of Node, Antora is only tested against LTS releases.
-//end::node-intro[]
+We recommend using the latest long term support (LTS) release of Node.
+While you can use other versions of Node, Antora is only tested against {url-node-releases}[active LTS releases^].
 
-To check whether you have Node installed, and which version, open a terminal and type:
+To see if you have Node installed, and which version, open a terminal and type:
 
  $ node --version
 
@@ -48,7 +41,7 @@ endif::[]
 
 If *the command returns a version that isn't an active LTS version*, upgrade to the latest Node LTS version <<upgrade-node,using nvm>> (or your package manager).
 
-If *the command returns an active Node LTS version*, makes sure that version is the default by typing the following command in your terminal:
+If *the command returns an active Node LTS version*, make sure that version is set as your default version by typing the following command in your terminal:
 
 [subs=attributes+]
  $ nvm alias default {version-node-major}
@@ -58,7 +51,7 @@ Now you're ready to xref:install-antora.adoc[install Antora].
 [#install-nvm]
 == Install nvm and Node
 
-We recommend using the {url-nvm}[Node Version Manager (nvm)^] to manage your Node installations, especially if your package manager doesn't provide Node and npm.
+We recommend using the {url-nvm}[Node Version Manager (nvm)^] to manage your Node installations.
 Follow these {url-nvm-install}[installation instructions^] to set up nvm on your machine.
 Then, return here.
 
@@ -69,18 +62,16 @@ Once you've installed nvm, open a new terminal and install the latest Node LTS r
 
  $ nvm install --lts
 
-The above command will both install the latest LTS release of Node and automatically set it as your default alias.
+The above command will install the latest LTS release of Node and automatically set it as your default alias.
 
 Now that you have Node set up, you can xref:install-antora.adoc[install Antora].
 
 [#upgrade-node]
 == Upgrade Node using nvm
 
-If you have nvm installed, but you don't have an LTS release installed, type the following command in your terminal:
+If you have nvm installed, but don't have the latest LTS version installed, type the following command in your terminal:
 
  $ nvm install --lts
-
-The above command will install the latest version of the latest Node LTS release.
 
 To set the latest version of Node as the default for any new terminal, type:
 
