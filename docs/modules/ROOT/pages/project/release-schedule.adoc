@@ -6,7 +6,7 @@ Each major release line of the Antora Core components is typically supported for
 
 [cols=6*]
 |===
-| |Latest Release |Status |GA |Maintenance |EOL
+|Release Line |Latest Release |Status |GA |Maintenance |EOL
 
 |Antora 3.x
 |NA
@@ -16,21 +16,15 @@ Each major release line of the Antora Core components is typically supported for
 |TBD
 
 |Antora 2.x
-|2.1.2
+|2.2.0
 |Active
 |2018/12/25
 |~ 2020/01/25
 |~ 2020/04/25
 
-|Antora 1.x
-|1.1.1
-|EOL
-|2018/08/28
-|2019/03/25
-|2019/08/31
 |===
 
-General Availability (GA):: A release line enters general availability on the date an initial, final major version of the software is released and available for download.
+General Availability (GA):: A release line, such as Antora 2.x, enters general availability on the date the initial, final major version (e.g., Antora 2.0.0) of the software is released and available for download.
 
 Active:: Release line is being actively improved and supported.
 
@@ -61,4 +55,9 @@ Major and minor releases may include pre-release versions (major.minor.patch-alp
 Pre-release versions will be tagged as _next_ so that the npm client doesn't prefer a pre-release over a stable version.
 Once a release candidate (rc) has been thoroughly tested, the stable release will be published.
 
-TIP: See the xref:project/roadmap.adoc[Roadmap] for some of the notable features and changes scheduled for upcoming Antora releases.
+[#roadmap]
+== Roadmap
+
+Refer to https://gitlab.com/antora/antora/-/milestones[Antora's milestones] and https://gitlab.com/antora/antora/issues[issue tracker] for a list of the currently scheduled development tasks.
+The milestones are intended for informational purposes only.
+The proposed features, their scope, and the release timeframes are estimates, not firm commitments.
