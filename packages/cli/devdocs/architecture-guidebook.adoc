@@ -74,10 +74,10 @@ CLI usage examples:
  $ antora generate -h
 
 .Run the generate command
- $ antora generate site.yml
+ $ antora generate antora-playbook.yml
 
 .Run the generate command with additional options
- $ antora generate --to-dir site --html-extension-style=indexify site.yml
+ $ antora generate --to-dir site --html-extension-style=indexify antora-playbook.yml
 
 == Data
 

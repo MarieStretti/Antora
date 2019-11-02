@@ -47,7 +47,7 @@ The playbook builder component should:
 * Convert a valid playbook spec into a transmittable, well-defined, read-only data model that other pipeline components can use
 
 .Inputs
-* Playbook spec (`site.yml`, `site.json`, or `site.toml`)
+* Playbook spec (`antora-playbook.yml`, `antora-playbook.json`, or `antora-playbook.toml`)
 * Process arguments (i.e., commandline flags and switches)
 * Environment variables
 
@@ -92,7 +92,7 @@ const buildPlaybook = require('@antora/playbook-builder')
 const playbook = buildPlaybook(process.argv.slice(2), process.env)
 ----
 
-The first argument is an array of process arguments (e.g., `+['--playbook', 'site.yml']+`) and the second is a map of environment variables (e.g., `+{ URL: 'http://example.com' }+`)
+The first argument is an array of process arguments (e.g., `+['--playbook', 'antora-playbook.yml']+`) and the second is a map of environment variables (e.g., `+{ URL: 'http://example.com' }+`)
 
 The properties of the playbook can be accessed as follows:
 
