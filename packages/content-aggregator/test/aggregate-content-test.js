@@ -3041,6 +3041,17 @@ describe('aggregateContent()', function () {
         expect(lines[0]).to.include(url)
       })
       if (oldSshAuthSock) process.env.SSH_AUTH_SOCK = oldSshAuthSock
+    }).timeout(this.timeout())
+
+    it('should throw meaningful error if remote repository URL is invalid', async () => {
+      const url = `http://localhost:${serverPort}|`
+      const expectedErrorMessage = `HTTP Error: 400 Bad Request (url: ${url})`
+      playbookSpec.content.sources.push({ url })
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred)
+        .to.throw(expectedErrorMessage)
+        .with.property('stack')
+        .that.includes('Caused by: HTTPError: HTTP Error: 400 Bad Request')
     })
 
     it('should throw meaningful error if remote repository URL not found', async () => {
