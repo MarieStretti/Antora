@@ -13,6 +13,7 @@ const GitServer = require('node-git-server')
 const http = require('http')
 const os = require('os')
 const ospath = require('path')
+const { Readable } = require('stream')
 const RepositoryBuilder = require('../../../test/repository-builder')
 
 const {
@@ -3013,14 +3014,37 @@ describe('aggregateContent()', function () {
         server = http
           .createServer((req, res) => {
             const headers = {}
-            const statusCode = parseInt(req.url.split('/')[1])
+            let body = 'No dice!'
+            let stream
+            let [statusCode, scenario] = req.url.split('/').slice(1, 3)
+            statusCode = parseInt(statusCode)
+            scenario = scenario.replace(/\.git$/, '')
             if (statusCode === 401) {
               headers['WWW-Authenticate'] = 'Basic realm="example"'
             } else if (statusCode === 301) {
               headers.Location = 'http://example.org'
+            } else if (statusCode === 200) {
+              if (scenario === 'incomplete-ref-capabilities') {
+                body = '001e# service=git-upload-pack\n0007ref\n'
+              } else if (scenario === 'insufficient-capabilities') {
+                body = '001e# service=git-upload-pack\n0009ref\x00\n'
+              } else {
+                body = '0000'
+              }
+              headers['Transfer-Encoding'] = 'chunked'
+              stream = new Readable({
+                read (size) {
+                  this.push(body)
+                  this.push(null)
+                },
+              })
             }
             res.writeHead(statusCode, headers)
-            res.end('No dice!')
+            if (stream) {
+              stream.pipe(res)
+            } else {
+              res.end(body)
+            }
           })
           .listen(0, function (err) {
             err ? reject(err) : resolve(this.address().port)
@@ -3052,15 +3076,48 @@ describe('aggregateContent()', function () {
       if (oldSshAuthSock) process.env.SSH_AUTH_SOCK = oldSshAuthSock
     }).timeout(this.timeout())
 
-    it('should throw meaningful error if remote repository returns bad request', async () => {
-      const url = `http://localhost:${serverPort}/400/bar.git`
-      const expectedErrorMessage = `HTTP Error: 400 Bad Request (url: ${url})`
+    it('should throw meaningful error if remote repository returns internal server error', async () => {
+      const url = `http://localhost:${serverPort}/500/bar.git`
+      const expectedErrorMessage = `HTTP Error: 500 Internal Server Error (url: ${url})`
       playbookSpec.content.sources.push({ url })
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred)
         .to.throw(expectedErrorMessage)
         .with.property('stack')
-        .that.includes('Caused by: HTTPError: HTTP Error: 400 Bad Request')
+        .that.includes('Caused by: HTTPError: HTTP Error: 500 Internal Server Error')
+    })
+
+    it('should throw meaningful error if git client throws exception', async () => {
+      const url = `http://localhost:${serverPort}/200/incomplete-ref-capabilities.git`
+      playbookSpec.content.sources.push({ url })
+      const expectedErrorMessage = `Unknown TypeError: See cause (url: ${url})`
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred)
+        .to.throw(expectedErrorMessage)
+        .with.property('stack')
+        .that.includes('Caused by: TypeError: Cannot read property \'split\' of undefined')
+    })
+
+    it('should throw meaningful error if git server does not support required capabilities', async () => {
+      const url = `http://localhost:${serverPort}/200/insufficient-capabilities.git`
+      playbookSpec.content.sources.push({ url })
+      const expectedErrorMessage = `Unknown RemoteDoesNotSupportShallowFail: See cause (url: ${url})`
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred)
+        .to.throw(expectedErrorMessage)
+        .with.property('stack')
+        .that.includes('Caused by: RemoteDoesNotSupportShallowFail: Remote does not support shallow fetches.')
+    })
+
+    it('should throw meaningful error if git server returns empty response', async () => {
+      const url = `http://localhost:${serverPort}/200/empty-response.git`
+      playbookSpec.content.sources.push({ url })
+      const expectedErrorMessage = `Unknown EmptyServerResponseFail: See cause (url: ${url})`
+      const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+      expect(aggregateContentDeferred)
+        .to.throw(expectedErrorMessage)
+        .with.property('stack')
+        .that.includes('Caused by: EmptyServerResponseFail: Empty response from git server.')
     })
 
     it('should throw meaningful error if remote repository URL not found', async () => {
