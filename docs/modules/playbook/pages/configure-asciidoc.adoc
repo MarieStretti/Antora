@@ -198,7 +198,7 @@ It does not invoke its exported function).
 
 Here's an example showing how to use the Antora CLI to preload multiple Asciidoctor extensions:
 
- $ antora -r ./lib/shout-block -r asciidoctor-emoji-macro site.yml
+ $ antora -r ./lib/shout-block -r asciidoctor-emoji-macro anotra-playbook.yml
 
 The `-r` option can also be used for other purposes, such as to alter global state or override Antora components.
 

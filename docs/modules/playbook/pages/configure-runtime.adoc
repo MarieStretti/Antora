@@ -69,9 +69,9 @@ Although that key is still recognized, it's considered deprecated.
 However, you don't have to modify the playbook file directly to set this key.
 Most of the time, you'll just use the `--fetch` CLI switch.
 
- $ antora --fetch site.yml
+ $ antora --fetch antora-playbook.yml
 
-The `--fetch` CLI switch sets the `fetch` key described in this section to `true`, overridding any value set in the playbook file.
+The `--fetch` CLI switch sets the `fetch` key described in this section to `true`, overriding any value set in the playbook file.
 
 Setting the `fetch` key to true activates two behaviors in Antora:
 

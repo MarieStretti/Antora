@@ -1,8 +1,9 @@
 = Run Antora to Generate Your Site
-:url-demo-project: https://gitlab.com/antora/demo/demo-site
-:url-demo-playbook: {url-demo-project}/raw/master/site.yml
-:url-demo-component-a: https://gitlab.com/antora/demo/demo-component-a
-:url-demo-component-b: https://gitlab.com/antora/demo/demo-component-b
+:url-demo: https://gitlab.com/antora/demo
+:url-demo-project: {url-demo}/docs-site
+:url-demo-playbook: {url-demo-project}/raw/master/antora-playbook.yml
+:url-demo-component-a: {url-demo}/demo-component-a
+:url-demo-component-b: {url-demo}/demo-component-b
 :url-default-ui: https://gitlab.com/antora/antora-ui-default
 
 Assumptions:
@@ -24,7 +25,7 @@ On this page, you'll learn:
 You don't need to set up a playbook file, docs component, or create a UI to evaluate Antora.
 Instead, you can use the Antora demo.
 
-The demo consists of a {url-demo-project}[playbook repository] containing a {url-demo-playbook}[playbook file] and several content respositories ({url-demo-component-a}[component-a] and {url-demo-component-b}[component-b]) to which that playbook refers.
+The demo consists of a {url-demo-project}[playbook repository] containing a {url-demo-playbook}[playbook file] and several content repositories ({url-demo-component-a}[component-a] and {url-demo-component-b}[component-b]) to which that playbook refers.
 It also makes use the UI bundle produced by the {url-default-ui}[default UI project].
 In other words, it contains everything you need to get started.
 
@@ -46,10 +47,10 @@ For the examples on this page, we'll use the Demo materials.
 
  ~ $ cd demo-site
 
-. Using your preferred text editor or IDE, create a new playbook file named [.path]_site.yml_ and populate it with the contents of the following example.
+. Using your preferred text editor or IDE, create a new playbook file named [.path]_antora-playbook.yml_ and populate it with the contents of the following example.
 You can also download {url-demo-playbook}[a sample playbook file] from the {url-demo-project}[Demo repository].
 +
-.site.yml
+.antora-playbook.yml
 [source,yaml]
 ----
 site:
@@ -68,11 +69,11 @@ ui:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
 ----
-<1> The 404 page and sitemap files are only generated if the site.url property is set.
-The sitemap files are only generated if the site.url property is an absolute URL.
-<2> The site.start_page property accepts the same page ID syntax that's used in xrefs.
+<1> The 404 page and sitemap files are only generated if the site `url` key is set.
+The sitemap files are only generated if the value of the site `url` key is an absolute URL.
+<2> The site `start_page` key accepts the same page ID syntax that's used in xrefs.
 
-. Save the playbook as [.path]_site.yml_ in the [.path]_demo-site_ directory you made in Step 1.
+. Save the playbook as [.path]_antora-playbook.yml_ in the [.path]_demo-site_ directory you made in Step 1.
 
 == Run Antora
 
@@ -80,9 +81,9 @@ The sitemap files are only generated if the site.url property is an absolute URL
 In the terminal, type:
 +
 --
- demo-site $ antora site.yml
+ demo-site $ antora antora-playbook.yml
 
-First, Antora will clone the content repositories.
+Antora will clone the content repositories.
 The cloning progress of each repository is displayed in the terminal.
 
 .Repository cloning progress
@@ -107,7 +108,7 @@ error: a message that summarizes what went wrong
 If this message does not provide enough information to fix the problem, you can ask Antora for more context.
 To tell Antora to reveal the calls leading up to the error (i.e., the stacktrace), run the `antora` command again, this time with the `--stacktrace` option:
 
- demo-site $ antora --stacktrace site.yml
+ demo-site $ antora --stacktrace antora-playbook.yml
 
 Share this stacktrace when xref:project/get-help.adoc[asking for help].
 ====

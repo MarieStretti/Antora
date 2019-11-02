@@ -1,5 +1,5 @@
 = Supported Platforms and System Requirements
-:test-count: over 960
+:test-count: over 1025
 :test-coverage: 99%
 // URLs
 :url-repo: https://gitlab.com/antora/antora

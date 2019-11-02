@@ -25,7 +25,7 @@ ifdef::env-gitlab[:outfilesuffix: .adoc]
 :uri-opendevise: https://opendevise.com
 :uri-git-credential-store: https://git-scm.com/docs/git-credential-store
 // Versions:
-:version-node: 10.15.0
+:version-node: 12.13.0
 
 ifdef::badges[]
 image:{img-ci-status}[CI Status (GitLab CI), link={uri-ci-pipelines}]
@@ -46,18 +46,11 @@ More comprehensive installation instructions are in the {uri-docs}[Antora docume
 
 === Prerequisites
 
-Antora is built on Node.js ("`Node`") and is verified to work on Linux, macOS, and Windows.
-
+Antora is built on Node.js and is verified to work on Linux, macOS, and Windows.
 To install Antora, you'll need Node (including npm, which is bundled with Node) on your system.
 You may also find the base build tools for your OS helpful (which includes `git`), though they're not required.
-
-==== Node
-
-You need Node installed on your machine to install and run Antora.
-
-Antora follows {uri-node-releases}[Node's release schedule], so we advise that you choose an active long-term support (LTS) release of Node.
-We recommend using Node 10.
-While you can use other versions of Node, Antora is only tested against active LTS releases.
+We recommend using the latest long term support (LTS) release of Node.
+While you can use other versions of Node, Antora is only tested against {uri-node-releases}[active LTS releases].
 
 To check whether you have Node installed, and which version, open a terminal and type:
 
@@ -84,64 +77,56 @@ Once you've installed nvm, open a *new* terminal and install the latest Node LTS
 IMPORTANT: If you're using nvm for Windows, you must enter the full version of Node when running commands (e.g., `nvm install {version-node}`, `nvm use {version-node}`).
 Run `nvm list available` to see a list of available Node versions.
 
-To make Node 10 the default in new terminals (Linux and macOS only), type:
+To make Node 12 the default in new terminals (Linux and macOS only), type:
 
- $ nvm alias default 10
+ $ nvm alias default 12
 
 Switch to this version of Node using the following command:
 
- $ nvm use 10
+ $ nvm use 12
 
-Now that you have Node installed, you can proceed with installing Antora.
+Now that you have Node installed, you can install Antora.
 
 === Install Antora
 
 To generate a site with Antora, you need the Antora CLI and an Antora site generator pipeline.
 Once these packages are installed, you use the `antora` command to generate your site.
+To install these packages globally using npm, in your terminal, type:
 
-We'll begin by installing the Antora CLI using npm.
-You should install this package globally so the `antora` command is always available on your PATH.
-
-In your terminal, type:
-
- $ npm install -g @antora/cli
-
-NOTE: If you prefer Yarn over npm, you can choose to install Antora using `yarn global add @antora/cli`.
+ $ npm install -g @antora/cli @antora/site-generator-default
 
 Verify the `antora` command is available on your PATH by running:
 
  $ antora -v
 
-If the installation worked, this command should complete successfully and report the version of the Antora CLI.
-
-Next, install the default Antora site generator using npm (or Yarn):
-
- $ npm install -g @antora/site-generator-default
-
-You can opt to install the site generator inside the project containing your playbook file instead of installing it globally.
-
-Now that the Antora CLI and default site generator are installed, you are ready to set up a playbook and generate a documentation site.
+For more installation methods and details see the {uri-docs}/antora/latest/install/install-antora/[installation documentation].
+Now that Antora is installed, you're ready to set up a playbook and generate a documentation site.
 
 === Run Antora to Generate a Site
 
 To generate a site with Antora, you need a playbook file that points to at least one content source repository and a UI bundle.
-Since the Antora repository is set up as an Antora documentation project, we can use that for now as your content source.
+The Antora Demo repositories are set up as an Antora documentation project, so we can use them for now as your content sources.
 Antora also provides a default UI for you to use out of the box.
 
 ==== Create a Playbook File
 
 First, create a new directory for your site and switch to it.
-Next, add a playbook file named [.path]_antora-playbook.yml_ and populate it with the following contents:
+Next, add a playbook file named [.path]_antora-playbook.yml_ and populate it with the configuration in the following example.
+Alternatively, you can download the playbook file from the https://gitlab.com/antora/demo/docs-site[Antora demo site's playbook repository].
 
 .antora-playbook.yml
 [source,yaml]
 ----
 site:
-  title: Antora Docs
+  title: Antora Demo Site
+  url: https://my-antora-demo-site.org
+  start_page: component-b::index.adoc
 content:
   sources:
-  - url: https://gitlab.com/antora/antora.git
+  - url: https://gitlab.com/antora/demo/demo-component-a.git
     branches: master
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+    branches: [v2.0, v1.0]
     start_path: docs
 ui:
   bundle:
@@ -149,8 +134,7 @@ ui:
     snapshot: true
 ----
 
-Notice we're looking for a documentation component under the [.path]_docs/_ subdirectory of the master branch of the Antora git repository.
-We're also using Antora's default UI as the UI for the site.
+We're using Antora's default UI as the UI for the site.
 Antora will take care of assembling all this input together to produce a documentation site.
 
 The UI bundle can be loaded from a URI or a local filesystem path.
@@ -159,7 +143,6 @@ If you want to use your own UI bundle, follow the instructions in the README for
 ==== Run Antora
 
 To generate the site, simply point the `antora` command at your playbook file.
-
 In your terminal, type:
 
  $ antora antora-playbook.yml
@@ -169,6 +152,7 @@ Antora will clone the content repository, convert the AsciiDoc pages to embeddab
 To view your site, navigate to any HTML page inside the destination folder in your browser.
 Using this example, look for the entry point file [.path]_build/site/index.html_.
 That file will redirect you to the start page.
+A site generated by Antora is designed to be viewable with or without a web server.
 
 ==== Troubleshooting
 
@@ -183,44 +167,7 @@ Share this stacktrace when <<Getting Help,asking for help>>.
 ==== Using Private Repositories
 
 If any of your content repositories require authentication, Antora will look up the credentials in the default git credential store file or one that you specify using the `--git-credentials-path` CLI option.
-See the {uri-docs}/antora/latest/playbook/private-repository-auth[private repository authentication] documentation to learn more.
-
-==== Changing Content
-
-Antora also supports local content, which is essential for authoring.
-If you want to make modifications to the documentation, you'll first need to clone the content repository (which in this example just happens to be the Antora repository):
-
- $ git clone https://gitlab.com/antora/antora.git workspace/antora
-
-Next, update the content source entry in the playbook to point to the local checkout instead of the remote URL:
-
-[source,yaml]
-----
-content:
-  sources:
-  - url: ./workspace/antora
-    branches: master
-    start_path: docs
-----
-
-Now, any changes you make to the content under the [.path]_workspace/antora/docs/_ folder will be visible the next time you generate the site.
-
-==== Running a Local Server (Optional)
-
-A site generated by Antora is designed to be viewable with or without a web server.
-However, you may need to view your site through a web server to test certain features, such as indexified URLs or caching.
-You can use the serve package for this purpose.
-
-Install the serve package globally using npm:
-
- $ npm i -g serve@6.5.8
-
-That puts a command by the same name on your PATH.
-Now launch the web server by pointing it at the location of the generated site:
-
- $ serve build/site
-
-Paste the provided URL into the location bar of your browser and you'll be viewing your site through a local web server.
+See the {uri-docs}/antora/latest/playbook/private-repository-auth/[private repository authentication documentation] to learn more.
 
 == Getting Help
 
@@ -276,10 +223,8 @@ Thanks in advance for helping to make this project a success!
 
 The Antora core components include a default site generator package, the packages the default site generator delegates to, and a CLI package.
 These packages are released together and follow semantic versioning rules (*major.minor.patch*).
-Major versions are maintained for at least 1 year after the {uri-docs}/antora/latest/project/release-schedule[initial public stable release].
+Major versions are maintained for at least 1 year after the {uri-docs}/antora/latest/project/release-schedule/[initial public stable release].
 Only the latest minor release will receive patch releases.
-
-The {uri-docs}/antora/latest/project/roadmap[project roadmap] provides the current development direction and schedule for Antora.
 
 == Copyright and License
 

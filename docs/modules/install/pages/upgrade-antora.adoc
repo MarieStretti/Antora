@@ -80,7 +80,7 @@ In this case, you'll need to upgrade the Antora CLI and site generator as descri
 If you didn't install a previous version of Antora site generator globally, you'll need to upgrade the Antora CLI and default site generator separately.
 
 . Upgrade the CLI globally by typing:
-
++
 [subs=attributes+]
  $ npm install -g @antora/cli@{page-component-version}
 
@@ -104,11 +104,13 @@ We recommend specifying a partial version number (major.minor) so that you recei
 . Save the file.
 
 . Upgrade the site generator by running the `npm install` command.
-
++
+--
  $ npm install
 
 TIP: If you're using yarn instead of npm, run the `yarn` command after updating  [.path]_package.json_.
 It may be necessary to pass the `--force` flag to force an update.
+--
 
 You've now upgraded to the latest version of Antora.
 

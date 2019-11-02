@@ -2,26 +2,22 @@
 :url-choco: https://chocolatey.org
 :url-node-releases: https://nodejs.org/en/about/releases/
 :url-nvm-windows: https://github.com/coreybutler/nvm-windows
-:version-node-major: 10
-:version-node: {version-node-major}.16.3
+:version-node-major: 12
+:version-node: {version-node-major}.13.0
 
 On this page, you'll learn:
 
-* [x] What tools you need in order to install Antora on Windows.
 * [x] How to install Chocolatey, the Windows package manager.
 * [x] How to install Node.
 
 If you've never installed Antora before, you'll need to complete the steps on this page before you can install Antora and use it to generate a documentation site.
 
-Antora is built on Node.js ("`Node`").
-To install Antora, all you need on your machine is a long term support (LTS) release of Node.
-We'll be using the Chocolatey package manager to install it.
-
 == Node
 
-include::page$linux-requirements.adoc[tag=node-intro]
+We recommend using the latest long term support (LTS) release of Node.
+While you can use other versions of Node, Antora is only tested against {url-node-releases}[active LTS releases^].
 
-To check whether you have Node installed, and which version, open PowerShell and type:
+To see if you have Node installed, and which version, open PowerShell and type:
 
  $ node --version
 
