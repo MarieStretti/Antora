@@ -68,7 +68,7 @@ Instead, it's resolved from the directory of the current page.
 . A resource ID must include the `page$` family segment since the include directive can also be used to include files from other families.
 The presence of the family segment forces the target to be treated as a resource ID, specifically a page ID (e.g., `page$name-of-page.adoc`).
 
-Like in the xref macro, all other segments (component, version, and module) are optional and will inherit the context of the current page.
+Like in the xref macro, all other segments (component, version, and module) are optional and will assume the context of the current page.
 
 [subs=+quotes]
 ----
@@ -76,7 +76,7 @@ Like in the xref macro, all other segments (component, version, and module) are 
 ----
 --
 
-. Close the directive with a set of square brackets (`[]`).
+. Close the directive using a set of square brackets (`[]`).
 +
 --
 [subs=+quotes]
@@ -84,15 +84,15 @@ Like in the xref macro, all other segments (component, version, and module) are 
 include::version@component:module:page$topic/page.adoc**[]**
 ----
 
-The brackets may contain an optional list of attributes (represented in the examples above by `<attrlist>`).
-Include attributes should be entered as key=value pairs that are separated by commas.
+The brackets may contain an optional list of attributes (represented in the previous examples by `<attrlist>`).
+Include attributes should be entered as key=value pairs separated by commas.
 
 [subs=+quotes]
 ----
 include::version@component:module:page$topic/page.adoc**[tag=definition]**
 ----
 
-All the optional attributes (e.g., `tags`, `leveloffset`, `indent`) on the include directive are supported.
+All the attributes (e.g., `tags`, `leveloffset`, `indent`) on the include directive are supported.
 --
 
 Antora supports filtering the lines of an include file by either line numbers using the `lines` attribute (since Antora 2.2) or tags using the `tag` or `tags` attributes.
@@ -102,7 +102,7 @@ Filtering by line numbers takes precedence.
 == The page-partial attribute
 
 As Antora processes each page, it converts the contents of the file from AsciiDoc to HTML.
-(Within a component version, pages are typically processed in order according to the module and relative filename).
+(Within a component version, pages are typically processed in order by module and relative filename).
 The conversion of the contents from AsciiDoc to HTML would normally impact the behavior of the include directive.
 Specifically, a page that uses the include directive to include a page that has already been processed would see HTML instead of AsciiDoc.
 
@@ -114,7 +114,7 @@ So, really, you don't even have to think of it.
 It will just work.
 
 The downside of retaining the AsciiDoc source is that it _may_ increase the peak heap usage of Antora for very large sites by ~ 10%.
-If that's a concern, you can revert to the previous behavior.
+If that's a concern, you can revert to the previous "`a la carte`" behavior.
 To revert to the previous behavior (prior to Antora 2.2), set the following property in the playbook file:
 
 [source,yaml]
@@ -124,9 +124,8 @@ asciidoc:
     page-partial: false
 ----
 
-Now the `page-partial` attribute will not be set globally.
-But you can still set it per page.
-In fact, you *must* now set set the `page-partial` atttribute on any page that you want to use in an include directive.
+The `page-partial` attribute will no longer be set globally.
+Now you *must* set the `page-partial` atttribute on any page you want to use in an include directive.
 For example:
 
 [source,asciidoc]
@@ -137,14 +136,14 @@ For example:
 Page contents.
 ----
 
-Now you can safely refer to that page using the include directive:
+With the `page-partial` attribute set, you can safely refer to that page using the include directive:
 
 [source,asciidoc]
 ----
 \include:shared-page.adoc[]
 ----
 
-The `page-partial` attribute in the included page instructs Antora to retain the AsciiDoc source until all pages have been converted.
+Recall that the `page-partial` attribute in the included page instructs Antora to retain the AsciiDoc source until all pages have been converted.
 
 == Learn more
 
