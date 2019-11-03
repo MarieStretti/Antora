@@ -119,7 +119,7 @@ AsciiDoc is a documentation writer's best friend.
 
 *Keep your content DRY using reusable attributes, includes, and syntax extensions.*
 
-Every time you type something you've typed before, your losing efficiency and introducing the risk of divergent content.
+Every time you type something you've typed before, you're losing efficiency and introducing the risk of divergent content.
 AsciiDoc provides several tools to keep you from having to repeat yourself.
 You can use attributes to avoid having to type URLs, product names, or definitions multiple times.
 You can use includes to extract whole paragraphs, sections, and other reusable content to common files.
@@ -167,7 +167,7 @@ Since the navigation file is just content, it can use the same xref system that'
 Think of a navigation file as a page that doesn't get published.
 And since the file is stored with the content, the xrefs can be contextual, meaning you only have to specify the traits of the target that differ from the current context.
 
-== Interchangable UI
+== Interchangeable UI
 
 *The site's user interface and theme is maintained separately from the content.*
 
