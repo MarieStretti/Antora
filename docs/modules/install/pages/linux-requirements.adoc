@@ -5,8 +5,8 @@
 :version-node-major: 12
 :version-node: {version-node-major}.13.0
 :url-node-releases: https://nodejs.org/en/about/releases/
-:url-nvm: https://github.com/creationix/nvm
-:url-nvm-install: {url-nvm}#installation
+:url-nvm: https://github.com/nvm-sh/nvm
+:url-nvm-install: {url-nvm}#installation-and-update
 
 On this page, you'll learn:
 
