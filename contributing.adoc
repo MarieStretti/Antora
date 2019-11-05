@@ -86,7 +86,7 @@ The GitLab project provides the following resources for the project:
 == Permissions
 
 You do not need a GitLab.com account to browse the issues and merge requests, read the source code and documentation, or view the CI results.
-However, you do need a https://gitlab.com/users/sign_in[GitLab.com account] to file an issue and submit a merge request.
+However, you do need a https://gitlab.com/users/sign_in[GitLab.com account] to file an issue and/or submit a merge request.
 
 //Issue Tracker and Board
 //== Have an Idea? Found an Error?
@@ -117,6 +117,9 @@ Issues move across the board from left (Backlog) to right (Done).
 == Contribution Workflow
 
 *Since Antora is an issue-driven project, a merge request (MR) should always complete an open issue.*
+
+NOTE: One exception to this rule is if you're submitting copy edits to the documentation.
+If you're fixing grammar or typos that don't otherwise change the meaning of the content, you can submit an MR directly.
 
 . Review the issue tracker to see if we're already discussing your idea or problem.
 .. If you don't see an issue that fits your scenario, then create a new one.
