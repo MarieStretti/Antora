@@ -122,17 +122,20 @@ NOTE: One exception to this rule is if you're submitting copy edits to the docum
 If you're fixing grammar or typos that don't otherwise change the meaning of the content, you can submit an MR directly.
 
 . Review the issue tracker to see if we're already discussing your idea or problem.
-.. If you don't see an issue that fits your scenario, then create a new one.
+ ** If you don't see an issue that fits your scenario, then create a new one.
 . If you'd like to submit code, documentation or other enhancements for an issue, review the following information first.
 .. Antora's <<project-rq,fork-branch-commit-MR rules>>
 .. <<code-workflow,Code workflow and requirements>>
 .. Applicable <<arch-gb,architecture guidebooks>>
 .. Applicable <<adr,ADRs>>
 . Fork the project and name your branch after its issue.
-.. If you're contributing code, you'll want to <<set-up-workspace,set up your development workspace>>.
+ ** If you're contributing code, you'll want to <<set-up-workspace,set up your development workspace>>.
 . Write, code, tinker, and have fun!
-.. Don't forget to <<lint-rq,lint>> and <<test-rq,test>> your code.
+ ** Don't forget to <<lint-rq,lint>> and <<test-rq,test>> your code.
 . When you're ready for feedback, open a MR.
+ ** On the MR form, you must check the box _Allow commits from members who can merge to the target branch._
+The MR cannot be accepted unless this box is checked.
+If you forget, you can fix it by clicking the Edit button on the MR page.
 
 [#project-rq]
 == Fork, Branch, Commit, and Merge Request Rules
