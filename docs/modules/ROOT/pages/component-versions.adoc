@@ -50,11 +50,13 @@ To attain the order you want, you need to understand Antora's sorting rules.
 Antora sorts component versions using the following rules:
 
 * Partition semantic versions and named versions.
- ** A version that contains at least one `.` and starts with either a digit or a "`v`" followed by a digit is assumed to be a semantic version.
+ ** A semantic version is identified either as an integer (e.g., 2 or 30) or a string that starts with a digit and contains at least one "`.`" character (e.g., 2.0.1 or 30.5).
+The semantic version may start with an optional leading "`v`" (e.g., v2.0.1), which is ignored when sorting.
  ** All other versions are assumed to be named versions.
 * Sort named versions in reverse (i.e., descending) alphabetical order and add them to the list.
  ** The assumption is that named versions that fall later in the alphabet are newer.
 * Sort semantic versions in descending order
+ ** Discard the leading "`v`", if present.
  ** Apply the ordering rules for semantic versioning as defined by https://semver.org.
 
 NOTE: Although the version `master` has special meaning when <<versionless-urls,creating URLs for a component version>>, it's treated as any other named version when sorting.
@@ -72,8 +74,8 @@ v2.0
 
 Whenever Antora displays versions in the UI, it presents them in this order.
 Bear in mind that if a display version is specified, the display version is shown instead.
-The display version allows the sortable version and the version displayed to be independent of one another.
-Thus, to the reader's eyes, the versions may not appear to be sorted as described.
+To the reader's eyes, the versions may not appear to be sorted as described.
+In effect, the display version allows the sortable version and the version displayed to be independent of one another.
 
 == Prerelease versions
 
