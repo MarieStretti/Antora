@@ -1,6 +1,7 @@
 'use strict'
 
 const NUMBERS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+const { isInteger } = Number
 
 /**
  * An augmented semantic version comparison function.
@@ -23,25 +24,25 @@ function versionCompareDesc (a, b) {
   const semverA = resolveSemver(a)
   const semverB = resolveSemver(b)
   if (semverA) {
-    return semverB ? -1 * semverCompare(semverA, semverB) : 1
+    return semverB ? -semverCompare(semverA, semverB) : 1
   } else {
-    return semverB ? -1 : -1 * a.localeCompare(b, 'en', { numeric: true })
+    return semverB ? -1 : -a.localeCompare(b, 'en', { numeric: true })
   }
 }
 
 function resolveSemver (str) {
-  const char0 = str.charAt()
-  if (char0 === 'v') {
-    if (NUMBERS.includes(str.charAt(1)) && (str = str.substr(1)) && (~str.indexOf('.') || isNumber(str.charAt()))) {
+  const chr0 = str.charAt()
+  if (chr0 === 'v') {
+    if (isDigit(str.charAt(1)) && (str = str.substr(1)) && (~str.indexOf('.') || isDigit(str.charAt()))) {
       return str
     }
-  } else if (NUMBERS.includes(char0) && (~str.indexOf('.') || isNumber(str))) {
+  } else if (isDigit(chr0) && (~str.indexOf('.') || isInteger(Number(str)))) {
     return str
   }
 }
 
-function isNumber (str) {
-  return !isNaN(Number(str))
+function isDigit (chr) {
+  return NUMBERS.includes(chr)
 }
 
 function semverCompare (a, b) {
