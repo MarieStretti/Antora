@@ -68,18 +68,11 @@ describe('versionCompareDesc()', () => {
     })
   })
 
-  it('should not change order of strings that contain a dot but are not semantic versions', () => {
-    const versions = ['r.y', 'r.x']
-
-    versions.sort(versionCompareDesc)
-    expect(versions).to.eql(['r.y', 'r.x'])
-  })
-
   it('should order non-semantic versions as strings', () => {
-    const versions = ['badger', 'rev99', 'alligator', 'camel']
+    const versions = ['badger', 'master', 'rev99', 'alligator', 'camel']
 
     versions.sort(versionCompareDesc)
-    expect(versions).to.eql(['rev99', 'camel', 'badger', 'alligator'])
+    expect(versions).to.eql(['rev99', 'master', 'camel', 'badger', 'alligator'])
   })
 
   it('should order numbers in descending numeric order', () => {
@@ -103,11 +96,32 @@ describe('versionCompareDesc()', () => {
     expect(versions).to.eql(['90.1', '80', '10', '9.0.2', '9.0.1', '8'])
   })
 
-  it('should group version v with other named versions', () => {
-    const versions = ['trusty', 'xenial', 'v']
+  it('should group version "v" with other named versions', () => {
+    const versions = ['trusty', 'xenial', 'v', '2.0.1']
 
     versions.sort(versionCompareDesc)
-    expect(versions).to.eql(['xenial', 'v', 'trusty'])
+    expect(versions).to.eql(['xenial', 'v', 'trusty', '2.0.1'])
+  })
+
+  it('should group version "Infinity" with other named versions', () => {
+    const versions = ['Ionic', 'Infinity', '2.0.1', 'Icicle']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['Ionic', 'Infinity', 'Icicle', '2.0.1'])
+  })
+
+  it('should group named version containing "." with other named versions', () => {
+    const versions = ['2.0.1', 'ab.ba', 'xy.yx', 'apple']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['xy.yx', 'apple', 'ab.ba', '2.0.1'])
+  })
+
+  it('should ignore case when sorting named versions', () => {
+    const versions = ['banana', 'Apple', 'CHERRY', 'APPLE']
+
+    versions.sort(versionCompareDesc)
+    expect(versions).to.eql(['CHERRY', 'banana', 'APPLE', 'Apple'])
   })
 
   it('should help ensure order is maintained on insertion', () => {
