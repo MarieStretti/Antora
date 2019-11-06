@@ -85,8 +85,16 @@ describe('loadUi()', () => {
   describe('should throw error if bundle cannot be found', () => {
     testAll('no-such-bundle.zip', async (playbook) => {
       const loadUiDeferred = await deferExceptions(loadUi, playbook)
-      const expectedMessage = playbook.ui.bundle.url.startsWith('http://') ? '404' : 'does not exist'
-      expect(loadUiDeferred).to.throw(expectedMessage)
+      if (playbook.ui.bundle.url.startsWith('http://')) {
+        const expectedMessage = `Failed to download UI bundle: ${playbook.ui.bundle.url}`
+        expect(loadUiDeferred)
+          .to.throw(expectedMessage)
+          .with.property('stack')
+          .that.matches(/Caused by: HTTP.*404/)
+      } else {
+        const expectedMessage = `UI bundle does not exist: ${playbook.ui.bundle.url}`
+        expect(loadUiDeferred).to.throw(expectedMessage)
+      }
     })
   })
 
