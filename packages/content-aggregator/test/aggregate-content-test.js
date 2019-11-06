@@ -303,6 +303,140 @@ describe('aggregateContent()', function () {
       })
     })
 
+    describe('should read properties from component descriptors located at start paths specified as CSV string', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc1 = {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'docs',
+        }
+        const componentDesc2 = {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v4.5.6',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'moredocs',
+        }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = repoBuilder.findEntry('docs/antora.yml')
+            componentDescEntry2 = repoBuilder.findEntry('moredocs/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'docs, moredocs' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
+      })
+    })
+
+    describe('should read properties from component descriptors located at start paths specified as array', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc1 = {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'docs',
+        }
+        const componentDesc2 = {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v4.5.6',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'moredocs',
+        }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = repoBuilder.findEntry('docs/antora.yml')
+            componentDescEntry2 = repoBuilder.findEntry('moredocs/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: ['docs', 'moredocs'] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
+      })
+    })
+
+    describe('should read properties from component descriptors located at start paths in each reference', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc1v1 = {
+          name: 'the-1-component',
+          title: 'The 1 Component',
+          version: 'v1',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'docs',
+        }
+        const componentDesc2v1 = {
+          name: 'the-2-component',
+          title: 'The 2 Component',
+          version: 'v1',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'moredocs',
+        }
+        const componentDesc1v2 = {
+          name: 'the-1-component',
+          title: 'The 1 Component',
+          version: 'v2',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'docs',
+        }
+        const componentDesc2v2 = {
+          name: 'the-2-component',
+          title: 'The 2 Component',
+          version: 'v2',
+          nav: ['nav-one.adoc', 'nav-two.adoc'],
+          startPath: 'moredocs',
+        }
+        let componentDescEntry1v1
+        let componentDescEntry2v1
+        await repoBuilder
+          .init(componentDesc1v1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1v1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2v1))
+          .then(() => repoBuilder.checkoutBranch('v1.0'))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1v2))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2v2))
+          .then(async () => {
+            componentDescEntry1v1 = repoBuilder.findEntry('docs/antora.yml')
+            componentDescEntry2v1 = repoBuilder.findEntry('moredocs/antora.yml')
+          })
+          .then(() => repoBuilder.close('master'))
+        expect(componentDescEntry1v1).to.exist()
+        expect(componentDescEntry2v1).to.exist()
+        playbookSpec.content.sources.push({
+          url: repoBuilder.url,
+          branches: ['master', 'v1.0'],
+          startPaths: ['docs', 'moredocs'],
+        })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(4)
+        expect(aggregate[0]).to.deep.include(componentDesc1v1)
+        expect(aggregate[1]).to.deep.include(componentDesc1v2)
+        expect(aggregate[2]).to.deep.include(componentDesc2v1)
+        expect(aggregate[3]).to.deep.include(componentDesc2v2)
+      })
+    })
+
     describe('should throw if start path is not found at reference', () => {
       testAll(async (repoBuilder) => {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'

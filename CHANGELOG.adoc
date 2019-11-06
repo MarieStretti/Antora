@@ -9,6 +9,7 @@ This project utilizes semantic versioning.
 
 === Added
 
+* *content-aggregator*: Allow multiple start paths to be specified on each content source defined in the playbook (#495)
 * *content-classifier*: Recognize AsciiDoc attributes defined in the component (version) descriptor (#251)
 * *content-classifier*: Store the component version-scoped AsciiDoc configuration on the `asciidocConfig` property of the component version instance (#251)
 * *content-classifier*: Add the site-wide AsciiDoc config as the optional third argument of the classifyContent function; compute from playbook if absent (#251)

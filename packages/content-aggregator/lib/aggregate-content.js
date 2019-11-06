@@ -34,6 +34,7 @@ const {
 const ABBREVIATE_REF_RX = /^refs\/(?:heads|remotes\/[^/]+|tags)\//
 const ANY_SEPARATOR_RX = /[:/]/
 const CSV_RX = /\s*,\s*/
+const VENTILATED_CSV_RX = /\s*,\s+/
 const EDIT_URL_TEMPLATE_VAR_RX = /\{(web_url|refname|path)\}/g
 const GIT_EXTENSION_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
@@ -108,7 +109,7 @@ function aggregateContent (playbook) {
 
 function buildAggregate (componentVersions) {
   return _(componentVersions)
-    .flattenDepth(2)
+    .flattenDepth(3)
     .groupBy(({ name, version }) => version + '@' + name)
     .map((componentVersions, id) => {
       const component = _(componentVersions)
@@ -318,26 +319,37 @@ function getCurrentBranchName (repo, remote) {
 async function populateComponentVersion (source, repo, remoteName, authStatus, ref) {
   const url = repo.url
   const originUrl = url || (await resolveRemoteUrl(repo, remoteName))
-  let startPath = source.startPath
-  if ((startPath = startPath == null ? '' : String(startPath)) && ~startPath.indexOf('/')) {
-    startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
-  }
   // Q: should worktreePath be passed in to this function?
   const worktreePath = ref.isHead && !(url || repo.noCheckout) ? repo.dir : undefined
-  let files
-  let componentVersion
-  try {
-    files = worktreePath
-      ? await readFilesFromWorktree(worktreePath, startPath)
-      : await readFilesFromGitTree(repo, ref, startPath)
-    componentVersion = loadComponentDescriptor(files, startPath)
-  } catch (err) {
-    err.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
-    throw err
+  let startPaths
+  if ('startPaths' in source) {
+    startPaths = Array.isArray((startPaths = source.startPaths))
+      ? startPaths.map((startPath) => startPath == null ? '' : String(startPath))
+      : (startPaths == null ? [''] : String(startPaths).split(VENTILATED_CSV_RX))
+  } else if ((startPaths = source.startPath) == null) {
+    startPaths = ['']
+  } else {
+    startPaths = [String(startPaths)]
   }
-  const origin = computeOrigin(originUrl, authStatus, ref.name, ref.type, startPath, worktreePath, source.editUrl)
-  componentVersion.files = files.map((file) => assignFileProperties(file, origin))
-  return componentVersion
+  return Promise.all(startPaths.map(async (startPath) => {
+    if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
+    // Q: should worktreePath be passed in to this function?
+    const worktreePath = ref.isHead && !(url || repo.noCheckout) ? repo.dir : undefined
+    let files
+    let componentVersion
+    try {
+      files = worktreePath
+        ? await readFilesFromWorktree(worktreePath, startPath)
+        : await readFilesFromGitTree(repo, ref, startPath)
+      componentVersion = loadComponentDescriptor(files, startPath)
+    } catch (err) {
+      err.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
+      throw err
+    }
+    const origin = computeOrigin(originUrl, authStatus, ref.name, ref.type, startPath, worktreePath, source.editUrl)
+    componentVersion.files = files.map((file) => assignFileProperties(file, origin))
+    return componentVersion
+  }))
 }
 
 function readFilesFromWorktree (worktreePath, startPath) {
