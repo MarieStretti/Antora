@@ -13,15 +13,26 @@ const convertDocument = require('./convert-document')
  * @memberof document-converter
  *
  * @param {ContentCatalog} contentCatalog - The catalog of all virtual content files in the site.
- * @param {Object} [asciidocConfig={}] - AsciiDoc processor configuration options.
+ * @param {Object} [siteAsciiDocConfig={}] - Site-wide AsciiDoc processor configuration options.
  *
  * @returns {Array<File>} The virtual files in the page family taken from the content catalog.
  */
-function convertDocuments (contentCatalog, asciidocConfig = {}) {
+function convertDocuments (contentCatalog, siteAsciiDocConfig = {}) {
+  const asciidocConfigs = new Map(
+    contentCatalog.getComponents().reduce((accum, { name, versions }) => {
+      return accum.concat(versions.map(({ version, asciidocConfig }) => [name + '@' + version, asciidocConfig]))
+    }, [])
+  )
   return contentCatalog
     .findBy({ family: 'page' })
     .filter((page) => page.out)
-    .map((page) => (page.mediaType === 'text/asciidoc' ? convertDocument(page, contentCatalog, asciidocConfig) : page))
+    .map((page) => {
+      if (page.mediaType === 'text/asciidoc') {
+        const asciidocConfig = asciidocConfigs.get(page.src.component + '@' + page.src.version) || siteAsciiDocConfig
+        return convertDocument(page, contentCatalog, asciidocConfig)
+      }
+      return page
+    })
     .map((page) => delete page.src.contents && page)
 }
 

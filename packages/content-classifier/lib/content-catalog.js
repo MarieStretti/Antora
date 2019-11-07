@@ -22,9 +22,9 @@ class ContentCatalog {
     //this.urlRedirectFacility = _.get(playbook, ['urls', 'redirectFacility'], 'static')
   }
 
-  registerComponentVersion (name, version, { displayVersion, prerelease, title, startPage } = {}) {
-    const startPageSpec = startPage
-    startPage = this.resolvePage(startPageSpec || 'index.adoc', { component: name, version, module: 'ROOT' })
+  registerComponentVersion (name, version, descriptor = {}) {
+    const { asciidocConfig, displayVersion, prerelease, title, startPage: startPageSpec } = descriptor
+    let startPage = this.resolvePage(startPageSpec || 'index.adoc', { component: name, version, module: 'ROOT' })
     if (!startPage) {
       //if (startPageSpec) throw new Error(`Start page specified for ${version}@${name} not found: ` + startPageSpec)
       if (startPageSpec) console.warn(`Start page specified for ${version}@${name} not found: ` + startPageSpec)
@@ -36,10 +36,10 @@ class ContentCatalog {
       startPage = { pub: startPagePub }
     }
     const componentVersion = {
-      version,
       displayVersion: displayVersion || version,
       title: title || name,
       url: startPage.pub.url,
+      version,
     }
     if (prerelease) {
       componentVersion.prerelease = prerelease
@@ -48,6 +48,7 @@ class ContentCatalog {
         componentVersion.displayVersion = `${version}${sep}${prerelease}`
       }
     }
+    if (asciidocConfig) componentVersion.asciidocConfig = asciidocConfig
     const component = this[$components][name]
     if (component) {
       const componentVersions = component.versions
@@ -89,7 +90,7 @@ class ContentCatalog {
   // QUESTION should this method return the file added?
   addFile (file) {
     const id = this[$generateId](file.src)
-    if (this[$files][id]) {
+    if (id in this[$files]) {
       throw new Error(`Duplicate ${file.src.family}: ${id.replace(':' + file.src.family + '$', ':')}`)
     }
     if (!File.isVinyl(file)) file = new File(file)

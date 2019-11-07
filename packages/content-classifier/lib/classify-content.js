@@ -15,17 +15,19 @@ const { START_PAGE_ID } = require('./constants')
  * @param {Object} playbook.urls - URL settings for the site.
  * @param {String} playbook.urls.htmlExtensionStyle - The style to use when computing page URLs.
  * @param {Object} aggregate - The raw aggregate of virtual file objects to be classified.
+ * @param {Object} [siteAsciiDocConfig=undefined] - Site-wide AsciiDoc processor configuration options.
  * @returns {ContentCatalog} A structured catalog of content components and virtual content files.
  */
-function classifyContent (playbook, aggregate) {
-  const contentCatalog = aggregate.reduce(
-    (accum, { name, version, display_version: displayVersion, prerelease, title, start_page: startAt, nav, files }) => {
-      files.forEach((file) => allocateSrc(file, name, version, nav) && accum.addFile(file))
-      accum.registerComponentVersion(name, version, { displayVersion, title, prerelease, startPage: startAt })
-      return accum
-    },
-    new ContentCatalog(playbook)
-  )
+function classifyContent (playbook, aggregate, siteAsciiDocConfig = undefined) {
+  if (!siteAsciiDocConfig) siteAsciiDocConfig = require('@antora/asciidoc-loader').resolveConfig(playbook)
+  const contentCatalog = aggregate.reduce((catalog, descriptor) => {
+    const { name, version, nav, files } = descriptor
+    delete descriptor.files
+    files.forEach((file) => allocateSrc(file, name, version, nav) && catalog.addFile(file))
+    descriptor.asciidocConfig = resolveAsciiDocConfig(siteAsciiDocConfig, descriptor)
+    catalog.registerComponentVersion(name, version, descriptor)
+    return catalog
+  }, new ContentCatalog(playbook))
   registerSiteStartPage(playbook, contentCatalog)
   return contentCatalog
 }
@@ -130,6 +132,31 @@ function registerSiteStartPage (playbook, contentCatalog) {
   } else {
     console.warn('Start page specified for site not found: ' + pageSpec)
     //throw new Error('Start page specified for site not found: ' + pageSpec)
+  }
+}
+
+function resolveAsciiDocConfig (siteAsciiDocConfig, { asciidoc }) {
+  const scopedAttributes = (asciidoc || {}).attributes
+  if (scopedAttributes) {
+    const siteAttributes = siteAsciiDocConfig.attributes
+    if (siteAttributes) {
+      const attributes = Object.keys(scopedAttributes).reduce((accum, name) => {
+        if (name in siteAttributes) {
+          const currentVal = siteAttributes[name]
+          if (currentVal === false || String(currentVal).endsWith('@')) accum[name] = scopedAttributes[name]
+        } else {
+          accum[name] = scopedAttributes[name]
+        }
+        return accum
+      }, {})
+      return Object.keys(attributes).length
+        ? Object.assign({}, siteAsciiDocConfig, { attributes: Object.assign({}, siteAttributes, attributes) })
+        : siteAsciiDocConfig
+    } else {
+      return Object.assign({}, siteAsciiDocConfig, { attributes: scopedAttributes })
+    }
+  } else {
+    return siteAsciiDocConfig
   }
 }
 

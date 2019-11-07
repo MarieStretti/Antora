@@ -116,6 +116,27 @@ describe('convertDocuments()', () => {
     })
   })
 
+  it('should use AsciiDoc config scoped to component version, if available', () => {
+    const contentCatalog = mockContentCatalog([
+      {
+        relative: 'index.adoc',
+        contents: 'btn:[Save]',
+        mediaType: 'text/asciidoc',
+      },
+    ])
+    const componentVersion = contentCatalog.getComponentVersion('component-a', 'master')
+    componentVersion.asciidocConfig = resolveAsciiDocConfig({
+      asciidoc: { attributes: { experimental: '' } },
+    })
+    expect(asciidocConfig.attributes).not.to.have.property('experimental')
+    const pages = convertDocuments(contentCatalog, asciidocConfig)
+    expect(pages).to.have.lengthOf(1)
+    pages.forEach((page) => {
+      expect(page.mediaType).to.equal('text/html')
+      expect(page.contents.toString()).to.include('<b class="button">Save</b>')
+    })
+  })
+
   it('should only convert documents that have the text/asciidoc media type', () => {
     const contentCatalog = mockContentCatalog([
       {

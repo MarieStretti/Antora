@@ -496,7 +496,7 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should be able to reference global attributes from AsciiDoc config', () => {
+  it('should be able to reference attributes from AsciiDoc config', () => {
     const navContents = heredoc`
       .xref:index.adoc[{product-name}]
       * {site-url}[{site-title}]
@@ -531,7 +531,9 @@ describe('buildNavigation()', () => {
       },
       { family: 'page', relative: 'index.adoc' },
     ])
-    const navCatalog = buildNavigation(contentCatalog, resolveAsciiDocConfig(playbook))
+    const componentVersion = contentCatalog.getComponentVersion('component-a', 'master')
+    componentVersion.asciidocConfig = resolveAsciiDocConfig(playbook)
+    const navCatalog = buildNavigation(contentCatalog)
     const menu = navCatalog.getNavigation('component-a', 'master')
     expect(menu).to.exist()
     expect(menu[0]).to.eql({
@@ -605,7 +607,7 @@ describe('buildNavigation()', () => {
     `
     const playbook = {
       asciidoc: {
-        // NOTE we pass the name of module A as an attribute to be sure other attributes are present
+        // NOTE pass the name of module A as an attribute to be sure other attributes are present
         attributes: { doctype: 'book', 'module-a-name': 'Module A' },
       },
     }

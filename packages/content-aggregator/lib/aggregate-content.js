@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const camelCaseKeys = require('camelcase-keys')
 const { createHash } = require('crypto')
 const EventEmitter = require('events')
 const expandPath = require('@antora/expand-path-helper')
@@ -489,7 +490,7 @@ function loadComponentDescriptor (files, startPath) {
   }
   data.name = name
   data.version = version
-  return data
+  return camelCaseKeys(data, { deep: true, stopPaths: ['asciidoc'] })
 }
 
 function computeOrigin (url, authStatus, refname, reftype, startPath, worktreePath = undefined, editUrl = true) {

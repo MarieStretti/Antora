@@ -184,6 +184,24 @@ describe('aggregateContent()', function () {
       })
     })
 
+    describe('should camelCase keys in component descriptor', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          display_version: '1.2.3',
+          start_page: 'home.adoc',
+        }
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc)
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.have.property('displayVersion', '1.2.3')
+        expect(aggregate[0]).to.have.property('startPage', 'home.adoc')
+      })
+    })
+
     describe('should throw if component descriptor cannot be found', () => {
       testAll(async (repoBuilder) => {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'

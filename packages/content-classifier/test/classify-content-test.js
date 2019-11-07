@@ -193,6 +193,30 @@ describe('classifyContent()', () => {
       expect(component.latest.version).to.equal('v3.0.0')
     })
 
+    it('should use version as display version by default', () => {
+      const catalog = classifyContent(playbook, aggregate)
+      const componentVersion = catalog.getComponentVersion('the-component', 'v1.2.3')
+      expect(componentVersion).to.exist()
+      expect(componentVersion.displayVersion).to.equal(componentVersion.version)
+    })
+
+    it('should compute display version from version and prerelease if prerelease is set', () => {
+      aggregate[0].prerelease = 'Beta.1'
+      const catalog = classifyContent(playbook, aggregate)
+      const componentVersion = catalog.getComponentVersion('the-component', 'v1.2.3')
+      expect(componentVersion).to.exist()
+      expect(componentVersion.displayVersion).to.equal('v1.2.3 Beta.1')
+    })
+
+    it('should not overwrite display version with computed value if set', () => {
+      aggregate[0].displayVersion = '1.2.3-beta.1'
+      aggregate[0].prerelease = 'Beta.1'
+      const catalog = classifyContent(playbook, aggregate)
+      const componentVersion = catalog.getComponentVersion('the-component', 'v1.2.3')
+      expect(componentVersion).to.exist()
+      expect(componentVersion.displayVersion).to.equal('1.2.3-beta.1')
+    })
+
     it('should throw when adding a duplicate version of a component', () => {
       aggregate.push({
         name: 'the-component',
@@ -201,6 +225,78 @@ describe('classifyContent()', () => {
         files: [],
       })
       expect(() => classifyContent(playbook, aggregate)).to.throw('version')
+    })
+
+    // QUESTION: should asciidocConfig not be assigned in this case?
+    it('should attach site AsciiDoc config to component version if component version has no AsciiDoc config', () => {
+      const siteAsciiDocConfig = {
+        attributes: { foo: 'bar' },
+        extensions: [{ register: () => {} }],
+      }
+
+      const contentCatalog = classifyContent(playbook, aggregate, siteAsciiDocConfig)
+      const component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      const componentVersions = component.versions
+      expect(componentVersions).to.have.lengthOf(1)
+      const asciidocConfig = componentVersions[0].asciidocConfig
+      expect(asciidocConfig).to.equal(siteAsciiDocConfig)
+    })
+
+    it('should copy AsciiDoc extensions to scoped AsciiDoc config', () => {
+      const siteAsciiDocConfig = {
+        extensions: [{ register: () => {} }],
+      }
+
+      aggregate[0].asciidoc = { attributes: { foo: 'bar' } }
+
+      const contentCatalog = classifyContent(playbook, aggregate, siteAsciiDocConfig)
+      const component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      const componentVersions = component.versions
+      expect(componentVersions).to.have.lengthOf(1)
+      const asciidocConfig = componentVersions[0].asciidocConfig
+      expect(asciidocConfig).to.have.property('extensions', siteAsciiDocConfig.extensions)
+      expect(asciidocConfig).to.have.property('attributes')
+      expect(asciidocConfig.attributes).to.include({ foo: 'bar' })
+    })
+
+    it('should only allow component descriptor to override attributes that are soft set', () => {
+      const siteAsciiDocConfig = {
+        attributes: {
+          'hard-set': '',
+          'hard-unset': null,
+          'soft-set': '@',
+          'soft-unset': false,
+          'soft-reset': 'foo@',
+        },
+      }
+
+      aggregate[0].asciidoc = {
+        attributes: {
+          'hard-set': 'override',
+          'hard-unset': 'override',
+          'soft-set': 'override',
+          'soft-unset': 'override',
+          'soft-reset': 'bar@',
+        },
+      }
+
+      const contentCatalog = classifyContent(playbook, aggregate, siteAsciiDocConfig)
+      const component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      const componentVersions = component.versions
+      expect(componentVersions).to.have.lengthOf(1)
+      const asciidocConfig = componentVersions[0].asciidocConfig
+      expect(asciidocConfig).to.exist()
+      expect(asciidocConfig).to.have.property('attributes')
+      expect(asciidocConfig.attributes).to.eql({
+        'hard-set': '',
+        'hard-unset': null,
+        'soft-set': 'override',
+        'soft-unset': 'override',
+        'soft-reset': 'bar@',
+      })
     })
   })
 
@@ -297,7 +393,7 @@ describe('classifyContent()', () => {
     })
 
     it('should allow the start page to be specified for a component version', () => {
-      aggregate[0].start_page = 'home.adoc'
+      aggregate[0].startPage = 'home.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/home.adoc'))
       const expectedUrl = '/the-component/v1.2.3/home.html'
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
@@ -307,7 +403,7 @@ describe('classifyContent()', () => {
     })
 
     it('should allow the start page in non-ROOT module to be specified for a component version', () => {
-      aggregate[0].start_page = 'quickstarts:start-here.adoc'
+      aggregate[0].startPage = 'quickstarts:start-here.adoc'
       aggregate[0].files.push(createFile('modules/quickstarts/pages/start-here.adoc'))
       const expectedUrl = '/the-component/v1.2.3/quickstarts/start-here.html'
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
@@ -317,7 +413,7 @@ describe('classifyContent()', () => {
     })
 
     it('should warn if start page specified for component version cannot be resolved', () => {
-      aggregate[0].start_page = 'no-such-page.adoc'
+      aggregate[0].startPage = 'no-such-page.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/home.adoc'))
       //expect(() => classifyContent(playbook, aggregate)).to.throw(/Start page .* not found/)
       const stdErrMessages = captureStdErrSync(classifyContent, playbook, aggregate)
@@ -348,7 +444,7 @@ describe('classifyContent()', () => {
         name: 'the-component',
         title: 'The Component',
         version: 'v2.0.0',
-        start_page: 'home.adoc',
+        startPage: 'home.adoc',
         files: [createFile('modules/ROOT/pages/home.adoc')],
       })
       const component = classifyContent(playbook, aggregate).getComponent('the-component')
