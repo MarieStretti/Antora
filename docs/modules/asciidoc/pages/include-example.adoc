@@ -48,7 +48,9 @@ The attributes should be entered as key=value pairs separated by commas.
 include::version@component:module:example$name-of-file.ext**[optional attributes]**
 ----
 
-NOTE: Currently, Antora only supports filtering includes by tags.
+NOTE: Antora supports filtering the lines of an include file by either line numbers using the `lines` attribute (since Antora 2.2) or tags using the tag or tags attributes.
+Filtering by line numbers takes precedence.
+See https://asciidoctor.org/docs/user-manual/#include-partial[the asciidoctor documentation] for full details of the `lines` and `tag` or `tags` syntax.
 
 == Include an example from the same module
 
