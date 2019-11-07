@@ -92,11 +92,12 @@ Include attributes should be entered as key=value pairs separated by commas.
 include::version@component:module:page$topic/page.adoc**[tag=definition]**
 ----
 
-All the attributes (e.g., `tags`, `leveloffset`, `indent`) on the include directive are supported.
+All the attributes (e.g., `lines`, `tags`, `leveloffset`, `indent`) on the include directive are supported.
 --
 
 Antora supports filtering the lines of an include file by either line numbers using the `lines` attribute (since Antora 2.2) or tags using the `tag` or `tags` attributes.
 Filtering by line numbers takes precedence.
+See https://asciidoctor.org/docs/user-manual/#include-partial[the asciidoctor documentation] for full details of the `lines` and `tag` or `tags` syntax.
 
 [#page-partial]
 == The page-partial attribute
