@@ -27,13 +27,15 @@ function mockContentCatalog (seed = []) {
     if (module == null) module = 'module-a'
     if (!family) family = 'page'
     if (!contents) contents = ''
+    let versions
     if (component in components) {
-      components[component].versions.unshift({ version })
+      versions = components[component].versions
+      if (versions.findIndex((it) => it.version === version) < 0) versions.unshift({ version })
     } else {
-      components[component] = { name: component, versions: [{ version }] }
+      components[component] = { name: component, versions: (versions = [{ version }]) }
     }
     // NOTE assume we want the latest to be the last version we register
-    components[component].latest = components[component].versions[0]
+    components[component].latest = versions[0]
     const componentVersionKey = buildComponentVersionKey(component, version)
     const componentRelativePath = path.join(module ? 'modules' : '', module, familyDirs[family], relative)
     const entry = {
