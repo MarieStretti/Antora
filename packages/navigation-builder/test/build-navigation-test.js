@@ -596,14 +596,17 @@ describe('buildNavigation()', () => {
     })
   })
 
-  it('should build navigation list when doctype is set to book in global AsciiDoc config', () => {
+  it('should build navigation list when doctype is set to book', () => {
     const navContents = heredoc`
-      .xref:index.adoc[Module A]
+      :doctype: book
+
+      .xref:index.adoc[{module-a-name}]
       * xref:requirements.adoc[Requirements]
     `
     const playbook = {
       asciidoc: {
-        attributes: { doctype: 'book' },
+        // NOTE we pass the name of module A as an attribute to be sure other attributes are present
+        attributes: { doctype: 'book', 'module-a-name': 'Module A' },
       },
     }
     const contentCatalog = mockContentCatalog([
