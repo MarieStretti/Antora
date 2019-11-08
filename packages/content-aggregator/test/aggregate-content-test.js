@@ -318,7 +318,7 @@ describe('aggregateContent()', function () {
       })
     })
 
-    describe('should discover components across multiple repositories', () => {
+    describe('should discover different components across multiple repositories', () => {
       testAll(async (repoBuilderA, repoBuilderB) => {
         const componentDescA = { name: 'the-component', title: 'The Component', version: 'v1.2' }
         await initRepoWithComponentDescriptor(repoBuilderA, componentDescA)
@@ -332,6 +332,24 @@ describe('aggregateContent()', function () {
         expect(aggregate).to.have.lengthOf(2)
         expect(aggregate[0]).to.include(componentDescA)
         expect(aggregate[1]).to.include(componentDescB)
+      }, 2)
+    })
+ 
+    // FIXME this test may change if we modify the rules for merging component descriptors
+    describe('should discover the same component version across multiple repositories', () => {
+      testAll(async (repoBuilderA1, repoBuilderA2) => {
+        const componentDescA1 = { name: 'the-component', title: 'The Component', version: 'v1.2' }
+        await initRepoWithComponentDescriptor(repoBuilderA1, componentDescA1)
+        playbookSpec.content.sources.push({ url: repoBuilderA1.url })
+
+        const componentDescA2 = { name: 'the-component', version: 'v1.2', prerelease: true }
+        await initRepoWithComponentDescriptor(repoBuilderA2, componentDescA2)
+        playbookSpec.content.sources.push({ url: repoBuilderA2.url })
+
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        // NOTE the keys of the two component descriptors are merged, last wins
+        expect(aggregate[0]).to.include({ ...componentDescA1, ...componentDescA2 })
       }, 2)
     })
 
