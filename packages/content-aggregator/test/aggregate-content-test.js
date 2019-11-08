@@ -249,7 +249,7 @@ describe('aggregateContent()', function () {
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
-        expect(aggregate[0]).to.deep.include({ name: '10', version: '1.0' })
+        expect(aggregate[0]).to.include({ name: '10', version: '1.0' })
       })
     })
 
@@ -259,7 +259,7 @@ describe('aggregateContent()', function () {
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
-        expect(aggregate[0]).to.deep.include({ name: 'the-component', version: '27' })
+        expect(aggregate[0]).to.include({ name: 'the-component', version: '27' })
       })
     })
 
@@ -352,7 +352,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include(componentDesc)
+      expect(aggregate[0]).to.include(componentDesc)
     })
 
     it('should resolve dot-relative repository path starting from playbook dir if set', async () => {
@@ -372,7 +372,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include(componentDesc)
+      expect(aggregate[0]).to.include(componentDesc)
     })
 
     it('should resolve dot-relative repository path start from cwd if playbook dir not set', async () => {
@@ -388,7 +388,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include(componentDesc)
+      expect(aggregate[0]).to.include(componentDesc)
     })
 
     it('should expand leading ~ segment in local repository path to user home', async () => {
@@ -404,7 +404,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include(componentDesc)
+      expect(aggregate[0]).to.include(componentDesc)
     })
 
     it('should expand leading ~+ segment in repository path to cwd', async () => {
@@ -424,7 +424,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include(componentDesc)
+      expect(aggregate[0]).to.include(componentDesc)
     })
 
     it('should disregard playbook dir if repository path is absolute', async () => {
@@ -444,7 +444,7 @@ describe('aggregateContent()', function () {
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(() => (aggregate = aggregateContentDeferred())).to.not.throw()
       expect(aggregate).to.have.lengthOf(1)
-      expect(aggregate[0]).to.deep.include(componentDesc)
+      expect(aggregate[0]).to.include(componentDesc)
     })
   })
 
@@ -1709,7 +1709,7 @@ describe('aggregateContent()', function () {
         playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v1.2.3-fixes', tags: 'v1.2.3' })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
-        expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
+        expect(aggregate[0]).to.include(componentDesc)
         const pageOne = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-one.adoc')
         expect(pageOne.src.origin.tag).to.equal('v1.2.3')
         const pageTwo = aggregate[0].files.find((file) => file.path === 'modules/ROOT/pages/page-two.adoc')
