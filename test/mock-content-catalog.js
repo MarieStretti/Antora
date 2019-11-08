@@ -92,6 +92,7 @@ function mockContentCatalog (seed = []) {
     getByPath: ({ path: path_, component, version }) =>
       entriesByPath[buildComponentVersionKey(component, version) + path_],
     getComponent: (name) => components[name],
+    getComponents: () => Object.values(components),
     getComponentVersion: (component, version) =>
       (typeof component === 'string' ? components[component] : component).versions.find((it) => it.version === version),
     getFiles: () => entries,
