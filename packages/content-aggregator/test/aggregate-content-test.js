@@ -334,7 +334,7 @@ describe('aggregateContent()', function () {
         expect(aggregate[1]).to.include(componentDescB)
       }, 2)
     })
- 
+
     // FIXME this test may change if we modify the rules for merging component descriptors
     describe('should discover the same component version across multiple repositories', () => {
       testAll(async (repoBuilderA1, repoBuilderA2) => {
