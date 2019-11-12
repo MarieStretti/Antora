@@ -743,7 +743,7 @@ describe('loadUi()', () => {
     expect(paths).to.have.members(expectedFilePaths)
   })
 
-  it('should throw error if remove bundle UI cannot be found', async () => {
+  it('should throw error if remote bundle UI cannot be found', async () => {
     const playbook = {
       runtime: { fetch: true },
       ui: { bundle: { url: 'http://localhost:1337/the-ui-bundl.zip', snapshot: true } },
