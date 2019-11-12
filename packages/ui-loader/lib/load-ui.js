@@ -4,7 +4,7 @@ const camelCaseKeys = require('camelcase-keys')
 const collectBuffer = require('bl')
 const { createHash } = require('crypto')
 const expandPath = require('@antora/expand-path-helper')
-const File = require('./file')
+const { File, MemoryFile, ReadableFile } = require('./file')
 const fs = require('fs-extra')
 const get = require('got')
 const getCacheDir = require('cache-directory')
@@ -18,7 +18,7 @@ const yaml = require('js-yaml')
 const vfs = require('vinyl-fs')
 const vzip = require('gulp-vinyl-zip')
 
-const { FILE_MODE, UI_CACHE_FOLDER, UI_DESC_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
+const { UI_CACHE_FOLDER, UI_DESC_FILENAME, SUPPLEMENTAL_FILES_GLOB } = require('./constants')
 const URI_SCHEME_RX = /^https?:\/\//
 const EXT_RX = /\.[a-z]{2,3}$/
 
@@ -75,17 +75,23 @@ async function loadUi (playbook) {
   }
 
   const files = await Promise.all([
-    resolveBundle.then(
-      (bundlePath) =>
-        new Promise((resolve, reject) =>
-          vzip
-            .src(bundlePath)
-            .on('error', reject)
-            .pipe(selectFilesStartingFrom(bundle.startPath))
-            .pipe(bufferizeContents())
-            .on('error', reject)
-            .pipe(collectFiles(resolve))
-        )
+    resolveBundle.then((bundlePath) =>
+      new Promise((resolve, reject) =>
+        vzip
+          .src(bundlePath)
+          .on('error', (err) => {
+            err.message = `not a valid zip file; ${err.message}`
+            reject(err)
+          })
+          .pipe(selectFilesStartingFrom(bundle.startPath))
+          .pipe(bufferizeContents())
+          .on('error', reject)
+          .pipe(collectFiles(resolve))
+      ).catch((e) => {
+        const wrapped = new Error(`Failed to read UI bundle: ${bundlePath} (resolved from url: ${bundleUrl})`)
+        wrapped.stack += '\nCaused by: ' + (e.stack || 'unknown')
+        throw wrapped
+      })
     ),
     srcSupplementalFiles(supplementalFilesSpec, startDir),
   ]).then(([bundleFiles, supplementalFiles]) => mergeFiles(bundleFiles, supplementalFiles))
@@ -128,9 +134,21 @@ function ensureCacheDir (customCacheDir, startDir) {
 
 function downloadBundle (url, to) {
   return get(url, { encoding: null })
-    .then(({ body }) => fs.outputFile(to, body).then(() => to))
+    .then(
+      ({ body }) =>
+        new Promise((resolve, reject) =>
+          new ReadableFile(new MemoryFile({ path: ospath.basename(to), contents: body }))
+            .pipe(vzip.src())
+            .on('error', (err) => {
+              err.message = `not a valid zip file; ${err.message}`
+              err.summary = 'Invalid UI bundle'
+              reject(err)
+            })
+            .on('finish', () => fs.outputFile(to, body).then(() => resolve(to)))
+        )
+    )
     .catch((e) => {
-      const wrapped = new Error(`Failed to download UI bundle: ${url}`)
+      const wrapped = new Error(`${e.summary || 'Failed to download UI bundle'}: ${url}`)
       wrapped.stack += '\nCaused by: ' + (e.stack || 'unknown')
       throw wrapped
     })
@@ -198,7 +216,7 @@ function srcSupplementalFiles (filesSpec, startDir) {
           return accum
         } else if (contents_) {
           if (~contents_.indexOf('\n') || !EXT_RX.test(contents_)) {
-            accum.push(createMemoryFile(path_, contents_))
+            accum.push(new MemoryFile({ path: path_, contents: Buffer.from(contents_) }))
           } else {
             contents_ = expandPath(contents_, '~+', startDir)
             accum.push(
@@ -208,7 +226,7 @@ function srcSupplementalFiles (filesSpec, startDir) {
             )
           }
         } else {
-          accum.push(createMemoryFile(path_))
+          accum.push(new MemoryFile({ path: path_ }))
         }
         return accum
       }, [])
@@ -232,14 +250,6 @@ function srcSupplementalFiles (filesSpec, startDir) {
         throw new Error('problem encountered while reading ui.supplemental_files: ' + err.message)
       })
   }
-}
-
-function createMemoryFile (path_, contents = []) {
-  const stat = new fs.Stats()
-  stat.mode = FILE_MODE
-  stat.mtime = undefined
-  stat.size = contents.length
-  return new File({ path: path_, contents: Buffer.from(contents), stat })
 }
 
 function relativizeFiles () {

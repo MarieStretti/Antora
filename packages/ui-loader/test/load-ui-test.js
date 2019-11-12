@@ -98,6 +98,17 @@ describe('loadUi()', () => {
     })
   })
 
+  describe('should throw error if bundle is not a valid zip file', () => {
+    testAll('the-ui-bundle.tar.gz', async (playbook) => {
+      const isRemote = playbook.ui.bundle.url.startsWith('http://')
+      const expectedMessage = isRemote ? `Invalid UI bundle: ${playbook.ui.bundle.url}` : 'Failed to read UI bundle:'
+      expect(await deferExceptions(loadUi, playbook))
+        .to.throw(expectedMessage)
+        .with.property('stack')
+        .that.includes('not a valid zip file')
+    })
+  })
+
   describe('should load all files in the UI bundle', () => {
     testAll('the-ui-bundle.zip', async (playbook) => {
       const uiCatalog = await loadUi(playbook)
@@ -751,6 +762,64 @@ describe('loadUi()', () => {
     const loadUiDeferred = await deferExceptions(loadUi, playbook)
     const expectedMessage = 'Failed to download UI bundle'
     expect(loadUiDeferred).to.throw(expectedMessage)
+  })
+
+  it('should cache bundle if a valid zip file', async () => {
+    const playbook = {
+      ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
+    }
+    await loadUi(playbook)
+    expect(CACHE_DIR)
+      .to.be.a.directory()
+      .with.subDirs([UI_CACHE_FOLDER])
+    expect(UI_CACHE_DIR)
+      .to.be.a.directory()
+      .and.not.be.empty()
+    const cachedBundleBasename = await fs.readdir(UI_CACHE_DIR).then((entries) => entries[0])
+    const cachedBundlePath = ospath.join(UI_CACHE_DIR, cachedBundleBasename)
+    const expectedContents = await fs.readFile(ospath.join(FIXTURES_DIR, 'the-ui-bundle.zip'))
+    const actualContents = await fs.readFile(cachedBundlePath)
+    try {
+      expect(actualContents).to.eql(expectedContents)
+    } catch (e) {
+      // NOTE showing the diff causes mocha to hang
+      e.showDiff = false
+      throw e
+    }
+  })
+
+  it('should not cache bundle if not a valid zip file', async () => {
+    const playbook = {
+      ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.tar.gz' } },
+    }
+    expect(await deferExceptions(loadUi, playbook)).to.throw()
+    expect(CACHE_DIR)
+      .to.be.a.directory()
+      .with.subDirs([UI_CACHE_FOLDER])
+    expect(UI_CACHE_DIR)
+      .to.be.a.directory()
+      .and.be.empty()
+  })
+
+  it('should throw error if bundle in cache is not a valid zip file', async () => {
+    const playbook = {
+      ui: { bundle: { url: 'http://localhost:1337/the-ui-bundle.zip' } },
+    }
+    await loadUi(playbook)
+    expect(CACHE_DIR)
+      .to.be.a.directory()
+      .with.subDirs([UI_CACHE_FOLDER])
+    expect(UI_CACHE_DIR)
+      .to.be.a.directory()
+      .and.not.be.empty()
+    const cachedBundleBasename = await fs.readdir(UI_CACHE_DIR).then((entries) => entries[0])
+    const cachedBundlePath = ospath.join(UI_CACHE_DIR, cachedBundleBasename)
+    await fs.copyFile(ospath.join(FIXTURES_DIR, 'the-ui-bundle.tar.gz'), cachedBundlePath)
+
+    expect(await deferExceptions(loadUi, playbook))
+      .to.throw(`Failed to read UI bundle: ${cachedBundlePath}`)
+      .with.property('stack')
+      .that.includes('not a valid zip file')
   })
 
   describe('custom cache dir', () => {
