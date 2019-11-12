@@ -77,7 +77,7 @@ async function loadUi (playbook) {
   const files = await Promise.all([
     resolveBundle.then(
       (bundlePath) =>
-        new Promise((resolve, reject) => {
+        new Promise((resolve, reject) =>
           vzip
             .src(bundlePath)
             .on('error', reject)
@@ -85,7 +85,7 @@ async function loadUi (playbook) {
             .pipe(bufferizeContents())
             .on('error', reject)
             .pipe(collectFiles(resolve))
-        })
+        )
     ),
     srcSupplementalFiles(supplementalFilesSpec, startDir),
   ]).then(([bundleFiles, supplementalFiles]) => mergeFiles(bundleFiles, supplementalFiles))
@@ -219,13 +219,13 @@ function srcSupplementalFiles (filesSpec, startDir) {
       .access(base)
       .then(
         () =>
-          new Promise((resolve, reject) => {
+          new Promise((resolve, reject) =>
             vfs
               .src(SUPPLEMENTAL_FILES_GLOB, { base, cwd: base, removeBOM: false })
               .on('error', reject)
               .pipe(relativizeFiles())
               .pipe(collectFiles(resolve))
-          })
+          )
       )
       .catch((err) => {
         // Q: should we skip unreadable files?

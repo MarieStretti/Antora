@@ -39,15 +39,15 @@ describe('publishSite()', () => {
     </html>
   `
 
-  const collectFilesFromZip = async (file) =>
+  const collectFilesFromZip = async (zipFile) =>
     new Promise((resolve, reject) => {
-      const accum = []
+      const files = []
       vzip
-        .src(file)
+        .src(zipFile)
         .pipe(bufferizeContents())
-        .on('data', (entry) => accum.push(entry))
+        .on('data', (file) => files.push(file))
         .on('error', reject)
-        .on('end', () => resolve(accum))
+        .on('end', () => resolve(files))
     })
 
   const verifyArchiveOutput = (destFile) => {

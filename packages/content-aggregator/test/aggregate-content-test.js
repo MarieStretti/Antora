@@ -3028,46 +3028,47 @@ describe('aggregateContent()', function () {
     let server
     let serverPort
     before(async () => {
-      serverPort = await new Promise((resolve, reject) => {
-        server = http
-          .createServer((req, res) => {
-            const headers = {}
-            let body = 'No dice!'
-            let stream
-            let [statusCode, scenario] = req.url.split('/').slice(1, 3)
-            statusCode = parseInt(statusCode)
-            scenario = scenario.replace(/\.git$/, '')
-            if (statusCode === 401) {
-              headers['WWW-Authenticate'] = 'Basic realm="example"'
-            } else if (statusCode === 301) {
-              headers.Location = 'http://example.org'
-            } else if (statusCode === 200) {
-              if (scenario === 'incomplete-ref-capabilities') {
-                body = '001e# service=git-upload-pack\n0007ref\n'
-              } else if (scenario === 'insufficient-capabilities') {
-                body = '001e# service=git-upload-pack\n0009ref\x00\n'
-              } else {
-                body = '0000'
+      serverPort = await new Promise(
+        (resolve, reject) =>
+          (server = http
+            .createServer((req, res) => {
+              const headers = {}
+              let body = 'No dice!'
+              let stream
+              let [statusCode, scenario] = req.url.split('/').slice(1, 3)
+              statusCode = parseInt(statusCode)
+              scenario = scenario.replace(/\.git$/, '')
+              if (statusCode === 401) {
+                headers['WWW-Authenticate'] = 'Basic realm="example"'
+              } else if (statusCode === 301) {
+                headers.Location = 'http://example.org'
+              } else if (statusCode === 200) {
+                if (scenario === 'incomplete-ref-capabilities') {
+                  body = '001e# service=git-upload-pack\n0007ref\n'
+                } else if (scenario === 'insufficient-capabilities') {
+                  body = '001e# service=git-upload-pack\n0009ref\x00\n'
+                } else {
+                  body = '0000'
+                }
+                headers['Transfer-Encoding'] = 'chunked'
+                stream = new Readable({
+                  read (size) {
+                    this.push(body)
+                    this.push(null)
+                  },
+                })
               }
-              headers['Transfer-Encoding'] = 'chunked'
-              stream = new Readable({
-                read (size) {
-                  this.push(body)
-                  this.push(null)
-                },
-              })
-            }
-            res.writeHead(statusCode, headers)
-            if (stream) {
-              stream.pipe(res)
-            } else {
-              res.end(body)
-            }
-          })
-          .listen(0, function (err) {
-            err ? reject(err) : resolve(this.address().port)
-          })
-      })
+              res.writeHead(statusCode, headers)
+              if (stream) {
+                stream.pipe(res)
+              } else {
+                res.end(body)
+              }
+            })
+            .listen(0, function (err) {
+              err ? reject(err) : resolve(this.address().port)
+            }))
+      )
     })
 
     after(async () => {
@@ -3113,7 +3114,7 @@ describe('aggregateContent()', function () {
       expect(aggregateContentDeferred)
         .to.throw(expectedErrorMessage)
         .with.property('stack')
-        .that.includes('Caused by: TypeError: Cannot read property \'split\' of undefined')
+        .that.includes("Caused by: TypeError: Cannot read property 'split' of undefined")
     })
 
     it('should throw meaningful error if git server does not support required capabilities', async () => {

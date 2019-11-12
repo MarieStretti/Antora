@@ -352,14 +352,13 @@ function readFilesFromWorktree (worktreePath, startPath) {
     })
     .then((stat) => {
       if (!stat.isDirectory()) throw new Error(`the start path '${startPath}' is not a directory`)
-      return new Promise((resolve, reject) => {
-        const opts = { base, cwd: base, removeBOM: false }
+      return new Promise((resolve, reject) =>
         vfs
-          .src(CONTENT_GLOB, opts)
+          .src(CONTENT_GLOB, { base, cwd: base, removeBOM: false })
           .on('error', reject)
           .pipe(relativizeFiles())
           .pipe(collectFiles(resolve))
-      })
+      )
     })
 }
 
