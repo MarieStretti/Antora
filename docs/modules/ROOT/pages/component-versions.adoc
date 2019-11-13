@@ -109,7 +109,7 @@ However, if all versions are prereleases, then the first version in the list is 
 Antora uses the latest version when qualifying a resource ID if it cannot otherwise determine the version.
 It also uses the latest version when determining the default URL for a component.
 
-The latest version is available as a property on each component in the UI model.
+The latest version is available as a property on each component in the xref:antora-ui-default::templates.adoc#site[UI model].
 The latest version information is typically used to inform the reader if there's a newer version of the documentation available.
 
 [#versionless-urls]
