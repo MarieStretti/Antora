@@ -236,11 +236,9 @@ async function selectReferences (source, repo, remote) {
       : String(tagPatterns).split(CSV_RX)
     if (tagPatterns.length) {
       const tags = await git.listTags(repo)
-      for (const name of tags) {
-        if (matcher([name], tagPatterns).length) {
-          // NOTE tags are stored using symbol keys to distinguish them from branches
-          refs.set(Symbol(name), { name, qname: 'tags/' + name, type: 'tag' })
-        }
+      for (const name of matcher(tags, tagPatterns)) {
+        // NOTE tags are stored using symbol keys to distinguish them from branches
+        refs.set(Symbol(name), { name, qname: 'tags/' + name, type: 'tag' })
       }
     }
   }
@@ -278,29 +276,25 @@ async function selectReferences (source, repo, remote) {
       }
     }
     const remoteBranches = await git.listBranches(Object.assign({ remote }, repo))
-    for (const name of remoteBranches) {
-      // NOTE isomorphic-git includes HEAD in list of remote branches (see https://isomorphic-git.org/docs/listBranches)
-      if (name !== 'HEAD' && matcher([name], branchPatterns).length) {
-        refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
-      }
+    // NOTE isomorphic-git includes HEAD in list of remote branches (see https://isomorphic-git.org/docs/listBranches)
+    const namedRemoteBranches = remoteBranches.filter((name) => name !== 'HEAD')
+    for (const name of matcher(namedRemoteBranches, branchPatterns)) {
+      refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
     }
     // NOTE only consider local branches if repo has a worktree or there are no remote tracking branches
     if (!isBare) {
       const localBranches = await git.listBranches(repo)
       if (localBranches.length) {
         const currentBranchName = await git.currentBranch(repo)
-        for (const name of localBranches) {
-          if (matcher([name], branchPatterns).length) {
-            refs.set(name, { name, qname: name, type: 'branch', isHead: name === currentBranchName })
-          }
+        for (const name of matcher(localBranches, branchPatterns)) {
+          refs.set(name, { name, qname: name, type: 'branch', isHead: name === currentBranchName })
         }
       }
     } else if (!remoteBranches.length) {
+      // QUESTION should local branches be used if only remote branch is HEAD?
       const localBranches = await git.listBranches(repo)
-      if (localBranches.length) {
-        for (const name of localBranches) {
-          if (matcher([name], branchPatterns).length) refs.set(name, { name, qname: name, type: 'branch' })
-        }
+      for (const name of matcher(localBranches, branchPatterns)) {
+        refs.set(name, { name, qname: name, type: 'branch' })
       }
     }
   }
