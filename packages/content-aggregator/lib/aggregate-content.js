@@ -6,6 +6,7 @@ const { createHash } = require('crypto')
 const EventEmitter = require('events')
 const expandPath = require('@antora/expand-path-helper')
 const File = require('./file')
+const flattenDeep = require('./flatten-deep')
 const fs = require('fs-extra')
 const getCacheDir = require('cache-directory')
 const GitCredentialManagerStore = require('./git-credential-manager-store')
@@ -18,6 +19,7 @@ const ospath = require('path')
 const { posix: path } = ospath
 const posixify = ospath.sep === '\\' ? (p) => p.replace(/\\/g, '/') : undefined
 const promiseFinally = require('./promise-finally')
+const { fs: resolvePathGlobsFs, git: resolvePathGlobsGit } = require('./resolve-path-globs')
 const vfs = require('vinyl-fs')
 const yaml = require('js-yaml')
 
@@ -39,8 +41,8 @@ const EDIT_URL_TEMPLATE_VAR_RX = /\{(web_url|refname|path)\}/g
 const GIT_EXTENSION_RX = /(?:(?:(?:\.git)?\/)?\.git|\/)$/
 const GIT_URI_DETECTOR_RX = /:(?:\/\/|[^/\\])/
 const HOSTED_GIT_REPO_RX = /^(?:https?:\/\/|.+@)(git(?:hub|lab)\.com|bitbucket\.org|pagure\.io)[/:](.+?)(?:\.git)?$/
-const PERIPHERAL_SEPARATOR_RX = /^\/+|\/+$/g
 const SPACE_RX = / /g
+const SUPERFLUOUS_SEPARATORS_RX = /^\/+|\/+$|\/+(?=\/)/g
 const URL_AUTH_CLEANER_RX = /^(https?:\/\/)[^/@]*@/
 const URL_AUTH_EXTRACTOR_RX = /^(https?:\/\/)(?:([^/:@]+)?(?::([^/@]+)?)?@)?(.*)/
 
@@ -91,13 +93,13 @@ function aggregateContent (playbook) {
                 // NOTE if repository is managed (has a url), we can assume the remote name is origin
                 // TODO if the repo has no remotes, then remoteName should be undefined
                 const remoteName = repo.url ? 'origin' : source.remote || 'origin'
-                return collectComponentVersions(source, repo, remoteName, authStatus)
+                return collectFilesFromSource(source, repo, remoteName, authStatus)
               })
             )
           )
         )
       )
-        .then((accruedComponentVersions) => buildAggregate(accruedComponentVersions))
+        .then(buildAggregate)
         .catch((err) => {
           progress && progress.terminate()
           throw err
@@ -107,9 +109,8 @@ function aggregateContent (playbook) {
   )
 }
 
-function buildAggregate (componentVersions) {
-  return _(componentVersions)
-    .flattenDepth(3)
+function buildAggregate (componentVersionBuckets) {
+  return _(flattenDeep(componentVersionBuckets))
     .groupBy(({ name, version }) => version + '@' + name)
     .map((componentVersions, id) => {
       const component = _(componentVersions)
@@ -220,9 +221,9 @@ function extractCredentials (url) {
   }
 }
 
-function collectComponentVersions (source, repo, remoteName, authStatus) {
+function collectFilesFromSource (source, repo, remoteName, authStatus) {
   return selectReferences(source, repo, remoteName).then((refs) =>
-    Promise.all(refs.map((ref) => populateComponentVersion(source, repo, remoteName, authStatus, ref)))
+    Promise.all(refs.map((ref) => collectFilesFromReference(source, repo, remoteName, authStatus, ref)))
   )
 }
 
@@ -316,40 +317,53 @@ function getCurrentBranchName (repo, remote) {
   return refPromise.then((ref) => (ref.startsWith('refs/') ? ref.replace(ABBREVIATE_REF_RX, '') : undefined))
 }
 
-async function populateComponentVersion (source, repo, remoteName, authStatus, ref) {
+async function collectFilesFromReference (source, repo, remoteName, authStatus, ref) {
   const url = repo.url
+  const displayUrl = url || repo.dir
   const originUrl = url || (await resolveRemoteUrl(repo, remoteName))
+  const editUrl = source.editUrl
   // Q: should worktreePath be passed in to this function?
   const worktreePath = ref.isHead && !(url || repo.noCheckout) ? repo.dir : undefined
-  let startPaths
   if ('startPaths' in source) {
+    let startPaths
     startPaths = Array.isArray((startPaths = source.startPaths))
-      ? startPaths.map((startPath) => startPath == null ? '' : String(startPath))
-      : (startPaths == null ? [''] : String(startPaths).split(VENTILATED_CSV_RX))
-  } else if ((startPaths = source.startPath) == null) {
-    startPaths = ['']
-  } else {
-    startPaths = [String(startPaths)]
-  }
-  return Promise.all(startPaths.map(async (startPath) => {
-    if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
-    // Q: should worktreePath be passed in to this function?
-    const worktreePath = ref.isHead && !(url || repo.noCheckout) ? repo.dir : undefined
-    let files
-    let componentVersion
-    try {
-      files = worktreePath
-        ? await readFilesFromWorktree(worktreePath, startPath)
-        : await readFilesFromGitTree(repo, ref, startPath)
-      componentVersion = loadComponentDescriptor(files, startPath)
-    } catch (err) {
-      err.message += ` in ${url || repo.dir} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`
-      throw err
+      ? startPaths.map(coerceToString).map(cleanStartPath)
+      : (startPaths = coerceToString(startPaths)) && startPaths.split(VENTILATED_CSV_RX).map(cleanStartPath)
+    startPaths = await (worktreePath
+      ? resolvePathGlobsFs(worktreePath, startPaths)
+      : git
+        .resolveRef(Object.assign({ ref: ref.qname }, repo))
+        .then((oid) => resolvePathGlobsGit(repo, oid, startPaths)))
+    if (!startPaths.length) {
+      throw new Error(`no start paths found in ${displayUrl} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`)
     }
-    const origin = computeOrigin(originUrl, authStatus, ref.name, ref.type, startPath, worktreePath, source.editUrl)
-    componentVersion.files = files.map((file) => assignFileProperties(file, origin))
-    return componentVersion
-  }))
+    return Promise.all(
+      startPaths.map((startPath) =>
+        collectFilesFromStartPath(startPath, repo, authStatus, ref, worktreePath, originUrl, editUrl)
+      )
+    )
+  } else {
+    const startPath = cleanStartPath(coerceToString(source.startPath))
+    return collectFilesFromStartPath(startPath, repo, authStatus, ref, worktreePath, originUrl, editUrl)
+  }
+}
+
+function collectFilesFromStartPath (startPath, repo, authStatus, ref, worktreePath, originUrl, editUrl) {
+  const { name: refnameShort, qname: refname, type: reftype } = ref
+  return (worktreePath
+    ? readFilesFromWorktree(worktreePath, startPath)
+    : readFilesFromGitTree(repo, refname, startPath)
+  )
+    .then((files) => {
+      const componentVersion = loadComponentDescriptor(files, startPath)
+      const origin = computeOrigin(originUrl, authStatus, refnameShort, reftype, startPath, worktreePath, editUrl)
+      componentVersion.files = files.map((file) => assignFileProperties(file, origin))
+      return componentVersion
+    })
+    .catch((err) => {
+      err.message += ` in ${repo.url || repo.dir} [ref: ${refname}${worktreePath ? ' <worktree>' : ''}]`
+      throw err
+    })
 }
 
 function readFilesFromWorktree (worktreePath, startPath) {
@@ -406,7 +420,7 @@ function readFilesFromGitTree (repo, ref, startPath) {
   return getGitTree(repo, ref, startPath).then((tree) => srcGitTree(repo, tree))
 }
 
-function getGitTree (repo, { qname: ref }, startPath) {
+function getGitTree (repo, ref, startPath) {
   // NOTE sometimes isomorphic-git takes two attempts resolve an annotated tag; perhaps something to address upstream
   return git
     .resolveRef(Object.assign({ ref }, repo))
@@ -771,6 +785,14 @@ function transformGitCloneError (err, displayUrl) {
   const wrappedErr = new Error(msg + ' (url: ' + displayUrl + ')')
   wrappedErr.stack += '\nCaused by: ' + (err.stack || 'unknown')
   return wrappedErr
+}
+
+function coerceToString (value) {
+  return value == null ? '' : String(value)
+}
+
+function cleanStartPath (value) {
+  return value && ~value.indexOf('/') ? value.replace(SUPERFLUOUS_SEPARATORS_RX, '') : value
 }
 
 module.exports = aggregateContent
