@@ -318,6 +318,27 @@ describe('aggregateContent()', function () {
       })
     })
 
+    describe('should coerce value of start path to string', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc = {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v1.2.3',
+          startPath: '10',
+        }
+        let componentDescEntry
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, async () => {
+          componentDescEntry = repoBuilder.findEntry('10/antora.yml')
+        })
+        expect(componentDescEntry).to.exist()
+        expect(repoBuilder.startPath).to.equal('10')
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 10 })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include(componentDesc)
+      })
+    })
+
     describe('should discover different components across multiple repositories', () => {
       testAll(async (repoBuilderA, repoBuilderB) => {
         const componentDescA = { name: 'the-component', title: 'The Component', version: 'v1.2' }

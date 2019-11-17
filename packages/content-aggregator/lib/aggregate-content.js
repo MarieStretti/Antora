@@ -317,8 +317,10 @@ function getCurrentBranchName (repo, remote) {
 async function populateComponentVersion (source, repo, remoteName, authStatus, ref) {
   const url = repo.url
   const originUrl = url || (await resolveRemoteUrl(repo, remoteName))
-  let startPath = source.startPath || ''
-  if (startPath && ~startPath.indexOf('/')) startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
+  let startPath = source.startPath
+  if ((startPath = startPath == null ? '' : String(startPath)) && ~startPath.indexOf('/')) {
+    startPath = startPath.replace(PERIPHERAL_SEPARATOR_RX, '')
+  }
   // Q: should worktreePath be passed in to this function?
   const worktreePath = ref.isHead && !(url || repo.noCheckout) ? repo.dir : undefined
   let files
