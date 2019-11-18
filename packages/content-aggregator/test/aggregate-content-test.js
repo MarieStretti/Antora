@@ -270,14 +270,14 @@ describe('aggregateContent()', function () {
           title: 'The Component',
           version: 'v1.2.3',
           nav: ['nav-one.adoc', 'nav-two.adoc'],
-          startPath: 'docs',
+          startPath: 'path/to/docs',
         }
         let componentDescEntry
-        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, async () => {
-          componentDescEntry = repoBuilder.findEntry('docs/antora.yml')
-        })
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder.findEntry('path/to/docs/antora.yml').then((entry) => (componentDescEntry = entry))
+        )
         expect(componentDescEntry).to.exist()
-        expect(repoBuilder.startPath).to.equal('docs')
+        expect(repoBuilder.startPath).to.equal('path/to/docs')
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
@@ -327,9 +327,9 @@ describe('aggregateContent()', function () {
           startPath: '10',
         }
         let componentDescEntry
-        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, async () => {
-          componentDescEntry = repoBuilder.findEntry('10/antora.yml')
-        })
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder.findEntry('10/antora.yml').then((entry) => (componentDescEntry = entry))
+        )
         expect(componentDescEntry).to.exist()
         expect(repoBuilder.startPath).to.equal('10')
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 10 })
@@ -533,7 +533,7 @@ describe('aggregateContent()', function () {
     describe('should select a branch that matches a numeric value', () => {
       testAll(async (repoBuilder) => {
         const componentName = 'the-component'
-        await initRepoWithBranches(repoBuilder, componentName, async () =>
+        await initRepoWithBranches(repoBuilder, componentName, () =>
           repoBuilder
             .checkoutBranch('5.6')
             .then(() => repoBuilder.addComponentDescriptor({ name: componentName, version: '5.6' }))
@@ -548,7 +548,7 @@ describe('aggregateContent()', function () {
     describe('should not inadvertently select a branch named push', () => {
       testAll(async (repoBuilder) => {
         const componentName = 'the-component'
-        await initRepoWithBranches(repoBuilder, componentName, async () =>
+        await initRepoWithBranches(repoBuilder, componentName, () =>
           repoBuilder
             .checkoutBranch('push')
             .then(() => repoBuilder.addComponentDescriptor({ name: componentName, version: 'push' }))
@@ -618,7 +618,7 @@ describe('aggregateContent()', function () {
 
     describe('should only use branches when only branches are specified', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () => repoBuilder.createTag('v1.0.0', 'v1.0'))
+        await initRepoWithBranches(repoBuilder, 'the-component', () => repoBuilder.createTag('v1.0.0', 'v1.0'))
         playbookSpec.content.sources.push({ url: repoBuilder.url, branches: 'v*' })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(3)
@@ -757,7 +757,7 @@ describe('aggregateContent()', function () {
 
     describe('should filter tags using wildcard', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -774,7 +774,7 @@ describe('aggregateContent()', function () {
 
     describe('should filter tags using exact name', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -790,7 +790,7 @@ describe('aggregateContent()', function () {
 
     describe('should select a tag that matches a numeric value', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () => repoBuilder.createTag('1', 'v1.0'))
+        await initRepoWithBranches(repoBuilder, 'the-component', () => repoBuilder.createTag('1', 'v1.0'))
         playbookSpec.content.branches = undefined
         playbookSpec.content.sources.push({ url: repoBuilder.url, tags: 1 })
         const aggregate = await aggregateContent(playbookSpec)
@@ -801,7 +801,7 @@ describe('aggregateContent()', function () {
 
     describe('should filter tags using multiple filters passed as array', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('1', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -818,7 +818,7 @@ describe('aggregateContent()', function () {
 
     describe('should filter tags using multiple filters passed as CSV string', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -835,7 +835,7 @@ describe('aggregateContent()', function () {
 
     describe('should exclude all refs if filter matches no tags', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -850,7 +850,7 @@ describe('aggregateContent()', function () {
 
     describe('should filter tags using default filter as string', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -867,7 +867,7 @@ describe('aggregateContent()', function () {
 
     describe('should filter tags using default filter as array', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -885,7 +885,7 @@ describe('aggregateContent()', function () {
 
     describe('should exclude all refs if filter on content source is undefined', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -901,7 +901,7 @@ describe('aggregateContent()', function () {
 
     describe('should filter both branches and tags', () => {
       testAll(async (repoBuilder) => {
-        await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+        await initRepoWithBranches(repoBuilder, 'the-component', () =>
           repoBuilder
             .createTag('v1.0.0', 'v1.0')
             .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
@@ -918,7 +918,7 @@ describe('aggregateContent()', function () {
 
     it('should select tags even when branches filter is HEAD', async () => {
       const repoBuilder = new RepositoryBuilder(CONTENT_REPOS_DIR, FIXTURES_DIR)
-      await initRepoWithBranches(repoBuilder, 'the-component', async () =>
+      await initRepoWithBranches(repoBuilder, 'the-component', () =>
         repoBuilder
           .createTag('v1.0.0', 'v1.0')
           .then(() => repoBuilder.createTag('v2.0.0', 'v2.0'))
