@@ -1,0 +1,91 @@
+= Component-Scoped Attributes
+
+Built-in AsciiDoc attributes, user-defined AsciiDoc attributes, and `page-` attributes can be declared in a component descriptor file ([.path]_antora.yml_).
+These attributes are applied to all of a component-version's pages according to the attribute precedence rules.
+Attributes declared in a component descriptor file are referred to as [.term]*component-scoped attributes*.
+
+== Set and unset attributes in antora.yml
+
+Component-scoped attributes are set or unset in the component descriptor file [.path]_antora.yml_.
+Each attribute is entered on its own line under the `asciidoc` and `attributes` category keys.
+
+.Declaring component-scoped attributes in antora.yml for version-name@component-name
+[source,yaml]
+----
+name: light
+title: Data Light
+version: '2.3'
+asciidoc: # <1>
+  attributes: # <2>
+    page-product-desc: Analyze your data at the speed of light # <3>
+    page-level: Advanced # <4>
+    page-category: Statistics; Cloud Infrastructure # <5>
+    experimental: '' # <6>
+    listing-caption: false # <7>
+nav:
+- modules/ROOT/nav.adoc
+----
+<1> Enter the `asciidoc` key, followed by a colon (`:`), and press kbd:[Enter].
+<2> The `attributes` key is nested under the `asciidoc` key.
+Enter `attributes`, followed by a colon (`:`), and press kbd:[Enter].
+<3> Attributes are nested under the `attributes` key.
+To declare a user-defined attribute that is available to the site's UI, type `page-` and the name of your component-scoped attribute, followed by a colon (`:`).
+Press kbd:[space] once after the colon, then enter the value of the attribute.
+<4> This attribute is hard set.
+See the <<assign-precedence,next section>> to learn more about hard and soft setting rules.
+<5> When an attribute has multiple, independent values, separate each value with a semicolon (`;`).
+<6> To assign the default value, or in the case of a boolean attribute, the _empty string_ value to a built-in AsciiDoc attribute, type two consecutive single quotation marks (`''`) in the value field.
+<7> The value `false` soft unsets this attribute.
+See the <<assign-precedence,next section>> to learn more about hard and soft unsetting rules.
+
+TIP: Antora declares `page-` attributes from most of the keys in the component descriptor file.
+For instance, Antora automatically sets the built-in attribute `page-component-title` and assigns it the value specified by the `title` key.
+Check out the xref:page-and-site-attributes.adoc[Built-in page- attributes] for a complete list of the `page-` attributes Antora automatically declares.
+
+[#assign-precedence]
+== Assign precedence to component-scoped attributes
+
+When component-scoped attributes are declared, you can control whether a page can reset or unset each attribute on a case by case basis.
+Pages can't override hard set and unset component-scoped attributes, but they can override soft set and unset attributes.
+
+The following example shows how component-scoped attributes are assigned hard and soft precedence.
+
+.Assigning hard and soft precedence to attributes in antora.yml for version-name@component-name
+[source,yaml]
+----
+asciidoc:
+  attributes:
+    page-category: Database # <1>
+    example-caption: Scenario@ # <2>
+    figure-caption: ~ # <3>
+    table-caption: false # <4>
+----
+<1> To hard set an attribute, simply enter its value.
+Hard set component-scoped attributes can't be reassigned or unset by a page.
+<2> To soft set an attribute, attach the `@` modifier to the end of its value.
+A page can override soft set component-scoped attributes.
+<3> To hard unset an attribute, assign it the tilde symbol (`~`).
+Hard unset component-scoped attributes can't be set by a page.
+<4> To soft unset an attribute, assign the value `false`.
+A page can override soft unset component-scoped attributes.
+
+The example assumes that the declared attributes weren't previously hard set or unset in the site's playbook, so the following precedence rules are applied to the attributes defined in the component descriptor:
+
+[#component-rules]
+.*Component-scoped attribute precedence rules*
+. Hard setting an attribute to a string value with no trailing `@` modifier (e.g., `value`) prevents the page from changing (setting or unsetting) the attribute.
+. Soft setting an attribute to a string value with a trailing `@` modifier (e.g., `value@`) allows the page to change (set or unset) the attribute.
+. Hard unsetting an attribute using the tilde symbol (`~`) prevents the page from setting the attribute.
+. Soft unsetting an attribute using a `false` value allows the page to set the attribute.
+
+Where things get more complicated is when both site-scoped and component-scoped attributes are defined.
+Antora takes the precedence assigned to attributes in the site's playbook into account first.
+A component-scoped attribute can override a site-scoped attribute *only if the site-scoped attribute is soft set or unset*.
+
+.*Site-scoped and component-scoped attribute precedence rules*
+. Hard setting a site-scoped attribute to a string value with no trailing `@` modifier prevents the component descriptor from changing (setting or unsetting) the attribute.
+. Soft setting a site-scoped attribute to a string value with a trailing `@` modifier allows the component descriptor to change (set or unset) the attribute.
+. Hard unsetting a site-scoped attribute using the tilde symbol (`~`) prevents the component descriptor from setting the attribute.
+. Soft unsetting a site-scoped attribute using a `false` value allows the component descriptor to set the attribute.
+
+If an attribute in the component descriptor can be set or unset, then the <<component-rules,first set of rules>> kick in for that attribute as it relates to the page.

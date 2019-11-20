@@ -5,220 +5,33 @@
 :url-gitlab: https://gitlab.com
 :url-git-antora: {url-gitlab}/antora/antora
 :url-issues: {url-git-antora}/issues
-:url-milestone-2-2-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.2.0
+:url-milestone-2-3-0: {url-issues}?scope=all&state=closed&label_name%5B%5D=%5BVersion%5D%202.3.0
 :url-mr: {url-git-antora}/merge_requests
 
-= Antora 2.2.0
+= Antora 2.3.0
 
-_**Release date:** 2019.11.02 | *Issue label:* {url-milestone-2-2-0}[2.2.0^]_
+_**Release date:** 2019.11.xx | *Issue label:* {url-milestone-2-3-0}[2.3.0^]_
 
 == Resolved issues
 
 === Added
 
-Issue {url-issues}/219[#219^]:: Generate a robots.txt file if the `site.robots` key is set in the playbook.
-Issue {url-issues}/292[#292^]:: Allow edit URL to be configured from pattern or disabled in playbook using the `edit_url` key on the content category or specific content source.
-Additionally, store the edit URL and file URI independently so both values are accessible via the UI model.
-Issue {url-issues}/374[#374^]:: Prune stale branches and tags when fetching repository updates.
-Issue {url-issues}/412[#412^]:: Add support for `lines` attribute on include directive, which can be used to filter lines by line numbers or line number ranges.
-Issue {url-issues}/497[#497^]:: Preserve stack from original clone error thrown by git client.
+//Issue {url-issues}/251[#251^]:: Recognize AsciiDoc attributes defined in the component (version) descriptor.
 
-=== Changed
+//=== Changed
 
-Issue {url-issues}/476[#476^]:: Upgrade git client (isomorphic-git); new index cache may improve performance.
-Issue {url-issues}/487[#487^]:: Make `page-partial` attribute obsolete.
-Issue {url-issues}/505[#505^]:: Be more strict about detecting semantic component versions when sorting.
-Issue {url-issues}/510[#510^]:: The `tags` and `branches` keys override the inherited (global) value even if the values are falsy.
-Issue {url-issues}/513[#513^]:: Clean embedded auth from remote URL resolved from git config of local repository.
+== Declare attributes in antora.yml
 
-== Customizable edit URL
+See xref:page:component-scoped-attributes.adoc[Component-scoped attributes] to learn more.
 
-By default, Antora automatically computes the edit URL for all files it takes from a remote repository or a local repository connected to a remote repository, if possible.
-"`If possible`" means this works if the remote repository is located on the primary GitHub, GitLab, Bitbucket, or Pagure hosted services.
-What was lacking in previous versions of Antora was support for other git hosts (e.g., on-prem GitLab) or to be able to customize or disable the value.
-If the automatic value of the edit URL doesn't work in your case, you can now customize it.
-
-You can use the `edit_url` key in the playbook to control the edit URL.
-This optional key can be set directly on the `content` category to apply to all content sources or on an individual content source entry to override that inherited value.
-
-By default, the value of the `edit_url` is `true`.
-This value tells Antora to use the existing, built-in behavior of computing the edit URL automatically.
-
-If the value of the `edit_url` is a string, it's interpreted as a pattern.
-That pattern supports the following placeholders, fulfilled by the file's origin information:
-
-\{web_url}:: The web URL of the git repository from which the file was taken.
-This value is derived automatically from the repository URL (by converting the protocol to `https` and dropping the `.git` extension, if present).
-\{refname}:: The name of the reference (i.e., branch or tag) in the git repository from which the file was taken.
-\{path}:: The path of the file from the root of the git repository (regardless of whether the content source defines a `start_path`).
-
-For example, to configure the edit URL to point to the view page of a file on GitHub, you'd use the following entry:
-
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://github.com/asciidoctor/asciidoctor.git
-    edit_url: '{web_url}/blob/{refname}/{path}'
-----
-
-To disable the edit URL instead, set the value to tilde (`~`) or `false`.
-
-[source,yaml]
-----
-content:
-  edit_url: false
-----
-
-or
-
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://github.com/asciidoctor/asciidoctor.git
-    edit_url: false
-----
-
-As part of this change, the edit URL no longer points to the file URI when a file is taken from the worktree (local file tree).
-Instead, the file URI is stored separately.
-Both values are passed to the UI model as `editUrl` and `fileUri`, respectively.
-This gives the UI template control over whether to use the file URI when available, or whether to ignore it and use the edit URL instead.
-
-The default UI has been updated to use the value of the `fileUri` for the edit link if set _and_ the `CI` environment variable is not set (i.e., `(and page.fileUri (not env.CI))`).
-Otherwise, it falls back to using the `editUrl` if the repository is public (i.e., `(and page.editUrl (not page.origin.private))`).
-This update allows the default UI to work with Antora 2.2 as well as earlier versions.
-
-To find out all the details about how this feature works, please refer to the xref:playbook:configure-edit-url.adoc[edit URL configuration page] in the documentation.
-
-== robots.txt generation
-
-When you put a static site online, you want to provide a hint to search engines about where to crawl when indexing the site.
-Sometimes, you want to give them free rein.
-Other times, you want to tell them to back off entirely.
-Or, you may want to restrict access to certain portions of the site.
-That's the role of the https://en.wikipedia.org/wiki/Robots_exclusion_standard[robots.txt file], found at the root of the site.
-
-You can now use the `site.robots` key in the playbook file to instruct Antora to generate the [.path]_robots.txt_ file.
-
-If you want to grant full access, set the value to `allow`:
-
-[source,yaml]
-----
-site:
-  robots: allow
-----
-
-If you want to forbid access, set the value to `disallow`:
-
-[source,yaml]
-----
-site:
-  robots: disallow
-----
-
-Any other value will be used as the contents of the [.path]_robots.txt_ file.
-For more details, see xref:playbook:configure-site.adoc#configure-robots[configuring the robots.txt file].
-
-== All pages can be included by default
-
-Previously, to include a page (i.e., an AsciiDoc file inside the pages directory), it was necessary to mark that page as a partial.
-You'd mark a page as a partial by declaring the `page-partial` attribute in the document header.
-As of this release, you can use any page in the include directive by default.
-In other words, *you no longer have to worry about marking individual pages as partials*.
-(Under the covers, Antora automatically sets the `page-partial` attribute globally).
-
-If you want to restore the previous behavior, add the following configuration to your playbook file:
-
-[source,yaml]
-----
-asciidoc:
-  attributes:
-    page-partial: false
-----
-
-If you make this change, you'll again need to mark any page you want to include using the `page-partial`.
-You may decide to revert to the previous behavior as an optimization, since it uses slightly less memory.
-You can find more details about this setting in the xref:asciidoc:include-page.adoc#page-partial[documentation for the page-partial attribute].
-
-== Filter includes by line numbers
-
-In addition to filtering the lines of an include file by named tags, you can now filter lines by line numbers.
-This AsciiDoc feature has long been available in Asciidoctor, but was not enabled in Antora.
-
-Line numbers are specified by the value of the `lines` attribute on the include directive.
-Line numbers, which start at 1, can be identified as individual entries or as a range.
-Multiple entries can be separated either by semi-colons or commas.
-
-For example, here's how you'd select the first line of this page:
-
-[source,asciidoc]
-----
-\include::./whats-new.adoc[lines=1]
-----
-
-Here's how you'd select lines 2 through 10:
-
-[source,asciidoc]
-----
-\include::./whats-new.adoc[lines=2..10]
-----
-
-And here's how you'd select the first line, and all the remaining lines starting at line 10:
-
-[source,asciidoc]
-----
-\include::./whats-new.adoc[lines=1;10..]
-----
-
-For more information about the `lines` attribute on the include directive, refer to the https://asciidoctor.org/docs/user-manual/#by-line-ranges[include by line ranges] section in the Asciidoctor user manual.
-
-== Prune references
-
-When you pass the `--fetch` flag to the `antora` command or set the `runtime.fetch` key in the playbook file to true, Antora fetches updates from all the remote git repositories.
-However, it wasn't removing references (branches and tags) that had been deleted from the remote repository.
-Antora would still discover these references due to the stale cache.
-In addition to publishing content that was supposed to be removed, Antora could also fail if it found the same file in two different references (the pesky duplicate nav or page errors).
-
-Now, Antora does a complete sync.
-When Antora reaches out to the remote repositories for updates, it will remove any references in the cache that have been removed from the remote repository.
-There's nothing you need to do to enable this feature.
-It's automatic.
-
-== Disable tags or branches
-
-To disable either tags or branches for a content source entry, you used to have to set the value to an empty array:
-
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://git.example.org/org/repo.git
-    branches: []
-----
-
-Now you can use the value tilde (`~`), which is short for `null` (aka nothing).
-
-[source,yaml]
-----
-content:
-  sources:
-  - url: https://git.example.org/org/repo.git
-    branches: ~
-----
-
-If the `tags` or `branches` key is present on a content source entry, that value takes precedence, regardless of what the value is.
-
-[#thank-you-2-2-0]
+[#thank-you-2-3-0]
 == Thank you!
 
 Most important of all, a huge *thank you!* to all the folks who helped make Antora even better.
 
 We want to call out the following people for making contributions to this release:
 
-David Jencks ({url-gitlab}/djencks[@djencks^]):: For implementing the [.path]_robots.txt_ generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
-
-Imran Iqbal ({url-gitlab}/myii[@myii^]):: Update site navigation to place "`Navigation Content & Link Formatting`" at the correct hierarchical level.
+//David Jencks ({url-gitlab}/djencks[@djencks^]):: For implementing the [.path]_robots.txt_ generation {url-issues}/219[#219^], for helping to get to the bottom of {url-issues}/497[#497^] and come up with a solution, and for helping to improve the documentation.
 
 [#deprecation]
 == Scheduled deprecations for Antora 3.0
