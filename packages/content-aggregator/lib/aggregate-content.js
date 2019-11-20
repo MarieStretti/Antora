@@ -421,22 +421,17 @@ function readFilesFromGitTree (repo, ref, startPath) {
 }
 
 function getGitTree (repo, ref, startPath) {
-  // NOTE sometimes isomorphic-git takes two attempts resolve an annotated tag; perhaps something to address upstream
-  return git
-    .resolveRef(Object.assign({ ref }, repo))
-    .then((oid) => git.readObject(Object.assign({ oid }, repo)))
-    .then((entry) => (entry.type === 'tag' ? git.readObject(Object.assign({ oid: entry.object.object }, repo)) : entry))
-    .then(({ object: commit }) =>
-      git
-        .readObject(Object.assign({ oid: commit.tree, filepath: startPath }, repo))
-        .catch(() => {
-          throw new Error(`the start path '${startPath}' does not exist`)
-        })
-        .then((entry) => {
-          if (entry.type !== 'tree') throw new Error(`the start path '${startPath}' is not a directory`)
-          return entry.object
-        })
-    )
+  return git.resolveRef(Object.assign({ ref }, repo)).then((oid) =>
+    git
+      .readObject(Object.assign({ oid, filepath: startPath }, repo))
+      .catch(() => {
+        throw new Error(`the start path '${startPath}' does not exist`)
+      })
+      .then(({ type, object }) => {
+        if (type !== 'tree') throw new Error(`the start path '${startPath}' is not a directory`)
+        return object
+      })
+  )
 }
 
 function srcGitTree (repo, tree) {
