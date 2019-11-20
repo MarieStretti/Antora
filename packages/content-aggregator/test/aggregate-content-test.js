@@ -652,8 +652,8 @@ describe('aggregateContent()', function () {
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'does-not-exist/{foo,bar*}' })
         const expectedMessage = new RegExp(
-          `^the start path 'does-not-exist/(foo|bar\\*)' does not exist in ${repoBuilder.url} [ref: ${ref}]$`.replace(
-            /[[\].]/g,
+          `^the start path 'does-not-exist/(foo|bar*)' does not exist in ${repoBuilder.url} [ref: ${ref}]$`.replace(
+            /[[\].*\\]/g,
             '\\$&'
           )
         )
