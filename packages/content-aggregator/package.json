@@ -18,6 +18,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@antora/expand-path-helper": "~1.0",
+    "braces": "~3.0",
     "cache-directory": "~2.0",
     "camelcase-keys": "~6.1",
     "fs-extra": "~8.1",
@@ -27,6 +28,7 @@
     "matcher": "~2.0",
     "mime-types": "~2.1",
     "multi-progress": "~2.0",
+    "picomatch": "~2.1",
     "through2": "~3.0",
     "vinyl": "~2.2",
     "vinyl-fs": "~3.0"

@@ -9,6 +9,8 @@ This project utilizes semantic versioning.
 
 === Added
 
+* *content-aggregator*: Allow multiple start paths to be specified per content source using the `start_paths` key (#495)
+* *content-aggregator*: Allow values of `start_paths` key on content source to be scan+filter glob (wildcard and/or brace) patterns (#495)
 * *content-classifier*: Recognize AsciiDoc attributes defined in the component (version) descriptor (#251)
 * *content-classifier*: Store the component version-scoped AsciiDoc configuration on the `asciidocConfig` property of the component version instance (#251)
 * *content-classifier*: Add the site-wide AsciiDoc config as the optional third argument of the classifyContent function; compute from playbook if absent (#251)
@@ -18,6 +20,7 @@ This project utilizes semantic versioning.
 === Changed
 
 * *content-aggregator*: Apply camelCase transformation to keys in the component (version) descriptor, excluding the `asciidoc` key (#251)
+* *content-aggregator*: Condense repeating slashes in start path value(s) (#495)
 * *ui-loader*: Preserve stack from got (HTTP client) error when downloading UI (#516)
 * *ui-loader*: Report clearer error when local or cached UI bundle is not valid or cannot otherwise be read (#517)
 * *site-generator-default*: Pass the site-wide AsciiDoc config to the classifyContent function (#251)

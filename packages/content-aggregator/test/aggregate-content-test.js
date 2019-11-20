@@ -281,32 +281,314 @@ describe('aggregateContent()', function () {
       })
     })
 
-    describe('should read properties from component descriptor located at specified start path', () => {
+    describe('should read component descriptor located at specified start path', () => {
       testAll(async (repoBuilder) => {
+        const startPath = 'path/to/docs'
         const componentDesc = {
           name: 'the-component',
-          title: 'The Component',
-          version: 'v1.2.3',
-          nav: ['nav-one.adoc', 'nav-two.adoc'],
-          startPath: 'path/to/docs',
+          title: 'Component Title',
+          version: '1.0',
+          nav: ['nav-start.adoc', 'nav-end.adoc'],
+          startPath,
         }
         let componentDescEntry
         await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
-          repoBuilder.findEntry('path/to/docs/antora.yml').then((entry) => (componentDescEntry = entry))
+          repoBuilder.findEntry(startPath + '/antora.yml').then((entry) => (componentDescEntry = entry))
         )
         expect(componentDescEntry).to.exist()
-        expect(repoBuilder.startPath).to.equal('path/to/docs')
-        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: repoBuilder.startPath })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.deep.include(componentDesc)
       })
     })
 
-    describe('should throw if start path is not found at reference', () => {
+    describe('should ignore leading, trailing, and repeating slashes in start path value', () => {
+      testAll(async (repoBuilder) => {
+        const startPath = 'path/to/docs'
+        const mangledStartPath = '/path//to/docs/'
+        const componentDesc = { name: 'the-component', title: 'Component Title', version: '1.0', startPath }
+        let componentDescEntry
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder.findEntry(startPath + '/antora.yml').then((entry) => (componentDescEntry = entry))
+        )
+        expect(componentDescEntry).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: mangledStartPath })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include(componentDesc)
+      })
+    })
+
+    describe('should read component descriptor located at exact start paths', () => {
+      testAll(async (repoBuilder) => {
+        const startPath = 'path/to/docs'
+        const componentDesc = {
+          name: 'the-component',
+          title: 'Component Title',
+          version: '1.0',
+          nav: ['nav-start.adoc', 'nav-end.adoc'],
+          startPath,
+        }
+        let componentDescEntry
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder.findEntry(startPath + '/antora.yml').then((entry) => (componentDescEntry = entry))
+        )
+        expect(componentDescEntry).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: [startPath] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include(componentDesc)
+      })
+    })
+
+    describe('should ignore leading, trailing, and repeating slashes in start paths', () => {
+      testAll(async (repoBuilder) => {
+        const startPath = 'path/to/docs'
+        const mangledStartPath = '/path//to/docs/'
+        const componentDesc = { name: 'the-component', title: 'Component Title', version: '1.0', startPath }
+        let componentDescEntry
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder.findEntry(startPath + '/antora.yml').then((entry) => (componentDescEntry = entry))
+        )
+        expect(componentDescEntry).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: [mangledStartPath] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include(componentDesc)
+      })
+    })
+
+    describe('should resolve start path from wildcard pattern', () => {
+      testAll(async (repoBuilder) => {
+        const startPath = 'docs'
+        const componentDesc = { name: 'the-component', title: 'Component Title', version: '1.0', startPath }
+        let componentDescEntry
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder.findEntry(startPath + '/antora.yml').then((entry) => (componentDescEntry = entry))
+        )
+        expect(componentDescEntry).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'doc*' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include(componentDesc)
+      })
+    })
+
+    describe('should read component descriptors located at start paths specified as CSV string', () => {
+      testAll(async (repoBuilder) => {
+        const startPath1 = 'docs'
+        const startPath2 = 'moredocs'
+        const componentDesc1 = { name: 'the-component', title: 'Component Title', version: '1', startPath: startPath1 }
+        const componentDesc2 = { name: 'the-component', title: 'Component Title', version: '2', startPath: startPath2 }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = await repoBuilder.findEntry(startPath1 + '/antora.yml')
+            componentDescEntry2 = await repoBuilder.findEntry(startPath2 + '/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: [startPath1, startPath2].join(', ') })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
+      })
+    })
+
+    describe('should read component descriptors located at start paths specified as array', () => {
+      testAll(async (repoBuilder) => {
+        const startPath1 = 'docs'
+        const startPath2 = 'more/docs'
+        const componentDesc1 = { name: 'the-component', title: 'Component Title', version: '1', startPath: startPath1 }
+        const componentDesc2 = { name: 'the-component', title: 'Component Title', version: '2', startPath: startPath2 }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = await repoBuilder.findEntry(startPath1 + '/antora.yml')
+            componentDescEntry2 = await repoBuilder.findEntry(startPath2 + '/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: [startPath1, startPath2] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
+      })
+    })
+
+    describe('should read component descriptors located at start paths specified as brace pattern', () => {
+      testAll(async (repoBuilder) => {
+        const startPath1 = 'docs'
+        const startPath2 = 'moredocs'
+        const componentDesc1 = { name: 'the-component', title: 'Component Title', version: '1', startPath: startPath1 }
+        const componentDesc2 = { name: 'the-component', title: 'Component Title', version: '2', startPath: startPath2 }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = await repoBuilder.findEntry(startPath1 + '/antora.yml')
+            componentDescEntry2 = await repoBuilder.findEntry(startPath2 + '/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: `{${startPath1},${startPath2}}` })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
+      })
+    })
+
+    describe('should read component descriptors at start paths specified as nested brace patterns', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc1 = { name: 'the-component', title: 'Component Title', version: '1', startPath: 'docs' }
+        const componentDesc2 = { name: 'the-component', title: 'Component Title', version: '2', startPath: 'docx' }
+        const componentDesc3 = { name: 'the-component', title: 'Component Title', version: '3', startPath: 'moredocs' }
+        let componentDescEntry1
+        let componentDescEntry2
+        let componentDescEntry3
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc3))
+          .then(async () => {
+            componentDescEntry1 = await repoBuilder.findEntry('docs/antora.yml')
+            componentDescEntry2 = await repoBuilder.findEntry('docx/antora.yml')
+            componentDescEntry3 = await repoBuilder.findEntry('moredocs/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        expect(componentDescEntry3).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: '{doc{s,x},moredocs}' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(3)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
+        expect(aggregate[2]).to.deep.include(componentDesc3)
+      })
+    })
+
+    describe('should resolve start paths that follow wildcard in start paths pattern', () => {
+      testAll(async (repoBuilder) => {
+        const startPath1 = 'path/to/docs'
+        const startPath2 = 'more/docs'
+        const componentDesc1 = { name: 'the-component', title: 'Component Title', version: '1', startPath: startPath1 }
+        const componentDesc2 = { name: 'the-component', title: 'Component Title', version: '2', startPath: startPath2 }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = await repoBuilder.findEntry(startPath1 + '/antora.yml')
+            componentDescEntry2 = await repoBuilder.findEntry(startPath2 + '/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        const startPaths = ['path/*/docs', '*/docs', '*/dne', '*/{does-,}not-exist']
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
+      })
+    })
+
+    describe('should not read component descriptors located at start paths that have been excluded', () => {
+      testAll(async (repoBuilder) => {
+        const startPath1 = 'docs'
+        const startPath2 = 'more/docs'
+        const componentDesc1 = { name: 'the-component', title: 'Component Title', version: '1', startPath: startPath1 }
+        const componentDesc2 = { name: 'the-component', title: 'Component Title', version: '2', startPath: startPath2 }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = await repoBuilder.findEntry(startPath1 + '/antora.yml')
+            componentDescEntry2 = await repoBuilder.findEntry(startPath2 + '/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: '*docs*, !more*' })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(1)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+      })
+    })
+
+    describe('should read component descriptors located at start paths in each reference', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc1v1 = { name: 'component-a', title: 'Component A', version: '1', startPath: 'docs' }
+        const componentDesc1v2 = { name: 'component-a', title: 'Component A', version: '2', startPath: 'docs' }
+        const componentDesc2v8 = { name: 'component-b', title: 'Component B', version: '8', startPath: 'moredocs' }
+        const componentDesc2v9 = { name: 'component-b', title: 'Component B', version: '9', startPath: 'moredocs' }
+        let componentDescEntry1v1
+        let componentDescEntry1v2
+        let componentDescEntry2v8
+        let componentDescEntry2v9
+        await repoBuilder
+          .init('hybrid')
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1v1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2v8))
+          .then(async () => {
+            componentDescEntry1v1 = await repoBuilder.findEntry('docs/antora.yml')
+            componentDescEntry2v8 = await repoBuilder.findEntry('moredocs/antora.yml')
+          })
+          .then(() => repoBuilder.checkoutBranch('other'))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1v2))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2v9))
+          .then(async () => {
+            componentDescEntry1v2 = await repoBuilder.findEntry('docs/antora.yml')
+            componentDescEntry2v9 = await repoBuilder.findEntry('moredocs/antora.yml')
+          })
+          .then(() => repoBuilder.close('master'))
+        expect(componentDescEntry1v1).to.exist()
+        expect(componentDescEntry1v2).to.exist()
+        expect(componentDescEntry2v8).to.exist()
+        expect(componentDescEntry2v9).to.exist()
+        playbookSpec.content.sources.push({
+          url: repoBuilder.url,
+          branches: ['master', 'other'],
+          startPaths: ['docs', 'moredocs'],
+        })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(4)
+        expect(aggregate[0]).to.deep.include(componentDesc1v1)
+        expect(aggregate[1]).to.deep.include(componentDesc1v2)
+        expect(aggregate[2]).to.deep.include(componentDesc2v8)
+        expect(aggregate[3]).to.deep.include(componentDesc2v9)
+      })
+    })
+
+    describe('should throw if start path is not found', () => {
       testAll(async (repoBuilder) => {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
-        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: 'v1.0' })
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'does-not-exist' })
         const expectedMessage = `the start path 'does-not-exist' does not exist in ${repoBuilder.url} [ref: ${ref}]`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
@@ -317,7 +599,7 @@ describe('aggregateContent()', function () {
     describe('should throw if start path at reference is not a directory', () => {
       testAll(async (repoBuilder) => {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
-        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: 'v1.0' })
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'antora.yml' })
         const expectedMessage = `the start path 'antora.yml' is not a directory in ${repoBuilder.url} [ref: ${ref}]`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
@@ -336,24 +618,88 @@ describe('aggregateContent()', function () {
       })
     })
 
-    describe('should coerce value of start path to string', () => {
+    describe('should throw if a start path specified in a brace pattern does not exist', () => {
       testAll(async (repoBuilder) => {
-        const componentDesc = {
-          name: 'the-component',
-          title: 'The Component',
-          version: 'v1.2.3',
-          startPath: '10',
-        }
+        const startPath = 'docs'
+        const componentDesc = { name: 'the-component', title: 'Component Title', version: '1.0', startPath }
         let componentDescEntry
         await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
-          repoBuilder.findEntry('10/antora.yml').then((entry) => (componentDescEntry = entry))
+          repoBuilder.findEntry(startPath + '/antora.yml').then((entry) => (componentDescEntry = entry))
         )
         expect(componentDescEntry).to.exist()
-        expect(repoBuilder.startPath).to.equal('10')
-        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 10 })
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: '{more,}docs' })
+        const expectedMessage = `the start path 'moredocs' does not exist in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
+    describe('should throw if no start paths are resolved', () => {
+      testAll(async (repoBuilder) => {
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'does-not-exist-*' })
+        const expectedMessage = `no start paths found in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
+    describe('should retain unresolved segments in start path if parent directory does not exist', () => {
+      testAll(async (repoBuilder) => {
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'does-not-exist/{foo,bar*}' })
+        const expectedMessage = new RegExp(
+          `^the start path 'does-not-exist/(foo|bar\\*)' does not exist in ${repoBuilder.url} [ref: ${ref}]$`.replace(
+            /[[\].]/g,
+            '\\$&'
+          )
+        )
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessage)
+      })
+    })
+
+    describe('should coerce value of start path to string', () => {
+      testAll(async (repoBuilder) => {
+        const startPath = '10'
+        const componentDesc = { name: 'the-component', title: 'Component', version: 'v10', startPath }
+        let componentDescEntry
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder.findEntry(startPath + '/antora.yml').then((entry) => (componentDescEntry = entry))
+        )
+        expect(componentDescEntry).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: parseInt(startPath) })
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.deep.include(componentDesc)
+      })
+    })
+
+    describe('should coerce value of each start path to string', () => {
+      testAll(async (repoBuilder) => {
+        const componentDesc1 = { name: 'the-component', title: 'Component Title', version: 'v10', startPath: '10' }
+        const componentDesc2 = { name: 'the-component', title: 'Component Title', version: 'v20', startPath: 'true' }
+        let componentDescEntry1
+        let componentDescEntry2
+        await repoBuilder
+          .init(componentDesc1.name)
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc1))
+          .then(() => repoBuilder.addComponentDescriptor(componentDesc2))
+          .then(async () => {
+            componentDescEntry1 = await repoBuilder.findEntry('10/antora.yml')
+            componentDescEntry2 = await repoBuilder.findEntry('true/antora.yml')
+          })
+          .then(() => repoBuilder.close())
+        expect(componentDescEntry1).to.exist()
+        expect(componentDescEntry2).to.exist()
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: [10, true] })
+        const aggregate = await aggregateContent(playbookSpec)
+        expect(aggregate).to.have.lengthOf(2)
+        expect(aggregate[0]).to.deep.include(componentDesc1)
+        expect(aggregate[1]).to.deep.include(componentDesc2)
       })
     })
 

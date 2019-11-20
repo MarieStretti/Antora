@@ -358,3 +358,25 @@ content:
 ----
 
 With `start_path` specified, Antora won't collect any files outside of \https://github.com/org/repo/packages/docs.
+
+=== Multiple start paths
+
+If one repository branch or tag contains multiple [.path]_antora.yml_ component descriptors, you can specify the multiple start paths for a single URL using the `start_paths` key.
+Allowable formats are a comma-separated list (with a required space after each comma) or an array (either on a single-line delimited by square brackets or on multiple lines delimited by a leading `-`.
+Here's an example showing all of these variations:
+
+[source,yaml]
+----
+content:
+  sources:
+  - url: https://github.com/org/repo1
+    start_paths: docs, more-docs
+  - url: https://github.com/org/repo2
+    start_paths: [docs, more-docs]
+  - url: https://github.com/org/repo3
+    start_paths:
+    - docs
+    - more-docs
+----
+
+If you specify multiple start paths along with multiple references (branches or tags), a component descriptor must exist at each start path for each reference.
