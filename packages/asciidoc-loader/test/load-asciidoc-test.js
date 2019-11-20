@@ -361,7 +361,7 @@ describe('loadAsciiDoc()', () => {
       }
       shoutBlockExtension.registered = 0
       shoutBlockExtension.register = (registry) => {
-        shoutBlockExtension.registered += 1
+        shoutBlockExtension.registered++
         registry.block('shout', shoutBlockExtension)
       }
       const config = { extensions: [shoutBlockExtension] }

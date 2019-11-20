@@ -2975,7 +2975,7 @@ describe('aggregateContent()', function () {
             next()
           } else {
             user((username, password) => {
-              credentialsRequestCount += 1
+              credentialsRequestCount++
               credentialsSent = { username, password }
               credentialsVerdict ? next(credentialsVerdict) : next()
             })

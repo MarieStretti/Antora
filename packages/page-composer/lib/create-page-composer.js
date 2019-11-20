@@ -247,7 +247,7 @@ function findNavItem (correlated, siblings, root = true, siblingIdx = 0, candida
       correlated.ancestors = ancestors
     }
   }
-  if ((siblingIdx += 1) < siblings.length) {
+  if (++siblingIdx < siblings.length) {
     correlated = findNavItem(correlated, siblings, root, siblingIdx)
     //if (correlated.current && (!correlated.seekNext || correlated.next)) return correlated
   } else if (root && !correlated.current) {
