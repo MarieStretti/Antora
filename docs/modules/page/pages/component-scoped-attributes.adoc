@@ -26,16 +26,16 @@ nav:
 - modules/ROOT/nav.adoc
 ----
 <1> Enter the `asciidoc` key, followed by a colon (`:`), and press kbd:[Enter].
-<2> Enter the `attributes` key, followed by a colon (`:`), and press kbd:[Enter].
-The `attributes` key is nested under the `asciidoc` key.
-<3> Attribute keys are nested under the `attributes` key.
+<2> The `attributes` key is nested under the `asciidoc` key.
+Enter `attributes`, followed by a colon (`:`), and press kbd:[Enter].
+<3> Attributes are nested under the `attributes` key.
 To declare a user-defined attribute that is available to the site's UI, type `page-` and the name of your component-scoped attribute, followed by a colon (`:`).
 Press kbd:[space] once after the colon, then enter the value of the attribute.
 <4> This attribute is hard set.
 See the <<assign-precedence,next section>> to learn more about hard and soft setting rules.
 <5> When an attribute has multiple, independent values, separate each value with a semicolon (`;`).
 <6> To assign the default value, or in the case of a boolean attribute, the _empty string_ value to a built-in AsciiDoc attribute, type two consecutive single quotation marks (`''`) in the value field.
-<7> This attribute is soft unset.
+<7> The value `false` soft unsets this attribute.
 See the <<assign-precedence,next section>> to learn more about hard and soft unsetting rules.
 
 TIP: Antora declares `page-` attributes from most of the keys in the component descriptor file.
@@ -85,7 +85,7 @@ A component-scoped attribute can override a site-scoped attribute *only if the s
 .*Site-scoped and component-scoped attribute precedence rules*
 . Hard setting a site-scoped attribute to a string value with no trailing `@` modifier prevents the component descriptor from changing (setting or unsetting) the attribute.
 . Soft setting a site-scoped attribute to a string value with a trailing `@` modifier allows the component descriptor to change (set or unset) the attribute.
-. Hard unsetting a site-wide attribute using the tilde symbol (`~`) prevents the component descriptor from setting the attribute.
-. Soft unsetting a site-wide attribute using a `false` value allows the component descriptor to set the attribute.
+. Hard unsetting a site-scoped attribute using the tilde symbol (`~`) prevents the component descriptor from setting the attribute.
+. Soft unsetting a site-scoped attribute using a `false` value allows the component descriptor to set the attribute.
 
 If an attribute in the component descriptor can be set or unset, then the <<component-rules,first set of rules>> kick in for that attribute as it relates to the page.
