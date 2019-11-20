@@ -2,92 +2,33 @@
 :keywords: AsciiDoc attrs, page header attributes
 // Filters
 :page-tags: playbook keys, AsciiDoc
-// URLs
-:url-adoc-manual: https://asciidoctor.org/docs/user-manual
-:url-attrs: {url-adoc-manual}/#builtin-attributes-table
 
 On this page, you'll learn:
 
-* [x] How to define global (site-wide) AsciiDoc document attributes in a playbook.
-* [x] How to override a global AsciiDoc document attribute from a page.
+* [x] Where to declare site-scoped AsciiDoc attributes and Asciidoctor extensions.
 * [x] How to register an Asciidoctor extension globally.
 * [x] How to register an Asciidoctor extension that's scoped to each page.
 * [x] How to preload modules into the Antora runtime.
 
 [#attrs]
-== Global document attributes
+== AsciiDoc attributes
 
-If you find yourself defining the same AsciiDoc document attributes over and over in every page, you can move these attributes to the playbook, where you only have to define them once.
-Antora then adds these attributes to every page it converts.
+Built-in AsciiDoc attributes, user-defined AsciiDoc attributes, and `page-` attributes can be declared in a site's playbook file and are referred to as [.term]*site-scoped attributes*.
+These attributes are nested under the `asciidoc` and `attributes` category keys in the playbook.
 
-You can define global (i.e., site-wide) AsciiDoc document attributes using the `attributes` key under the `asciidoc` category in the playbook.
-This key accepts a map of name-value pairs.
-The attribute can be one of the following:
-
-* A {url-attrs}[built-in AsciiDoc attribute^] you want to override (e.g., `sectnums`, `hide-uri-scheme`, `linkattrs`)
-* A custom attribute specific to your content (e.g., `product-name`)
-* An attribute that configures the behavior of a custom extension (e.g., `plantuml-server-url`)
-
-.Defining global AsciiDoc document attributes
+.Declaring site-scoped AsciiDoc attributes
 [source,yaml]
 ----
 asciidoc:
   attributes:
     hide-uri-scheme: ''
-    product-name: 'Instant Container Maker'
-    toc: ~
+    page-team: Coco B
+    table-caption: ~
 ----
 
-These attributes will be applied and available to every page in your site.
-You can yield the value of these attributes using the attribute reference syntax (e.g., `+{product-name}+`).
-
-CAUTION: Certain built-in attributes are not applicable in the Antora environment.
-These attributes include `data-uri`, `allow-uri-read`, `docinfo`, `linkcss`, `noheader`, `nofooter`, `webfonts`, and `outfilesuffix`.
-Assigning a value to these attributes either has no effect or may cause Antora to malfunction.
-Other attributes, such as `imagesdir`, are automatically set by Antora and cannot be overridden.
-
-=== Attribute value types
-
-There are three attribute value types in AsciiDoc: String, Number, and Boolean.
-
-If the attribute value is a _String_, we recommend enclosing the value in quotes just to be safe (e.g., `'Listing'`).
-(If you're using YAML for your playbook, and you are comfortable with the rules of the syntax, you may choose to drop the quotes when they aren't needed).
-
-If the attribute value is a _Number_, no quotes should be used around the value (e.g., `3`).
-
-If the attribute value is a _Boolean_, use an empty string (i.e., `''`) to set the attribute and a null value (i.e., `null` or `~`) to unset the value.
-
-You can also use a null value to unset any type of attribute (e.g., `table-caption: ~`).
-This is a good way to disable attributes that authors may use for local preview but should never be set in Antora (e.g., `toc: ~`).
-
-== Default attribute values
-
-Sometimes, you want to assign a default value to an attribute, but still allow a given page to override that value.
-By default, an attribute defined in the playbook overrides any assignment in the document (aka the page) itself.
-This behavior can be changed by appending the modifier `@`.
-
-If you add the `@` symbol at the end of an attribute value defined in the playbook, it lowers the precedence of the attribute assignment so the page may override the value.
-The `@` modifier is then stripped from the value.
-We refer to this technique as [.term]_soft setting_ an attribute.
-
-.Defining attributes that can be overridden by a page
-[source,yaml]
-----
-asciidoc:
-  attributes:
-    product-name: 'Instant Container Maker@'
-----
-
-Now, any page can override this attribute as follows:
-
-.Overriding a default global attribute in a page
-[source,asciidoc]
-----
-= Document Title
-:product-name: Explosive Container Maker
-----
-
-Unfortunately, it's not currently possible to soft unset an attribute.
+Site-scoped attributes are applied and available to all of a site's pages according to the xref:page:site-scoped-attributes.adoc#assign-precedence[attribute precedence rules].
+See xref:page:site-scoped-attributes.adoc[Site-scoped attributes] to learn how to set, assign, and unset attributes in the playbook in more detail.
+Also, attributes can be xref:page:component-scoped-attributes.adoc[declared by component-version] and may override site-scoped attributes depending on the the attribute's assigned precedence.
 
 [#extensions]
 == Asciidoctor extensions
