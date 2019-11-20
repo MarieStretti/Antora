@@ -43,10 +43,7 @@ See the <<assign-precedence,next section>> to learn more about hard and soft set
 Site-scoped attributes are applied and available to every page in your site.
 The values of user-defined attributes, such as `page-team` and `db` can be displayed in a page using the attribute reference syntax (e.g., `+{db}+`).
 
-CAUTION: Some built-in AsciiDoc attributes are not applicable in the Antora environment.
-These attributes include `data-uri`, `allow-uri-read`, `docinfo`, `linkcss`, `noheader`, `nofooter`, `webfonts`, and `outfilesuffix`.
-Setting these attributes either has no effect or may cause Antora to malfunction.
-Other attributes, such as `imagesdir`, are automatically set by Antora and cannot be overridden.
+include::partial$dont-use-these-attributes.adoc[]
 
 [#assign-precedence]
 == Assign precedence to site-scoped attributes
@@ -76,15 +73,7 @@ Hard unset site-scoped attributes can't be set by a component descriptor or page
 <4> To soft unset an attribute, assign the value `false`.
 A component descriptor or page can override soft unset site-scoped attributes.
 
-[TIP]
-====
-Attributes are declared using the same structure and syntax in both the playbook file and the component descriptor file.
-
-Remember, the playbook file is where you configure the site, content source, and UI URLs.
-This playbook file usually has the word _playbook_ in its file name, e.g., [.path]_antora-playbook.yml_ or [.path]_local-antora-playbook.yml_.
-The component descriptor file is where you configure the name, title, version, and navigation list for a component-version.
-The file name of a component descriptor is always [.path]_antora.yml_.
-====
+include::partial$playbook-vs-descriptor.adoc[]
 
 Antora takes the precedence assigned to attributes in the site's playbook into account first.
 *Only soft set and soft unset site-scoped attributes can be overridden*.

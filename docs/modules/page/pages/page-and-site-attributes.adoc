@@ -1,14 +1,12 @@
-= Page and Site Attributes
-//TODO provide example of user-defined page attribute
+= Built-in Page- and Site Attributes
+//These attributes are helpful when passing data from a page to the site UI and integrations, such as a search service.
 
-Attributes that are prefixed with `page-` are cataloged by Antora and available to both the page they're set on and the pipeline components during site generation.
-These attributes are helpful when passing data from a page to the site UI and integrations, such as a search service.
-In addition to user-defined page attributes, Antora also provides built-in page attributes.
+Antora provides built-in `page-` and site attributes.
 
 [#page-attributes]
-== Built-in Antora attributes
+== Built-in page- attributes
 
-Antora sets the following attributes for each page:
+Antora automatically sets the following attributes for each page:
 
 `page-component-name`:: The name of the component as specified in _antora.yml_.
 `page-component-version`:: The version of the component as specified in _antora.yml_.
@@ -26,7 +24,7 @@ Antora sets the following attributes for each page:
 `page-origin-reftype`:: The reference type where the page is located in the repository (tag or branch).
 `page-origin-worktree`:: Set if the file was taken from the git worktree.
 
-These attributes are available to the pipeline during processing and can be referenced in a page.
+Attributes that are prefixed with `page-` are available to the pipeline and UI model during site generation, and they can be displayed in a page using the attribute reference syntax (e.g., `+{page-version}+`).
 
 [source,asciidoc]
 ----
@@ -42,7 +40,7 @@ The source document for this page is in the *{page-module}* module.
 
 TIP: This data is also available via the xref:antora-ui-default::templates.adoc#template-variables[UI model].
 
-== Site attributes
+== Built-in site attributes
 
 There may be times when your document needs to know that it's being processed by Antora.
 Antora sets these site attributes for each page.
