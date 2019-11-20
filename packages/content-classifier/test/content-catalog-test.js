@@ -78,6 +78,7 @@ describe('ContentCatalog', () => {
       const title = 'The Component'
       const url = '/the-component/1.0.0/index.html'
       const contentCatalog = new ContentCatalog()
+      const descriptor = { title }
       expect(contentCatalog.getComponents()).to.have.lengthOf(0)
       contentCatalog.addFile({
         src: {
@@ -90,7 +91,7 @@ describe('ContentCatalog', () => {
           mediaType: 'text/asciidoc',
         },
       })
-      contentCatalog.registerComponentVersion(name, version, { title })
+      contentCatalog.registerComponentVersion(name, version, descriptor)
       const components = contentCatalog.getComponents()
       expect(components).to.have.lengthOf(1)
       expect(components[0]).to.deep.include({
@@ -108,19 +109,21 @@ describe('ContentCatalog', () => {
       const name = 'the-component'
       const version1 = '1.0.0'
       const title1 = 'The Component (1.0.0)'
+      const descriptor1 = { title: title1 }
       const url1 = '/the-component/1.0.0/index.html'
       const version2 = '2.0.0'
       const title2 = 'The Component (2.0.0)'
+      const descriptor2 = { title: title2 }
       const url2 = '/the-component/2.0.0/index.html'
       const indexPageT = { family: 'page', relative: 'index.adoc', stem: 'index', mediaType: 'text/asciidoc' }
       const contentCatalog = new ContentCatalog()
       contentCatalog.addFile({ src: Object.assign({ component: name, version: version1, module: 'ROOT' }, indexPageT) })
-      contentCatalog.registerComponentVersion(name, version1, { title: title1 })
+      contentCatalog.registerComponentVersion(name, version1, descriptor1)
       expect(contentCatalog.getComponents()).to.have.lengthOf(1)
       const component = contentCatalog.getComponent(name)
 
       contentCatalog.addFile({ src: Object.assign({ component: name, version: version2, module: 'ROOT' }, indexPageT) })
-      contentCatalog.registerComponentVersion(name, version2, { title: title2 })
+      contentCatalog.registerComponentVersion(name, version2, descriptor2)
       expect(contentCatalog.getComponents()).to.have.lengthOf(1)
       expect(contentCatalog.getComponent(name)).to.equal(component)
       expect(component).to.deep.include({
@@ -132,7 +135,12 @@ describe('ContentCatalog', () => {
           { version: version1, displayVersion: version1, title: title1, url: url1 },
         ],
       })
-      expect(component.latest).to.eql({ version: version2, displayVersion: version2, title: title2, url: url2 })
+      expect(component.latest).to.eql({
+        version: version2,
+        displayVersion: version2,
+        title: title2,
+        url: url2,
+      })
     })
 
     it('should throw error if component version already exists', () => {
@@ -162,29 +170,47 @@ describe('ContentCatalog', () => {
       const version1 = '1.0.0'
       const title1 = 'The Component (1.0.0)'
       const url1 = '/the-component/1.0.0/index.html'
+      const descriptor1 = { title: title1 }
       const src1 = Object.assign({}, srcTemplate, { component: componentName, version: version1, module: 'ROOT' })
       const version2 = '2.0.0'
       const title2 = 'The Component (2.0.0)'
       const url2 = '/the-component/2.0.0/index.html'
       const prerelease2 = true
+      const descriptor2 = { title: title2, prerelease: prerelease2 }
       const src2 = Object.assign({}, srcTemplate, { component: componentName, version: version2, module: 'ROOT' })
       const contentCatalog = new ContentCatalog()
 
       contentCatalog.addFile({ src: src1 })
-      contentCatalog.registerComponentVersion(componentName, version1, { title: title1 })
+      contentCatalog.registerComponentVersion(componentName, version1, descriptor1)
       expect(contentCatalog.getComponents()).to.have.lengthOf(1)
       const component = contentCatalog.getComponent(componentName)
 
       contentCatalog.addFile({ src: src2 })
-      contentCatalog.registerComponentVersion(componentName, version2, { title: title2, prerelease: prerelease2 })
+      contentCatalog.registerComponentVersion(componentName, version2, descriptor2)
       expect(contentCatalog.getComponents()).to.have.lengthOf(1)
       expect(contentCatalog.getComponent(componentName)).to.equal(component)
 
       expect(component.versions).to.eql([
-        { version: version2, displayVersion: version2, title: title2, url: url2, prerelease: prerelease2 },
-        { version: version1, displayVersion: version1, title: title1, url: url1 },
+        {
+          version: version2,
+          displayVersion: version2,
+          title: title2,
+          url: url2,
+          prerelease: prerelease2,
+        },
+        {
+          version: version1,
+          displayVersion: version1,
+          title: title1,
+          url: url1,
+        },
       ])
-      expect(component.latest).to.eql({ version: version1, displayVersion: version1, title: title1, url: url1 })
+      expect(component.latest).to.eql({
+        version: version1,
+        displayVersion: version1,
+        title: title1,
+        url: url1,
+      })
       expect(component.name).to.equal(componentName)
       expect(component.title).to.equal(title1)
       expect(component.url).to.equal(url1)
@@ -197,27 +223,41 @@ describe('ContentCatalog', () => {
       const title1 = 'The Component (1.0.0)'
       const url1 = '/the-component/1.0.0/index.html'
       const prerelease1 = true
+      const descriptor1 = { title: title1, prerelease: prerelease1 }
       const src1 = Object.assign({}, srcTemplate, { component: componentName, version: version1, module: 'ROOT' })
       const version2 = '2.0.0'
       const title2 = 'The Component (2.0.0)'
       const url2 = '/the-component/2.0.0/index.html'
       const prerelease2 = true
+      const descriptor2 = { title: title2, prerelease: prerelease2 }
       const src2 = Object.assign({}, srcTemplate, { component: componentName, version: version2, module: 'ROOT' })
       const contentCatalog = new ContentCatalog()
 
       contentCatalog.addFile({ src: src1 })
-      contentCatalog.registerComponentVersion(componentName, version1, { title: title1, prerelease: prerelease1 })
+      contentCatalog.registerComponentVersion(componentName, version1, descriptor1)
       expect(contentCatalog.getComponents()).to.have.lengthOf(1)
       const component = contentCatalog.getComponent(componentName)
 
       contentCatalog.addFile({ src: src2 })
-      contentCatalog.registerComponentVersion(componentName, version2, { title: title2, prerelease: prerelease2 })
+      contentCatalog.registerComponentVersion(componentName, version2, descriptor2)
       expect(contentCatalog.getComponents()).to.have.lengthOf(1)
       expect(contentCatalog.getComponent(componentName)).to.equal(component)
 
       expect(component.versions).to.eql([
-        { version: version2, displayVersion: version2, title: title2, url: url2, prerelease: prerelease2 },
-        { version: version1, displayVersion: version1, title: title1, url: url1, prerelease: prerelease1 },
+        {
+          version: version2,
+          displayVersion: version2,
+          title: title2,
+          url: url2,
+          prerelease: prerelease2,
+        },
+        {
+          version: version1,
+          displayVersion: version1,
+          title: title1,
+          url: url1,
+          prerelease: prerelease1,
+        },
       ])
       expect(component.latest).to.eql({
         version: version2,
@@ -282,6 +322,7 @@ describe('ContentCatalog', () => {
       const name = 'the-component'
       const version = '1.0.0'
       const title = 'The Component'
+      const descriptor = { title, startPage: 'home.adoc' }
       const url = '/the-component/1.0.0/home.html'
       const contentCatalog = new ContentCatalog()
       contentCatalog.addFile({
@@ -295,7 +336,7 @@ describe('ContentCatalog', () => {
           mediaType: 'text/asciidoc',
         },
       })
-      contentCatalog.registerComponentVersion(name, version, { title, startPage: 'home.adoc' })
+      contentCatalog.registerComponentVersion(name, version, descriptor)
       const components = contentCatalog.getComponents()
       expect(components).to.have.lengthOf(1)
       expect(components[0]).to.deep.include({
@@ -360,6 +401,23 @@ describe('ContentCatalog', () => {
       contentCatalog.registerComponentVersion(name, version, { title })
       const component = contentCatalog.getComponent(name)
       expect(component.url).to.equal(url)
+    })
+
+    it('should store scoped AsciiDoc config on component version', () => {
+      const contentCatalog = new ContentCatalog()
+      const asciidocConfig = { attributes: { foo: 'bar' } }
+      const descriptor = {
+        title: 'ACME',
+        displayVersion: '1.0 Beta',
+        asciidocConfig,
+      }
+      contentCatalog.registerComponentVersion('the-component', '1.0', descriptor)
+      const component = contentCatalog.getComponent('the-component')
+      expect(component).to.exist()
+      expect(component.versions[0]).to.exist()
+      expect(component.versions[0].asciidocConfig).to.eql(asciidocConfig)
+      //expect(descriptor).not.to.have.property('asciidocConfig')
+      //expect(component.versions[0].descriptor).not.to.have.property('asciidocConfig')
     })
   })
 

@@ -9,12 +9,18 @@ This project utilizes semantic versioning.
 
 === Added
 
+* *content-classifier*: Recognize AsciiDoc attributes defined in the component (version) descriptor (#251)
+* *content-classifier*: Store the component version-scoped AsciiDoc configuration on the `asciidocConfig` property of the component version instance (#251)
+* *content-classifier*: Add the site-wide AsciiDoc config as the optional third argument of the classifyContent function; compute from playbook if absent (#251)
+* *navigation-builder*: Add `addNavigation` function to NavigationCatalog for registering all trees for component version at once (#251)
 * *ui-loader*: Verify downloaded UI bundle is a valid zip file before caching; throw error if invalid (#517)
 
 === Changed
 
+* *content-aggregator*: Apply camelCase transformation to keys in the component (version) descriptor, excluding the `asciidoc` key (#251)
 * *ui-loader*: Preserve stack from got (HTTP client) error when downloading UI (#516)
 * *ui-loader*: Report clearer error when local or cached UI bundle is not valid or cannot otherwise be read (#517)
+* *site-generator-default*: Pass the site-wide AsciiDoc config to the classifyContent function (#251)
 
 == 2.2.0 (2019-11-02)
 

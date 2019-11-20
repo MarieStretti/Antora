@@ -26,31 +26,38 @@ const LINK_RX = /<a href="([^"]+)"(?: class="([^"]+)")?>(.+?)<\/a>/
  *
  * @returns {NavigationCatalog} A navigation catalog built from the navigation files in the content catalog.
  */
-function buildNavigation (contentCatalog, asciidocConfig = {}) {
-  const navFiles = contentCatalog.findBy({ family: 'nav' })
-  if (!(navFiles && navFiles.length)) return new NavigationCatalog()
-  asciidocConfig = Object.assign({}, asciidocConfig, { doctype: 'article', extensions: [], relativizePageRefs: false })
-  return navFiles
-    .map((navFile) => loadNavigationFile(navFile, contentCatalog, asciidocConfig))
-    .reduce((accum, trees) => accum.concat(trees), [])
-    .reduce((catalog, { component, version, tree }) => {
-      contentCatalog.getComponentVersion(component, version).navigation = catalog.addTree(component, version, tree)
-      return catalog
-    }, new NavigationCatalog())
+function buildNavigation (contentCatalog, siteAsciiDocConfig = {}) {
+  const navCatalog = new NavigationCatalog()
+  const navAsciiDocConfig = { doctype: 'article', extensions: [], relativizePageRefs: false }
+  contentCatalog
+    .findBy({ family: 'nav' })
+    .reduce((accum, navFile) => {
+      const { component, version } = navFile.src
+      const key = version + '@' + component
+      const val = accum.get(key)
+      if (val) return new Map(accum).set(key, Object.assign({}, val, { navFiles: val.navFiles.concat(navFile) }))
+      const componentVersion = contentCatalog.getComponentVersion(component, version)
+      const asciidocConfig = Object.assign({}, componentVersion.asciidocConfig || siteAsciiDocConfig, navAsciiDocConfig)
+      return new Map(accum).set(key, { component, version, componentVersion, asciidocConfig, navFiles: [navFile] })
+    }, new Map())
+    .forEach(({ component, version, componentVersion, asciidocConfig, navFiles }) => {
+      const trees = navFiles.reduce((accum, navFile) => {
+        return accum.concat(loadNavigationFile(navFile, contentCatalog, asciidocConfig))
+      }, [])
+      componentVersion.navigation = navCatalog.addNavigation(component, version, trees)
+    })
+  return navCatalog
 }
 
 function loadNavigationFile (navFile, contentCatalog, asciidocConfig) {
   const lists = loadAsciiDoc(navFile, contentCatalog, asciidocConfig).blocks.filter((b) => b.getContext() === 'ulist')
   if (!lists.length) return []
-  const {
-    src: { component, version },
-    nav: { index },
-  } = navFile
+  const index = navFile.nav.index
   return lists.map((list, idx) => {
     const tree = buildNavigationTree(list.getTitle(), list.getItems())
     tree.root = true
     tree.order = idx ? parseFloat((index + idx / lists.length).toFixed(4)) : index
-    return { component, version, tree }
+    return tree
   })
 }
 

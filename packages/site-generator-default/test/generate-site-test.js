@@ -278,6 +278,36 @@ describe('generateSite()', function () {
     expect($('head meta[name=description]')).to.have.attr('content', 'The almighty index page')
   }).timeout(timeoutOverride)
 
+  it('should pass AsciiDoc attributes defined in component descriptor to AsciiDoc processor', async () => {
+    playbookSpec.asciidoc = {
+      attributes: { sectanchors: null, description: 'Site description@' },
+    }
+    await repoBuilder
+      .open()
+      .then(() => repoBuilder.checkoutBranch('v2.0'))
+      .then(() =>
+        repoBuilder.addComponentDescriptor({
+          name: 'the-component',
+          version: '2.0',
+          nav: ['modules/ROOT/nav.adoc'],
+          asciidoc: {
+            attributes: { description: 'Component description@', sectnums: '' },
+          },
+        })
+      )
+      .then(() => repoBuilder.close('master'))
+    fs.writeJsonSync(playbookFile, playbookSpec, { spaces: 2 })
+    await generateSite(['--playbook', playbookFile], env)
+    expect(ospath.join(absDestDir, 'the-component/2.0/the-page.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/the-page.html')
+    expect($('head meta[name=description]')).to.have.attr('content', 'Component description')
+    expect($('h2#_section_a')).to.have.html('1. Section A')
+    expect($('h2#_section_b')).to.have.html('2. Section B')
+    expect(ospath.join(absDestDir, 'the-component/2.0/index.html')).to.be.a.file()
+    $ = loadHtmlFile('the-component/2.0/index.html')
+    expect($('head meta[name=description]')).to.have.attr('content', 'The almighty index page')
+  }).timeout(timeoutOverride)
+
   it('should register extensions defined in playbook on AsciiDoc processor', async () => {
     fs.outputFileSync(
       ospath.resolve(WORK_DIR, 'ext', 'shout-tree-processor.js'),
