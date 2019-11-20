@@ -485,7 +485,7 @@ function walkGitTree (repo, root, filter) {
  * Returns true if the entry should be processed or false if it should be skipped.
  */
 function filterGitEntry (entry) {
-  return !entry.path.startsWith('.') && (entry.type !== 'blob' || ~entry.path.indexOf('.'))
+  return entry.path.charAt() !== '.' && (entry.type !== 'blob' || ~entry.path.indexOf('.'))
 }
 
 function entryToFile (entry) {

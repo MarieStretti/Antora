@@ -44,7 +44,8 @@ class ContentCatalog {
     if (prerelease) {
       componentVersion.prerelease = prerelease
       if (!displayVersion && (typeof prerelease === 'string' || prerelease instanceof String)) {
-        const sep = prerelease.startsWith('-') || prerelease.startsWith('.') ? '' : ' '
+        const ch0 = prerelease.charAt()
+        const sep = ch0 === '-' || ch0 === '.' ? '' : ' '
         componentVersion.displayVersion = `${version}${sep}${prerelease}`
       }
     }

@@ -72,7 +72,7 @@ cli
       generateSite = requireLibrary(generator, ospath.resolve(playbookFile, '..'))
     } catch (err) {
       let msg = 'Generator not found or failed to load.'
-      if (generator && !generator.startsWith('.')) msg += ` Try installing the '${generator}' package.`
+      if (generator && generator.charAt() !== '.') msg += ` Try installing the '${generator}' package.`
       exitWithError(err, cli.stacktrace, msg)
     }
     const args = cli.rawArgs.slice(cli.rawArgs.indexOf(command.name()) + 1)
