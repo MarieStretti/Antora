@@ -38,9 +38,12 @@ See the <<assign-precedence,next section>> to learn more about hard and soft set
 <7> The value `false` soft unsets this attribute.
 See the <<assign-precedence,next section>> to learn more about hard and soft unsetting rules.
 
+Component-scoped attributes are applied and available to every page in the applicable component-version.
+The values of user-defined attributes, such as `page-level`, and built-in `page-` attributes can be displayed in a page using the attribute reference syntax (e.g., `+{page-level}+` or `+{page-version}+`).
+
 TIP: Antora declares `page-` attributes from most of the keys in the component descriptor file.
 For instance, Antora automatically sets the built-in attribute `page-component-title` and assigns it the value specified by the `title` key.
-Check out the xref:page-and-site-attributes.adoc[Built-in page- attributes] for a complete list of the `page-` attributes Antora automatically declares.
+Check out the xref:page-and-site-attributes.adoc#page-attributes[Built-in page- attributes] for a complete list of the `page-` attributes Antora automatically declares.
 
 [#assign-precedence]
 == Assign precedence to component-scoped attributes
@@ -69,7 +72,7 @@ Hard unset component-scoped attributes can't be set by a page.
 <4> To soft unset an attribute, assign the value `false`.
 A page can override soft unset component-scoped attributes.
 
-The example assumes that the declared attributes weren't previously hard set or unset in the site's playbook, so the following precedence rules are applied to the attributes defined in the component descriptor:
+The example assumes that the declared attributes weren't previously xref:site-scoped-attributes.adoc[hard set or unset in the site's playbook], so the following precedence rules are applied to the attributes defined in the component descriptor:
 
 [#component-rules]
 .*Component-scoped attribute precedence rules*
@@ -89,3 +92,5 @@ A component-scoped attribute can override a site-scoped attribute *only if the s
 . Soft unsetting a site-scoped attribute using a `false` value allows the component descriptor to set the attribute.
 
 If an attribute in the component descriptor can be set or unset, then the <<component-rules,first set of rules>> kick in for that attribute as it relates to the page.
+
+include::partial$dont-use-these-attributes.adoc[]

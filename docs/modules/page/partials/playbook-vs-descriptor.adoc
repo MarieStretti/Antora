@@ -1,0 +1,10 @@
+[NOTE]
+.Playbook file versus component descriptor file
+====
+Attributes are declared using the same structure and syntax in both the playbook file and the component descriptor file.
+
+Remember, the xref:playbook:index.adoc[playbook file] is where you configure the site, content source, and UI URLs.
+This playbook file usually has the word _playbook_ in its file name, e.g., [.path]_antora-playbook.yml_ or [.path]_local-antora-playbook.yml_.
+The xref:ROOT:component-descriptor.adoc[component descriptor file] is where you configure the name, title, version, and navigation list for a component-version.
+The file name of a component descriptor is always [.path]_antora.yml_.
+====

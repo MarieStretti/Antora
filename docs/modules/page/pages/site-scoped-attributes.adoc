@@ -1,0 +1,87 @@
+= Site-Scoped Attributes
+
+Built-in AsciiDoc attributes, user-defined AsciiDoc attributes, and `page-` attributes can be declared in a site's playbook file.
+These attributes are applied to all of a site's pages according to the attribute precedence rules.
+Attributes declared in the playbook are referred to as [.term]*site-scoped attributes*.
+
+== Set and unset attributes in the playbook
+
+Each site-scoped attribute is entered on its own line under the playbook's `asciidoc` and `attributes` category keys.
+
+.Declaring site-scoped attributes in the playbook
+[source,yaml]
+----
+site:
+  title: Antora Demo Site
+content:
+  sources:
+  - url: https://gitlab.com/antora/demo/demo-component-b.git
+    branches: [v2.0, v1.0]
+    start_path: docs
+asciidoc: # <1>
+  attributes: # <2>
+    listing-caption: Snippet # <3>
+    figure-caption: ~ # <4>
+    hide-uri-scheme: '' # <5>
+    page-team: Coco B # <6>
+    db: graphical-peaks-pack.db # <7>
+----
+<1> Enter the `asciidoc` key, followed by a colon (`:`), and press kbd:[Enter].
+<2> The `attributes` key is nested under the `asciidoc` key.
+Enter `attributes`, followed by a colon (`:`), and press kbd:[Enter].
+<3> Site-scoped attributes are nested under the `attributes` key.
+Enter the name of the attribute, followed by a colon (`:`).
+Press kbd:[space] once after the colon, then enter the value of the attribute.
+<4> The tilde symbol (`~`) hard unsets this attribute.
+See the <<assign-precedence,next section>> to learn more about hard and soft unsetting rules.
+<5> To assign the default value, or in the case of a boolean attribute, the _empty string_ value to a built-in AsciiDoc attribute, type two consecutive single quotation marks (`''`) in the value field.
+<6> To declare a user-defined `page-` attribute, type `page-` and the name of your attribute, followed by a colon (`:`).
+Press kbd:[space] once after the colon, then enter the value of the attribute.
+<7> This user-defined attribute is hard set.
+See the <<assign-precedence,next section>> to learn more about hard and soft setting rules.
+
+Site-scoped attributes are applied and available to every page in your site.
+The values of user-defined attributes, such as `page-team` and `db` can be displayed in a page using the attribute reference syntax (e.g., `+{db}+`).
+
+include::partial$dont-use-these-attributes.adoc[]
+
+[#assign-precedence]
+== Assign precedence to site-scoped attributes
+
+You can control whether a site-scoped attribute can be overridden from a component descriptor file or a page.
+Site-scoped attributes that are hard set and hard unset can't be changed by a component descriptor file or a page.
+However, soft set and unset site-scoped attributes can be overridden from the component descriptor or page.
+
+The following example shows how site-scoped attributes are assigned hard and soft precedence.
+
+.Assigning hard and soft precedence to attributes in the playbook
+[source,yaml]
+----
+asciidoc:
+  attributes:
+    example-caption: Scenario # <1>
+    page-team: Coco B@ # <2>
+    figure-caption: ~ # <3>
+    table-caption: false # <4>
+----
+<1> To hard set an attribute, simply enter its value.
+Hard set site-scoped attributes can't be reassigned or unset by a component descriptor or page.
+<2> To soft set an attribute, attach the `@` modifier to the end of its value.
+A component descriptor or page can override soft set site-scoped attributes.
+<3> To hard unset an attribute, assign it the tilde symbol (`~`).
+Hard unset site-scoped attributes can't be set by a component descriptor or page.
+<4> To soft unset an attribute, assign the value `false`.
+A component descriptor or page can override soft unset site-scoped attributes.
+
+include::partial$playbook-vs-descriptor.adoc[]
+
+Antora takes the precedence assigned to attributes in the site's playbook into account first.
+*Only soft set and soft unset site-scoped attributes can be overridden*.
+
+.*Site-scoped attribute precedence rules*
+. Hard setting a site-scoped attribute to a string value with no trailing `@` modifier (e.g., `value`) prevents a component descriptor or page from changing (setting or unsetting) the attribute.
+. Soft setting a site-scoped attribute to a string value with a trailing `@` modifier (e.g., `value@`) allows a component descriptor or page to change (set or unset) the attribute.
+. Hard unsetting a site-scoped attribute using the tilde symbol (`~`) prevents  component descriptor or page from setting the attribute.
+. Soft unsetting a site-scoped attribute using the `false` value allows a component descriptor or page to set the attribute.
+
+To learn more about how site-scoped and component-scoped attributes interact, see xref:component-scoped-attributes.adoc[Component-scoped attributes].

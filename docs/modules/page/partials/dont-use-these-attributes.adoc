@@ -1,0 +1,4 @@
+CAUTION: Some built-in AsciiDoc attributes are not applicable in the Antora environment.
+These attributes include `data-uri`, `allow-uri-read`, `docinfo`, `linkcss`, `noheader`, `nofooter`, `webfonts`, and `outfilesuffix`.
+Setting these attributes either has no effect or may cause Antora to malfunction.
+Other attributes, such as `imagesdir`, are automatically set by Antora and cannot be overridden.

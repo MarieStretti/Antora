@@ -12,7 +12,7 @@ Here's a contrived example of a playbook file showing all the keys that can be d
 
 WARNING: *Do not copy and paste this listing!*
 It's only meant to serve as a reference to illustrate all the available keys and possible values in a playbook.
-If you try to use it as is, it will _not_ work.
+If you try to use it, it will *not* work.
 Use the https://gitlab.com/antora/demo/docs-site/blob/master/antora-playbook.yml[Demo antora-playbook.yml] instead if you're looking for a starting point.
 
 [source,yaml]
@@ -31,8 +31,7 @@ content: # <7>
     start_path: docs # <12>
 asciidoc: # <13>
   attributes: # <14>
-    linkattrs: ''
-    toc: ~
+    table-caption: ~
   extensions:
   - ./lib/custom-block.js
 ui: # <15>
@@ -189,18 +188,18 @@ Learn more:
 [#asciidoc-category]
 == AsciiDoc category
 
-The `asciidoc` category contains keys that configure the AsciiDoc processor, such as AsciiDoc document attributes and extensions.
+The `asciidoc` category contains keys that configure the AsciiDoc processor, such as AsciiDoc document attributes and Asciidoctor extensions.
 
 [#asciidoc-attributes-key]
 === attributes
 
-The `attributes` key under the `asciidoc` category is a map used to define global (i.e., site-wide) AsciiDoc document attributes.
-These document attributes are made available to each page in the site.
+The `attributes` key under the `asciidoc` category is a map used to define site-scoped AsciiDoc attributes.
+These document attributes are applied and made available to all of a site's pages.
 
 Learn more:
 
-* xref:configure-asciidoc.adoc#define-global-document-attributes[Define global document attributes]
-* xref:configure-asciidoc.adoc#default-attribute-values[Allow pages to override certain global document attributes]
+* xref:configure-asciidoc.adoc#attrs[Declare site-scoped AsciiDoc attributes]
+* xref:page:site-scoped-attributes.adoc#assign-precedence[Allow component-scoped and page attributes to override site-scoped attributes]
 
 [#asciidoc-extensions-key]
 === extensions
