@@ -1,9 +1,11 @@
 'use strict'
 
-module.exports = (array) => {
-  let next
-  const source = array.slice(0)
-  const result = []
-  while (source.length) Array.isArray((next = source.pop())) ? source.push(...next) : result.push(next)
-  return result.reverse()
+function flattenDeep (array, accum = []) {
+  const len = array.length
+  for (let i = 0, it; i < len; i++) {
+    Array.isArray((it = array[i])) ? flattenDeep(it, accum) : accum.push(it)
+  }
+  return accum
 }
+
+module.exports = flattenDeep
