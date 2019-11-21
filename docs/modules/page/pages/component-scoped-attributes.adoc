@@ -1,7 +1,7 @@
 = Component-Scoped Attributes
 
 Built-in AsciiDoc attributes, user-defined AsciiDoc attributes, and `page-` attributes can be declared in a component descriptor file ([.path]_antora.yml_).
-These attributes are applied to all of a component-version's pages according to the attribute precedence rules.
+These attributes are applied to all of a component version's pages according to the attribute precedence rules.
 Attributes declared in a component descriptor file are referred to as [.term]*component-scoped attributes*.
 
 == Set and unset attributes in antora.yml
@@ -38,7 +38,7 @@ See the <<assign-precedence,next section>> to learn more about hard and soft set
 <7> The value `false` soft unsets this attribute.
 See the <<assign-precedence,next section>> to learn more about hard and soft unsetting rules.
 
-Component-scoped attributes are applied and available to every page in the applicable component-version.
+Component-scoped attributes are applied and available to every page in the applicable component version.
 The values of user-defined attributes, such as `page-level`, and built-in `page-` attributes can be displayed in a page using the attribute reference syntax (e.g., `+{page-level}+` or `+{page-version}+`).
 
 TIP: Antora declares `page-` attributes from most of the keys in the component descriptor file.

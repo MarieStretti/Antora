@@ -41,15 +41,15 @@ Transform input files into virtual file objects::
 Antora collects all of the files--text, images, samples, and other supporting materials--from each documentation component subtree.
 Then it creates a virtual file of each input file.
 
-Assign files to component-version collections::
+Assign files to component version buckets::
 Antora reads the component descriptor (i.e., [.path]_antora.yml_) files.
 +
-A xref:component-descriptor.adoc[component descriptor] associates the files under it with a specified component name and version (aka component-version).
+A xref:component-descriptor.adoc[component descriptor] associates the files under it with a specified component name and version (aka component version).
 This allows the files to be decoupled from the repository and branch in which they live.
 The component descriptor file makes Antora's repository-spanning, file system and URL agnostic xref:asciidoc:page-to-page-xref.adoc[cross references] possible.
 +
 Antora assigns the descriptor information and other source metadata to the appropriate virtual files.
-Then it sorts each file into a virtual collection based on the assigned component-version data.
+Then it sorts each file into a virtual collection based on the assigned component version data.
 
 Compute additional metadata::
 Using xref:playbook:configure-site.adoc[site properties] from the playbook and information assigned to the files in the previous step, Antora adds module, family, family-relative path, and other metadata values to each file.

@@ -11,7 +11,7 @@ Often referred to as the [.term]*component descriptor*, [.path]_antora.yml_ has 
 This ability to store a documentation component anywhere in a directory hierarchy allows you to maintain and manage a component (or part of a component) in a repository with the software it documents, a demo or sample project, or in its own repository.
 
 . *Component information*: [.path]_antora.yml_ is referred to as the component descriptor because it describes the documentation component.
-It associates the files in the standard directory structure with the specified component name and version (explicitly referred to as the component-version if you want to get technical).
+It associates the files in the standard directory structure with the specified component name and version (explicitly referred to as the _component version_, if you want to get technical).
 This assignment of component information decouples the source files from the repository and branches in which they're stored.
 It's also used for constructing Antora's resource IDs so you can reference pages, partials, examples, and images within a component and across components.
 Finally, the component descriptor identifies and orders the files Antora uses to build the documentation's navigation.

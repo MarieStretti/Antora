@@ -28,7 +28,7 @@ asciidoc:
 
 Site-scoped attributes are applied and available to all of a site's pages according to the xref:page:site-scoped-attributes.adoc#assign-precedence[attribute precedence rules].
 See xref:page:site-scoped-attributes.adoc[Site-scoped attributes] to learn how to set, assign, and unset attributes in the playbook in more detail.
-Also, attributes can be xref:page:component-scoped-attributes.adoc[declared by component-version] and may override site-scoped attributes depending on the the attribute's assigned precedence.
+Also, attributes can be xref:page:component-scoped-attributes.adoc[declared by component version] and may override site-scoped attributes depending on the the attribute's assigned precedence.
 
 [#extensions]
 == Asciidoctor extensions
