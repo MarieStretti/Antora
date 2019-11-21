@@ -74,7 +74,7 @@ Regardless of whether you're deploying your site locally, to a staging or produc
 The cross reference locks on to the target page and produces a URL that points to it wherever it gets published.
 
 *We've avoided coupling to the filesystem* by using a location based on the documentation component structure.
-The page ID describes the source file's project (i.e., component+version) and where in that project the source file is located (module+page).
+The page ID describes the source file's project (component & version) and where the source file is located in that project (module, family, & family-relative path).
 
 *We've eliminated the relative path (../../) problem* by specifying the page as a module-relative path.
 The path always starts from a module's [.path]_pages_ directory, even when the referencing page is located inside a topic folder.
