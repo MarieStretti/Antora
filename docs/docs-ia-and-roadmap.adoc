@@ -799,4 +799,4 @@ git + Docs Managers (C, P)::
 _{r}_ Series of tuturials for administrators / managers / maintainers / leads / approvers showing them how do git tasks that enhance their collaboration, review, approval, and release abilities.
 +
 _{s}_ The tutorials are just proposed ideas at this time.
-The tutorials would step the user through the following tasks: test and merge and branch into a version branch or master; create a release of a branch; deploy and publish component-versions; create, manage, and remove/archive future, current and past branches/versions; set up a repository compatible with Antora; rebase and cherry-pick; rollback merged commits; rollback a release.
+The tutorials would step the user through the following tasks: test and merge and branch into a version branch or master; create a release of a branch; deploy and publish component versions; create, manage, and remove/archive future, current and past branches/versions; set up a repository compatible with Antora; rebase and cherry-pick; rollback merged commits; rollback a release.

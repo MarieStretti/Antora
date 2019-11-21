@@ -72,7 +72,7 @@ The component descriptor file tells Antora that the contents of the repository o
 This file contains crucial metadata that's applied to all of a component's files.
 See xref:component-descriptor.adoc[Component Descriptor: antora.yml] to learn about the required and optional information you can assign to a component.
 
-//Antora easily builds and publishes documentation sites with over 60 documentation components--that are collected from even more repositories since a <<distributed,component can be distributed>>--and hundreds of component-versions.
+//Antora easily builds and publishes documentation sites with over 60 documentation components--that are collected from even more repositories since a <<distributed,component can be distributed>>--and hundreds of component versions.
 
 [#distributed]
 .Distributed component
