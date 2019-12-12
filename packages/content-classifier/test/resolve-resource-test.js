@@ -144,6 +144,35 @@ describe('resolveResource', () => {
     expect(result).to.exist()
   })
 
+  it('should assume ROOT module if module is not specified', () => {
+    const context = {
+      component: 'current-component',
+      version: '1.0',
+      family: 'page',
+    }
+    const targetFile = {
+      src: {
+        component: 'current-component',
+        version: '1.0',
+        module: 'ROOT',
+        family: 'page',
+        relative: 'target-page.adoc',
+      },
+    }
+    const contentCatalog = mockContentCatalog(targetFile)
+    const targetPageIdSpec = 'target-page.adoc'
+    const targetPageId = {
+      component: 'current-component',
+      version: '1.0',
+      module: 'ROOT',
+      family: 'page',
+      relative: 'target-page.adoc',
+    }
+    const result = resolveResource(targetPageIdSpec, contentCatalog, context)
+    expect(contentCatalog.getById).to.have.been.called.with(targetPageId)
+    expect(result).to.exist()
+  })
+
   it('should return undefined if component is unknown and version not specified', () => {
     const contentCatalog = mockContentCatalog()
     const targetPageIdSpec = 'unknown-component::the-page.adoc'

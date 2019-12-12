@@ -28,12 +28,12 @@ function resolveResource (spec, catalog, ctx = {}, permittedFamilies = undefined
 
   if (!id) throw new Error(`Invalid ${defaultFamily || 'resource'} ID syntax`)
   if (!id.family) return
-
   if (!id.version) {
     const component = catalog.getComponent(id.component)
     if (!component) return
     id.version = component.latest.version
   }
+  if (!id.module) id.module = 'ROOT'
 
   return catalog.getById(id)
 }
