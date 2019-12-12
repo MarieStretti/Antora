@@ -9,7 +9,8 @@ This project utilizes semantic versioning.
 
 === Added
 
-* *content-classifier*: Add `getPages()` method to content catalog to retrieve all pages
+* *content-classifier*: Add `getPages()` method to content catalog to retrieve all pages (#537)
+* *page-composer*: Expose public API of content catalog to UI model as `site.contentCatalog` (#328)
 
 == 2.3.0-alpha.1 (2019-11-20)
 

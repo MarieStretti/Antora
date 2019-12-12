@@ -98,7 +98,7 @@ function buildUiModel (file, contentCatalog, navigationCatalog, site, env) {
 }
 
 function buildSiteUiModel (playbook, contentCatalog) {
-  const model = { title: playbook.site.title }
+  const model = { title: playbook.site.title, contentCatalog: contentCatalog.exportToModel() }
 
   let siteUrl = playbook.site.url
   if (siteUrl) {

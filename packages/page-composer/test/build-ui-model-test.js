@@ -66,6 +66,7 @@ describe('build UI model', () => {
           }, {})
       ),
       getSiteStartPage: spy(() => undefined),
+      exportToModel: spy(() => new Proxy(contentCatalog, {})),
     }
 
     menu = []
@@ -237,6 +238,15 @@ describe('build UI model', () => {
     it('should set url property on ui property to root relative path (sans trailing slash)', () => {
       const model = buildSiteUiModel(playbook, contentCatalog)
       expect(model.ui.url).to.equal('/_')
+    })
+
+    it('should expose proxy of content catalog', () => {
+      const model = buildSiteUiModel(playbook, contentCatalog)
+      expect(contentCatalog.exportToModel).to.have.been.called()
+      expect(model.contentCatalog).to.exist()
+      expect(model.contentCatalog).not.to.equal(contentCatalog)
+      expect(model.contentCatalog.getComponent('the-component').name).to.equal('the-component')
+      expect(contentCatalog.getComponent).to.have.been.called()
     })
   })
 
