@@ -37,24 +37,21 @@ describe('mapSite()', () => {
   it('should not generate sitemaps if site URL is not set', () => {
     delete playbook.site.url
     const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.be.empty()
   })
 
   it('should not generate sitemaps if site URL is /', () => {
     playbook.site.url = '/'
     const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.be.empty()
   })
 
   it('should not generate sitemaps if site URL is a pathname', () => {
     playbook.site.url = '/docs'
     const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.be.empty()
   })
 
@@ -64,8 +61,7 @@ describe('mapSite()', () => {
       { family: 'page', relative: 'quickstart.adoc' },
       { family: 'page', relative: 'features.adoc' },
     ])
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.have.lengthOf(1)
     const sitemapIndex = sitemaps[0]
     expect(sitemapIndex.out).to.eql({ path: 'sitemap.xml' })
@@ -78,8 +74,7 @@ describe('mapSite()', () => {
       { component: 'component-a', family: 'page', relative: 'index.adoc' },
       { component: 'component-b', family: 'page', relative: 'index.adoc' },
     ])
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.have.lengthOf(3)
     const paths = sitemaps.map((sitemap) => sitemap.out.path)
     expect(paths).to.have.members(['sitemap.xml', 'sitemap-component-a.xml', 'sitemap-component-b.xml'])
@@ -94,8 +89,7 @@ describe('mapSite()', () => {
   it('should trim trailing slash from site url', () => {
     const contentCatalog = mockContentCatalog({ family: 'page', module: 'ROOT', relative: 'index.adoc' })
     playbook.site.url = playbook.site.url + '/'
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps[0].contents.toString()).to.include('<loc>https://docs.example.org/component-a/index.html</loc>')
   })
 
@@ -106,8 +100,7 @@ describe('mapSite()', () => {
       { component: 'component-b', family: 'page', relative: 'index.adoc' },
       { component: 'component-b', family: 'page', relative: 'commands/generate.adoc' },
     ])
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.have.lengthOf(3)
     sitemaps.forEach((sitemap) => {
       expect(validateXml(sitemap.contents.toString())).to.be.empty()
@@ -128,8 +121,7 @@ describe('mapSite()', () => {
       { component: 'component-a', version: '2.0', family: 'page', relative: 'b.adoc' },
       { component: 'component-b', family: 'page', relative: 'index.adoc' },
     ])
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     const sitemapA = sitemaps.find((sitemap) => sitemap.out.path === 'sitemap-component-a.xml')
     const urls = collectUrls(new DOMParser().parseFromString(sitemapA.contents.toString()))
     const urlsExpected = [
@@ -154,8 +146,7 @@ describe('mapSite()', () => {
       { component: 'commander', family: 'page', relative: 'index.adoc' },
       { component: 'antora', family: 'page', relative: 'index.adoc' },
     ])
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     const sitemapIndex = sitemaps.find((sitemap) => sitemap.out.path === 'sitemap.xml')
     const urls = collectUrls(new DOMParser().parseFromString(sitemapIndex.contents.toString()), 'sitemap')
     const urlsExpected = [
@@ -172,8 +163,7 @@ describe('mapSite()', () => {
       { component: 'the-component', family: 'page', relative: 'setup&go.adoc' },
       { component: 'the-component', family: 'page', relative: 'reverting-1<2.adoc' },
     ])
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     const sitemapXml = sitemaps[0].contents.toString()
     expect(validateXml(sitemapXml)).to.be.empty()
     expect(sitemapXml).to.include('setup&amp;go')
@@ -183,8 +173,7 @@ describe('mapSite()', () => {
   it('should generate robots.txt that allows all if value of site.robots is "allow"', () => {
     playbook.site.robots = 'allow'
     const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.have.lengthOf(2)
     const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
     expect(robotstxt).not.to.be.undefined()
@@ -196,8 +185,7 @@ Allow: /
   it('should generate robots.txt that disallows all if value of site.robots is "disallow"', () => {
     playbook.site.robots = 'disallow'
     const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     expect(sitemaps).to.have.lengthOf(2)
     const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
     expect(robotstxt).not.to.be.undefined()
@@ -210,8 +198,7 @@ Disallow: /
     playbook.site.robots = `User-agent: *
 Disallow: /secret-component/`
     const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
-    const pages = contentCatalog.findBy({ family: 'page' })
-    const sitemaps = mapSite(playbook, pages)
+    const sitemaps = mapSite(playbook, contentCatalog.getPages())
     const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
     expect(robotstxt).not.to.be.undefined()
     expect(robotstxt.contents.toString()).to.equal(`User-agent: *
@@ -223,8 +210,7 @@ Disallow: /secret-component/
     ;[null, undefined, false, ''].forEach((robots) => {
       playbook.site.robots = robots
       const contentCatalog = mockContentCatalog({ family: 'page', relative: 'index.adoc' })
-      const pages = contentCatalog.findBy({ family: 'page' })
-      const sitemaps = mapSite(playbook, pages)
+      const sitemaps = mapSite(playbook, contentCatalog.getPages())
       const robotstxt = sitemaps.find((sitemap) => sitemap.out.path === 'robots.txt')
       expect(robotstxt).to.be.undefined()
     })

@@ -23,7 +23,7 @@ describe('produceRedirects()', () => {
       { family: 'alias', relative: 'old-target/index.adoc' },
       { family: 'alias', component: '', version: '', module: '', relative: 'index.adoc' },
     ])
-    const targetFile = contentCatalog.findBy({ family: 'page' })[0]
+    const targetFile = contentCatalog.getPages()[0]
     contentCatalog.findBy({ family: 'alias' }).forEach((file) => (file.rel = targetFile))
   })
 
@@ -66,7 +66,7 @@ describe('produceRedirects()', () => {
         { family: 'page', relative: 'target with spaces.adoc' },
         { family: 'alias', relative: 'alias with spaces.adoc' },
       ])
-      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
+      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.getPages()[0]
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(0)
       const expectedQualifiedUrl = 'https://docs.example.org/component-a/module-a/target%20with%20spaces.html'
@@ -163,7 +163,7 @@ describe('produceRedirects()', () => {
         { family: 'page', relative: 'target with spaces.adoc' },
         { family: 'alias', relative: 'alias with spaces.adoc' },
       ])
-      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
+      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.getPages()[0]
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0]).to.have.property('contents')
@@ -329,7 +329,7 @@ describe('produceRedirects()', () => {
         { family: 'page', relative: 'target with spaces.adoc' },
         { family: 'alias', relative: 'alias with spaces.adoc' },
       ])
-      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.findBy({ family: 'page' })[0]
+      contentCatalog.findBy({ family: 'alias' })[0].rel = contentCatalog.getPages()[0]
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0]).to.have.property('contents')

@@ -78,14 +78,14 @@ const convertDocument = require('@antora/document-converter/lib/convert-document
 
 //...
 
-catalog.findBy({ family: 'page' }).filter((file) => 'out' in file).forEach((file) => {
+catalog.getPages().filter((file) => 'out' in file).forEach((file) => {
   await convertDocument(file, playbook, catalog)
 })
 ----
 
 == Data
 
-The document converter mutates the files in the `page` family of the content catalog, which can be retrieved by invoking `findBy({ family: 'page' })` on the content catalog then selecting files that have an `out` property.
+The document converter mutates the files in the `page` family of the content catalog, which can be retrieved by invoking `getPages()` on the content catalog then selecting files that have an `out` property.
 Specifically, this component updates the value of the `contents` property by replacing the AsciiDoc with embeddable HTML.
 The previous value is still accessible via the `history` property on the file.
 It also assigns a hash of header attributes to the `asciidoc.attributes` property on the file object.

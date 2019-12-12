@@ -154,6 +154,10 @@ class ContentCatalog {
     return Object.values(this[$files])
   }
 
+  getPages () {
+    return Object.values(this[$files]).filter(({ src: { family } }) => family === 'page')
+  }
+
   // TODO add `follow` argument to control whether alias is followed
   getSiteStartPage () {
     const page = this.getById(START_PAGE_ID) || this.getById(Object.assign({}, START_PAGE_ID, { family: 'alias' }))

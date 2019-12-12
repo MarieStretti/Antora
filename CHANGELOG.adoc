@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Added
+
+* *content-classifier*: Add `getPages()` method to content catalog to retrieve all pages
+
 == 2.3.0-alpha.1 (2019-11-20)
 
 === Added

@@ -24,7 +24,7 @@ function convertDocuments (contentCatalog, siteAsciiDocConfig = {}) {
     }, [])
   )
   return contentCatalog
-    .findBy({ family: 'page' })
+    .getPages()
     .filter((page) => page.out)
     .map((page) => {
       if (page.mediaType === 'text/asciidoc') {
