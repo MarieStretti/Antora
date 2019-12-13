@@ -57,7 +57,7 @@ If the provider needs to modify the virtual file, it should work on a copy of th
 
 The site publisher is implemented as a dedicated node package (i.e., module).
 The site publisher API exports the `publishSite()` function, which accepts a playbook and collection of virtual file catalogs.
-The site publisher queries for publishable files in each catalog (`+catalog.getFiles().filter((file) => file.out)+`) and creates a stream from this collection.
+The site publisher queries for publishable files in each catalog (`+catalog.getAll().filter((file) => file.out)+`) and creates a stream from this collection.
 It then passes that stream and the playbook to the publish function for each destination provider configured in the playbook.
 The function returns a Promise that resolves once all the destination providers have run to completion.
 However, the Promise does not currently resolve any data.

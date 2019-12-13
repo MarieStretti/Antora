@@ -4,7 +4,7 @@ function fileReportBlockMacro (context) {
   return function () {
     this.process((parent, target, attrs) => {
       const lines = [
-        `Files in catalog: ${context.contentCatalog.getFiles().length}`,
+        `Files in catalog: ${context.contentCatalog.getAll().length}`,
         `URL of current page: ${context.file.pub.url}`,
       ]
       return this.createBlock(parent, 'paragraph', lines)

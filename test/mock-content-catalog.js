@@ -95,6 +95,7 @@ function mockContentCatalog (seed = []) {
     getComponents: () => Object.values(components),
     getComponentVersion: (component, version) =>
       (typeof component === 'string' ? components[component] : component).versions.find((it) => it.version === version),
+    getAll: () => entries,
     getFiles: () => entries,
     getPages: () => entriesByFamily.page || [],
     resolvePage: function (spec, ctx = {}) {

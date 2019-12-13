@@ -9,7 +9,7 @@ class UiCatalog {
     this[$files] = {}
   }
 
-  getFiles () {
+  getAll () {
     return Object.values(this[$files])
   }
 
@@ -25,6 +25,11 @@ class UiCatalog {
     return _.filter(this[$files], { type })
   }
 }
+
+/**
+ * @deprecated superceded by getAll
+ */
+UiCatalog.prototype.getFiles = UiCatalog.prototype.getAll
 
 function generateKey ({ type, path }) {
   return [type, ...path.split('/')]
