@@ -12,7 +12,6 @@ const SPACE_RX = / /g
 
 const $components = Symbol('components')
 const $files = Symbol('files')
-const $generateId = Symbol('generateId')
 
 class ContentCatalog {
   constructor (playbook) {
@@ -90,9 +89,9 @@ class ContentCatalog {
 
   // QUESTION should this method return the file added?
   addFile (file) {
-    const id = this[$generateId](file.src)
-    if (id in this[$files]) {
-      throw new Error(`Duplicate ${file.src.family}: ${id.replace(':' + file.src.family + '$', ':')}`)
+    const key = generateKey(file.src)
+    if (key in this[$files]) {
+      throw new Error(`Duplicate ${file.src.family}: ${key.replace(':' + file.src.family + '$', ':')}`)
     }
     if (!File.isVinyl(file)) file = new File(file)
     const family = file.src.family
@@ -110,7 +109,7 @@ class ContentCatalog {
     if (!file.pub && (publishable || actingFamily === 'nav')) {
       file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
     }
-    this[$files][id] = file
+    this[$files][key] = file
   }
 
   findBy (criteria) {
@@ -118,8 +117,7 @@ class ContentCatalog {
   }
 
   getById ({ component, version, module, family, relative }) {
-    const id = this[$generateId]({ component, version, module, family, relative })
-    return this[$files][id]
+    return this[$files][generateKey({ component, version, module, family, relative })]
   }
 
   getByPath ({ component, version, path: path_ }) {
@@ -174,7 +172,7 @@ class ContentCatalog {
       const existingPage = this.getById(src)
       if (existingPage) {
         // TODO we'll need some way to easily get a displayable page ID
-        let qualifiedSpec = this[$generateId](existingPage.src)
+        let qualifiedSpec = generateKey(existingPage.src)
         qualifiedSpec = qualifiedSpec.replace(':page$', ':')
         const message = `Page alias cannot reference ${targetPage === existingPage ? 'itself' : 'an existing page'}`
         throw new Error(message + ': ' + qualifiedSpec)
@@ -217,10 +215,10 @@ class ContentCatalog {
   resolveResource (spec, context = {}, permittedFamilies = undefined, defaultFamily = undefined) {
     return resolveResource(spec, this, context, permittedFamilies, defaultFamily)
   }
+}
 
-  [$generateId] ({ component, version, module, family, relative }) {
-    return `${version}@${component}:${module}:${family}$${relative}`
-  }
+function generateKey ({ component, version, module, family, relative }) {
+  return `${version}@${component}:${module}:${family}$${relative}`
 }
 
 function expandPageSrc (src, family = 'page') {

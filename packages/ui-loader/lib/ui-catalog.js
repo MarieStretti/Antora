@@ -3,7 +3,6 @@
 const _ = require('lodash')
 
 const $files = Symbol('files')
-const $generateId = Symbol('generateId')
 
 class UiCatalog {
   constructor () {
@@ -15,20 +14,20 @@ class UiCatalog {
   }
 
   addFile (file) {
-    const id = this[$generateId](file)
-    if (id in this[$files]) {
+    const key = generateKey(file)
+    if (key in this[$files]) {
       throw new Error('Duplicate file')
     }
-    this[$files][id] = file
+    this[$files][key] = file
   }
 
   findByType (type) {
     return _.filter(this[$files], { type })
   }
+}
 
-  [$generateId] (file) {
-    return [file.type, ...file.path.split('/')]
-  }
+function generateKey ({ type, path }) {
+  return [type, ...path.split('/')]
 }
 
 module.exports = UiCatalog

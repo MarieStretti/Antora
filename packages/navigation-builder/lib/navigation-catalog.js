@@ -1,7 +1,6 @@
 'use strict'
 
 const $sets = Symbol('sets')
-const $generateId = Symbol('generateId')
 
 class NavigationCatalog {
   constructor () {
@@ -9,8 +8,8 @@ class NavigationCatalog {
   }
 
   addTree (component, version, tree) {
-    const id = this[$generateId](component, version)
-    const navigation = this[$sets][id] || (this[$sets][id] = [])
+    const key = generateKey(component, version)
+    const navigation = this[$sets][key] || (this[$sets][key] = [])
     // NOTE retain order on insert
     const insertIdx = navigation.findIndex((candidate) => candidate.order >= tree.order)
     ~insertIdx ? navigation.splice(insertIdx, 0, tree) : navigation.push(tree)
@@ -18,17 +17,16 @@ class NavigationCatalog {
   }
 
   addNavigation (component, version, trees) {
-    return (this[$sets][this[$generateId](component, version)] = trees.sort((a, b) => a.order - b.order))
+    return (this[$sets][generateKey(component, version)] = trees.sort((a, b) => a.order - b.order))
   }
 
   getNavigation (component, version) {
-    const id = this[$generateId](component, version)
-    return this[$sets][id]
+    return this[$sets][generateKey(component, version)]
   }
+}
 
-  [$generateId] (component, version) {
-    return version + '@' + component
-  }
+function generateKey (component, version) {
+  return version + '@' + component
 }
 
 module.exports = NavigationCatalog
