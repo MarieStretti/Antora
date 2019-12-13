@@ -489,8 +489,10 @@ describe('ContentCatalog', () => {
     })
 
     it('should find files by family', () => {
-      const pages = classifyContent(playbook, aggregate).findBy({ family: 'page' })
-      expect(pages).to.have.lengthOf(4)
+      const contentCatalog = classifyContent(playbook, aggregate)
+      const numPages = contentCatalog.getPages().length
+      const pages = contentCatalog.findBy({ family: 'page' })
+      expect(pages).to.have.lengthOf(numPages)
       pages.sort((a, b) => a.src.version.localeCompare(b.src.version) || a.path.localeCompare(b.path))
       expect(pages[0].path).to.equal('modules/ROOT/pages/page-one.adoc')
       expect(pages[0].src.version).to.equal('v1.2.3')

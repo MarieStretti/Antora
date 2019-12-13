@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const { expect, expectCalledWith, heredoc } = require('../../../test/test-utils')
+const { expect, heredoc } = require('../../../test/test-utils')
 
 const convertDocuments = require('@antora/document-converter')
 const { resolveConfig: resolveAsciiDocConfig } = require('@antora/asciidoc-loader')
@@ -11,9 +11,9 @@ describe('convertDocuments()', () => {
   const asciidocConfig = resolveAsciiDocConfig()
 
   it('should run on all files in the page family', () => {
-    const contentCatalog = mockContentCatalog().spyOn('findBy')
+    const contentCatalog = mockContentCatalog().spyOn('getPages')
     convertDocuments(contentCatalog)
-    expectCalledWith(contentCatalog.findBy, { family: 'page' })
+    expect(contentCatalog.getPages).to.have.been.called()
   })
 
   it('should only process and return publishable files from the page family in the content catalog', () => {

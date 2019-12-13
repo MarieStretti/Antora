@@ -84,7 +84,7 @@ composePages(playbook, catalog, uiCatalog)
 
 == Data
 
-The document converter mutates the files in the `page` family from the content catalog, which can be retrieved by invoking `findBy({ family: 'page' })` on the content catalog.
+The document converter mutates the files in the `page` family from the content catalog, which can be retrieved by invoking `getPages()` on the content catalog.
 Specifically, this component updates the value of the `contents` property for each file by replacing the embeddable HTML with the HTML produced by the template.
 The previous value is still accessible via the `history` property on the file.
 

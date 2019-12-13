@@ -74,7 +74,7 @@ The files in the catalog can be queried as follows:
 
 [source,js]
 ----
-const pages = catalog.findBy({ family: 'page' })
+const pages = catalog.getPages()
 ----
 
 .Content catalog API
@@ -84,6 +84,7 @@ const pages = catalog.findBy({ family: 'page' })
 * `getByPath({ component, version, path })`
 * `findBy({...})` - finds files that match example; at least one property must be specified
  ** filterable properties: `component`, `version`, `module`, `family`, `relative`, `basename`, `extname`
+* `getPages()` - equivalent to `findBy({ family: 'page' })`
 
 == Data
 

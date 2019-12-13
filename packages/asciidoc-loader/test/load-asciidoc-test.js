@@ -1920,7 +1920,7 @@ describe('loadAsciiDoc()', () => {
 
     it('should skip page reference to non-publishable file', () => {
       const contentCatalog = mockContentCatalog({ relative: '_hidden.adoc' }).spyOn('getById')
-      delete contentCatalog.findBy({ family: 'page' })[0].pub
+      delete contentCatalog.getPages()[0].pub
       setInputFileContents('xref:_hidden.adoc[Hidden Page]')
       const html = loadAsciiDoc(inputFile, contentCatalog).convert()
       expectCalledWith(contentCatalog.getById, {
