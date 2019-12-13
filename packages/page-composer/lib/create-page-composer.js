@@ -27,6 +27,9 @@ const { version: VERSION } = require('../package.json')
  *   HTML contents in a standalone page layout).
  */
 function createPageComposer (playbook, contentCatalog, uiCatalog, env = process.env) {
+  handlebars.registerHelper('resolvePage', resolvePageHelper)
+  handlebars.registerHelper('resolvePageUrl', resolvePageUrlHelper)
+
   uiCatalog
     .findByType('helper')
     .forEach((file) => handlebars.registerHelper(file.stem, requireFromString(file.contents.toString(), file.path)))
@@ -196,6 +199,15 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   }
 
   return model
+}
+
+function resolvePageHelper (spec, { hash: context }) {
+  return this.site.contentCatalog.resolvePage(spec, context)
+}
+
+function resolvePageUrlHelper (spec, { hash: context }) {
+  const page = this.site.contentCatalog.resolvePage(spec, context)
+  if (page) return page.pub.url
 }
 
 function getNavContext (url, title, navigation) {

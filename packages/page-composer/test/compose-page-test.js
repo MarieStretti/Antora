@@ -153,6 +153,24 @@ describe('createPageComposer()', () => {
           ` + '\n'
         ),
       },
+      {
+        stem: 'body-resolve-page',
+        contents: Buffer.from(
+          heredoc`
+          {{#with (resolvePage 'the-component::the-page.adoc')}}
+          <p>{{pub.url}}</p>
+          {{/with}}
+          ` + '\n'
+        ),
+      },
+      {
+        stem: 'body-resolve-page-url',
+        contents: Buffer.from(
+          heredoc`
+          <p>{{resolvePageUrl 'the-component::the-page.adoc'}}</p>
+          ` + '\n'
+        ),
+      },
     ]
 
     contentCatalog = {
@@ -241,6 +259,7 @@ describe('createPageComposer()', () => {
             }, {}),
         getPages: () => [file],
         getSiteStartPage: () => undefined,
+        resolvePage: (spec, context) => spec === 'the-component::the-page.adoc' ? file : undefined,
         exportToModel: () => new Proxy(contentCatalog, {}),
       }
 
@@ -421,6 +440,20 @@ describe('createPageComposer()', () => {
 
     it('should be able to access content catalog from helper', () => {
       replaceCallToBodyPartial('{{> body-get-the-page}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
+    })
+
+    it('should be able to call built-in helper to resolve page', () => {
+      replaceCallToBodyPartial('{{> body-resolve-page}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
+    })
+
+    it('should be able to call built-in helper to resolve URL of page', () => {
+      replaceCallToBodyPartial('{{> body-resolve-page-url}}')
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
       composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
