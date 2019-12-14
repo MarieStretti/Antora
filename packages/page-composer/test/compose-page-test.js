@@ -259,7 +259,7 @@ describe('createPageComposer()', () => {
             }, {}),
         getPages: () => [file],
         getSiteStartPage: () => undefined,
-        resolvePage: (spec, context) => spec === 'the-component::the-page.adoc' ? file : undefined,
+        resolvePage: (spec, context) => (spec === 'the-component::the-page.adoc' ? file : undefined),
         exportToModel: () => new Proxy(contentCatalog, {}),
       }
 
