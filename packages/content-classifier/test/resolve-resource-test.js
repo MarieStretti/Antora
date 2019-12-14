@@ -19,9 +19,7 @@ describe('resolveResource', () => {
 
   it('should throw error if page ID spec has invalid syntax', () => {
     const contentCatalog = mockContentCatalog()
-    expect(() => resolveResource('component-foo::', contentCatalog, undefined, undefined, 'page')).to.throw(
-      'Invalid page ID syntax'
-    )
+    expect(() => resolveResource('component-foo::', contentCatalog, {}, 'page')).to.throw('Invalid page ID syntax')
     expect(contentCatalog.getById).to.not.have.been.called()
   })
 
@@ -211,7 +209,7 @@ describe('resolveResource', () => {
     }
     const contentCatalog = mockContentCatalog(targetFile)
     const targetPageIdSpec = '1.2.3@the-component:the-module:partial$the-page.adoc'
-    const result = resolveResource(targetPageIdSpec, contentCatalog, undefined, ['page'])
+    const result = resolveResource(targetPageIdSpec, contentCatalog, {}, 'page', ['page'])
     expect(contentCatalog.getById).to.not.have.been.called()
     expect(result).to.be.undefined()
   })
@@ -235,7 +233,7 @@ describe('resolveResource', () => {
     }
     const contentCatalog = mockContentCatalog(targetFile)
     const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
-    const result = resolveResource(targetPageIdSpec, contentCatalog, context, ['page'], 'page')
+    const result = resolveResource(targetPageIdSpec, contentCatalog, context, 'page', ['page'])
     expect(contentCatalog.getById).to.have.been.called.with(targetFile.src)
     expect(result).to.exist()
   })
@@ -252,7 +250,7 @@ describe('resolveResource', () => {
     }
     const contentCatalog = mockContentCatalog(targetFile)
     const targetPageIdSpec = '1.2.3@the-component:the-module:the-page.adoc'
-    const result = resolveResource(targetPageIdSpec, contentCatalog, undefined, undefined, null)
+    const result = resolveResource(targetPageIdSpec, contentCatalog, undefined, null)
     expect(contentCatalog.getById).to.not.have.been.called()
     expect(result).to.be.undefined()
   })

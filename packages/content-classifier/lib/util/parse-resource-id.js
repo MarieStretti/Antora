@@ -21,13 +21,14 @@ const RESOURCE_ID_RX_GROUP = { version: 1, component: 2, module: 3, family: 4, r
  *
  * @param {String} spec - The contextual resource ID spec (e.g., version@component:module:family$relative).
  * @param {Object} [ctx={}] - The src context.
- * @param {Array<String>} [permittedFamilies=undefined] - An optional array of permitted family names.
- * @param {String} [defaultFamily='page'] - The default family to use if family is not specified in spec.
+ * @param {String} [defaultFamily='page'] - The default family to use if family is not specified in the spec.
+ *   This value is always used instead of family value provided by the ctx.
+ * @param {Array<String>} [permittedFamilies=undefined] - An optional array of family names to allow.
  *
  * @returns {Object} A resource ID object that can be used to look up the file in the content
  * catalog. If the spec is malformed, the return value is undefined.
  */
-function parseResourceId (spec, ctx = {}, permittedFamilies = undefined, defaultFamily = 'page') {
+function parseResourceId (spec, ctx = {}, defaultFamily = 'page', permittedFamilies = undefined) {
   const match = spec.match(RESOURCE_ID_RX)
   if (!match) return
 

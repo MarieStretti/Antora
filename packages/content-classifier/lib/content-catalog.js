@@ -166,7 +166,7 @@ class ContentCatalog {
 
   // QUESTION should this be addPageAlias?
   registerPageAlias (aliasSpec, targetPage) {
-    const src = parseResourceId(aliasSpec, targetPage.src, ['page'])
+    const src = parseResourceId(aliasSpec, targetPage.src, 'page', ['page'])
     // QUESTION should we throw an error if alias is invalid?
     if (!src) return
     const component = this.getComponent(src.component)
@@ -213,11 +213,11 @@ class ContentCatalog {
    * file cannot be resolved.
    */
   resolvePage (spec, context = {}) {
-    return resolveResource(spec, this, context, ['page'])
+    return resolveResource(spec, this, context, 'page', ['page'])
   }
 
-  resolveResource (spec, context = {}, permittedFamilies = undefined, defaultFamily = undefined) {
-    return resolveResource(spec, this, context, permittedFamilies, defaultFamily)
+  resolveResource (spec, context = {}, defaultFamily = undefined, permittedFamilies = undefined) {
+    return resolveResource(spec, this, context, defaultFamily, permittedFamilies)
   }
 }
 

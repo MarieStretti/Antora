@@ -327,9 +327,9 @@ describe('parseResourceId()', () => {
     expect(result).to.eql(expected)
   })
 
-  it('should leave family undefined if spec does not reference permitted family', () => {
+  it('should leave family undefined if spec does not reference valid family', () => {
     const inputSpec = 'image$dialog.png'
-    expect(parseResourceId(inputSpec, undefined, ['page', 'partial', 'example']).family).to.be.undefined()
+    expect(parseResourceId(inputSpec, {}, 'page', ['page', 'partial', 'example']).family).to.be.undefined()
   })
 
   it('should not use family from context if family not specified in ID', () => {
@@ -365,13 +365,13 @@ describe('parseResourceId()', () => {
       family: 'image',
       relative: 'dialog.png',
     }
-    const result = parseResourceId(inputSpec, inputCtx, ['image'], 'image')
+    const result = parseResourceId(inputSpec, inputCtx, 'image', ['image'])
     expect(result).to.eql(expected)
   })
 
   it('should not set family if default family is null and family not specified in spec', () => {
     const inputSpec = 'the-module:dialog.png'
-    const result = parseResourceId(inputSpec, undefined, undefined, null)
+    const result = parseResourceId(inputSpec, {}, null)
     expect(result.family).to.not.exist()
   })
 })
