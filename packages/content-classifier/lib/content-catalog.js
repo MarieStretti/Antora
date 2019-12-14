@@ -222,18 +222,39 @@ class ContentCatalog {
 
   exportToModel () {
     const target = this
-    return new class ContentCatalog {
-      findBy (criteria) { return target.findBy(criteria) }
-      getById (id) { return target.getById(id) }
-      getComponent (name) { return target.getComponent(name) }
-      getComponents () { return target.getComponents() }
-      getFiles () { return target.getFiles() }
-      getPages () { return target.getPages() }
-      resolvePage (spec, context = {}) { return target.resolvePage(spec, context) }
+    return new (class ContentCatalog {
+      findBy (criteria) {
+        return target.findBy(criteria)
+      }
+
+      getById (id) {
+        return target.getById(id)
+      }
+
+      getComponent (name) {
+        return target.getComponent(name)
+      }
+
+      getComponents () {
+        return target.getComponents()
+      }
+
+      getFiles () {
+        return target.getFiles()
+      }
+
+      getPages () {
+        return target.getPages()
+      }
+
+      resolvePage (spec, context = {}) {
+        return target.resolvePage(spec, context)
+      }
+
       resolveResource (spec, context = {}, defaultFamily = undefined, permittedFamilies = undefined) {
         return target.resolveResource(spec, context, defaultFamily, permittedFamilies)
       }
-    }()
+    })()
   }
 }
 

@@ -11,6 +11,7 @@ This project utilizes semantic versioning.
 
 * *content-classifier*: Add `getPages()` method to content catalog to retrieve all pages (#537)
 * *page-composer*: Expose public API of content catalog to UI model as `site.contentCatalog` (#328)
+* *page-composer*: Add built-in helpers resolvePage and resolvePageUrl to resolve arbitrary pages and their publish URLs (#328)
 
 == 2.3.0-alpha.1 (2019-11-20)
 
