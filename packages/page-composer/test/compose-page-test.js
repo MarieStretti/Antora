@@ -52,6 +52,14 @@ describe('createPageComposer()', () => {
           ` + '\n'
         ),
       },
+      {
+        stem: 'get-the-page',
+        contents: Buffer.from(
+          heredoc`
+          module.exports = function () { return this.site.contentCatalog.getPages()[0] }
+          ` + '\n'
+        ),
+      },
     ]
 
     layouts = [
@@ -135,11 +143,22 @@ describe('createPageComposer()', () => {
           ` + '\n'
         ),
       },
+      {
+        stem: 'body-get-the-page',
+        contents: Buffer.from(
+          heredoc`
+          {{#with (get-the-page)}}
+          <p>{{pub.url}}</p>
+          {{/with}}
+          ` + '\n'
+        ),
+      },
     ]
 
     contentCatalog = {
       getComponentMapSortedBy: (property) => ({}),
       getSiteStartPage: () => undefined,
+      exportToModel: () => new Proxy(contentCatalog, {}),
     }
 
     uiCatalog = {
@@ -220,7 +239,9 @@ describe('createPageComposer()', () => {
               accum[it.name] = it
               return accum
             }, {}),
+        getPages: () => [file],
         getSiteStartPage: () => undefined,
+        exportToModel: () => new Proxy(contentCatalog, {}),
       }
 
       menu = []
@@ -396,6 +417,13 @@ describe('createPageComposer()', () => {
         <h1>Page Not Found</h1>
         </html>
       `)
+    })
+
+    it('should be able to access content catalog from helper', () => {
+      replaceCallToBodyPartial('{{> body-get-the-page}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
     })
 
     // QUESTION what should we do with a template execution error? (e.g., missing partial or helper)
