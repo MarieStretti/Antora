@@ -455,6 +455,50 @@ describe('ContentCatalog', () => {
     })
   })
 
+  describe('#getAll()', () => {
+    beforeEach(() => {
+      aggregate = [
+        {
+          name: 'the-component',
+          title: 'The Component',
+          version: 'v4.5.6',
+          files: [
+            createFile('modules/ROOT/assets/images/directory-structure.svg'),
+            createFile('modules/ROOT/pages/page-one.adoc'),
+            createFile('modules/ROOT/pages/page-two.adoc'),
+            createFile('modules/ROOT/partials/foo.adoc'),
+          ],
+        },
+        {
+          name: 'the-other-component',
+          title: 'The Other Title',
+          version: 'v4.5.6',
+          files: [createFile('modules/ROOT/pages/page-three.adoc')],
+        },
+      ]
+    })
+
+    it('should return all files in catalog', () => {
+      const contentCatalog = classifyContent(playbook, aggregate)
+      const files = contentCatalog.getAll()
+      expect(files).to.have.lengthOf(5)
+      const pages = files.filter((it) => it.src.family === 'page')
+      expect(pages).to.have.lengthOf(3)
+      const partials = files.filter((it) => it.src.family === 'partial')
+      expect(partials).to.have.lengthOf(1)
+    })
+
+    it('should map getFiles as alias', () => {
+      const contentCatalog = classifyContent(playbook, aggregate)
+      const files = contentCatalog.getFiles()
+      expect(files).to.have.lengthOf(5)
+      const pages = files.filter((it) => it.src.family === 'page')
+      expect(pages).to.have.lengthOf(3)
+      const partials = files.filter((it) => it.src.family === 'partial')
+      expect(partials).to.have.lengthOf(1)
+    })
+  })
+
   describe('#findBy()', () => {
     beforeEach(() => {
       aggregate = [

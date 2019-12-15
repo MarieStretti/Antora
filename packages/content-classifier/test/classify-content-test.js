@@ -303,7 +303,7 @@ describe('classifyContent()', () => {
   describe('classify files', () => {
     it('should classify a page', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/pages/page-one.adoc')
@@ -332,7 +332,7 @@ describe('classifyContent()', () => {
 
     it('should classify a page in a topic dir', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/the-topic/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/pages/the-topic/page-one.adoc')
@@ -359,7 +359,7 @@ describe('classifyContent()', () => {
 
     it('should classify a page that contains spaces', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/the topic/i like spaces.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/pages/the topic/i like spaces.adoc')
@@ -456,7 +456,7 @@ describe('classifyContent()', () => {
 
     it('should classify a partial page in pages/_partials', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/_partials/foo.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/pages/_partials/foo.adoc')
@@ -475,7 +475,7 @@ describe('classifyContent()', () => {
 
     it('should classify a partial page in partials', () => {
       aggregate[0].files.push(createFile('modules/ROOT/partials/foo.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/partials/foo.adoc')
@@ -494,7 +494,7 @@ describe('classifyContent()', () => {
 
     it('should classify an image under assets', () => {
       aggregate[0].files.push(createFile('modules/ROOT/assets/images/foo.png'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/assets/images/foo.png')
@@ -519,7 +519,7 @@ describe('classifyContent()', () => {
 
     it('should classify an image', () => {
       aggregate[0].files.push(createFile('modules/ROOT/images/foo.png'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/images/foo.png')
@@ -544,7 +544,7 @@ describe('classifyContent()', () => {
 
     it('should classify an attachment under assets', () => {
       aggregate[0].files.push(createFile('modules/ROOT/assets/attachments/example.zip'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/assets/attachments/example.zip')
@@ -569,7 +569,7 @@ describe('classifyContent()', () => {
 
     it('should classify an attachment', () => {
       aggregate[0].files.push(createFile('modules/ROOT/attachments/example.zip'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/attachments/example.zip')
@@ -594,7 +594,7 @@ describe('classifyContent()', () => {
 
     it('should classify an example', () => {
       aggregate[0].files.push(createFile('modules/ROOT/examples/foo.xml'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/ROOT/examples/foo.xml')
@@ -639,7 +639,7 @@ describe('classifyContent()', () => {
     it('should classify a navigation file in subdir of module', () => {
       aggregate[0].nav = ['modules/module-a/nav/primary.adoc']
       aggregate[0].files.push(createFile('modules/module-a/nav/primary.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/module-a/nav/primary.adoc')
@@ -662,7 +662,7 @@ describe('classifyContent()', () => {
     it('should classify a navigation file outside of module', () => {
       aggregate[0].nav = ['modules/nav.adoc']
       aggregate[0].files.push(createFile('modules/nav.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.path).to.equal('modules/nav.adoc')
@@ -683,7 +683,7 @@ describe('classifyContent()', () => {
 
     it('should not classify a navigation file if not in nav list', () => {
       aggregate[0].files.push(createFile('modules/ROOT/nav.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(0)
     })
 
@@ -705,7 +705,7 @@ describe('classifyContent()', () => {
           createFile('modules/module-a/nav.adoc'),
         ]
       )
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(3)
       files.sort((a, b) => (a.nav.index < b.nav.index ? -1 : a.nav.index > b.nav.index ? 1 : 0))
       expect(files[0].path).to.equal('modules/ROOT/nav.adoc')
@@ -734,7 +734,7 @@ describe('classifyContent()', () => {
           createFile('modules/ROOT/bad-folder/bad-file.yml'),
         ]
       )
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(0)
     })
 
@@ -753,7 +753,7 @@ describe('classifyContent()', () => {
           files: [createFile('modules/basics/pages/page-two.adoc')],
         },
       ]
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(2)
       files.sort((a, b) => a.src.module.localeCompare(b.src.module))
       expect(files[0].path).to.equal('modules/basics/pages/page-two.adoc')
@@ -785,7 +785,7 @@ describe('classifyContent()', () => {
     it('should not register site start page if not specified', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
       const contentCatalog = classifyContent(playbook, aggregate)
-      const files = contentCatalog.getFiles()
+      const files = contentCatalog.getAll()
       expect(files).to.have.lengthOf(1)
       const expected = contentCatalog.getById({
         component: 'the-component',
@@ -801,7 +801,7 @@ describe('classifyContent()', () => {
       playbook.site.startPage = 'v1.2.3@the-component:ROOT:index.adoc'
       aggregate[0].files.push(createFile('modules/ROOT/pages/index.adoc'))
       const contentCatalog = classifyContent(playbook, aggregate)
-      const files = contentCatalog.getFiles()
+      const files = contentCatalog.getAll()
       expect(files).to.have.lengthOf(2)
       const expected = contentCatalog.getById({
         component: '',
@@ -826,7 +826,7 @@ describe('classifyContent()', () => {
   describe('assign correct out and pub properties to files', () => {
     it('complete example', () => {
       aggregate[0].files.push(createFile('modules/the-module/pages/the-topic/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -845,7 +845,7 @@ describe('classifyContent()', () => {
 
     it('page in topic dirs', () => {
       aggregate[0].files.push(createFile('modules/the-module/pages/subpath-foo/subpath-bar/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -859,7 +859,7 @@ describe('classifyContent()', () => {
 
     it('page without topic dir', () => {
       aggregate[0].files.push(createFile('modules/the-module/pages/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -873,7 +873,7 @@ describe('classifyContent()', () => {
 
     it('page in ROOT module', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -887,7 +887,7 @@ describe('classifyContent()', () => {
 
     it('should not set out and pub on file with leading underscore', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/_attributes.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file).to.not.have.property('out')
@@ -896,7 +896,7 @@ describe('classifyContent()', () => {
 
     it('should not set out and pub on file in directory with leading underscore', () => {
       aggregate[0].files.push(createFile('modules/ROOT/pages/_attributes/common.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file).to.not.have.property('out')
@@ -912,7 +912,7 @@ describe('classifyContent()', () => {
           files: [createFile('modules/the-module/pages/page-one.adoc')],
         },
       ]
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -933,7 +933,7 @@ describe('classifyContent()', () => {
           files: [createFile('modules/ROOT/pages/page-one.adoc')],
         },
       ]
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -947,7 +947,7 @@ describe('classifyContent()', () => {
 
     it('image', () => {
       aggregate[0].files.push(createFile('modules/the-module/assets/images/foo.png'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -961,7 +961,7 @@ describe('classifyContent()', () => {
 
     it('attachment', () => {
       aggregate[0].files.push(createFile('modules/the-module/assets/attachments/example.zip'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -976,7 +976,7 @@ describe('classifyContent()', () => {
     it('image with drop html extension strategy', () => {
       playbook.urls.htmlExtensionStyle = 'drop'
       aggregate[0].files.push(createFile('modules/the-module/assets/images/foo.png'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -996,7 +996,7 @@ describe('classifyContent()', () => {
     it('page with drop html extension strategy', () => {
       playbook.urls.htmlExtensionStyle = 'drop'
       aggregate[0].files.push(createFile('modules/the-module/pages/the-topic/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -1016,7 +1016,7 @@ describe('classifyContent()', () => {
     it('index page with drop html extension strategy', () => {
       playbook.urls.htmlExtensionStyle = 'drop'
       aggregate[0].files.push(createFile('modules/the-module/pages/the-topic/index.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -1036,7 +1036,7 @@ describe('classifyContent()', () => {
     it('indexify html extension strategy', () => {
       playbook.urls.htmlExtensionStyle = 'indexify'
       aggregate[0].files.push(createFile('modules/the-module/pages/the-topic/page-one.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({
@@ -1056,7 +1056,7 @@ describe('classifyContent()', () => {
     it('index page with indexify html extension strategy', () => {
       playbook.urls.htmlExtensionStyle = 'indexify'
       aggregate[0].files.push(createFile('modules/the-module/pages/the-topic/index.adoc'))
-      const files = classifyContent(playbook, aggregate).getFiles()
+      const files = classifyContent(playbook, aggregate).getAll()
       expect(files).to.have.lengthOf(1)
       const file = files[0]
       expect(file.out).to.include({

@@ -179,7 +179,7 @@ describe('produceRedirects()', () => {
     })
 
     it('should not include extra redirect for directory if HTML URL extension style is indexify', () => {
-      contentCatalog.getFiles().forEach((file) => {
+      contentCatalog.getAll().forEach((file) => {
         file.pub.url = file.pub.url.slice(0, file.pub.url.endsWith('/index.html') ? -11 : -5) + '/'
       })
       playbook.urls.htmlExtensionStyle = 'indexify'
@@ -200,7 +200,7 @@ describe('produceRedirects()', () => {
     })
 
     it('should not include extra redirect for directory if HTML URL extension style is drop', () => {
-      contentCatalog.getFiles().forEach((file) => {
+      contentCatalog.getAll().forEach((file) => {
         file.pub.url = file.pub.url.slice(0, file.pub.url.endsWith('/index.html') ? -10 : -5)
       })
       playbook.urls.htmlExtensionStyle = 'drop'

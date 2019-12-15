@@ -45,7 +45,7 @@ describe('convertDocuments()', () => {
         contents: '<svg>...</svg>',
       },
     ])
-    const attributesFile = contentCatalog.getFiles().find((f) => f.src.relative === '_attributes.adoc')
+    const attributesFile = contentCatalog.getAll().find((f) => f.src.relative === '_attributes.adoc')
     const attributesFileContents = attributesFile.contents
     const pages = convertDocuments(contentCatalog, asciidocConfig)
     expect(pages).to.have.lengthOf(2)

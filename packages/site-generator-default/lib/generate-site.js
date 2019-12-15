@@ -25,7 +25,7 @@ async function generateSite (args, env) {
   pages.forEach((page) => composePage(page, contentCatalog, navigationCatalog))
   const siteFiles = mapSite(playbook, pages).concat(produceRedirects(playbook, contentCatalog))
   if (playbook.site.url) siteFiles.push(composePage(create404Page()))
-  const siteCatalog = { getFiles: () => siteFiles }
+  const siteCatalog = { getAll: () => siteFiles }
   return publishSite(playbook, [contentCatalog, uiCatalog, siteCatalog])
 }
 

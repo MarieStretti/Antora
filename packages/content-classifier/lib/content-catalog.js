@@ -150,7 +150,7 @@ class ContentCatalog {
     return this.getComponents().sort((a, b) => a[property].localeCompare(b[property]))
   }
 
-  getFiles () {
+  getAll () {
     return Object.values(this[$files])
   }
 
@@ -227,6 +227,10 @@ class ContentCatalog {
         return target.findBy(criteria)
       }
 
+      getAll () {
+        return target.getAll()
+      }
+
       getById (id) {
         return target.getById(id)
       }
@@ -237,10 +241,6 @@ class ContentCatalog {
 
       getComponents () {
         return target.getComponents()
-      }
-
-      getFiles () {
-        return target.getFiles()
       }
 
       getPages () {
@@ -257,6 +257,11 @@ class ContentCatalog {
     })()
   }
 }
+
+/**
+ * @deprecated superceded by getAll()
+ */
+ContentCatalog.prototype.getFiles = ContentCatalog.prototype.getAll
 
 function generateKey ({ component, version, module, family, relative }) {
   return `${version}@${component}:${module}:${family}$${relative}`

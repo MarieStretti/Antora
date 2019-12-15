@@ -12,6 +12,9 @@ This project utilizes semantic versioning.
 * *content-classifier*: Add `getPages()` method to content catalog to retrieve all pages (#537)
 * *page-composer*: Expose public API of content catalog to UI model as `site.contentCatalog` (#328)
 * *page-composer*: Add built-in helpers resolvePage and resolvePageUrl to resolve arbitrary pages and their publish URLs (#328)
+* *content-classifier*: Rename `getFiles()` method on content catalog to `getAll()`; retain `getFiles()` as deprecated method (#538)
+* *ui-loader*: Rename `getFiles()` method on UI catalog to `getAll()`; retain `getFiles()` as deprecated method (#538)
+* *site-publisher*: Call `getAll()` method on catalog if available, otherwise `getFiles()` (#538)
 
 == 2.3.0-alpha.1 (2019-11-20)
 
