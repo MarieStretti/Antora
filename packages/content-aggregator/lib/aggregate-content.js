@@ -279,10 +279,13 @@ async function selectReferences (source, repo, remote) {
       }
     }
     const remoteBranches = await git.listBranches(Object.assign({ remote }, repo))
-    // NOTE isomorphic-git includes HEAD in list of remote branches (see https://isomorphic-git.org/docs/listBranches)
-    const namedRemoteBranches = remoteBranches.filter((name) => name !== 'HEAD')
-    for (const name of matcher(namedRemoteBranches, branchPatterns)) {
-      refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
+    if (remoteBranches.length) {
+      // NOTE isomorphic-git includes HEAD in list of remote branches (see https://isomorphic-git.org/docs/listBranches)
+      const headIdx = remoteBranches.indexOf('HEAD')
+      if (~headIdx) remoteBranches.splice(headIdx, 1)
+      for (const name of matcher(remoteBranches, branchPatterns)) {
+        refs.set(name, { name, qname: path.join('remotes', remote, name), type: 'branch', remote })
+      }
     }
     // NOTE only consider local branches if repo has a worktree or there are no remote tracking branches
     if (!isBare) {
