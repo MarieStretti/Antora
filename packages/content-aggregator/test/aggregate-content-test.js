@@ -207,7 +207,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await repoBuilder.init('the-component').then(() => repoBuilder.close())
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -223,7 +223,7 @@ describe('aggregateContent()', function () {
         )
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const expectedMessageStart = `${COMPONENT_DESC_FILENAME} has invalid syntax;`
-        const expectedMessageEnd = ` in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessageEnd = ` in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessageStart)
         expect(aggregateContentDeferred).to.throw(expectedMessageEnd)
@@ -235,7 +235,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithComponentDescriptor(repoBuilder, { version: 'v1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a name in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a name in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -246,7 +246,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component' })
         playbookSpec.content.sources.push({ url: repoBuilder.url })
-        const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a version in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} is missing a version in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -259,7 +259,7 @@ describe('aggregateContent()', function () {
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const expectedMessage =
           `name in ${COMPONENT_DESC_FILENAME} cannot have path segments: foo/bar` +
-          ` in ${repoBuilder.url} [ref: ${ref}]`
+          ` in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -272,7 +272,7 @@ describe('aggregateContent()', function () {
         playbookSpec.content.sources.push({ url: repoBuilder.url })
         const expectedMessage =
           `version in ${COMPONENT_DESC_FILENAME} cannot have path segments: 1.1/0` +
-          ` in ${repoBuilder.url} [ref: ${ref}]`
+          ` in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -331,7 +331,7 @@ describe('aggregateContent()', function () {
         )
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'docs' })
         const expectedMessageStart = `${COMPONENT_DESC_FILENAME} has invalid syntax;`
-        const expectedMessageEnd = ` in ${repoBuilder.url} [ref: ${ref}; path: docs]`
+        const expectedMessageEnd = ` in ${repoBuilder.url} (ref: ${ref}; path: docs)`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessageStart)
         expect(aggregateContentDeferred).to.throw(expectedMessageEnd)
@@ -625,7 +625,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'does-not-exist' })
-        const expectedMessage = `the start path 'does-not-exist' does not exist in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `the start path 'does-not-exist' does not exist in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -636,7 +636,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'antora.yml' })
-        const expectedMessage = `the start path 'antora.yml' is not a directory in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `the start path 'antora.yml' is not a directory in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -647,7 +647,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithFiles(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'modules' })
-        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} [ref: ${ref}; path: modules]`
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} (ref: ${ref}; path: modules)`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -664,7 +664,7 @@ describe('aggregateContent()', function () {
         expect(componentDescEntry).to.exist()
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: '{more,}docs' })
-        const expectedMessage = `the start path 'moredocs' does not exist in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `the start path 'moredocs' does not exist in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -675,7 +675,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'does-not-exist-*' })
-        const expectedMessage = `no start paths found in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `no start paths found in ${repoBuilder.url} (ref: ${ref})`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -688,7 +688,7 @@ describe('aggregateContent()', function () {
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'does-not-exist/{foo,bar*}' })
         const expectedMessage = new RegExp(
           "^the start path 'does-not-exist/(foo|bar\\*)' does not exist in " +
-            `${repoBuilder.url} [ref: ${ref}]$`.replace(/[.[\]\\]/g, '\\$&')
+            `${repoBuilder.url} (ref: ${ref})$`.replace(/[.()\\]/g, '\\$&')
         )
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)

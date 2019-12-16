@@ -338,7 +338,7 @@ async function collectFilesFromReference (source, repo, remoteName, authStatus, 
         .resolveRef(Object.assign({ ref: ref.qname }, repo))
         .then((oid) => resolvePathGlobsGit(repo, oid, startPaths)))
     if (!startPaths.length) {
-      throw new Error(`no start paths found in ${displayUrl} [ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''}]`)
+      throw new Error(`no start paths found in ${displayUrl} (ref: ${ref.qname}${worktreePath ? ' <worktree>' : ''})`)
     }
     return Promise.all(
       startPaths.map((startPath) =>
@@ -366,7 +366,7 @@ function collectFilesFromStartPath (startPath, repo, authStatus, ref, worktreePa
     .catch((err) => {
       const refInfo = `ref: ${refname}${worktreePath ? ' <worktree>' : ''}`
       const pathInfo = !startPath || err.message.startsWith('the start path ') ? '' : '; path: ' + startPath
-      err.message += ` in ${repo.url || repo.dir} [${refInfo}${pathInfo}]`
+      err.message += ` in ${repo.url || repo.dir} (${refInfo}${pathInfo})`
       throw err
     })
 }
