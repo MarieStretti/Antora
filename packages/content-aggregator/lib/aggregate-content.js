@@ -363,7 +363,7 @@ function collectFilesFromStartPath (startPath, repo, authStatus, ref, worktreePa
     })
     .catch((err) => {
       const refInfo = `ref: ${refname}${worktreePath ? ' <worktree>' : ''}`
-      const pathInfo = !startPath || err.message.startsWith('the start path ') ? '' : '; path: ' + startPath
+      const pathInfo = !startPath || err.message.startsWith('the start path ') ? '' : ' | path: ' + startPath
       err.message += ` in ${repo.url || repo.dir} (${refInfo}${pathInfo})`
       throw err
     })

@@ -331,7 +331,7 @@ describe('aggregateContent()', function () {
         )
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'docs' })
         const expectedMessageStart = `${COMPONENT_DESC_FILENAME} has invalid syntax;`
-        const expectedMessageEnd = ` in ${repoBuilder.url} (ref: ${ref}; path: docs)`
+        const expectedMessageEnd = ` in ${repoBuilder.url} (ref: ${ref} | path: docs)`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessageStart)
         expect(aggregateContentDeferred).to.throw(expectedMessageEnd)
@@ -647,7 +647,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithFiles(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'modules' })
-        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} (ref: ${ref}; path: modules)`
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} (ref: ${ref} | path: modules)`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
