@@ -358,13 +358,15 @@ function collectFilesFromStartPath (startPath, repo, authStatus, ref, worktreePa
     : readFilesFromGitTree(repo, refname, startPath)
   )
     .then((files) => {
-      const componentVersion = loadComponentDescriptor(files, startPath)
+      const componentVersion = loadComponentDescriptor(files)
       const origin = computeOrigin(originUrl, authStatus, refnameShort, reftype, startPath, worktreePath, editUrl)
       componentVersion.files = files.map((file) => assignFileProperties(file, origin))
       return componentVersion
     })
     .catch((err) => {
-      err.message += ` in ${repo.url || repo.dir} [ref: ${refname}${worktreePath ? ' <worktree>' : ''}]`
+      const refInfo = `ref: ${refname}${worktreePath ? ' <worktree>' : ''}`
+      const pathInfo = !startPath || err.message.startsWith('the start path ') ? '' : '; path: ' + startPath
+      err.message += ` in ${repo.url || repo.dir} [${refInfo}${pathInfo}]`
       throw err
     })
 }
@@ -496,21 +498,27 @@ function entryToFile (entry) {
   })
 }
 
-function loadComponentDescriptor (files, startPath) {
+function loadComponentDescriptor (files) {
   const descriptorFileIdx = files.findIndex((file) => file.path === COMPONENT_DESC_FILENAME)
-  if (descriptorFileIdx < 0) throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' not found')
+  if (descriptorFileIdx < 0) throw new Error(`${COMPONENT_DESC_FILENAME} not found`)
   const descriptorFile = files[descriptorFileIdx]
   files.splice(descriptorFileIdx, 1)
-  const data = yaml.safeLoad(descriptorFile.contents.toString())
-  if (data.name == null) throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a name')
+  let data
+  try {
+    data = yaml.safeLoad(descriptorFile.contents.toString())
+  } catch (e) {
+    e.message = `${COMPONENT_DESC_FILENAME} has invalid syntax; ${e.message}`
+    throw e
+  }
+  if (data.name == null) throw new Error(`${COMPONENT_DESC_FILENAME} is missing a name`)
   const name = String(data.name)
   if (name === '.' || name === '..' || ~name.indexOf('/')) {
-    throw new Error(`name in ${path.join(startPath, COMPONENT_DESC_FILENAME)} cannot have path segments: ${name}`)
+    throw new Error(`name in ${COMPONENT_DESC_FILENAME} cannot have path segments: ${name}`)
   }
-  if (data.version == null) throw new Error(path.join(startPath, COMPONENT_DESC_FILENAME) + ' is missing a version')
+  if (data.version == null) throw new Error(`${COMPONENT_DESC_FILENAME} is missing a version`)
   const version = String(data.version)
   if (version === '.' || version === '..' || ~version.indexOf('/')) {
-    throw new Error(`version in ${path.join(startPath, COMPONENT_DESC_FILENAME)} cannot have path segments: ${version}`)
+    throw new Error(`version in ${COMPONENT_DESC_FILENAME} cannot have path segments: ${version}`)
   }
   data.name = name
   data.version = version

@@ -213,6 +213,23 @@ describe('aggregateContent()', function () {
       })
     })
 
+    describe('should throw if component descriptor cannot be parsed', () => {
+      testAll(async (repoBuilder) => {
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: 'v1.0' }, () =>
+          repoBuilder
+            .addToWorktree('antora.yml', ':\nname: the-component\nversion: v1.0\n')
+            .then(() => repoBuilder.commitAll('mangle component descriptor'))
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url })
+        const expectedMessageStart = `${COMPONENT_DESC_FILENAME} has invalid syntax;`
+        const expectedMessageEnd = ` in ${repoBuilder.url} [ref: ${ref}]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessageStart)
+        expect(aggregateContentDeferred).to.throw(expectedMessageEnd)
+      })
+    })
+
     describe('should throw if component descriptor does not define a name', () => {
       testAll(async (repoBuilder) => {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
@@ -300,6 +317,24 @@ describe('aggregateContent()', function () {
         const aggregate = await aggregateContent(playbookSpec)
         expect(aggregate).to.have.lengthOf(1)
         expect(aggregate[0]).to.deep.include(componentDesc)
+      })
+    })
+
+    describe('should throw if component descriptor at start path cannot be parsed', () => {
+      testAll(async (repoBuilder) => {
+        const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
+        const componentDesc = { name: 'the-component', version: 'v1.0', startPath: 'docs' }
+        await initRepoWithComponentDescriptor(repoBuilder, componentDesc, () =>
+          repoBuilder
+            .addToWorktree('docs/antora.yml', ':\nname: the-component\nversion: v1.0\n')
+            .then(() => repoBuilder.commitAll('mangle component descriptor'))
+        )
+        playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'docs' })
+        const expectedMessageStart = `${COMPONENT_DESC_FILENAME} has invalid syntax;`
+        const expectedMessageEnd = ` in ${repoBuilder.url} [ref: ${ref}; path: docs]`
+        const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
+        expect(aggregateContentDeferred).to.throw(expectedMessageStart)
+        expect(aggregateContentDeferred).to.throw(expectedMessageEnd)
       })
     })
 
@@ -612,7 +647,7 @@ describe('aggregateContent()', function () {
         const ref = repoBuilder.remote ? 'remotes/origin/master' : repoBuilder.bare ? 'master' : 'master <worktree>'
         await initRepoWithFiles(repoBuilder)
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPath: 'modules' })
-        const expectedMessage = `modules/${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} [ref: ${ref}]`
+        const expectedMessage = `${COMPONENT_DESC_FILENAME} not found in ${repoBuilder.url} [ref: ${ref}; path: modules]`
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
       })
@@ -652,10 +687,8 @@ describe('aggregateContent()', function () {
         await initRepoWithComponentDescriptor(repoBuilder, { name: 'the-component', version: '1.0' })
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'does-not-exist/{foo,bar*}' })
         const expectedMessage = new RegExp(
-          `^the start path 'does-not-exist/(foo|bar*)' does not exist in ${repoBuilder.url} [ref: ${ref}]$`.replace(
-            /[[\].*\\]/g,
-            '\\$&'
-          )
+          "^the start path 'does-not-exist/(foo|bar\\*)' does not exist in " +
+            `${repoBuilder.url} [ref: ${ref}]$`.replace(/[.[\]\\]/g, '\\$&')
         )
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
