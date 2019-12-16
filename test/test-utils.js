@@ -18,6 +18,18 @@ chai.use(require('chai-spies'))
 // dirty-chai must be loaded after the other plugins
 // see https://github.com/prodatakey/dirty-chai#plugin-assertions
 chai.use(require('dirty-chai'))
+chai.Assertion.addMethod('endWith', function (expected) {
+  const subject = this._obj
+  let verdict = false
+  if (typeof subject === 'string' && typeof expected === 'string') verdict = subject.endsWith(expected)
+  return this.assert(
+    verdict,
+    'expected #{this} to end with #{exp}',
+    'expected #{this} to not end with #{exp}',
+    expected,
+    undefined
+  )
+})
 
 module.exports = {
   bufferizeContents: () =>

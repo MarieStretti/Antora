@@ -10,6 +10,13 @@ describe('produceRedirects()', () => {
   let contentCatalog
   let playbook
 
+  const extractRules = ({ contents }) =>
+    contents
+      .toString()
+      .trimRight()
+      .split('\n')
+      .sort()
+
   beforeEach(() => {
     playbook = {
       site: { url: 'https://docs.example.org' },
@@ -58,6 +65,7 @@ describe('produceRedirects()', () => {
         expect(html).to.include(`<script>location="${expectedRelativeUrl}"</script>`)
         expect(html).to.include(`<meta http-equiv="refresh" content="0; url=${expectedRelativeUrl}">`)
         expect(html).to.include(`<a href="${expectedRelativeUrl}">${expectedQualifiedUrl}</a>`)
+        expect(html).to.endWith('\n')
       })
     })
 
@@ -143,10 +151,8 @@ describe('produceRedirects()', () => {
       expect(result[0]).to.have.property('contents')
       expect(result[0]).to.have.property('out')
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         '/ /component-a/module-a/the-target.html 301',
         '/component-a/module-a/alias-a.html /component-a/module-a/the-target.html 301',
@@ -169,10 +175,8 @@ describe('produceRedirects()', () => {
       expect(result[0]).to.have.property('contents')
       expect(result[0]).to.have.property('out')
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         '/component-a/module-a/alias%20with%20spaces.html /component-a/module-a/target%20with%20spaces.html 301',
       ])
@@ -186,10 +190,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         '/ /component-a/module-a/the-target/ 301',
         '/component-a/module-a/alias-a/ /component-a/module-a/the-target/ 301',
@@ -207,10 +209,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         '/ /component-a/module-a/the-target 301',
         '/component-a/module-a/alias-a /component-a/module-a/the-target 301',
@@ -225,10 +225,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         '/docs/ /docs/component-a/module-a/the-target.html 301',
         '/docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html 301',
@@ -245,10 +243,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         '/docs/ /docs/component-a/module-a/the-target.html 301',
         '/docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html 301',
@@ -265,10 +261,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.include('/docs/component-a/module-a/alias-a.html /docs/component-a/module-a/the-target.html 301')
     })
 
@@ -277,10 +271,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('_redirects')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         '/ /component-a/module-a/the-target.html 301',
         '/component-a/module-a/alias-a.html /component-a/module-a/the-target.html 301',
@@ -311,10 +303,8 @@ describe('produceRedirects()', () => {
       expect(result[0]).to.have.property('contents')
       expect(result[0]).to.have.property('out')
       expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         'location = /component-a/module-a/alias-a.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-a/module-a/old-target/index.html { return 301 /component-a/module-a/the-target.html; }',
@@ -335,10 +325,8 @@ describe('produceRedirects()', () => {
       expect(result[0]).to.have.property('contents')
       expect(result[0]).to.have.property('out')
       expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         "location = '/component-a/module-a/alias with spaces.html' { return 301 '/component-a/module-a/target with spaces.html'; }",
       ])
@@ -349,10 +337,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         'location = /docs/component-a/module-a/alias-a.html { return 301 /docs/component-a/module-a/the-target.html; }',
         'location = /docs/component-a/module-a/old-target/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
@@ -367,10 +353,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         'location = /docs/component-a/module-a/alias-a.html { return 301 /docs/component-a/module-a/the-target.html; }',
         'location = /docs/component-a/module-a/old-target/index.html { return 301 /docs/component-a/module-a/the-target.html; }',
@@ -385,10 +369,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.include(
         'location = /docs/component-a/module-a/alias-a.html { return 301 /docs/component-a/module-a/the-target.html; }'
       )
@@ -399,10 +381,8 @@ describe('produceRedirects()', () => {
       const result = produceRedirects(playbook, contentCatalog)
       expect(result).to.have.lengthOf(1)
       expect(result[0].out.path).to.equal('.etc/nginx/rewrite.conf')
-      const rules = result[0].contents
-        .toString()
-        .split('\n')
-        .sort()
+      expect(result[0].contents.toString()).to.endWith('\n')
+      const rules = extractRules(result[0])
       expect(rules).to.eql([
         'location = /component-a/module-a/alias-a.html { return 301 /component-a/module-a/the-target.html; }',
         'location = /component-a/module-a/old-target/index.html { return 301 /component-a/module-a/the-target.html; }',

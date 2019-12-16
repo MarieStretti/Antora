@@ -67,6 +67,7 @@ describe('mapSite()', () => {
     expect(sitemapIndex.out).to.eql({ path: 'sitemap.xml' })
     expect(sitemapIndex.pub).to.eql({ url: '/sitemap.xml' })
     expect(sitemapIndex.contents.toString()).to.include('<urlset ')
+    expect(sitemapIndex.contents.toString()).to.endWith('\n')
   })
 
   it('should generate multiple sitemaps with index at root of site if site contains multiple components', () => {
@@ -82,6 +83,7 @@ describe('mapSite()', () => {
     expect(sitemapIndex.out).to.eql({ path: 'sitemap.xml' })
     expect(sitemapIndex.pub).to.eql({ url: '/sitemap.xml' })
     expect(sitemapIndex.contents.toString()).to.include('<sitemapindex ')
+    expect(sitemapIndex.contents.toString()).to.endWith('\n')
     const componentSitemap = sitemaps.find((sitemap) => sitemap.out.path !== 'sitemap.xml')
     expect(componentSitemap.contents.toString()).to.include('<urlset ')
   })
