@@ -144,9 +144,7 @@ async function loadRepository (url, opts) {
       ? { core: GIT_CORE, dir }
       : { core: GIT_CORE, dir, gitdir: dir, noCheckout: true }
   } else {
-    throw new Error(
-      `Local content source does not exist: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
-    )
+    throw new Error(`Local content source does not exist: ${dir}${url !== dir ? ' (url: ' + url + ')' : ''}`)
   }
 
   // QUESTION should we capture the current branch in repo object here?
@@ -195,7 +193,7 @@ async function loadRepository (url, opts) {
         .then(() => fetchOpts.emitter && fetchOpts.emitter.emit('complete'))
     } else {
       throw new Error(
-        `Local content source must be a git repository: ${dir}${url !== dir ? ' (resolved from url: ' + url + ')' : ''}`
+        `Local content source must be a git repository: ${dir}${url !== dir ? ' (url: ' + url + ')' : ''}`
       )
     }
   }

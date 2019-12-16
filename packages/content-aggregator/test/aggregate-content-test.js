@@ -3393,7 +3393,7 @@ describe('aggregateContent()', function () {
       playbookSpec.dir = WORK_DIR
       playbookSpec.content.sources.push({ url: invalidDir })
       const expectedErrorMessage =
-        'Local content source does not exist: ' + absInvalidDir + ' (resolved from url: ' + invalidDir + ')'
+        'Local content source does not exist: ' + absInvalidDir + ' (url: ' + invalidDir + ')'
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })
@@ -3414,7 +3414,7 @@ describe('aggregateContent()', function () {
       playbookSpec.dir = WORK_DIR
       playbookSpec.content.sources.push({ url: regularDir })
       const expectedErrorMessage =
-        'Local content source must be a git repository: ' + absRegularDir + ' (resolved from url: ' + regularDir + ')'
+        'Local content source must be a git repository: ' + absRegularDir + ' (url: ' + regularDir + ')'
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })
