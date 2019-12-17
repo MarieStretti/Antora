@@ -133,9 +133,9 @@ function ensureCacheDir (customCacheDir, startDir) {
 }
 
 function downloadBundle (url, to) {
-  return get(url, { encoding: null })
+  return get(url, { resolveBodyOnly: true, responseType: 'buffer' })
     .then(
-      ({ body }) =>
+      (body) =>
         new Promise((resolve, reject) =>
           new ReadableFile(new MemoryFile({ path: ospath.basename(to), contents: body }))
             .pipe(vzip.src())
