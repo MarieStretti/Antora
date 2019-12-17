@@ -143,7 +143,7 @@ describe('mapSite()', () => {
 
   it('should sort entries in sitemap index by component name', () => {
     const contentCatalog = mockContentCatalog([
-      { component: 'lodash', family: 'page', relative: 'index.adoc' },
+      { component: 'vinyl', family: 'page', relative: 'index.adoc' },
       { component: 'babel', family: 'page', relative: 'index.adoc' },
       { component: 'commander', family: 'page', relative: 'index.adoc' },
       { component: 'antora', family: 'page', relative: 'index.adoc' },
@@ -155,7 +155,7 @@ describe('mapSite()', () => {
       'https://docs.example.org/sitemap-antora.xml',
       'https://docs.example.org/sitemap-babel.xml',
       'https://docs.example.org/sitemap-commander.xml',
-      'https://docs.example.org/sitemap-lodash.xml',
+      'https://docs.example.org/sitemap-vinyl.xml',
     ]
     expect(urls).to.have.ordered.members(urlsExpected)
   })
