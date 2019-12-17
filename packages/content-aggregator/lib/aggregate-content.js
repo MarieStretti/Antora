@@ -777,12 +777,12 @@ function transformGitCloneError (err, displayUrl) {
     } else if (data.statusCode === 404) {
       msg = 'Content repository not found'
     } else {
-      msg = message
+      msg = message.trimRight()
     }
   } else if (code === git.E.RemoteUrlParseError || code === git.E.UnknownTransportError) {
     msg = 'Content source uses an unsupported transport protocol'
   } else if (code && data) {
-    msg = ~message.indexOf('. ') ? message : message.replace(/\.$/, '')
+    msg = (~message.indexOf('. ') ? message : message.replace(/\.$/, '')).trimRight()
   } else {
     msg = 'Unknown ' + err.name + ': See cause'
   }

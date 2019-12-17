@@ -94,6 +94,8 @@ describe('aggregateContent()', function () {
 
   const prefixPath = (prefix, path_) => [prefix, path_].join(ospath.sep)
 
+  const regexpEscape = (str) => str.replace(/[.*[\](|)\\]/g, '\\$&')
+
   const clean = (fin) => {
     process.chdir(CWD)
     removeSyncForce(CACHE_DIR)
@@ -688,7 +690,7 @@ describe('aggregateContent()', function () {
         playbookSpec.content.sources.push({ url: repoBuilder.url, startPaths: 'does-not-exist/{foo,bar*}' })
         const expectedMessage = new RegExp(
           "^the start path 'does-not-exist/(foo|bar\\*)' does not exist in " +
-            `${repoBuilder.url} (ref: ${ref})$`.replace(/[.()\\]/g, '\\$&')
+            `${regexpEscape(repoBuilder.url)} \\(ref: ${regexpEscape(ref)}\\)$`
         )
         const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
         expect(aggregateContentDeferred).to.throw(expectedMessage)
@@ -3498,11 +3500,9 @@ describe('aggregateContent()', function () {
       const oldSshAuthSock = process.env.SSH_AUTH_SOCK
       delete process.env.SSH_AUTH_SOCK
       const url = 'git@gitlab.com:invalid-repository.git'
-      const expectedErrorMessage =
-        'Remote does not support the "smart" HTTP protocol, ' +
-        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible (url: ' +
-        url +
-        ')'
+      const expectedErrorMessage = new RegExp(
+        `^Remote did not reply using the "smart" HTTP protocol\\.[\\s\\S]* \\(url: ${regexpEscape(url)}\\)`
+      )
       playbookSpec.content.sources.push({ url })
       await withMockStdout(async (lines) => {
         playbookSpec.runtime.quiet = false
@@ -3527,9 +3527,11 @@ describe('aggregateContent()', function () {
     it('should throw meaningful error if git client throws exception', async () => {
       const url = `http://localhost:${serverPort}/200/incomplete-ref-capabilities.git`
       playbookSpec.content.sources.push({ url })
-      const commonErrorMessage = 'Expected "Two strings separated by \'\\x00\'" but got "ref"'
-      const expectedErrorMessage = `${commonErrorMessage} (url: ${url})`
-      const expectedCauseMessage = `AssertServerResponseFail: ${commonErrorMessage}`
+      const commonErrorMessage = 'Remote did not reply using the "smart" HTTP protocol.'
+      const expectedErrorMessage =
+        `${commonErrorMessage} Expected "001e# service=git-upload-pack" ` +
+        `but received: 001e# service=git-upload-pack\n0007ref (url: ${url})`
+      const expectedCauseMessage = `RemoteDoesNotSupportSmartHTTP: ${commonErrorMessage}`
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred)
         .to.throw(expectedErrorMessage)
@@ -3540,9 +3542,11 @@ describe('aggregateContent()', function () {
     it('should throw meaningful error if git server does not support required capabilities', async () => {
       const url = `http://localhost:${serverPort}/200/insufficient-capabilities.git`
       playbookSpec.content.sources.push({ url })
-      const commonErrorMessage = 'Expected "Two strings separated by \' \'" but got "ref"'
-      const expectedErrorMessage = `${commonErrorMessage} (url: ${url})`
-      const expectedCauseMessage = `AssertServerResponseFail: ${commonErrorMessage}`
+      const commonErrorMessage = 'Remote did not reply using the "smart" HTTP protocol.'
+      const expectedErrorMessage =
+        `${commonErrorMessage} Expected "001e# service=git-upload-pack" ` +
+        `but received: 001e# service=git-upload-pack\n0009ref\x00 (url: ${url})`
+      const expectedCauseMessage = `RemoteDoesNotSupportSmartHTTP: ${commonErrorMessage}`
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred)
         .to.throw(expectedErrorMessage)
@@ -3553,12 +3557,15 @@ describe('aggregateContent()', function () {
     it('should throw meaningful error if git server returns empty response', async () => {
       const url = `http://localhost:${serverPort}/200/empty-response.git`
       playbookSpec.content.sources.push({ url })
-      const expectedErrorMessage = `Unknown EmptyServerResponseFail: See cause (url: ${url})`
+      const commonErrorMessage = 'Remote did not reply using the "smart" HTTP protocol.'
+      const expectedErrorMessage =
+        `${commonErrorMessage} Expected "001e# service=git-upload-pack" ` + `but received: 0000 (url: ${url})`
+      const expectedCauseMessage = `RemoteDoesNotSupportSmartHTTP: ${commonErrorMessage}`
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred)
         .to.throw(expectedErrorMessage)
         .with.property('stack')
-        .that.includes('Caused by: EmptyServerResponseFail: Empty response from git server.')
+        .that.includes('Caused by: ' + expectedCauseMessage)
     })
 
     it('should throw meaningful error if remote repository URL not found', async () => {
@@ -3617,12 +3624,9 @@ describe('aggregateContent()', function () {
 
     it('should throw meaningful error if server returns unexpected error', async () => {
       const url = `http://localhost:${serverPort}/301/invalid-repository.git`
-      const expectedErrorMessage =
-        'Remote does not support the "smart" HTTP protocol, ' +
-        'and isomorphic-git does not support the "dumb" HTTP protocol, so they are incompatible (url: ' +
-        url +
-        ')'
       playbookSpec.content.sources.push({ url })
+      const commonErrorMessage = 'Remote did not reply using the "smart" HTTP protocol.'
+      const expectedErrorMessage = `${commonErrorMessage} Expected "001e# service=git-upload-pack"`
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred).to.throw(expectedErrorMessage)
     })

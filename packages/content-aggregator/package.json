@@ -22,7 +22,7 @@
     "cache-directory": "~2.0",
     "camelcase-keys": "~6.1",
     "fs-extra": "~8.1",
-    "isomorphic-git": "0.70.5",
+    "isomorphic-git": "0.70.6",
     "js-yaml": "~3.13",
     "lodash": "~4.17",
     "matcher": "~2.1",
