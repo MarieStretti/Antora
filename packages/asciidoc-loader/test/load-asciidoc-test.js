@@ -357,7 +357,7 @@ describe('loadAsciiDoc()', () => {
         this.onContext('paragraph')
         this.process((parent, reader) =>
           this.createBlock(parent, 'paragraph', reader.getLines().map((l) => l.toUpperCase()))
-        )
+        ) // prettier-ignore
       }
       shoutBlockExtension.registered = 0
       shoutBlockExtension.register = (registry) => {

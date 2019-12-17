@@ -66,7 +66,10 @@ describe('buildPlaybook()', () => {
       },
       two: 42,
       three: false,
-      four: [{ lastname: 'Lennon', name: 'John' }, { lastname: 'McCartney', name: 'Paul' }],
+      four: [
+        { lastname: 'Lennon', name: 'John' },
+        { lastname: 'McCartney', name: 'Paul' },
+      ],
       stuff: {},
     }
   })
@@ -118,7 +121,10 @@ describe('buildPlaybook()', () => {
     expectedPlaybook.dir = ospath.dirname(yamlSpec)
     expectedPlaybook.file = yamlSpec
     expectedPlaybook.one.one = 'yaml-spec-value-one'
-    expectedPlaybook.four = [{ lastname: 'Starr', name: 'Ringo' }, { lastname: 'Harrison', name: 'George' }]
+    expectedPlaybook.four = [
+      { lastname: 'Starr', name: 'Ringo' },
+      { lastname: 'Harrison', name: 'George' },
+    ]
     expect(playbook).to.eql(expectedPlaybook)
   })
 

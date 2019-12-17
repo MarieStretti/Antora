@@ -416,7 +416,7 @@ function relativizeFiles () {
 
 function collectFiles (done) {
   const accum = []
-  return map((file, enc, next) => accum.push(file) && next(), () => done(accum))
+  return map((file, enc, next) => accum.push(file) && next(), () => done(accum)) // prettier-ignore
 }
 
 function readFilesFromGitTree (repo, ref, startPath) {

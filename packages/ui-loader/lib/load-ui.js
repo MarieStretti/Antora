@@ -203,7 +203,7 @@ function bufferizeContents () {
 
 function collectFiles (done) {
   const files = new Map()
-  return map((file, _, next) => files.set(file.path, file) && next(), () => done(files))
+  return map((file, _, next) => files.set(file.path, file) && next(), () => done(files)) // prettier-ignore
 }
 
 function srcSupplementalFiles (filesSpec, startDir) {

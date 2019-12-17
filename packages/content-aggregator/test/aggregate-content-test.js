@@ -1986,7 +1986,7 @@ describe('aggregateContent()', function () {
         ]
         const hostnames = ['github.com', 'private.github.com']
         const action = { branch: 'edit', tag: 'blob' }
-        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']] // prettier-ignore
         refs.forEach(([name, type]) => {
           hostnames.forEach((hostname) => {
             urls.forEach((url) => {
@@ -2014,7 +2014,7 @@ describe('aggregateContent()', function () {
         ]
         const hostnames = ['gitlab.com', 'private.gitlab.com']
         const action = { branch: 'edit', tag: 'blob' }
-        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']] // prettier-ignore
         refs.forEach(([name, type]) => {
           hostnames.forEach((hostname) => {
             urls.forEach((url) => {
@@ -2041,7 +2041,7 @@ describe('aggregateContent()', function () {
           'git@{hostname}:org-name/repo-name',
         ]
         const hostnames = ['bitbucket.org', 'private.bitbucket.org']
-        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']] // prettier-ignore
         refs.forEach(([name, type]) => {
           hostnames.forEach((hostname) => {
             urls.forEach((url) => {
@@ -2068,7 +2068,7 @@ describe('aggregateContent()', function () {
           'git@{hostname}:group-name/repo-name',
         ]
         const hostnames = ['pagure.io', 'private.pagure.io']
-        const refs = [['master', 'branch'], ['v1.1.0', 'tag']]
+        const refs = [['master', 'branch'], ['v1.1.0', 'tag']] // prettier-ignore
         refs.forEach(([name, type]) => {
           hostnames.forEach((hostname) => {
             urls.forEach((url) => {
