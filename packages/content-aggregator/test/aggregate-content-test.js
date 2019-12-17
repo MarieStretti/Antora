@@ -3527,23 +3527,27 @@ describe('aggregateContent()', function () {
     it('should throw meaningful error if git client throws exception', async () => {
       const url = `http://localhost:${serverPort}/200/incomplete-ref-capabilities.git`
       playbookSpec.content.sources.push({ url })
-      const expectedErrorMessage = `Unknown TypeError: See cause (url: ${url})`
+      const commonErrorMessage = 'Expected "Two strings separated by \'\\x00\'" but got "ref"'
+      const expectedErrorMessage = `${commonErrorMessage} (url: ${url})`
+      const expectedCauseMessage = `AssertServerResponseFail: ${commonErrorMessage}`
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred)
         .to.throw(expectedErrorMessage)
         .with.property('stack')
-        .that.includes("Caused by: TypeError: Cannot read property 'split' of undefined")
+        .that.includes('Caused by: ' + expectedCauseMessage)
     })
 
     it('should throw meaningful error if git server does not support required capabilities', async () => {
       const url = `http://localhost:${serverPort}/200/insufficient-capabilities.git`
       playbookSpec.content.sources.push({ url })
-      const expectedErrorMessage = `Unknown RemoteDoesNotSupportShallowFail: See cause (url: ${url})`
+      const commonErrorMessage = 'Expected "Two strings separated by \' \'" but got "ref"'
+      const expectedErrorMessage = `${commonErrorMessage} (url: ${url})`
+      const expectedCauseMessage = `AssertServerResponseFail: ${commonErrorMessage}`
       const aggregateContentDeferred = await deferExceptions(aggregateContent, playbookSpec)
       expect(aggregateContentDeferred)
         .to.throw(expectedErrorMessage)
         .with.property('stack')
-        .that.includes('Caused by: RemoteDoesNotSupportShallowFail: Remote does not support shallow fetches.')
+        .that.includes('Caused by: ' + expectedCauseMessage)
     })
 
     it('should throw meaningful error if git server returns empty response', async () => {
