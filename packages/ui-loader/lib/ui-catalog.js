@@ -1,28 +1,31 @@
 'use strict'
 
-const _ = require('lodash')
-
 const $files = Symbol('files')
 
 class UiCatalog {
   constructor () {
-    this[$files] = {}
+    this[$files] = new Map()
   }
 
   getAll () {
-    return Object.values(this[$files])
+    return [...this[$files].values()]
   }
 
   addFile (file) {
     const key = generateKey(file)
-    if (key in this[$files]) {
+    if (this[$files].has(key)) {
       throw new Error('Duplicate file')
     }
-    this[$files][key] = file
+    this[$files].set(key, file)
   }
 
   findByType (type) {
-    return _.filter(this[$files], { type })
+    const accum = []
+    for (const entry of this[$files]) {
+      const candidate = entry[1]
+      if (candidate.type === type) accum.push(candidate)
+    }
+    return accum
   }
 }
 
@@ -32,7 +35,7 @@ class UiCatalog {
 UiCatalog.prototype.getFiles = UiCatalog.prototype.getAll
 
 function generateKey ({ type, path }) {
-  return [type, ...path.split('/')]
+  return `${type}$${path}`
 }
 
 module.exports = UiCatalog
