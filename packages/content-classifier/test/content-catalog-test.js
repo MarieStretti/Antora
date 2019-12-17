@@ -41,6 +41,7 @@ describe('ContentCatalog', () => {
       contentCatalog.registerComponentVersion('yin', '1.0', { title: 'Yin' })
       contentCatalog.registerComponentVersion('yang', '1.0', { title: 'Yang' })
       const componentMap = contentCatalog.getComponentMap()
+      expect(componentMap).not.to.be.instanceOf(Map)
       expect(Object.keys(componentMap)).to.eql(['foo', 'bar', 'yin', 'yang'])
       expect(Object.values(componentMap).map((v) => v.title)).to.eql(['Foo', 'Bar', 'Yin', 'Yang'])
     })

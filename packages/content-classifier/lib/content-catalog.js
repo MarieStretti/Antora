@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const File = require('./file')
 const parseResourceId = require('./util/parse-resource-id')
 const { posix: path } = require('path')
@@ -14,11 +13,11 @@ const $components = Symbol('components')
 const $files = Symbol('files')
 
 class ContentCatalog {
-  constructor (playbook) {
-    this[$components] = {}
-    this[$files] = {}
-    this.htmlUrlExtensionStyle = _.get(playbook, ['urls', 'htmlExtensionStyle'], 'default')
-    //this.urlRedirectFacility = _.get(playbook, ['urls', 'redirectFacility'], 'static')
+  constructor (playbook = {}) {
+    this[$components] = new Map()
+    this[$files] = new Map()
+    this.htmlUrlExtensionStyle = (playbook.urls || {}).htmlExtensionStyle || 'default'
+    this.urlRedirectFacility = (playbook.urls || {}).redirectFacility || 'static'
   }
 
   registerComponentVersion (name, version, descriptor = {}) {
@@ -49,7 +48,7 @@ class ContentCatalog {
       }
     }
     if (asciidocConfig) componentVersion.asciidocConfig = asciidocConfig
-    const component = this[$components][name]
+    const component = this.getComponent(name)
     if (component) {
       const componentVersions = component.versions
       const insertIdx = componentVersions.findIndex(({ version: candidate }) => {
@@ -63,26 +62,29 @@ class ContentCatalog {
       }
       component.latest = componentVersions.find((candidate) => !candidate.prerelease) || componentVersions[0]
     } else {
-      this[$components][name] = Object.defineProperties(
-        { name, latest: componentVersion, versions: [componentVersion] },
-        {
-          // NOTE alias latestVersion to latest for backwards compatibility
-          latestVersion: {
-            get: function () {
-              return this.latest
+      this[$components].set(
+        name,
+        Object.defineProperties(
+          { name, latest: componentVersion, versions: [componentVersion] },
+          {
+            // NOTE alias latestVersion to latest for backwards compatibility
+            latestVersion: {
+              get: function () {
+                return this.latest
+              },
             },
-          },
-          title: {
-            get: function () {
-              return this.latest.title
+            title: {
+              get: function () {
+                return this.latest.title
+              },
             },
-          },
-          url: {
-            get: function () {
-              return this.latest.url
+            url: {
+              get: function () {
+                return this.latest.url
+              },
             },
-          },
-        }
+          }
+        )
       )
     }
   }
@@ -90,7 +92,7 @@ class ContentCatalog {
   // QUESTION should this method return the file added?
   addFile (file) {
     const key = generateKey(file.src)
-    if (key in this[$files]) {
+    if (this[$files].has(key)) {
       throw new Error(`Duplicate ${file.src.family}: ${key.replace(':' + file.src.family + '$', ':')}`)
     }
     if (!File.isVinyl(file)) file = new File(file)
@@ -109,23 +111,35 @@ class ContentCatalog {
     if (!file.pub && (publishable || actingFamily === 'nav')) {
       file.pub = computePub(file.src, file.out, actingFamily, this.htmlUrlExtensionStyle)
     }
-    this[$files][key] = file
+    this[$files].set(key, file)
   }
 
   findBy (criteria) {
-    return _.filter(this[$files], { src: criteria })
+    const criteriaEntries = Object.entries(criteria)
+    const accum = []
+    for (const entry of this[$files]) {
+      const candidate = entry[1]
+      const candidateSrc = candidate.src
+      if (criteriaEntries.every(([key, val]) => candidateSrc[key] === val)) accum.push(candidate)
+    }
+    return accum
   }
 
   getById ({ component, version, module, family, relative }) {
-    return this[$files][generateKey({ component, version, module, family, relative })]
+    return this[$files].get(generateKey({ component, version, module, family, relative }))
   }
 
   getByPath ({ component, version, path: path_ }) {
-    return _.find(this[$files], { path: path_, src: { component, version } })
+    for (const entry of this[$files]) {
+      const candidate = entry[1]
+      if (candidate.path === path_ && candidate.src.component === component && candidate.src.version === version) {
+        return candidate
+      }
+    }
   }
 
   getComponent (name) {
-    return this[$components][name]
+    return this[$components].get(name)
   }
 
   getComponentVersion (component, version) {
@@ -135,7 +149,11 @@ class ContentCatalog {
   }
 
   getComponentMap () {
-    return Object.assign({}, this[$components])
+    const accum = {}
+    for (const [name, component] of this[$components]) {
+      accum[name] = component
+    }
+    return accum
   }
 
   getComponentMapSortedBy (property) {
@@ -143,7 +161,7 @@ class ContentCatalog {
   }
 
   getComponents () {
-    return Object.values(this[$components])
+    return [...this[$components].values()]
   }
 
   getComponentsSortedBy (property) {
@@ -151,11 +169,16 @@ class ContentCatalog {
   }
 
   getAll () {
-    return Object.values(this[$files])
+    return [...this[$files].values()]
   }
 
   getPages () {
-    return Object.values(this[$files]).filter(({ src: { family } }) => family === 'page')
+    const accum = []
+    for (const entry of this[$files]) {
+      const candidate = entry[1]
+      if (candidate.src.family === 'page') accum.push(candidate)
+    }
+    return accum
   }
 
   // TODO add `follow` argument to control whether alias is followed

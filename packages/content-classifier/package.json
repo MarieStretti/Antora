@@ -16,7 +16,6 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "lodash": "~4.17",
     "vinyl": "~2.2"
   },
   "devDependencies": {
