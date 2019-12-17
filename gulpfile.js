@@ -29,7 +29,8 @@ const formatTask = createTask({
   name: 'format',
   desc: 'Format JavaScript files using prettier (JavaScript Standard profile)',
   opts: sharedOpts,
-  call: format(glob.sourceFiles),
+  // convert globs to absolute path to workaround https://github.com/prettier/prettier-eslint-cli/issues/208
+  call: format(glob.sourceFiles.map((it) => `${__dirname}/${it}`)),
 })
 
 const testTask = createTask({
