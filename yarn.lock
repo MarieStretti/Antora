@@ -2921,10 +2921,10 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
-isomorphic-git@0.70.6:
-  version "0.70.6"
-  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.70.6.tgz#d00239ab6fd6679b04143283b1c737c8b80c8e3c"
-  integrity sha512-hznbxOsMDU3gCd/F8zF8uJy3I75TUF61iKTLapFMVoRlR3t0H+erpjwzRyFkG1SXJJ/gNaecq19vXhajp4bwXA==
+isomorphic-git@0.70.9:
+  version "0.70.9"
+  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-0.70.9.tgz#28abcf493aac882f93bc87fafab8914e4972b1ff"
+  integrity sha512-Ds7uRPBoUmdRMT8eAd5bVXQkg3wU4N4XhwADcq58aPK46gw1DeAYVMOiu/TZafvVN4sDPhFd3AeBzySOaBuYmQ==
   dependencies:
     async-lock "^1.1.0"
     clean-git-ref "^2.0.1"
@@ -4622,9 +4622,9 @@ resolve-url@^0.2.1:
   integrity sha1-LGN/53yJOv0qZj/iGqkIAGjiBSo=
 
 resolve@^1.1.6, resolve@^1.1.7, resolve@^1.10.0, resolve@^1.10.1, resolve@^1.12.0, resolve@^1.4.0, resolve@^1.5.0:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.13.1.tgz#be0aa4c06acd53083505abb35f4d66932ab35d16"
-  integrity sha512-CxqObCX8K8YtAhOBRg+lrcdn+LK+WYOS8tSjqSFbjtrI5PnS63QPhZl4+yKfrU9tdsbMu9Anr/amegT87M9Z6w==
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.14.0.tgz#6d14c6f9db9f8002071332b600039abf82053f64"
+  integrity sha512-uviWSi5N67j3t3UKFxej1loCH0VZn5XuqdNxoLShPcYPw6cUZn74K1VRj+9myynRX03bxIBEkwlkob/ujLsJVw==
   dependencies:
     path-parse "^1.0.6"
 
