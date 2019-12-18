@@ -222,23 +222,23 @@ describe('commander', () => {
     it('should derive argument placeholder from option name', () => {
       const configSchema = {
         urlStrategy: {
-          arg: 'url-strategy',
-          default: 'default',
-          doc: 'URL strategy',
+          arg: 'to-dir',
+          default: 'build/site',
+          doc: 'The base URL (absolute URL or pathname) of the published site.',
           format: String,
         },
       }
       const options = createCli(configSchema).options
       expect(options).to.have.lengthOf(1)
       expect(options[0]).to.include({
-        long: '--url-strategy',
-        flags: '--url-strategy <strategy>',
-        description: 'URL strategy',
-        defaultValue: 'default',
+        long: '--to-dir',
+        flags: '--to-dir <dir>',
+        description: 'The base URL (absolute URL or pathname) of the published site.',
+        defaultValue: 'build/site',
       })
     })
 
-    it('should derive argument placeholder from enumeration options', () => {
+    it('should include enumeration options in description', () => {
       const configSchema = {
         urlStrategy: {
           arg: 'url-strategy',
@@ -251,8 +251,8 @@ describe('commander', () => {
       expect(options).to.have.lengthOf(1)
       expect(options[0]).to.include({
         long: '--url-strategy',
-        flags: '--url-strategy <default|drop|indexify>',
-        description: 'URL strategy',
+        flags: '--url-strategy <option>',
+        description: 'URL strategy (options: default, drop, or indexify)',
         defaultValue: 'default',
       })
     })

@@ -170,7 +170,16 @@ describe('cli', function () {
         // -h option is always listed last
         .joinUntil(/^ *-h, --help/, { join: '\n' })
         .assert((optionsText) => {
+          // NOTE unwrap lines
           options = optionsText.split('\n').reduce((accum, line) => {
+            if (line.startsWith('-')) {
+              accum.push(line)
+            } else {
+              accum.push(accum.pop() + ' ' + line)
+            }
+            return accum
+          }, [])
+          options = options.reduce((accum, line) => {
             const [sig, ...dsc] = line.split('  ')
             accum[sig.trim()] = dsc.join('').trim()
             return accum
@@ -183,8 +192,9 @@ describe('cli', function () {
           expect(optionForms).to.not.be.empty()
           expect(optionForms).to.include('--title <title>')
           expect(optionForms).to.include('--url <url>')
-          expect(optionForms).to.include('--html-url-extension-style <default|drop|indexify>')
-          expect(options['--html-url-extension-style <default|drop|indexify>']).to.have.string('(default: default)')
+          expect(optionForms).to.include('--html-url-extension-style <option>')
+          expect(options['--html-url-extension-style <option>']).to.have.string('(options: default, drop, or indexify)')
+          expect(options['--html-url-extension-style <option>']).to.have.string('(default: default)')
           expect(optionForms).to.include('--generator <library>')
           expect(options['--generator <library>']).to.have.string('(default: @antora/site-generator-default)')
           // check options are sorted, except drop -h as we know it always comes last

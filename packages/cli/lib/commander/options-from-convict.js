@@ -25,9 +25,8 @@ function collectOptions (properties, options = [], context = undefined) {
       const { arg, format, default: default_ } = value
       const option = { name: arg, form: `--${arg}`, description: value.doc, format: format }
       if (Array.isArray(format)) {
-        option.form += ` <${format.join('|')}>`
-        //option.form += ` <${arg.substr(arg.lastIndexOf('-') + 1, arg.length)}>`
-        //option.description += ` (${format.join(', ')})`
+        option.form += ' <option>'
+        option.description += ` (options: ${format.join(', ').replace(/, ([^,]+)$/, ', or $1')})`
       } else if (format !== 'boolean') {
         option.form += ` <${arg.substr(arg.lastIndexOf('-') + 1, arg.length)}>`
       }
