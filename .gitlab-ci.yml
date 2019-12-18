@@ -1,7 +1,5 @@
 image: node:10.16.3-buster
 stages: [ init, verify, deploy ]
-variables:
-  GIT_DEPTH: '5'
 .defs:
 # only_code not used when an MR is created, hence the need for except_docs
 - &only_code
@@ -27,23 +25,17 @@ variables:
   - yarn --cache-folder=.cache/yarn --pure-lockfile > /dev/null
 yarn:
   stage: init
-  <<: *except_docs
-  <<: *only_code
   cache:
     <<: *cache_paths
   <<: *yarn_install
   script: $(npm bin)/antora version
 lint:
   stage: verify
-  <<: *except_docs
-  <<: *only_code
   <<: *pull_cache
   <<: *yarn_install
   script: $(npm bin)/gulp lint
 test:
   stage: verify
-  <<: *except_docs
-  <<: *only_code
   <<: *pull_cache
   <<: *yarn_install
   script: $(npm bin)/gulp test
