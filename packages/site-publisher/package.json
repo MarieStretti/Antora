@@ -1,6 +1,6 @@
 {
   "name": "@antora/site-publisher",
-  "version": "2.3.0-alpha.1",
+  "version": "2.3.0-alpha.2",
   "description": "Publishes the files generated in an Antora documentation pipeline to the destination(s) specified in the playbook.",
   "license": "MPL-2.0",
   "author": "OpenDevise Inc. (https://opendevise.com)",
