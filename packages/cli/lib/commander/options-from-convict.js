@@ -6,9 +6,7 @@ Command.prototype.optionsFromConvict = function (convictConfig, opts = {}) {
   let exclude = opts.exclude
   if (exclude && !Array.isArray(exclude)) exclude = Array(exclude)
   getOptions(convictConfig).forEach((option) => {
-    if (!(exclude && exclude.includes(option.name))) {
-      this.option(option.form, option.description, option.default)
-    }
+    if (!(exclude && exclude.includes(option.name))) this.option(option.form, option.description, option.default)
   })
   return this
 }
@@ -34,7 +32,7 @@ function collectOptions (properties, options = [], context = undefined) {
         option.form += ` <${arg.substr(arg.lastIndexOf('-') + 1, arg.length)}>`
       }
       if (default_ === null) {
-        option.mandatory = true
+        //option.mandatory = true
         option.description += ' (required)'
       } else if (default_ && (typeof default_ !== 'object' || default_.toString() !== '[object Object]')) {
         option.default = default_
