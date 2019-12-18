@@ -3,17 +3,13 @@
 const { Command } = require('commander')
 
 const helpInformation = Command.prototype.helpInformation
-
-const QUOTED_DEFAULT_VALUE_RX = / \(default: "([^"]+)"\)/
+const stringify = JSON.stringify
 
 // TODO include common options when outputting help for a (sub)command
 Command.prototype.helpInformation = function () {
-  return helpInformation
-    .call(this)
-    .split(/^/m)
-    .reduce((accum, line) => {
-      ~line.indexOf('"') ? accum.push(line.replace(QUOTED_DEFAULT_VALUE_RX, ' (default: $1)')) : accum.push(line)
-      return accum
-    }, [])
-    .join('')
+  // NOTE override stringify to coerce to string normally
+  JSON.stringify = (val) => `${val}`
+  const helpInfo = helpInformation.call(this)
+  JSON.stringify = stringify
+  return helpInfo
 }
