@@ -17,6 +17,7 @@ const UI_BUNDLE_URI =
   'https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable'
 const VERSION = pkg.version
 const WORK_DIR = ospath.join(__dirname, 'work')
+const ANTORA_CACHE_DIR = ospath.join(WORK_DIR, '.antora/cache')
 
 Kapok.config.shouldShowLog = false
 
@@ -48,7 +49,7 @@ describe('cli', function () {
   // NOTE run the antora command from WORK_DIR by default to simulate a typical use case
   const runAntora = (args = undefined, env = undefined, cwd = WORK_DIR) => {
     if (!Array.isArray(args)) args = args ? args.split(' ') : []
-    env = Object.assign({}, process.env, { ANTORA_CACHE_DIR: ospath.join(WORK_DIR, '.antora/cache') }, env)
+    env = Object.assign({}, process.env, { ANTORA_CACHE_DIR }, env)
     return Kapok.start(ANTORA_CLI, args, { cwd, env })
   }
 
