@@ -120,10 +120,10 @@ describe('cli', function () {
   it('should output list of common options when invoked with "-h"', () => {
     return runAntora('-h')
       .ignoreUntil(/^Options:/)
-      .assert(/^ *-v, --version /)
-      .assert(/^ *-r, --require /)
-      .assert(/^ *--stacktrace /)
-      .assert(/^ *-h, --help *Output usage information\./)
+      .assert(/^ *-v, --version +Output the version number\./)
+      .assert(/^ *-r, --require .*/)
+      .assert(/^ *--stacktrace .*/)
+      .assert(/^ *-h, --help +Output usage information\./)
       .done()
   })
 

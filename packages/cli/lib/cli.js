@@ -47,7 +47,7 @@ function requireLibrary (requirePath, cwd = process.cwd()) {
 
 cli
   .name('antora')
-  .version(VERSION, '-v, --version')
+  .version(VERSION, '-v, --version', 'Output the version number.')
   .description('A modular, multi-repository documentation site generator for AsciiDoc.')
   .usage('[options] [[command] [args]]')
   .helpOption('-h, --help', 'Output usage information.')
