@@ -122,7 +122,7 @@ describe('createPageComposer()', () => {
         ),
       },
       {
-        stem: 'body-component-equality',
+        stem: 'the-component',
         contents: Buffer.from(
           heredoc`
           {{#each site.components}}
@@ -309,7 +309,14 @@ describe('createPageComposer()', () => {
     })
 
     it('should be able to compare component with entry in component list for equality', () => {
-      replaceCallToBodyPartial('{{> body-component-equality}}')
+      replaceCallToBodyPartial('{{> the-component}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>The current component is the-component.</p>')
+    })
+
+    it('should be able to include a dynamic partial', () => {
+      replaceCallToBodyPartial('{{> (lookup page.component "name")}}')
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
       composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<p>The current component is the-component.</p>')
