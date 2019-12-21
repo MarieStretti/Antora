@@ -406,10 +406,10 @@ redirects: Generate nginx config file containing URL redirects for page aliases.
 
 Instead of modifying the main playbook, you can create a custom playbook and pass it to Antora.
 
-Start by creating a new file named [.path]_custom-site.yml_.
+Start by creating a new file named [.path]_custom-antora-playbook.yml_.
 Populate it as follows:
 
-.custom-site.yml (excerpt)
+.custom-antora-playbook.yml (excerpt)
 [source,yaml,subs=attributes+]
 ----
 site:

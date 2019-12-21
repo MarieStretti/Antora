@@ -114,7 +114,7 @@ An example block
 
 ** A literal paragraph doesn't require a list continuation.
 
- $ antora site.yml
+ $ antora antora-playbook.yml
 
 * You can also mix list item types in the same list.
 ** Unordered list item
@@ -144,7 +144,7 @@ An example block
 
 ** A literal paragraph doesn't require a list continuation.
 
- $ antora site.yml
+ $ antora antora-playbook.yml
 
 * You can also mix list item types in the same list.
 .. Ordered list item

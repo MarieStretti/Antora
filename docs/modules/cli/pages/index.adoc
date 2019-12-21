@@ -181,9 +181,9 @@ You can run the generate command implicitly or explicitly.
 In Example 1, Antora generates a documentation site using the playbook [.path]_antora-playbook.yml_.
 
 .Example 2: Run the generate command (explicit)
- $ antora generate test-site
+ $ antora generate test-antora-playbook
 
-In Example 2, Antora generates a documentation site using the auto-detected playbook [.path]_test-site.yml_.
+In Example 2, Antora generates a documentation site using the auto-detected playbook [.path]_test-antora-playbook.yml_.
 When the playbook argument doesn't have a file extension, Antora will look for a YAML, JSON, or TOML file matching the playbook name (in that order).
 
 .Example 3: Run the generate command with --to-dir option (implicit)
