@@ -43,7 +43,7 @@ Let's find out how to run it.
 To demonstrate how to use this image, we'll be using the Antora demo site.
 Start by cloning the playbook repository for the demo site, then switch to the newly created folder:
 
- ~ $ git clone https://gitlab.com/antora/demo/docs-site.git && cd demo-site
+ ~ $ git clone https://gitlab.com/antora/demo/docs-site.git && cd docs-site
 
 Next, execute the `docker run` command to invoke the entrypoint command for this image (which is `antora`).
 
