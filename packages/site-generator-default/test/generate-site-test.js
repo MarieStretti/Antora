@@ -648,7 +648,7 @@ describe('generateSite()', function () {
 
   // to test:
   // - don't pass environment variable map to generateSite
-  // - pass environment varaible override to generateSite
+  // - pass environment variable override to generateSite
   // - test if component start page is missing (current throws an error because its undefined)
   // - path to images from topic dir
   // - html URL extension style

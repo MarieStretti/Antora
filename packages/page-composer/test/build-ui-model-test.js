@@ -911,7 +911,7 @@ describe('build UI model', () => {
       expect(model.latest).to.eql(model.versions[0])
     })
 
-    it('should propogate prerelease and display version from component version to page version', () => {
+    it('should propagate prerelease and display version from component version to page version', () => {
       component.versions.unshift({
         version: '2.0',
         prerelease: 'Beta',

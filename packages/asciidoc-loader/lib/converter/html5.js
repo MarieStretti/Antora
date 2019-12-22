@@ -26,7 +26,7 @@ const Html5Converter = (() => {
         const { content, target, internal, unresolved } = callback(attrs.refid, node.getText())
         let options
         if (internal) {
-          // QUESTION should we propogate the role in this case?
+          // QUESTION should we propagate the role in this case?
           options = Opal.hash2(['type', 'target'], { type: 'link', target })
         } else {
           attrs.role = `page${unresolved ? ' unresolved' : ''}${attrs.role ? ' ' + attrs.role : ''}`
