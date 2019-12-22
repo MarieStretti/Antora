@@ -239,7 +239,7 @@ Next, create a user using the `npm adduser` command (assuming the default port):
 You'll never need to login as this user.
 This just adds an auth token for localhost:4873 to the [.path]_~/.npmrc_ file that the npm client will use for publishing to this registry.
 
-Next, we'll need to disable the proxy for the `@antora` scope so that we can test locally without interferring with or getting interference from the released packages.
+Next, we'll need to disable the proxy for the `@antora` scope so that we can test locally without interfering with or getting interference from the released packages.
 
 First, stop Verdaccio.
 Then, open the file [.path]_~/.config/verdaccio/config.yaml_, add the entry under the `packages:` key, and save it.
