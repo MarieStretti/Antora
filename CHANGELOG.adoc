@@ -54,6 +54,7 @@ This project utilizes semantic versioning.
 * *content-aggregator*: Prune stale branches and tags when fetching repository updates (#374)
 * *content-aggregator*: Split src.editUrl on file object into src.editUrl and src.fileUri so both values can coexist (#292)
 * *content-aggregator*: Allow edit URL to be disabled or configured from pattern using edit_url key on content category in playbook or on content source (#292)
+* *asciidoc-loader*: Enable `page-partial` attribute by default so all pages can be included out of the box (#487)
 * *asciidoc-loader*: Add support for `lines` attribute on include directive; filters lines by individual line numbers or line number ranges (#412)
 * *page-composer*: Map src.fileUri to fileUri property on page UI model (#292)
 * *site-mapper*: Generate a robots.txt file if the site.robots key is set in the playbook (#219) (@djencks)
