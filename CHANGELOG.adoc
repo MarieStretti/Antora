@@ -5,6 +5,12 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Changed
+
+* *page-composer*: Upgrade Handlebars to fix performance regression (#551)
+
 == 2.3.0-alpha.2 (2019-12-18)
 
 === Added
