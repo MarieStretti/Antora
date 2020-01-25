@@ -8,16 +8,12 @@ cache:
 jobs:
   include:
     - stage: setup
-      script:
-        - yarn install
-        - npm install gulp-cli
+      script: yarn install
+    - script: npm install gulp-cli
     - stage: verify
-      before_script:
-        - rm -rf coverage .nyc_output node_modules/.cache/nyc
-      script: 
-        - gulp lint
-        - gulp test
-    # - stage: deploy
-    #   script: ./deploy
+      script: gulp lint
+    # - script: gulp test
+    - stage: deploy
+      script: antora ./docs/antora.yml
 
 
