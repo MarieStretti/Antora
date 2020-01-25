@@ -9,6 +9,7 @@ jobs:
   include:
     - stage: setup
       script: yarn install
+      script: yarn install gulp-cli
     - stage: verify
       script: gulp lint
       script: gulp test
