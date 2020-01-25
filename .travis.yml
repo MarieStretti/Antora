@@ -11,7 +11,7 @@ jobs:
       script: yarn install
     - script: npm install gulp-cli
     - stage: verify
-      script: gulp lint && 
+      script: gulp lint
     - script: gulp test
     # - stage: deploy
     #   script: ./deploy
