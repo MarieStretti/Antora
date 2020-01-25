@@ -8,11 +8,15 @@ cache:
 jobs:
   include:
     - stage: setup
-      script: yarn install
-    - script: npm install gulp-cli
+      script:
+        - yarn install
+        - npm install gulp-cli
     - stage: verify
-      script: gulp lint
-    - script: gulp test
+      before_script:
+        - rm -rf coverage .nyc_output node_modules/.cache/nyc
+      script: 
+        - gulp lint
+        - gulp test
     # - stage: deploy
     #   script: ./deploy
 
