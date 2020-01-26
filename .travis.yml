@@ -16,6 +16,6 @@ jobs:
       script: gulp lint
     # - script: gulp test
     - stage: deploy
-      script: antora ./docs/antora_playbook.yml
+      script: antora ./test_cicd_playbook/antora_playbook.yml
 
 
