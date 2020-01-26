@@ -19,6 +19,10 @@ jobs:
     - stage: verify
       node_js:
         - 10
+      script:
+        - gulp lint
+        - gulp test
+      node_js:
         - 12
       script:
         - gulp lint
