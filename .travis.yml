@@ -13,7 +13,7 @@ jobs:
       script: yarn install
     - script: npm install gulp-cli
     - script: npm install jsdoc
-    - script: ./node_modules/.bin/jsdoc -d jsdoc scripts/*.js
+    - script: ./node_modules/.bin/jsdoc scripts/*.js -d jsdoc
     - stage: verify
       script: gulp lint
     # - script: gulp test
