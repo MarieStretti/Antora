@@ -24,8 +24,8 @@ jobs:
         provider: pages
         cleanup: false
         token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
-        keep_history: true
-        local_dir: docs
+        # keep_history: true
+        local_dir: ./docs
         verbose: true
         on:
           all_branches: true
