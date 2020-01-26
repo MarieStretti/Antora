@@ -26,7 +26,6 @@ jobs:
         token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
         keep_history: true
         local_dir: ./docs
-        github_url: https://github.com/MarieStretti/Antora
         verbose: true
         on:
           all_branches: true
