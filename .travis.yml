@@ -22,7 +22,7 @@ jobs:
       env: TEST_SUITE=suite_10
       - node_js: "12"
       env: TEST_SUITE=suite_12
-      script: gulp test -e "Run on node js 10" $TEST_SUITE
+      script: gulp test $TEST_SUITE
 
     - stage: deploy
       script: antora ./test_cicd_playbook/antora_playbook.yml
