@@ -16,6 +16,6 @@ jobs:
       script: gulp lint
     # - script: gulp test
     - stage: deploy
-      script: antora --stacktrace ./docs/antora.yml
+      script: antora ./docs/antora_playbook.yml
 
 
