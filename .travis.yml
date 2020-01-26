@@ -10,9 +10,10 @@ cache:
 jobs:
   include:
     - stage: setup
-      script: yarn install
-    - script: npm install gulp-cli
-    - script: ./node_modules/.bin/jsdoc scripts/*.js -d jsdoc
+      script:
+        - yarn install
+        - npm install gulp-cli
+        - ./node_modules/.bin/jsdoc scripts/*.js -d jsdoc
     - stage: verify
       script: gulp lint
     # - script: gulp test
