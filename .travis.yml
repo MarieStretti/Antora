@@ -13,7 +13,7 @@ jobs:
       script:
         - yarn install
         - npm install gulp-cli
-        - ./node_modules/.bin/jsdoc scripts/*.js -d jsdoc
+        - ./node_modules/.bin/jsdoc scripts/*.js -d docs
     - stage: verify
       script: gulp lint
     # - script: gulp test
@@ -21,10 +21,10 @@ jobs:
       script: antora ./test_cicd_playbook/antora_playbook.yml
       deploy:
         provider: pages
-        skip_cleanup: true
-        github_token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
+        cleanup: true
+        token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
         keep_history: true
-        local_dir: ./jsdoc
+        local_dir: ./docs
         on:
           all_branches: true
 
