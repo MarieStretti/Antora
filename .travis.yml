@@ -24,7 +24,7 @@ jobs:
         skip_cleanup: true
         github_token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
         keep_history: true
-        local_dir: ./out
+        local_dir: ./jsdoc
         on:
           all_branches: true
 
