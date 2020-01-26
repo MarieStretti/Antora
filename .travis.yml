@@ -16,12 +16,12 @@ jobs:
         - npm install gulp-cli
         - ./node_modules/.bin/jsdoc scripts/*.js -d docs
     - stage: verify
-      - language: node_js
-        node_js: 12
+      # - language: node_js
+      #   node_js: 12
         script: gulp lint -e "Run on node js 12"
-      - language: node_js
-        node_js: 11
-        script: gulp lint -e "Run on node js 11"
+      # - language: node_js
+      #   node_js: 11
+      #   script: gulp lint -e "Run on node js 11"
     # - script: gulp test
     - stage: deploy
       script: antora ./test_cicd_playbook/antora_playbook.yml
