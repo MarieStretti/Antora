@@ -6,6 +6,7 @@ cache:
   yarn: true
   directories:
     - "node_modules"
+    - "docs"
 
 jobs:
   include:
