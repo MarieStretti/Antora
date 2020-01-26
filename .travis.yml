@@ -12,6 +12,7 @@ jobs:
     - stage: setup
       script: yarn install
     - script: npm install gulp-cli
+    - script: npm install -g jsdoc
     - script: jsdoc scripts/*.js
     - stage: verify
       script: gulp lint
@@ -23,7 +24,7 @@ jobs:
         skip_cleanup: true
         github_token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
         keep_history: true
-        local_dir: ./documentation
+        local_dir: ./out
         on:
           all_branches: true
 
