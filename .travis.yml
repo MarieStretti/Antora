@@ -20,8 +20,7 @@ jobs:
       
       script:
         - gulp lint
-        - nvm exec 10 gulp test
-        # - nvm use 12 && gulp test
+        - gulp test
 
     - stage: deploy
       script: antora ./test_cicd_playbook/antora_playbook.yml
