@@ -17,16 +17,11 @@ jobs:
         - ./node_modules/.bin/jsdoc scripts/*.js -d docs
 
     - stage: verify
-      node_js:
-        - 10
+      
       script:
         - gulp lint
-        - gulp test
-      node_js:
-        - 12
-      script:
-        - gulp lint
-        - gulp test
+        - nvm exec 10 gulp test
+        # - nvm use 12 && gulp test
 
     - stage: deploy
       script: antora ./test_cicd_playbook/antora_playbook.yml
