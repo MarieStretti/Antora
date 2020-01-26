@@ -12,8 +12,8 @@ jobs:
     - stage: setup
       script: yarn install
     - script: npm install gulp-cli
-    - script: npm install -g jsdoc
-    - script: jsdoc scripts/*.js
+    - script: npm install jsdoc
+    - script: npm run jsdoc scripts/*.js
     - stage: verify
       script: gulp lint
     # - script: gulp test
