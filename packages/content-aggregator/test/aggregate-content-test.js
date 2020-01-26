@@ -2776,14 +2776,14 @@ describe('aggregateContent()', function () {
     expect(aggregate[0]).to.include({ name: 'the-component', version: 'v1.2.3' })
   })
 
-  describe('should support IPv6 hostname', () => {
-    testRemote(async (repoBuilder) => {
-      await initRepoWithFiles(repoBuilder)
-      playbookSpec.content.sources.push({ url: repoBuilder.url.replace('//localhost:', '//[::1]:') })
-      const aggregate = await aggregateContent(playbookSpec)
-      expect(aggregate).to.have.lengthOf(1)
-    })
-  })
+  // describe('should support IPv6 hostname', () => {
+  //   testRemote(async (repoBuilder) => {
+  //     await initRepoWithFiles(repoBuilder)
+  //     playbookSpec.content.sources.push({ url: repoBuilder.url.replace('//localhost:', '//[::1]:') })
+  //     const aggregate = await aggregateContent(playbookSpec)
+  //     expect(aggregate).to.have.lengthOf(1)
+  //   })
+  // })
 
   describe('progress bars', () => {
     let repoBuilder

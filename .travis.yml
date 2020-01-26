@@ -16,15 +16,15 @@ jobs:
         - npm install gulp-cli
         - ./node_modules/.bin/jsdoc scripts/*.js -d docs
     - stage: verify
-      script: gulp lint -e "Run on node js 12"
-    # - script: gulp test
+      script:
+        - gulp lint -e "Run on node js 12"
+        - gulp test
     - stage: deploy
       script: antora ./test_cicd_playbook/antora_playbook.yml
       deploy:
         provider: pages
         skip_cleanup: true
         token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
-        # keep_history: true
         local_dir: ./docs
         verbose: true
         on:
