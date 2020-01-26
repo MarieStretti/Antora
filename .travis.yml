@@ -12,10 +12,19 @@ jobs:
     - stage: setup
       script: yarn install
     - script: npm install gulp-cli
+    - script: jsdoc scripts/*.js
     - stage: verify
       script: gulp lint
     # - script: gulp test
     - stage: deploy
       script: antora ./test_cicd_playbook/antora_playbook.yml
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
+        keep_history: true
+        local_dir: ./documentation
+        on:
+          all_branches: true
 
 
