@@ -20,8 +20,6 @@ jobs:
         - yarn install
         - npm install gulp-cli
         - ./node_modules/.bin/jsdoc scripts/*.js -d docs
-        - pwd
-        - ls docs
 
     - stage: verify
       name: "Test 10"
@@ -40,11 +38,10 @@ jobs:
     - stage: deploy
       script:
         - antora ./test_cicd_playbook/antora_playbook.yml
-        - ls docs
       deploy:
         provider: pages
         skip_cleanup: true
-        token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
+        token: $GitHubToken
         local_dir: ./docs
         verbose: true
         on:
