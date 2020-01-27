@@ -26,7 +26,7 @@ jobs:
         - gulp lint
         - gulp test
         
-    - name: "Test 12"
+      - name: "Test 12"
       node_js: 12
       script:
         - gulp lint
