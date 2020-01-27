@@ -1,12 +1,16 @@
 language: node_js
-#node_js:
-#  - 12
+node_js: 12
 
 cache:
   yarn: true
   directories:
     - "node_modules"
     - "docs"
+
+stage:
+ - setup
+ - verify
+ - deploy
 
 jobs:
   include:
@@ -25,13 +29,14 @@ jobs:
       script:
         - gulp lint
         - gulp test
-        
-      - name: "Test 12"
+
+    - stage: verify
+      name: "Test 12"
       node_js: 12
       script:
         - gulp lint
         - gulp test
-
+        
     - stage: deploy
       script:
         - antora ./test_cicd_playbook/antora_playbook.yml
