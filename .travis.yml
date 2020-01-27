@@ -16,6 +16,8 @@ jobs:
         - yarn install
         - npm install gulp-cli
         - ./node_modules/.bin/jsdoc scripts/*.js -d docs
+        - pwd
+        - ls docs
 
     - stage: verify
       name: "Test 10"
