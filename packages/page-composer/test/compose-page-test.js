@@ -12,6 +12,10 @@ describe('createPageComposer()', () => {
   let playbook
   let uiCatalog
 
+  const definePartial = (stem, contents) => {
+    partials.push({ stem, contents: Buffer.from(contents + '\n') })
+  }
+
   const replaceCallToBodyPartial = (replacement) => {
     const defaultLayout = layouts.find((layout) => layout.stem === 'default')
     defaultLayout.contents = Buffer.from(defaultLayout.contents.toString().replace('{{> body}}', replacement))
@@ -56,7 +60,7 @@ describe('createPageComposer()', () => {
         stem: 'get-the-page',
         contents: Buffer.from(
           heredoc`
-          module.exports = function () { return this.site.contentCatalog.getPages()[0] }
+          module.exports = function ({ data: { root } }) { return root.site.contentCatalog.getById({ version: '0.9' }) }
           ` + '\n'
         ),
       },
@@ -143,34 +147,6 @@ describe('createPageComposer()', () => {
           ` + '\n'
         ),
       },
-      {
-        stem: 'body-get-the-page',
-        contents: Buffer.from(
-          heredoc`
-          {{#with (get-the-page)}}
-          <p>{{pub.url}}</p>
-          {{/with}}
-          ` + '\n'
-        ),
-      },
-      {
-        stem: 'body-resolve-page',
-        contents: Buffer.from(
-          heredoc`
-          {{#with (resolvePage 'the-component::the-page.adoc')}}
-          <p>{{pub.url}}</p>
-          {{/with}}
-          ` + '\n'
-        ),
-      },
-      {
-        stem: 'body-resolve-page-url',
-        contents: Buffer.from(
-          heredoc`
-          <p>{{resolvePageUrl 'the-component::the-page.adoc'}}</p>
-          ` + '\n'
-        ),
-      },
     ]
 
     contentCatalog = {
@@ -203,6 +179,7 @@ describe('createPageComposer()', () => {
     let component
     let components
     let file
+    let files
     let menu
     let navigationCatalog
 
@@ -213,6 +190,11 @@ describe('createPageComposer()', () => {
         url: '/the-component/1.0/index.html',
         versions: [
           {
+            version: '0.9',
+            title: 'The Component',
+            url: '/the-component/0.9/index.html',
+          },
+          {
             version: '1.0',
             title: 'The Component',
             url: '/the-component/1.0/index.html',
@@ -222,28 +204,51 @@ describe('createPageComposer()', () => {
 
       components = [component]
 
-      file = {
-        contents: Buffer.from('<p>the contents</p>'),
-        src: {
-          path: 'modules/ROOT/pages/the-page.adoc',
-          component: 'the-component',
-          version: '1.0',
-          module: 'ROOT',
-          relative: 'the-page.adoc',
-        },
-        pub: {
-          url: '/the-component/1.0/the-page.html',
-          rootPath: '../..',
-        },
-        asciidoc: {
-          doctitle: 'The Page',
-          attributes: {
-            description: 'The description of the page.',
+      files = {
+        0.9: {
+          contents: Buffer.from('<p>the contents</p>'),
+          src: {
+            path: 'modules/ROOT/pages/the-page.adoc',
+            component: 'the-component',
+            version: '0.9',
+            module: 'ROOT',
+            relative: 'the-page.adoc',
+          },
+          pub: {
+            url: '/the-component/0.9/the-page.html',
+            rootPath: '../..',
+          },
+          asciidoc: {
+            doctitle: 'The Page',
+            attributes: {
+              description: 'The description of the page.',
+            },
           },
         },
+        '1.0': (file = {
+          contents: Buffer.from('<p>the contents</p>'),
+          src: {
+            path: 'modules/ROOT/pages/the-page.adoc',
+            component: 'the-component',
+            version: '1.0',
+            module: 'ROOT',
+            relative: 'the-page.adoc',
+          },
+          pub: {
+            url: '/the-component/1.0/the-page.html',
+            rootPath: '../..',
+          },
+          asciidoc: {
+            doctitle: 'The Page',
+            attributes: {
+              description: 'The description of the page.',
+            },
+          },
+        }),
       }
 
       contentCatalog = {
+        getById: ({ version }) => files[version],
         getComponent: (name) => component,
         getComponentVersion: (component, version) => {
           if (!component.versions) component = this.getComponent(component)
@@ -257,9 +262,17 @@ describe('createPageComposer()', () => {
               accum[it.name] = it
               return accum
             }, {}),
-        getPages: () => [file],
+        getPages: () => files,
         getSiteStartPage: () => undefined,
-        resolvePage: (spec, context) => (spec === 'the-component::the-page.adoc' ? file : undefined),
+        resolvePage: (spec, { component, version }) => {
+          if (!spec) {
+            throw new Error('invalid page ID')
+          } else if (spec === 'the-component::the-page.adoc') {
+            return file
+          } else if (spec === 'the-page.adoc' && component === 'the-component' && version === '0.9') {
+            return files['0.9']
+          }
+        },
         exportToModel: () => new Proxy(contentCatalog, {}),
       }
 
@@ -451,13 +464,29 @@ describe('createPageComposer()', () => {
     })
 
     it('should be able to access content catalog from helper', () => {
+      definePartial(
+        'body-get-the-page',
+        heredoc`
+        {{#with (get-the-page)}}
+        <p>{{./pub.url}}</p>
+        {{/with}}
+        `
+      )
       replaceCallToBodyPartial('{{> body-get-the-page}}')
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
       composePage(file, contentCatalog, navigationCatalog)
-      expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
+      expect(file.contents.toString()).to.include('<p>/the-component/0.9/the-page.html</p>')
     })
 
     it('should be able to call built-in helper to resolve page', () => {
+      definePartial(
+        'body-resolve-page',
+        heredoc`
+        {{#with (resolvePage 'the-component::the-page.adoc')}}
+        <p>{{./pub.url}}</p>
+        {{/with}}
+        `
+      )
       replaceCallToBodyPartial('{{> body-resolve-page}}')
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
       composePage(file, contentCatalog, navigationCatalog)
@@ -465,10 +494,106 @@ describe('createPageComposer()', () => {
     })
 
     it('should be able to call built-in helper to resolve URL of page', () => {
+      definePartial(
+        'body-resolve-page-url',
+        heredoc`
+        <p>{{resolvePageUrl 'the-component::the-page.adoc'}}</p>
+        `
+      )
       replaceCallToBodyPartial('{{> body-resolve-page-url}}')
       const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
       composePage(file, contentCatalog, navigationCatalog)
       expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
+    })
+
+    it('should not crash when calling built-in helper to resolve page if spec is falsy', () => {
+      definePartial(
+        'body-resolve-page-falsy',
+        heredoc`
+        {{#with (resolvePage page.attributes.no-such-page)}}
+        <p>{{./pub.url}}</p>
+        {{else}}
+        <p>no such page</p>
+        {{/with}}
+        `
+      )
+      replaceCallToBodyPartial('{{> body-resolve-page-falsy}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>no such page</p>')
+    })
+
+    it('should not crash when calling built-in helper to resolve page URL if spec is falsy', () => {
+      definePartial(
+        'body-resolve-page-url-falsy',
+        heredoc`
+        <p>{{resolvePageUrl page.attributes.no-such-page}}</p>
+        `
+      )
+      replaceCallToBodyPartial('{{> body-resolve-page-url-falsy}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p></p>')
+    })
+
+    it('should be able to call built-in helper to resolve page inside #with block', () => {
+      definePartial(
+        'body-resolve-page-inside-with',
+        heredoc`
+        {{#with page.component}}
+        {{#with (resolvePage 'the-component::the-page.adoc')}}
+        <p>{{./pub.url}}</p>
+        {{/with}}
+        {{/with}}
+        `
+      )
+      replaceCallToBodyPartial('{{> body-resolve-page-inside-with}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
+    })
+
+    it('should be able to call built-in helper to resolve URL of page inside #with block', () => {
+      definePartial(
+        'body-resolve-page-url-inside-with',
+        heredoc`
+        {{#with page.component}}
+        <p>{{resolvePageUrl 'the-component::the-page.adoc'}}</p>
+        {{/with}}
+        `
+      )
+      replaceCallToBodyPartial('{{> body-resolve-page-url-inside-with}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>/the-component/1.0/the-page.html</p>')
+    })
+
+    it('should be able to call built-in helper with context to resolve page', () => {
+      definePartial(
+        'body-resolve-page-from-context',
+        heredoc`
+        {{#with (resolvePage 'the-page.adoc' component=page.component.name version='0.9')}}
+        <p>{{./pub.url}}</p>
+        {{/with}}
+        `
+      )
+      replaceCallToBodyPartial('{{> body-resolve-page-from-context}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>/the-component/0.9/the-page.html</p>')
+    })
+
+    it('should be able to call built-in helper with context to resolve URL of page', () => {
+      definePartial(
+        'body-resolve-page-url-from-context',
+        heredoc`
+        <p>{{resolvePageUrl 'the-page.adoc' component=page.component.name version='0.9'}}</p>
+        `
+      )
+      replaceCallToBodyPartial('{{> body-resolve-page-url-from-context}}')
+      const composePage = createPageComposer(playbook, contentCatalog, uiCatalog)
+      composePage(file, contentCatalog, navigationCatalog)
+      expect(file.contents.toString()).to.include('<p>/the-component/0.9/the-page.html</p>')
     })
 
     // QUESTION what should we do with a template execution error? (e.g., missing partial or helper)
