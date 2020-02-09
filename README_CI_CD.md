@@ -38,7 +38,7 @@ Un des points à remplir était d'effectuer des tests d'intégration ou d'accept
 
 ## Stage Deploy
 
-Ce stage consiste à déployer le site web statique pour chaque branche, c'est-à-dire la documentation générée avec JSDoc. Ce déploiement se fait sur la page GitHub (https://mariestretti.github.io/Antora/), par l'intermédiaire de la branche `gh-pages`.
+Ce stage consiste à déployer le site web statique pour chaque branche, c'est-à-dire la documentation générée par Antora. Ce déploiement se fait sur la page GitHub (https://mariestretti.github.io/Antora/), par l'intermédiaire de la branche `gh-pages`.
 
 ## Pull/Merge request
 Etant donné que Travis se met à builder la pipeline automatiquement une fois un push réalisé, il est essentiel de faire en sorte qu'un contributeur ne puisse pull ou merge seulement si le build est passé. Pour cela, il a fallu configurer la branche `master` sur GitHub en lui ajoutant deux règles :
