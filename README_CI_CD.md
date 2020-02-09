@@ -18,7 +18,7 @@ L’étape “Déployer” devra déployer le site web statique pour chaque bran
 
 Travis CI
 
-# Stage Setup
+## Stage Setup
 
 Ce stage exécute trois commandes :
 * `yarn install` : installation des dépendances yarn
@@ -46,3 +46,6 @@ Il reste cependant un petit bug : le ficher index.html n'arrive pas à faire le 
 Etant donné que Travis se met à builder la pipeline automatiquement une fois un push réalisé, il est essentiel de faire en sorte qu'un contributeur ne puisse pull ou merge seulement si le build est passé. Pour cela, il a fallu configurer la branche `master` sur GitHub en lui ajoutant deux règles :
 * `Require status checks to pass before merging` : permet de vérifier que des statuts spécifiques soient passée avant de merger sur `master`
 * `Require branches to be up to date before merging` : permet de s'assurer que la branche `master` a été testée avec la dernière version du code sur `master` 
+
+## JSDoc
+La commande `./node_modules/.bin/jsdoc scripts/*.js -d codeDocumentation` permet de générer la documentation du code du projet Antora dans le dossier `codeDocumentation`, qu'il faut créer au préalable.
