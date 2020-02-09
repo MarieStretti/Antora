@@ -40,6 +40,7 @@ Un des points à remplir était d'effectuer des tests d'intégration ou d'accept
 Ce stage consiste à déployer le site web statique pour chaque branche, c'est-à-dire la documentation générée par Antora grâce à la commande : `antora antora_playbook.yml`. Le résultat est stocké dans le dossier `docs` (lu par défaut par GitHub comme dossier de documentation) de la branche `master`. Il a fallu avant ça que je modifie le playbook.yml pour spécifier le dossier de sortie du résultat de la commande.
 
 Le déploiement se fait sur la page GitHub (https://mariestretti.github.io/Antora/), sur la branche `gh-pages`.
+Il reste cependant un petit bug : le ficher index.html n'arrive pas à faire le lien avec le fichier css, bien que ce dernier soit correctement généré...
 
 ## Pull/Merge request
 Etant donné que Travis se met à builder la pipeline automatiquement une fois un push réalisé, il est essentiel de faire en sorte qu'un contributeur ne puisse pull ou merge seulement si le build est passé. Pour cela, il a fallu configurer la branche `master` sur GitHub en lui ajoutant deux règles :
