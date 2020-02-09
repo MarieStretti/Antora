@@ -23,7 +23,6 @@ Travis CI
 Ce stage exécute trois commandes :
 * `yarn install` : installation des dépendances yarn
 * `npm install gulp-cli` : installation de gulp, qui contrairement à npm et yarn, n'est pas intégré dans Travis
-* `./node_modules/.bin/jsdoc scripts/*.js -d docs` : génération de la documentation (i.e de tous les fichiers .js du dossier script) dans le dossier docs (lu par défaut par GitHub comme dossier de documentation)
 
 ## Stage Verify
 
@@ -38,7 +37,9 @@ Un des points à remplir était d'effectuer des tests d'intégration ou d'accept
 
 ## Stage Deploy
 
-Ce stage consiste à déployer le site web statique pour chaque branche, c'est-à-dire la documentation générée par Antora. Ce déploiement se fait sur la page GitHub (https://mariestretti.github.io/Antora/), par l'intermédiaire de la branche `gh-pages`.
+Ce stage consiste à déployer le site web statique pour chaque branche, c'est-à-dire la documentation générée par Antora grâce à la commande : `antora antora_playbook.yml`. Le résultat est stocké dans le dossier `docs` (lu par défaut par GitHub comme dossier de documentation) de la branche `master`. Il a fallu avant ça que je modifie le playbook.yml pour spécifier le dossier de sortie du résultat de la commande.
+
+Le déploiement se fait sur la page GitHub (https://mariestretti.github.io/Antora/), sur la branche `gh-pages`.
 
 ## Pull/Merge request
 Etant donné que Travis se met à builder la pipeline automatiquement une fois un push réalisé, il est essentiel de faire en sorte qu'un contributeur ne puisse pull ou merge seulement si le build est passé. Pour cela, il a fallu configurer la branche `master` sur GitHub en lui ajoutant deux règles :
