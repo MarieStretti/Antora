@@ -37,6 +37,8 @@ jobs:
     - stage: deploy
       script:
         - antora ./test_cicd_playbook/antora_playbook.yml
+        - pwd
+        - ls docs
       deploy:
         provider: pages
         skip_cleanup: true
