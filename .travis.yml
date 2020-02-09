@@ -44,8 +44,8 @@ jobs:
       deploy:
         provider: pages
         skip_cleanup: true
-        token: $GitHubToken  # Set in the settings page of your repository, as a secure variable
-        local_dir: ./docs
+        token: $GitHubToken
+        local_dir: ./antoraOutput
         verbose: true
         on:
           all_branches: true
