@@ -34,7 +34,7 @@ jobs:
       script:
         - gulp lint
         - gulp test
-        
+
     - stage: deploy
       script:
         - antora ./test_cicd_playbook/antora_playbook.yml
@@ -46,5 +46,3 @@ jobs:
         verbose: true
         on:
           all_branches: true
-
-
