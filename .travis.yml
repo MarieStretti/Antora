@@ -42,7 +42,7 @@ jobs:
         provider: pages
         skip_cleanup: true
         token: $GitHubToken
-        local_dir: ./antoraOutput
+        local_dir: ./docs
         verbose: true
         on:
           all_branches: true
