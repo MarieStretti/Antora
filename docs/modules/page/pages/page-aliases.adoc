@@ -1,0 +1,189 @@
+= The [.term]*page-aliases* attribute and rewrite rules
+
+Setting the [.term]*page-aliases* attribute in a page causes Antora to generate redirect information to that page in a format determined by playbook configuration.
+The value of the [.term]*page-aliases* attribute is a comma-separated list of resource ids.
+For each resource id, Antora will generate redirect information so that the URL calculated from that resource id is redirected to the current page.
+For simplicity I'll call the current page at its URL the [.term]*target page*.
+
+The value of the [.term]*page-aliases* attribute is available on a page as `{page-aliases}`.
+
+The site start_page, if specified in the playbook, is implemented through the redirect facility.
+
+== Simplest Example
+
+If you rename old-name.adoc to new-name.adoc in the top level ROOT/pages directory, use:
+
+----
+:page-aliases: :old-name.adoc
+----
+
+Note that the value has the format of an xref with "`xref`" removed.
+This will result in component/version/old-name.html being redirected to component/version/new-name.html.
+Alternatively, if you've specified "`indexify`", path/to/this/page/old-name will be redirected to path/to/this/page/new-name.
+
+== Results, or configuring the rewrite facility
+
+What sort of redirect facility will be used is configured in the playbook under the (optional) urls key.
+
+----
+urls:
+  redirect-facility: static
+----
+
+Allowed values and the resulting effects:
+
+static::
+(default) A static "bounce page" is generated and placed in the generated site at the location of the resource id, specifying a 301 redirect to the target page.
+nginx::
+An nginx format redirect file is generated and placed at the root of the generated site at [.path]_.etc/nginx/rewrite.conf_.
+netlify::
+An netlify format redirect file is generated and placed at the root of the generated site at [.path]__redirects_.
+disabled::
+No redirects will be generated.
+
+== Limitations
+
+* A redirect URL cannot be the target of an xref.
+Therefore, if you move a page, you need to update all the references to it in your source to the new Antora coordinates.
+See https://gitlab.com/antora/antora/issues/425[Page version selector and canonical URL should take page aliases into account] for a possibly relevant enhancement.
+
+== Guide to alias interpolation
+
+When you specify an alias using an incomplete resource id, Antora interpolates the missing parts using the target page coordinates and information about the project.
+To be specific, assume:
+
+* The project has two components:
+** component1 with versions v1 and v2
+** component2 with versions v1, v2, and v3 (prerelease)
+* the target page coordinates are v1@component1:module1:topic/older-target.adoc
+
+In any resource id, specifying relative is required, and for page aliases the family must be "`page`".
+There are 8 combinations of version, component, and module, and several have different effects based on whether the component is otherwise present in the site and whether the version is specified to be "`master`".
+Here, the final URL is shown and the interpolation decisions are described.
+
+=== 1. Specifying nothing (except the required relative)
+
+topic/older-target-source-1.adoc:: component1/v1/module1/topic/older-target-source-1.html
+
+The version, component, and module are determined from the target page.
+
+=== 2. Specifying only module
+
+module2:topic/older-target-source-2.adoc:: component1/v1/module2/topic/older-target-source-2.html
+
+The version and component are determined from the target page.
+
+=== 3. Specifying only component
+==== 3.a. Existing component
+
+component2::topic/older-target-source-3a.adoc:: component2/v2/topic/older-target-source-3a.html
+
+The version is the [.term]*latest* for that component.
+Since in component2 version v3 is prerelease, the latest version is v2.
+The module is ROOT.
+
+==== 3.b. Otherwise unknown component
+
+component3::topic/older-target-source-3b.adoc:: component3/topic/older-target-source-3b.html
+
+Since there is no information about possible versions for this component, the version is the "`versionless`" "`master`", causing the version segment to be omitted from the URL.
+The module is ROOT.
+
+=== 4 Specifying only version
+
+v4@:topic/older-target-source-4.adoc:: component1/v4/module1/topic/older-target-source-4.html
+
+The component and module are determined from the target page.
+
+=== 5. Specifying version and component, not module
+==== 5.a. Regular version
+
+v3@component2::topic/older-target-source-5a.adoc:: component2/v3/topic/older-target-source-5a.html
+
+The regular version appears in the URL.
+The module is ROOT.
+
+==== 5.b. Special "`versionless`" master version
+master@component1::topic/older-target-source-5b.adoc:: component1/topic/older-target-source-5b.html
+
+The  "`versionless`" "`master`" version causes the version segment to be omitted from the URL.
+The module is ROOT.
+
+=== 6 Specifying version and module, not component
+
+v4@module2:topic/older-target-source-6.adoc:: component1/v4/module2/topic/older-target-source-6.html
+
+The component is determined from the target page.
+
+=== 7. Specifying component and module, not version
+==== 7.a Existing component
+
+component2:module2:topic/older-target-source-7a.adoc:: component2/v2/module2/topic/older-target-source-7a.html
+
+The version is the [.term]*latest* for that component.
+Since in component2 version v3 is prerelease, the latest version is v2.
+
+==== 7.b. Otherwise unknown component
+
+component3:module2:topic/older-target-source-7b.adoc:: component3/module2/topic/older-target-source-7b.html
+
+Since there is no information about possible versions for this component, the version is the "`versionless`" "`master`", causing the version segment to be omitted from the URL.
+
+=== 8. Specifying version, component, and module
+v4@component3:module3:topic/older-target-source-8.adoc:: component3/v4/module3/topic/older-target-source-8.html
+
+Everything is specified in the alias, so no interpolation takes place.
+
+== Examples
+
+=== Produce a versionless alias for a page using built-in page attributes
+
+To make the redirects concrete, assume the original page coordinates are v2@component1::topic/topic.adoc.
+
+----
+:page-aliases: master@{page-component-name}:{page-module}:{page-relative}
+----
+
+For clarity, this is expressed as case 8, everything specified.
+Since the component and module are the same as the target, it could equivalently be expressed as case 4:
+----
+:page-aliases: master@:{page-relative}
+----
+
+* static redirect:
+[source,html]
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="canonical" href="http://example.com/component1/v2/topic/topic.html">
+<script>location="../v2/topic/topic.html"</script>
+<meta http-equiv="refresh" content="0; url=../v2/topic/topic.html">
+<meta name="robots" content="noindex">
+<title>Redirect Notice</title>
+<h1>Redirect Notice</h1>
+<p>The page you requested has been relocated to <a href="../v2/topic/topic.html">http://example.com/component1/v2/topic/topic.html</a>.</p>
+
+* netlify redirect:
+[source,text]
+/component1/topic/topic.html /component1/v2/topic/topic.html 301
+
+* nginx redirect:
+[source,text]
+location = /component1/topic/topic.html { return 301 /component1/v2/topic/topic.html; }
+
+=== Change module using a partial containing the page-aliases
+
+If you've moved a large number of files in a similar way, such as from one module to another, it may avoid duplication to include the page-aliases from a partial.
+Suppose your files are now at v3 in new-module, and you want  to redirect from v2 in old-module.
+In new-module/partials/alias.adoc, include
+
+----
+:page-aliases: v2@{page-component-name}:old-module:{page-relative}
+----
+
+and in each redirect target file add in the headers:
+
+----
+\include::partial$alias.adoc[]
+----
+
+For example, a file v3@component2:new-module:topic/topic.adoc will be redirected to from v2@component2:old-module:topic/topic.adoc, which translates to component2/v2/old-module/topic/topic.html.
