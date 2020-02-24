@@ -105,7 +105,7 @@ The xref:3.4@ROOT:scopes/super-mass.adoc[super massive scope] splits atoms.
 == Scenario: In a different component
 
 When the current page and the destination page are in different components, you must specify the target component.
-If a version is not specified, the implicit value is the xref:ROOT:component-versions.adoc#latest-version['latest version`].
+If a version is not specified, the implicit value is the xref:ROOT:component-versions.adoc#latest-version[latest version].
 If the module is not specified, the implicit value is `ROOT`.
 
 .Link to a page in the ROOT module of a component explicitly specifying the version
