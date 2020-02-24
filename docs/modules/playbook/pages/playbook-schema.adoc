@@ -180,6 +180,7 @@ Learn more:
 
 Antora automatically looks for the xref:ROOT:component-descriptor.adoc[component descriptor] file at the root of a repository.
 When the documentation component isn't stored at the root, you need to specify the repository relative path to the component descriptor's location using `start_path`.
+The `url` identifies where the git repository is and the `start_path` identifies where [.path]_antora.yml_ is in the git repository (or local worktree).
 
 Learn more:
 
