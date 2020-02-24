@@ -9,8 +9,7 @@ cache:
 stage:
  - setup
  - verify
- - name: deploy
-    if: branch = master
+ - deploy
 
 jobs:
   include:
