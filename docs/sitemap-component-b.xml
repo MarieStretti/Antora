@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://my-antora-demo-site.org/component-b/2.0/index.html</loc>
+<lastmod>2020-02-09T19:22:15.443Z</lastmod>
+</url>
+<url>
+<loc>https://my-antora-demo-site.org/component-b/2.0/module-one/overview.html</loc>
+<lastmod>2020-02-09T19:22:15.443Z</lastmod>
+</url>
+<url>
+<loc>https://my-antora-demo-site.org/component-b/1.0/index.html</loc>
+<lastmod>2020-02-09T19:22:15.443Z</lastmod>
+</url>
+<url>
+<loc>https://my-antora-demo-site.org/component-b/1.0/module-one/overview.html</loc>
+<lastmod>2020-02-09T19:22:15.443Z</lastmod>
+</url>
+</urlset>
