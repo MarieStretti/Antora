@@ -104,17 +104,18 @@ The xref:3.4@ROOT:scopes/super-mass.adoc[super massive scope] splits atoms.
 [#different-component]
 == Scenario: In a different component
 
-When the current page and the destination page are in different components, you'll enter values for all of the coordinates.
-If a version is not specified, the implicit value is `master@`.
+When the current page and the destination page are in different components, you must specify the target component.
+If a version is not specified, the implicit value is the xref:ROOT:component-versions.adoc#latest-version[latest version].
+If the module is not specified, the implicit value is `ROOT`.
 
-.Link to a page in the ROOT module of a versioned component
+.Link to a page in the ROOT module of a component explicitly specifying the version
 [source,asciidoc]
 How do I xref:2.0@default-ui::modify-template.adoc[modify a UI template]?
 
-.Link to a page in the ROOT module of a component that doesn't have versions
+.Link to a page in the ROOT module of a component without specifying version resolves to the latest version
 [source,asciidoc]
 xref:icons::index.adoc#intro[Introducing the Icon Project]
 
-.Link to a page in a module of a component that doesn't have versions
+.Link to a page in a module of a component without specifying version resolves to the latest version
 [source,asciidoc]
 xref:icons:web:modify-svg.adoc[Get started with the SVG assets]

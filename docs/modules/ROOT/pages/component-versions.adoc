@@ -42,6 +42,7 @@ You may need to add the xref:playbook:configure-content-sources.adoc#branches[br
 Keep in mind that content sources are filtered by branch name, not by the version they contain.
 That's because a single version can be spread out across multiple branches, or even multiple repositories.
 
+[#version-sorting]
 == How Antora sorts versions
 
 Antora sorts the versions of each component.
@@ -77,6 +78,7 @@ Bear in mind that if a display version is specified, the display version is show
 The display version allows the sortable version to differ from the version displayed in the UI.
 Thus, to the reader's eyes, the versions may not appear to be sorted in the order described.
 
+[#prerelease-versions]
 == Prerelease versions
 
 A version may be designated as a [.term]_prerelease version_ by assigning a value to the `prerelease` property in [.path]_antora.yml_.
@@ -98,6 +100,7 @@ This assignment has two consequences:
  ** If the `display_version` key is set, that value overrides the computed value just described.
 * The version will be skipped when determining the latest version (unless all versions are prerelease versions, in which case it is not skipped).
 
+[#latest-version]
 == Choosing the latest version
 
 In addition to sorting versions, Antora selects the latest version of each component.
