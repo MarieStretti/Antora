@@ -1,0 +1,103 @@
+= Redirect Facility Configuration
+// URLS
+:url-netlify-redirects: https://docs.netlify.com/routing/redirects/
+:url-nginx-rewrites: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return
+:url-meta-tag: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
+
+Antora can generate static HTML refresh pages as well as Ngnix and Netlify redirect configuration files.
+These redirects are derived from a source page's page ID that's assigned to a xref:page:page-aliases.adoc[page-aliases attribute] in a target page's header.
+The xref:page:page-aliases.adoc#source-page[source page] refers to the page you're redirecting from.
+The xref:page:page-aliases.adoc#target-page[target page] refers to the page you're redirecting to.
+
+== Redirect facility key
+
+The playbook key `redirect-facility` is optional.
+It can be configured in the playbook or via the CLI and accepts one of the following built-in values:
+
+disabled::
+Redirects aren't generated.
+netlify::
+A Netlify format redirect file is generated and placed at the root of the generated site at [.path]_+++_redirects+++_.
+nginx::
+An Nginx format redirect file is generated and placed at the root of the generated site at [.path]_.etc/nginx/rewrite.conf_.
+static::
+(default) A static HTML file with the `http-equiv` meta element set to `refresh` is generated at the source page's URL.
+The file provides a redirect notice and routes the source page URL to the target page URL.
+
+Antora automatically assigns the value `static` to the `redirect-facility` key unless you explicitly configure it in the playbook or CLI.
+
+=== Configure redirect-facility in the playbook
+
+The `redirect-facility` key is configured in the playbook under the `urls` category key.
+
+.antora-playbook.yml
+[source,yaml]
+----
+urls:
+  redirect-facility: netlify
+----
+
+=== Configure redirect-facility in the CLI
+
+The `redirect-facility` key can also be configured in the xref:cli:index.adoc[CLI].
+
+ $ antora --redirect-facility netlify antora-playbook.yml
+
+== Choosing a redirect facility configuration
+
+How your site's URL redirects should be configured depends on the web server or service you use to serve your site.
+
+=== Generated redirect configuration for Netlify
+
+{url-netlify-redirects}[Redirect rules for sites served by Netlify] are configured in a plain text file named [.path]_+++_redirects+++_.
+When the assigned redirect facility value is `netlify`, Antora generates [.path]_+++_redirects+++_ and places it at the root of the generated site.
+Each redirect rule is automatically calculated by Antora from the `page-aliases` attributes, and then the 301 HTTP status code is applied to each rule.
+This means that each redirect is considered permanent.
+
+.Antora generated _redirects file
+....
+/component/version/module/old-name.html /component/version/module/new-name.html 301
+....
+
+The example output above shows a redirect rule that routes the URL for a renamed page to it's target page URL and the applied 301 HTTP status code.
+
+=== Generated redirect configuration for Nginx
+
+Antora generates an {url-nginx-rewrites}[Nginx rewrite configuration file] named [.path]_rewrite.conf_ and places it in the generated site at [.path]_.etc/nginx/rewrite.conf_.
+
+.Antora generated rewrite.conf
+....
+location = /component/version/module/old-name.html { return 301 /component/version/module/old-name.html; }
+....
+
+The example output above shows a redirect rule with a 301 HTTP status code that permanently routes the URL for a renamed page to it's target page URL.
+
+=== Generated static HTML refresh pages
+
+The `static` redirect value is useful for sites deployed on services, such as GitLab Pages and GitHub Pages, that don't accept or provide access to URL redirection configuration files.
+This setting is also helpful when you build a site on your local machine to test your `page-aliases`.
+
+Antora generates a static HTML refresh page for each aliased source page that redirects a visitor to the corresponding target page.
+Each refresh page contains:
+
+. The canonical URL of the xref:page:page-aliases.adoc#target-page[target page].
+. The `http-equiv` meta attribute assigned the value `refresh`.
+. The `content` meta attribute assigned the value `0` and the URL of the relative target page that the visitor will be redirected to.
+The `0` indicates that the visitor will be redirected to the target page in 0 seconds.
+. A redirect notice, letting the visitor know that the xref:page:page-aliases.adoc#source-page[source page] no longer exists and providing a link to the target page.
+
+.Generated static refresh page for old-name.html that redirects to new-name.html
+[source,html]
+....
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="canonical" href="https://base-url.com/component/version/module/new-name.html">
+<script>location="new-name.html"</script>
+<meta http-equiv="refresh" content="0; url=new-name.html">
+<meta name="robots" content="noindex">
+<title>Redirect Notice</title>
+<h1>Redirect Notice</h1>
+<p>
+  The page you requested has been relocated to
+  <a href="new-name.html">https://base-url.com/component/version/module/new-name.html</a>.</p>
+....

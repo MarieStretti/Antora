@@ -1,138 +1,92 @@
-= The [.term]*page-aliases* attribute and rewrite rules
+= Set Up URL Redirects with Page Aliases
+:xrefstyle: short
+:listing-caption: Example
 
-Setting the [.term]*page-aliases* attribute in a page causes Antora to generate redirect information to that page in a format determined by playbook configuration.
-The value of the [.term]*page-aliases* attribute is a comma-separated list of resource ids.
-For each resource id, Antora will generate redirect information so that the URL calculated from that resource id is redirected to the current page.
-For simplicity I'll call the current page at its URL the [.term]*target page*.
+You can create a redirect using the `page-aliases` attribute.
+This document attribute is useful when you delete a page, rename a page's file, or move a page to a different module or component.
 
-The value of the [.term]*page-aliases* attribute is available on a page as `{page-aliases}`.
+[IMPORTANT]
+.Bulk URL Redirects
+The `page-aliases` attribute should not be used to create bulk redirects.
+We strongly recommended that you use the router provided by your web server or service when a module, component, or version is deleted, renamed, or moved.
 
-The site start_page, if specified in the playbook, is implemented through the redirect facility.
+== The page-aliases attribute
 
-== Simplest Example
+The `page-aliases` attribute is set in the xref:asciidoc:page-header.adoc[header] of a target page.
+[[target-page]]The [.term]*target page* refers to the page you're redirecting a source page to.
+[[source-page]]The [.term]*source page* refers to the deleted, renamed, or moved page that you're redirecting from.
+A source page's page ID--its xref:page-id.adoc[page ID] before it was deleted, renamed, or moved--is assigned to the `page-aliases` attribute in a target page.
+Multiple page IDs can be assigned to the attribute in a comma-separated list.
 
-If you rename old-name.adoc to new-name.adoc in the top level ROOT/pages directory, use:
-
+.Header of target page
+[source]
 ----
-:page-aliases: :old-name.adoc
-----
-
-Note that the value has the format of an xref with "`xref`" removed.
-This will result in component/version/old-name.html being redirected to component/version/new-name.html.
-Alternatively, if you've specified "`indexify`", path/to/this/page/old-name will be redirected to path/to/this/page/new-name.
-
-== Results, or configuring the rewrite facility
-
-What sort of redirect facility will be used is configured in the playbook under the (optional) urls key.
-
-----
-urls:
-  redirect-facility: static
+= Title of Target Page
+:page-aliases: page ID, page ID
 ----
 
-Allowed values and the resulting effects:
+Antora calculates the URL for a source page's page ID and generates redirect information so that the source page URL redirects to the target page URL.
+Any coordinates, such as xref:page-id.adoc#id-version[version] or xref:page-id.adoc#id-component[component], that are missing from a source page's page ID are interpolated from the target page's coordinates.
+The generated output format of the redirect information is determined by your chosen xref:playbook:configure-redirect-facility.adoc[redirect facility].
 
-static::
-(default) A static "bounce page" is generated and placed in the generated site at the location of the resource id, specifying a 301 redirect to the target page.
-nginx::
-An nginx format redirect file is generated and placed at the root of the generated site at [.path]_.etc/nginx/rewrite.conf_.
-netlify::
-An netlify format redirect file is generated and placed at the root of the generated site at [.path]__redirects_.
-disabled::
-No redirects will be generated.
+//The site start_page, if specified in the playbook, is implemented through the redirect facility.
 
-== Limitations
+[CAUTION]
+.Page Alias Limitations
+====
+* A page ID assigned to a `page-aliases` attribute can't be used in an xref.
+Therefore, if you delete, rename, or move a page, you need to update any references to it in your source to the page ID of the target page.
+The ability to use aliased page IDs in xrefs is scheduled for a future Antora release.
+* Page aliases can only be applied to pages.
+Partials, examples, images, and attachments can't be aliased.
+====
 
-* A redirect URL cannot be the target of an xref.
-Therefore, if you move a page, you need to update all the references to it in your source to the new Antora coordinates.
-See https://gitlab.com/antora/antora/issues/425[Page version selector and canonical URL should take page aliases into account] for a possibly relevant enhancement.
+== Create a redirect for a renamed page
 
-== Guide to alias interpolation
+If you change a source page's file name from [.path]_old-name.adoc_ to [.path]_new-name.adoc_, assign the file's former page ID to `page-aliases` in the header of the target page's file.
 
-When you specify an alias using an incomplete resource id, Antora interpolates the missing parts using the target page coordinates and information about the project.
-To be specific, assume:
+.new-name.adoc
+[source]
+----
+= Title of Target Page
+:page-aliases: old-name.adoc
+----
 
-* The project has two components:
-** component1 with versions v1 and v2
-** component2 with versions v1, v2, and v3 (prerelease)
-* the target page coordinates are v1@component1:module1:topic/older-target.adoc
+This will result in [.path]_\https://base-url.com/component/version/module/old-name.html_ being redirected to [.path]_\https://base-url.com/component/version/module/new-name.html_.
+The missing page ID coordinates (version, component, module) for the source page `old-name.adoc` are interpolated from the target page's coordinates.
+//Alternatively, if you've specified `indexify` in your playbook, [.path]_\https://base-url.com/component/version/module/old-name_ will redirect to [.path]_\https://base-url.com/component/version/module/new-name_ .
 
-In any resource id, specifying relative is required, and for page aliases the family must be "`page`".
-There are 8 combinations of version, component, and module, and several have different effects based on whether the component is otherwise present in the site and whether the version is specified to be "`master`".
-Here, the final URL is shown and the interpolation decisions are described.
+== Create a redirect for a moved page
 
-=== 1. Specifying nothing (except the required relative)
+When a page is moved from one module to another module in the same component, the aliased page ID needs to contain the source page's former xref:page-id.adoc#id-module[module coordinate].
+In <<ex-module>>, the page `source-1.adoc` has moved from `module-1` to `module-z`.
+Both `module-1` and `module-z` are modules in version `5.0` of `component-1`.
 
-topic/older-target-source-1.adoc:: component1/v1/module1/topic/older-target-source-1.html
+[#ex-module]
+.Alias for source-1.adoc when it's moved from module-1 to module-z
+[source]
+----
+:page-aliases: module-1:source-1.adoc
+----
 
-The version, component, and module are determined from the target page.
+Now, Antora will redirect the URL [.path]_\https://base-url.com/component-1/5.0/module-1/source-1.html_ to the URL [.path]_\https://base-url.com/component-1/5.0/module-z/source-1.html_.
 
-=== 2. Specifying only module
+When a page is moved from one component to another component, assign the source page's fully-qualified former page ID to `page-aliases`.
+In <<ex-component>>, the page `source-w.adoc` has moved from version `1.4` of `component-8`, `module-u` to version `3.0` of `component-delta`, `ROOT`.
 
-module2:topic/older-target-source-2.adoc:: component1/v1/module2/topic/older-target-source-2.html
+[#ex-component]
+.Alias for source-w.adoc when it's moved to the ROOT module of version 3.0 of component-delta
+[source]
+----
+:page-aliases: 1.4@component-8:module-u:source-w.adoc
+----
 
-The version and component are determined from the target page.
+This will result in the URL [.path]_\https://base-url.com/component-8/1.4/module-u/source-w.html_ being redirected to [.path]_\https://base-url.com/component-delta/3.0/source-w.html_.
 
-=== 3. Specifying only component
-==== 3.a. Existing component
+// == Create a redirect for a deleted page
 
-component2::topic/older-target-source-3a.adoc:: component2/v2/topic/older-target-source-3a.html
-
-The version is the [.term]*latest* for that component.
-Since in component2 version v3 is prerelease, the latest version is v2.
-The module is ROOT.
-
-==== 3.b. Otherwise unknown component
-
-component3::topic/older-target-source-3b.adoc:: component3/topic/older-target-source-3b.html
-
-Since there is no information about possible versions for this component, the version is the "`versionless`" "`master`", causing the version segment to be omitted from the URL.
-The module is ROOT.
-
-=== 4 Specifying only version
-
-v4@:topic/older-target-source-4.adoc:: component1/v4/module1/topic/older-target-source-4.html
-
-The component and module are determined from the target page.
-
-=== 5. Specifying version and component, not module
-==== 5.a. Regular version
-
-v3@component2::topic/older-target-source-5a.adoc:: component2/v3/topic/older-target-source-5a.html
-
-The regular version appears in the URL.
-The module is ROOT.
-
-==== 5.b. Special "`versionless`" master version
-master@component1::topic/older-target-source-5b.adoc:: component1/topic/older-target-source-5b.html
-
-The  "`versionless`" "`master`" version causes the version segment to be omitted from the URL.
-The module is ROOT.
-
-=== 6 Specifying version and module, not component
-
-v4@module2:topic/older-target-source-6.adoc:: component1/v4/module2/topic/older-target-source-6.html
-
-The component is determined from the target page.
-
-=== 7. Specifying component and module, not version
-==== 7.a Existing component
-
-component2:module2:topic/older-target-source-7a.adoc:: component2/v2/module2/topic/older-target-source-7a.html
-
-The version is the [.term]*latest* for that component.
-Since in component2 version v3 is prerelease, the latest version is v2.
-
-==== 7.b. Otherwise unknown component
-
-component3:module2:topic/older-target-source-7b.adoc:: component3/module2/topic/older-target-source-7b.html
-
-Since there is no information about possible versions for this component, the version is the "`versionless`" "`master`", causing the version segment to be omitted from the URL.
-
-=== 8. Specifying version, component, and module
-v4@component3:module3:topic/older-target-source-8.adoc:: component3/v4/module3/topic/older-target-source-8.html
-
-Everything is specified in the alias, so no interpolation takes place.
+////
+Discussion TODO: While this use case would work, we don't recommend using the built-in attributes in the page-aliases except to the most advanced users and in special (usually migration) situations. Large teams seem to quickly create redirect loops and break redirects because they try to use it for wholesale re-routing or SEO tactics
 
 == Examples
 
@@ -170,6 +124,10 @@ Since the component and module are the same as the target, it could equivalently
 [source,text]
 location = /component1/topic/topic.html { return 301 /component1/v2/topic/topic.html; }
 
+Discussion TODO: While this use case would work, it wasn't the original intent of the page-aliases attribute. page-aliases was originally created for renaming a file or moving individual pages to other modules and topic folders, etc. It really wasn't meant for wholesale rerouting and I'm not sure we want to recommend it to users as such. Instead, we probably want to recommend an actual router for such bulk URL changes and/or create a discrete routing component for Antora.
+
+However, I'm keeping this content here because we may change our mind after further discussion and/or use at a basis for changes to this feature.
+
 === Change module using a partial containing the page-aliases
 
 If you've moved a large number of files in a similar way, such as from one module to another, it may avoid duplication to include the page-aliases from a partial.
@@ -187,3 +145,4 @@ and in each redirect target file add in the headers:
 ----
 
 For example, a file v3@component2:new-module:topic/topic.adoc will be redirected to from v2@component2:old-module:topic/topic.adoc, which translates to component2/v2/old-module/topic/topic.html.
+////

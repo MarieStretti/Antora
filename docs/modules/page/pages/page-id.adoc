@@ -24,9 +24,11 @@ These source document coordinates are described below.
 Version::
 The version of the component in which the page lives; often mapped to a repository branch.
 
+[#id-component]
 Component::
 The documentation component to which the page belongs; often mapped to a repository.
 
+[#id-module]
 Module::
 The content bundle in which the page is grouped; if empty, defaults to ROOT.
 
