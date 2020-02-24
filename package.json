@@ -45,5 +45,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "opal-runtime": "^1.0.14"
+  }
 }
