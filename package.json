@@ -47,6 +47,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "fs-extra": "^8.1.0",
     "opal-runtime": "^1.0.14"
   }
 }
