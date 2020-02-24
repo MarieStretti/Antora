@@ -5,16 +5,12 @@
 :url-author: {url-adoc-manual}/#author-and-email
 :url-attrs: {url-adoc-manual}/#attributes
 :url-builtin-attrs: {url-adoc-manual}/#builtin-attributes
-:url-netlify-redirects: https://www.netlify.com/docs/redirects/
-:url-meta-tag: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
-:url-nginx-rewrite-return-directive: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return
 
 On this page, you'll learn:
 
 * [x] How to structure a valid AsciiDoc page header.
 * [x] How to set a page title.
 * [x] How to add metadata to a page.
-* [x] How to configure redirects to one or more pages.
 * [x] How to set AsciiDoc's built-in page attributes.
 
 == Header anatomy
@@ -131,82 +127,6 @@ The keywords attribute contains a list of comma-separated values that are assign
 <head>
 <meta charset="UTF-8">
 <meta name="keywords" content="comma-separated values, stored, in an HTML, meta, tag">
-....
-
-== Configuring page redirects
-
-To configure page redirects, you use the `page-alias` attribute.
-This attribute contains a comma-separated list of pages that redirect to the current page.
-
-For example, if `upgrade/service/apache.adoc` was renamed to `upgrade/server/apache.adoc`, then at the top of `upgrade/server/apache.adoc`, add a `page-alias` attribute that references the renamed page:
-
-[source,asciidoc]
-....
-= Page Title
-:page-aliases: upgrade/service/apache.adoc
-....
-
-NOTE: The redirected pages must follow xref:page:page-id.adoc[Antora’s Page Identifier rules].
-
-To allow Antora to follow redirects, you need to generate them.
-To do this, assuming one or more page-alias attributes have been added, use Antora's xref:cli:index.adoc#_commands_and_options[`--redirect-facility` option], and specify one of the four redirect types (`disabled`, `netlify`, `nginx`, or `static`).
-
-For example, to generate a redirect configuration suitable for use with the NGINX webserver, then you would use the, simplified, command:
-
-[source,console]
-....
-antora --redirect-facility nginx playbook.yml
-....
-
-Redirects work differently, depending on the value provided.
-Below are the examples of generated configurations for each of the four parameters:
-
-=== nginx
-
-Antora generates an {url-nginx-rewrite-return-directive}[NGINX rewrite configuration] in a file called `rewrite.conf`, in a new directory called  `.etc/nginx`, itself created inside the Playbook's output directory.
-
-.Generated configuration for Nginx
-[source,nginx]
-....
-location = /upgrade/service/apache.html {
-  return 301 /upgrade/server/apache.html;
-}
-....
-
-=== netlify
-
-Antora generates {url-netlify-redirects}[a Netlify _redirects file] (called `_redirects`) in the Playbook's output directory, containing the generated rewrite configuration.
-
-.Generated configuration for Netlify
-[source]
-....
-/upgrade/service/apache.html /upgrade/server/apache.html 301
-....
-
-=== static
-
-Antora generates static bounce pages for each page that is to redirected _from_.
-These pages contain:
-
-. A link to the new, canonical reference.
-. A {url-meta-tag}[meta refresh tag] to redirect to the new canonical reference
-. A notice, letting the reader know that the old page no longer exists along with the location of the new page.
-
-.Generated static configuration for ./service/apache.html
-[source,html]
-....
-<!DOCTYPE html>
-<meta charset="utf-8">
-<link rel="canonical" href="http://localhost:5000/upgrade/server/apache.html">
-<script>location="marketplace_apps.html"</script>
-<meta http-equiv="refresh" content="0; url=../server/apache.html">
-<meta name="robots" content="noindex">
-<title>Redirect Notice</title>
-<h1>Redirect Notice</h1>
-<p>
-  The page you requested has been relocated to
-  <a href="../server/.html">http://localhost:5000/server/apache.html</a>.
-</p>
 ....
 
 [#page-attrs]
