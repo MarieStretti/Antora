@@ -19,7 +19,6 @@
     "eslint-plugin-standard": "~4.0",
     "gulp": "~4.0",
     "isomorphic-git": "0.70.9",
-    "jsdoc": "^3.6.3",
     "js-yaml": "~3.13",
     "mocha": "~6.2",
     "node-git-server": "~0.6",
@@ -45,14 +44,5 @@
   },
   "workspaces": [
     "packages/*"
-  ],
-  "dependencies": {
-    "@antora/asciidoc-loader": "^2.2.0",
-    "@antora/content-classifier": "^2.2.0",
-    "fs-extra": "^8.1.0",
-    "npm-path": "^2.0.4",
-    "opal-runtime": "^1.0.14",
-    "require-directory": "^2.1.1",
-    "undertaker": "^1.2.1"
-  }
+  ]
 }
