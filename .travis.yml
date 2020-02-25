@@ -18,7 +18,6 @@ jobs:
       script:
         - yarn install
         - npm install gulp-cli
-        #- ./node_modules/.bin/jsdoc scripts/*.js -d docs
 
     - stage: verify
       name: "Test 10"
@@ -36,7 +35,7 @@ jobs:
 
     - stage: deploy
       script:
-        - antora ./test_cicd_playbook/antora_playbook.yml
+        - antora ./ci-cd/antora_playbook.yml
       deploy:
         provider: pages
         skip_cleanup: true

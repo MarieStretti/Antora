@@ -5,6 +5,8 @@
 * Les résultats des builds se trouvent ici : https://travis-ci.com/MarieStretti/Antora/
 * La documentation générée est au lien suivant : https://mariestretti.github.io/Antora/
 
+* Le dossier `ci-cd` contient le fichier `antora_playbook.yml` et le `README.md` créés pour ce projet d'intégration continue.
+
 ## Objectifs du TP
 
 L'objectif principal de ce TP est de mettre en oeuvre de la livraison continue sur un projet. Pour cela, il fallait créer un pipeline avec trois étapes : Construire, Tests et Déployer.
@@ -19,6 +21,8 @@ L’étape “Déployer” devra déployer le site web statique pour chaque bran
 Travis CI
 
 ## Pipeline utilisé
+
+Le pipeline est décrit dans le fichier `.travis.yml` à la racine du projet.
 
 ![Pipeline utilisé](https://github.com/MarieStretti/Antora/blob/master/ci-cd/pipeline.png)
 
@@ -53,5 +57,5 @@ Etant donné que Travis se met à builder la pipeline automatiquement une fois u
 * `Include administrators` : applique ces restrictions également pour les administrateurs
 
 ## JSDoc
-Si l'on veut déployer la documentation avec JSDoc et non la documentation d'Antora avec le `playbook.yml`, il faut utiliser la commande suivante à la place de *antora ./test_cicd_playbook/antora_playbook.yml* dans le stage `deploy`:
+Si l'on veut déployer la documentation avec JSDoc et non la documentation d'Antora avec le `antora_playbook.yml`, il faut utiliser la commande suivante à la place de *antora ./test_cicd_playbook/antora_playbook.yml* dans le stage `deploy`:
 * `./node_modules/.bin/jsdoc scripts/*.js -d docs`
