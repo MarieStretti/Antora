@@ -53,4 +53,5 @@ Etant donné que Travis se met à builder la pipeline automatiquement une fois u
 * `Include administrators` : applique ces restrictions également pour les administrateurs
 
 ## JSDoc
-La commande `./node_modules/.bin/jsdoc scripts/*.js -d codeDocumentation` (qu'il faut décommenter) permet de générer la documentation du code du projet Antora dans le dossier `codeDocumentation`, qu'il faut créer au préalable.
+Si l'on veut déployer la documentation avec JSDoc et non la documentation d'Antora avec le `playbook.yml`, il faut utiliser la commande suivante à la place de *antora ./test_cicd_playbook/antora_playbook.yml* dans le stage `deploy`:
+* `./node_modules/.bin/jsdoc scripts/*.js -d docs`
