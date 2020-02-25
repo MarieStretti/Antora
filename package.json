@@ -47,6 +47,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "@antora/asciidoc-loader": "^2.2.0",
     "@antora/content-classifier": "^2.2.0",
     "fs-extra": "^8.1.0",
     "npm-path": "^2.0.4",
