@@ -7,7 +7,7 @@
 **** xref:configure-edit-url.adoc[Edit URL]
 *** xref:configure-asciidoc.adoc[AsciiDoc]
 *** xref:configure-ui.adoc[UI]
-//*** xref:configure-redirects.adoc[Configure Redirects]
+*** xref:configure-redirect-facility.adoc[Redirect Facility]
 *** xref:configure-output.adoc[Output]
 *** xref:configure-runtime.adoc[Runtime]
 // ** Create a Playbook

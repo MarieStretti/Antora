@@ -27,11 +27,12 @@ The command prompt (`$`) is not displayed in the command output.
 
 The `antora` command accepts user inputs in the form of options, positional arguments, and environment variables.
 
- $ antora <command> [options] <arguments>
+ $ antora <command> [option] <arguments>
 
 . All functions start with a base call to Antora (`antora`).
 . The command tells Antora what operation to perform.
 . Additional options can be specified after a command.
+Options are prefixed with two hyphens (`--`).
 . Positional arguments, such as the name of the playbook file, are specified last.
 . Environment variables are read from the terminal's state.
 
@@ -45,9 +46,9 @@ The `antora` command accepts user inputs in the form of options, positional argu
 |antora
 |Required base command.
 
-|generate [options] <playbook>
+|generate
 |Generate the documentation site specified by the <playbook>.
-This command is implicitly executed if no command is specified.
+This command is implicitly executed when no command is specified.
 <<cli-run-ex,See examples>>.
 |===
 
@@ -87,7 +88,7 @@ Effectively substitutes Antora's entire pipeline with a user-defined function._
 |@antora/site-generator-default
 
 |--git-credentials-path
-|An alternate path to a file that contains credentials for git matching the format used by git-credential-store.
+|An alternate path to a file that contains credentials for git matching the format used by `git-credential-store`.
 |String
 |not set
 
@@ -106,6 +107,12 @@ Setting this option implicitly enables the Google Analytics / Tag Manager embed 
 |Do not write any messages to stdout.
 |Boolean
 |false
+
+|--redirect-facility <facility>
+|Facility for handling URL redirects calculated from xref:page:page-aliases.adoc[page-aliases].
+The xref:playbook:configure-redirect-facility.adoc[supported facilities] are `disabled`, `netlify`, `nginx`, and `static`.
+|String
+|`static`
 
 |-r, --require <name>
 |Preload the specified library or script.

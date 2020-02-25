@@ -5,6 +5,7 @@
 ** xref:page:site-scoped-attributes.adoc[Site-Scoped Attributes]
 ** xref:page:component-scoped-attributes.adoc[Component-Scoped Attributes]
 ** xref:page:page-and-site-attributes.adoc[Built-in Page- and Site Attributes]
+* xref:page:page-aliases.adoc[Set Up URL Redirects with Page Aliases]
 * xref:page-header.adoc[Page Header]
 ** xref:page-header.adoc#page-title[Title]
 ** xref:page-header.adoc#page-meta[Metadata]
