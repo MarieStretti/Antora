@@ -53,4 +53,4 @@ Etant donné que Travis se met à builder la pipeline automatiquement une fois u
 * `Include administrators` : applique ces restrictions également pour les administrateurs
 
 ## JSDoc
-La commande `./node_modules/.bin/jsdoc scripts/*.js -d codeDocumentation` permet de générer la documentation du code du projet Antora dans le dossier `codeDocumentation`, qu'il faut créer au préalable.
+La commande `./node_modules/.bin/jsdoc scripts/*.js -d codeDocumentation` (qu'il faut décommenter) permet de générer la documentation du code du projet Antora dans le dossier `codeDocumentation`, qu'il faut créer au préalable.
