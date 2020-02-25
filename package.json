@@ -47,7 +47,11 @@
     "packages/*"
   ],
   "dependencies": {
+    "@antora/content-classifier": "^2.2.0",
     "fs-extra": "^8.1.0",
-    "opal-runtime": "^1.0.14"
+    "npm-path": "^2.0.4",
+    "opal-runtime": "^1.0.14",
+    "require-directory": "^2.1.1",
+    "undertaker": "^1.2.1"
   }
 }
