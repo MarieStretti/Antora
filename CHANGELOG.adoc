@@ -5,6 +5,14 @@ For a detailed view of what's changed, refer to the repository's https://gitlab.
 
 This project utilizes semantic versioning.
 
+== Unreleased
+
+=== Changed
+
+* *page-composer*: Upgrade Handlebars to fix performance regression (#551)
+* *page-composer*: Fix resolvePage and resolvePageUrl helpers to retrieve content catalog independent of template context (#554)
+* *page-composer*: Make resolvePage and resolvePageUrl helpers resilient against falsy page spec (#554)
+
 == 2.3.0-alpha.2 (2019-12-18)
 
 === Added

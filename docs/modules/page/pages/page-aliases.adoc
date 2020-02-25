@@ -1,0 +1,148 @@
+= Set Up URL Redirects with Page Aliases
+:xrefstyle: short
+:listing-caption: Example
+
+You can create a redirect using the `page-aliases` attribute.
+This document attribute is useful when you delete a page, rename a page's file, or move a page to a different module or component.
+
+[IMPORTANT]
+.Bulk URL Redirects
+The `page-aliases` attribute should not be used to create bulk redirects.
+We strongly recommended that you use the router provided by your web server or service when a module, component, or version is deleted, renamed, or moved.
+
+== The page-aliases attribute
+
+The `page-aliases` attribute is set in the xref:asciidoc:page-header.adoc[header] of a target page.
+[[target-page]]The [.term]*target page* refers to the page you're redirecting a source page to.
+[[source-page]]The [.term]*source page* refers to the deleted, renamed, or moved page that you're redirecting from.
+A source page's page ID--its xref:page-id.adoc[page ID] before it was deleted, renamed, or moved--is assigned to the `page-aliases` attribute in a target page.
+Multiple page IDs can be assigned to the attribute in a comma-separated list.
+
+.Header of target page
+[source]
+----
+= Title of Target Page
+:page-aliases: page ID, page ID
+----
+
+Antora calculates the URL for a source page's page ID and generates redirect information so that the source page URL redirects to the target page URL.
+Any coordinates, such as xref:page-id.adoc#id-version[version] or xref:page-id.adoc#id-component[component], that are missing from a source page's page ID are interpolated from the target page's coordinates.
+The generated output format of the redirect information is determined by your chosen xref:playbook:configure-redirect-facility.adoc[redirect facility].
+
+//The site start_page, if specified in the playbook, is implemented through the redirect facility.
+
+[CAUTION]
+.Page Alias Limitations
+====
+* A page ID assigned to a `page-aliases` attribute can't be used in an xref.
+Therefore, if you delete, rename, or move a page, you need to update any references to it in your source to the page ID of the target page.
+The ability to use aliased page IDs in xrefs is scheduled for a future Antora release.
+* Page aliases can only be applied to pages.
+Partials, examples, images, and attachments can't be aliased.
+====
+
+== Create a redirect for a renamed page
+
+If you change a source page's file name from [.path]_old-name.adoc_ to [.path]_new-name.adoc_, assign the file's former page ID to `page-aliases` in the header of the target page's file.
+
+.new-name.adoc
+[source]
+----
+= Title of Target Page
+:page-aliases: old-name.adoc
+----
+
+This will result in [.path]_\https://base-url.com/component/version/module/old-name.html_ being redirected to [.path]_\https://base-url.com/component/version/module/new-name.html_.
+The missing page ID coordinates (version, component, module) for the source page `old-name.adoc` are interpolated from the target page's coordinates.
+//Alternatively, if you've specified `indexify` in your playbook, [.path]_\https://base-url.com/component/version/module/old-name_ will redirect to [.path]_\https://base-url.com/component/version/module/new-name_ .
+
+== Create a redirect for a moved page
+
+When a page is moved from one module to another module in the same component, the aliased page ID needs to contain the source page's former xref:page-id.adoc#id-module[module coordinate].
+In <<ex-module>>, the page `source-1.adoc` has moved from `module-1` to `module-z`.
+Both `module-1` and `module-z` are modules in version `5.0` of `component-1`.
+
+[#ex-module]
+.Alias for source-1.adoc when it's moved from module-1 to module-z
+[source]
+----
+:page-aliases: module-1:source-1.adoc
+----
+
+Now, Antora will redirect the URL [.path]_\https://base-url.com/component-1/5.0/module-1/source-1.html_ to the URL [.path]_\https://base-url.com/component-1/5.0/module-z/source-1.html_.
+
+When a page is moved from one component to another component, assign the source page's fully-qualified former page ID to `page-aliases`.
+In <<ex-component>>, the page `source-w.adoc` has moved from version `1.4` of `component-8`, `module-u` to version `3.0` of `component-delta`, `ROOT`.
+
+[#ex-component]
+.Alias for source-w.adoc when it's moved to the ROOT module of version 3.0 of component-delta
+[source]
+----
+:page-aliases: 1.4@component-8:module-u:source-w.adoc
+----
+
+This will result in the URL [.path]_\https://base-url.com/component-8/1.4/module-u/source-w.html_ being redirected to [.path]_\https://base-url.com/component-delta/3.0/source-w.html_.
+
+// == Create a redirect for a deleted page
+
+////
+Discussion TODO: While this use case would work, we don't recommend using the built-in attributes in the page-aliases except to the most advanced users and in special (usually migration) situations. Large teams seem to quickly create redirect loops and break redirects because they try to use it for wholesale re-routing or SEO tactics
+
+== Examples
+
+=== Produce a versionless alias for a page using built-in page attributes
+
+To make the redirects concrete, assume the original page coordinates are v2@component1::topic/topic.adoc.
+
+----
+:page-aliases: master@{page-component-name}:{page-module}:{page-relative}
+----
+
+For clarity, this is expressed as case 8, everything specified.
+Since the component and module are the same as the target, it could equivalently be expressed as case 4:
+----
+:page-aliases: master@:{page-relative}
+----
+
+* static redirect:
+[source,html]
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="canonical" href="http://example.com/component1/v2/topic/topic.html">
+<script>location="../v2/topic/topic.html"</script>
+<meta http-equiv="refresh" content="0; url=../v2/topic/topic.html">
+<meta name="robots" content="noindex">
+<title>Redirect Notice</title>
+<h1>Redirect Notice</h1>
+<p>The page you requested has been relocated to <a href="../v2/topic/topic.html">http://example.com/component1/v2/topic/topic.html</a>.</p>
+
+* netlify redirect:
+[source,text]
+/component1/topic/topic.html /component1/v2/topic/topic.html 301
+
+* nginx redirect:
+[source,text]
+location = /component1/topic/topic.html { return 301 /component1/v2/topic/topic.html; }
+
+Discussion TODO: While this use case would work, it wasn't the original intent of the page-aliases attribute. page-aliases was originally created for renaming a file or moving individual pages to other modules and topic folders, etc. It really wasn't meant for wholesale rerouting and I'm not sure we want to recommend it to users as such. Instead, we probably want to recommend an actual router for such bulk URL changes and/or create a discrete routing component for Antora.
+
+However, I'm keeping this content here because we may change our mind after further discussion and/or use at a basis for changes to this feature.
+
+=== Change module using a partial containing the page-aliases
+
+If you've moved a large number of files in a similar way, such as from one module to another, it may avoid duplication to include the page-aliases from a partial.
+Suppose your files are now at v3 in new-module, and you want  to redirect from v2 in old-module.
+In new-module/partials/alias.adoc, include
+
+----
+:page-aliases: v2@{page-component-name}:old-module:{page-relative}
+----
+
+and in each redirect target file add in the headers:
+
+----
+\include::partial$alias.adoc[]
+----
+
+For example, a file v3@component2:new-module:topic/topic.adoc will be redirected to from v2@component2:old-module:topic/topic.adoc, which translates to component2/v2/old-module/topic/topic.html.
+////

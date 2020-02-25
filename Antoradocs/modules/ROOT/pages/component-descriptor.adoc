@@ -57,6 +57,8 @@ The value isn't related to the name of the repository or directory the component
 For instance, a documentation component might be stored in a GitLab repository named _Coco B's Massive Quantum App_ but this doesn't impact how Antora handles the component when it publishes a documentation site that uses it.
 Antora only uses the value assigned to the component's name key when converting resource IDs and generating the URLs for the component's pages.
 //, which Coco B's docs manager decided should be `mq`,
+[TIP]
+To minimise the likelyhood of portability issues between web servers, letters used in component name and component version should be lowercase.
 
 === `title`
 

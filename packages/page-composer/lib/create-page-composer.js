@@ -201,12 +201,13 @@ function buildPageUiModel (file, contentCatalog, navigationCatalog, site) {
   return model
 }
 
-function resolvePageHelper (spec, { hash: context }) {
-  return this.site.contentCatalog.resolvePage(spec, context)
+function resolvePageHelper (spec, { data: { root }, hash: context }) {
+  return spec ? root.site.contentCatalog.resolvePage(spec, context) : undefined
 }
 
-function resolvePageUrlHelper (spec, { hash: context }) {
-  const page = this.site.contentCatalog.resolvePage(spec, context)
+function resolvePageUrlHelper (spec, { data: { root }, hash: context }) {
+  if (!spec) return
+  const page = root.site.contentCatalog.resolvePage(spec, context)
   if (page) return page.pub.url
 }
 
