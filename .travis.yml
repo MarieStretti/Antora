@@ -16,7 +16,7 @@ jobs:
     - stage: setup
       node_js: 12
       script:
-        - yarn install --frozen-lockfile
+        - yarn install
         - npm install gulp-cli
         #- ./node_modules/.bin/jsdoc scripts/*.js -d docs
 
