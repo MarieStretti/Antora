@@ -18,6 +18,10 @@ L’étape “Déployer” devra déployer le site web statique pour chaque bran
 
 Travis CI
 
+## Pipeline utilisé
+
+![Pipeline utilisé](https://github.com/MarieStretti/Antora/blob/master/ci-cd/pipeline.png)
+
 ## Stage Setup
 
 Ce stage exécute trois commandes :
