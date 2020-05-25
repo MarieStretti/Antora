@@ -72,6 +72,7 @@ describe('text-utils#capitalizeKeys', () => {
     expect(capitalizedKeysObject).to.eql(expectedObject)
     // expect#equal fails on two different object instances
     expect(capitalizedKeysObject).not.to.equal(expectedObject)
+    expect('key').to.eql('foo')
   })
 
   it('should not capitalize deep keys (since it is not recursive)', () => {
