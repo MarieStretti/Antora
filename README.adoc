@@ -41,6 +41,7 @@ This project includes a command line interface (CLI) and a preassembled site gen
 
 == Quickstart
 
+
 This section offers a basic tutorial for evaluating Antora.
 More comprehensive installation instructions are in the {uri-docs}[Antora documentation].
 
