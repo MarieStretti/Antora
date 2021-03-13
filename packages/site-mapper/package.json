@@ -20,7 +20,7 @@
     "vinyl": "~2.2"
   },
   "devDependencies": {
-    "xmldom": "0.1.27"
+    "xmldom": "0.5.0"
   },
   "engines": {
     "node": ">=8.11.0"
