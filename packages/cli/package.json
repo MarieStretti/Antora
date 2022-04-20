@@ -22,7 +22,7 @@
     "commander": "~4.0"
   },
   "devDependencies": {
-    "convict": "~5.2",
+    "convict": "~6.2",
     "fs-extra": "~8.1",
     "kapok-js": "~0.10"
   },
